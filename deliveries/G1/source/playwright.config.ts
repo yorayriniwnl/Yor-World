@@ -12,12 +12,11 @@ export default defineConfig({
     baseURL: `http://127.0.0.1:${port}`,
     viewport: { width: 1440, height: 900 },
     deviceScaleFactor: 1,
-    trace: "retain-on-failure",
+    trace: "off",
     screenshot: "only-on-failure",
     video: "on",
     headless: true,
   },
-  outputDir: path.join(process.env.G1_EVIDENCE_DIR ?? process.env.W3_EVIDENCE_DIR ?? "test-results", "recordings"),
   projects: [
     { name: "chrome", use: { browserName: "chromium", channel: "chrome" } },
     { name: "edge", use: { browserName: "chromium", channel: "msedge" } },
@@ -28,7 +27,7 @@ export default defineConfig({
     reuseExistingServer: false,
     timeout: 60_000,
     env: { NEXT_TELEMETRY_DISABLED: "1" },
-    stdout: "inherit",
-    stderr: "inherit",
+    stdout: "pipe",
+    stderr: "pipe",
   },
 });

@@ -147,6 +147,12 @@ for action in sys.argv[1:]:
         if code: raise SystemExit(code)
     elif action == "test:e2e":
         code = run("test-e2e", ["test:e2e"])
+        rec_dir = evidence / "recordings"
+        rec_dir.mkdir(parents=True, exist_ok=True)
+        if (app / "test-results").exists():
+            for vid in (app / "test-results").rglob("*.webm"):
+                dest_name = f"{vid.parent.name}_{vid.name}"
+                shutil.copy2(vid, rec_dir / dest_name)
         if code: raise SystemExit(code)
     elif action == "package":
         # Package delivery archive
