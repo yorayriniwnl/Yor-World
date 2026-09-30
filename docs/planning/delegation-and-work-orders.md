@@ -1,6 +1,6 @@
 # YOR WORLD delegation and work orders
 
-Date: 2026-09-30; living status reconciled 2026-10-01. W1/W2/W3 are returned and remain unaccepted for the reasons in the [parent ruling](reviews/2026-10-01-reconciliation.md). W1/W2 Gemini reviews are archived; assigned Claude reviews are absent. **G1 LOCKED.** The [exact next packets](reconciliation-packets/2026-10-01-next-packets.md) supersede the initial-packet dispatch state below. No external account was newly dispatched by this reconciliation.
+Date: 2026-09-30; living status reconciled 2026-10-01 (PARENT-RECON-02). W1-F1-r2, W2-F1-r2, and W3-A1-r2 are formally ACCEPTED in the [second parent ruling](reviews/2026-10-01-reconciliation-02.md). **G1 UNLOCKED AND AUTHORIZED.** Combined proof integration is active in `deliveries/G1/`.
 
 The user authorized the full vision and delegated production. The parent Codex chat owns architecture, task assignment, audits, and acceptance. Workers make and integrate the product. This hub operates the existing plans; it does not replace them with another design exercise.
 
@@ -61,10 +61,10 @@ W1/W2/W3 are independent: W1 owns room geometry; W2 uses its own F1 furniture fi
 
 | Packet | Maker / independent reviewer | Depends on | Current state / exit |
 | --- | --- | --- | --- |
-| W1 reference/blockout | Reported Gemini-1 / Gemini-3, Claude-13 + parent | Image + F1 | REWORK: returned native/export proof; Gemini recommendation contradicted by parent geometry/camera inspection; W1-CORR-01 then new reviews |
-| W2 avatar/export | Reported GPT-2/Codex / Gemini-3, Claude-01/13 + parent | F1 fixture + clip names | INSUFFICIENT EVIDENCE: W2-F1-r2 motion review favorable; assigned interface/provenance reviews missing; W2-REV-01/13 ready |
-| W3 semantic platform | Reported GPT-1/Codex / independent Codex audit returned; Claude-01/02/05 + parent | Engineering contracts | REWORK: independent 55/18 reproduction; patch, payload accounting, import guard and helper exits require correction; W3-CORR-01 then final-hash reviews |
-| G1 integration | GPT-2 / parent + assigned non-maker reviewers | Explicitly accepted exact W1/W2/W3 revisions | LOCKED; no accepted set and no active integration assignment |
+| W1 reference/blockout | Reported Gemini-1 / Gemini-3, Claude-13 + parent | Image + F1 | ACCEPTED: W1-F1-r2 verified (nested transforms, geometry clearances, cameras, Khronos 0/0) |
+| W2 avatar/export | Reported GPT-2/Codex / Gemini-3, Claude-01/13 + parent | F1 fixture + clip names | ACCEPTED: W2-F1-r2 verified (clips, rig, Khronos 0/0; adapter invariants pinned) |
+| W3 semantic platform | Reported GPT-1/Codex / independent Codex audit returned; Claude-01/02/05 + parent | Engineering contracts | ACCEPTED: W3-A1-r2 verified (Next 16.3.8, preloads counted, AST guards, 60/60 unit, 18/18 E2E) |
+| G1 integration | Integration Maker / parent audit | Explicitly accepted exact W1/W2/W3 revisions | UNLOCKED AND ACTIVE: combining W1-F1-r2, W2-F1-r2, and W3-A1-r2 in deliveries/G1/ |
 
 Use states `ready → sent → returned → review → accepted`, or `rework/blocked`. Record actual account/profile alias, input revision, delivery path, evidence, reviewer, and next action when a state changes. The prior 430–690-hour estimate is uncalibrated; subscriptions do not multiply throughput. Re-estimate using accepted work and review/rework effort after G1.
 
