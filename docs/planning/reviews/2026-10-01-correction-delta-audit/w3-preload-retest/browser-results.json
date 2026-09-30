@@ -1,0 +1,187 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-correction-delta-audit-xku9idea\\app\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "tests/e2e/payload.spec.ts",
+      "--project=chrome"
+    ],
+    "configFile": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-correction-delta-audit-xku9idea\\app\\playwright.config.ts",
+    "rootDir": "C:/Users/yoray/AppData/Local/Temp/yor-correction-delta-audit-xku9idea/app/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/yoray/AppData/Local/Temp/yor-correction-delta-audit-xku9idea/app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chrome",
+        "name": "chrome",
+        "testDir": "C:/Users/yoray/AppData/Local/Temp/yor-correction-delta-audit-xku9idea/app/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/yoray/AppData/Local/Temp/yor-correction-delta-audit-xku9idea/app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "edge",
+        "name": "edge",
+        "testDir": "C:/Users/yoray/AppData/Local/Temp/yor-correction-delta-audit-xku9idea/app/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "C:\\Users\\yoray\\Projects\\Yor World\\docs\\planning\\reviews\\2026-10-01-correction-delta-audit\\w3-preload-retest\\browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 52111",
+      "url": "http://127.0.0.1:52111",
+      "reuseExistingServer": false,
+      "timeout": 60000,
+      "env": {
+        "NEXT_TELEMETRY_DISABLED": "1"
+      },
+      "stdout": "pipe",
+      "stderr": "pipe"
+    }
+  },
+  "suites": [
+    {
+      "title": "payload.spec.ts",
+      "file": "payload.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "five cold loads per desktop and mobile profile record actual production payloads",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chrome",
+              "projectName": "chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 1824,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m256000\u001b[39m\nReceived:    \u001b[31m586349\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m256000\u001b[39m\nReceived:    \u001b[31m586349\u001b[39m\n    at C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-correction-delta-audit-xku9idea\\app\\tests\\e2e\\payload.spec.ts:90:32",
+                    "location": {
+                      "file": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-correction-delta-audit-xku9idea\\app\\tests\\e2e\\payload.spec.ts",
+                      "column": 32,
+                      "line": 90
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 88 |\u001b[39m         \u001b[36mconst\u001b[39m totalTransferBytes \u001b[33m=\u001b[39m [\u001b[33m...\u001b[39muniqueAppResources\u001b[33m,\u001b[39m \u001b[33m...\u001b[39mtiming\u001b[33m.\u001b[39mnavigation]\u001b[33m.\u001b[39mreduce((sum\u001b[33m,\u001b[39m r) \u001b[33m=>\u001b[39m sum \u001b[33m+\u001b[39m r\u001b[33m.\u001b[39mtransferSize\u001b[33m,\u001b[39m \u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 89 |\u001b[39m         expect(encodedJsBytes)\u001b[33m.\u001b[39mtoBeGreaterThan(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 90 |\u001b[39m         expect(encodedJsBytes)\u001b[33m.\u001b[39mtoBeLessThanOrEqual(\u001b[35m250\u001b[39m \u001b[33m*\u001b[39m \u001b[35m1024\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 91 |\u001b[39m         expect(totalTransferBytes)\u001b[33m.\u001b[39mtoBeLessThanOrEqual(\u001b[35m650\u001b[39m \u001b[33m*\u001b[39m \u001b[35m1024\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 92 |\u001b[39m         expect(network\u001b[33m.\u001b[39mfilter((r) \u001b[33m=>\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mURL\u001b[39m(r\u001b[33m.\u001b[39murl)\u001b[33m.\u001b[39morigin \u001b[33m!==\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mURL\u001b[39m(baseURL\u001b[33m!\u001b[39m)\u001b[33m.\u001b[39morigin))\u001b[33m.\u001b[39mtoEqual([])\u001b[33m;\u001b[39m\n \u001b[90m 93 |\u001b[39m         expect(blockedExternal\u001b[33m.\u001b[39mfilter((url) \u001b[33m=>\u001b[39m \u001b[33m!\u001b[39m\u001b[35m/^(gc|me)\\.kis\\.v2\\.scr\\.kaspersky-labs\\.com$/\u001b[39m\u001b[33m.\u001b[39mtest(\u001b[36mnew\u001b[39m \u001b[33mURL\u001b[39m(url)\u001b[33m.\u001b[39mhostname)))\u001b[33m.\u001b[39mtoEqual([])\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-correction-delta-audit-xku9idea\\app\\tests\\e2e\\payload.spec.ts",
+                        "column": 32,
+                        "line": 90
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m256000\u001b[39m\nReceived:    \u001b[31m586349\u001b[39m\n\n  88 |         const totalTransferBytes = [...uniqueAppResources, ...timing.navigation].reduce((sum, r) => sum + r.transferSize, 0);\n  89 |         expect(encodedJsBytes).toBeGreaterThan(0);\n> 90 |         expect(encodedJsBytes).toBeLessThanOrEqual(250 * 1024);\n     |                                ^\n  91 |         expect(totalTransferBytes).toBeLessThanOrEqual(650 * 1024);\n  92 |         expect(network.filter((r) => new URL(r.url).origin !== new URL(baseURL!).origin)).toEqual([]);\n  93 |         expect(blockedExternal.filter((url) => !/^(gc|me)\\.kis\\.v2\\.scr\\.kaspersky-labs\\.com$/.test(new URL(url).hostname))).toEqual([]);\n    at C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-correction-delta-audit-xku9idea\\app\\tests\\e2e\\payload.spec.ts:90:32"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-30T22:31:17.956Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-correction-delta-audit-xku9idea\\app\\test-results\\payload-five-cold-loads-pe-2c7f3--actual-production-payloads-chrome\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-correction-delta-audit-xku9idea\\app\\test-results\\payload-five-cold-loads-pe-2c7f3--actual-production-payloads-chrome\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-correction-delta-audit-xku9idea\\app\\test-results\\payload-five-cold-loads-pe-2c7f3--actual-production-payloads-chrome\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-correction-delta-audit-xku9idea\\app\\tests\\e2e\\payload.spec.ts",
+                    "column": 32,
+                    "line": 90
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "5c61aa67fec245dc574b-9c6c94d7902794bb21c6",
+          "file": "payload.spec.ts",
+          "line": 7,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-30T22:31:16.451Z",
+    "duration": 4143.9349999999995,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

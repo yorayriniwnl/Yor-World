@@ -1,0 +1,47 @@
+COMMAND: "C:\Program Files\nodejs\node.EXE" C:\Users\yoray\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs test:unit tests/unit/boundaries.test.ts
+CWD: C:\Users\yoray\AppData\Local\Temp\yor-correction-delta-audit-xku9idea\app
+
+> yor-world-platform-proof@0.1.0 test:unit C:\Users\yoray\AppData\Local\Temp\yor-correction-delta-audit-xku9idea\app
+> vitest run --config vitest.config.ts "tests/unit/boundaries.test.ts"
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.2 [39m[90mC:/Users/yoray/AppData/Local/Temp/yor-correction-delta-audit-xku9idea/app[39m
+
+[90mstdout[2m | tests/unit/boundaries.test.ts
+[22m[39mREVIEWER ONLY: production module loaded test fixture
+
+ [31m❯[39m tests/unit/boundaries.test.ts [2m([22m[2m8 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 70[2mms[22m[39m
+   [32m✓[39m keeps all public projects empty and identity provisional[32m 4[2mms[22m[39m
+[31m   [31m×[31m does not pull fixture, world, service, or audio dependencies into production[39m[32m 51[2mms[22m[39m
+   [32m✓[39m keeps shared contracts independent of framework and server imports[32m 9[2mms[22m[39m
+   [32m✓[39m regression: syntax-level import boundary detection [2m(5)[22m
+     [32m✓[39m rejects dynamic import of test fixture in production module[32m 1[2mms[22m[39m
+     [32m✓[39m rejects side-effect import of test fixture in production module[32m 0[2mms[22m[39m
+     [32m✓[39m rejects export-from of test fixture in production module[32m 0[2mms[22m[39m
+     [32m✓[39m rejects aliased import of test fixture in production module[32m 0[2mms[22m[39m
+     [32m✓[39m rejects framework or dynamic imports in contracts[32m 2[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/unit/boundaries.test.ts[2m > [22mdoes not pull fixture, world, service, or audio dependencies into production
+[31m[1mError[22m: Forbidden import (dynamic-import) in src/features/portfolio/public-content.ts:1: specifier "../../../tests/fixtures/reviewer-fixture" resolves to "tests/fixtures/reviewer-fixture" matching /(?:^|\/)(?:tests|fixtures)(?:\/|$)/[39m
+[36m [2m❯[22m validateProductionModule tests/unit/boundaries.test.ts:[2m88:15[22m[39m
+    [90m 86|[39m     for (const pattern of forbiddenPatterns) {
+    [90m 87|[39m       if (pattern.test(imp.specifier) || pattern.test(imp.resolvedPath…
+    [90m 88|[39m         throw new Error(
+    [90m   |[39m               [31m^[39m
+    [90m 89|[39m           `Forbidden import (${imp.kind}) in ${filePath}:${imp.line}: …
+    [90m 90|[39m         );
+[90m [2m❯[22m tests/unit/boundaries.test.ts:[2m118:5[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m7 passed[39m[22m[90m (8)[39m
+[2m   Start at [22m 03:54:44
+[2m   Duration [22m 759ms[2m (import 66%, transform 20%, tests 13%, worker 1%)[22m
+
+ ELIFECYCLE  Command failed with exit code 1.
+
+EXIT: 1
