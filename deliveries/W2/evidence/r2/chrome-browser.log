@@ -1,0 +1,643 @@
+chrome 154.0.8037.58 {"threeRevision":"180","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36","renderer":"ANGLE (NVIDIA, NVIDIA GeForce RTX 2060 (0x00001E89) Direct3D11 vs_5_0 ps_5_0, D3D11)","vendor":"Google Inc. (NVIDIA)","viewport":[1440,900],"canvas":[1140,800],"dpr":1,"cameras":{"proof":{"position":[-2.15,1.72,2.1],"target":[0,0.72,-0.64],"fov":44},"side":{"position":[2.25,1.4,-0.3],"target":[0.3,0.75,-0.55],"fov":42},"top":{"position":[0.3,3.5,-0.1],"target":[0.3,0,-0.5],"fov":43}},"clips":[[{"name":"coding_idle","seconds":6},{"name":"notice_visitor","seconds":0.6000000238418579},{"name":"turn_to_visitor","seconds":1.2000000476837158},{"name":"greeting_nod","seconds":0.8999999761581421},{"name":"return_to_work","seconds":1.2999999523162842}],[{"name":"coding_idle","seconds":6},{"name":"notice_visitor","seconds":0.6000000238418579},{"name":"turn_to_visitor","seconds":1.2000000476837158},{"name":"greeting_nod","seconds":0.8999999761581421},{"name":"return_to_work","seconds":1.2999999523162842}]],"bones":["body-turn","pelvis","spine","head","upper-armL","forearmL","handL","upper-armR","forearmR","handR","thighL","shinL","footL","thighR","shinR","footR"],"renderStats":{"frame":92,"calls":65,"triangles":10532,"points":0,"lines":0},"fixtureRoots":["chair-base","chair-root","fixture-static"],"avatarRoots":["resident","resident-body"],"desk":{"isBox3":true,"min":{"x":-1.2999999523162842,"y":0.6900000292807817,"z":-1.5499999821186066},"max":{"x":1.2999999523162842,"y":0.7500000279396772,"z":-0.7499999701976776}}} {"clip":"coding_idle","time":0,"mode":"coding","revision":0,"paused":false,"pendingSegments":0,"rootPosition":[0.30000001192092896,0,-0.36000001430511475],"rootErrorM":1.8621086318923273e-8,"chairRootErrorM":1.8621086318923273e-8,"baseRootErrorM":1.8621086318923273e-8,"chairYawDeg":0,"bodyYawDeg":0,"baseQuaternion":[0,0,0,1],"avatarActionTime":0,"fixtureActionTime":0,"feet":{"footL":{"sole":-1.8690695438842238e-7,"maxY":0.10999997083681229,"ankle":[0.12999996772811828,0.1099999616028347,-0.6799999361153427]},"footR":{"sole":7.278073858037456e-8,"maxY":0.11000019047594975,"ankle":[0.4700000014680405,0.11000012258571329,-0.6800000408233383]}},"pelvisBottomM":0.46000000104450733,"seatGapM":1.0445073139742078e-9,"handFrontGapM":-0.19300011510081738,"handMinYM":0.7910000445904404,"handBounds":{"min":[0.11500005862478375,0.7910000445904404,-0.9430001151008174],"max":[0.48499991596815983,0.8290000480001988,-0.7869998422306601]},"avatarTopM":1.4010000507515685,"desktopInteriorVertices":0,"tableTriangleHits":0,"pedestalTriangleHits":0}
+[
+  {
+    "name": "All 60 Hz samples root and synchronized yaw",
+    "status": "PASS",
+    "detail": {
+      "samples": 605
+    }
+  },
+  {
+    "name": "Runtime triangle versus desk/pedestals",
+    "status": "PASS",
+    "detail": {
+      "maximum": 0
+    }
+  },
+  {
+    "name": "Seat contact",
+    "status": "PASS",
+    "detail": {
+      "maximumGapM": 6.293515070199263e-8
+    }
+  },
+  {
+    "name": "Foot floor bounds",
+    "status": "FAIL",
+    "detail": {
+      "min": -0.00046729918945045696,
+      "max": 0.051994861882070136
+    }
+  },
+  {
+    "name": "Planted foot displacement between samples",
+    "status": "FAIL",
+    "detail": {
+      "maxPlantedDriftM": 0.005150744741108493
+    }
+  },
+  {
+    "name": "Hands withdrawn during yaw",
+    "status": "PASS",
+    "detail": {
+      "minimumGapM": 0.06121779210450595
+    }
+  },
+  {
+    "name": "125 degree coordinated greeting",
+    "status": "PASS",
+    "detail": {
+      "yaw": 125.0000229114456
+    }
+  },
+  {
+    "name": "Shared clip boundaries and coding loop",
+    "status": "PASS",
+    "detail": [
+      {
+        "from": "coding_idle",
+        "to": "coding_idle",
+        "maxVertexGapM": 0
+      },
+      {
+        "from": "coding_idle",
+        "to": "notice_visitor",
+        "maxVertexGapM": 0
+      },
+      {
+        "from": "notice_visitor",
+        "to": "turn_to_visitor",
+        "maxVertexGapM": 2.7043355469041634e-7
+      },
+      {
+        "from": "turn_to_visitor",
+        "to": "greeting_nod",
+        "maxVertexGapM": 3.027605737164847e-7
+      },
+      {
+        "from": "greeting_nod",
+        "to": "return_to_work",
+        "maxVertexGapM": 0
+      },
+      {
+        "from": "return_to_work",
+        "to": "coding_idle",
+        "maxVertexGapM": 0
+      }
+    ]
+  },
+  {
+    "name": "Five full cycles settle",
+    "status": "PASS",
+    "detail": [
+      {
+        "cycle": 1,
+        "maxRootErrorM": 1.8621086318923273e-8,
+        "finalMode": "coding"
+      },
+      {
+        "cycle": 2,
+        "maxRootErrorM": 1.8621086318923273e-8,
+        "finalMode": "coding"
+      },
+      {
+        "cycle": 3,
+        "maxRootErrorM": 1.8621086318923273e-8,
+        "finalMode": "coding"
+      },
+      {
+        "cycle": 4,
+        "maxRootErrorM": 1.8621086318923273e-8,
+        "finalMode": "coding"
+      },
+      {
+        "cycle": 5,
+        "maxRootErrorM": 1.8621086318923273e-8,
+        "finalMode": "coding"
+      }
+    ]
+  },
+  {
+    "name": "25 cancellations settle without yaw reversal or stale work",
+    "status": "PASS",
+    "detail": {
+      "maxSeconds": 2.666666666666662,
+      "maxNonCodingJumpM": 0
+    }
+  },
+  {
+    "name": "25 immediate skips restore exact coding mesh",
+    "status": "PASS",
+    "detail": {
+      "maxVertexErrorM": 0
+    }
+  },
+  {
+    "name": "Double input and cancellation leave no stale sequence",
+    "status": "PASS",
+    "detail": {
+      "coalesced": true,
+      "final": {
+        "clip": "coding_idle",
+        "time": 4,
+        "mode": "coding",
+        "revision": 115,
+        "paused": false,
+        "pendingSegments": 0,
+        "rootPosition": [
+          0.30000001192092896,
+          0,
+          -0.36000001430511475
+        ],
+        "rootErrorM": 1.8621086318923273e-8,
+        "chairRootErrorM": 1.8621086318923273e-8,
+        "baseRootErrorM": 1.8621086318923273e-8,
+        "chairYawDeg": 0,
+        "bodyYawDeg": 0,
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "avatarActionTime": 4,
+        "fixtureActionTime": 4,
+        "feet": {
+          "footL": {
+            "sole": -1.8690695438842238e-7,
+            "maxY": 0.10999997083681229,
+            "ankle": [
+              0.12999996772811828,
+              0.1099999616028347,
+              -0.6799999361153427
+            ]
+          },
+          "footR": {
+            "sole": 7.278073858037456e-8,
+            "maxY": 0.11000019047594975,
+            "ankle": [
+              0.4700000014680405,
+              0.11000012258571329,
+              -0.6800000408233383
+            ]
+          }
+        },
+        "pelvisBottomM": 0.46000000104450733,
+        "seatGapM": 1.0445073139742078e-9,
+        "handFrontGapM": -0.19300011510081738,
+        "handMinYM": 0.7910000445904404,
+        "handBounds": {
+          "min": [
+            0.11500005862478375,
+            0.7910000445904404,
+            -0.9430001151008174
+          ],
+          "max": [
+            0.48499991596815983,
+            0.8290000480001988,
+            -0.7869998422306601
+          ]
+        },
+        "avatarTopM": 1.4010000507515685,
+        "desktopInteriorVertices": 0,
+        "tableTriangleHits": 0,
+        "pedestalTriangleHits": 0
+      }
+    }
+  },
+  {
+    "name": "Real-time exported browser playback and recording",
+    "status": "PASS",
+    "detail": {
+      "samples": [
+        {
+          "clip": "coding_idle",
+          "time": 0.5152999999999999,
+          "mode": "sequence",
+          "revision": 1,
+          "paused": false,
+          "pendingSegments": 5,
+          "rootPosition": [
+            0.30000001192092896,
+            0,
+            -0.36000001430511475
+          ],
+          "rootErrorM": 1.8621086318923273e-8,
+          "chairRootErrorM": 1.8621086318923273e-8,
+          "baseRootErrorM": 1.8621086318923273e-8,
+          "chairYawDeg": 0,
+          "bodyYawDeg": 0,
+          "baseQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "avatarActionTime": 0.5152999999999999,
+          "fixtureActionTime": 0.5152999999999999
+        },
+        {
+          "clip": "coding_idle",
+          "time": 1.030699999999999,
+          "mode": "sequence",
+          "revision": 1,
+          "paused": false,
+          "pendingSegments": 5,
+          "rootPosition": [
+            0.30000001192092896,
+            0,
+            -0.36000001430511475
+          ],
+          "rootErrorM": 1.8621086318923273e-8,
+          "chairRootErrorM": 1.8621086318923273e-8,
+          "baseRootErrorM": 1.8621086318923273e-8,
+          "chairYawDeg": 0,
+          "bodyYawDeg": 0,
+          "baseQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "avatarActionTime": 1.030699999999999,
+          "fixtureActionTime": 1.030699999999999
+        },
+        {
+          "clip": "notice_visitor",
+          "time": 0.045900000000002064,
+          "mode": "sequence",
+          "revision": 1,
+          "paused": false,
+          "pendingSegments": 4,
+          "rootPosition": [
+            0.30000001192092896,
+            0,
+            -0.36000001430511475
+          ],
+          "rootErrorM": 1.8621086318923273e-8,
+          "chairRootErrorM": 1.8621086318923273e-8,
+          "baseRootErrorM": 1.8621086318923273e-8,
+          "chairYawDeg": 0,
+          "bodyYawDeg": 0,
+          "baseQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "avatarActionTime": 0.045900000000002064,
+          "fixtureActionTime": 0.045900000000002064
+        },
+        {
+          "clip": "notice_visitor",
+          "time": 0.5551000000000016,
+          "mode": "sequence",
+          "revision": 1,
+          "paused": false,
+          "pendingSegments": 4,
+          "rootPosition": [
+            0.30000001192092896,
+            0,
+            -0.36000001430511475
+          ],
+          "rootErrorM": 1.8621086318923273e-8,
+          "chairRootErrorM": 1.8621086318923273e-8,
+          "baseRootErrorM": 1.8621086318923273e-8,
+          "chairYawDeg": 0,
+          "bodyYawDeg": 0,
+          "baseQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "avatarActionTime": 0.5551000000000016,
+          "fixtureActionTime": 0.5551000000000016
+        },
+        {
+          "clip": "turn_to_visitor",
+          "time": 0.47650000000000137,
+          "mode": "sequence",
+          "revision": 1,
+          "paused": false,
+          "pendingSegments": 3,
+          "rootPosition": [
+            0.30000001192092896,
+            0,
+            -0.36000001430511475
+          ],
+          "rootErrorM": 1.8621086318923273e-8,
+          "chairRootErrorM": 1.8621086318923273e-8,
+          "baseRootErrorM": 1.8621086318923273e-8,
+          "chairYawDeg": 43.48757059552991,
+          "bodyYawDeg": 43.48757129925811,
+          "baseQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "avatarActionTime": 0.47650000000000137,
+          "fixtureActionTime": 0.47650000000000137
+        },
+        {
+          "clip": "turn_to_visitor",
+          "time": 0.9918000000000005,
+          "mode": "sequence",
+          "revision": 1,
+          "paused": false,
+          "pendingSegments": 3,
+          "rootPosition": [
+            0.30000001192092896,
+            0,
+            -0.36000001430511475
+          ],
+          "rootErrorM": 1.8621086318923273e-8,
+          "chairRootErrorM": 1.8621086318923273e-8,
+          "baseRootErrorM": 1.8621086318923273e-8,
+          "chairYawDeg": 114.9827968565195,
+          "bodyYawDeg": 114.98279476188462,
+          "baseQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "avatarActionTime": 0.9918000000000005,
+          "fixtureActionTime": 0.9918000000000005
+        },
+        {
+          "clip": "greeting_nod",
+          "time": 0.3071000000000019,
+          "mode": "sequence",
+          "revision": 1,
+          "paused": false,
+          "pendingSegments": 2,
+          "rootPosition": [
+            0.30000001192092896,
+            0,
+            -0.36000001430511475
+          ],
+          "rootErrorM": 1.8621086318923273e-8,
+          "chairRootErrorM": 1.8621086318923273e-8,
+          "baseRootErrorM": 1.8621086318923273e-8,
+          "chairYawDeg": 125.0000229114456,
+          "bodyYawDeg": 125.00002384466273,
+          "baseQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "avatarActionTime": 0.3071000000000019,
+          "fixtureActionTime": 0.3071000000000019
+        },
+        {
+          "clip": "greeting_nod",
+          "time": 0.8164000000000011,
+          "mode": "sequence",
+          "revision": 1,
+          "paused": false,
+          "pendingSegments": 2,
+          "rootPosition": [
+            0.30000001192092896,
+            0,
+            -0.36000001430511475
+          ],
+          "rootErrorM": 1.8621086318923273e-8,
+          "chairRootErrorM": 1.8621086318923273e-8,
+          "baseRootErrorM": 1.8621086318923273e-8,
+          "chairYawDeg": 125.0000229114456,
+          "bodyYawDeg": 125.00002384466273,
+          "baseQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "avatarActionTime": 0.8164000000000011,
+          "fixtureActionTime": 0.8164000000000011
+        },
+        {
+          "clip": "return_to_work",
+          "time": 0.431600000000002,
+          "mode": "sequence",
+          "revision": 1,
+          "paused": false,
+          "pendingSegments": 1,
+          "rootPosition": [
+            0.30000001192092896,
+            0,
+            -0.36000001430511475
+          ],
+          "rootErrorM": 1.8621086318923273e-8,
+          "chairRootErrorM": 1.8621086318923273e-8,
+          "baseRootErrorM": 1.8621086318923273e-8,
+          "chairYawDeg": 73.19997813113093,
+          "bodyYawDeg": 73.19999730636579,
+          "baseQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "avatarActionTime": 0.431600000000002,
+          "fixtureActionTime": 0.431600000000002
+        },
+        {
+          "clip": "return_to_work",
+          "time": 0.946900000000001,
+          "mode": "sequence",
+          "revision": 1,
+          "paused": false,
+          "pendingSegments": 1,
+          "rootPosition": [
+            0.30000001192092896,
+            0,
+            -0.36000001430511475
+          ],
+          "rootErrorM": 1.8621086318923273e-8,
+          "chairRootErrorM": 1.8621086318923273e-8,
+          "baseRootErrorM": 1.8621086318923273e-8,
+          "chairYawDeg": 0.40563535346292234,
+          "bodyYawDeg": 0.40563413689580113,
+          "baseQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "avatarActionTime": 0.946900000000001,
+          "fixtureActionTime": 0.946900000000001
+        },
+        {
+          "clip": "coding_idle",
+          "time": 0.16220000000000293,
+          "mode": "coding",
+          "revision": 1,
+          "paused": false,
+          "pendingSegments": 0,
+          "rootPosition": [
+            0.30000001192092896,
+            0,
+            -0.36000001430511475
+          ],
+          "rootErrorM": 1.8621086318923273e-8,
+          "chairRootErrorM": 1.8621086318923273e-8,
+          "baseRootErrorM": 1.8621086318923273e-8,
+          "chairYawDeg": 0,
+          "bodyYawDeg": 0,
+          "baseQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "avatarActionTime": 0.16220000000000293,
+          "fixtureActionTime": 0.16220000000000293
+        },
+        {
+          "clip": "coding_idle",
+          "time": 0.6714000000000024,
+          "mode": "coding",
+          "revision": 1,
+          "paused": false,
+          "pendingSegments": 0,
+          "rootPosition": [
+            0.30000001192092896,
+            0,
+            -0.36000001430511475
+          ],
+          "rootErrorM": 1.8621086318923273e-8,
+          "chairRootErrorM": 1.8621086318923273e-8,
+          "baseRootErrorM": 1.8621086318923273e-8,
+          "chairYawDeg": 0,
+          "bodyYawDeg": 0,
+          "baseQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "avatarActionTime": 0.6714000000000024,
+          "fixtureActionTime": 0.6714000000000024
+        },
+        {
+          "clip": "coding_idle",
+          "time": 1.1867000000000034,
+          "mode": "coding",
+          "revision": 1,
+          "paused": false,
+          "pendingSegments": 0,
+          "rootPosition": [
+            0.30000001192092896,
+            0,
+            -0.36000001430511475
+          ],
+          "rootErrorM": 1.8621086318923273e-8,
+          "chairRootErrorM": 1.8621086318923273e-8,
+          "baseRootErrorM": 1.8621086318923273e-8,
+          "chairYawDeg": 0,
+          "bodyYawDeg": 0,
+          "baseQuaternion": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "avatarActionTime": 1.1867000000000034,
+          "fixtureActionTime": 1.1867000000000034
+        }
+      ],
+      "final": {
+        "clip": "coding_idle",
+        "time": 1.2171000000000043,
+        "mode": "coding",
+        "revision": 1,
+        "paused": false,
+        "pendingSegments": 0,
+        "rootPosition": [
+          0.30000001192092896,
+          0,
+          -0.36000001430511475
+        ],
+        "rootErrorM": 1.8621086318923273e-8,
+        "chairRootErrorM": 1.8621086318923273e-8,
+        "baseRootErrorM": 1.8621086318923273e-8,
+        "chairYawDeg": 0,
+        "bodyYawDeg": 0,
+        "baseQuaternion": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "avatarActionTime": 1.2171000000000043,
+        "fixtureActionTime": 1.2171000000000043,
+        "feet": {
+          "footL": {
+            "sole": -1.8690695438842238e-7,
+            "maxY": 0.10999997083681229,
+            "ankle": [
+              0.12999996772811828,
+              0.1099999616028347,
+              -0.6799999361153427
+            ]
+          },
+          "footR": {
+            "sole": 7.278073858037456e-8,
+            "maxY": 0.11000019047594975,
+            "ankle": [
+              0.4700000014680405,
+              0.11000012258571329,
+              -0.6800000408233383
+            ]
+          }
+        },
+        "pelvisBottomM": 0.46000000104450733,
+        "seatGapM": 1.0445073139742078e-9,
+        "handFrontGapM": -0.19300007511485595,
+        "handMinYM": 0.7910688540128639,
+        "handBounds": {
+          "min": [
+            0.11500005703763314,
+            0.7910688540128639,
+            -0.943000075114856
+          ],
+          "max": [
+            0.4849999314080714,
+            0.8308958387904838,
+            -0.7869998348720341
+          ]
+        },
+        "avatarTopM": 1.4010000507515685,
+        "desktopInteriorVertices": 0,
+        "tableTriangleHits": 0,
+        "pedestalTriangleHits": 0
+      },
+      "recordingBytes": 645750
+    }
+  },
+  {
+    "name": "F1 desktop world bounds",
+    "status": "PASS",
+    "detail": {
+      "isBox3": true,
+      "min": {
+        "x": -1.2999999523162842,
+        "y": 0.6900000292807817,
+        "z": -1.5499999821186066
+      },
+      "max": {
+        "x": 1.2999999523162842,
+        "y": 0.7500000279396772,
+        "z": -0.7499999701976776
+      }
+    }
+  },
+  {
+    "name": "No console errors or failing asset requests",
+    "status": "PASS",
+    "detail": []
+  }
+]

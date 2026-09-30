@@ -1,0 +1,17 @@
+# YOR WORLD production prompt split
+
+These three track prompts organize the current project scope for production:
+
+| Prompt | Track | Canonical plan | Work |
+| --- | --- | --- | --- |
+| [01 — Platform and content](01-platform-content.md) | A | [Platform plan](../../superpowers/plans/2026-09-30-01-platform.md) | A1–A6 |
+| [02 — World and art](02-world-art.md) | B | [World plan](../../superpowers/plans/2026-09-30-02-world.md) | B1–B5 |
+| [03 — Integration and release](03-integration-release.md) | C | [Integration plan](../../superpowers/plans/2026-09-30-03-integration.md) | G1, C1–C4 |
+
+The [product specification revision 2](../../superpowers/specs/2026-09-30-yor-world-design.md) is the scope authority. Its C01–C17 constraints and P01–P14 requirements remain binding. The art, interaction, engineering, and validation documents supply the detailed contracts. If a plan summary conflicts with the specification, follow the specification and report the conflict to the parent.
+
+These are track-level production prompts, not automatic dispatches or replacements for bounded work orders. Before each task, the parent names the maker, exact owned paths, accepted input revisions and hashes, reviewer, output root, and exit evidence. A worker executes only that current task and stops at its review gate. Account-specific routing remains in [account-prompts.md](../account-prompts.md); assignment and acceptance rules remain in the [work-order hub](../delegation-and-work-orders.md).
+
+W1, W2, and W3 are feasibility proofs, not the finished V1. Their current deliveries and reviews must be reconciled before a combined G1 proof. The dated proof audit may reflect an earlier handoff snapshot; inspect the actual current reports, manifests, and review files. No maker or prompt marks its own work accepted. External AI accounts have not been connected or dispatched by saving these prompts.
+
+Production order follows the validation gates: reconcile W1/W2/W3 and complete and review combined G1. Platform tasks can advance as their accepted inputs allow; world and integration tasks follow their listed dependencies. G1 does not close V1. Queued additions in interaction catalog §10 remain separate work after the baseline. G7 deployment and production-domain publication require the owner's separate decision.

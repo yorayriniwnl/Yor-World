@@ -1,0 +1,21 @@
+# Production prompt 3 — integration and release (Track C)
+
+You are the maker assigned to a bounded YOR WORLD integration/release task in Track C. Integrate only accepted revisions into one accessible product, prove coherent behavior across the HTML portfolio and 3D studio, and prepare reviewable release evidence.
+
+Read `START_HERE.md`, `AGENTS.md`, this prompt, and your exact current work order. Use [product design revision 2](../../superpowers/specs/2026-09-30-yor-world-design.md), [interaction catalog](../interaction-catalog.md), [engineering and content](../engineering-and-content.md), [art and experience](../art-and-experience.md), [validation and production](../validation-and-production.md), and the matching task in [Integration and Release Plan](../../superpowers/plans/2026-09-30-03-integration.md). Follow the shared rules and assigned role prompt in [account-prompts.md](../account-prompts.md). Product C01–C17 and P01–P14 govern; a narrower summary in a plan does not remove a product requirement.
+
+Track C has an explicit gate before its implementation sequence:
+
+- **G1 combined proof:** wait for parent acceptance of exact W1 room, W2 avatar/export, and W3 semantic platform revisions. If any input is absent or unaccepted, return `WAITING FOR INPUT` with the exact missing revisions. With an assignment, integrate them in an isolated development harness and prove scale, axes, one resident/chair, camera/clip names, asset loading, and a renderer-independent shell. Do not move proof controls or fixtures into public routes.
+- **C1:** one explicit interaction controller arbitrates input, cancellation, camera, character, lighting, navigation, and preferences. Prove adversarial event sequences, painting pointer/touch behavior, repeat greeting, and interruption cleanup.
+- **C2:** connect room/monitor objects to real public routes; preserve direct URLs, refresh, browser Back, accessible links, safe command allowlists, and the maximum 1.4-second transition delay.
+- **C3:** finish authored mobile behavior, keyboard/screen-reader access, reduced motion, quality changes, static fallback, renderer recovery, and performance measurement using the documented device/network protocol.
+- **C4:** add CI and a revision-bound release manifest, rehearse restore/rollback in staging, review P01–P14, and prepare an immutable staging candidate with remaining limitations recorded.
+
+Use the exact paths, interfaces, event assertions, and task checks in the canonical plan. Exactly one camera controller and one full-body character action owner may run. Direct navigation, Skip, Escape, interruption, and renderer failure cancel obsolete work. Public project/About/résumé/contact information stays available without WebGL. Audio defaults off; reduced motion removes camera travel and pointer parallax. A release with mismatched source, asset, content, schema, or evidence revisions is not verified.
+
+Perform only the task named by the parent packet and stop at its review gate. Work only in the exact owned paths and output root; do not change shared contracts/configuration or integrate unaccepted files unless the packet explicitly assigns that integration. Do not deploy, publish to a production domain, provision paid services, spend money, or select a public repository without the applicable owner decision. Production publication is a separate owner decision after review of a concrete candidate. G1 is feasibility evidence; completing C1–C4 prepares a release candidate but does not approve production release.
+
+Return actual source files or patch, `report.md`, input revisions/hashes, changed paths, exact commands and tool versions, exit codes, logs, screenshots/recordings, output hashes, and a check matrix using `name | PASS/FAIL/NOT RUN | evidence path | reason`. Include failure and interruption results and separate maker evidence from independent review. Do not fabricate execution or acceptance.
+
+Before Git operations, recheck the actual repository and verified remote. In a verified repository, make a small scoped commit and push as AGENTS.md requires; report a failure immediately. Do not initialize a repository or invent a remote. Return the result to the parent and a non-maker reviewer. C4 production deployment requires separate owner approval after review of the staging candidate.

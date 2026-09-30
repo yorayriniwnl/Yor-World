@@ -1,0 +1,140 @@
+{
+  "sourceRevision": "W2-F1-r2",
+  "exportRevision": "W2-F1-r2",
+  "baseline": "F1",
+  "specRevision": 2,
+  "blenderVersion": "5.2.2 LTS",
+  "fps": 30,
+  "runtimeAxes": "meters Y-up; rear -Z",
+  "rootRuntime": [
+    0.3,
+    0,
+    -0.36
+  ],
+  "deskRuntime": {
+    "centerXZ": [
+      0,
+      -1.15
+    ],
+    "width": 2.6,
+    "depth": 0.8,
+    "top": 0.75
+  },
+  "clipSeconds": {
+    "coding_idle": 6.0,
+    "notice_visitor": 0.6,
+    "turn_to_visitor": 1.2,
+    "greeting_nod": 0.9,
+    "return_to_work": 1.3
+  },
+  "turnDegrees": 125,
+  "character": "generic procedural rigid-weight mannequin; unapproved likeness",
+  "meshVertices": 2086,
+  "meshPolygons": 2182,
+  "bones": [
+    "body-turn",
+    "pelvis",
+    "spine",
+    "head",
+    "upper-arm.L",
+    "forearm.L",
+    "hand.L",
+    "thigh.L",
+    "shin.L",
+    "foot.L",
+    "upper-arm.R",
+    "forearm.R",
+    "hand.R",
+    "thigh.R",
+    "shin.R",
+    "foot.R"
+  ],
+  "boneParents": {
+    "body-turn": null,
+    "pelvis": "body-turn",
+    "spine": "pelvis",
+    "head": "spine",
+    "upper-arm.L": "spine",
+    "forearm.L": "upper-arm.L",
+    "hand.L": "forearm.L",
+    "thigh.L": "pelvis",
+    "shin.L": "thigh.L",
+    "foot.L": null,
+    "upper-arm.R": "spine",
+    "forearm.R": "upper-arm.R",
+    "hand.R": "forearm.R",
+    "thigh.R": "pelvis",
+    "shin.R": "thigh.R",
+    "foot.R": null
+  },
+  "sourceSha256": "13228064b326737142d13e95ec408628c52e26b4c72589f49efe506f412d8685",
+  "license": "No asset license or publication approval assigned. Original procedural geometry, with inherited W2 source preserved in history.",
+  "approval": {
+    "makerAccepted": false,
+    "parentAccepted": false,
+    "likenessApproved": false
+  },
+  "textures": [],
+  "provenance": {
+    "geometry": "Original procedural W2 source; no external mesh, texture or audio",
+    "visualReference": "main-reference.png guides fixture color/form only; reference rights unknown"
+  },
+  "status": "maker evidence only; pending independent review and parent acceptance; not final B4",
+  "provider": "OpenAI",
+  "model": "GPT-6 (session developer identity; serving build not exposed)",
+  "placement": "Load both GLB scenes at identity; exported nodes carry F1 translations. No extra rotations or root offsets.",
+  "integration": {
+    "avatar": "Keep all avatar-proof.glb roots and skeleton links together at identity.",
+    "fixtureKeep": [
+      "chair-root",
+      "chair-base"
+    ],
+    "fixtureDiscard": [
+      "fixture-static"
+    ],
+    "chairYawOwner": "chair-root local rotation, not chair-base; avatar body-turn bone has matching absolute yaw.",
+    "sync": "Both clip players sample same named clip at same local time; never parent resident under chair-root.",
+    "W1": "Integrator removes accepted W1 resident proxy and entire static chair subtree, retains W1 desk/environment. Exact W1 names and hashes require accepted G1 inputs."
+  },
+  "files": {
+    "avatar-proof.glb": {
+      "bytes": 230360,
+      "sha256": "eba336b923e7fd8caf20fc006221934bd820f1f61812a0965833c109d7525511"
+    },
+    "fixture-proof.glb": {
+      "bytes": 307852,
+      "sha256": "7c9b2358b898a26b40baae799506cf3be26a54019f7e14826b7d3b2c9a94a4d7"
+    },
+    "avatar-proof.blend": {
+      "bytes": 459097,
+      "sha256": "72f791644f488a7e15dfdcd7ed3c951abead9873223daf0ea9fdf176a2322360"
+    }
+  },
+  "inputs": "input-revisions.json",
+  "currentHandoffInputs": "handoff-input-revisions.json",
+  "inputRevisionCaveat": "Shared file hashes changed during execution. Original build inputs retained; current W2/F1 sections inspected as compatible. Parent reconciliation pending.",
+  "exportStatistics": {
+    "avatar-proof.glb": {
+      "bytes": 230360,
+      "sha256": "eba336b923e7fd8caf20fc006221934bd820f1f61812a0965833c109d7525511",
+      "triangles": 4060,
+      "materials": 6,
+      "decodedBufferBytes": 170388,
+      "textures": []
+    },
+    "fixture-proof.glb": {
+      "bytes": 307852,
+      "sha256": "7c9b2358b898a26b40baae799506cf3be26a54019f7e14826b7d3b2c9a94a4d7",
+      "triangles": 6472,
+      "materials": 5,
+      "decodedBufferBytes": 265380,
+      "textures": []
+    }
+  },
+  "lods": "Single unoptimized proof LOD; B2 optimization not performed.",
+  "nativeChecks": "evidence/r2/blender-checks.json",
+  "browserChecks": [
+    "evidence/r2/chrome-browser.json",
+    "evidence/r2/msedge-browser.json"
+  ]
+}

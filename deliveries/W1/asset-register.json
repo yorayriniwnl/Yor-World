@@ -1,0 +1,456 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-30T10:03:36Z",
+  "generator": "build-blockout.py via Blender 5.2.2 LTS",
+  "packet": "W1 - Reference analysis and room blockout",
+  "worker": "Gemini-1 (Model: Gemini 3.8 Flash (High))",
+  "reviewer": "Gemini-3 (Independent Peer Review) / Parent Codex (Architectural Audit)",
+  "provenance": {
+    "mainReferencePath": "references/images/main-reference.png",
+    "mainReferenceSha256": "37adfb0ee344642798978e954a0cfc8d9715eac1b3ca4e5a84ab87a228c53362",
+    "referenceIndexPath": "references/README.md",
+    "referenceIndexStatus": "PRESENT and inspected (25 lines, verified SHA-256 in manifest)",
+    "rightsStatus": "Unknown rights - reference image only; original 3D geometry authored clean-room for YOR WORLD feasibility.",
+    "sourceDiscussion": "references/text/source-discussion.txt",
+    "manifestPath": "references/manifest.json"
+  },
+  "workingAssumptionsF1": {
+    "roomDimensionsMeters": {
+      "width_X": 4.2,
+      "depth_Z": 3.6,
+      "height_Y": 2.8
+    },
+    "runtimeCoordinateSystem": "Meters, Y-Up, Origin at room-floor center; Rear desk wall at Z = -1.8; Front doorway wall at Z = +1.8",
+    "blenderCoordinateSystem": "Meters, Z-Up; Exported once to glTF Y-Up via standard transform matrix",
+    "deskFootprintMeters": {
+      "width": 2.6,
+      "depth": 0.8,
+      "height": 0.75,
+      "center_X": 0.0,
+      "center_Z": -1.15
+    },
+    "chairResidentRoot": {
+      "x": 0.3,
+      "y": 0.0,
+      "z": -0.36
+    },
+    "addedDoorway": {
+      "location": "Front-left wall Z = +1.80",
+      "opening_width": 0.9,
+      "opening_height": 2.1,
+      "hinge": [
+        -1.65,
+        0.0,
+        1.8
+      ]
+    },
+    "addedHallway": {
+      "extent_Z": [
+        1.8,
+        2.8
+      ],
+      "width_X": 1.1,
+      "height_Y": 2.8
+    }
+  },
+  "observedReferenceFeatures": {
+    "workstationDesk": "Bright white/ivory desk supported by two 4-drawer Alex-style units, front and side glowing LED strips, acoustic quilted diamond wall panel behind monitor with neon frame.",
+    "gamingChair": "High-back ergonomic gaming chair with blue and white racing upholstery, white lumbar and headrest pillows, 5-star wheeled base.",
+    "monitor": "Large curved ultrawide 21:9 display on heavy desk mount arm, mounted screen lightbar emitting downward warm light.",
+    "lightingAtmosphere": "Vivid pink/lilac upper accent from honeycomb hex wall panels; cyan ambient underglow beneath desk and behind monitor; warm amber lightbar pool; deep royal blue carpet floor.",
+    "deskProps": "White PS5 console vertical on left; boom-arm condenser microphone on left; dual pebble round speakers; mechanical keyboard and mouse on desk mat; retro digital clock showing 17:49; coffee cup; small succulent pot.",
+    "rightWallProps": "Dual-chamber white PC tower with tempered glass panel and 3 RGB glowing fans (pink/cyan); white perforated pegboard with 2 hung controllers; white headset stand with over-ear gaming headphones.",
+    "upperWallProps": "Prominent pink honeycomb hexagonal light modules; dual white floating shelves with trailing cascading plants, camera, mini display keyboard, glowing PlayStation shapes.",
+    "foregroundProps": "Large leafy plant on 4-leg wooden stand in lower-left foreground."
+  },
+  "authoredAdditionsVersusReference": [
+    {
+      "item": "room-shell",
+      "justification": "Main reference shows only corner desk crop. Full 4.2x3.6x2.8m enclosure created to bound room for browser traversal."
+    },
+    {
+      "item": "doorway_and_hallway",
+      "justification": "Added front-left door opening and 1.0m exterior threshold for entrance choreography (spec \u00a75)."
+    },
+    {
+      "item": "wall-painting",
+      "justification": "Placed on left side wall outside direct reference view to house interaction target and hidden-yor-mark (catalog \u00a75)."
+    },
+    {
+      "item": "resident_scale_proxy",
+      "justification": "Seated proxy placed at chair-root to validate scale and clearances before avatar rigging (W2)."
+    },
+    {
+      "item": "secondary_props",
+      "justification": "zenith-model, research-books, contact-phone, desk-lamp, window-blinds placed in secondary zones without displacing reference anchors."
+    }
+  ],
+  "removableProxyNodeNames": [
+    "resident",
+    "resident_pelvis",
+    "resident_torso",
+    "resident_neck",
+    "resident_head",
+    "resident_hair",
+    "resident_upper_arm_l",
+    "resident_forearm_l",
+    "resident_hand_l",
+    "resident_upper_arm_r",
+    "resident_forearm_r",
+    "resident_hand_r",
+    "resident_thigh_l",
+    "resident_thigh_r",
+    "resident_shin_l",
+    "resident_shin_r",
+    "resident_foot_l",
+    "resident_foot_r"
+  ],
+  "removableChairNodeNames": [
+    "chair",
+    "chair_base_hub",
+    "chair_cylinder",
+    "chair_seat_cushion",
+    "chair_seat_center_white",
+    "chair_backrest_blue",
+    "chair_backrest_white_stripe",
+    "chair_headrest_pillow",
+    "chair_lumbar_pillow",
+    "chair_armrest_left_stem",
+    "chair_armrest_left_pad",
+    "chair_armrest_right_stem",
+    "chair_armrest_right_pad"
+  ],
+  "runtimeCameraValues": {
+    "entry": {
+      "position": [
+        -1.2,
+        1.45,
+        2.1
+      ],
+      "target": [
+        0.0,
+        1.05,
+        -1.15
+      ],
+      "fov_deg": 52.0,
+      "sensor_fit": "AUTO"
+    },
+    "home": {
+      "position": [
+        -1.75,
+        1.65,
+        1.45
+      ],
+      "target": [
+        0.2,
+        1.28,
+        -1.15
+      ],
+      "fov_deg": 56.0,
+      "sensor_fit": "AUTO"
+    },
+    "mobile": {
+      "position": [
+        -1.15,
+        1.45,
+        1.05
+      ],
+      "target": [
+        0.18,
+        1.05,
+        -0.95
+      ],
+      "fov_deg": 50.0,
+      "sensor_fit": "HORIZONTAL"
+    },
+    "monitor": {
+      "position": [
+        0.0,
+        1.1,
+        -0.55
+      ],
+      "target": [
+        0.0,
+        1.08,
+        -1.35
+      ],
+      "fov_deg": 50.0,
+      "sensor_fit": "AUTO"
+    },
+    "reverse_doorway": {
+      "position": [
+        0.2,
+        1.25,
+        -1.1
+      ],
+      "target": [
+        -1.2,
+        1.1,
+        1.8
+      ],
+      "fov_deg": 55.0,
+      "sensor_fit": "AUTO"
+    },
+    "reference_match": {
+      "position": [
+        -1.9,
+        2.05,
+        1.55
+      ],
+      "target": [
+        0.22,
+        0.9,
+        -1.15
+      ],
+      "fov_deg": 52.0,
+      "sensor_fit": "AUTO"
+    }
+  },
+  "runtimeAnchorValues": {
+    "door-hinge": [
+      -1.65,
+      0.0,
+      1.8
+    ],
+    "chair-root": [
+      0.3,
+      0.0,
+      -0.36
+    ],
+    "monitor-surface": [
+      0.0,
+      1.08,
+      -1.345
+    ],
+    "painting-pivot": [
+      -2.07,
+      2.05,
+      0.2
+    ]
+  },
+  "registeredAssets": [
+    {
+      "assetId": "room-shell",
+      "category": "environment",
+      "meshCount": 14,
+      "triangles": 168,
+      "materials": [
+        "Wall_Lavender",
+        "Carpet_Blue",
+        "Ceiling_White",
+        "Baseboard",
+        "Neon_Cyan"
+      ]
+    },
+    {
+      "assetId": "desk",
+      "category": "furniture",
+      "meshCount": 24,
+      "triangles": 384,
+      "materials": [
+        "Desk_White",
+        "Desk_Drawer",
+        "Monitor_Bezel",
+        "Neon_Pink",
+        "Neon_Cyan",
+        "Acoustic_Backing"
+      ]
+    },
+    {
+      "assetId": "door",
+      "category": "architecture",
+      "meshCount": 6,
+      "triangles": 96,
+      "materials": [
+        "Door_Frame",
+        "Door_Wood",
+        "Door_Brass"
+      ],
+      "anchors": [
+        "door-hinge"
+      ]
+    },
+    {
+      "assetId": "chair",
+      "category": "furniture",
+      "meshCount": 19,
+      "triangles": 712,
+      "materials": [
+        "Chair_Blue",
+        "Chair_White",
+        "Chair_Dark"
+      ],
+      "anchors": [
+        "chair-root"
+      ]
+    },
+    {
+      "assetId": "monitor",
+      "category": "hardware",
+      "meshCount": 9,
+      "triangles": 184,
+      "materials": [
+        "Monitor_Bezel",
+        "Monitor_Screen",
+        "Lightbar_Body",
+        "Lightbar_Warm"
+      ],
+      "anchors": [
+        "monitor-surface"
+      ]
+    },
+    {
+      "assetId": "resident",
+      "category": "character_proxy",
+      "meshCount": 16,
+      "triangles": 624,
+      "materials": [
+        "Resident_Skin",
+        "Resident_Clothes",
+        "Resident_Hair",
+        "Chair_Dark"
+      ]
+    },
+    {
+      "assetId": "wall-painting",
+      "category": "interactive_art",
+      "meshCount": 3,
+      "triangles": 48,
+      "materials": [
+        "Painting_Frame",
+        "Painting_Canvas",
+        "Neon_Pink"
+      ],
+      "anchors": [
+        "painting-pivot"
+      ]
+    },
+    {
+      "assetId": "reference-props",
+      "category": "props",
+      "meshCount": 65,
+      "triangles": 2980,
+      "materials": [
+        "PC_Case",
+        "PC_Glass",
+        "PC_Fan_Pink",
+        "PC_Fan_Cyan",
+        "Pegboard_White",
+        "Controller_Blue",
+        "Headset_White",
+        "Console_White",
+        "Console_Dark",
+        "Microphone_Mat",
+        "Speaker_White",
+        "Hex_Pink",
+        "Plant_Green",
+        "Pot_White",
+        "Pot_Wood",
+        "Clock_Case",
+        "Clock_Screen",
+        "Deskmat_Mat",
+        "Keyboard_Mat",
+        "Mouse_Mat",
+        "Cup_Mat",
+        "Zenith_Model",
+        "Book_Cover",
+        "Phone_Mat",
+        "Blinds_Mat"
+      ]
+    }
+  ],
+  "interactionHitZones": [
+    "hit_entrance_door",
+    "hit_resident",
+    "hit_wall_painting",
+    "hit_main_monitor",
+    "hit_helios_pc",
+    "hit_zenith_model",
+    "hit_ai_real_camera",
+    "hit_talks_microphone",
+    "hit_research_books",
+    "hit_contact_phone",
+    "hit_desk_lamp",
+    "hit_window_blinds",
+    "hit_desk_clock",
+    "hit_speakers",
+    "hit_keyboard",
+    "hit_mouse",
+    "hit_door_inside"
+  ],
+  "clearanceValidation": {
+    "door_swing": {
+      "hinge_location_runtime": [
+        -1.65,
+        0.0,
+        1.8
+      ],
+      "door_leaf_width_m": 0.88,
+      "door_open_tip_runtime": [
+        -1.65,
+        0.0,
+        0.92
+      ],
+      "min_wall_clearance_m": 0.45,
+      "desk_clearance_m": 1.67,
+      "plant_clearance_m": 1.07,
+      "status": "PASS",
+      "notes": "Door swings freely inward with 0.45m clearance to left wall and 1.07m clearance to foreground plant."
+    },
+    "entry_path": {
+      "doorway_opening_width_m": 0.9,
+      "doorway_opening_height_m": 2.1,
+      "corridor_min_width_m": 0.9,
+      "status": "PASS",
+      "notes": "Unobstructed entry path from exterior threshold to resident chair; minimum width 0.90m at door frame."
+    },
+    "chair_turn": {
+      "chair_root_runtime": [
+        0.3,
+        0.0,
+        -0.36
+      ],
+      "base_turning_radius_m": 0.32,
+      "desk_front_z_m": -0.75,
+      "base_to_desk_front_clearance_m": 0.07,
+      "armrest_under_table_clearance_m": 0.05,
+      "knee_well_width_m": 1.6,
+      "lateral_drawer_clearance_m": 0.25,
+      "visitor_turn_open_clearance_m": 1.65,
+      "status": "PASS",
+      "notes": "Full 360\u00b0 base rotation clears desk front by 70mm; armrests clear under 0.70m tabletop; 45\u00b0 visitor turn opens into vast floor space."
+    },
+    "camera_sightlines": {
+      "entry": {
+        "target": "desk",
+        "status": "PASS",
+        "details": "Unobstructed sightline to workstation from doorway"
+      },
+      "home": {
+        "target": "resident / desk",
+        "status": "PASS",
+        "details": "Retains hex lights, shelves, monitor, console/mic, PC/pegboard, and blue chair"
+      },
+      "mobile": {
+        "target": "monitor / resident",
+        "status": "PASS",
+        "details": "Both resident and monitor fully framed with room for touch controls"
+      },
+      "monitor": {
+        "target": "monitor-surface",
+        "status": "PASS",
+        "details": "Direct facing view of curved ultrawide screen and lightbar"
+      },
+      "reverse_doorway": {
+        "target": "door / threshold",
+        "status": "PASS",
+        "details": "Unobstructed view of entrance doorway, corridor, and painting"
+      },
+      "reference_match": {
+        "target": "workstation composition",
+        "status": "PASS",
+        "details": "Matches high three-quarter angle and framing of main-reference.png"
+      }
+    }
+  }
+}
