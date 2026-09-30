@@ -1,0 +1,79 @@
+{
+  "scope": "Fault injection matrix for proof.py audit and list exit propagation",
+  "results": [
+    {
+      "action": "audit",
+      "injectedChildExits": {
+        "audit-all": 1,
+        "audit-production": 1
+      },
+      "helperExitCode": 1,
+      "observedChildExits": [
+        1,
+        1
+      ],
+      "childCount": 2,
+      "pass": true
+    },
+    {
+      "action": "audit",
+      "injectedChildExits": {
+        "audit-all": 0,
+        "audit-production": 1
+      },
+      "helperExitCode": 1,
+      "observedChildExits": [
+        0,
+        1
+      ],
+      "childCount": 2,
+      "pass": true
+    },
+    {
+      "action": "audit",
+      "injectedChildExits": {
+        "audit-all": 1,
+        "audit-production": 0
+      },
+      "helperExitCode": 1,
+      "observedChildExits": [
+        1,
+        0
+      ],
+      "childCount": 2,
+      "pass": true
+    },
+    {
+      "action": "audit",
+      "injectedChildExits": {
+        "audit-all": 0,
+        "audit-production": 0
+      },
+      "helperExitCode": 0,
+      "observedChildExits": [
+        0,
+        0
+      ],
+      "childCount": 2,
+      "pass": true
+    },
+    {
+      "action": "list",
+      "injectedChildExit": 1,
+      "helperExitCode": 1,
+      "observedChildExits": [
+        1
+      ],
+      "pass": true
+    },
+    {
+      "action": "list",
+      "injectedChildExit": 0,
+      "helperExitCode": 0,
+      "observedChildExits": [
+        0
+      ],
+      "pass": true
+    }
+  ]
+}

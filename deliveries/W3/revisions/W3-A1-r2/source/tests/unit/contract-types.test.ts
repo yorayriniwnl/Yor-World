@@ -1,0 +1,21 @@
+import { expectTypeOf, it } from "vitest";
+import type * as Baseline from "../fixtures/engineering-section-4";
+import type * as Content from "../../src/contracts/content";
+import type * as Experience from "../../src/contracts/experience";
+import type * as Assets from "../../src/contracts/assets";
+it("preserves every exact shared value type from engineering section 4", () => {
+  expectTypeOf<Content.ProjectId>().toEqualTypeOf<Baseline.ProjectId>();
+  expectTypeOf<Content.EvidenceStatus>().toEqualTypeOf<Baseline.EvidenceStatus>();
+  expectTypeOf<Content.EvidenceRef>().toEqualTypeOf<Baseline.EvidenceRef>();
+  expectTypeOf<Content.PublishedProject>().toEqualTypeOf<Baseline.PublishedProject>();
+  expectTypeOf<Content.ContentSection>().toEqualTypeOf<Baseline.ContentSection>();
+  expectTypeOf<Content.Publication>().toEqualTypeOf<Baseline.Publication>();
+  expectTypeOf<Experience.QualityTier>().toEqualTypeOf<Baseline.QualityTier>();
+  expectTypeOf<Experience.PublicRoute>().toEqualTypeOf<Baseline.PublicRoute>();
+  expectTypeOf<Experience.CharacterAction>().toEqualTypeOf<Baseline.CharacterAction>();
+  expectTypeOf<Experience.CameraId>().toEqualTypeOf<Baseline.CameraId>();
+  expectTypeOf<Experience.Preferences>().toEqualTypeOf<Baseline.Preferences>();
+  expectTypeOf<Experience.WorldSnapshot>().toEqualTypeOf<Baseline.WorldSnapshot>();
+  expectTypeOf<Experience.ExperienceIntent>().toEqualTypeOf<Baseline.ExperienceIntent>();
+  expectTypeOf<Assets.AssetManifest>().toEqualTypeOf<Baseline.AssetManifest>();
+});

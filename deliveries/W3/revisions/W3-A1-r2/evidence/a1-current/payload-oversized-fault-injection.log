@@ -1,0 +1,56 @@
+COMMAND: pnpm test:e2e tests/e2e/payload.spec.ts --project=chrome
+EXIT: 1
+
+STDOUT:
+
+> yor-world-platform-proof@0.1.0 test:e2e C:\Users\yoray\AppData\Local\Temp\yor-world-w3-a1-r2-4_uuwl01\app
+> playwright test "tests/e2e/payload.spec.ts" "--project=chrome"
+
+[WebServer] ▲ Next.js 16.3.8
+[WebServer] - Local:         http://127.0.0.1:3149
+[WebServer] - Network:       http://127.0.0.1:3149
+[WebServer] ✓ Ready in 176ms
+[WebServer] ✓ Running next.config.ts took 46ms
+
+Running 1 test using 1 worker
+
+  x  1 [chrome] › tests\e2e\payload.spec.ts:7:1 › five cold loads per desktop and mobile profile record actual production payloads (1.6s)
+
+
+  1) [chrome] › tests\e2e\payload.spec.ts:7:1 › five cold loads per desktop and mobile profile record actual production payloads 
+
+    Error: expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 256000
+    Received:    436834
+
+      88 |         const totalTransferBytes = [...uniqueAppResources, ...timing.navigation].reduce((sum, r) => sum + r.transferSize, 0);
+      89 |         expect(encodedJsBytes).toBeGreaterThan(0);
+    > 90 |         expect(encodedJsBytes).toBeLessThanOrEqual(250 * 1024);
+         |                                ^
+      91 |         expect(totalTransferBytes).toBeLessThanOrEqual(650 * 1024);
+      92 |         expect(network.filter((r) => new URL(r.url).origin !== new URL(baseURL!).origin)).toEqual([]);
+      93 |         expect(blockedExternal.filter((url) => !/^(gc|me)\.kis\.v2\.scr\.kaspersky-labs\.com$/.test(new URL(url).hostname))).toEqual([]);
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-w3-a1-r2-4_uuwl01\app\tests\e2e\payload.spec.ts:90:32
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\payload-five-cold-loads-pe-2c7f3--actual-production-payloads-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\payload-five-cold-loads-pe-2c7f3--actual-production-payloads-chrome\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\payload-five-cold-loads-pe-2c7f3--actual-production-payloads-chrome\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\payload-five-cold-loads-pe-2c7f3--actual-production-payloads-chrome\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chrome] › tests\e2e\payload.spec.ts:7:1 › five cold loads per desktop and mobile profile record actual production payloads 
+ ELIFECYCLE  Command failed with exit code 1.
+
+
+STDERR:
+
