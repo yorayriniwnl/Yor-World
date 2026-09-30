@@ -1,0 +1,48 @@
+import { createRequire } from 'node:module';
+import {writeFile,mkdir} from 'node:fs/promises';
+import path from 'node:path';
+const require=createRequire("C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-w3-independent-35atl0bg\\app"+'/package.json');
+const {chromium}=require('@playwright/test');
+const out="C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\W3\\reviews\\2026-10-01-independent\\evidence";
+const base='http://127.0.0.1:3158';
+const browser=await chromium.launch({channel:'chrome',headless:true});
+const result={browser:browser.version(),routes:[],focus:[],reflow:[],network:[],failed:[],errors:[],payload:null};
+const focus=async(page,label)=>result.focus.push({label,url:page.url(),...await page.evaluate(()=>{const e=document.activeElement;return {tag:e?.tagName,id:e?.id,text:e?.textContent?.slice(0,150),href:e?.getAttribute('href'),tabindex:e?.getAttribute('tabindex'),outline:e?getComputedStyle(e).outline:null,scrollY:scrollY,live:document.querySelector('next-route-announcer')?.shadowRoot?.textContent};})});
+try{
+ const context=await browser.newContext({viewport:{width:1440,height:900}});
+ const page=await context.newPage();
+ page.on('request',r=>result.network.push({url:r.url(),type:r.resourceType()}));
+ page.on('requestfailed',r=>result.failed.push({url:r.url(),error:r.failure()}));
+ page.on('pageerror',e=>result.errors.push(e.message));
+ for(const route of ['/','/projects','/about','/contact','/resume','/projects/test-only','/admin','/api/contact']){
+  const response=await page.goto(base+route);await page.waitForLoadState('networkidle');
+  result.routes.push({route,status:response.status(),title:await page.title(),main:await page.locator('main').count(),h1:await page.locator('h1').allTextContents(),body:await page.locator('body').innerText()});
+ }
+ await page.goto(base);await page.waitForLoadState('networkidle');
+ await page.keyboard.press('Tab');await focus(page,'initial Tab');await page.keyboard.press('Enter');await focus(page,'skip Enter');
+ await page.keyboard.press('Tab');await focus(page,'after skip Tab');await page.keyboard.press('Enter');await page.waitForURL(base+'/projects');await page.waitForLoadState('networkidle');await focus(page,'View projects Enter');
+ await page.keyboard.press('Tab');await focus(page,'Tab on Projects after View projects');
+ await page.goto(base);await page.waitForLoadState('networkidle');for(let i=0;i<3;i++)await page.keyboard.press('Tab');await page.keyboard.press('Enter');await page.waitForURL(base+'/projects');await page.waitForLoadState('networkidle');await focus(page,'navigation Projects Enter');await page.keyboard.press('Tab');await focus(page,'Tab after navigation Projects');
+ for(const id of ['skills','research']){
+  await page.goto(base+'/about#'+id);await page.waitForLoadState('networkidle');await focus(page,'direct fragment '+id);await page.keyboard.press('Tab');await focus(page,'fragment Tab '+id);
+ }
+ for(const mode of ['320px','200pct-text','400pct-reflow']){
+  await page.setViewportSize(mode==='320px'||mode==='400pct-reflow'?{width:320,height:800}:{width:1440,height:900});
+  for(const route of ['/','/projects','/about','/contact','/resume']){
+   await page.goto(base+route);
+   if(mode==='200pct-text')await page.addStyleTag({content:'html {font-size: 200% !important;}'});
+   if(route==='/')await page.locator('summary').click();
+   result.reflow.push({mode,route,...await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,overflow:[...document.querySelectorAll('body *')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&(r.right>innerWidth+1||r.left< -1)&&getComputedStyle(e).position!=='fixed'}).map(e=>({tag:e.tagName,text:e.textContent?.slice(0,75),rect:e.getBoundingClientRect().toJSON()}))}))});
+  }
+ }
+ await page.setViewportSize({width:320,height:800});await page.goto(base);await page.emulateMedia({forcedColors:'active'});await page.keyboard.press('Tab');await page.screenshot({path:path.join(out,'forced-colors-skip.png'),fullPage:true});
+ await context.close();
+ const cold=await browser.newContext();const p=await cold.newPage();await cold.route('**/*',async route=>new URL(route.request().url()).origin===base?route.continue():route.abort());
+ const responses=[];p.on('response',r=>responses.push({url:r.url(),type:r.request().resourceType(),status:r.status(),headers:r.headers()}));
+ await p.goto(base);await p.waitForLoadState('networkidle');
+ const resources=await p.evaluate(()=>performance.getEntriesByType('resource').map(r=>({url:r.name,initiatorType:r.initiatorType,encoded:r.encodedBodySize,transfer:r.transferSize})));
+ const same=resources.filter(r=>new URL(r.url).origin===base);
+ result.payload={resources,responses,makerMethod:same.filter(r=>r.initiatorType==='script').reduce((s,r)=>s+r.encoded,0),allJs:same.filter(r=>new URL(r.url).pathname.endsWith('.js')).reduce((s,r)=>s+r.encoded,0)};
+ await cold.close();
+}finally{await browser.close();await writeFile(path.join(out,'independent-browser.json'),JSON.stringify(result,null,2));}
+console.log(JSON.stringify({focus:result.focus,reflow:result.reflow.filter(r=>r.scrollWidth>r.width),payload:{makerMethod:result.payload?.makerMethod,allJs:result.payload?.allJs},errors:result.errors},null,2));

@@ -1,0 +1,19 @@
+from pathlib import Path
+from datetime import datetime, timezone
+import json,os,subprocess,sys
+statefile=Path('C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\W3\\reviews\\2026-10-01-independent\\evidence\\execution.json')
+s=json.loads(statefile.read_text())
+env={k:v for k,v in os.environ.items() if k.upper() in {'PATH','SYSTEMROOT','WINDIR','COMSPEC','PATHEXT','TEMP','TMP','LOCALAPPDATA','APPDATA','USERPROFILE','NUMBER_OF_PROCESSORS','PROCESSOR_ARCHITECTURE','PROGRAMFILES','PROGRAMFILES(X86)','COMMONPROGRAMFILES'}}
+env.update({'NEXT_TELEMETRY_DISABLED':'1','CI':'1','PORT':'3159','W3_EVIDENCE_DIR':str(statefile.parent/'maker-suite'),'NPM_CONFIG_USERCONFIG':str(Path(s['scratch'])/'empty.npmrc'),'NPM_CONFIG_GLOBALCONFIG':str(Path(s['scratch'])/'empty.npmrc')})
+for action in sys.argv[1:]:
+ args={'install':['install','--frozen-lockfile','--store-dir',str(Path(s['scratch'])/'store'),'--config.cache-dir='+str(Path(s['scratch'])/'cache')],'audit':['audit','--json'],'audit-prod':['audit','--prod','--json'],'list':['list','--depth','0','--json']}.get(action,[action])
+ cmd=[s['node'],s['pnpmJs'],*args]
+ logfile=statefile.parent/(str(len(s['commands'])+1).zfill(2)+'-'+action.replace(':','-')+'.log')
+ rec={'argv':cmd,'cwd':s['app'],'startedAt':datetime.now(timezone.utc).isoformat(),'log':logfile.name}
+ with logfile.open('w',encoding='utf-8') as log:
+  result=subprocess.run(cmd,cwd=s['app'],env=env,stdout=log,stderr=subprocess.STDOUT,creationflags=subprocess.CREATE_NO_WINDOW if os.name=='nt' else 0)
+ rec.update(exitCode=result.returncode,endedAt=datetime.now(timezone.utc).isoformat())
+ s['commands'].append(rec)
+ statefile.write_text(json.dumps(s,indent=2),encoding='utf-8')
+ print(action, 'exit',result.returncode,'log',str(logfile),flush=True)
+ if result.returncode and action not in ['audit','audit-prod']:sys.exit(result.returncode)

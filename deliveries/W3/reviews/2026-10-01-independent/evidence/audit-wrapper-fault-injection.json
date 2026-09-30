@@ -1,0 +1,45 @@
+{
+  "scope": "Fault injection into a copied helper and reviewer-controlled CLI; original implementation untouched",
+  "argv": [
+    "python",
+    "-X",
+    "utf8",
+    "C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-w3-independent-35atl0bg\\helper-repro\\tools\\proof.py",
+    "audit"
+  ],
+  "helperExitCode": 0,
+  "stdout": "audit-all exit 1 log C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-w3-independent-35atl0bg\\helper-repro\\evidence\\a1-current\\01-audit-all.log\naudit-production exit 1 log C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-w3-independent-35atl0bg\\helper-repro\\evidence\\a1-current\\02-audit-production.log\n",
+  "commands": [
+    {
+      "label": "audit-all",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-w3-independent-35atl0bg\\helper-repro\\fake-pnpm.cjs",
+        "audit",
+        "--json"
+      ],
+      "cwd": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-w3-independent-35atl0bg\\app",
+      "startedAt": "2026-09-30T19:20:11.862841+00:00",
+      "log": "evidence/a1-current/01-audit-all.log",
+      "environment": "System runtime variables only; no backend/service credentials; telemetry disabled.",
+      "exitCode": 1,
+      "endedAt": "2026-09-30T19:20:11.950309+00:00"
+    },
+    {
+      "label": "audit-production",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-w3-independent-35atl0bg\\helper-repro\\fake-pnpm.cjs",
+        "audit",
+        "--prod",
+        "--json"
+      ],
+      "cwd": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-w3-independent-35atl0bg\\app",
+      "startedAt": "2026-09-30T19:20:11.951309+00:00",
+      "log": "evidence/a1-current/02-audit-production.log",
+      "environment": "System runtime variables only; no backend/service credentials; telemetry disabled.",
+      "exitCode": 1,
+      "endedAt": "2026-09-30T19:20:12.030376+00:00"
+    }
+  ]
+}
