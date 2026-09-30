@@ -1,9 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useSyncExternalStore } from "react";
 import dynamic from "next/dynamic";
 import styles from "./world.module.css";
 import portfolioStyles from "@/features/portfolio/portfolio.module.css";
+
+const emptySubscribe = () => () => {};
+
+function getSearchSnapshot(): string {
+  return typeof window !== "undefined" ? window.location.search : "";
+}
+
+function getServerSearchSnapshot(): string {
+  return "";
+}
 
 // Dynamic import with ssr: false ensures ZERO Three.js code is loaded pre-entry
 const DynamicWorldRoot = dynamic(() => import("./WorldRoot"), {
@@ -18,29 +28,19 @@ const DynamicWorldRoot = dynamic(() => import("./WorldRoot"), {
 });
 
 export function StudioLauncher() {
-  const [isEntered, setIsEntered] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      return (
-        params.get("studio") === "enter" ||
-        params.get("simulateAssetError") === "1" ||
-        params.get("simulateRendererError") === "1"
-      );
-    }
-    return false;
-  });
-  const [simulateAssetError] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      return new URLSearchParams(window.location.search).get("simulateAssetError") === "1";
-    }
-    return false;
-  });
-  const [simulateRendererError] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      return new URLSearchParams(window.location.search).get("simulateRendererError") === "1";
-    }
-    return false;
-  });
+  const search = useSyncExternalStore(emptySubscribe, getSearchSnapshot, getServerSearchSnapshot);
+  const params = new URLSearchParams(search);
+  const autoEnter =
+    params.get("studio") === "enter" ||
+    params.get("simulateAssetError") === "1" ||
+    params.get("simulateRendererError") === "1";
+  const simulateAssetError = params.get("simulateAssetError") === "1";
+  const simulateRendererError = params.get("simulateRendererError") === "1";
+
+  const [manuallyClosed, setManuallyClosed] = useState<boolean>(false);
+  const [manuallyOpened, setManuallyOpened] = useState<boolean>(false);
+
+  const isEntered = (autoEnter && !manuallyClosed) || manuallyOpened;
 
   return (
     <div>
@@ -57,7 +57,10 @@ export function StudioLauncher() {
                 type="button"
                 id="enter-studio-btn"
                 data-testid="enter-studio-btn"
-                onClick={() => setIsEntered(true)}
+                onClick={() => {
+                  setManuallyOpened(true);
+                  setManuallyClosed(false);
+                }}
                 className={portfolioStyles.primaryAction}
                 style={{ cursor: "pointer", border: "none" }}
               >
@@ -68,7 +71,10 @@ export function StudioLauncher() {
         </details>
       ) : (
         <DynamicWorldRoot
-          onClose={() => setIsEntered(false)}
+          onClose={() => {
+            setManuallyClosed(true);
+            setManuallyOpened(false);
+          }}
           simulateAssetError={simulateAssetError}
           simulateRendererError={simulateRendererError}
         />

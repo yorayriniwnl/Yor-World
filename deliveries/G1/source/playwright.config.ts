@@ -28,7 +28,7 @@ export default defineConfig({
     reuseExistingServer: false,
     timeout: 60_000,
     env: { NEXT_TELEMETRY_DISABLED: "1" },
-    stdout: "pipe",
-    stderr: "pipe",
+    stdout: "inherit",
+    stderr: "inherit",
   },
 });
