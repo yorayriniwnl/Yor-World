@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "description": "Coordinate system mapping, transformation invariants, and camera presets for G1",
+  "conventions": {
+    "runtime": {
+      "units": "meters",
+      "upAxis": "+Y",
+      "forwardAxis": "-Z (facing workstation rear wall)",
+      "rearWallZ": -1.8,
+      "doorwayWallZ": 1.8,
+      "leftWallX": -2.1,
+      "rightWallX": 2.1,
+      "floorY": 0.0,
+      "ceilingY": 2.8
+    },
+    "authoringBlender": {
+      "units": "meters",
+      "upAxis": "+Z",
+      "facing": "+Y (facing desk in Blender)",
+      "exportConversion": "(x, y, z) -> (x, z, -y) performed exactly once during glTF export"
+    },
+    "singleConversionPolicy": {
+      "rule": "glTF files already embed the single Blender-to-glTF transform and authored F1 roots. The Three.js loader mounts all scenes strictly at identity (position [0,0,0], quaternion [0,0,0,1], scale [1,1,1]).",
+      "doubleOffsetGuard": "NEVER apply [0.30, 0, -0.36] to the scene root or resident/chair parent. Roots resident, chair-root, and chair-base already possess authored translation [0.30, 0, -0.36] in their local TRS."
+    }
+  },
+  "anchors": {
+    "deskFootprint": {
+      "width_X": 2.6,
+      "depth_Z": 0.8,
+      "height_Y": 0.75,
+      "centerX": 0.0,
+      "centerZ": -1.15,
+      "topSurfaceY": 0.75,
+      "undersideY": 0.70
+    },
+    "residentChairRoot": {
+      "x": 0.30,
+      "y": 0.0,
+      "z": -0.36,
+      "restingHeadingDeg": 0.0,
+      "greetingHeadingDeg": 125.0
+    },
+    "doorway": {
+      "openingWidth": 0.9,
+      "openingHeight": 2.1,
+      "hinge": [-1.65, 0.0, 1.8],
+      "closedLeafCenter": [-1.2, 1.05, 1.8]
+    },
+    "clearances": {
+      "doorSweepMinWallClearanceM": 0.45,
+      "doorSweepMinDeskClearanceM": 1.67,
+      "armrestVerticalClearanceM": 0.035,
+      "kneeWellClearWidthM": 1.62
+    }
+  },
+  "cameras": {
+    "home": {
+      "name": "Camera_Home",
+      "description": "Primary overview framing workstation, hex lights, monitor, resident, and plant",
+      "position": [-2.15, 1.70, 1.55],
+      "target": [0.12, 1.25, -1.15],
+      "fov": 60.0,
+      "aspect": "16:9"
+    },
+    "entry": {
+      "name": "Camera_Entry",
+      "description": "Doorway perspective looking into the studio reveal",
+      "position": [-1.2, 1.45, 2.15],
+      "target": [0.0, 1.05, -1.15],
+      "fov": 54.0,
+      "aspect": "16:9"
+    },
+    "mobile": {
+      "name": "Camera_Mobile",
+      "description": "Portrait viewport framing with >=38% reserved lower touch area",
+      "position": [-1.25, 1.48, 1.15],
+      "target": [0.16, 1.08, -0.95],
+      "fov": 52.0,
+      "aspect": "9:16"
+    },
+    "monitor": {
+      "name": "Camera_Monitor",
+      "description": "Close-up front view of curved ultrawide screen and lightbar",
+      "position": [0.0, 1.08, -0.5],
+      "target": [0.0, 1.08, -1.35],
+      "fov": 50.0,
+      "aspect": "16:9"
+    },
+    "reverseDoorway": {
+      "name": "Camera_ReverseDoorway",
+      "description": "View from desk looking back at closed doorway and entrance threshold",
+      "position": [0.2, 1.25, -1.0],
+      "target": [-1.2, 1.1, 1.8],
+      "fov": 56.0,
+      "aspect": "16:9"
+    },
+    "referenceMatch": {
+      "name": "Camera_ReferenceMatch",
+      "description": "Isometric three-quarter view aligning with main-reference.png",
+      "position": [-1.95, 2.10, 1.55],
+      "target": [0.22, 0.90, -1.15],
+      "fov": 52.0,
+      "aspect": "4:3"
+    }
+  }
+}

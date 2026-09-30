@@ -1,0 +1,76 @@
+COMMAND: "C:\Program Files\nodejs\node.EXE" C:\Users\yoray\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs lint
+CWD: C:\Users\yoray\AppData\Local\Temp\yor-world-g1-proof-5k01yp30\app
+
+> yor-world-g1-proof@0.1.0 lint C:\Users\yoray\AppData\Local\Temp\yor-world-g1-proof-5k01yp30\app
+> eslint . --max-warnings=0
+
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-g1-proof-5k01yp30\app\src\features\studio\camera-controller.ts
+  2:31  warning  'CameraPreset' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-g1-proof-5k01yp30\app\src\features\studio\scene-assembly.ts
+  2:27  warning  'GLTF' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-g1-proof-5k01yp30\app\src\features\studio\studio-view.tsx
+   51:7  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-g1-proof-5k01yp30\app\src\features\studio\studio-view.tsx:51:7
+  49 |     if (typeof window !== "undefined" && window.matchMedia) {
+  50 |       const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+> 51 |       setReducedMotion(mq.matches);
+     |       ^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  52 |       const listener = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+  53 |       mq.addEventListener("change", listener);
+  54 |       return () => mq.removeEventListener("change", listener);  react-hooks/set-state-in-effect
+  112:7  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-g1-proof-5k01yp30\app\src\features\studio\studio-view.tsx:112:7
+  110 |     const gl = testCanvas.getContext("webgl2") || testCanvas.getContext("webgl");
+  111 |     if (!gl) {
+> 112 |       setError({
+      |       ^^^^^^^^ Avoid calling setState() directly within an effect
+  113 |         type: "webgl_unsupported",
+  114 |         message: "WebGL is not supported or is disabled in your browser environment.",
+  115 |       });                                                                                                                    react-hooks/set-state-in-effect
+  352:6  warning  React Hook useEffect has missing dependencies: 'activeCamera' and 'urls'. Either include them or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      react-hooks/exhaustive-deps
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-g1-proof-5k01yp30\app\src\features\world\StudioLauncher.tsx
+  29:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-g1-proof-5k01yp30\app\src\features\world\StudioLauncher.tsx:29:9
+  27 |       const params = new URLSearchParams(window.location.search);
+  28 |       if (params.get("studio") === "enter") {
+> 29 |         setIsEntered(true);
+     |         ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  30 |       }
+  31 |       if (params.get("simulateAssetError") === "1") {
+  32 |         setSimulateAssetError(true);  react-hooks/set-state-in-effect
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-g1-proof-5k01yp30\app\tests\unit\scene-integrator.test.ts
+   52:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  102:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  139:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 9 problems (6 errors, 3 warnings)
+
+ ELIFECYCLE  Command failed with exit code 1.
+
+EXIT: 1

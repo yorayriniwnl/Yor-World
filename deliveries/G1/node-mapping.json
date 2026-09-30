@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 1,
+  "description": "Comprehensive node mapping and tree reconciliation for G1 integration of W1, W2-Avatar, and W2-Fixture",
+  "summary": {
+    "w1OriginalNodes": 232,
+    "w1NodesRemoved": 42,
+    "w1NodesRetained": 190,
+    "w2AvatarNodesAdded": 18,
+    "w2FixtureNodesAdded": 20,
+    "w2FixtureNodesDiscarded": 42,
+    "integratedSceneTotalNodes": 228,
+    "residentsInScene": 1,
+    "movingChairsInScene": 1,
+    "staticChairsInScene": 0,
+    "duplicateDesksInScene": 0,
+    "duplicateFloorsInScene": 0
+  },
+  "removalRules": {
+    "w1ProxyResident": {
+      "rootNode": "resident",
+      "disposition": "REMOVED_RECURSIVELY",
+      "nodeCount": 18,
+      "nodes": [
+        "resident",
+        "resident_torso",
+        "resident_neck",
+        "resident_head",
+        "resident_hair",
+        "resident_pelvis",
+        "resident_upper_arm_l",
+        "resident_forearm_l",
+        "resident_hand_l",
+        "resident_upper_arm_r",
+        "resident_forearm_r",
+        "resident_hand_r",
+        "resident_thigh_l",
+        "resident_shin_l",
+        "resident_foot_l",
+        "resident_thigh_r",
+        "resident_shin_r",
+        "resident_foot_r"
+      ]
+    },
+    "w1StaticChair": {
+      "rootNode": "chair",
+      "disposition": "REMOVED_RECURSIVELY",
+      "nodeCount": 23,
+      "nodes": [
+        "chair",
+        "chair_seat_cushion",
+        "chair_seat_center_white",
+        "chair_backrest_blue",
+        "chair_backrest_white_stripe",
+        "chair_lumbar_pillow",
+        "chair_headrest_pillow",
+        "chair_armrest_left_stem",
+        "chair_armrest_left_pad",
+        "chair_armrest_right_stem",
+        "chair_armrest_right_pad",
+        "chair_cylinder",
+        "chair_base_hub",
+        "chair_base_leg_1",
+        "chair_base_leg_2",
+        "chair_base_leg_3",
+        "chair_base_leg_4",
+        "chair_base_leg_5",
+        "chair_caster_1",
+        "chair_caster_2",
+        "chair_caster_3",
+        "chair_caster_4",
+        "chair_caster_5"
+      ]
+    },
+    "w1ChairRootLocator": {
+      "node": "chair-root",
+      "disposition": "DISPOSED",
+      "nodeCount": 1,
+      "rationale": "W1 locator chair-root held W1 chair and resident proxy; disposed before importing W2 chair-root to prevent name collision."
+    },
+    "w2FixtureStatic": {
+      "rootNode": "fixture-static",
+      "disposition": "DISCARDED_ENTIRE_SUBTREE",
+      "nodeCount": 42,
+      "rationale": "Proof desk, keyboard, mouse, pedestals, and floor used in W2 isolated proof; discarded to avoid duplicate desk and floor geometry in integrated room."
+    }
+  },
+  "importedNodes": {
+    "w2Avatar": {
+      "source": "deliveries/W2/avatar-proof.glb",
+      "rootMount": [0.0, 0.0, 0.0],
+      "nodes": [
+        { "name": "resident", "type": "Armature/RootBone", "f1AuthoredPosition": [0.3, 0.0, -0.36] },
+        { "name": "body-turn", "type": "Bone", "motion": "Owns avatar yaw rotation (0-125 deg)" },
+        { "name": "pelvis", "type": "Bone" },
+        { "name": "spine", "type": "Bone" },
+        { "name": "head", "type": "Bone", "motion": "Owns 9 deg acknowledgment nod" },
+        { "name": "upper-arm.L", "type": "Bone" },
+        { "name": "forearm.L", "type": "Bone" },
+        { "name": "hand.L", "type": "Bone", "motion": "Withdraws and clears from desk" },
+        { "name": "upper-arm.R", "type": "Bone" },
+        { "name": "forearm.R", "type": "Bone" },
+        { "name": "hand.R", "type": "Bone", "motion": "Withdraws and clears from desk" },
+        { "name": "thigh.L", "type": "Bone" },
+        { "name": "shin.L", "type": "Bone" },
+        { "name": "foot.L", "type": "Bone", "motion": "Stepping floor contact" },
+        { "name": "thigh.R", "type": "Bone" },
+        { "name": "shin.R", "type": "Bone" },
+        { "name": "foot.R", "type": "Bone", "motion": "Stepping floor contact" },
+        { "name": "resident-body", "type": "SkinnedMesh", "placement": "Scene-root sibling sharing skeleton joints" }
+      ]
+    },
+    "w2ArticulatedChair": {
+      "source": "deliveries/W2/fixture-proof.glb",
+      "rootMount": [0.0, 0.0, 0.0],
+      "subtrees": [
+        {
+          "root": "chair-root",
+          "f1AuthoredPosition": [0.3, 0.0, -0.36],
+          "nodeCount": 8,
+          "components": ["chair-seat", "chair-backrest", "chair-armrest-left", "chair-armrest-right", "chair-lumbar", "chair-headrest", "chair-lift"],
+          "motion": "Upper chair yaw swivel (0-125 deg) matching avatar body-turn"
+        },
+        {
+          "root": "chair-base",
+          "f1AuthoredPosition": [0.3, 0.0, -0.36],
+          "nodeCount": 12,
+          "components": ["chair-hub", "chair-leg-1..5", "chair-caster-1..5"],
+          "motion": "Stationary on floor during turn"
+        }
+      ]
+    }
+  },
+  "retainedW1Environment": {
+    "source": "deliveries/W1/revisions/W1-F1-r2/room-blockout.glb",
+    "categories": {
+      "architecture": ["room-shell", "wall-north", "wall-south", "wall-east", "wall-west", "floor", "ceiling"],
+      "doorway": ["door-frame", "door-leaf", "door-handle", "door-hinge"],
+      "workstationDesk": ["desk", "desk-top", "desk-pedestal-left", "desk-pedestal-right", "desk-led-strip", "desk-quilted-panel"],
+      "displayAndLighting": ["monitor", "monitor-arm", "screen-lightbar", "hex-lights", "cyan-underglow", "pink-accent"],
+      "deskProps": ["console-ps5", "microphone-boom", "speakers-pebble", "mechanical-keyboard", "mouse", "desk-mat", "clock-digital", "coffee-cup", "succulent"],
+      "roomProps": ["pc-tower", "pegboard", "pegboard-controllers", "headset-stand", "headphones", "floating-shelves", "shelf-plants", "floor-plant-stand", "floor-plant-leaves"],
+      "cameras": ["Camera_Entry", "Camera_Home", "Camera_Mobile", "Camera_Monitor", "Camera_ReverseDoorway", "Camera_ReferenceMatch"]
+    }
+  }
+}
