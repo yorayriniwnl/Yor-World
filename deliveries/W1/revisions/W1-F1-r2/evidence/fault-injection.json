@@ -1,0 +1,67 @@
+{
+  "executedAt": "2026-09-30T21:08:53Z",
+  "test": "W1-CORR-01 Item 2 Clearance Checker Fault Injection Validation",
+  "scope": "Demonstrate that deliberate colliding mutations cause the clearance checker to fail as required",
+  "tests": [
+    {
+      "testId": "FAULT-INJECT-00-NORMAL-BASELINE",
+      "description": "Baseline evaluation of un-mutated delivered geometry",
+      "expectedStatus": "PASS",
+      "actualStatus": "PASS",
+      "details": {
+        "door_sweep": {
+          "status": "PASS",
+          "min_wall_clearance_m": 0.45,
+          "min_desk_clearance_m": 1.67,
+          "min_plant_clearance_m": 0.8333
+        },
+        "armrest_clearance": {
+          "status": "PASS",
+          "armrest_top_y_m": 0.665,
+          "desk_underside_y_m": 0.7,
+          "armrest_vertical_clearance_m": 0.035
+        },
+        "chair_base_clearance": {
+          "status": "PASS",
+          "closest_point_z_m": -0.68,
+          "desk_front_z_m": -0.75,
+          "base_to_desk_clearance_m": 0.07
+        }
+      },
+      "verdict": "PASS"
+    },
+    {
+      "testId": "FAULT-INJECT-01-DOOR-WALL-PROXIMITY",
+      "description": "Displace door hinge to X=-2.08m (20mm from X=-2.10m wall, violating 50mm clearance limit)",
+      "expectedCheckerOutcome": "FAIL",
+      "actualCheckerOutcome": "FAIL",
+      "minWallClearanceMeasured": 0.02,
+      "detectorCaughtCollision": true,
+      "verdict": "PASS (Collision correctly rejected)"
+    },
+    {
+      "testId": "FAULT-INJECT-02-ARMREST-TABLETOP-COLLISION",
+      "description": "Inject elevated armrests (+80mm) so armrest top (0.745m) penetrates 0.700m desk underside",
+      "expectedCheckerOutcome": "FAIL",
+      "actualCheckerOutcome": "FAIL",
+      "armrestVerticalClearanceMeasured": -0.045,
+      "detectorCaughtCollision": true,
+      "verdict": "PASS (Collision correctly rejected)"
+    },
+    {
+      "testId": "FAULT-INJECT-03-CHAIR-BASE-DESK-COLLISION",
+      "description": "Inject forward chair displacement (Z=-0.65m vs -0.36m normal) causing base to penetrate desk front",
+      "expectedCheckerOutcome": "FAIL",
+      "actualCheckerOutcome": "FAIL",
+      "baseToDeskClearanceMeasured": -0.22,
+      "detectorCaughtCollision": true,
+      "verdict": "PASS (Collision correctly rejected)"
+    }
+  ],
+  "summary": {
+    "totalTests": 4,
+    "passed": 4,
+    "failed": 0,
+    "allFaultsDemonstrablyDetected": true
+  }
+}
