@@ -1,6 +1,6 @@
 # YOR WORLD — prompts for 20 reported accounts
 
-Status: **local GPT/Gemini handoff and browser Claude review prepared for 2 GPT Plus, 3 Gemini AI Pro and 15 Claude free browser accounts.** External accounts are not connected or dispatched. Existing partial deliveries remain unaccepted; this prompt file does not start a worker.
+Status, 2026-10-01: **W1/W2/W3 returned; W1/W2 Gemini reviews archived; assigned Claude reviews absent. W1 REWORK, W2 INSUFFICIENT EVIDENCE, W3 REWORK; G1 LOCKED.** See the [parent ruling](reviews/2026-10-01-reconciliation.md) and [exact next packets](reconciliation-packets/2026-10-01-next-packets.md). The resource inventory remains 2 GPT Plus, 3 Gemini AI Pro and 15 Claude free browser accounts. No new external dispatch occurred in this reconciliation; these role templates do not start workers.
 
 Parent Codex owns architecture, coordination, audit, and acceptance. Makers return files; independent reviewers return findings; the parent assigns corrections. The user reviews personal identity, likeness, final visual direction, and publication decisions.
 
@@ -456,7 +456,7 @@ Local archive label: reviews/claude-15/review.md; the parent or local worker sav
 
 ## Handoff sequence
 
-1. For the next assigned production wave, dispatch **GPT-1/W3, GPT-2/W2, Gemini-1/W1**. Separate roots, one F1 baseline.
+1. The initial W1/W2/W3 wave has returned. Use the [current bounded corrections and reviews](reconciliation-packets/2026-10-01-next-packets.md): W1 geometry/evidence correction, W2 interface/provenance reviews, and W3 dependency correction followed by reviews. Preserve earlier evidence; do not restart or integrate the original packets speculatively.
 2. On actual return, assign applicable bounded reviews to **Gemini-3, Claude-01, Claude-02, Claude-05, Claude-13**. Send Claude reviewers the current packet envelope and changed source/evidence via the browser workflow, reusing current Project instructions and knowledge. Include the full shared rules only when those instructions are unavailable. A parent/local worker archives returned text. Parent returns defects and records exact accepted revisions.
 3. After all three inputs are accepted, dispatch **GPT-2/G1**. Use **Gemini-3, Claude-10, Claude-13, Claude-15** for combined proof review.
 4. After G1, issue individual platform, avatar/export, geometry and material packets. **Gemini-2 begins with one sample**, then expands after acceptance.

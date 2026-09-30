@@ -30,4 +30,4 @@ Return reviews in chat or an actually generated file. A local worker saves them 
 
 ## Current handoff state
 
-Existing files under deliveries/W1, W2 and W3 are preserved as unaccepted inputs. This folder setup does not execute those proofs or accept their results. Historical handoffs may contain the former three-GPT inventory; the current instructions and account map supersede that count. Each new assignment names exact input revisions, owned paths, and independent review evidence.
+Current deliveries under W1, W2 and W3 are returned, with W1/W2 Gemini review reports. The [parent reconciliation](reviews/2026-10-01-reconciliation.md) records independent native/validator checks, distinguishes maker browser evidence, and rules W1 REWORK, W2 INSUFFICIENT EVIDENCE, W3 REWORK; G1 is LOCKED. GitHub is the authoritative live repository. Historical no-Git statements and the former three-GPT inventory remain historical; current instructions supersede their living status. Each [new packet](reconciliation-packets/2026-10-01-next-packets.md) names exact inputs, owned paths and required reviews. This audit did not connect or dispatch external accounts.

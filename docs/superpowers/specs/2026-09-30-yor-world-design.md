@@ -2,7 +2,7 @@
 
 Date: 2026-09-30  
 Revision: 2  
-Status: main-reference and delegation correction; implementation has not begun.
+Status updated 2026-10-01: revision 2 requirements remain unchanged; isolated W1/W2/W3 implementations and evidence are returned. [Parent reconciliation](../../planning/reviews/2026-10-01-reconciliation.md): W1 REWORK, W2 INSUFFICIENT EVIDENCE, W3 REWORK; G1 LOCKED.
 
 ## 1. Intended outcome
 
@@ -173,7 +173,7 @@ These inputs are not required to review this planning package.
 | Project repositories, live URLs, role and evidence | Five candidate names; facts unknown | Publishing case studies |
 | Research/certification proof | Unknown | Publishing those sections |
 | Reusable .blend/.glb/rig/audio assets and rights | None verified | Asset reuse |
-| GitHub repository owner/name/visibility | Unknown; folder is not Git | Remote creation and first push |
+| GitHub repository owner/name/visibility | Confirmed live authority: public `yorayriniwnl/Yor-World`, branch `main`; see parent reconciliation | Recheck live state before each scoped commit/push |
 | Domain and provider accounts | Unknown | Staging/production provisioning |
 | Spending ceiling | No purchase authorization; flag any cost | Any paid action |
 | Contact address and résumé | Unknown | Contact and résumé go-live |

@@ -1,0 +1,218 @@
+--- handoff/docs/planning/account-prompts.md
++++ base/docs/planning/account-prompts.md
+@@ -1,10 +1,12 @@
+ # YOR WORLD — prompts for 20 reported accounts
+ 
+-Status: **local GPT/Gemini handoff and browser Claude review prepared for 2 GPT Plus, 3 Gemini AI Pro and 15 Claude free accounts.** External accounts are not connected or dispatched. Existing partial deliveries remain unaccepted; this prompt file does not start a worker.
++Status: **local GPT/Gemini handoff and browser Claude review prepared for 2 GPT Plus, 3 Gemini AI Pro and 15 Claude free browser accounts.** External accounts are not connected or dispatched. Existing partial deliveries remain unaccepted; this prompt file does not start a worker.
+ 
+ Parent Codex owns architecture, coordination, audit, and acceptance. Makers return files; independent reviewers return findings; the parent assigns corrections. The user reviews personal identity, likeness, final visual direction, and publication decisions.
+ 
+-GPT/Gemini blocks target local tools with access to C:\Users\yoray\Projects\Yor World. Claude blocks target browser chats receiving attached or pasted review packets; send the shared browser rules with every Claude prompt. Repository paths in those packets are citation labels, not browser-accessible locations. Follow [Browser review workflow](browser-review-workflow.md) for packet preparation and local archival.
++For a three-track production overview, see [production prompts](production-prompts/README.md). This account map still controls provider roles and bounded handoffs; the track prompts do not dispatch accounts or replace per-task work orders.
++
++GPT/Gemini blocks target local tools with access to C:\Users\yoray\Projects\Yor World. Claude blocks target browser chats receiving attached or pasted review packets. Include the current packet envelope with each prompt; reuse current shared rules in Project instructions and stable briefs in Project knowledge. Include the full shared-rules block only when that session lacks the current instructions. Repository paths in packets are citation labels, not browser-accessible locations. Follow [Browser review workflow](browser-review-workflow.md) for packet preparation and local archival.
+ 
+ ## Assignment map
+ 
+@@ -152,9 +154,9 @@
+ Return review.md and annotated evidence: criterion | PASS/FAIL/NOT RUN | exact evidence | reason, then prioritized defects with node/file/timecode/camera and correction checks. Recommend accept/rework only for the named proof. Parent accepts; do not declare V1/final visual approval.
+ ~~~
+ 
+-## Shared browser review rules — send with every Claude prompt
+-
+-The sender must include this entire block with each role prompt, even when stable context is already saved in that account.
++## Shared browser review rules — reusable Project instructions
++
++Store this block once in each used account's Project instructions and keep its version current. Each role prompt still needs its current packet envelope. Include the entire block with the prompt only if that session lacks the current Project instructions; this provides a self-contained fallback for ordinary chats. Reuse the versioned stable brief in Project knowledge rather than attaching it again unchanged.
+ 
+ ~~~text
+ You are an independent reviewer in a browser chat. Review only attached/pasted material or explicitly identified project knowledge. Repository paths are citation labels; they do not grant access to C: or another machine. Do not open/write local folders, edit maker source, log in, install tools, deploy or contact anyone. A parent/local worker archives your returned text.
+@@ -180,7 +182,7 @@
+ 
+ ## Claude-01 — contracts and interfaces
+ 
+-**Delivery:** Send the Shared browser review rules, the filled packet envelope (packet ID, exact revision, manifest, input inventory), and this prompt together.
++**Delivery:** Send this prompt with the filled current packet envelope (packet ID, exact revision, manifest, input inventory, stable-context version). Use the current Shared browser review rules in this account's Project instructions; include the full rules block only if this session lacks those instructions, including ordinary chats.
+ 
+ ~~~text
+ You are Claude-01, YOR WORLD's independent browser reviewer for contracts and interfaces.
+@@ -198,7 +200,7 @@
+ 
+ ## Claude-02 — semantic foundation and code boundaries
+ 
+-**Delivery:** Send the Shared browser review rules, the filled packet envelope (packet ID, exact revision, manifest, input inventory), and this prompt together.
++**Delivery:** Send this prompt with the filled current packet envelope (packet ID, exact revision, manifest, input inventory, stable-context version). Use the current Shared browser review rules in this account's Project instructions; include the full rules block only if this session lacks those instructions, including ordinary chats.
+ 
+ ~~~text
+ You are Claude-02, YOR WORLD's independent browser reviewer for the semantic platform.
+@@ -216,7 +218,7 @@
+ 
+ ## Claude-03 — state and cancellation
+ 
+-**Delivery:** Send the Shared browser review rules, the filled packet envelope (packet ID, exact revision, manifest, input inventory), and this prompt together.
++**Delivery:** Send this prompt with the filled current packet envelope (packet ID, exact revision, manifest, input inventory, stable-context version). Use the current Shared browser review rules in this account's Project instructions; include the full rules block only if this session lacks those instructions, including ordinary chats.
+ 
+ ~~~text
+ You are Claude-03, YOR WORLD's independent browser reviewer for state and cancellation.
+@@ -234,7 +236,7 @@
+ 
+ ## Claude-04 — content evidence and claims
+ 
+-**Delivery:** Send the Shared browser review rules, the filled packet envelope (packet ID, exact revision, manifest, input inventory), and this prompt together.
++**Delivery:** Send this prompt with the filled current packet envelope (packet ID, exact revision, manifest, input inventory, stable-context version). Use the current Shared browser review rules in this account's Project instructions; include the full rules block only if this session lacks those instructions, including ordinary chats.
+ 
+ ~~~text
+ You are Claude-04, YOR WORLD's independent browser reviewer for content evidence.
+@@ -252,7 +254,7 @@
+ 
+ ## Claude-05 — accessibility and keyboard
+ 
+-**Delivery:** Send the Shared browser review rules, the filled packet envelope (packet ID, exact revision, manifest, input inventory), and this prompt together.
++**Delivery:** Send this prompt with the filled current packet envelope (packet ID, exact revision, manifest, input inventory, stable-context version). Use the current Shared browser review rules in this account's Project instructions; include the full rules block only if this session lacks those instructions, including ordinary chats.
+ 
+ ~~~text
+ You are Claude-05, YOR WORLD's independent browser reviewer for accessibility and keyboard behavior.
+@@ -270,7 +272,7 @@
+ 
+ ## Claude-06 — mobile, touch, and motion
+ 
+-**Delivery:** Send the Shared browser review rules, the filled packet envelope (packet ID, exact revision, manifest, input inventory), and this prompt together.
++**Delivery:** Send this prompt with the filled current packet envelope (packet ID, exact revision, manifest, input inventory, stable-context version). Use the current Shared browser review rules in this account's Project instructions; include the full rules block only if this session lacks those instructions, including ordinary chats.
+ 
+ ~~~text
+ You are Claude-06, YOR WORLD's independent browser reviewer for mobile, touch and reduced motion.
+@@ -288,7 +290,7 @@
+ 
+ ## Claude-07 — owner authentication
+ 
+-**Delivery:** Send the Shared browser review rules, the filled packet envelope (packet ID, exact revision, manifest, input inventory), and this prompt together.
++**Delivery:** Send this prompt with the filled current packet envelope (packet ID, exact revision, manifest, input inventory, stable-context version). Use the current Shared browser review rules in this account's Project instructions; include the full rules block only if this session lacks those instructions, including ordinary chats.
+ 
+ ~~~text
+ You are Claude-07, YOR WORLD's independent browser reviewer for owner authentication.
+@@ -306,7 +308,7 @@
+ 
+ ## Claude-08 — database and publishing
+ 
+-**Delivery:** Send the Shared browser review rules, the filled packet envelope (packet ID, exact revision, manifest, input inventory), and this prompt together.
++**Delivery:** Send this prompt with the filled current packet envelope (packet ID, exact revision, manifest, input inventory, stable-context version). Use the current Shared browser review rules in this account's Project instructions; include the full rules block only if this session lacks those instructions, including ordinary chats.
+ 
+ ~~~text
+ You are Claude-08, YOR WORLD's independent browser reviewer for data and publication.
+@@ -324,7 +326,7 @@
+ 
+ ## Claude-09 — contact and delivery failures
+ 
+-**Delivery:** Send the Shared browser review rules, the filled packet envelope (packet ID, exact revision, manifest, input inventory), and this prompt together.
++**Delivery:** Send this prompt with the filled current packet envelope (packet ID, exact revision, manifest, input inventory, stable-context version). Use the current Shared browser review rules in this account's Project instructions; include the full rules block only if this session lacks those instructions, including ordinary chats.
+ 
+ ~~~text
+ You are Claude-09, YOR WORLD's independent browser reviewer for contact receipts and outbox failures.
+@@ -342,7 +344,7 @@
+ 
+ ## Claude-10 — entrance and renderer lifecycle
+ 
+-**Delivery:** Send the Shared browser review rules, the filled packet envelope (packet ID, exact revision, manifest, input inventory), and this prompt together.
++**Delivery:** Send this prompt with the filled current packet envelope (packet ID, exact revision, manifest, input inventory, stable-context version). Use the current Shared browser review rules in this account's Project instructions; include the full rules block only if this session lacks those instructions, including ordinary chats.
+ 
+ ~~~text
+ You are Claude-10, YOR WORLD's independent browser reviewer for entrance and renderer lifecycle.
+@@ -362,7 +364,7 @@
+ 
+ ## Claude-11 — interaction and navigation
+ 
+-**Delivery:** Send the Shared browser review rules, the filled packet envelope (packet ID, exact revision, manifest, input inventory), and this prompt together.
++**Delivery:** Send this prompt with the filled current packet envelope (packet ID, exact revision, manifest, input inventory, stable-context version). Use the current Shared browser review rules in this account's Project instructions; include the full rules block only if this session lacks those instructions, including ordinary chats.
+ 
+ ~~~text
+ You are Claude-11, YOR WORLD's independent browser reviewer for interactions and navigation.
+@@ -380,7 +382,7 @@
+ 
+ ## Claude-12 — browser and performance evidence
+ 
+-**Delivery:** Send the Shared browser review rules, the filled packet envelope (packet ID, exact revision, manifest, input inventory), and this prompt together.
++**Delivery:** Send this prompt with the filled current packet envelope (packet ID, exact revision, manifest, input inventory, stable-context version). Use the current Shared browser review rules in this account's Project instructions; include the full rules block only if this session lacks those instructions, including ordinary chats.
+ 
+ ~~~text
+ You are Claude-12, YOR WORLD's independent browser reviewer for browser/performance evidence.
+@@ -398,7 +400,7 @@
+ 
+ ## Claude-13 — asset provenance and exports
+ 
+-**Delivery:** Send the Shared browser review rules, the filled packet envelope (packet ID, exact revision, manifest, input inventory), and this prompt together.
++**Delivery:** Send this prompt with the filled current packet envelope (packet ID, exact revision, manifest, input inventory, stable-context version). Use the current Shared browser review rules in this account's Project instructions; include the full rules block only if this session lacks those instructions, including ordinary chats.
+ 
+ ~~~text
+ You are Claude-13, YOR WORLD's independent browser reviewer for asset provenance and exports.
+@@ -416,7 +418,7 @@
+ 
+ ## Claude-14 — operations and external boundaries
+ 
+-**Delivery:** Send the Shared browser review rules, the filled packet envelope (packet ID, exact revision, manifest, input inventory), and this prompt together.
++**Delivery:** Send this prompt with the filled current packet envelope (packet ID, exact revision, manifest, input inventory, stable-context version). Use the current Shared browser review rules in this account's Project instructions; include the full rules block only if this session lacks those instructions, including ordinary chats.
+ 
+ ~~~text
+ You are Claude-14, YOR WORLD's independent browser reviewer for operations and external boundaries.
+@@ -434,7 +436,7 @@
+ 
+ ## Claude-15 — gate and release auditor
+ 
+-**Delivery:** Send the Shared browser review rules, the filled packet envelope (packet ID, exact revision, manifest, input inventory), and this prompt together.
++**Delivery:** Send this prompt with the filled current packet envelope (packet ID, exact revision, manifest, input inventory, stable-context version). Use the current Shared browser review rules in this account's Project instructions; include the full rules block only if this session lacks those instructions, including ordinary chats.
+ 
+ ~~~text
+ You are Claude-15, YOR WORLD's independent browser reviewer for gate and release evidence.
+@@ -455,7 +457,7 @@
+ ## Handoff sequence
+ 
+ 1. For the next assigned production wave, dispatch **GPT-1/W3, GPT-2/W2, Gemini-1/W1**. Separate roots, one F1 baseline.
+-2. On actual return, assign applicable bounded reviews to **Gemini-3, Claude-01, Claude-02, Claude-05, Claude-13**. Send Claude reviewers the shared browser rules and attached/pasted packets via the browser workflow; a parent/local worker archives their returned text. Parent returns defects and records exact accepted revisions.
++2. On actual return, assign applicable bounded reviews to **Gemini-3, Claude-01, Claude-02, Claude-05, Claude-13**. Send Claude reviewers the current packet envelope and changed source/evidence via the browser workflow, reusing current Project instructions and knowledge. Include the full shared rules only when those instructions are unavailable. A parent/local worker archives returned text. Parent returns defects and records exact accepted revisions.
+ 3. After all three inputs are accepted, dispatch **GPT-2/G1**. Use **Gemini-3, Claude-10, Claude-13, Claude-15** for combined proof review.
+ 4. After G1, issue individual platform, avatar/export, geometry and material packets. **Gemini-2 begins with one sample**, then expands after acceptance.
+ 5. **GPT-2** integrates accepted files and implements individually assigned runtime packets. **Claude-03/06/10/11/12** review state, mobile, lifecycle, interactions and measurements when those files exist.
+
+--- handoff/docs/planning/delegation-and-work-orders.md
++++ base/docs/planning/delegation-and-work-orders.md
+@@ -7,6 +7,8 @@
+ ## One specification and a small shared baseline
+ 
+ The [product spec](../superpowers/specs/2026-09-30-yor-world-design.md) is the single scope authority. Its [art](art-and-experience.md), [interaction](interaction-catalog.md), [engineering](engineering-and-content.md), and [validation](validation-and-production.md) documents supply contracts and acceptance criteria. Record the supplied spec revision and file hashes in each handoff. No worker independently redesigns the product or deletes a requirement. Unresolved assumptions stay identified; the already authorized vision needs no repeated approval.
++
++The complete work is grouped into three [production prompt tracks](production-prompts/README.md): platform/content (A), world/art (B), and integration/release (C). The track prompts point back to these plans and do not replace the exact bounded packet, owned paths, input revisions, reviewer, and evidence named for each task.
+ 
+ Start at [START_HERE.md](../../START_HERE.md). The main reference is [references/images/main-reference.png](../../references/images/main-reference.png): bright white workstation, blue chair, pink/violet lighting with cyan fill. The [reference index](../../references/README.md) and [manifest](../../references/manifest.json) hold supplementary inputs and provenance. Unknown rights remain unknown; a reference is not an editable licensed asset.
+ 
+@@ -41,9 +43,9 @@
+ 2. Production workers declare actual capabilities, then return real source files or a patch plus a short `report.md`: input revisions, changed paths, commands/results, screenshots or recordings, limits, and open defects. Return a zip when supported. If attachments are unavailable, return complete file contents with filenames; prose instructions alone are insufficient.
+ 3. Browser-generated scripts are **NOT RUN** until a capable local worker or the user executes them. Capture actual tool versions, exit codes, logs, and output hashes. Never invent `.blend`/`.glb` files or screenshots, and never call source inspection reproduced validation.
+ 4. Deliver under `deliveries/W1/`, `deliveries/W2/`, or `deliveries/W3/`; workers do not edit each other's roots or shared production files. The parent reviews source/evidence and obtains maker-independent review. A maker cannot accept its own task. Return concrete defects to that maker.
++5. After acceptance, assign integration to GPT-2 or another verified local-capable worker. Only that assignment maps accepted outputs into final paths, resolves conflicts, updates shared contracts/configuration/manifests, and runs combined checks. The parent audits; it does not absorb production labor.
++
+ Browser reviewers return a structured review in chat or an actually generated downloadable file; the coordinator/local worker archives it under the assigned reviews/claude-NN/ path with packet/revision identity. They do not claim to have written that local folder or executed the maker’s tests.
+-
+-5. After acceptance, assign integration to GPT-2 or another verified local-capable worker. Only that assignment maps accepted outputs into final paths, resolves conflicts, updates shared contracts/configuration/manifests, and runs combined checks. The parent audits; it does not absorb production labor.
+ 
+ The platform worker owns initial contract/config proposals inside W3. Other workers consume F1 and request contract changes; they do not create competing production schemas. After integration, every packet names exact owned paths and a base revision. Changes outside those paths require reassignment.
+ 
+
+--- handoff/START_HERE.md
++++ base/START_HERE.md
+@@ -14,6 +14,7 @@
+ | Product scope and accepted direction | [Product design](docs/superpowers/specs/2026-09-30-yor-world-design.md) |
+ | Full document map | [README.md](README.md) |
+ | Account-specific prompts and phases | [Account prompts](docs/planning/account-prompts.md) |
++| Three production prompt tracks | [Production prompts](docs/planning/production-prompts/README.md) |
+ | Claude browser review handoff | [Browser review workflow](docs/planning/browser-review-workflow.md) |
+ | Local startup files and verified access limits | [Local tool access](docs/planning/local-tool-access.md) |
+ | Assignments, packets, dependencies, and evidence rules | [Delegation and work orders](docs/planning/delegation-and-work-orders.md) |
+@@ -30,7 +31,7 @@
+ 
+ These are isolated proof output roots. Earlier local W1/W2/W3 attempts are retained as unaccepted artifacts; consult the work-order hub for the current maker, evidence, and acceptance state. The provider names above remain proposed lanes. Parent Codex coordinates and audits; an assigned production worker performs later integration. Report what you actually read, produced, and ran.
+ 
+-Local access must be real: a worker that can open this folder can reuse its files without repeated attachments. A browser-only ChatGPT, Gemini, or Claude chat does not gain filesystem access from a subscription or this document. No external account connection has been configured. If you cannot open the files, say **NO FILE ACCESS** and identify the missing inputs; use the browser-only fallback in the work-order hub.
++Local access must be real: a GPT/Gemini worker that can open this folder can reuse its files without repeated attachments; if it cannot, it reports **NO FILE ACCESS**. Claude browser reviewers instead read supplied project knowledge and review packets, flag absent items as **MISSING INPUT**, and review available material. No external account connection or automatic local-file synchronization has been configured.
+ 
+ For GPT/Gemini local tools, open this project as the working folder. AGENTS.md is the shared instruction source; GEMINI.md imports it and this entry point. CLAUDE.md is an unused optional Code adapter; current Claude reviewers use browser project knowledge and review packets. Read only your assigned packet and its named input files. Do not preload the entire archive. Installation, account authentication, and per-tool loading have not been validated by creating these files.
+ 

@@ -1,10 +1,10 @@
 # YOR WORLD — planning package
 
-Prepared 30 September 2026. Status: shared local-folder handoff prepared; earlier proof deliveries require verified handoff and review. See the [work-order board](docs/planning/delegation-and-work-orders.md).
+Prepared 30 September 2026; status reconciled 1 October 2026. GitHub is the authoritative live repository. **W1 REWORK; W2 INSUFFICIENT EVIDENCE; W3 REWORK; G1 LOCKED.** See the [parent ruling and exact revisions](docs/planning/reviews/2026-10-01-reconciliation.md) and [next packets](docs/planning/reconciliation-packets/2026-10-01-next-packets.md).
 
 YOR WORLD is a personal portfolio experienced as an inhabited developer studio. A visitor can enter through a cinematic doorway, meet the creator, touch objects that respond physically, and explore real work. Projects, résumé, and contact remain directly accessible through ordinary web pages.
 
-This workspace contains the project specification, local reference library, and isolated production work under `deliveries/`. Earlier room, avatar, and platform proof artifacts are retained for review; this setup does not claim completed proofs or running production workers. No production deployment or paid service has been created.
+This workspace contains the project specification, local reference library, and returned isolated proofs under `deliveries/`. W1/W2 have Gemini independent reviews; W3 now has an independent Codex implementation audit with reproduced tests. Assigned Claude reviews remain unarchived. Parent inspection found W1 spatial/camera defects; W3 requires dependency, payload-accounting, import-guard and helper-exit corrections. No proof is formally accepted, and no G1 implementation or production deployment is authorized by this reconciliation.
 
 The work is grouped into three [production prompts](docs/planning/production-prompts/README.md): platform/content (A), world/art (B), and integration/release (C). They follow the existing plans and preserve task-level assignment and review gates.
 
@@ -58,13 +58,13 @@ Before final environment modeling, prove a coarse room and a coarse rig can supp
 ## What is verified today
 
 - The project directory was empty before these documents were written.
-- It is not a Git repository; no remote or branch is configured here.
+- The live repository is [yorayriniwnl/Yor-World](https://github.com/yorayriniwnl/Yor-World), public, on `main`. Reconciliation began at clean commit `fe1a40f797ce3ec839939c09a1857b797c197269`, matching the live remote.
 - Blender 5.2.2 LTS is installed. The system reports Node 24.19.0 and pnpm 9.15.9.
 - Nine reference images were inspected. The supplied video is 6.5 seconds, 1600 × 1200, 30 FPS, without an audio track.
 - The user-designated main image was inspected for this revision; the account counts above remain user-reported, with no provider access verified.
-- No editable room, avatar, rig, source textures, or licensed production assets have been verified.
+- Editable room/avatar proof scenes and GLB exports are returned and independently reopened/validated. Final art, likeness, publication rights and production asset approval remain unverified.
 - The saved reference library has been rechecked: all 12 files match their recorded SHA-256 hashes and available originals; its missing index and manifest bookkeeping are repaired. [Integrity evidence](docs/planning/reviews/2026-09-30-reference-audit.json).
-- Existing local W1/W2/W3 artifacts remain unaccepted. No external subscription account is connected or newly dispatched; worker status is recorded in the work-order board.
+- W1/W2/W3 remain unaccepted for the specific reasons in the parent ruling. No external account was newly dispatched by this reconciliation; the [work-order board](docs/planning/delegation-and-work-orders.md) records current decisions. Historical no-Git statements in proof reports remain evidence of their earlier environment.
 - Official framework, rendering, accessibility, and backend documentation informed the proposed architecture. Source links are included beside relevant decisions.
 
 ## Reading estimates correctly

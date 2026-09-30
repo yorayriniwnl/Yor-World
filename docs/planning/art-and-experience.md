@@ -1,6 +1,6 @@
 # Art, room, and experience specification
 
-Date: 2026-09-30. Proposed production baseline. This is a written specification; no room, avatar, storyboard images, or production assets have been created.
+Date: 2026-09-30; status updated 2026-10-01. Art requirements are unchanged. W1 room and W2 avatar native/export feasibility artifacts are returned, with Gemini reviews; see the [parent ruling](reviews/2026-10-01-reconciliation.md). Final art, likeness and production asset approval remain outstanding.
 
 Parent: [Product design](../superpowers/specs/2026-09-30-yor-world-design.md).
 

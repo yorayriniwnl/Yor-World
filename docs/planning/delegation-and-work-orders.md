@@ -1,6 +1,6 @@
 # YOR WORLD delegation and work orders
 
-Date: 2026-09-30. Status: local-folder handoff prepared for 2 GPT Plus, 3 Gemini AI Pro and 15 Claude free browser accounts. Earlier local proof artifacts remain unaccepted; no external subscription account is connected or newly dispatched.
+Date: 2026-09-30; living status reconciled 2026-10-01. W1/W2/W3 are returned and remain unaccepted for the reasons in the [parent ruling](reviews/2026-10-01-reconciliation.md). W1/W2 Gemini reviews are archived; assigned Claude reviews are absent. **G1 LOCKED.** The [exact next packets](reconciliation-packets/2026-10-01-next-packets.md) supersede the initial-packet dispatch state below. No external account was newly dispatched by this reconciliation.
 
 The user authorized the full vision and delegated production. The parent Codex chat owns architecture, task assignment, audits, and acceptance. Workers make and integrate the product. This hub operates the existing plans; it does not replace them with another design exercise.
 
@@ -49,7 +49,7 @@ Browser reviewers return a structured review in chat or an actually generated do
 
 The platform worker owns initial contract/config proposals inside W3. Other workers consume F1 and request contract changes; they do not create competing production schemas. After integration, every packet names exact owned paths and a base revision. Changes outside those paths require reassignment.
 
-For completed code in an actual Git repository: inspect unrelated changes, commit only the completed scope, push to the verified GitHub remote, and report commit/push failures immediately. This workspace currently has no Git repository or known remote; do not initialize or invent one from a packet. Isolated files can be reviewed before repository setup.
+For completed code: inspect unrelated changes, commit only the completed scope, push to the verified GitHub remote, and report commit/push failures immediately. The authoritative repository is `https://github.com/yorayriniwnl/Yor-World.git`, branch `main`; local and live remote matched `fe1a40f797ce3ec839939c09a1857b797c197269` at reconciliation start. Recheck before work. Preserve historical no-Git statements in old reports; do not initialize or invent another repository.
 
 Workspace-connected workers read the saved files directly; no repeat attachments are needed. Claude browser reviewers follow the regular browser-review packet workflow: missing packet items are MISSING INPUT, and available items can still be reviewed. A missing C: drive is expected in those chats, not a reason to abandon review. No external account connection or external-provider dispatch has occurred. Signed-in access alone does not prove local execution.
 
@@ -61,10 +61,10 @@ W1/W2/W3 are independent: W1 owns room geometry; W2 uses its own F1 furniture fi
 
 | Packet | Maker / independent reviewer | Depends on | Current state / exit |
 | --- | --- | --- | --- |
-| W1 reference/blockout | Gemini-1 / Gemini-3 + parent | Image + F1 | Prior local artifacts await handoff/review; external packet unsent |
-| W2 avatar/export | GPT-2 / Gemini-3 + independent contract reviewer | F1 fixture + clip names | Prior local artifacts await handoff/review; external packet unsent |
-| W3 semantic platform | GPT-1 / assigned independent reviewer + parent | Engineering contracts | Prior local artifacts await handoff/review; external packet unsent |
-| G1 integration | GPT-2 / parent + assigned non-maker reviewer | Accepted W1/W2/W3 | Waiting / combined browser proof |
+| W1 reference/blockout | Reported Gemini-1 / Gemini-3, Claude-13 + parent | Image + F1 | REWORK: returned native/export proof; Gemini recommendation contradicted by parent geometry/camera inspection; W1-CORR-01 then new reviews |
+| W2 avatar/export | Reported GPT-2/Codex / Gemini-3, Claude-01/13 + parent | F1 fixture + clip names | INSUFFICIENT EVIDENCE: W2-F1-r2 motion review favorable; assigned interface/provenance reviews missing; W2-REV-01/13 ready |
+| W3 semantic platform | Reported GPT-1/Codex / independent Codex audit returned; Claude-01/02/05 + parent | Engineering contracts | REWORK: independent 55/18 reproduction; patch, payload accounting, import guard and helper exits require correction; W3-CORR-01 then final-hash reviews |
+| G1 integration | GPT-2 / parent + assigned non-maker reviewers | Explicitly accepted exact W1/W2/W3 revisions | LOCKED; no accepted set and no active integration assignment |
 
 Use states `ready → sent → returned → review → accepted`, or `rework/blocked`. Record actual account/profile alias, input revision, delivery path, evidence, reviewer, and next action when a state changes. The prior 430–690-hour estimate is uncalibrated; subscriptions do not multiply throughput. Re-estimate using accepted work and review/rework effort after G1.
 
