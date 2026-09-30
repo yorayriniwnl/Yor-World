@@ -32,6 +32,8 @@ export default function WorldRoot({
   const [activeCamera, setActiveCamera] = useState<CameraPreset>("home-desktop");
   const [showDiagnostics, setShowDiagnostics] = useState<boolean>(false);
 
+  const initialReducedMotionRef = useRef(reducedMotion);
+
   // Initialize runtime
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -39,7 +41,7 @@ export default function WorldRoot({
     const runtime = new WorldRuntime({
       canvas: canvasRef.current,
       soundEnabled: false,
-      reducedMotion,
+      reducedMotion: initialReducedMotionRef.current,
       simulateAssetError,
       simulateRendererError,
       onReady: (diag) => {

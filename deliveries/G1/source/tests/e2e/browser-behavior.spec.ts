@@ -163,7 +163,7 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
 
     // Wait for greeting nod and return sequence to finish (total sequence ~4.0s)
     await expect(page.locator('[data-testid="status-badge"]')).toContainText("coding_idle", { timeout: 8000 });
-    await captureScreenshot(page, "04-return-to-work");
+    await captureScreenshot(page, "04-return-coding");
   });
 
   test("6. Repeat: safe repeated greeting interactions without state corruption", async ({ page }) => {
@@ -183,6 +183,7 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
     // Third greeting after instant skip
     await page.click('[data-testid="skip-motion-btn"]');
     await expect(page.locator('[data-testid="status-badge"]')).toContainText("coding_idle");
+    await captureScreenshot(page, "05-repeat-greeting");
   });
 
   test("7. Cancel: safe cancellation reverses along collision-checked path back to rest", async ({ page }) => {
@@ -201,6 +202,7 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
 
     // Wait for return to finish
     await expect(page.locator('[data-testid="status-badge"]')).toContainText("coding_idle", { timeout: 5000 });
+    await captureScreenshot(page, "06-cancel-safe-return");
   });
 
   test("8. Skip/Escape: instant settlement to coding pose within ≤50ms", async ({ page }) => {
@@ -219,6 +221,7 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
     await expect(page.locator('[data-testid="status-badge"]')).toContainText("coding_idle");
     const elapsed = Date.now() - startTime;
     expect(elapsed).toBeLessThanOrEqual(500); // Fast UI response
+    await captureScreenshot(page, "07-skip-instant-settle");
   });
 
   test("9. Monitor & 10. Reverse Doorway camera navigation", async ({ page }) => {
@@ -234,7 +237,7 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
     expect(diag.cameraPosition[0]).toBeCloseTo(0, 1);
     expect(diag.cameraPosition[1]).toBeCloseTo(1.08, 1);
     expect(diag.cameraPosition[2]).toBeCloseTo(-0.5, 1);
-    await captureScreenshot(page, "05-camera-monitor");
+    await captureScreenshot(page, "08-camera-monitor");
 
     // Switch to Reverse Doorway
     await page.click('[data-testid="camera-reverse-btn"]');
@@ -244,7 +247,7 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
     expect(diag.cameraPosition[0]).toBeCloseTo(0.2, 1);
     expect(diag.cameraPosition[1]).toBeCloseTo(1.25, 1);
     expect(diag.cameraPosition[2]).toBeCloseTo(-1.0, 1);
-    await captureScreenshot(page, "06-camera-reverse-doorway");
+    await captureScreenshot(page, "09-camera-reverse-doorway");
 
     // Switch back to Home
     await page.click('[data-testid="camera-home-btn"]');
@@ -258,7 +261,7 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
     await page.goto("/?studio=enter");
 
     await expect(page.locator('[data-testid="world-canvas"]')).toBeVisible({ timeout: 15000 });
-    await captureScreenshot(page, "07-mobile-viewport");
+    await captureScreenshot(page, "10-mobile-viewport");
 
     // Buttons must have >= 44px touch height
     const btnBox = await page.locator('[data-testid="greet-resident-btn"]').boundingBox();
@@ -290,11 +293,12 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
     // Toggle Reduced Motion ON
     await page.click('[data-testid="reduced-motion-toggle-btn"]');
     await expect(page.locator('[data-testid="reduced-motion-toggle-btn"]')).toContainText("Reduced Motion: On");
+    await expect(page.locator('[data-testid="world-diagnostics"]')).toContainText('"reducedMotion": true');
     text = await page.locator('[data-testid="world-diagnostics"]').textContent();
     diag = JSON.parse(text!);
     expect(diag.reducedMotion).toBe(true);
 
-    await captureScreenshot(page, "08-reduced-motion");
+    await captureScreenshot(page, "11-reduced-motion");
   });
 
   test("13. Asset Failure: graceful fallback leaves useful HTML", async ({ page }) => {
@@ -304,7 +308,7 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
     const fallback = page.locator('[data-testid="world-fallback-banner"]');
     await expect(fallback).toBeVisible({ timeout: 5000 });
     await expect(fallback).toContainText("Accessible Portfolio View");
-    await captureScreenshot(page, "09-asset-fallback");
+    await captureScreenshot(page, "12-asset-failure-fallback");
 
     // Direct links to projects and about are present and working
     await expect(page.locator('[data-testid="fallback-projects-link"]')).toBeVisible();
@@ -321,10 +325,11 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
     const fallback = page.locator('[data-testid="world-fallback-banner"]');
     await expect(fallback).toBeVisible({ timeout: 5000 });
     await expect(fallback).toContainText("Accessible Portfolio View");
-    await captureScreenshot(page, "10-renderer-fallback");
+    await captureScreenshot(page, "13-renderer-failure-fallback");
 
     // Page navigation still functions
-    await expect(page.locator('a[href="/projects"]')).toHaveCount(2); // In nav and directory
+    await expect(page.locator('[data-testid="fallback-projects-link"]')).toBeVisible();
+    await expect(page.locator('[data-testid="fallback-about-link"]')).toBeVisible();
   });
 
   test("15. Fallback Content with JavaScript Disabled: 100% useful semantic HTML", async ({ browser }) => {
@@ -333,7 +338,7 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
 
     await page.goto("/");
     await expect(page.locator("h1")).toContainText("A little world");
-    await captureScreenshot(page, "11-fallback-no-javascript");
+    await captureScreenshot(page, "14-javascript-disabled");
 
     // Details disclosure works natively without JS
     const disclosure = page.locator('[data-testid="studio-disclosure"]');

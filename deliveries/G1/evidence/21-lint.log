@@ -1,0 +1,33 @@
+COMMAND: "C:\Program Files\nodejs\node.EXE" C:\Users\yoray\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs lint
+CWD: C:\Users\yoray\AppData\Local\Temp\yor-world-g1-proof-5k01yp30\app
+
+> yor-world-g1-proof@0.1.0 lint C:\Users\yoray\AppData\Local\Temp\yor-world-g1-proof-5k01yp30\app
+> eslint . --max-warnings=0
+
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-g1-proof-5k01yp30\app\src\features\world\StudioLauncher.tsx
+  32:18  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-g1-proof-5k01yp30\app\src\features\world\StudioLauncher.tsx:32:18
+  30 |         params.get("simulateAssetError") === "1" ||
+  31 |         params.get("simulateRendererError") === "1";
+> 32 |       if (enter) setIsEntered(true);
+     |                  ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  33 |       if (params.get("simulateAssetError") === "1") setSimulateAssetError(true);
+  34 |       if (params.get("simulateRendererError") === "1") setSimulateRendererError(true);
+  35 |     }  react-hooks/set-state-in-effect
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-g1-proof-5k01yp30\app\src\features\world\WorldRoot.tsx
+  80:6  warning  React Hook useEffect has a missing dependency: 'reducedMotion'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+✖ 2 problems (1 error, 1 warning)
+
+ ELIFECYCLE  Command failed with exit code 1.
+
+EXIT: 1

@@ -85,7 +85,7 @@ env.update({
     "CI": "1",
     "NPM_CONFIG_USERCONFIG": str(scratch / "empty.npmrc"),
     "NPM_CONFIG_GLOBALCONFIG": str(scratch / "empty.npmrc"),
-    "PORT": "3147",
+    "PORT": "3189",
     "G1_EVIDENCE_DIR": str(evidence),
     "W3_EVIDENCE_DIR": str(evidence),
 })

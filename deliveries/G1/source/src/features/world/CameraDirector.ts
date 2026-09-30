@@ -67,10 +67,10 @@ export class CameraDirector {
     if (width <= 0 || height <= 0) return;
     this.camera.aspect = width / height;
 
-    const isMobile = width < 640 || (typeof window !== "undefined" && window.innerWidth < 640);
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
     if (isMobile && this.currentPreset === "home-desktop") {
       this.setPreset("home-mobile", true);
-    } else if (!isMobile && width >= 640 && this.currentPreset === "home-mobile" && this.camera.aspect >= 1.0) {
+    } else if (!isMobile && this.currentPreset === "home-mobile") {
       this.setPreset("home-desktop", true);
     } else {
       this.camera.updateProjectionMatrix();

@@ -1,6 +1,6 @@
 # YOR WORLD delegation and work orders
 
-Date: 2026-09-30; living status reconciled 2026-10-01 (PARENT-RECON-02). W1-F1-r2, W2-F1-r2, and W3-A1-r2 are formally ACCEPTED in the [second parent ruling](reviews/2026-10-01-reconciliation-02.md). **G1 UNLOCKED AND AUTHORIZED.** Combined proof integration is active in `deliveries/G1/`.
+Date: 2026-09-30; living status reconciled 2026-10-01 (PARENT-RECON-03). W1-F1-r2, W2-F1-r2, and W3-A1-r2 were ACCEPTED in the [second parent ruling](reviews/2026-10-01-reconciliation-02.md). Following G1 delivery and independent reviews (Claude-10, Claude-13, Claude-15, and GPT-6 Astra audit), the [third parent ruling](reviews/2026-10-01-reconciliation-03.md) is **G1 ACCEPTED (`G1-R1`)**. Gemini-2 (material-light sample), B2-B5, and A2 are **UNLOCKED AND AUTHORIZED**.
 
 The user authorized the full vision and delegated production. The parent Codex chat owns architecture, task assignment, audits, and acceptance. Workers make and integrate the product. This hub operates the existing plans; it does not replace them with another design exercise.
 

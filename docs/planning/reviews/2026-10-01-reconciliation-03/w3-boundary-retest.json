@@ -1,0 +1,111 @@
+{
+  "evidenceClass": "REVIEWER EXECUTED",
+  "candidateRevision": "20950576f8b9a149fe521ac4ac44056ff263aba9",
+  "scratch": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-recon03-w3-gb00kcon",
+  "environment": "System runtime variables only; no backend/service credentials; telemetry disabled.",
+  "commands": [
+    {
+      "label": "frozen-install",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\yoray\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "install",
+        "--frozen-lockfile",
+        "--store-dir",
+        "C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-recon03-w3-gb00kcon\\store",
+        "--config.cache-dir=C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-recon03-w3-gb00kcon\\cache"
+      ],
+      "cwd": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-recon03-w3-gb00kcon\\app",
+      "startedAtUtc": "2026-09-30T22:02:26.085749+00:00",
+      "exitCode": 0,
+      "log": "w3-frozen-install.log",
+      "endedAtUtc": "2026-09-30T22:03:35.720689+00:00"
+    },
+    {
+      "label": "lint-final",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\yoray\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "lint"
+      ],
+      "cwd": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-recon03-w3-gb00kcon\\app",
+      "startedAtUtc": "2026-09-30T22:03:35.720689+00:00",
+      "exitCode": 0,
+      "log": "w3-lint-final.log",
+      "endedAtUtc": "2026-09-30T22:03:59.570710+00:00"
+    },
+    {
+      "label": "typecheck-final",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\yoray\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "typecheck"
+      ],
+      "cwd": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-recon03-w3-gb00kcon\\app",
+      "startedAtUtc": "2026-09-30T22:03:59.570710+00:00",
+      "exitCode": 0,
+      "log": "w3-typecheck-final.log",
+      "endedAtUtc": "2026-09-30T22:04:08.016221+00:00"
+    },
+    {
+      "label": "unit-final",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\yoray\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "test:unit"
+      ],
+      "cwd": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-recon03-w3-gb00kcon\\app",
+      "startedAtUtc": "2026-09-30T22:04:08.018566+00:00",
+      "exitCode": 0,
+      "log": "w3-unit-final.log",
+      "endedAtUtc": "2026-09-30T22:04:12.167906+00:00"
+    },
+    {
+      "label": "quoted-fixture-control",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\yoray\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "test:unit",
+        "tests/unit/boundaries.test.ts"
+      ],
+      "cwd": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-recon03-w3-gb00kcon\\app",
+      "startedAtUtc": "2026-09-30T22:04:12.172921+00:00",
+      "exitCode": 1,
+      "log": "w3-quoted-fixture-control.log",
+      "endedAtUtc": "2026-09-30T22:04:15.010456+00:00"
+    },
+    {
+      "label": "backtick-fixture-negative",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\yoray\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "test:unit",
+        "tests/unit/boundaries.test.ts"
+      ],
+      "cwd": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-recon03-w3-gb00kcon\\app",
+      "startedAtUtc": "2026-09-30T22:04:15.010456+00:00",
+      "exitCode": 0,
+      "log": "w3-backtick-fixture-negative.log",
+      "endedAtUtc": "2026-09-30T22:04:17.144366+00:00"
+    }
+  ],
+  "mutations": [
+    {
+      "id": "quoted-fixture-control",
+      "source": "const reviewerFixture = await import(\"../../../tests/fixtures/reviewer-fixture\");\nimport type { PublishedProject } from \"@/contracts/content\";\n\n// No projects have passed evidence review. Candidate names are not public cards.\nexport const publishedProjects: readonly PublishedProject[] = [];\nexport const draftIdentity = {\n  name: reviewerFixture.unverifiedName,\n  role: \"Software engineer \u2014 proposed title\",\n  note: \"Name and professional title await owner confirmation.\",\n} as const;\n",
+      "expectedExit": "nonzero",
+      "actualExit": 1,
+      "fixtureLogObserved": true
+    },
+    {
+      "id": "backtick-fixture-negative",
+      "source": "const reviewerFixture = await import(`../../../tests/fixtures/reviewer-fixture`);\nimport type { PublishedProject } from \"@/contracts/content\";\n\n// No projects have passed evidence review. Candidate names are not public cards.\nexport const publishedProjects: readonly PublishedProject[] = [];\nexport const draftIdentity = {\n  name: reviewerFixture.unverifiedName,\n  role: \"Software engineer \u2014 proposed title\",\n  note: \"Name and professional title await owner confirmation.\",\n} as const;\n",
+      "expectedExit": "nonzero",
+      "actualExit": 0,
+      "fixtureLogObserved": true
+    }
+  ],
+  "deliveredSourceUnchanged": true,
+  "scratchContentRestored": true,
+  "lockfileUnchanged": true
+}

@@ -1,0 +1,43 @@
+
+> yor-world-platform-proof@0.1.0 test:unit C:\Users\yoray\AppData\Local\Temp\yor-recon03-w3-gb00kcon\app
+> vitest run --config vitest.config.ts "tests/unit/boundaries.test.ts"
+
+
+ RUN  v5.0.2 C:/Users/yoray/AppData/Local/Temp/yor-recon03-w3-gb00kcon/app
+
+stdout | tests/unit/boundaries.test.ts
+RECON03: production module evaluated test fixture
+
+ ❯ tests/unit/boundaries.test.ts (8 tests | 1 failed) 86ms
+   ✓ keeps all public projects empty and identity provisional 3ms
+   × does not pull fixture, world, service, or audio dependencies into production 63ms
+   ✓ keeps shared contracts independent of framework and server imports 9ms
+   ✓ regression: syntax-level import boundary detection (5)
+     ✓ rejects dynamic import of test fixture in production module 3ms
+     ✓ rejects side-effect import of test fixture in production module 1ms
+     ✓ rejects export-from of test fixture in production module 1ms
+     ✓ rejects aliased import of test fixture in production module 1ms
+     ✓ rejects framework or dynamic imports in contracts 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/boundaries.test.ts > does not pull fixture, world, service, or audio dependencies into production
+Error: Forbidden import (dynamic-import) in src/features/portfolio/public-content.ts:1: specifier "../../../tests/fixtures/reviewer-fixture" resolves to "tests/fixtures/reviewer-fixture" matching /(?:^|\/)(?:tests|fixtures)(?:\/|$)/
+ ❯ validateProductionModule tests/unit/boundaries.test.ts:88:15
+     86|     for (const pattern of forbiddenPatterns) {
+     87|       if (pattern.test(imp.specifier) || pattern.test(imp.resolvedPath…
+     88|         throw new Error(
+       |               ^
+     89|           `Forbidden import (${imp.kind}) in ${filePath}:${imp.line}: …
+     90|         );
+ ❯ tests/unit/boundaries.test.ts:118:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  03:34:13
+   Duration  1.04s (import 57%, transform 30%, tests 11%, worker 1%)
+
+ ELIFECYCLE  Command failed with exit code 1.

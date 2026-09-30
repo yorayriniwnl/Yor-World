@@ -18,22 +18,29 @@ const DynamicWorldRoot = dynamic(() => import("./WorldRoot"), {
 });
 
 export function StudioLauncher() {
-  const [isEntered, setIsEntered] = useState<boolean>(false);
-  const [simulateAssetError, setSimulateAssetError] = useState<boolean>(false);
-  const [simulateRendererError, setSimulateRendererError] = useState<boolean>(false);
-
-  useEffect(() => {
+  const [isEntered, setIsEntered] = useState<boolean>(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      const enter =
+      return (
         params.get("studio") === "enter" ||
         params.get("simulateAssetError") === "1" ||
-        params.get("simulateRendererError") === "1";
-      if (enter) setIsEntered(true);
-      if (params.get("simulateAssetError") === "1") setSimulateAssetError(true);
-      if (params.get("simulateRendererError") === "1") setSimulateRendererError(true);
+        params.get("simulateRendererError") === "1"
+      );
     }
-  }, []);
+    return false;
+  });
+  const [simulateAssetError] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      return new URLSearchParams(window.location.search).get("simulateAssetError") === "1";
+    }
+    return false;
+  });
+  const [simulateRendererError] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      return new URLSearchParams(window.location.search).get("simulateRendererError") === "1";
+    }
+    return false;
+  });
 
   return (
     <div>
