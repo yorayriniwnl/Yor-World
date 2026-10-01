@@ -1,0 +1,265 @@
+   1: import * as THREE from "three";
+   2: import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+   3: import { integrateScene, IntegratedSceneResult } from "./SceneIntegrator";
+   4: import { CharacterDirector } from "./CharacterDirector";
+   5: import { CameraDirector } from "./CameraDirector";
+   6: import type { CameraPreset, Diagnostics } from "./types";
+   7: 
+   8: export interface WorldRuntimeOptions {
+   9:   canvas: HTMLCanvasElement;
+  10:   soundEnabled?: boolean | undefined;
+  11:   reducedMotion?: boolean | undefined;
+  12:   simulateAssetError?: boolean | undefined;
+  13:   simulateRendererError?: boolean | undefined;
+  14:   onReady?: ((diagnostics: Diagnostics) => void) | undefined;
+  15:   onError?: ((err: Error) => void) | undefined;
+  16: }
+  17: 
+  18: export class WorldRuntime {
+  19:   private canvas: HTMLCanvasElement;
+  20:   private renderer: THREE.WebGLRenderer | null = null;
+  21:   private scene: THREE.Scene;
+  22:   private camera: THREE.PerspectiveCamera;
+  23:   private characterDirector: CharacterDirector | null = null;
+  24:   private cameraDirector: CameraDirector | null = null;
+  25:   private integratedResult: IntegratedSceneResult | null = null;
+  26: 
+  27:   public soundEnabled: boolean;
+  28:   public reducedMotion: boolean;
+  29:   private isDisposed: boolean = false;
+  30:   private animationFrameId: number | null = null;
+  31:   private lastTime: number = 0;
+  32:   private webglRendererName: string = "Unknown";
+  33: 
+  34:   constructor(options: WorldRuntimeOptions) {
+  35:     this.canvas = options.canvas;
+  36:     this.soundEnabled = options.soundEnabled ?? false;
+  37:     this.reducedMotion = options.reducedMotion ?? false;
+  38: 
+  39:     this.scene = new THREE.Scene();
+  40:     this.scene.background = new THREE.Color("#0c1017");
+  41: 
+  42:     this.camera = new THREE.PerspectiveCamera(60, 16 / 9, 0.05, 30);
+  43:     this.cameraDirector = new CameraDirector(this.camera, "home-desktop");
+  44:     this.cameraDirector.setReducedMotion(this.reducedMotion);
+  45: 
+  46:     this.init(options).catch((err) => {
+  47:       console.error("[WorldRuntime] Initialization error:", err);
+  48:       if (options.onError) {
+  49:         options.onError(err instanceof Error ? err : new Error(String(err)));
+  50:       }
+  51:     });
+  52:   }
+  53: 
+  54:   private async init(options: WorldRuntimeOptions) {
+  55:     // 1. Renderer initialization with fault simulation support
+  56:     if (options.simulateRendererError) {
+  57:       throw new Error("Simulated WebGL Renderer Context Failure");
+  58:     }
+  59: 
+  60:     try {
+  61:       this.renderer = new THREE.WebGLRenderer({
+  62:         canvas: this.canvas,
+  63:         antialias: true,
+  64:         preserveDrawingBuffer: true,
+  65:       });
+  66:       this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  67:       this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  68:       this.renderer.toneMappingExposure = 1.15;
+  69:       this.renderer.shadowMap.enabled = true;
+  70:       this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  71: 
+  72:       const gl = this.renderer.getContext();
+  73:       const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
+  74:       this.webglRendererName = debugInfo
+  75:         ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)
+  76:         : gl.getParameter(gl.RENDERER) || "WebGL";
+  77:     } catch (e) {
+  78:       throw new Error(`WebGL context creation failed: ${(e as Error).message}`);
+  79:     }
+  80: 
+  81:     // 2. Lighting setup matching main reference palette
+  82:     this.setupLighting();
+  83: 
+  84:     // 3. Asset Loading with fault simulation support
+  85:     if (options.simulateAssetError) {
+  86:       throw new Error("Simulated Asset Loading 404 / Parse Failure");
+  87:     }
+  88: 
+  89:     const loader = new GLTFLoader();
+  90:     const [w1Gltf, avatarGltf, fixtureGltf] = await Promise.all([
+  91:       loader.loadAsync("/models/room-blockout.glb"),
+  92:       loader.loadAsync("/models/avatar-proof.glb"),
+  93:       loader.loadAsync("/models/fixture-proof.glb"),
+  94:     ]);
+  95: 
+  96:     if (this.isDisposed) return;
+  97: 
+  98:     // 4. Integrate Scene Graph per G1 invariants
+  99:     this.integratedResult = integrateScene(w1Gltf, avatarGltf, fixtureGltf);
+ 100:     this.scene.add(this.integratedResult.scene);
+ 101: 
+ 102:     // 5. Initialize Directors
+ 103:     this.characterDirector = new CharacterDirector(
+ 104:       this.integratedResult.avatarMixer,
+ 105:       this.integratedResult.chairMixer,
+ 106:       this.integratedResult.avatarActions,
+ 107:       this.integratedResult.chairActions,
+ 108:       this.integratedResult.bodyTurn,
+ 109:       this.integratedResult.chairRoot
+ 110:     );
+ 111: 
+ 112:     // 6. Handle Viewport Sizing
+ 113:     this.resize();
+ 114: 
+ 115:     // 7. Start Animation Loop
+ 116:     this.lastTime = performance.now();
+ 117:     this.animate(this.lastTime);
+ 118: 
+ 119:     // Notify ready
+ 120:     if (options.onReady) {
+ 121:       options.onReady(this.getDiagnostics());
+ 122:     }
+ 123:   }
+ 124: 
+ 125:   private setupLighting() {
+ 126:     // Ambient / Hemisphere Fill
+ 127:     const hemiLight = new THREE.HemisphereLight(0xffffff, 0x687c9a, 2.1);
+ 128:     this.scene.add(hemiLight);
+ 129: 
+ 130:     // Main Directional Workstation Light (warm task light)
+ 131:     const whiteDir = new THREE.DirectionalLight(0xfff5e8, 3.1);
+ 132:     whiteDir.position.set(-2, 4, 3);
+ 133:     whiteDir.castShadow = true;
+ 134:     whiteDir.shadow.mapSize.set(1024, 1024);
+ 135:     this.scene.add(whiteDir);
+ 136: 
+ 137:     // Cyan Fill / Accent
+ 138:     const cyanLight = new THREE.PointLight(0x78e4ff, 15, 8);
+ 139:     cyanLight.position.set(2, 2, -1);
+ 140:     this.scene.add(cyanLight);
+ 141: 
+ 142:     // Pink / Violet Hex Cluster Accent
+ 143:     const pinkLight = new THREE.PointLight(0xffa4e6, 14, 8);
+ 144:     pinkLight.position.set(-1, 2.1, -1.6);
+ 145:     this.scene.add(pinkLight);
+ 146:   }
+ 147: 
+ 148:   private animate = (currentTime: number) => {
+ 149:     if (this.isDisposed) return;
+ 150:     this.animationFrameId = requestAnimationFrame(this.animate);
+ 151: 
+ 152:     const dt = this.lastTime ? Math.min((currentTime - this.lastTime) / 1000, 0.1) : 0;
+ 153:     this.lastTime = currentTime;
+ 154: 
+ 155:     if (this.characterDirector) {
+ 156:       this.characterDirector.advance(dt);
+ 157:     }
+ 158: 
+ 159:     if (this.renderer && this.integratedResult) {
+ 160:       this.integratedResult.residentBody.skeleton.update();
+ 161:       this.renderer.render(this.scene, this.camera);
+ 162:     }
+ 163:   };
+ 164: 
+ 165:   public resize() {
+ 166:     if (!this.canvas || !this.renderer) return;
+ 167:     const parent = this.canvas.parentElement;
+ 168:     if (!parent) return;
+ 169: 
+ 170:     const width = parent.clientWidth || window.innerWidth;
+ 171:     const height = parent.clientHeight || window.innerHeight;
+ 172: 
+ 173:     this.renderer.setSize(width, height, false);
+ 174:     if (this.cameraDirector) {
+ 175:       this.cameraDirector.resize(width, height);
+ 176:     }
+ 177:   }
+ 178: 
+ 179:   public greet(): number {
+ 180:     return this.characterDirector ? this.characterDirector.playGreeting() : 0;
+ 181:   }
+ 182: 
+ 183:   public cancel(): number {
+ 184:     return this.characterDirector ? this.characterDirector.cancel() : 0;
+ 185:   }
+ 186: 
+ 187:   public skip(): number {
+ 188:     return this.characterDirector ? this.characterDirector.settle() : 0;
+ 189:   }
+ 190: 
+ 191:   public setCamera(preset: CameraPreset) {
+ 192:     if (this.cameraDirector) {
+ 193:       this.cameraDirector.setPreset(preset);
+ 194:     }
+ 195:   }
+ 196: 
+ 197:   public setSound(enabled: boolean) {
+ 198:     this.soundEnabled = enabled;
+ 199:   }
+ 200: 
+ 201:   public setReducedMotion(enabled: boolean) {
+ 202:     this.reducedMotion = enabled;
+ 203:     if (this.cameraDirector) {
+ 204:       this.cameraDirector.setReducedMotion(enabled);
+ 205:     }
+ 206:   }
+ 207: 
+ 208:   public getDiagnostics(): Diagnostics {
+ 209:     const charDiag = this.characterDirector?.getDiagnostics() ?? {
+ 210:       currentClip: "none",
+ 211:       currentTime: 0,
+ 212:       mode: "unmounted",
+ 213:       queueLength: 0,
+ 214:       chairYawDeg: 0,
+ 215:       bodyYawDeg: 0,
+ 216:     };
+ 217: 
+ 218:     const camDiag = this.cameraDirector?.getDiagnostics() ?? {
+ 219:       preset: "home-desktop" as CameraPreset,
+ 220:       position: [0, 0, 0] as [number, number, number],
+ 221:       fov: 60,
+ 222:     };
+ 223: 
+ 224:     const residentPos = this.integratedResult?.resident
+ 225:       ? (this.integratedResult.resident.getWorldPosition(new THREE.Vector3()).toArray() as [number, number, number])
+ 226:       : [0, 0, 0];
+ 227: 
+ 228:     const chairPos = this.integratedResult?.chairRoot
+ 229:       ? (this.integratedResult.chairRoot.getWorldPosition(new THREE.Vector3()).toArray() as [number, number, number])
+ 230:       : [0, 0, 0];
+ 231: 
+ 232:     return {
+ 233:       residentCount: this.integratedResult?.nodeCounts.residentCount ?? 0,
+ 234:       chairCount: this.integratedResult?.nodeCounts.chairRootCount ?? 0,
+ 235:       movingChairCount: this.integratedResult?.nodeCounts.chairRootCount ?? 0,
+ 236:       deskCount: this.integratedResult?.nodeCounts.deskCount ?? 0,
+ 237:       fixtureStaticDiscarded: (this.integratedResult?.nodeCounts.fixtureStaticCount ?? 0) === 0,
+ 238:       residentPosition: residentPos as [number, number, number],
+ 239:       chairPosition: chairPos as [number, number, number],
+ 240:       chairYawDeg: charDiag.chairYawDeg,
+ 241:       bodyYawDeg: charDiag.bodyYawDeg,
+ 242:       activeClip: charDiag.currentClip,
+ 243:       currentTime: charDiag.currentTime,
+ 244:       cameraPreset: camDiag.preset,
+ 245:       cameraPosition: camDiag.position,
+ 246:       cameraFov: camDiag.fov,
+ 247:       soundEnabled: this.soundEnabled,
+ 248:       reducedMotion: this.reducedMotion,
+ 249:       webglRenderer: this.webglRendererName,
+ 250:       mode: charDiag.mode,
+ 251:     };
+ 252:   }
+ 253: 
+ 254:   public dispose() {
+ 255:     this.isDisposed = true;
+ 256:     if (this.animationFrameId !== null) {
+ 257:       cancelAnimationFrame(this.animationFrameId);
+ 258:       this.animationFrameId = null;
+ 259:     }
+ 260:     if (this.renderer) {
+ 261:       this.renderer.dispose();
+ 262:       this.renderer = null;
+ 263:     }
+ 264:   }
+ 265: }

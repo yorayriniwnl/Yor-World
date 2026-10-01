@@ -1,0 +1,280 @@
+   1: "use client";
+   2: 
+   3: import React, { useEffect, useRef, useState, useCallback } from "react";
+   4: import { WorldRuntime } from "./WorldRuntime";
+   5: import { WorldFallback } from "./WorldFallback";
+   6: import type { CameraPreset, Diagnostics } from "./types";
+   7: import styles from "./world.module.css";
+   8: 
+   9: export interface WorldRootProps {
+  10:   onClose?: (() => void) | undefined;
+  11:   simulateAssetError?: boolean | undefined;
+  12:   simulateRendererError?: boolean | undefined;
+  13: }
+  14: 
+  15: export default function WorldRoot({
+  16:   onClose,
+  17:   simulateAssetError = false,
+  18:   simulateRendererError = false,
+  19: }: WorldRootProps) {
+  20:   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  21:   const runtimeRef = useRef<WorldRuntime | null>(null);
+  22: 
+  23:   const [diagnostics, setDiagnostics] = useState<Diagnostics | null>(null);
+  24:   const [error, setError] = useState<string | null>(null);
+  25:   const [soundEnabled, setSoundEnabled] = useState<boolean>(false);
+  26:   const [reducedMotion, setReducedMotion] = useState<boolean>(() => {
+  27:     return (
+  28:       typeof window !== "undefined" &&
+  29:       window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  30:     );
+  31:   });
+  32:   const [activeCamera, setActiveCamera] = useState<CameraPreset>("home-desktop");
+  33:   const [showDiagnostics, setShowDiagnostics] = useState<boolean>(false);
+  34: 
+  35:   const initialReducedMotionRef = useRef(reducedMotion);
+  36: 
+  37:   // Initialize runtime
+  38:   useEffect(() => {
+  39:     if (!canvasRef.current) return;
+  40: 
+  41:     const runtime = new WorldRuntime({
+  42:       canvas: canvasRef.current,
+  43:       soundEnabled: false,
+  44:       reducedMotion: initialReducedMotionRef.current,
+  45:       simulateAssetError,
+  46:       simulateRendererError,
+  47:       onReady: (diag) => {
+  48:         setDiagnostics(diag);
+  49:       },
+  50:       onError: (err) => {
+  51:         setError(err.message);
+  52:       },
+  53:     });
+  54: 
+  55:     runtimeRef.current = runtime;
+  56: 
+  57:     const handleResize = () => runtime.resize();
+  58:     const handleKeyDown = (e: KeyboardEvent) => {
+  59:       if (e.key === "Escape") {
+  60:         runtime.skip();
+  61:         setDiagnostics(runtime.getDiagnostics());
+  62:       }
+  63:     };
+  64: 
+  65:     window.addEventListener("resize", handleResize);
+  66:     window.addEventListener("keydown", handleKeyDown);
+  67: 
+  68:     // Diagnostics polling interval for live state
+  69:     const interval = setInterval(() => {
+  70:       if (runtimeRef.current) {
+  71:         setDiagnostics(runtimeRef.current.getDiagnostics());
+  72:       }
+  73:     }, 100);
+  74: 
+  75:     return () => {
+  76:       clearInterval(interval);
+  77:       window.removeEventListener("resize", handleResize);
+  78:       window.removeEventListener("keydown", handleKeyDown);
+  79:       runtime.dispose();
+  80:       runtimeRef.current = null;
+  81:     };
+  82:   }, [simulateAssetError, simulateRendererError]);
+  83: 
+  84:   // Synchronize reducedMotion changes with runtime
+  85:   useEffect(() => {
+  86:     if (runtimeRef.current) {
+  87:       runtimeRef.current.setReducedMotion(reducedMotion);
+  88:     }
+  89:   }, [reducedMotion]);
+  90: 
+  91:   const handleGreet = useCallback(() => {
+  92:     if (runtimeRef.current) {
+  93:       runtimeRef.current.greet();
+  94:       setDiagnostics(runtimeRef.current.getDiagnostics());
+  95:     }
+  96:   }, []);
+  97: 
+  98:   const handleCancel = useCallback(() => {
+  99:     if (runtimeRef.current) {
+ 100:       runtimeRef.current.cancel();
+ 101:       setDiagnostics(runtimeRef.current.getDiagnostics());
+ 102:     }
+ 103:   }, []);
+ 104: 
+ 105:   const handleSkip = useCallback(() => {
+ 106:     if (runtimeRef.current) {
+ 107:       runtimeRef.current.skip();
+ 108:       setDiagnostics(runtimeRef.current.getDiagnostics());
+ 109:     }
+ 110:   }, []);
+ 111: 
+ 112:   const handleCameraChange = useCallback((preset: CameraPreset) => {
+ 113:     if (runtimeRef.current) {
+ 114:       runtimeRef.current.setCamera(preset);
+ 115:       setActiveCamera(preset);
+ 116:       setDiagnostics(runtimeRef.current.getDiagnostics());
+ 117:     }
+ 118:   }, []);
+ 119: 
+ 120:   const handleSoundToggle = useCallback(() => {
+ 121:     setSoundEnabled((prev) => {
+ 122:       const next = !prev;
+ 123:       if (runtimeRef.current) runtimeRef.current.setSound(next);
+ 124:       return next;
+ 125:     });
+ 126:   }, []);
+ 127: 
+ 128:   const handleReducedMotionToggle = useCallback(() => {
+ 129:     setReducedMotion((prev) => {
+ 130:       const next = !prev;
+ 131:       if (runtimeRef.current) runtimeRef.current.setReducedMotion(next);
+ 132:       return next;
+ 133:     });
+ 134:   }, []);
+ 135: 
+ 136:   if (error) {
+ 137:     return <WorldFallback reason={error} onDismiss={onClose} />;
+ 138:   }
+ 139: 
+ 140:   return (
+ 141:     <div
+ 142:       className={styles.stageContainer}
+ 143:       data-testid="world-stage-container"
+ 144:       role="region"
+ 145:       aria-label="Interactive 3D Studio"
+ 146:     >
+ 147:       <canvas
+ 148:         ref={canvasRef}
+ 149:         className={styles.canvas}
+ 150:         data-testid="world-canvas"
+ 151:         aria-label="3D Room view showing resident, workstation, and moving chair"
+ 152:       />
+ 153: 
+ 154:       <div className={styles.hudOverlay}>
+ 155:         <div className={styles.hudTopBar}>
+ 156:           <div className={styles.hudControls}>
+ 157:             <button
+ 158:               type="button"
+ 159:               onClick={handleGreet}
+ 160:               className={styles.hudButton}
+ 161:               data-testid="greet-resident-btn"
+ 162:               aria-label="Acknowledge and greet resident"
+ 163:             >
+ 164:               Greet Resident
+ 165:             </button>
+ 166:             <button
+ 167:               type="button"
+ 168:               onClick={handleCancel}
+ 169:               className={styles.hudButton}
+ 170:               data-testid="cancel-motion-btn"
+ 171:               aria-label="Safely cancel motion and return to work"
+ 172:             >
+ 173:               Cancel
+ 174:             </button>
+ 175:             <button
+ 176:               type="button"
+ 177:               onClick={handleSkip}
+ 178:               className={styles.hudButton}
+ 179:               data-testid="skip-motion-btn"
+ 180:               aria-label="Instant skip to coding pose (Escape)"
+ 181:             >
+ 182:               Skip (Esc)
+ 183:             </button>
+ 184:           </div>
+ 185: 
+ 186:           <div className={styles.hudControls}>
+ 187:             <button
+ 188:               type="button"
+ 189:               onClick={handleSoundToggle}
+ 190:               className={`${styles.hudButton} ${soundEnabled ? styles.hudButtonActive : ""}`}
+ 191:               data-testid="sound-toggle-btn"
+ 192:               aria-label={`Sound ${soundEnabled ? "On" : "Off"}`}
+ 193:             >
+ 194:               Sound: {soundEnabled ? "On" : "Off"}
+ 195:             </button>
+ 196:             <button
+ 197:               type="button"
+ 198:               onClick={handleReducedMotionToggle}
+ 199:               className={`${styles.hudButton} ${reducedMotion ? styles.hudButtonActive : ""}`}
+ 200:               data-testid="reduced-motion-toggle-btn"
+ 201:               aria-label={`Reduced Motion ${reducedMotion ? "On" : "Off"}`}
+ 202:             >
+ 203:               Reduced Motion: {reducedMotion ? "On" : "Off"}
+ 204:             </button>
+ 205:             {onClose && (
+ 206:               <button
+ 207:                 type="button"
+ 208:                 onClick={onClose}
+ 209:                 className={styles.hudButton}
+ 210:                 data-testid="exit-studio-btn"
+ 211:                 aria-label="Exit 3D Studio and return to portfolio"
+ 212:               >
+ 213:                 Exit Studio
+ 214:               </button>
+ 215:             )}
+ 216:           </div>
+ 217:         </div>
+ 218: 
+ 219:         <div className={styles.hudTopBar}>
+ 220:           <div className={styles.hudControls}>
+ 221:             <button
+ 222:               type="button"
+ 223:               onClick={() => handleCameraChange("home-desktop")}
+ 224:               className={`${styles.hudButton} ${activeCamera === "home-desktop" ? styles.hudButtonActive : ""}`}
+ 225:               data-testid="camera-home-btn"
+ 226:             >
+ 227:               Home Camera
+ 228:             </button>
+ 229:             <button
+ 230:               type="button"
+ 231:               onClick={() => handleCameraChange("monitor")}
+ 232:               className={`${styles.hudButton} ${activeCamera === "monitor" ? styles.hudButtonActive : ""}`}
+ 233:               data-testid="camera-monitor-btn"
+ 234:             >
+ 235:               Monitor
+ 236:             </button>
+ 237:             <button
+ 238:               type="button"
+ 239:               onClick={() => handleCameraChange("reverse-doorway")}
+ 240:               className={`${styles.hudButton} ${activeCamera === "reverse-doorway" ? styles.hudButtonActive : ""}`}
+ 241:               data-testid="camera-reverse-btn"
+ 242:             >
+ 243:               Reverse Doorway
+ 244:             </button>
+ 245:             <button
+ 246:               type="button"
+ 247:               onClick={() => handleCameraChange("home-mobile")}
+ 248:               className={`${styles.hudButton} ${activeCamera === "home-mobile" ? styles.hudButtonActive : ""}`}
+ 249:               data-testid="camera-mobile-btn"
+ 250:             >
+ 251:               Mobile View
+ 252:             </button>
+ 253:           </div>
+ 254: 
+ 255:           <div className={styles.hudControls}>
+ 256:             <button
+ 257:               type="button"
+ 258:               onClick={() => setShowDiagnostics((prev) => !prev)}
+ 259:               className={styles.hudButton}
+ 260:               data-testid="diagnostics-toggle-btn"
+ 261:             >
+ 262:               Diagnostics
+ 263:             </button>
+ 264:             {diagnostics && (
+ 265:               <span className={styles.statusBadge} data-testid="status-badge">
+ 266:                 {diagnostics.activeClip} · {diagnostics.mode}
+ 267:               </span>
+ 268:             )}
+ 269:           </div>
+ 270:         </div>
+ 271: 
+ 272:         {showDiagnostics && diagnostics && (
+ 273:           <pre className={styles.diagnosticsDrawer} data-testid="world-diagnostics">
+ 274:             {JSON.stringify(diagnostics, null, 2)}
+ 275:           </pre>
+ 276:         )}
+ 277:       </div>
+ 278:     </div>
+ 279:   );
+ 280: }
