@@ -1,0 +1,71 @@
+{
+  "title": "YOR WORLD - Interaction Assets Performance & Budget Report",
+  "version": "1.0.0",
+  "authority": "Feasibility Baseline F1 & Validation Specification §5",
+  "evaluatedTimestamp": "2026-10-02T00:03:00Z",
+  "budgets": {
+    "maxAssetSizeKb": 5000,
+    "maxTriangles": 50000,
+    "maxDrawCalls": 500,
+    "maxTextureDecodedVramMb": 30.0
+  },
+  "runtimeAssets": {
+    "standard": {
+      "file": "interaction-assets.glb",
+      "diskBytes": 261236,
+      "diskKb": 255.11,
+      "percentOfBudget": 5.1,
+      "triangles": 1716,
+      "vertices": 1276,
+      "nodes": 132,
+      "meshes": 110,
+      "primitives": 110,
+      "materials": 36,
+      "animations": 9,
+      "embeddedTextures": 7,
+      "estimatedDrawCalls": 110,
+      "compliance": "PASS"
+    },
+    "mobile": {
+      "file": "interaction-assets-mobile.glb",
+      "diskBytes": 261728,
+      "diskKb": 255.59,
+      "percentOfBudget": 5.1,
+      "triangles": 1716,
+      "vertices": 1276,
+      "nodes": 132,
+      "meshes": 110,
+      "primitives": 110,
+      "materials": 36,
+      "animations": 9,
+      "embeddedTextures": 7,
+      "hitProxyEnlargementFactor": 1.35,
+      "estimatedDrawCalls": 110,
+      "compliance": "PASS"
+    }
+  },
+  "textureMemory": {
+    "textureFilesCount": 10,
+    "totalDiskBytes": 56115,
+    "totalDiskKb": 54.8,
+    "totalDecodedVramBytes": 2883584,
+    "totalDecodedVramMb": 2.75,
+    "percentOfVramBudget": 9.17,
+    "compliance": "PASS"
+  },
+  "animationFootprint": {
+    "actions": [
+      { "name": "Action_Painting_Tilt_Settle", "target": "painting-pivot", "channel": "rotation_euler.x", "durationSec": 1.5, "fps": 30 },
+      { "name": "Action_Blinds_Toggle", "target": "blinds_slat_rotator", "channel": "rotation_euler.x", "durationSec": 1.0, "fps": 30 },
+      { "name": "Action_Door_Entrance_Swing", "target": "door-hinge", "channel": "rotation_euler.z", "durationSec": 1.5, "fps": 30 },
+      { "name": "Action_Lamp_Toggle", "target": "lamp_shade_cone", "channel": "rotation_euler.x", "durationSec": 0.53, "fps": 30 },
+      { "name": "Action_Keyboard_Press", "target": "keyboard_keycaps", "channel": "location.z", "durationSec": 0.33, "fps": 30 },
+      { "name": "Action_Mouse_Click", "target": "mouse_body", "channel": "location.z", "durationSec": 0.27, "fps": 30 },
+      { "name": "Action_Plant_Sway", "target": "plant_foliage_leaves", "channel": "rotation_euler.y", "durationSec": 0.60, "fps": 30 },
+      { "name": "Action_Helios_Fan_Spin", "target": "pc_rgb_fan_front1", "channel": "rotation_euler.y", "durationSec": 1.0, "fps": 30 },
+      { "name": "Action_Camera_Focus", "target": "ai_camera_lens", "channel": "location.y", "durationSec": 1.0, "fps": 30 }
+    ],
+    "overhead": "Negligible (<10 KB keyframe data)"
+  },
+  "overallVerdict": "PASS - Highly optimized for desktop and mobile 60 FPS sustained runtime execution"
+}

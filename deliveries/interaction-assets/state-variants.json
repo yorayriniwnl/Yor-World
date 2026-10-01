@@ -1,0 +1,579 @@
+{
+  "title": "YOR WORLD - Interaction Catalog State Variants & Invariants",
+  "version": "1.0.0",
+  "catalogAuthority": "docs/planning/interaction-catalog.md",
+  "totalEntities": 25,
+  "stateVariants": [
+    {
+      "assetId": "entrance-door",
+      "channels": ["rotation_euler.y", "threshold_light_emission"],
+      "rest": {
+        "doorHingeYawRad": 0.0,
+        "doorClosed": true,
+        "thresholdLightEmission": 0.5
+      },
+      "active": {
+        "doorHingeYawRad": 1.30899694,
+        "doorClosed": false,
+        "thresholdLightEmission": 2.0,
+        "presentationDurationSec": 1.5
+      },
+      "restoration": {
+        "doorHingeYawRad": 0.0,
+        "doorClosed": true,
+        "thresholdLightEmission": 0.5,
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "doorHingeYawRad": 0.0,
+        "suppressContinuousSwing": true,
+        "instantEntryBypass": true
+      }
+    },
+    {
+      "assetId": "door-inside",
+      "channels": ["panel_glow", "dialog_open"],
+      "rest": {
+        "highlightEmission": 0.0,
+        "dialogActive": false
+      },
+      "active": {
+        "highlightEmission": 1.0,
+        "dialogActive": true,
+        "dialogTarget": "replay_confirmation"
+      },
+      "restoration": {
+        "highlightEmission": 0.0,
+        "dialogActive": false,
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "instantDialogDisplay": true,
+        "noCameraSwing": true
+      }
+    },
+    {
+      "assetId": "resident",
+      "channels": ["clip_sequence", "head_yaw_rad", "chair_sync_yaw"],
+      "rest": {
+        "actionClip": "coding_idle",
+        "headYawRad": 0.0,
+        "lookingAt": "screen"
+      },
+      "active": {
+        "actionClip": "greeting_nod",
+        "headYawRad": 1.134464,
+        "lookingAt": "visitor",
+        "sequence": ["notice_visitor", "turn_to_visitor", "greeting_nod"],
+        "cooldownSec": 7.0
+      },
+      "restoration": {
+        "actionClip": "coding_idle",
+        "headYawRad": 0.0,
+        "lookingAt": "screen",
+        "sequence": ["return_to_work", "coding_idle"],
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "actionClip": "greeting_nod",
+        "suppressFullBodyTurn": true,
+        "briefAcknowledgmentPose": true
+      }
+    },
+    {
+      "assetId": "chair",
+      "channels": ["rotation_euler.y"],
+      "rest": {
+        "yawRad": 0.0,
+        "facing": "-Z (desk)"
+      },
+      "active": {
+        "yawRad": 1.134464,
+        "facing": "+Z (visitor)"
+      },
+      "restoration": {
+        "yawRad": 0.0,
+        "facing": "-Z (desk)",
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "yawRad": 0.0,
+        "suppressRotation": true
+      }
+    },
+    {
+      "assetId": "wall-painting",
+      "channels": ["rotation_euler.x", "spring_damped_velocity"],
+      "rest": {
+        "tiltAngleRad": 0.0,
+        "tiltAngleDeg": 0.0,
+        "revealsMark": false,
+        "wallClearanceM": 0.015
+      },
+      "active": {
+        "tiltAngleRad": 0.10471976,
+        "tiltAngleDeg": 6.0,
+        "revealsMark": true,
+        "thresholdAngleRad": 0.0610865,
+        "maxDurationSec": 1.2
+      },
+      "restoration": {
+        "tiltAngleRad": 0.0,
+        "tiltAngleDeg": 0.0,
+        "revealsMark": false,
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "tiltAngleRad": 0.0,
+        "suppressPhysicalTilt": true,
+        "staticBorderHighlight": true
+      }
+    },
+    {
+      "assetId": "hidden-yor-mark",
+      "channels": ["occlusion_flag", "discovery_state"],
+      "rest": {
+        "occluded": true,
+        "discovered": false
+      },
+      "active": {
+        "occluded": false,
+        "discovered": true,
+        "revealTrigger": "painting_tilt_ge_3.5_deg"
+      },
+      "restoration": {
+        "occluded": true,
+        "discovered": true
+      },
+      "reducedMotion": {
+        "accessibleControlAlternative": "Reveal room detail",
+        "noTiltRequired": true
+      }
+    },
+    {
+      "assetId": "main-monitor",
+      "channels": ["material_emission", "screen_texture", "camera_focus"],
+      "rest": {
+        "emissionStrength": 1.0,
+        "texture": "monitor-screen-ambient.png",
+        "launcherVisible": false
+      },
+      "active": {
+        "emissionStrength": 1.5,
+        "texture": "monitor-screen-active.png",
+        "launcherVisible": true,
+        "focusTransitionSec": 0.90
+      },
+      "restoration": {
+        "emissionStrength": 1.0,
+        "texture": "monitor-screen-ambient.png",
+        "launcherVisible": false,
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "directPanelOpen": true,
+        "suppressCameraZoom": true
+      }
+    },
+    {
+      "assetId": "candidatex-launcher",
+      "channels": ["emissive_pulse", "route_dispatch"],
+      "rest": {
+        "pulseIntensity": 1.0,
+        "highlightActive": false
+      },
+      "active": {
+        "pulseIntensity": 2.0,
+        "highlightActive": true,
+        "route": "/projects/candidatex"
+      },
+      "restoration": {
+        "pulseIntensity": 1.0,
+        "highlightActive": false,
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "staticHighlight": true,
+        "skipPulseMotion": true
+      }
+    },
+    {
+      "assetId": "helios-pc",
+      "channels": ["fan_rotation_speed", "rgb_emission_strength", "rgb_color"],
+      "rest": {
+        "fanRpm": 800,
+        "rgbEmission": 0.6,
+        "rgbColor": "#74d8f3"
+      },
+      "active": {
+        "fanRpm": 1800,
+        "rgbEmission": 1.8,
+        "rgbColor": "#f1a5f3",
+        "route": "/projects/helios"
+      },
+      "restoration": {
+        "fanRpm": 800,
+        "rgbEmission": 0.6,
+        "rgbColor": "#74d8f3",
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "fanRpm": 800,
+        "staticRgbIndicator": true,
+        "suppressFanSpinAcceleration": true
+      }
+    },
+    {
+      "assetId": "zenith-model",
+      "channels": ["circuit_led_sequence", "route_dispatch"],
+      "rest": {
+        "traceFlowActive": false,
+        "baselineLed": 0.5
+      },
+      "active": {
+        "traceFlowActive": true,
+        "durationSec": 1.4,
+        "route": "/projects/zenith"
+      },
+      "restoration": {
+        "traceFlowActive": false,
+        "baselineLed": 0.5,
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "staticCircuitGlow": true,
+        "suppressSequentialTracer": true
+      }
+    },
+    {
+      "assetId": "ai-real-camera",
+      "channels": ["lens_focus_translation", "status_led_blink"],
+      "rest": {
+        "lensTravelMm": 0.0,
+        "statusLed": "steady_blue"
+      },
+      "active": {
+        "lensTravelMm": 2.0,
+        "statusLed": "subtle_pulse",
+        "route": "/projects/ai-real"
+      },
+      "restoration": {
+        "lensTravelMm": 0.0,
+        "statusLed": "steady_blue",
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "lensTravelMm": 0.0,
+        "suppressLensFocusMovement": true,
+        "noFlashingLights": true
+      }
+    },
+    {
+      "assetId": "talks-microphone",
+      "channels": ["ring_led_emission", "led_color"],
+      "rest": {
+        "emissionStrength": 0.2,
+        "ledColor": "#444455"
+      },
+      "active": {
+        "emissionStrength": 2.5,
+        "ledColor": "#ff3344",
+        "route": "/projects/talks"
+      },
+      "restoration": {
+        "emissionStrength": 0.2,
+        "ledColor": "#444455",
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "staticBadgeOnly": true,
+        "suppressWaveformPulse": true
+      }
+    },
+    {
+      "assetId": "project-shortcuts",
+      "channels": ["dom_visibility", "dom_expanded"],
+      "rest": {
+        "railVisible": true,
+        "expanded": false
+      },
+      "active": {
+        "railVisible": true,
+        "expanded": true
+      },
+      "restoration": {
+        "railVisible": true,
+        "expanded": false,
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "standardHtmlNavigation": true
+      }
+    },
+    {
+      "assetId": "research-books",
+      "channels": ["spine_translation_z", "spine_highlight"],
+      "rest": {
+        "nudgeOffsetMm": 0.0,
+        "highlight": false
+      },
+      "active": {
+        "nudgeOffsetMm": 15.0,
+        "highlight": true,
+        "route": "/research"
+      },
+      "restoration": {
+        "nudgeOffsetMm": 0.0,
+        "highlight": false,
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "nudgeOffsetMm": 0.0,
+        "suppressSpinePull": true
+      }
+    },
+    {
+      "assetId": "skills-board",
+      "channels": ["pin_emissive_strength"],
+      "rest": {
+        "pinsIlluminated": false,
+        "emission": 0.0
+      },
+      "active": {
+        "pinsIlluminated": true,
+        "emission": 1.5,
+        "route": "/about#skills"
+      },
+      "restoration": {
+        "pinsIlluminated": false,
+        "emission": 0.0,
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "noGlowSweep": true
+      }
+    },
+    {
+      "assetId": "certificate-frame",
+      "channels": ["border_specular_highlight"],
+      "rest": {
+        "highlight": 0.3
+      },
+      "active": {
+        "highlight": 0.8,
+        "route": "/about#credentials"
+      },
+      "restoration": {
+        "highlight": 0.3,
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "staticBorder": true
+      }
+    },
+    {
+      "assetId": "about-personal-object",
+      "channels": ["lift_elevation_mm", "yaw_rotation_deg"],
+      "rest": {
+        "liftMm": 0.0,
+        "yawDeg": 0.0
+      },
+      "active": {
+        "liftMm": 2.0,
+        "yawDeg": 15.0,
+        "route": "/about"
+      },
+      "restoration": {
+        "liftMm": 0.0,
+        "yawDeg": 0.0,
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "liftMm": 0.0,
+        "yawDeg": 0.0
+      }
+    },
+    {
+      "assetId": "contact-phone",
+      "channels": ["screen_wake_emission", "screen_texture"],
+      "rest": {
+        "screenAwake": false,
+        "emission": 0.0,
+        "texture": "phone-screen-idle.png"
+      },
+      "active": {
+        "screenAwake": true,
+        "emission": 1.2,
+        "texture": "phone-screen-active.png",
+        "route": "/contact"
+      },
+      "restoration": {
+        "screenAwake": false,
+        "emission": 0.0,
+        "texture": "phone-screen-idle.png",
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "instantWake": true,
+        "suppressCameraFocus": true
+      }
+    },
+    {
+      "assetId": "desk-lamp",
+      "channels": ["bulb_emission", "light_spot_energy", "switch_ease_ms"],
+      "rest": {
+        "enabled": true,
+        "bulbEmission": 2.5,
+        "spotEnergy": 4.5
+      },
+      "active": {
+        "enabled": false,
+        "bulbEmission": 0.0,
+        "spotEnergy": 0.0,
+        "transitionEaseMs": 250
+      },
+      "restoration": {
+        "enabled": true,
+        "bulbEmission": 2.5,
+        "spotEnergy": 4.5,
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "instantToggle": true,
+        "suppress250msEase": true
+      }
+    },
+    {
+      "assetId": "window-blinds",
+      "channels": ["slat_rotation_rad", "window_fill_light_energy"],
+      "rest": {
+        "open": true,
+        "slatRotationRad": 0.0,
+        "fillLightEnergy": 1.2
+      },
+      "active": {
+        "open": false,
+        "slatRotationRad": 1.30899694,
+        "fillLightEnergy": 0.2
+      },
+      "restoration": {
+        "open": true,
+        "slatRotationRad": 0.0,
+        "fillLightEnergy": 1.2,
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "instantPresetSwap": true,
+        "suppressRotationLerp": true
+      }
+    },
+    {
+      "assetId": "desk-clock",
+      "channels": ["texture_display_format"],
+      "rest": {
+        "format": "24h",
+        "display": "14:30 IST",
+        "texture": "clock-display-24h.png"
+      },
+      "active": {
+        "format": "12h",
+        "display": "02:30 PM",
+        "texture": "clock-display-12h.png"
+      },
+      "restoration": {
+        "format": "24h",
+        "display": "14:30 IST",
+        "texture": "clock-display-24h.png",
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "instantFormatSwap": true,
+        "noBlink": true
+      }
+    },
+    {
+      "assetId": "speakers",
+      "channels": ["mute_led_color", "cone_vibration"],
+      "rest": {
+        "muted": true,
+        "ledColor": "#ff3344",
+        "coneOscillation": false
+      },
+      "active": {
+        "muted": false,
+        "ledColor": "#55e8d0",
+        "coneOscillation": true
+      },
+      "restoration": {
+        "muted": true,
+        "ledColor": "#ff3344",
+        "coneOscillation": false,
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "ledColorChangeOnly": true,
+        "suppressConeOscillation": true
+      }
+    },
+    {
+      "assetId": "plant-leaves",
+      "channels": ["rotation_euler.y", "spring_damped_velocity"],
+      "rest": {
+        "swayRad": 0.0
+      },
+      "active": {
+        "swayRad": 0.06981317,
+        "settleDurationMs": 600
+      },
+      "restoration": {
+        "swayRad": 0.0,
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "swayRad": 0.0,
+        "suppressSway": true
+      }
+    },
+    {
+      "assetId": "keyboard",
+      "channels": ["keycap_depression_mm", "underglow_pulse"],
+      "rest": {
+        "depressionMm": 0.0,
+        "underglow": "idle"
+      },
+      "active": {
+        "depressionMm": 1.5,
+        "underglow": "pulse",
+        "targetTab": "commands"
+      },
+      "restoration": {
+        "depressionMm": 0.0,
+        "underglow": "idle",
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "depressionMm": 0.0,
+        "suppressTravel": true
+      }
+    },
+    {
+      "assetId": "mouse",
+      "channels": ["click_travel_mm"],
+      "rest": {
+        "travelMm": 0.0
+      },
+      "active": {
+        "travelMm": 0.8,
+        "actionTarget": "wake_monitor"
+      },
+      "restoration": {
+        "travelMm": 0.0,
+        "targetToleranceDelta": 0.0
+      },
+      "reducedMotion": {
+        "travelMm": 0.0,
+        "suppressTravel": true
+      }
+    }
+  ]
+}

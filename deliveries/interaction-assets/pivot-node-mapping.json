@@ -1,0 +1,297 @@
+{
+  "title": "YOR WORLD - Interaction Pivot and Node Mapping",
+  "version": "1.0.0",
+  "coordinateConvention": {
+    "runtime": "Meters, Right-handed, Y-up, -Z Rear Wall, +Z Entrance Doorway",
+    "blender": "Meters, Right-handed, Z-up, +Y Rear Wall, -Y Entrance Doorway",
+    "conversionFormula": {
+      "r2b": "[rx, -rz, ry]",
+      "b2r": "[bx, bz, -by]"
+    }
+  },
+  "f1Invariants": {
+    "roomDimensionsM": [4.2, 3.6, 2.8],
+    "rearWallZRuntimeM": -1.8,
+    "entranceDoorZRuntimeM": 1.8,
+    "deskDimensionsM": [2.6, 0.8, 0.75],
+    "deskCenterRuntimeM": [0.0, 0.75, -1.15],
+    "chairRootRuntimeM": [0.30, 0.0, -0.36]
+  },
+  "mappings": [
+    {
+      "assetId": "entrance-door",
+      "visibleNode": "door_leaf",
+      "visibleSubNodes": ["door_handle_outer", "door_handle_inner", "door_threshold_light"],
+      "pivotNode": "door-hinge",
+      "runtimeCoords": [-1.65, 0.0, 1.80],
+      "blenderCoords": [-1.65, -1.80, 0.0],
+      "hitProxyNode": "hit_entrance_door",
+      "hitBoundsRuntime": [1.00, 2.15, 0.20],
+      "parentHierarchy": "Scene -> door-hinge -> door_leaf"
+    },
+    {
+      "assetId": "door-inside",
+      "visibleNode": "door_leaf_inner_panel",
+      "visibleSubNodes": ["door_leaf_inner_panel"],
+      "pivotNode": "door-hinge",
+      "runtimeCoords": [-1.65, 0.0, 1.80],
+      "blenderCoords": [-1.65, -1.80, 0.0],
+      "hitProxyNode": "hit_door_inside",
+      "hitBoundsRuntime": [0.90, 2.05, 0.10],
+      "parentHierarchy": "Scene -> door-hinge -> door_leaf -> door_leaf_inner_panel"
+    },
+    {
+      "assetId": "resident",
+      "visibleNode": "resident_proxy_torso",
+      "visibleSubNodes": ["resident_proxy_head"],
+      "pivotNode": "chair-root",
+      "runtimeCoords": [0.30, 0.0, -0.36],
+      "blenderCoords": [0.30, 0.36, 0.0],
+      "hitProxyNode": "hit_resident",
+      "hitBoundsRuntime": [0.48, 0.85, 0.45],
+      "parentHierarchy": "Scene -> chair-root -> chair_base -> chair_gaslift -> chair_seat -> resident_proxy_torso"
+    },
+    {
+      "assetId": "chair",
+      "visibleNode": "chair_seat",
+      "visibleSubNodes": ["chair_back", "chair_arm_l", "chair_arm_r", "chair_base", "chair_gaslift"],
+      "pivotNode": "chair-root",
+      "runtimeCoords": [0.30, 0.0, -0.36],
+      "blenderCoords": [0.30, 0.36, 0.0],
+      "hitProxyNode": "hit_chair",
+      "hitBoundsRuntime": [0.60, 0.95, 0.60],
+      "parentHierarchy": "Scene -> chair-root -> chair_base -> chair_gaslift -> chair_seat"
+    },
+    {
+      "assetId": "wall-painting",
+      "visibleNode": "painting_frame",
+      "visibleSubNodes": ["painting_canvas", "painting_hanger_cord"],
+      "pivotNode": "painting-pivot",
+      "runtimeCoords": [-2.07, 1.85, 0.20],
+      "blenderCoords": [-2.07, -0.20, 1.85],
+      "hitProxyNode": "hit_wall_painting",
+      "hitBoundsRuntime": [0.08, 0.75, 0.95],
+      "parentHierarchy": "Scene -> painting-pivot -> painting_frame -> painting_canvas"
+    },
+    {
+      "assetId": "hidden-yor-mark",
+      "visibleNode": "hidden_yor_mark_plate",
+      "visibleSubNodes": ["hidden_yor_mark_plate"],
+      "pivotNode": "painting-pivot",
+      "runtimeCoords": [-2.09, 1.50, 0.20],
+      "blenderCoords": [-2.09, -0.20, 1.50],
+      "hitProxyNode": "hit_hidden_yor_mark",
+      "hitBoundsRuntime": [0.05, 0.25, 0.25],
+      "parentHierarchy": "Scene -> hidden_yor_mark_plate"
+    },
+    {
+      "assetId": "main-monitor",
+      "visibleNode": "monitor_curved_housing",
+      "visibleSubNodes": ["monitor_screen_display", "monitor_stand_base", "monitor_stand_col", "monitor_lightbar"],
+      "pivotNode": "monitor-surface",
+      "runtimeCoords": [0.0, 1.05, -1.08],
+      "blenderCoords": [0.0, 1.08, 1.05],
+      "hitProxyNode": "hit_main_monitor",
+      "hitBoundsRuntime": [1.25, 0.42, 0.15],
+      "parentHierarchy": "Scene -> monitor-surface -> monitor_curved_housing -> monitor_screen_display"
+    },
+    {
+      "assetId": "candidatex-launcher",
+      "visibleNode": "candidatex_launcher_node",
+      "visibleSubNodes": ["candidatex_launcher_node"],
+      "pivotNode": "monitor-surface",
+      "runtimeCoords": [0.0, 1.05, -1.075],
+      "blenderCoords": [0.0, 1.075, 1.05],
+      "hitProxyNode": "hit_candidatex_launcher",
+      "hitBoundsRuntime": [0.30, 0.22, 0.05],
+      "parentHierarchy": "Scene -> monitor-surface -> monitor_curved_housing -> monitor_screen_display -> candidatex_launcher_node"
+    },
+    {
+      "assetId": "helios-pc",
+      "visibleNode": "pc_chassis_white",
+      "visibleSubNodes": ["pc_glass_panel", "pc_rgb_fan_front1", "pc_rgb_fan_front2"],
+      "pivotNode": "pc-pivot",
+      "runtimeCoords": [-0.95, 0.75, -1.10],
+      "blenderCoords": [-0.95, 1.10, 0.75],
+      "hitProxyNode": "hit_helios_pc",
+      "hitBoundsRuntime": [0.28, 0.48, 0.48],
+      "parentHierarchy": "Scene -> pc-pivot -> pc_chassis_white"
+    },
+    {
+      "assetId": "zenith-model",
+      "visibleNode": "zenith_base_stand",
+      "visibleSubNodes": ["zenith_solar_array"],
+      "pivotNode": "zenith-model-pivot",
+      "runtimeCoords": [0.95, 0.75, -1.05],
+      "blenderCoords": [0.95, 1.05, 0.75],
+      "hitProxyNode": "hit_zenith_model",
+      "hitBoundsRuntime": [0.20, 0.20, 0.20],
+      "parentHierarchy": "Scene -> zenith-model-pivot -> zenith_base_stand -> zenith_solar_array"
+    },
+    {
+      "assetId": "ai-real-camera",
+      "visibleNode": "ai_camera_body",
+      "visibleSubNodes": ["ai_camera_lens"],
+      "pivotNode": "ai-camera-pivot",
+      "runtimeCoords": [0.75, 0.85, -0.90],
+      "blenderCoords": [0.75, 0.90, 0.85],
+      "hitProxyNode": "hit_ai_real_camera",
+      "hitBoundsRuntime": [0.15, 0.12, 0.15],
+      "parentHierarchy": "Scene -> ai-camera-pivot -> ai_camera_body -> ai_camera_lens"
+    },
+    {
+      "assetId": "talks-microphone",
+      "visibleNode": "mic_capsule",
+      "visibleSubNodes": ["mic_stand_base", "mic_boom_arm", "mic_led_ring"],
+      "pivotNode": "mic-pivot",
+      "runtimeCoords": [0.45, 0.78, -0.85],
+      "blenderCoords": [0.45, 0.85, 0.78],
+      "hitProxyNode": "hit_talks_microphone",
+      "hitBoundsRuntime": [0.14, 0.28, 0.14],
+      "parentHierarchy": "Scene -> mic-pivot -> mic_stand_base -> mic_capsule"
+    },
+    {
+      "assetId": "project-shortcuts",
+      "visibleNode": "project-shortcuts-anchor",
+      "visibleSubNodes": [],
+      "pivotNode": "project-shortcuts-anchor",
+      "runtimeCoords": [0.0, 0.75, -0.65],
+      "blenderCoords": [0.0, 0.65, 0.75],
+      "hitProxyNode": "hit_project_shortcuts",
+      "hitBoundsRuntime": [0.40, 0.05, 0.15],
+      "parentHierarchy": "Scene -> project-shortcuts-anchor -> hit_project_shortcuts"
+    },
+    {
+      "assetId": "research-books",
+      "visibleNode": "book_stack_horizontal",
+      "visibleSubNodes": ["book_stack_horizontal"],
+      "pivotNode": "books-pivot",
+      "runtimeCoords": [1.05, 1.20, -1.35],
+      "blenderCoords": [1.05, 1.35, 1.20],
+      "hitProxyNode": "hit_research_books",
+      "hitBoundsRuntime": [0.28, 0.20, 0.24],
+      "parentHierarchy": "Scene -> books-pivot -> book_stack_horizontal"
+    },
+    {
+      "assetId": "skills-board",
+      "visibleNode": "skills_board_panel",
+      "visibleSubNodes": ["skills_board_panel"],
+      "pivotNode": "skills-board-pivot",
+      "runtimeCoords": [-1.10, 1.40, -1.75],
+      "blenderCoords": [-1.10, 1.75, 1.40],
+      "hitProxyNode": "hit_skills_board",
+      "hitBoundsRuntime": [0.50, 0.40, 0.08],
+      "parentHierarchy": "Scene -> skills-board-pivot -> skills_board_panel"
+    },
+    {
+      "assetId": "certificate-frame",
+      "visibleNode": "certificate_frame_border",
+      "visibleSubNodes": ["certificate_frame_border"],
+      "pivotNode": "cert-frame-pivot",
+      "runtimeCoords": [-1.40, 1.65, -1.75],
+      "blenderCoords": [-1.40, 1.75, 1.65],
+      "hitProxyNode": "hit_certificate_frame",
+      "hitBoundsRuntime": [0.32, 0.26, 0.08],
+      "parentHierarchy": "Scene -> cert-frame-pivot -> certificate_frame_border"
+    },
+    {
+      "assetId": "about-personal-object",
+      "visibleNode": "personal_token_sculpture",
+      "visibleSubNodes": ["personal_token_pedestal"],
+      "pivotNode": "personal-obj-pivot",
+      "runtimeCoords": [-0.55, 0.75, -0.95],
+      "blenderCoords": [-0.55, 0.95, 0.75],
+      "hitProxyNode": "hit_about_personal_object",
+      "hitBoundsRuntime": [0.12, 0.16, 0.12],
+      "parentHierarchy": "Scene -> personal-obj-pivot -> personal_token_pedestal -> personal_token_sculpture"
+    },
+    {
+      "assetId": "contact-phone",
+      "visibleNode": "phone_chassis",
+      "visibleSubNodes": ["phone_screen_glass"],
+      "pivotNode": "phone-pivot",
+      "runtimeCoords": [0.55, 0.75, -0.75],
+      "blenderCoords": [0.55, 0.75, 0.75],
+      "hitProxyNode": "hit_contact_phone",
+      "hitBoundsRuntime": [0.12, 0.06, 0.20],
+      "parentHierarchy": "Scene -> phone-pivot -> phone_chassis -> phone_screen_glass"
+    },
+    {
+      "assetId": "desk-lamp",
+      "visibleNode": "lamp_shade_cone",
+      "visibleSubNodes": ["lamp_base_disc", "lamp_lower_arm", "lamp_bulb_emissive", "Light_TaskLamp"],
+      "pivotNode": "lamp-switch-pivot",
+      "runtimeCoords": [-0.75, 0.75, -1.20],
+      "blenderCoords": [-0.75, 1.20, 0.75],
+      "hitProxyNode": "hit_desk_lamp",
+      "hitBoundsRuntime": [0.24, 0.40, 0.24],
+      "parentHierarchy": "Scene -> lamp-switch-pivot -> lamp_base_disc -> lamp_lower_arm -> lamp_shade_cone -> Light_TaskLamp"
+    },
+    {
+      "assetId": "window-blinds",
+      "visibleNode": "window_frame_right",
+      "visibleSubNodes": ["blinds_top_header", "blinds_slat_rotator", "blinds_slat_01", "blinds_pull_cord", "Light_WindowFill"],
+      "pivotNode": "blinds-cord-pivot",
+      "runtimeCoords": [2.08, 1.50, -0.20],
+      "blenderCoords": [2.08, 0.20, 1.50],
+      "hitProxyNode": "hit_window_blinds",
+      "hitBoundsRuntime": [0.12, 1.45, 1.15],
+      "parentHierarchy": "Scene -> blinds-cord-pivot -> blinds_top_header -> blinds_slat_rotator -> [blinds_slat_01..12]"
+    },
+    {
+      "assetId": "desk-clock",
+      "visibleNode": "clock_chassis",
+      "visibleSubNodes": ["clock_display_screen"],
+      "pivotNode": "clock-top-button",
+      "runtimeCoords": [0.70, 0.75, -1.10],
+      "blenderCoords": [0.70, 1.10, 0.75],
+      "hitProxyNode": "hit_desk_clock",
+      "hitBoundsRuntime": [0.20, 0.12, 0.14],
+      "parentHierarchy": "Scene -> clock-top-button -> clock_chassis -> clock_display_screen"
+    },
+    {
+      "assetId": "speakers",
+      "visibleNode": "speaker_right_cabinet",
+      "visibleSubNodes": ["speaker_left_cabinet", "speaker_left_cone_w", "speaker_right_cone_w", "speaker_mute_indicator"],
+      "pivotNode": "speaker-knob-pivot",
+      "runtimeCoords": [0.85, 0.75, -1.15],
+      "blenderCoords": [0.85, 1.15, 0.75],
+      "hitProxyNode": "hit_speakers",
+      "hitBoundsRuntime": [0.22, 0.30, 0.24],
+      "parentHierarchy": "Scene -> speaker-knob-pivot -> speaker_right_cabinet -> speaker_mute_indicator"
+    },
+    {
+      "assetId": "plant-leaves",
+      "visibleNode": "plant_foliage_leaves",
+      "visibleSubNodes": ["plant_ceramic_pot"],
+      "pivotNode": "plant-pot-base",
+      "runtimeCoords": [-1.0, 0.75, -0.80],
+      "blenderCoords": [-1.0, 0.80, 0.75],
+      "hitProxyNode": "hit_plant_leaves",
+      "hitBoundsRuntime": [0.28, 0.32, 0.28],
+      "parentHierarchy": "Scene -> plant-pot-base -> plant_ceramic_pot -> plant_foliage_leaves"
+    },
+    {
+      "assetId": "keyboard",
+      "visibleNode": "keyboard_frame",
+      "visibleSubNodes": ["keyboard_keycaps"],
+      "pivotNode": "keyboard-center-pivot",
+      "runtimeCoords": [0.0, 0.75, -0.75],
+      "blenderCoords": [0.0, 0.75, 0.75],
+      "hitProxyNode": "hit_keyboard",
+      "hitBoundsRuntime": [0.46, 0.05, 0.18],
+      "parentHierarchy": "Scene -> keyboard-center-pivot -> keyboard_frame -> keyboard_keycaps"
+    },
+    {
+      "assetId": "mouse",
+      "visibleNode": "mouse_body",
+      "visibleSubNodes": ["mouse_scroll_wheel"],
+      "pivotNode": "mouse-click-pivot",
+      "runtimeCoords": [0.28, 0.75, -0.75],
+      "blenderCoords": [0.28, 0.75, 0.75],
+      "hitProxyNode": "hit_mouse",
+      "hitBoundsRuntime": [0.12, 0.06, 0.16],
+      "parentHierarchy": "Scene -> mouse-click-pivot -> mouse_body -> mouse_scroll_wheel"
+    }
+  ]
+}

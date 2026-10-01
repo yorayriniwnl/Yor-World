@@ -1,0 +1,1071 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "YOR WORLD - Frozen V1 Interaction Catalog Physical Assets Manifest",
+  "packet": "B3-C1-ASSETS",
+  "version": "1.0.0",
+  "frozenCatalogAuthority": "docs/planning/interaction-catalog.md",
+  "spatialBaseline": "Feasibility Baseline F1 (4.2m x 3.6m x 2.8m, Y-up)",
+  "totalEntities": 25,
+  "objects": [
+    {
+      "assetId": "entrance-door",
+      "category": "environment",
+      "label": "Enter studio",
+      "visibleNode": "door_leaf",
+      "interactionPivot": "door-hinge",
+      "pivotRuntimeCoords": [-1.65, 0.0, 1.80],
+      "hitGeometry": {
+        "node": "hit_entrance_door",
+        "type": "box",
+        "runtimeCenter": [-1.20, 1.05, 1.80],
+        "dimensions": [1.00, 2.15, 0.20],
+        "touchTargetMinPt": 48
+      },
+      "channel": {
+        "type": "rotation_euler",
+        "axis": "Y",
+        "unit": "radians",
+        "range": [0.0, 1.30899694]
+      },
+      "restState": {
+        "rotation": [0.0, 0.0, 0.0],
+        "closed": true,
+        "thresholdLight": "active_low"
+      },
+      "activeState": {
+        "rotation": [0.0, 1.30899694, 0.0],
+        "closed": false,
+        "swingDurationSec": 1.5
+      },
+      "restorationState": {
+        "rotation": [0.0, 0.0, 0.0],
+        "closed": true
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [1.35, 2.30, 0.30],
+        "touchSemantics": "single_tap_trigger",
+        "bypassCameraParallax": true
+      },
+      "reducedMotionRepresentation": {
+        "transitionType": "instantaneous_crossfade",
+        "suppressHingeSwing": true,
+        "targetCamera": "home-desktop"
+      }
+    },
+    {
+      "assetId": "door-inside",
+      "category": "environment",
+      "label": "Replay entrance",
+      "visibleNode": "door_leaf_inner_panel",
+      "interactionPivot": "door-hinge",
+      "pivotRuntimeCoords": [-1.65, 0.0, 1.80],
+      "hitGeometry": {
+        "node": "hit_door_inside",
+        "type": "box",
+        "runtimeCenter": [-1.20, 1.05, 1.76],
+        "dimensions": [0.90, 2.05, 0.10],
+        "touchTargetMinPt": 48
+      },
+      "channel": {
+        "type": "material_emission",
+        "material": "Door_Wood",
+        "property": "border_glow",
+        "range": [0.0, 1.0]
+      },
+      "restState": {
+        "glowIntensity": 0.0,
+        "openPanel": false
+      },
+      "activeState": {
+        "glowIntensity": 1.0,
+        "openPanel": true,
+        "actionTarget": "replay_confirmation_panel"
+      },
+      "restorationState": {
+        "glowIntensity": 0.0,
+        "openPanel": false
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [1.20, 2.15, 0.15],
+        "touchSemantics": "single_tap_opens_dialog",
+        "roomControlsEquivalent": "Replay studio entrance"
+      },
+      "reducedMotionRepresentation": {
+        "suppressDoorTravel": true,
+        "directPanelOpen": true
+      }
+    },
+    {
+      "assetId": "resident",
+      "category": "avatar",
+      "label": "Greet the creator",
+      "visibleNode": "resident_proxy_torso",
+      "interactionPivot": "chair-root",
+      "pivotRuntimeCoords": [0.30, 0.0, -0.36],
+      "hitGeometry": {
+        "node": "hit_resident",
+        "type": "box",
+        "runtimeCenter": [0.30, 1.00, -0.36],
+        "dimensions": [0.48, 0.85, 0.45],
+        "touchTargetMinPt": 48
+      },
+      "channel": {
+        "type": "animation_clip",
+        "clips": ["coding_idle", "notice_visitor", "turn_to_visitor", "greeting_nod", "return_to_work"],
+        "cooldownSec": 7.0
+      },
+      "restState": {
+        "clip": "coding_idle",
+        "attention": "forward_screen",
+        "turnAngleRad": 0.0
+      },
+      "activeState": {
+        "clipSequence": ["notice_visitor", "turn_to_visitor", "greeting_nod"],
+        "turnAngleRad": 1.134464,
+        "attention": "visitor_camera"
+      },
+      "restorationState": {
+        "clipSequence": ["return_to_work", "coding_idle"],
+        "turnAngleRad": 0.0,
+        "attention": "forward_screen"
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [0.65, 1.15, 0.60],
+        "touchSemantics": "single_tap_initiates_nod",
+        "roomControlsEquivalent": "Greet resident"
+      },
+      "reducedMotionRepresentation": {
+        "clip": "greeting_nod",
+        "suppressFullBodyTurn": true,
+        "headNodOnly": true
+      }
+    },
+    {
+      "assetId": "chair",
+      "category": "furniture",
+      "label": "Workstation chair",
+      "visibleNode": "chair_seat",
+      "interactionPivot": "chair-root",
+      "pivotRuntimeCoords": [0.30, 0.0, -0.36],
+      "hitGeometry": {
+        "node": "hit_chair",
+        "type": "box",
+        "runtimeCenter": [0.30, 0.55, -0.36],
+        "dimensions": [0.60, 0.95, 0.60],
+        "touchTargetMinPt": 48
+      },
+      "channel": {
+        "type": "rotation_euler",
+        "axis": "Y",
+        "unit": "radians",
+        "range": [0.0, 1.134464]
+      },
+      "restState": {
+        "yawRad": 0.0,
+        "facing": "desk_negative_z"
+      },
+      "activeState": {
+        "yawRad": 1.134464,
+        "facing": "visitor_positive_z"
+      },
+      "restorationState": {
+        "yawRad": 0.0,
+        "facing": "desk_negative_z"
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [0.80, 1.10, 0.80],
+        "sharedTouchTarget": "resident"
+      },
+      "reducedMotionRepresentation": {
+        "suppressYawRotation": true,
+        "staticOrientation": true
+      }
+    },
+    {
+      "assetId": "wall-painting",
+      "category": "interactive_art",
+      "label": "Wall painting",
+      "visibleNode": "painting_frame",
+      "interactionPivot": "painting-pivot",
+      "pivotRuntimeCoords": [-2.07, 1.85, 0.20],
+      "hitGeometry": {
+        "node": "hit_wall_painting",
+        "type": "box",
+        "runtimeCenter": [-2.05, 1.50, 0.20],
+        "dimensions": [0.08, 0.75, 0.95],
+        "touchTargetMinPt": 48
+      },
+      "channel": {
+        "type": "rotation_euler",
+        "axis": "X",
+        "unit": "radians",
+        "range": [-0.10471976, 0.10471976],
+        "maxAngleDeg": 6.0,
+        "springDampingSec": 1.2
+      },
+      "restState": {
+        "rotation": [0.0, 0.0, 0.0],
+        "revealsMark": false,
+        "wallClearanceM": 0.015
+      },
+      "activeState": {
+        "rotation": [0.10471976, 0.0, 0.0],
+        "revealsMark": true,
+        "revealThresholdRad": 0.0610865
+      },
+      "restorationState": {
+        "rotation": [0.0, 0.0, 0.0],
+        "revealsMark": false,
+        "dampingSettle": "zero_delta_guaranteed"
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [0.12, 0.90, 1.15],
+        "touchSemantics": "single_tap_swings_preset",
+        "autoSettleSec": 1.2
+      },
+      "reducedMotionRepresentation": {
+        "suppressPhysicalTilt": true,
+        "borderHighlightOnly": true,
+        "accessibleRevealControl": "Reveal room detail"
+      }
+    },
+    {
+      "assetId": "hidden-yor-mark",
+      "category": "secret_easter_egg",
+      "label": "Hidden Yor signature mark",
+      "visibleNode": "hidden_yor_mark_plate",
+      "interactionPivot": "painting-pivot",
+      "pivotRuntimeCoords": [-2.09, 1.50, 0.20],
+      "hitGeometry": {
+        "node": "hit_hidden_yor_mark",
+        "type": "box",
+        "runtimeCenter": [-2.08, 1.50, 0.20],
+        "dimensions": [0.05, 0.25, 0.25],
+        "touchTargetMinPt": 44
+      },
+      "channel": {
+        "type": "visibility_occlusion",
+        "occluder": "painting_canvas",
+        "revealThresholdAngleRad": 0.0610865
+      },
+      "restState": {
+        "occluded": true,
+        "interactive": false
+      },
+      "activeState": {
+        "occluded": false,
+        "interactive": true,
+        "discoverySessionFlag": true
+      },
+      "restorationState": {
+        "occluded": true,
+        "interactive": false
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [0.08, 0.35, 0.35],
+        "accessibleDOMAlternative": "Reveal room detail"
+      },
+      "reducedMotionRepresentation": {
+        "directTextDiscovery": true,
+        "noTiltRequirement": true
+      }
+    },
+    {
+      "assetId": "main-monitor",
+      "category": "primary_portal",
+      "label": "Workstation monitor",
+      "visibleNode": "monitor_curved_housing",
+      "interactionPivot": "monitor-surface",
+      "pivotRuntimeCoords": [0.0, 1.05, -1.08],
+      "hitGeometry": {
+        "node": "hit_main_monitor",
+        "type": "box",
+        "runtimeCenter": [0.0, 1.05, -1.08],
+        "dimensions": [1.25, 0.42, 0.15],
+        "touchTargetMinPt": 48
+      },
+      "channel": {
+        "type": "material_emission",
+        "material": "Monitor_Screen",
+        "range": [1.0, 1.8],
+        "textureSwap": ["monitor-screen-ambient.png", "monitor-screen-active.png"]
+      },
+      "restState": {
+        "emissiveStrength": 1.0,
+        "texture": "monitor-screen-ambient.png",
+        "launcherOpen": false
+      },
+      "activeState": {
+        "emissiveStrength": 1.5,
+        "texture": "monitor-screen-active.png",
+        "launcherOpen": true,
+        "focusDelayMaxSec": 0.90
+      },
+      "restorationState": {
+        "emissiveStrength": 1.0,
+        "texture": "monitor-screen-ambient.png",
+        "launcherOpen": false
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [1.40, 0.55, 0.25],
+        "directHTMLPanel": true,
+        "framedPanelFallback": true
+      },
+      "reducedMotionRepresentation": {
+        "suppressCameraFocusZoom": true,
+        "directModalOpen": true
+      }
+    },
+    {
+      "assetId": "candidatex-launcher",
+      "category": "project_prop",
+      "label": "CandidateX: Automated Evaluation Engine",
+      "visibleNode": "candidatex_launcher_node",
+      "interactionPivot": "monitor-surface",
+      "pivotRuntimeCoords": [0.0, 1.05, -1.075],
+      "hitGeometry": {
+        "node": "hit_candidatex_launcher",
+        "type": "box",
+        "runtimeCenter": [0.0, 1.05, -1.07],
+        "dimensions": [0.30, 0.22, 0.05],
+        "touchTargetMinPt": 44
+      },
+      "channel": {
+        "type": "emissive_pulse",
+        "material": "Monitor_Screen",
+        "color": "#74d8f3",
+        "range": [1.0, 2.0]
+      },
+      "restState": {
+        "pulseIntensity": 1.0,
+        "motifActive": false
+      },
+      "activeState": {
+        "pulseIntensity": 2.0,
+        "motifActive": true,
+        "destinationRoute": "/projects/candidatex"
+      },
+      "restorationState": {
+        "pulseIntensity": 1.0,
+        "motifActive": false
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [0.40, 0.30, 0.10],
+        "accessibleRailTarget": true
+      },
+      "reducedMotionRepresentation": {
+        "staticIconHighlight": true,
+        "skipWaveMotion": true
+      }
+    },
+    {
+      "assetId": "helios-pc",
+      "category": "project_prop",
+      "label": "Helios: Distributed Compute Network",
+      "visibleNode": "pc_chassis_white",
+      "interactionPivot": "pc-pivot",
+      "pivotRuntimeCoords": [-0.95, 0.75, -1.10],
+      "hitGeometry": {
+        "node": "hit_helios_pc",
+        "type": "box",
+        "runtimeCenter": [-0.95, 0.98, -1.10],
+        "dimensions": [0.28, 0.48, 0.48],
+        "touchTargetMinPt": 48
+      },
+      "channel": {
+        "type": "composite_rgb_rotation",
+        "fanNode": "pc_rgb_fan_front1",
+        "rgbMaterial": "PC_RGB",
+        "emissionRange": [0.6, 1.8]
+      },
+      "restState": {
+        "fanRpm": "baseline_quiet",
+        "rgbEmission": 0.6,
+        "rgbColor": "#74d8f3"
+      },
+      "activeState": {
+        "fanRpm": "accelerated_pulse",
+        "rgbEmission": 1.8,
+        "rgbColor": "#f1a5f3",
+        "destinationRoute": "/projects/helios"
+      },
+      "restorationState": {
+        "fanRpm": "baseline_quiet",
+        "rgbEmission": 0.6,
+        "rgbColor": "#74d8f3"
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [0.38, 0.58, 0.58],
+        "singleTapNavigates": true
+      },
+      "reducedMotionRepresentation": {
+        "staticRGBHighlight": true,
+        "suppressFanSpinAcceleration": true
+      }
+    },
+    {
+      "assetId": "zenith-model",
+      "category": "project_prop",
+      "label": "Zenith: Clean Energy Simulation",
+      "visibleNode": "zenith_base_stand",
+      "interactionPivot": "zenith-model-pivot",
+      "pivotRuntimeCoords": [0.95, 0.75, -1.05],
+      "hitGeometry": {
+        "node": "hit_zenith_model",
+        "type": "box",
+        "runtimeCenter": [0.95, 0.84, -1.05],
+        "dimensions": [0.20, 0.20, 0.20],
+        "touchTargetMinPt": 44
+      },
+      "channel": {
+        "type": "circuit_trace_led",
+        "material": "Zenith_Mat",
+        "ledSequence": ["solar", "storage", "grid"]
+      },
+      "restState": {
+        "ledFlowActive": false,
+        "baselineGlow": 0.5
+      },
+      "activeState": {
+        "ledFlowActive": true,
+        "durationSec": 1.4,
+        "destinationRoute": "/projects/zenith"
+      },
+      "restorationState": {
+        "ledFlowActive": false,
+        "baselineGlow": 0.5
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [0.28, 0.28, 0.28],
+        "singleTapNavigates": true
+      },
+      "reducedMotionRepresentation": {
+        "staticCircuitDiagram": true,
+        "suppressSequentialTracer": true
+      }
+    },
+    {
+      "assetId": "ai-real-camera",
+      "category": "project_prop",
+      "label": "AI Real: Computer Vision Scanner",
+      "visibleNode": "ai_camera_body",
+      "interactionPivot": "ai-camera-pivot",
+      "pivotRuntimeCoords": [0.75, 0.85, -0.90],
+      "hitGeometry": {
+        "node": "hit_ai_real_camera",
+        "type": "box",
+        "runtimeCenter": [0.75, 0.85, -0.90],
+        "dimensions": [0.15, 0.12, 0.15],
+        "touchTargetMinPt": 44
+      },
+      "channel": {
+        "type": "lens_rotation_led",
+        "lensNode": "ai_camera_lens",
+        "travelMm": 2.0
+      },
+      "restState": {
+        "lensTravelMm": 0.0,
+        "statusLed": "steady_blue"
+      },
+      "activeState": {
+        "lensTravelMm": 2.0,
+        "statusLed": "scanning_pulse",
+        "destinationRoute": "/projects/ai-real"
+      },
+      "restorationState": {
+        "lensTravelMm": 0.0,
+        "statusLed": "steady_blue"
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [0.22, 0.18, 0.22],
+        "singleTapNavigates": true
+      },
+      "reducedMotionRepresentation": {
+        "suppressLensMovement": true,
+        "noFlashingLights": true
+      }
+    },
+    {
+      "assetId": "talks-microphone",
+      "category": "project_prop",
+      "label": "Yor Talks: Podcast & Public Tech Talks",
+      "visibleNode": "mic_capsule",
+      "interactionPivot": "mic-pivot",
+      "pivotRuntimeCoords": [0.45, 0.78, -0.85],
+      "hitGeometry": {
+        "node": "hit_talks_microphone",
+        "type": "box",
+        "runtimeCenter": [0.45, 0.88, -0.85],
+        "dimensions": [0.14, 0.28, 0.14],
+        "touchTargetMinPt": 44
+      },
+      "channel": {
+        "type": "emissive_ring_led",
+        "ringNode": "mic_led_ring",
+        "material": "PC_RGB",
+        "emissionRange": [0.2, 2.5]
+      },
+      "restState": {
+        "emissionStrength": 0.2,
+        "color": "#444455"
+      },
+      "activeState": {
+        "emissionStrength": 2.5,
+        "color": "#ff3344",
+        "destinationRoute": "/projects/talks"
+      },
+      "restorationState": {
+        "emissionStrength": 0.2,
+        "color": "#444455"
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [0.20, 0.35, 0.20],
+        "singleTapNavigates": true
+      },
+      "reducedMotionRepresentation": {
+        "staticMicBadge": true,
+        "suppressPulsingWaveform": true
+      }
+    },
+    {
+      "assetId": "project-shortcuts",
+      "category": "accessible_navigation",
+      "label": "Project shortcuts rail",
+      "visibleNode": "project-shortcuts-anchor",
+      "interactionPivot": "project-shortcuts-anchor",
+      "pivotRuntimeCoords": [0.0, 0.75, -0.65],
+      "hitGeometry": {
+        "node": "hit_project_shortcuts",
+        "type": "box",
+        "runtimeCenter": [0.0, 0.75, -0.65],
+        "dimensions": [0.40, 0.05, 0.15],
+        "touchTargetMinPt": 44,
+        "domFallback": "#project-shortcuts-rail"
+      },
+      "channel": {
+        "type": "dom_focus_ring"
+      },
+      "restState": {
+        "visible": true,
+        "expanded": false
+      },
+      "activeState": {
+        "visible": true,
+        "expanded": true
+      },
+      "restorationState": {
+        "visible": true,
+        "expanded": false
+      },
+      "mobileSimplification": {
+        "persistentBottomRail": true,
+        "touchFriendlyChips": true
+      },
+      "reducedMotionRepresentation": {
+        "nativeStandardNavigation": true
+      }
+    },
+    {
+      "assetId": "research-books",
+      "category": "project_prop",
+      "label": "Research papers and monographs",
+      "visibleNode": "book_stack_horizontal",
+      "interactionPivot": "books-pivot",
+      "pivotRuntimeCoords": [1.05, 1.20, -1.35],
+      "hitGeometry": {
+        "node": "hit_research_books",
+        "type": "box",
+        "runtimeCenter": [1.05, 1.18, -1.35],
+        "dimensions": [0.28, 0.20, 0.24],
+        "touchTargetMinPt": 44
+      },
+      "channel": {
+        "type": "translation_z",
+        "travelMm": 15.0
+      },
+      "restState": {
+        "translationZ": 0.0,
+        "highlight": false
+      },
+      "activeState": {
+        "translationZ": -0.015,
+        "highlight": true,
+        "destinationRoute": "/research"
+      },
+      "restorationState": {
+        "translationZ": 0.0,
+        "highlight": false
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [0.36, 0.28, 0.32],
+        "singleTapNavigates": true
+      },
+      "reducedMotionRepresentation": {
+        "suppressSpinePull": true,
+        "directLinkAction": true
+      }
+    },
+    {
+      "assetId": "skills-board",
+      "category": "project_prop",
+      "label": "Verified technical skills board",
+      "visibleNode": "skills_board_panel",
+      "interactionPivot": "skills-board-pivot",
+      "pivotRuntimeCoords": [-1.10, 1.40, -1.75],
+      "hitGeometry": {
+        "node": "hit_skills_board",
+        "type": "box",
+        "runtimeCenter": [-1.10, 1.40, -1.75],
+        "dimensions": [0.50, 0.40, 0.08],
+        "touchTargetMinPt": 44
+      },
+      "channel": {
+        "type": "emissive_highlight",
+        "material": "Board_Wood",
+        "range": [0.0, 1.0]
+      },
+      "restState": {
+        "pinsIlluminated": false
+      },
+      "activeState": {
+        "pinsIlluminated": true,
+        "destinationRoute": "/about#skills"
+      },
+      "restorationState": {
+        "pinsIlluminated": false
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [0.65, 0.50, 0.15],
+        "singleTapNavigates": true
+      },
+      "reducedMotionRepresentation": {
+        "noPinGlowSweep": true
+      }
+    },
+    {
+      "assetId": "certificate-frame",
+      "category": "project_prop",
+      "label": "Verified credentials frame",
+      "visibleNode": "certificate_frame_border",
+      "interactionPivot": "cert-frame-pivot",
+      "pivotRuntimeCoords": [-1.40, 1.65, -1.75],
+      "hitGeometry": {
+        "node": "hit_certificate_frame",
+        "type": "box",
+        "runtimeCenter": [-1.40, 1.65, -1.75],
+        "dimensions": [0.32, 0.26, 0.08],
+        "touchTargetMinPt": 44
+      },
+      "channel": {
+        "type": "border_specular",
+        "range": [0.3, 0.8]
+      },
+      "restState": {
+        "specularHighlight": 0.3
+      },
+      "activeState": {
+        "specularHighlight": 0.8,
+        "destinationRoute": "/about#credentials"
+      },
+      "restorationState": {
+        "specularHighlight": 0.3
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [0.42, 0.35, 0.15],
+        "singleTapNavigates": true
+      },
+      "reducedMotionRepresentation": {
+        "staticBorderOnly": true
+      }
+    },
+    {
+      "assetId": "about-personal-object",
+      "category": "project_prop",
+      "label": "Personal verified studio emblem",
+      "visibleNode": "personal_token_sculpture",
+      "interactionPivot": "personal-obj-pivot",
+      "pivotRuntimeCoords": [-0.55, 0.75, -0.95],
+      "hitGeometry": {
+        "node": "hit_about_personal_object",
+        "type": "box",
+        "runtimeCenter": [-0.55, 0.81, -0.95],
+        "dimensions": [0.12, 0.16, 0.12],
+        "touchTargetMinPt": 44
+      },
+      "channel": {
+        "type": "elevation_and_rotation",
+        "liftMm": 2.0,
+        "yawDeg": 15.0
+      },
+      "restState": {
+        "liftMm": 0.0,
+        "yawDeg": 0.0
+      },
+      "activeState": {
+        "liftMm": 2.0,
+        "yawDeg": 15.0,
+        "destinationRoute": "/about"
+      },
+      "restorationState": {
+        "liftMm": 0.0,
+        "yawDeg": 0.0
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [0.18, 0.22, 0.18],
+        "singleTapNavigates": true
+      },
+      "reducedMotionRepresentation": {
+        "suppressLiftAndRotate": true
+      }
+    },
+    {
+      "assetId": "contact-phone",
+      "category": "contact_portal",
+      "label": "Workstation phone",
+      "visibleNode": "phone_chassis",
+      "interactionPivot": "phone-pivot",
+      "pivotRuntimeCoords": [0.55, 0.75, -0.75],
+      "hitGeometry": {
+        "node": "hit_contact_phone",
+        "type": "box",
+        "runtimeCenter": [0.55, 0.76, -0.75],
+        "dimensions": [0.12, 0.06, 0.20],
+        "touchTargetMinPt": 48
+      },
+      "channel": {
+        "type": "screen_wake_emission",
+        "material": "Phone_Screen",
+        "textureSwap": ["phone-screen-idle.png", "phone-screen-active.png"],
+        "emissionRange": [0.0, 1.2]
+      },
+      "restState": {
+        "screenAwake": false,
+        "emissionStrength": 0.0,
+        "texture": "phone-screen-idle.png"
+      },
+      "activeState": {
+        "screenAwake": true,
+        "emissionStrength": 1.2,
+        "texture": "phone-screen-active.png",
+        "destinationRoute": "/contact"
+      },
+      "restorationState": {
+        "screenAwake": false,
+        "emissionStrength": 0.0,
+        "texture": "phone-screen-idle.png"
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [0.18, 0.10, 0.28],
+        "directContactForm": true
+      },
+      "reducedMotionRepresentation": {
+        "instantScreenWake": true,
+        "suppressCameraFocus": true
+      }
+    },
+    {
+      "assetId": "desk-lamp",
+      "category": "lighting_control",
+      "label": "Architectural desk task lamp",
+      "visibleNode": "lamp_shade_cone",
+      "interactionPivot": "lamp-switch-pivot",
+      "pivotRuntimeCoords": [-0.75, 0.75, -1.20],
+      "hitGeometry": {
+        "node": "hit_desk_lamp",
+        "type": "box",
+        "runtimeCenter": [-0.72, 0.92, -1.18],
+        "dimensions": [0.24, 0.40, 0.24],
+        "touchTargetMinPt": 48
+      },
+      "channel": {
+        "type": "light_and_emission_toggle",
+        "bulbMaterial": "Lamp_Bulb",
+        "lightObject": "Light_TaskLamp",
+        "easeDurationMs": 250,
+        "bulbEmissionRange": [0.0, 2.5],
+        "spotEnergyRange": [0.0, 4.5]
+      },
+      "restState": {
+        "enabled": true,
+        "bulbEmission": 2.5,
+        "lightEnergy": 4.5
+      },
+      "activeState": {
+        "enabled": false,
+        "bulbEmission": 0.0,
+        "lightEnergy": 0.0
+      },
+      "restorationState": {
+        "enabled": true,
+        "bulbEmission": 2.5,
+        "lightEnergy": 4.5,
+        "zeroDeltaProven": true
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [0.35, 0.50, 0.35],
+        "roomControlsToggle": true
+      },
+      "reducedMotionRepresentation": {
+        "instantToggle": true,
+        "suppress250msEase": true
+      }
+    },
+    {
+      "assetId": "window-blinds",
+      "category": "environment_control",
+      "label": "Studio window blinds",
+      "visibleNode": "window_frame_right",
+      "interactionPivot": "blinds-cord-pivot",
+      "pivotRuntimeCoords": [2.08, 1.50, -0.20],
+      "hitGeometry": {
+        "node": "hit_window_blinds",
+        "type": "box",
+        "runtimeCenter": [2.06, 1.50, -0.20],
+        "dimensions": [0.12, 1.45, 1.15],
+        "touchTargetMinPt": 48
+      },
+      "channel": {
+        "type": "slat_rotation_and_fill_light",
+        "slatObject": "blinds_slat_rotator",
+        "lightObject": "Light_WindowFill",
+        "slatRotationRangeRad": [0.0, 1.30899694],
+        "fillLightEnergyRange": [0.2, 1.2]
+      },
+      "restState": {
+        "open": true,
+        "slatRotationRad": 0.0,
+        "fillLightEnergy": 1.2
+      },
+      "activeState": {
+        "open": false,
+        "slatRotationRad": 1.30899694,
+        "fillLightEnergy": 0.2
+      },
+      "restorationState": {
+        "open": true,
+        "slatRotationRad": 0.0,
+        "fillLightEnergy": 1.2,
+        "zeroDeltaProven": true
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [0.18, 1.60, 1.30],
+        "roomControlsToggle": true
+      },
+      "reducedMotionRepresentation": {
+        "instantSlatSwap": true,
+        "suppressSlatRotationLerp": true
+      }
+    },
+    {
+      "assetId": "desk-clock",
+      "category": "widget",
+      "label": "Digital desk clock (Asia/Kolkata)",
+      "visibleNode": "clock_chassis",
+      "interactionPivot": "clock-top-button",
+      "pivotRuntimeCoords": [0.70, 0.75, -1.10],
+      "hitGeometry": {
+        "node": "hit_desk_clock",
+        "type": "box",
+        "runtimeCenter": [0.70, 0.79, -1.10],
+        "dimensions": [0.20, 0.12, 0.14],
+        "touchTargetMinPt": 44
+      },
+      "channel": {
+        "type": "texture_format_toggle",
+        "material": "Clock_Display",
+        "formats": ["24h", "12h"],
+        "textures": ["clock-display-24h.png", "clock-display-12h.png"]
+      },
+      "restState": {
+        "format": "24h",
+        "displaySample": "14:30 IST",
+        "timezone": "Asia/Kolkata"
+      },
+      "activeState": {
+        "format": "12h",
+        "displaySample": "02:30 PM",
+        "timezone": "Asia/Kolkata"
+      },
+      "restorationState": {
+        "format": "24h",
+        "displaySample": "14:30 IST"
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [0.28, 0.18, 0.20],
+        "singleTapTogglesFormat": true
+      },
+      "reducedMotionRepresentation": {
+        "instantFormatSwap": true,
+        "noColonPulse": true
+      }
+    },
+    {
+      "assetId": "speakers",
+      "category": "audio_control",
+      "label": "Desktop studio monitor speakers",
+      "visibleNode": "speaker_right_cabinet",
+      "interactionPivot": "speaker-knob-pivot",
+      "pivotRuntimeCoords": [0.85, 0.75, -1.15],
+      "hitGeometry": {
+        "node": "hit_speakers",
+        "type": "box",
+        "runtimeCenter": [0.85, 0.88, -1.15],
+        "dimensions": [0.22, 0.30, 0.24],
+        "touchTargetMinPt": 48
+      },
+      "channel": {
+        "type": "mute_led_and_cone_oscillation",
+        "ledNode": "speaker_mute_indicator",
+        "material": "Speaker_Mute_LED",
+        "colors": {
+          "muted": "#ff3344",
+          "unmuted": "#55e8d0"
+        }
+      },
+      "restState": {
+        "audioMuted": true,
+        "ledColor": "#ff3344",
+        "coneOscillation": false
+      },
+      "activeState": {
+        "audioMuted": false,
+        "ledColor": "#55e8d0",
+        "coneOscillation": true
+      },
+      "restorationState": {
+        "audioMuted": true,
+        "ledColor": "#ff3344",
+        "coneOscillation": false
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [0.32, 0.40, 0.32],
+        "globalSoundButtonSync": true
+      },
+      "reducedMotionRepresentation": {
+        "ledColorChangeOnly": true,
+        "suppressConeVibration": true
+      }
+    },
+    {
+      "assetId": "plant-leaves",
+      "category": "decoration",
+      "label": "Desktop potted plant",
+      "visibleNode": "plant_foliage_leaves",
+      "interactionPivot": "plant-pot-base",
+      "pivotRuntimeCoords": [-1.0, 0.75, -0.80],
+      "hitGeometry": {
+        "node": "hit_plant_leaves",
+        "type": "box",
+        "runtimeCenter": [-1.0, 0.90, -0.80],
+        "dimensions": [0.28, 0.32, 0.28],
+        "touchTargetMinPt": 44
+      },
+      "channel": {
+        "type": "rotation_sway",
+        "axis": "Y",
+        "maxDeflectionRad": 0.06981317,
+        "coalescingMs": 500
+      },
+      "restState": {
+        "swayAngleRad": 0.0
+      },
+      "activeState": {
+        "swayAngleRad": 0.06981317,
+        "dampedReturnMs": 600
+      },
+      "restorationState": {
+        "swayAngleRad": 0.0
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [0.38, 0.42, 0.38],
+        "tapTriggersPresetSway": true
+      },
+      "reducedMotionRepresentation": {
+        "suppressLeafSway": true,
+        "subtleFresnelGlowOnly": true
+      }
+    },
+    {
+      "assetId": "keyboard",
+      "category": "input_hardware",
+      "label": "Mechanical keyboard",
+      "visibleNode": "keyboard_frame",
+      "interactionPivot": "keyboard-center-pivot",
+      "pivotRuntimeCoords": [0.0, 0.75, -0.75],
+      "hitGeometry": {
+        "node": "hit_keyboard",
+        "type": "box",
+        "runtimeCenter": [0.0, 0.76, -0.75],
+        "dimensions": [0.46, 0.05, 0.18],
+        "touchTargetMinPt": 48
+      },
+      "channel": {
+        "type": "key_travel_depression",
+        "keysNode": "keyboard_keycaps",
+        "travelMm": 1.5
+      },
+      "restState": {
+        "depressionMm": 0.0,
+        "underglow": "idle_lavender"
+      },
+      "activeState": {
+        "depressionMm": 1.5,
+        "underglow": "active_cyan_pulse",
+        "actionTarget": "open_monitor_commands_tab"
+      },
+      "restorationState": {
+        "depressionMm": 0.0,
+        "underglow": "idle_lavender"
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [0.55, 0.08, 0.25],
+        "opensCommandsModal": true
+      },
+      "reducedMotionRepresentation": {
+        "suppressKeycapTravel": true,
+        "underglowGlowOnly": true
+      }
+    },
+    {
+      "assetId": "mouse",
+      "category": "input_hardware",
+      "label": "Ergonomic desk mouse",
+      "visibleNode": "mouse_body",
+      "interactionPivot": "mouse-click-pivot",
+      "pivotRuntimeCoords": [0.28, 0.75, -0.75],
+      "hitGeometry": {
+        "node": "hit_mouse",
+        "type": "box",
+        "runtimeCenter": [0.28, 0.765, -0.75],
+        "dimensions": [0.12, 0.06, 0.16],
+        "touchTargetMinPt": 44
+      },
+      "channel": {
+        "type": "button_click_depression",
+        "shellNode": "mouse_body",
+        "travelMm": 0.8
+      },
+      "restState": {
+        "clicked": false,
+        "buttonTravelMm": 0.0
+      },
+      "activeState": {
+        "clicked": true,
+        "buttonTravelMm": 0.8,
+        "actionTarget": "wake_monitor_launcher"
+      },
+      "restorationState": {
+        "clicked": false,
+        "buttonTravelMm": 0.0
+      },
+      "mobileSimplification": {
+        "hitBoundsEnlarged": [0.18, 0.10, 0.22],
+        "wakesMonitorLauncher": true
+      },
+      "reducedMotionRepresentation": {
+        "suppressButtonTravel": true,
+        "instantWake": true
+      }
+    }
+  ]
+}

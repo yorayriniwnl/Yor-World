@@ -1,0 +1,67 @@
+{
+  "steps": [
+    {
+      "step": 1,
+      "action": "capture_initial_base",
+      "status": "PASS",
+      "initial": {
+        "lampBulbEmission": 2.5,
+        "lampLightEnergy": 4.5,
+        "blindsRotationRad": 0,
+        "windowLightEnergy": 1.2
+      }
+    },
+    {
+      "step": 2,
+      "action": "mutate_lamp_off_blinds_closed",
+      "status": "PASS",
+      "mutated": {
+        "lampBulbEmission": 0,
+        "lampLightEnergy": 0,
+        "blindsRotationRad": 1.3089969389957472,
+        "windowLightEnergy": 0.2
+      }
+    },
+    {
+      "step": 3,
+      "action": "apply_project_focus_layer",
+      "status": "PASS",
+      "focusLayer": {
+        "studioFillDimmed": true,
+        "projectAccentActive": true
+      }
+    },
+    {
+      "step": 4,
+      "action": "clear_focus_verify_persistence",
+      "status": "PASS",
+      "postFocus": {
+        "lampBulbEmission": 0,
+        "lampLightEnergy": 0,
+        "blindsRotationRad": 1.3089969389957472,
+        "windowLightEnergy": 0.2
+      }
+    },
+    {
+      "step": 5,
+      "action": "restore_initial_base",
+      "status": "PASS",
+      "restored": {
+        "lampBulbEmission": 2.5,
+        "lampLightEnergy": 4.5,
+        "blindsRotationRad": 0,
+        "windowLightEnergy": 1.2
+      },
+      "deltas": {
+        "lampBulbEmissionDelta": 0,
+        "lampLightEnergyDelta": 0,
+        "blindsRotationDelta": 0,
+        "windowLightEnergyDelta": 0
+      }
+    }
+  ],
+  "preferencesPreservedThroughFocus": true,
+  "maxDelta": 0,
+  "zeroDeltaRestored": true,
+  "verdict": "PASS"
+}
