@@ -1,0 +1,613 @@
+{
+  "schemaVersion": 2,
+  "revision": "W1-F1-r3",
+  "generatedAt": "2026-10-01T04:42:18Z",
+  "generator": "build-blockout.py via Blender 5.2.2 LTS",
+  "packet": "W1-CORR-02 - Room blockout and correction delta audit resolution",
+  "worker": "Gemini-1 (Model: Gemini Pro / Gemini 3.8 Flash (High))",
+  "reviewerReviewLanes": [
+    "Gemini-3 (W1-REV-02)",
+    "Claude-13 (W1-REV-02)"
+  ],
+  "provenance": {
+    "mainReferencePath": "references/images/main-reference.png",
+    "mainReferenceSha256": "37adfb0ee344642798978e954a0cfc8d9715eac1b3ca4e5a84ab87a228c53362",
+    "referenceIndexPath": "references/README.md",
+    "referenceIndexStatus": "PRESENT and inspected (SHA-256: 4bef6bb974a6f44f9ba1a28016685b1df74efdd87f9f025a4cc25d102ea5a0d2)",
+    "rightsStatus": "Unknown rights - reference image only; original 3D clean-room implementation for YOR WORLD feasibility.",
+    "sourceDiscussion": "references/text/source-discussion.txt",
+    "manifestPath": "references/manifest.json"
+  },
+  "liveSceneStatistics": {
+    "totalNodes": 232,
+    "totalMeshObjects": 204,
+    "totalTriangles": 11020,
+    "nativeMaterialDatablocks": 50,
+    "exportedGltfMaterials": 49,
+    "totalCameras": 6
+  },
+  "workingAssumptionsF1": {
+    "roomDimensionsMeters": {
+      "width_X": 4.2,
+      "depth_Z": 3.6,
+      "height_Y": 2.8
+    },
+    "runtimeCoordinateSystem": "Meters, Y-Up, Origin at room-floor center; Rear desk wall at Z = -1.8; Front doorway wall at Z = +1.8",
+    "blenderCoordinateSystem": "Meters, Z-Up; Exported once to glTF Y-Up via standard transform matrix",
+    "deskFootprintMeters": {
+      "width": 2.6,
+      "depth": 0.8,
+      "height": 0.75,
+      "center_X": 0.0,
+      "center_Z": -1.15
+    },
+    "chairResidentRoot": {
+      "x": 0.3,
+      "y": 0.0,
+      "z": -0.36
+    },
+    "doorway": {
+      "location": "Front-left wall Z = +1.80",
+      "opening_width": 0.9,
+      "opening_height": 2.1,
+      "hinge": [
+        -1.65,
+        0.0,
+        1.8
+      ]
+    },
+    "doorLeafClosedCenter": [
+      -1.2,
+      1.05,
+      1.8
+    ]
+  },
+  "observedReferenceFeatures": {
+    "workstationDesk": "Bright white/ivory desk supported by two 4-drawer Alex-style units, front and side glowing LED strips, acoustic quilted diamond wall panel behind monitor with neon frame.",
+    "gamingChair": "High-back ergonomic gaming chair with blue and white racing upholstery, white lumbar and headrest pillows, 5-star wheeled base.",
+    "monitor": "Large curved ultrawide 21:9 display on heavy desk mount arm, mounted screen lightbar emitting downward warm light.",
+    "lightingAtmosphere": "Vivid pink/lilac upper accent from honeycomb hex wall panels; cyan ambient underglow beneath desk and behind monitor; warm amber lightbar pool; deep royal blue carpet floor.",
+    "deskProps": "White PS5 console vertical on left; boom-arm condenser microphone on left; dual pebble round speakers; mechanical keyboard and mouse on desk mat; retro digital clock showing 17:49; coffee cup; small succulent pot.",
+    "rightWallProps": "Dual-chamber white PC tower with tempered glass panel and 3 RGB glowing fans (pink/cyan); white perforated pegboard with 2 hung controllers; white headset stand with over-ear gaming headphones.",
+    "upperWallProps": "Prominent pink honeycomb hexagonal light modules; dual white floating shelves with trailing cascading plants, camera, mini display keyboard, glowing PlayStation shapes.",
+    "foregroundProps": "Large leafy plant on 4-leg wooden stand in lower-left foreground."
+  },
+  "cameraDeclarations": {
+    "cameraPurpose": "Exported cameras represent proof and framing presets; they do not define or replace the production CameraId enum in the runtime platform specification.",
+    "exportedCameraAspectNote": "Default glTF 2.0 camera export writes perspective aspectRatio 1.7777778 for all cameras; responsive WebGL canvas runtime loaders override projection aspect dynamically.",
+    "cameras": {
+      "Camera_Entry": {
+        "position_runtime": [
+          -1.2,
+          1.45,
+          2.15
+        ],
+        "target_runtime": [
+          0.0,
+          1.05,
+          -1.15
+        ],
+        "fov_horizontal_deg": 54.0,
+        "sensor_fit": "AUTO",
+        "aspect": "16:9",
+        "resolution": [
+          1920,
+          1080
+        ],
+        "notes": "Doorway threshold looking into workstation reveal; sightline clear when door is open 90\u00b0."
+      },
+      "Camera_Home": {
+        "position_runtime": [
+          -1.9,
+          1.7,
+          1.45
+        ],
+        "target_runtime": [
+          0.12,
+          1.25,
+          -1.15
+        ],
+        "fov_horizontal_deg": 60.0,
+        "fov_vertical_yfov_deg": 35.98,
+        "sensor_fit": "AUTO",
+        "aspect": "16:9",
+        "resolution": [
+          1920,
+          1080
+        ],
+        "notes": "Elevated three-quarter desktop view; position (-1.90, 1.70, 1.45) is inside room (200mm clear of left wall inner face at X=-2.10) providing zero wall obstruction."
+      },
+      "Camera_Mobile": {
+        "position_runtime": [
+          -1.25,
+          1.48,
+          1.15
+        ],
+        "target_runtime": [
+          0.16,
+          1.08,
+          -0.95
+        ],
+        "fov_horizontal_deg": 52.0,
+        "sensor_fit": "HORIZONTAL",
+        "aspect": "9:16",
+        "resolution": [
+          1080,
+          1920
+        ],
+        "notes": "Vertical portrait framing resident and monitor. Lower 35-38% viewport over blue carpet provides clean touch UI control area."
+      },
+      "Camera_Monitor": {
+        "position_runtime": [
+          0.0,
+          1.08,
+          -0.5
+        ],
+        "target_runtime": [
+          0.0,
+          1.08,
+          -1.35
+        ],
+        "fov_horizontal_deg": 50.0,
+        "sensor_fit": "AUTO",
+        "aspect": "16:9",
+        "resolution": [
+          1920,
+          1080
+        ]
+      },
+      "Camera_ReverseDoorway": {
+        "position_runtime": [
+          0.2,
+          1.25,
+          -1.0
+        ],
+        "target_runtime": [
+          -1.2,
+          1.1,
+          1.8
+        ],
+        "fov_horizontal_deg": 56.0,
+        "sensor_fit": "AUTO",
+        "aspect": "16:9",
+        "resolution": [
+          1920,
+          1080
+        ]
+      },
+      "Camera_ReferenceMatch": {
+        "position_runtime": [
+          -1.95,
+          2.1,
+          1.55
+        ],
+        "target_runtime": [
+          0.22,
+          0.9,
+          -1.15
+        ],
+        "fov_horizontal_deg": 52.0,
+        "sensor_fit": "AUTO",
+        "aspect": "4:3",
+        "resolution": [
+          1504,
+          1128
+        ]
+      }
+    }
+  },
+  "chairLocatorAndOrientation": {
+    "chairRootLocator": "chair-root",
+    "runtimePosition": [
+      0.3,
+      0.0,
+      -0.36
+    ],
+    "storedBlenderEulerZ": -135.0,
+    "exportedGltfRotationQuaternion": [
+      0.0,
+      -0.92387956,
+      0.0,
+      0.38268346
+    ],
+    "runtimeYawDescription": "-135.0\u00b0 about +Y (+135.0\u00b0 clockwise from front / +225.0\u00b0 mathematical angle from +X)",
+    "integrationHandoffPolicy": "W1 defines locator 'chair-root'. In future G1 integration, the resident and chair subtrees are recursively removed; the locator 'chair-root' must either be reused by W2 or disposed/renamed before importing W2's 'chair-root' to avoid duplicate node names."
+  },
+  "recursiveRemovalRoots": {
+    "resident": {
+      "rootNode": "resident",
+      "purpose": "Removes proxy resident mannequin and all 17 child nodes when binding W2 rigged avatar.",
+      "childNodeCount": 17,
+      "descendants": [
+        "resident_foot_l",
+        "resident_foot_r",
+        "resident_forearm_l",
+        "resident_forearm_r",
+        "resident_hair",
+        "resident_hand_l",
+        "resident_hand_r",
+        "resident_head",
+        "resident_neck",
+        "resident_pelvis",
+        "resident_shin_l",
+        "resident_shin_r",
+        "resident_thigh_l",
+        "resident_thigh_r",
+        "resident_torso",
+        "resident_upper_arm_l",
+        "resident_upper_arm_r"
+      ]
+    },
+    "chair": {
+      "rootNode": "chair",
+      "purpose": "Removes blockout chair and all 22 child nodes (hub, 5 legs, 5 casters, cylinder, cushions, backrest, pillows, armrests) when binding W2 animated chair.",
+      "childNodeCount": 22,
+      "descendants": [
+        "chair_armrest_left_pad",
+        "chair_armrest_left_stem",
+        "chair_armrest_right_pad",
+        "chair_armrest_right_stem",
+        "chair_backrest_blue",
+        "chair_backrest_white_stripe",
+        "chair_base_hub",
+        "chair_base_leg_1",
+        "chair_base_leg_2",
+        "chair_base_leg_3",
+        "chair_base_leg_4",
+        "chair_base_leg_5",
+        "chair_caster_1",
+        "chair_caster_2",
+        "chair_caster_3",
+        "chair_caster_4",
+        "chair_caster_5",
+        "chair_cylinder",
+        "chair_headrest_pillow",
+        "chair_lumbar_pillow",
+        "chair_seat_center_white",
+        "chair_seat_cushion"
+      ]
+    },
+    "chair-root": {
+      "rootNode": "chair-root",
+      "purpose": "Locator root containing both chair and resident hierarchies.",
+      "childNodeCount": 41,
+      "descendants": [
+        "chair",
+        "chair_armrest_left_pad",
+        "chair_armrest_left_stem",
+        "chair_armrest_right_pad",
+        "chair_armrest_right_stem",
+        "chair_backrest_blue",
+        "chair_backrest_white_stripe",
+        "chair_base_hub",
+        "chair_base_leg_1",
+        "chair_base_leg_2",
+        "chair_base_leg_3",
+        "chair_base_leg_4",
+        "chair_base_leg_5",
+        "chair_caster_1",
+        "chair_caster_2",
+        "chair_caster_3",
+        "chair_caster_4",
+        "chair_caster_5",
+        "chair_cylinder",
+        "chair_headrest_pillow",
+        "chair_lumbar_pillow",
+        "chair_seat_center_white",
+        "chair_seat_cushion",
+        "resident",
+        "resident_foot_l",
+        "resident_foot_r",
+        "resident_forearm_l",
+        "resident_forearm_r",
+        "resident_hair",
+        "resident_hand_l",
+        "resident_hand_r",
+        "resident_head",
+        "resident_neck",
+        "resident_pelvis",
+        "resident_shin_l",
+        "resident_shin_r",
+        "resident_thigh_l",
+        "resident_thigh_r",
+        "resident_torso",
+        "resident_upper_arm_l",
+        "resident_upper_arm_r"
+      ]
+    }
+  },
+  "clearanceValidation": {
+    "door_sweep": {
+      "status": "PASS",
+      "sample_interval_deg": 5.0,
+      "sample_count": 19,
+      "tolerance_m": 0.001,
+      "hinge_location_runtime": [
+        -1.65,
+        0.0,
+        1.8
+      ],
+      "door_leaf_dimensions_m": [
+        0.88,
+        2.08,
+        0.04
+      ],
+      "measured_min_wall_clearance_m": 0.43,
+      "measured_min_desk_clearance_m": 1.67,
+      "measured_min_plant_clearance_m": 0.9098,
+      "sampling_disclaimer": "Sampled check evaluated at 5.0-degree increments against evaluated object bounding geometry; discrete sampling does not constitute a continuous topological guarantee.",
+      "samples": [
+        {
+          "angle_deg": 0.0,
+          "door_min_runtime": [
+            -1.65,
+            1.04,
+            1.78
+          ],
+          "clearance_to_left_wall_m": 0.45,
+          "clearance_to_desk_m": 2.53,
+          "clearance_to_plant_m": 1.7732
+        },
+        {
+          "angle_deg": 5.0,
+          "door_min_runtime": [
+            -1.6517,
+            1.04,
+            1.7034
+          ],
+          "clearance_to_left_wall_m": 0.4483,
+          "clearance_to_desk_m": 2.4534,
+          "clearance_to_plant_m": 1.7605
+        },
+        {
+          "angle_deg": 10.0,
+          "door_min_runtime": [
+            -1.6535,
+            1.04,
+            1.6275
+          ],
+          "clearance_to_left_wall_m": 0.4465,
+          "clearance_to_desk_m": 2.3775,
+          "clearance_to_plant_m": 1.6846
+        },
+        {
+          "angle_deg": 15.0,
+          "door_min_runtime": [
+            -1.6552,
+            1.04,
+            1.5529
+          ],
+          "clearance_to_left_wall_m": 0.4448,
+          "clearance_to_desk_m": 2.3029,
+          "clearance_to_plant_m": 1.608
+        },
+        {
+          "angle_deg": 20.0,
+          "door_min_runtime": [
+            -1.6568,
+            1.04,
+            1.4802
+          ],
+          "clearance_to_left_wall_m": 0.4432,
+          "clearance_to_desk_m": 2.2302,
+          "clearance_to_plant_m": 1.5312
+        },
+        {
+          "angle_deg": 25.0,
+          "door_min_runtime": [
+            -1.6585,
+            1.04,
+            1.41
+          ],
+          "clearance_to_left_wall_m": 0.4415,
+          "clearance_to_desk_m": 2.16,
+          "clearance_to_plant_m": 1.4548
+        },
+        {
+          "angle_deg": 30.0,
+          "door_min_runtime": [
+            -1.66,
+            1.04,
+            1.3427
+          ],
+          "clearance_to_left_wall_m": 0.44,
+          "clearance_to_desk_m": 2.0927,
+          "clearance_to_plant_m": 1.3796
+        },
+        {
+          "angle_deg": 35.0,
+          "door_min_runtime": [
+            -1.6615,
+            1.04,
+            1.2789
+          ],
+          "clearance_to_left_wall_m": 0.4385,
+          "clearance_to_desk_m": 2.0289,
+          "clearance_to_plant_m": 1.3064
+        },
+        {
+          "angle_deg": 40.0,
+          "door_min_runtime": [
+            -1.6629,
+            1.04,
+            1.219
+          ],
+          "clearance_to_left_wall_m": 0.4371,
+          "clearance_to_desk_m": 1.969,
+          "clearance_to_plant_m": 1.2359
+        },
+        {
+          "angle_deg": 45.0,
+          "door_min_runtime": [
+            -1.6641,
+            1.04,
+            1.1636
+          ],
+          "clearance_to_left_wall_m": 0.4359,
+          "clearance_to_desk_m": 1.9136,
+          "clearance_to_plant_m": 1.1693
+        },
+        {
+          "angle_deg": 50.0,
+          "door_min_runtime": [
+            -1.6653,
+            1.04,
+            1.113
+          ],
+          "clearance_to_left_wall_m": 0.4347,
+          "clearance_to_desk_m": 1.863,
+          "clearance_to_plant_m": 1.1076
+        },
+        {
+          "angle_deg": 55.0,
+          "door_min_runtime": [
+            -1.6664,
+            1.04,
+            1.0677
+          ],
+          "clearance_to_left_wall_m": 0.4336,
+          "clearance_to_desk_m": 1.8177,
+          "clearance_to_plant_m": 1.0522
+        },
+        {
+          "angle_deg": 60.0,
+          "door_min_runtime": [
+            -1.6673,
+            1.04,
+            1.0279
+          ],
+          "clearance_to_left_wall_m": 0.4327,
+          "clearance_to_desk_m": 1.7779,
+          "clearance_to_plant_m": 1.0043
+        },
+        {
+          "angle_deg": 65.0,
+          "door_min_runtime": [
+            -1.6681,
+            1.04,
+            0.994
+          ],
+          "clearance_to_left_wall_m": 0.4319,
+          "clearance_to_desk_m": 1.744,
+          "clearance_to_plant_m": 0.9653
+        },
+        {
+          "angle_deg": 70.0,
+          "door_min_runtime": [
+            -1.6688,
+            1.04,
+            0.9662
+          ],
+          "clearance_to_left_wall_m": 0.4312,
+          "clearance_to_desk_m": 1.7162,
+          "clearance_to_plant_m": 0.9364
+        },
+        {
+          "angle_deg": 75.0,
+          "door_min_runtime": [
+            -1.6693,
+            1.04,
+            0.9448
+          ],
+          "clearance_to_left_wall_m": 0.4307,
+          "clearance_to_desk_m": 1.6948,
+          "clearance_to_plant_m": 0.9186
+        },
+        {
+          "angle_deg": 80.0,
+          "door_min_runtime": [
+            -1.6697,
+            1.04,
+            0.9299
+          ],
+          "clearance_to_left_wall_m": 0.4303,
+          "clearance_to_desk_m": 1.6799,
+          "clearance_to_plant_m": 0.9127
+        },
+        {
+          "angle_deg": 85.0,
+          "door_min_runtime": [
+            -1.6699,
+            1.04,
+            0.9216
+          ],
+          "clearance_to_left_wall_m": 0.4301,
+          "clearance_to_desk_m": 1.6716,
+          "clearance_to_plant_m": 0.9098
+        },
+        {
+          "angle_deg": 90.0,
+          "door_min_runtime": [
+            -1.67,
+            1.04,
+            0.92
+          ],
+          "clearance_to_left_wall_m": 0.43,
+          "clearance_to_desk_m": 1.67,
+          "clearance_to_plant_m": 0.9124
+        }
+      ]
+    },
+    "entry_path": {
+      "status": "PASS",
+      "doorway_clear_width_m": 0.89,
+      "doorway_clear_height_m": 2.095,
+      "corridor_width_m": 1.09,
+      "entry_camera_runtime": [
+        -1.2,
+        1.45,
+        2.15
+      ],
+      "entry_camera_left_clearance_m": 0.545,
+      "entry_camera_right_clearance_m": 0.545,
+      "notes": "Unobstructed entry path from exterior corridor threshold to resident workstation."
+    },
+    "chair_turn": {
+      "status": "PASS",
+      "chair_root_runtime": [
+        0.3,
+        0.0,
+        -0.36
+      ],
+      "evaluated_armrest_top_y_m": 0.665,
+      "evaluated_desk_underside_y_m": 0.7,
+      "armrest_vertical_clearance_m": 0.035,
+      "knee_well_clear_width_m": 1.62,
+      "chair_base_turning_radius_m": 0.32,
+      "base_to_desk_front_clearance_m": 0.07,
+      "sampling_disclaimer": "Evaluated from object world bounding boxes; armrest pad top at 0.665m provides 35mm clearance beneath 0.700m tabletop underside.",
+      "visitor_acknowledge_turn": {
+        "turn_angle_deg": 45.0,
+        "status": "PASS",
+        "clearance_to_obstacles_m": 1.65,
+        "notes": "45\u00b0 turn toward doorway opens into unencumbered room floor space."
+      }
+    },
+    "camera_sightlines": {
+      "entry": {
+        "status": "PASS",
+        "details": "Direct sightline to workstation reveal from doorway when door is opened."
+      },
+      "home": {
+        "status": "PASS",
+        "details": "Frames hex lights, shelves, monitor, console/mic, PC/headset, pegboard, chair, and plant from (-1.90, 1.70, 1.45) with zero wall obstruction."
+      },
+      "mobile": {
+        "status": "PASS",
+        "details": "Frames monitor on left, resident on right, with lower 35-38% viewport over blue carpet for touch UI."
+      },
+      "monitor": {
+        "status": "PASS",
+        "details": "Direct facing view of curved ultrawide screen and lightbar."
+      },
+      "reverse_doorway": {
+        "status": "PASS",
+        "details": "Direct view of entrance threshold and door leaf."
+      },
+      "reference_match": {
+        "status": "PASS",
+        "details": "Matches high three-quarter angle of main-reference.png."
+      }
+    }
+  }
+}

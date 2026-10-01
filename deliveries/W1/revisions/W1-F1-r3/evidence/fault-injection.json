@@ -1,0 +1,63 @@
+{
+  "executedAtUtc": "2026-10-01T09:03:44Z",
+  "blenderVersion": "5.2.2 LTS",
+  "suiteVerdict": "PASS",
+  "totalTests": 5,
+  "passedTests": 5,
+  "testResults": [
+    {
+      "testId": "FAULT-INJECT-00",
+      "description": "Baseline delivery scene clearance verification",
+      "mutation": "Un-mutated candidate geometry",
+      "expectedOutcome": "PASS",
+      "actualOutcome": "PASS",
+      "detectorAction": "All clearances evaluated clear above thresholds",
+      "details": {
+        "door_sweep": "PASS",
+        "entry_path": "PASS",
+        "chair_turn": "PASS",
+        "min_door_wall_clearance_m": 0.43,
+        "min_door_desk_clearance_m": 1.67,
+        "chair_base_to_desk_clearance_m": 0.07,
+        "armrest_vertical_clearance_m": 0.035
+      },
+      "verdict": "PASS"
+    },
+    {
+      "testId": "FAULT-INJECT-01",
+      "description": "Chair base forward desk collision fault (Parent Counterexample 1)",
+      "mutation": "Displace chair-root by +0.29m in Blender Y (Runtime Z = -0.65m, penetrating desk front Z = -0.75m)",
+      "expectedOutcome": "FAIL",
+      "actualOutcome": "FAIL",
+      "detectorAction": "Clearance checker detected signed clearance -0.22m <= 0.02m and rejected collision",
+      "verdict": "PASS"
+    },
+    {
+      "testId": "FAULT-INJECT-02",
+      "description": "Left wall inward displacement door collision fault (Parent Counterexample 2)",
+      "mutation": "Displace wall_left center to X = -1.20m (overlapping door leaf closed X in [-1.64, -0.76])",
+      "expectedOutcome": "FAIL",
+      "actualOutcome": "FAIL",
+      "detectorAction": "Clearance checker detected wall clearance -0.52m <= 0.05m and rejected collision",
+      "verdict": "PASS"
+    },
+    {
+      "testId": "FAULT-INJECT-03",
+      "description": "Entry camera corridor boundary violation fault (Parent Counterexample 3)",
+      "mutation": "Displace Camera_Entry to X = 0.0m (past right corridor frame boundary X = -0.65m)",
+      "expectedOutcome": "FAIL",
+      "actualOutcome": "FAIL",
+      "detectorAction": "Clearance checker detected right clearance -0.655m <= 0.20m and rejected boundary violation",
+      "verdict": "PASS"
+    },
+    {
+      "testId": "FAULT-INJECT-04",
+      "description": "Armrest tabletop penetration collision fault",
+      "mutation": "Elevate chair armrests +80mm to Y = 0.745m (penetrating 0.700m desk underside by 45mm)",
+      "expectedOutcome": "FAIL",
+      "actualOutcome": "FAIL",
+      "detectorAction": "Clearance checker detected vertical clearance -0.045m <= 0.01m and rejected collision",
+      "verdict": "PASS"
+    }
+  ]
+}
