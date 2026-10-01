@@ -1,0 +1,57 @@
+COMMAND: "C:\Program Files\nodejs\node.EXE" C:\Users\yoray\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs test:unit
+CWD: C:\Users\yoray\AppData\Local\Temp\yor-world-a4-proof-sy65n45b\app
+
+> yor-world-a4-proof@0.1.0 test:unit C:\Users\yoray\AppData\Local\Temp\yor-world-a4-proof-sy65n45b\app
+> vitest run --config vitest.config.ts
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.2 [39m[90mC:/Users/yoray/AppData/Local/Temp/yor-world-a4-proof-sy65n45b/app[39m
+
+ [32m✓[39m tests/unit/contract-types.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 137[2mms[22m[39m
+ [32m✓[39m tests/unit/scene-integrator.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 588[2mms[22m[39m
+ [32m✓[39m tests/unit/character-director.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 412[2mms[22m[39m
+ [31m❯[39m tests/unit/boundaries.test.ts [2m([22m[2m9 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 5859[2mms[22m[39m
+   [32m✓[39m publishes verified projects and verified owner identity[32m 24[2mms[22m[39m
+[31m   [31m×[31m enforces A3 dependency boundaries: three is isolated to world, public shell is free of server/supabase, dependencies are pinned[39m[33m 5534[2mms[22m[39m
+   [32m✓[39m keeps shared contracts independent of framework and server imports[32m 9[2mms[22m[39m
+   [32m✓[39m regression: syntax-level import boundary detection [2m(6)[22m
+     [32m✓[39m rejects dynamic import of test fixture in production module[32m 2[2mms[22m[39m
+     [32m✓[39m rejects side-effect import of test fixture in production module[32m 1[2mms[22m[39m
+     [32m✓[39m rejects export-from of test fixture in production module[32m 1[2mms[22m[39m
+     [32m✓[39m rejects aliased import of test fixture in production module[32m 0[2mms[22m[39m
+     [32m✓[39m rejects framework or dynamic imports in contracts[32m 2[2mms[22m[39m
+     [32m✓[39m rejects three.js import in public shell features outside world[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/contracts.test.ts [2m([22m[2m51 tests[22m[2m)[22m[33m 2046[2mms[22m[39m
+   [32m✓[39m engineering section 4 boundaries [2m(51)[22m
+     [33m[2m✓[22m[39m retains the exact allowed enum values[33m 336[2mms[22m[39m
+ [32m✓[39m tests/unit/content-visibility.test.ts [2m([22m[2m17 tests[22m[2m)[22m[33m 513[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/unit/boundaries.test.ts[2m > [22menforces A3 dependency boundaries: three is isolated to world, public shell is free of server/supabase, dependencies are pinned
+[31m[1mError[22m: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+[36m [2m❯[22m tests/unit/boundaries.test.ts:[2m124:1[22m[39m
+    [90m122|[39m });
+    [90m123|[39m
+    [90m124|[39m it("enforces A3 dependency boundaries: three is isolated to world, pub…
+    [90m   |[39m [31m^[39m
+    [90m125|[39m   const packageJson = JSON.parse(readFileSync("package.json", "utf8"))…
+    [90m126|[39m   expect(Object.keys(packageJson.dependencies).sort()).toEqual([
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m5 passed[39m[22m[90m (6)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m83 passed[39m[22m[90m (84)[39m
+[2m   Start at [22m 00:07:56
+[2m   Duration [22m 37.32s[2m (import 48%, transform 40%, tests 10%, worker 2%)[22m
+
+[2m  Transform [22m [33mtransforming modules took 38.69s[39m[2m · 40% of tracked time, re-done on every run[22m
+[2m            [22m [2mpersist transforms across runs with [22m[33mfsModuleCache: true[39m
+[2m            [22m [2mon CI this only helps when the cache directory is persisted between runs[22m
+[2m            [22m [2mlearn more: https://vitest.dev/guide/improving-performance#caching-between-reruns[22m
+
+ ELIFECYCLE  Command failed with exit code 1.
+
+EXIT: 1
