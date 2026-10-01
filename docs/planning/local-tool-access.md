@@ -1,6 +1,6 @@
 # Local production and browser review access
 
-The user selected local coding tools for GPT/Gemini production and confirmed that Claude accounts are browser-based. The inventory is **2 GPT Plus, 3 Gemini AI Pro and 15 Claude free browser accounts**. The coordinator uses the existing GPT resources; it is not a third GPT account. GPT-2 handles avatar/export work first, then integration after independent review. Account labels are work lanes, not proof of simultaneous capacity.
+The user selected local coding tools for GPT/Gemini production and confirmed that Claude accounts are browser-based. The inventory is **2 GPT Plus, 3 Gemini AI Pro and 15 Claude free browser accounts**. The coordinator uses the existing GPT resources; it is not a third GPT account. Current assignments are Gemini #1 A2, Gemini #2 B3-P1, Gemini #3 B5-P1 and GPT Plus #2 independent audit; use the [current continuation packets](post-g1-wave-01/intake/2026-10-01/README.md). Earlier GPT-2 avatar/integration assignments remain historical. Account labels are work lanes, not proof of simultaneous capacity.
 
 ## Shared files
 
@@ -10,7 +10,7 @@ GPT/Gemini workers with real filesystem access read these files directly, withou
 
 ## Startup files and verification
 
-| Tool | Project entry | Current evidence |
+| Tool | Project entry | Recorded setup observation (not current worker execution) |
 | --- | --- | --- |
 | Current Codex session / local Codex | [AGENTS.md](../../AGENTS.md), then START_HERE | This session reads the folder; `codex` resolves on PATH. Other account sign-ins are unverified. |
 | Gemini CLI | [GEMINI.md](../../GEMINI.md) imports AGENTS and START_HERE | Entry file prepared; `gemini` was not found on PATH. No Gemini account authenticated or dispatched. |
@@ -30,4 +30,4 @@ Return reviews in chat or an actually generated file. A local worker saves them 
 
 ## Current handoff state
 
-Current deliveries under W1, W2 and W3 are returned, with W1/W2 Gemini review reports. The [parent reconciliation](reviews/2026-10-01-reconciliation.md) records independent native/validator checks, distinguishes maker browser evidence, and rules W1 REWORK, W2 INSUFFICIENT EVIDENCE, W3 REWORK; G1 is LOCKED. GitHub is the authoritative live repository. Historical no-Git statements and the former three-GPT inventory remain historical; current instructions supersede their living status. Each [new packet](reconciliation-packets/2026-10-01-next-packets.md) names exact inputs, owned paths and required reviews. This audit did not connect or dispatch external accounts.
+W1-F1-r2, W2-F1-r2 and W3-A1-r2 were accepted by PARENT-RECON-02; G1-R1 was accepted by PARENT-RECON-03. The current post-G1 intake holds returned A2/B5 candidates for bounded correction and preserves PARENT-RECON-04's accepted B3 visual benchmark with an append-only member-identity clarification. Follow the [exact next packets and FREEZE-1](post-g1-wave-01/intake/2026-10-01/README.md); independent GPT Plus #2 runtime review is pending. GitHub is the authoritative live repository. Earlier rulings, no-Git statements, tool-access observations and the former three-GPT inventory remain historical evidence. This continuation has not connected or dispatched external accounts.

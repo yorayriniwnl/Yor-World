@@ -1,5 +1,7 @@
 # POST-G1-WAVE-01 — bounded production dispatch
 
+**Current continuation:** [returned-candidate intake and exact correction/binding packets](intake/2026-10-01/README.md). A2/B5 have returned legacy candidates and need REWORK; existing B3 benchmark acceptance is preserved and its member identities clarified. Use the continuation packets for current maker pickup. FREEZE-1 stays unchanged. The original `dispatch-manifest.json` identifies files as issued at `385c945fddd2de0b45353dcbc0324c001b3276fc`, rather than later living-document edits.
+
 Status: **AUTHORIZED / READY FOR MAKER PICKUP**. Authority: the user's current instruction that G1 is formally accepted and that Gemini #1/#2/#3 receive A2/B3-P1/B5-P1. This assignment supersedes older account-role templates for these three packets only. Creating these files does not claim an external account was contacted or a worker started.
 
 Dispatch branch: `planning/post-g1-wave-01`. Start each maker branch from a clean checkout containing this packet commit, then reconstruct the frozen application baseline from the identified archive. Do not assume these packet files already exist on an older `main` checkout. The final handoff identifies the pushed packet commit.

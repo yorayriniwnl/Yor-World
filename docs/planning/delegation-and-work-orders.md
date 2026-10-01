@@ -4,6 +4,8 @@ Date: 2026-09-30; living status reconciled 2026-10-01 (PARENT-RECON-03). W1-F1-r
 
 **Current dispatch: [POST-G1-WAVE-01](post-g1-wave-01/README.md), FREEZE-1.** The user confirms G1 accepted and assigns A2 to Gemini #1, B3-P1 to Gemini #2, B5-P1 to Gemini #3, and independent audit to GPT Plus #2. These are three bounded overlay packets, authorized/ready for maker pickup. Their exact accepted archive/input identities, exclusive path allowlists, evidence requirements and escalation policy supersede older role templates. No external account launch is claimed.
 
+**Latest receipt state:** [2026-10-01 intake and next packets](post-g1-wave-01/intake/2026-10-01/README.md). A2 and B5 legacy returns are held for bounded corrections to exact baseline, ownership and evidence. Current correction roots are `deliveries/A2/revisions/A2-r2/` and `deliveries/B5-P1/revisions/B5-P1-r2/`. PARENT-RECON-04's B3 visual-benchmark acceptance is preserved with an append-only member-digest clarification; B3-BIND-01 checks the bounded wave compatibility. GPT Plus #2 audit is pending; no combined integration is authorized. Original packet production allowlists and shared contracts remain unchanged.
+
 The user authorized the full vision and delegated production. The parent Codex chat owns architecture, task assignment, audits, and acceptance. Workers make and integrate the product. This hub operates the existing plans; it does not replace them with another design exercise.
 
 ## One specification and a small shared baseline
@@ -64,7 +66,7 @@ W1/W2/W3 are independent: W1 owns room geometry; W2 uses its own F1 furniture fi
 | W3 semantic platform | Reported GPT-1/Codex / independent Codex audit returned; Claude-01/02/05 + parent | Engineering contracts | ACCEPTED: W3-A1-r2 verified (Next 16.3.8, preloads counted, AST guards, 60/60 unit, 18/18 E2E) |
 | G1 integration | Integration Maker / parent audit | Explicitly accepted exact W1/W2/W3 revisions | ACCEPTED: G1-R1 per PARENT-RECON-03; exact accepted ZIP and constituent hashes pinned in POST-G1-WAVE-01 |
 
-Current bounded production packets: [A2](post-g1-wave-01/A2.md), [B3-P1](post-g1-wave-01/B3-P1.md), [B5-P1](post-g1-wave-01/B5-P1.md). All are READY; source/evidence return and independent audit are still pending. Their individual acceptance does not close full B3/B5 or G2/G3/G4.
+Current bounded next packets: [A2-CORR-01](post-g1-wave-01/intake/2026-10-01/A2-CORR-01.md), [B3-BIND-01](post-g1-wave-01/intake/2026-10-01/B3-BIND-01.md), [B5-CORR-01](post-g1-wave-01/intake/2026-10-01/B5-CORR-01.md). Corrections/binding handoff are READY; independent audit remains pending. Their individual acceptance does not close full B3/B5 or G2/G3/G4.
 
 Use states `ready → sent → returned → review → accepted`, or `rework/blocked`. Record actual account/profile alias, input revision, delivery path, evidence, reviewer, and next action when a state changes. The prior 430–690-hour estimate is uncalibrated; subscriptions do not multiply throughput. Re-estimate using accepted work and review/rework effort after G1.
 
