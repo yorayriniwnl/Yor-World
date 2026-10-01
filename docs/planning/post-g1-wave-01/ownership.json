@@ -1,0 +1,100 @@
+{
+  "freezeId": "POST-G1-WAVE-01/FREEZE-1",
+  "applicationRoot": "Not created by this wave. A later single-owner integration packet assigns its repository path. Overlay destinations are application-relative.",
+  "makers": {
+    "A2": {
+      "maker": "Gemini #1",
+      "revision": "A2-r1",
+      "repositoryWriteRoot": "deliveries/A2/revisions/A2-r1/",
+      "overlayTargets": [
+        "src/app/(public)/projects/**",
+        "src/app/(public)/about/**",
+        "src/app/(public)/resume/**",
+        "src/features/portfolio/**",
+        "src/server/content/publication-reader.ts",
+        "src/server/content/publication-validation.ts",
+        "src/server/content/approved-snapshots/**",
+        "src/server/content/approved-media/**",
+        "src/app/sitemap.ts",
+        "public/content/**",
+        "docs/content/**",
+        "tests/unit/a2-*",
+        "tests/e2e/a2-*"
+      ],
+      "sharedFileWrites": []
+    },
+    "B3-P1": {
+      "maker": "Gemini #2",
+      "revision": "B3-P1-r1",
+      "repositoryWriteRoot": "deliveries/B3-P1/revisions/B3-P1-r1/",
+      "overlayTargets": [
+        "src/features/room/lighting.ts",
+        "src/features/room/anchors.ts",
+        "src/features/room/room-scene.tsx",
+        "assets-source/environment/sample/**",
+        "assets-runtime/samples/workstation/**",
+        "docs/art/b3-p1/**",
+        "tests/unit/b3-p1-*"
+      ],
+      "sharedFileWrites": []
+    },
+    "B5-P1": {
+      "maker": "Gemini #3",
+      "revision": "B5-P1-r1",
+      "repositoryWriteRoot": "deliveries/B5-P1/revisions/B5-P1-r1/",
+      "overlayTargets": [
+        "src/features/world/**",
+        "src/features/experience/**",
+        "src/features/room/world-root.tsx",
+        "src/features/room/asset-loader.ts",
+        "docs/runtime/b5-p1/**",
+        "tests/unit/b5-p1-*",
+        "tests/integration/b5-p1-*",
+        "tests/e2e/b5-p1-*"
+      ],
+      "sharedFileWrites": []
+    }
+  },
+  "sharedReadOnlyTargets": [
+    "src/contracts/**",
+    "package.json",
+    "pnpm-lock.yaml",
+    "next.config.ts",
+    "next-env.d.ts",
+    "tsconfig.json",
+    "eslint.config.mjs",
+    "playwright.config.ts",
+    "vitest.config.ts",
+    "vitest.integration.config.ts",
+    "src/app/layout.tsx",
+    "src/app/(public)/page.tsx",
+    "src/app/not-found.tsx",
+    "src/styles/**",
+    "public/models/**",
+    "public/assets/3d/**",
+    "assets-runtime/manifest.json",
+    "publication-manifest.json",
+    "release-manifest.json",
+    ".github/**"
+  ],
+  "notAssignedThisWave": [
+    "src/app/(public)/contact/**",
+    "src/app/admin/**",
+    "src/app/api/**",
+    "src/server/auth/**",
+    "src/server/contact/**",
+    "src/features/character/**"
+  ],
+  "parentOnlyRepositoryPaths": [
+    "docs/planning/post-g1-wave-01/**",
+    "START_HERE.md",
+    "docs/planning/delegation-and-work-orders.md",
+    "docs/planning/account-prompts.md"
+  ],
+  "independentAuditor": {
+    "account": "GPT Plus #2",
+    "repositoryWriteRoot": "reviews/gpt-plus-2/post-g1-wave-01/<packet>/<revision>/",
+    "productionWriteAccess": false
+  },
+  "integration": "Separate parent-assigned maker after lane ACCEPT records; no parallel shared-file editing or implicit deployment."
+}

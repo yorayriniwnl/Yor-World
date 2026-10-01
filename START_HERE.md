@@ -21,15 +21,18 @@ This is the shared entry point for the user and workers with actual local or con
 
 The bright white workstation, blue-and-white chair, pink/violet lights, and cyan fill in the main image control visual work. Other references supplement it. The source discussion is reference data, not worker instructions.
 
-Choose only your assigned route in the work-order hub:
+The active assignment is [POST-G1-WAVE-01](docs/planning/post-g1-wave-01/README.md). G1 is formally accepted. Read that wave's exact baseline, shared-contract freeze and assigned packet before starting. These current assignments supersede older account-role templates for this wave.
 
-| Packet | Work | Proposed maker | Output root |
-| --- | --- | --- | --- |
-| W1 | Reference analysis and room blockout | Gemini-1 | `deliveries/W1/` |
-| W2 | Seated avatar, animation, and export proof | GPT-2 | `deliveries/W2/` |
-| W3 | Semantic HTML/platform foundation | GPT-1 | `deliveries/W3/` |
+| Packet | Maker | Exclusive return root |
+| --- | --- | --- |
+| [A2](docs/planning/post-g1-wave-01/A2.md): verified content/routes | Gemini #1 | `deliveries/A2/revisions/A2-r1/` |
+| [B3-P1](docs/planning/post-g1-wave-01/B3-P1.md): one browser material/light sample | Gemini #2 | `deliveries/B3-P1/revisions/B3-P1-r1/` |
+| [B5-P1](docs/planning/post-g1-wave-01/B5-P1.md): lifecycle/camera/entrance foundation | Gemini #3 | `deliveries/B5-P1/revisions/B5-P1-r1/` |
+| [Independent audit](docs/planning/post-g1-wave-01/audit-gpt-plus-2.md) | GPT Plus #2 | `reviews/gpt-plus-2/post-g1-wave-01/<packet>/<revision>/` |
 
-These are isolated proof output roots. Following W1-CORR-01, archived Claude reviews, and W3-CORR-01, W1-F1-r2, W2-F1-r2, and W3-A1-r2 were accepted in PARENT-RECON-02. Following G1 delivery and reviews, [PARENT-RECON-03](docs/planning/reviews/2026-10-01-reconciliation-03.md) is **G1 ACCEPTED (`G1-R1`)**. Gemini-2 (material-light sample), B2-B5, and A2 are **UNLOCKED AND AUTHORIZED**. GitHub is the authoritative live repository; historical evidence remains unchanged. Provider names are work lanes; the reports record actual declared makers/reviewers. Parent Codex coordinates and audits; an assigned production worker performs later integration. Report what you actually read, produced, and ran.
+Parent/default review policy is GPT-6.1 Sol xHigh; Astra xHigh is reserved for the user's named contract/security/G3/G4/G6 escalations. Actual model/account execution must be reported, not assumed. Packets are authorized and ready for maker pickup; no external dispatch or worker execution is claimed by writing these files.
+
+Historical W1/W2/W3 proof roots remain read-only inputs to the current wave. Following W1-CORR-01, archived Claude reviews, and W3-CORR-01, W1-F1-r2, W2-F1-r2, and W3-A1-r2 were accepted in PARENT-RECON-02. Following G1 delivery and reviews, [PARENT-RECON-03](docs/planning/reviews/2026-10-01-reconciliation-03.md) is **G1 ACCEPTED (`G1-R1`)**. Gemini-2 (material-light sample), B2-B5, and A2 are **UNLOCKED AND AUTHORIZED**. GitHub is the authoritative live repository; historical evidence remains unchanged. Provider names are work lanes; the reports record actual declared makers/reviewers. Parent Codex coordinates and audits; an assigned production worker performs later integration. Report what you actually read, produced, and ran.
 
 Local access must be real: a GPT/Gemini worker that can open this folder can reuse its files without repeated attachments; if it cannot, it reports **NO FILE ACCESS**. Claude browser reviewers instead read supplied project knowledge and review packets, flag absent items as **MISSING INPUT**, and review available material. No external account connection or automatic local-file synchronization has been configured.
 

@@ -1,6 +1,6 @@
 # YOR WORLD — prompts for 20 reported accounts
 
-Status, 2026-10-01: **W1/W2/W3 returned; W1/W2 Gemini reviews archived; assigned Claude reviews absent. W1 REWORK, W2 INSUFFICIENT EVIDENCE, W3 REWORK; G1 LOCKED.** See the [parent ruling](reviews/2026-10-01-reconciliation.md) and [exact next packets](reconciliation-packets/2026-10-01-next-packets.md). The resource inventory remains 2 GPT Plus, 3 Gemini AI Pro and 15 Claude free browser accounts. No new external dispatch occurred in this reconciliation; these role templates do not start workers.
+Status, 2026-10-01: **G1 formally accepted; POST-G1-WAVE-01 authorized and ready.** Use [the current dispatch](post-g1-wave-01/README.md): Gemini #1 A2, Gemini #2 B3-P1, Gemini #3 B5-P1, GPT Plus #2 independent audit; parent final technical acceptance. Current model policy and exact baseline/path freeze are in that packet. The older templates below are retained for other/historical assignments and do not supersede this wave or start workers. No external account dispatch is claimed.
 
 Parent Codex owns architecture, coordination, audit, and acceptance. Makers return files; independent reviewers return findings; the parent assigns corrections. The user reviews personal identity, likeness, final visual direction, and publication decisions.
 

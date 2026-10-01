@@ -2,6 +2,8 @@
 
 Date: 2026-09-30; living status reconciled 2026-10-01 (PARENT-RECON-03). W1-F1-r2, W2-F1-r2, and W3-A1-r2 were ACCEPTED in the [second parent ruling](reviews/2026-10-01-reconciliation-02.md). Following G1 delivery and independent reviews (Claude-10, Claude-13, Claude-15, and GPT-6 Astra audit), the [third parent ruling](reviews/2026-10-01-reconciliation-03.md) is **G1 ACCEPTED (`G1-R1`)**. Gemini-2 (material-light sample), B2-B5, and A2 are **UNLOCKED AND AUTHORIZED**.
 
+**Current dispatch: [POST-G1-WAVE-01](post-g1-wave-01/README.md), FREEZE-1.** The user confirms G1 accepted and assigns A2 to Gemini #1, B3-P1 to Gemini #2, B5-P1 to Gemini #3, and independent audit to GPT Plus #2. These are three bounded overlay packets, authorized/ready for maker pickup. Their exact accepted archive/input identities, exclusive path allowlists, evidence requirements and escalation policy supersede older role templates. No external account launch is claimed.
+
 The user authorized the full vision and delegated production. The parent Codex chat owns architecture, task assignment, audits, and acceptance. Workers make and integrate the product. This hub operates the existing plans; it does not replace them with another design exercise.
 
 ## One specification and a small shared baseline
@@ -18,20 +20,16 @@ Proof baseline F1: room 4.2 × 3.6 × 2.8 m; runtime meters/Y-up, rear wall Z=-1
 
 The user reports 2 GPT Plus, 3 Gemini AI Pro, and 15 Claude free browser accounts. The aliases below are assignments to functions. Access, model availability, limits, native tools, API credit, and concurrent capacity are unverified. Use available accounts within their limits; do not rotate accounts to bypass quotas. Start only the work that can be handed off and reviewed.
 
-| Alias | Proposed responsibility |
+| Alias | Current wave responsibility |
 | --- | --- |
-| GPT-1 | Semantic platform; later A1–A6 backend/content implementation |
-| GPT-2 | Avatar/export first (W2, B2/B4), then combined proof, browser runtime and integration (G1, B5, C1–C4); sequential packets |
-| Gemini-1 | Reference analysis, room blockout; later B1/B3 environment |
-| Gemini-2 | Later materials, lighting, prop variations, visual comparisons |
-| Gemini-3 | Independent reference, export, and camera review |
-| Claude C01–C03 | Narrow contract/state/code reviews |
-| Claude C04–C06 | Content evidence and accessibility reviews |
-| Claude C07–C09 | Auth/data/contact failure reviews |
-| Claude C10–C12 | Interaction interruption and browser-test reviews |
-| Claude C13–C15 | Asset provenance, restore, and release reviews |
+| Parent / existing GPT resource | Architecture, contract freeze, coordination, final technical acceptance; GPT-6.1 Sol xHigh by default |
+| GPT Plus #2 | Independent A2 / B3-P1 / B5-P1 audit; no maker implementation in this wave |
+| Gemini #1 | A2 verified content and portfolio routes |
+| Gemini #2 | B3-P1 one production-quality browser material/light sample |
+| Gemini #3 | B5-P1 production lifecycle/camera/entrance foundation |
+| Claude C01-C15 | Reserve browser review roles; no automatic dispatch or replacement of GPT Plus #2 audit |
 
-The coordinator uses the existing GPT resources; it is not a third paid GPT account. GPT-2 completes reviewed avatar work before taking integration packets.
+The coordinator uses the existing GPT resources; it is not a third paid GPT account. Current maker identities and independent audit are defined by POST-G1-WAVE-01. A later integration maker requires a separate bounded packet and cannot independently audit its own assembly.
 
 The user confirmed that all fifteen Claude accounts are browser-based reviewers. Keep their assigned review roles. Supply stable context through a Claude Project and task-specific source/evidence packets; local folder access and Claude Code are not required for those reviews. Follow the [browser review workflow](browser-review-workflow.md). Runtime, device, and database checks still run through local production/test workers and return evidence for review.
 
@@ -42,8 +40,8 @@ Claude aliases are a reserve review pool, not fifteen simultaneous sessions. Rea
 1. The parent issues one bounded packet with local input paths, output root, acceptance evidence, and independent reviewer. Workers read only relevant sections, not every previous chat.
 2. Production workers declare actual capabilities, then return real source files or a patch plus a short `report.md`: input revisions, changed paths, commands/results, screenshots or recordings, limits, and open defects. Return a zip when supported. If attachments are unavailable, return complete file contents with filenames; prose instructions alone are insufficient.
 3. Browser-generated scripts are **NOT RUN** until a capable local worker or the user executes them. Capture actual tool versions, exit codes, logs, and output hashes. Never invent `.blend`/`.glb` files or screenshots, and never call source inspection reproduced validation.
-4. Deliver under `deliveries/W1/`, `deliveries/W2/`, or `deliveries/W3/`; workers do not edit each other's roots or shared production files. The parent reviews source/evidence and obtains maker-independent review. A maker cannot accept its own task. Return concrete defects to that maker.
-5. After acceptance, assign integration to GPT-2 or another verified local-capable worker. Only that assignment maps accepted outputs into final paths, resolves conflicts, updates shared contracts/configuration/manifests, and runs combined checks. The parent audits; it does not absorb production labor.
+4. Deliver under the exact root in the assigned packet. Historical proofs used `deliveries/W1/`, `deliveries/W2/`, and `deliveries/W3/`; current wave revision roots and overlay destinations are pinned in [ownership.json](post-g1-wave-01/ownership.json). Workers do not edit each other's roots or shared production files. The parent reviews source/evidence and obtains maker-independent review. A maker cannot accept its own task. Return concrete defects to that maker.
+5. After acceptance, assign integration to one verified local-capable production worker in a new packet; GPT Plus #2 remains the independent auditor for this wave. Only that assignment maps accepted outputs into final paths, resolves conflicts, updates shared contracts/configuration/manifests, and runs combined checks. The parent audits; it does not absorb production labor.
 
 Browser reviewers return a structured review in chat or an actually generated downloadable file; the coordinator/local worker archives it under the assigned reviews/claude-NN/ path with packet/revision identity. They do not claim to have written that local folder or executed the maker’s tests.
 
@@ -64,7 +62,9 @@ W1/W2/W3 are independent: W1 owns room geometry; W2 uses its own F1 furniture fi
 | W1 reference/blockout | Reported Gemini-1 / Gemini-3, Claude-13 + parent | Image + F1 | ACCEPTED: W1-F1-r2 verified (nested transforms, geometry clearances, cameras, Khronos 0/0) |
 | W2 avatar/export | Reported GPT-2/Codex / Gemini-3, Claude-01/13 + parent | F1 fixture + clip names | ACCEPTED: W2-F1-r2 verified (clips, rig, Khronos 0/0; adapter invariants pinned) |
 | W3 semantic platform | Reported GPT-1/Codex / independent Codex audit returned; Claude-01/02/05 + parent | Engineering contracts | ACCEPTED: W3-A1-r2 verified (Next 16.3.8, preloads counted, AST guards, 60/60 unit, 18/18 E2E) |
-| G1 integration | Integration Maker / parent audit | Explicitly accepted exact W1/W2/W3 revisions | UNLOCKED AND ACTIVE: combining W1-F1-r2, W2-F1-r2, and W3-A1-r2 in deliveries/G1/ |
+| G1 integration | Integration Maker / parent audit | Explicitly accepted exact W1/W2/W3 revisions | ACCEPTED: G1-R1 per PARENT-RECON-03; exact accepted ZIP and constituent hashes pinned in POST-G1-WAVE-01 |
+
+Current bounded production packets: [A2](post-g1-wave-01/A2.md), [B3-P1](post-g1-wave-01/B3-P1.md), [B5-P1](post-g1-wave-01/B5-P1.md). All are READY; source/evidence return and independent audit are still pending. Their individual acceptance does not close full B3/B5 or G2/G3/G4.
 
 Use states `ready → sent → returned → review → accepted`, or `rework/blocked`. Record actual account/profile alias, input revision, delivery path, evidence, reviewer, and next action when a state changes. The prior 430–690-hour estimate is uncalibrated; subscriptions do not multiply throughput. Re-estimate using accepted work and review/rework effort after G1.
 
