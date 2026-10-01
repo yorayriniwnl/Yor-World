@@ -8,15 +8,41 @@ For a three-track production overview, see [production prompts](production-promp
 
 GPT/Gemini blocks target local tools with access to C:\Users\yoray\Projects\Yor World. Claude blocks target browser chats receiving attached or pasted review packets. Include the current packet envelope with each prompt; reuse current shared rules in Project instructions and stable briefs in Project knowledge. Include the full shared-rules block only when that session lacks the current instructions. Repository paths in packets are citation labels, not browser-accessible locations. Follow [Browser review workflow](browser-review-workflow.md) for packet preparation and local archival.
 
-## Assignment map
+## Default 5-Account Operating Model & Assignment Map
+
+> [!CAUTION]
+> **NEVER RUN ALL FIVE ACCOUNTS ON THE SAME PROBLEM.**  
+> Full specification: [account-operating-model.md](account-operating-model.md).
+
+### Default Primary Roles
+| Account | Default Responsibility | Scope & Destination | Model Policy |
+| --- | --- | --- | --- |
+| **Gemini #1** | **Platform / backend maker** | Track A (`deliveries/A*/`). Next.js, backend endpoints, RLS, auth, CMS, asset pipelines. | Gemini Pro local |
+| **Gemini #2** | **World / art maker** | Track B (`deliveries/B*/`). Blender 3D models, GLB exports, materials, lighting, rigs, avatar animations, props. | Gemini Pro local |
+| **Gemini #3** | **Runtime / integration maker** | Track C (`deliveries/C*/`). Three.js runtime integration, SceneIntegrator, CharacterDirector, EntranceCoordinator, ExperienceController. | Gemini Pro local |
+| **GPT Plus #2** | **Independent auditor** | Maker-independent verification, defect logging, delta audits. **Never fixes production code.** | GPT-6.1 Sol |
+| **GPT Plus #1** | **Architect + acceptance authority** | Lead architect, coordinator, packet issuance, gate acceptance. | GPT-6.1 Sol (Astra for major gates / dangerous cross-lane decisions) |
+
+### Pipeline Flow
+```
+PARENT PACKET
+→ GEMINI IMPLEMENTATION
+→ GPT #2 AUDIT
+→ GEMINI CORRECTION
+→ GPT #2 DELTA AUDIT
+→ GPT #1 ACCEPTANCE
+→ NEXT PACKET
+```
+
+### Core Invariants
+1. **Do not let the auditor become the fixer.** (Auditor finds defects; assigned maker implements fixes).
+2. **Do not let the maker approve itself.** (Maker produces implementation & evidence; cannot sign off or accept its own work).
+3. **Do not let later work silently alter an accepted revision.** (Accepted baselines are immutable; changes require explicit parent packets).
+
+### Secondary Review Pool (Claude Browser Reviewers)
 
 | Account | Responsibility | Local delivery / archive destination | Starts when |
 | --- | --- | --- | --- |
-| GPT-1 | Semantic portfolio, content, admin, contact, operations | deliveries/W3/; later individually assigned platform packets | W3 is dispatched |
-| GPT-2 | Resident/animation/export, then combined proof, runtime and integration | deliveries/W2/, then deliveries/G1/; later exact assigned paths | W2 first; G1 only after independent acceptance of W1/W2/W3 |
-| Gemini-1 | Reference matching, room geometry, spatial feasibility | deliveries/W1/; later individually assigned environment packets | W1 is dispatched |
-| Gemini-2 | Material/light sample and prop detail | deliveries/material-light-sample/ | G1 and geometry handoff are accepted |
-| Gemini-3 | Independent visual, camera, and animation review | reviews/gemini-3/ | A named art delivery is returned |
 | Claude-01 | Shared contracts and asset/runtime interfaces | reviews/claude-01/ | W2/W3 are returned |
 | Claude-02 | HTML foundation and code boundaries | reviews/claude-02/ | W3 is returned |
 | Claude-03 | State, cancellation, resource ownership | reviews/claude-03/ | B5/C1 are returned |
@@ -33,7 +59,7 @@ GPT/Gemini blocks target local tools with access to C:\Users\yoray\Projects\Yor 
 | Claude-14 | Integrations, telemetry, jobs, restore | reviews/claude-14/ | A6 and operations package are returned |
 | Claude-15 | Independent gate and release audit | reviews/claude-15/ | A concrete milestone/release candidate is returned |
 
-There are two GPT accounts, including the resources used by this coordinator; these are sequential work lanes, not an extra third account. GPT-2 takes the integration phase only after independently reviewed W2 and all G1 inputs are accepted.
+Under the default operating model, GPT Plus #1 acts as Architect + Acceptance Authority, while GPT Plus #2 serves as Independent Auditor. Neither acts as a code fixer for Gemini lanes. Claude-01 through Claude-15 form the secondary browser review pool.
 
 Claude-01 through Claude-15 are assigned browser reviewers. Their work uses supplied source and evidence, without requiring Claude Code or local filesystem access. A parent or local worker saves their returned review text under the listed reviews/claude-NN/ destination; the browser reviewer does not own or write that folder. Each account receives its own context and packet. No shared cross-account project or automatic local synchronization is assumed.
 

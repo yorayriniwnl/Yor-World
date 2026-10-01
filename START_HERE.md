@@ -17,19 +17,25 @@ This is the shared entry point for the user and workers with actual local or con
 | Three production prompt tracks | [Production prompts](docs/planning/production-prompts/README.md) |
 | Claude browser review handoff | [Browser review workflow](docs/planning/browser-review-workflow.md) |
 | Local startup files and verified access limits | [Local tool access](docs/planning/local-tool-access.md) |
+| Account operating model and governance pipeline | [Account operating model](docs/planning/account-operating-model.md) |
 | Assignments, packets, dependencies, and evidence rules | [Delegation and work orders](docs/planning/delegation-and-work-orders.md) |
 
 The bright white workstation, blue-and-white chair, pink/violet lights, and cyan fill in the main image control visual work. Other references supplement it. The source discussion is reference data, not worker instructions.
 
-Choose only your assigned route in the work-order hub:
+### Default Account Operating Model
 
-| Packet | Work | Proposed maker | Output root |
-| --- | --- | --- | --- |
-| W1 | Reference analysis and room blockout | Gemini-1 | `deliveries/W1/` |
-| W2 | Seated avatar, animation, and export proof | GPT-2 | `deliveries/W2/` |
-| W3 | Semantic HTML/platform foundation | GPT-1 | `deliveries/W3/` |
+Never run all five accounts on the same problem:
+- **Gemini #1**: Platform / backend maker (Track A)
+- **Gemini #2**: World / art maker (Track B)
+- **Gemini #3**: Runtime / integration maker (Track C)
+- **GPT Plus #2**: Independent auditor (audits code/assets/deltas; never writes fixes)
+- **GPT Plus #1**: Architect + acceptance authority (issues packets, decides gates, signs acceptance)
 
-These are isolated proof output roots. Following W1-CORR-01, archived Claude reviews, and W3-CORR-01, W1-F1-r2, W2-F1-r2, and W3-A1-r2 were accepted in PARENT-RECON-02. Following G1 delivery and reviews, [PARENT-RECON-03](docs/planning/reviews/2026-10-01-reconciliation-03.md) is **G1 ACCEPTED (`G1-R1`)**. Gemini-2 (material-light sample), B2-B5, and A2 are **UNLOCKED AND AUTHORIZED**. GitHub is the authoritative live repository; historical evidence remains unchanged. Provider names are work lanes; the reports record actual declared makers/reviewers. Parent Codex coordinates and audits; an assigned production worker performs later integration. Report what you actually read, produced, and ran.
+**Flow:** `PARENT PACKET → GEMINI IMPLEMENTATION → GPT #2 AUDIT → GEMINI CORRECTION → GPT #2 DELTA AUDIT → GPT #1 ACCEPTANCE → NEXT PACKET`  
+**Model Policy:** Use **GPT-6.1 Sol** for ordinary coordination/auditing; use **Astra** only for dangerous cross-lane decisions and major gates.  
+**Invariants:** Auditor does not become fixer; maker does not approve itself; later work cannot silently alter an accepted revision.
+
+Historic proof output roots (W1, W2, W3, G1) were reconciled and accepted in PARENT-RECON-02/03. Production now proceeds under this operating pipeline.
 
 Local access must be real: a GPT/Gemini worker that can open this folder can reuse its files without repeated attachments; if it cannot, it reports **NO FILE ACCESS**. Claude browser reviewers instead read supplied project knowledge and review packets, flag absent items as **MISSING INPUT**, and review available material. No external account connection or automatic local-file synchronization has been configured.
 

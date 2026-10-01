@@ -14,28 +14,42 @@ Start at [START_HERE.md](../../START_HERE.md). The main reference is [references
 
 Proof baseline F1: room 4.2 × 3.6 × 2.8 m; runtime meters/Y-up, rear wall Z=-1.8; Blender Z-up converted once at export. Desk footprint 2.6 × 0.8 m, height 0.75 m, center X/Z=(0,-1.15); chair/resident root=(0.30,0,-0.36). Use current engineering names and art clip names. These are temporary feasibility dimensions, not measurements recovered from the image. Changes require a short proposal and coordinated F2 update.
 
-## Account lanes — corrected inventory
+## Account lanes — default operating model & inventory
 
-The user reports 2 GPT Plus, 3 Gemini AI Pro, and 15 Claude free browser accounts. The aliases below are assignments to functions. Access, model availability, limits, native tools, API credit, and concurrent capacity are unverified. Use available accounts within their limits; do not rotate accounts to bypass quotas. Start only the work that can be handed off and reviewed.
+The user reports 2 GPT Plus, 3 Gemini AI Pro, and 15 Claude free browser accounts. Detailed governance policy: [account-operating-model.md](account-operating-model.md).
 
-| Alias | Proposed responsibility |
-| --- | --- |
-| GPT-1 | Semantic platform; later A1–A6 backend/content implementation |
-| GPT-2 | Avatar/export first (W2, B2/B4), then combined proof, browser runtime and integration (G1, B5, C1–C4); sequential packets |
-| Gemini-1 | Reference analysis, room blockout; currently assigned Milestone A4 (CMS & publishing) |
-| Gemini-2 | Materials, lighting, prop detail; currently assigned Milestone B3-P3 (Interactive prop assets) |
-| Gemini-3 | Independent visual/camera review; currently assigned Milestone C1 (Experience state & interactions) |
-| Claude C01–C03 | Narrow contract/state/code reviews |
-| Claude C04–C06 | Content evidence and accessibility reviews |
-| Claude C07–C09 | Auth/data/contact failure reviews |
-| Claude C10–C12 | Interaction interruption and browser-test reviews |
-| Claude C13–C15 | Asset provenance, restore, and release reviews |
+> [!CAUTION]
+> **NEVER RUN ALL FIVE ACCOUNTS ON THE SAME PROBLEM.**
 
-The coordinator uses the existing GPT resources; it is not a third paid GPT account. GPT-2 completes reviewed avatar work before taking integration packets.
+### Default Account Assignments
+| Alias | Default responsibility | Scope & Output Domain |
+| --- | --- | --- |
+| **Gemini #1** | **Platform / backend maker** | Track A (`deliveries/A*/`). Next.js app, semantic HTML, backend endpoints, database schema, RLS, admin auth, CMS publishing. |
+| **Gemini #2** | **World / art maker** | Track B (`deliveries/B*/`). Blender models, GLB exports, 3D meshes, textures, materials, lighting, rigs, avatar clips, interactive props. |
+| **Gemini #3** | **Runtime / integration maker** | Track C (`deliveries/C*/`). Three.js runtime integration, SceneIntegrator, CharacterDirector, EntranceCoordinator, ExperienceController, camera arbitration, canvas lifecycle. |
+| **GPT Plus #2** | **Independent auditor** | Maker-independent verification, code/asset audit, defect logging, delta audits. **The auditor never writes production fixes.** |
+| **GPT Plus #1** | **Architect + acceptance authority** | Lead architect, coordinator, packet issuance, frozen baselines, gate evaluation, and final acceptance sign-off. |
+| Claude C01–C15 | Specialized browser reviews | Reserve pool for targeted browser reviews (contracts, a11y, auth/RLS, outbox, legal/provenance) per [browser review workflow](browser-review-workflow.md). |
 
-The user confirmed that all fifteen Claude accounts are browser-based reviewers. Keep their assigned review roles. Supply stable context through a Claude Project and task-specific source/evidence packets; local folder access and Claude Code are not required for those reviews. Follow the [browser review workflow](browser-review-workflow.md). Runtime, device, and database checks still run through local production/test workers and return evidence for review.
+### Execution Pipeline Flow
+```
+PARENT PACKET
+→ GEMINI IMPLEMENTATION
+→ GPT #2 AUDIT
+→ GEMINI CORRECTION
+→ GPT #2 DELTA AUDIT
+→ GPT #1 ACCEPTANCE
+→ NEXT PACKET
+```
 
-Claude aliases are a reserve review pool, not fifteen simultaneous sessions. Reassign lanes if proven tool capabilities warrant it. No subscription proves artistic skill or machine control. Purchases, paid API usage, licensed assets, and specialist commissions remain separately flagged decisions.
+### Model Policy
+- Use **GPT-6.1 Sol** for ordinary coordination and auditing.
+- Use **Astra** only for dangerous cross-lane decisions and major gates.
+
+### Core Governance Invariants
+- **Do not let the auditor become the fixer.** (Auditor finds defects; assigned maker fixes them).
+- **Do not let the maker approve itself.** (Maker produces implementation & evidence; cannot sign off or accept its own work).
+- **Do not let later work silently alter an accepted revision.** (Accepted baselines are immutable; changes require explicit parent packets).
 
 ## Ownership, review, and local handoff
 

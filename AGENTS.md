@@ -10,6 +10,37 @@ Claude reviewers use browser chats and the [browser review workflow](docs/planni
 
 Parent Codex owns architecture, coordination, and audit. Production workers execute assigned work, write only their owned paths, and return actual files with PASS/FAIL/NOT RUN evidence. Use the existing specification and assigned packet; do not create a competing plan, silently change contracts, or accept your own output.
 
+## Account Operating Model & Governance Pipeline (DEFAULT)
+
+Never run all five accounts on the same problem. Detailed policy: [docs/planning/account-operating-model.md](docs/planning/account-operating-model.md).
+
+### Default Lane Assignments
+- **Gemini #1**: Platform / backend maker
+- **Gemini #2**: World / art maker
+- **Gemini #3**: Runtime / integration maker
+- **GPT Plus #2**: Independent auditor
+- **GPT Plus #1**: Architect + acceptance authority
+
+### Pipeline Flow
+```
+PARENT PACKET
+→ GEMINI IMPLEMENTATION
+→ GPT #2 AUDIT
+→ GEMINI CORRECTION
+→ GPT #2 DELTA AUDIT
+→ GPT #1 ACCEPTANCE
+→ NEXT PACKET
+```
+
+### Model Policy
+- Use **GPT-6.1 Sol** for ordinary coordination and auditing.
+- Use **Astra** only for dangerous cross-lane decisions and major gates.
+
+### Core Governance Invariants
+- **Do not let the auditor become the fixer.** (Auditor identifies defects and verifies fixes; assigned maker implements them).
+- **Do not let the maker approve itself.** (Maker produces implementation & evidence; cannot sign off or accept its own work).
+- **Do not let later work silently alter an accepted revision.** (Accepted baselines are immutable; changes require explicit parent packets).
+
 ## Git rule
 
 After each completed code change in a git repository, create a small descriptive commit and push it to GitHub unless the user explicitly says not to.
