@@ -1,208 +1,202 @@
-# Packet C1 Verification & Delivery Report: Coherent World Interactions & State Runtime
+# Milestone C1 Proof Report: Experience State Machine, Priority Arbitration & Physical Room Interactions
 
-**Lane:** Experience-State and Interaction-Runtime Maker  
-**Packet:** C1 (Accepted G3 Integration)  
-**Gate Status:** SUBMITTED for GPT Plus #2 Audit (Stop Point)  
-**Evaluator Role:** Maker / Production Worker (Never Self-Approving)  
-**Execution Environment:** Node.js v24.19.0, pnpm 9.15.9, Next.js 16.3.8, React 19.3.0, Three.js 0.180.0  
-**Test Matrix:** 122 Unit Tests (Vitest, 14/14 suites) · 12 E2E Browser Behavior Tests (Playwright Chromium + Edge) · **100% PASS**  
-**Delivery Archive:** `deliveries/C1/c1-interaction-proof.zip`  
-**Archive Hash File:** `deliveries/C1/c1-interaction-proof.zip.sha256`  
+**Lane:** Experience-State & Interaction-Runtime Maker (Gemini #3)  
+**Milestone:** C1  
+**Gate Authority:** [`PARENT-RECON-04`](../planning/reviews/2026-10-01-reconciliation-04.md) / [Bounded Packets A4, B3-P3, C1](../planning/reconciliation-packets/2026-10-01-bounded-packets-a4-b3p3-c1.md)  
+**Evaluator Role:** Production Maker (Never Self-Approving; Stop for GPT #2 Audit)  
+**Execution Environment:** Node.js v24.19.0, pnpm 9.15.9, Next.js 16.3.8, React 19.3.0, Three.js 0.180.0, Playwright 1.63.0, Vitest 5.0.2  
+**Test Matrix:** 122 Unit Tests PASS (14 Test Suites, Vitest) · 12 E2E Physical Interaction Tests PASS (Playwright Chrome + Edge) · 0 TypeScript Errors · 0 ESLint Errors / 0 Warnings  
 
 ---
 
-## 1. Executive Summary
+## 1. Executive Summary & Architectural Invariants
 
-Packet **C1** delivers the deterministic experience-state and interaction-runtime foundation for YOR WORLD, integrating on top of the accepted G3 baseline (incorporating W1 room blockout, W2 avatar and fixtures, W3 platform, G1 integration proof, B3-P1 workstation sample, and B5 runtime lifecycle foundation).
+Milestone **C1** implements the production experience-state machine and physical interaction runtime for YOR WORLD, strictly consuming the frozen G3 baseline, frozen interaction catalog revision `2026-09-30-v1` (23 entities), and immutable engineering contracts (`src/contracts/experience.ts`).
 
-The implementation establishes strict single ownership across all interaction domains, provides race-free intent arbitration, enforces monotonic transition cancellation identity, implements the frozen V1 catalog with accessible non-geometry equivalents, and successfully repels all 10 adversarial attacks without state corruption or dangling promises.
+All 5 core architectural invariants required by the parent specification are rigorously enforced:
 
-### Core Architecture & Governance Invariants
-1. **One Current High-Level Experience State**:
-   - `ExperienceSnapshot` holds the canonical state of the experience (`phase`, `activeProject`, `activePanel`, `world`, `preferences`, `currentTransitionId`, `currentIntent`, `suspended`, `paused`, `activeCamera`, `characterAction`, `paintingAngleDeg`, and `singleOwners`).
-2. **One Camera Owner**:
-   - `primary-camera-director` exclusively commands camera framing, field-of-view, preset transitions, and instant cut-points.
-3. **One Full-Body Character Owner**:
-   - `primary-character-director` owns root yaw rotations, blended clip transitions across the 8-clip V1 catalog, and immediate $\le 50$ms rest-pose settlement.
-4. **One Current Interaction Intent**:
-   - Exactly one `ExperienceIntent` can be in flight at any given moment. Incoming intents are arbitrated according to strict priority hierarchies.
-5. **Explicit Cancellation Identity**:
-   - Monotonic transition IDs (`currentTransitionId`), unique `AbortController` instances, and explicit abort reasons (`SUPERSEDED_BY_NEW_INTENT`, `ESCAPE_REQUESTED`, `RENDERER_FAILED`, `ROUTE_NAVIGATION`) ensure stale asynchronous work is unconditionally rejected.
-   - **Obsolete asynchronous work never navigates, never restarts animation, never changes camera, never restores an old state, and never reopens UI.**
-6. **Frozen V1 Catalog & Non-Geometry Accessibility Equivalence**:
-   - Every interactive object (resident, monitor, 5 project props, lamp, blinds, clock, painting, plant, keyboard, mouse, chair, doors, speakers, skills board, research books, phone) has a corresponding accessible HTML DOM control in `RoomControls` or the navigation bar.
+1. **One Canonical High-Level Experience State Snapshot:**
+   Managed exclusively by `ExperienceController` (`src/features/experience/controller.ts`). The snapshot (`ExperienceSnapshot`) provides an immutable, coherent view of the experience phase (`explore`, `focus`, `panel`, `intro`, `static`), active project, active panel, active camera, character action clip, environment state (`lampOn`, `blindsOpen`, `detailFound`), and user preferences.
+2. **One Camera Director Owner:**
+   Camera positioning, FOV, and smooth transitions are owned strictly by `CameraDirector` (`primary-camera-director`). All project focuses, panel openers, and entrance choreography delegate camera travel to this single owner. Reduced motion bypasses all camera motion instantaneously.
+3. **One Full-Body Character Director Owner:**
+   Character skeletal animation and chair turning are owned strictly by `CharacterDirector` (`primary-character-director`). Coordinated by `GreetingController`, greeting sequences (`notice_visitor` $\to$ `turn_to_visitor` $\to$ `greeting_nod` $\to$ `return_to_work`) enforce a 7-second cooldown. Repeat triggers within 7s convert to a subtle attention glance (`attention_glance`). Any higher-priority interaction preempts character motion and settles the avatar into the safe typing rest pose (`coding_idle`) within $\le 50$ms.
+4. **One Current Interaction Intent:**
+   Enforced by `IntentArbitrator` (`src/features/experience/intent-arbitration.ts`). Incoming intents are arbitrated across a strict 6-tier deterministic priority ladder. No concurrent contradictory intents can execute simultaneously.
+5. **Explicit Cancellation Identity & Transition Tokens:**
+   Orchestrated by `CancellationCoordinator` (`src/features/experience/cancellation-coordinator.ts`). Every asynchronous operation receives a monotonic transition ID and `AbortSignal`. Stale completions are explicitly rejected; obsolete asynchronous work **never** navigates, restarts animations, travels cameras, or corrupts state.
 
 ---
 
-## 2. Canonical Single Ownership Matrix
+## 2. Frozen V1 Interaction Catalog Arbitration & Non-Geometry Parity
 
-| Domain | Canonical Owner ID | Implementation File | Verification & Invariants |
-| :--- | :--- | :--- | :--- |
-| **Renderer Lifecycle** | `primary-renderer-lifecycle` | `WorldRuntime.ts` | Controls WebGL canvas mounting, RAF loop, GPU resource disposal, and context loss recovery. Exactly 1 canvas exists in DOM. |
-| **Camera** | `primary-camera-director` | `CameraDirector.ts` | Controls Three.js perspective camera, FOV, target lerping, aspect ratio resize, and preset transitions. |
-| **Resident Character** | `primary-character-director` | `CharacterDirector.ts` | Exclusive master for avatar and chair animation mixers, root yaw rotation, and clip sequencing. |
-| **Transition Coordinator** | `primary-transition-coordinator` | `cancellation-coordinator.ts` | Manages monotonic transition IDs, AbortSignals, and stale completion rejection guards. |
-| **Experience Controller** | `primary-experience-controller` | `controller.ts` | Dispatches accepted `ExperienceIntent`s, orchestrates arbitration, and produces immutable `ExperienceSnapshot`. |
+Every interaction in Milestone C1 consumes an explicit registered catalog entity from the frozen V1 catalog (23 entities, see [`catalog-mapping.json`](catalog-mapping.json)). Zero unregistered or uncataloged interactions exist.
 
----
+Every meaningful 3D geometry interaction has a 100% accessible non-geometry equivalent in the accessible `RoomControls` DOM overlay (`src/features/room/room-controls.tsx`) and header navigation.
 
-## 3. Priority Arbitration Hierarchy & Cooldown Rules
-
-| Priority Level | Category | Intents / Actions | Preemption & Cooldown Rules |
-| :---: | :--- | :--- | :--- |
-| **1 (Critical)** | Emergency / Route | `ESCAPE`, `SKIP`, `NAVIGATE`, `HIDE`, `SHOW`, `RENDERER_FAILED` | Always preempts active work. Immediately aborts in-flight transitions; settles character within $\le 50$ms. |
-| **2 (High)** | Project Transitions | `OPEN_PROJECT` | Preempts character greetings (Priority 3). Successive Project B supersedes Project A. Max duration 1.4s. |
-| **3 (Normal)** | Character / Modals | `GREET`, `OPEN_PANEL`, `ENTER` | Enforces 7,000ms resident greeting cooldown (repeat during cooldown converted to `attention_glance`). |
-| **4 (Settings)** | Environment | `SET_LAMP`, `SET_BLINDS`, `SET_SOUND`, `SET_QUALITY`, `SET_CLOCK_FORMAT`, `SET_PAUSED` | 250ms smooth transition ease (instant if reduced motion). Non-blocking. |
-| **5 (Decorative)** | Minor Props | `TILT_PAINTING`, `NUDGE_PLANT`, `ADJUST_CHAIR` | Dropped when Priority $\le 4$ is in flight. Coalesced within cooldowns (painting 250ms, plant 500ms, chair 5000ms). |
-| **6 (Ambient)** | Background Loops | `breathing_idle`, clock ticking | Suspended on document visibility change (`visibilitychange: hidden`). |
-
----
-
-## 4. Frozen V1 Catalog Mapping & Non-Geometry Accessibility Equivalence
-
-| Catalog ID | Label | Category | Camera Preset | Cooldown | Accessible DOM Equivalent | Reduced Motion Behavior |
-| :--- | :--- | :--- | :---: | :---: | :--- | :--- |
-| `entrance-door` | Entrance Door | navigation | `entry` | 0ms | Button: "Enter Studio / Replay Entrance" | Instant settle to home without camera travel |
-| `resident` | Creator Avatar | resident | null | 7,000ms | Button: "Greet the creator" | Nod acknowledgment without root yaw turn |
-| `wall-painting` | Wall Painting | decorative | null | 250ms | Button: "Inspect wall painting & reveal room detail" | Instant detail reveal without tilt animation |
-| `main-monitor` | Main Monitor | monitor | `monitor` | 0ms | Button: "Open studio project launcher" | Open launcher modal without camera zoom |
-| `candidatex-launcher`| CandidateX | project | `monitor` | 0ms | Link: "Open CandidateX case study" | Direct navigation to `/projects/candidatex` |
-| `helios-pc` | Helios PC Rig | project | `pc` | 0ms | Link: "Open Helios case study" | Direct navigation to `/projects/helios` |
-| `zenith-model` | Zenith Model | project | `energy` | 0ms | Link: "Open Zenith case study" | Direct navigation to `/projects/zenith` |
-| `ai-real-camera` | AI Scanner Camera | project | `scanner` | 0ms | Link: "Open AI Scanner case study" | Direct navigation to `/projects/ai-camera` |
-| `talks-microphone` | Broadcast Mic | project | `microphone` | 0ms | Link: "Open Yor Talks case study" | Direct navigation to `/projects/yor-talks` |
-| `desk-lamp` | Desk Task Lamp | environment | null | 0ms | Switch: "Toggle desk lamp" | Instant lighting toggle without 250ms ease |
-| `window-blinds` | Window Blinds | environment | null | 0ms | Switch: "Toggle window blinds" | Instant daylight toggle without 250ms ease |
-| `desk-clock` | Desk Clock | environment | null | 0ms | Switch: "Toggle 12h / 24h clock format" | Instant format switch |
-| `plant-leaves` | Plant Leaves | decorative | null | 500ms | Button: "Nudge desk plant leaves" | No physics simulation |
-| `keyboard` | Keyboard | environment | null | 0ms | Button: "Type on keyboard" | No key depression animation |
-| `mouse` | Mouse | environment | null | 0ms | Button: "Click mouse" | No mouse movement animation |
-| `chair` | Ergonomic Chair | decorative | null | 5,000ms | Button: "Swivel chair" | No rotation physics |
-| `door-inside` | Studio Exit Door | navigation | null | 0ms | Link: "Leave studio / Return to Home" | Direct navigation to `/` |
-| `speakers` | Studio Monitors | environment | null | 0ms | Switch: "Toggle studio audio ambience" | Instant audio enable/disable |
-| `skills-board` | Skills Board | navigation | `about` | 0ms | Link: "View engineering skills" | Direct navigation to `/about#skills` |
-| `research-books` | Research Books | navigation | `about` | 0ms | Link: "View research publications" | Direct navigation to `/about#research` |
-| `contact-phone` | Desk Phone | navigation | `contact` | 0ms | Link: "Contact Yor" | Direct navigation to `/contact` |
+| Catalog ID | Entity / Object | Category | 3D Physical Mechanic | Accessible Non-Geometry Equivalent | Camera / Character Action | Cooldown / Coalescing |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `entrance-door` | Studio Entrance Door | Navigation | 3D Door click / entry | "Enter Studio / Replay Entrance" button | `entry` $\to$ `reveal` $\to$ `home-desktop` | Single active entrance; skip instant |
+| `resident` | Seated Creator Avatar | Resident | Direct 3D mesh click | "Greet Creator" accessible button | Notice $\to$ Turn $\to$ Nod $\to$ Return | 7s full turn cooldown; glance on repeat |
+| `wall-painting` | Wall Artwork | Kinetic Prop | Pointer drag (max 6°); $\ge 5^\circ$ reveals mark | "Inspect Wall Painting" button | No camera travel; 1.2s spring return to $0^\circ$ | 8px click suppression; 250ms coalesce |
+| `main-monitor` | 34" Ultrawide Display | Monitor | Screen click focuses launcher | "Open Studio Launcher" button | `monitor` camera; resident clears hands | Transient focus ($\le 900$ms) |
+| `candidatex-launcher` | Launcher Project Entry | Project | Monitor link click | Direct link to `/projects/candidatex` | `monitor` camera; resident looks at screen | Shows unverified state |
+| `helios-pc` | Custom PC Chassis | Project | Chassis click; pulse motif | Direct link to `/projects/helios` | `pc` camera; resident brief glance | Max 1.4s transition delay |
+| `zenith-model` | Solar/Battery Model | Project | Model click; energy trace | Direct link to `/projects/zenith` | `energy` camera; resident unaffected | Max 1.4s transition delay |
+| `ai-real-camera` | Inspection Scanner Rig | Project | Scanner click; lens reflection | Direct link to `/projects/ai-camera` | `scanner` camera; subtle lens shimmer | Max 1.4s transition delay |
+| `talks-microphone` | Broadcast Microphone | Project | Microphone click; status LED | Direct link to `/projects/yor-talks` | `microphone` camera; audio chime if sound ON | Max 1.4s transition delay |
+| `desk-lamp` | Minimalist Task Lightbar | Environment | 3D Lamp fixture toggle | "Desk Task Lamp" accessible switch | Updates ambient lighting with 250ms ease | Persisted in room session |
+| `window-blinds` | Window Louvers | Environment | Blinds click toggle | "Window Blinds" accessible switch | Updates cyan fill with 250ms ease | Persisted in room session |
+| `desk-clock` | Asia/Kolkata Clock | Environment | Clock click 12h/24h toggle | "Clock Format" accessible switch | Swaps 12h/24h format display | Persisted in local preferences |
+| `speakers` | Studio Monitors | Environment | Speaker click mute/unmute | "Studio Sound Effects" accessible switch | Toggles sound engine state | Opt-in; default muted |
+| `plant-leaves` | Potted Desk Plant | Kinetic Prop | Leaf deflection on click | "Nudge Plant Leaves" accessible button | Spring settle back to neutral | 500ms coalescing |
+| `keyboard` | 75% Mechanical Keyboard| Peripheral | Key click focuses monitor | Keyboard shortcut / launcher button | `monitor` camera; opens launcher | Transient |
+| `mouse` | Ergonomic Mouse | Peripheral | Mouse click focuses monitor | Launcher button | `monitor` camera; opens launcher | Transient |
+| `chair` | Ergonomic Swivel Chair | Resident | Chair click adjusts posture | "Adjust Chair Posture" button | Subtle seated posture shift | 5s cooldown; blocked during turn |
+| `door-inside` | Interior Exit Door | Navigation | Interior door click | "Replay Entrance" accessible button | Replays entrance sequence cleanly | Reset preferences modal |
+| `skills-board` | Pegboard Tool Reference | Navigation | Pegboard click | Direct link to `/about#skills` | `about` camera preset | Direct navigation |
+| `research-books` | Bookshelf Technical Volumes | Navigation | Book stack click | Direct link to `/about#research` | Subtle focus preset | Direct navigation |
+| `contact-phone` | Smartphone on Desk | Navigation | Phone screen tap | Direct link to `/contact` | `contact` camera preset | Direct navigation |
+| `about-personal-object`| Approved Artifact | Navigation | Artifact click | Direct link to `/about` | `about` camera preset | Direct navigation |
+| `certificate-frame` | Credential Frame | Navigation | Frame click | Direct link to `/about` | Short focus preset | Disabled if unverified |
 
 ---
 
-## 5. Adversarial Attack Verification Matrix
+## 3. 6-Tier Priority Arbitration & Adversarial Attack Verification
 
-Every attack vector specified in the prompt was implemented, tested, and verified:
+The `IntentArbitrator` enforces deterministic arbitration across 6 priority tiers:
 
-| # | Attack Vector | Expected Defense Outcome | Verification Evidence | Status |
-| :-: | :--- | :--- | :--- | :---: |
-| 1 | **resident $\to$ resident rapidly** | Duplicate clicks during active greeting sequence are dropped without double-queuing. Subsequent clicks during the 7s cooldown trigger a restrained `attention_glance` rather than restarting the full sequence. | Unit: `tests/unit/interaction-controller.test.ts`<br>E2E: `physical-interactions.spec.ts` (Test 2) | **PASS** |
-| 2 | **resident $\to$ project** | Project transition (Priority 2) immediately preempts active resident greeting (Priority 3). Greeting `AbortController` signals cancellation; avatar settles to coding pose in $\le 50$ms; project camera travel initiates. | Unit: `tests/unit/interaction-controller.test.ts`<br>Evidence: `mockChar.settle` called $\le 50$ms | **PASS** |
-| 3 | **project A $\to$ project B** | Project B supersedes Project A. Transition ID increments; Project A's token is marked obsolete; Project A's stale camera promise resolution is discarded; only Project B navigates. | Unit: `tests/unit/interaction-controller.test.ts`<br>Trace: `open_project_candidatex` aborted | **PASS** |
-| 4 | **painting during camera movement** | Wall painting tilt is dropped or coalesced while high-priority camera transition (Priority 2) is in progress. `paintingAngleDeg` remains neutral (0°). | Unit: `tests/unit/interaction-controller.test.ts`<br>Evidence: `controller.tiltPainting(5.0) === false` | **PASS** |
-| 5 | **Escape during interaction** | User presses `Escape` while a project transition is running. Transition aborts immediately; character settles to coding pose; camera resets to `home-desktop`; explore phase restored; base room preferences (lamp, blinds) preserved. | Unit: `tests/unit/interaction-controller.test.ts`<br>E2E: `physical-interactions.spec.ts` (Test 3) | **PASS** |
-| 6 | **Back / route navigation during interaction** | Route navigation aborts the active 3D transition, unmounts world components cleanly without unhandled promise rejections, and transitions to static page presentation. | Unit: `tests/unit/interaction-controller.test.ts`<br>E2E: `physical-interactions.spec.ts` (Test 6) | **PASS** |
-| 7 | **hide / show (visibility change)** | `document.visibilitychange` to hidden suspends RAF loops and ambient timers. Resuming on visible restores loops without accumulated time-leaps or animation skips. | Unit: `tests/unit/interaction-controller.test.ts`<br>Evidence: `snap.suspended === true` | **PASS** |
-| 8 | **renderer failure** | WebGL context loss or initialization error dispatches `RENDERER_FAILED`. All active 3D transitions are cancelled; UI falls back cleanly to static accessible portfolio mode. | Unit: `tests/unit/interaction-controller.test.ts`<br>Evidence: fallback to `phase: "static"` | **PASS** |
-| 9 | **unmount cleanup** | Component unmount invokes `controller.stop()`. Cancellation coordinator disposes all tokens, settles character, detaches pointer capture, and clears listeners with 0 lingering timers. | Unit: `tests/unit/interaction-controller.test.ts`<br>Evidence: `cancellation.isCurrent(1) === false` | **PASS** |
-| 10 | **reduced motion** | When `prefers-reduced-motion: reduce` is active, cinematic camera travel is bypassed; project opens instantly; painting tilt animations do not run. | Unit: `tests/unit/interaction-controller.test.ts`<br>Evidence: `transitionTo` bypassed, instant preset set | **PASS** |
-| 11 | **storage denied** | In private browsing or restricted iframes where `localStorage` throws `SecurityError` or `QuotaExceededError`, `PreferencesStore` catches the exception and operates reliably in-memory. | Unit: `tests/unit/preferences-resilience.test.ts`<br>Evidence: `SecurityError` swallowed safely | **PASS** |
-| 12 | **corrupt preferences** | When `localStorage` contains malformed JSON or invalid schema values, Zod safe-parsing rejects corrupt data and initializes defaults safely without crashing. | Unit: `tests/unit/preferences-resilience.test.ts`<br>Evidence: `PreferencesSchema.safeParse` fallback | **PASS** |
+```
+[Tier 1 (Highest)] ESCAPE, SKIP, NAVIGATE, HIDE, SHOW, RENDERER_FAILED
+        ↓ Preempts all lower tiers immediately; releases pointer capture; <=50ms safe settle
+[Tier 2] OPEN_PROJECT
+        ↓ Preempts greeting or prior project focus; bounded <=1.4s budget
+[Tier 3] GREET, OPEN_PANEL, ENTER
+        ↓ 7s cooldown on full turn; repeat within 7s converted to glance; dropped if duplicate in-flight
+[Tier 4] SET_LAMP, SET_BLINDS, SET_CLOCK_FORMAT, SET_SOUND, SET_QUALITY, SET_PAUSED
+        ↓ Updates environment/preferences; does not disrupt camera or character
+[Tier 5] Kinetic reactions (painting drag, leaf deflection, chair posture)
+        ↓ Damped spring physics; dropped if Tier 1-2 arrives
+[Tier 6 (Lowest)] Ambient loops (coding_idle, breathing_idle)
+```
 
----
+### Verified Adversarial Attacks:
 
-## 6. Physical Wall Painting Interaction Verification
+1. **Resident $\to$ Resident Rapidly (Double-Click Attack):**
+   - **Behavior:** Sending repeat `GREET` intents while the character is in-flight.
+   - **Verification:** Duplicate click is detected by `IntentArbitrator` (`accepted: false`) and dropped without double-queuing. Subsequent click during the 7s cooldown window triggers an restrained `attention_glance` without heavy yaw rotation.
+   - **Evidence:** `tests/unit/interaction-controller.test.ts` (Attack 1) PASS · E2E Test 2 PASS.
 
-The interactive wall painting adheres strictly to the physical interaction specification:
-- **8 CSS px drag threshold**: Distinguishes intentional click/tap from drags. Movements $< 8$px are treated as clicks (triggering a momentary inspection tilt and settlement); movements $\ge 8$px initiate continuous pointer drag.
-- **6° maximum tilt clamp**: Tilt angle is strictly clamped to $[-6.0^\circ, +6.0^\circ]$.
-- **1.2s damped spring return**: Upon pointer release, an under-damped spring dynamics equation with stiffness $36.0$ and damping $12.0$ returns the painting to $0^\circ$ neutral within $1.2$ seconds.
-- **Hidden detail revelation**: Tilting beyond $\ge 5.0^\circ$ triggers discovery of the hidden Yor mark (`detailFound: true`), updating the world snapshot and persisting across room inspections.
-- **Pointer capture lifecycle**: Captures primary pointer on down; safely releases on up or cancel; cleanly ignores secondary touches during multitouch.
+2. **Resident $\to$ Project Preemption:**
+   - **Behavior:** Clicking a project prop while the avatar is mid-greeting.
+   - **Verification:** `IntentArbitrator` assigns Tier 2 (`OPEN_PROJECT`) which preempts Tier 3 (`GREET`). Avatar aborts turn immediately and settles into safe `coding_idle` within $\le 50$ms. Camera smoothly travels to the project preset.
+   - **Evidence:** `tests/unit/interaction-controller.test.ts` (Attack 2) PASS.
 
----
+3. **Project A $\to$ Project B (Stale Completion Rejection):**
+   - **Behavior:** Triggering Project A focus, then triggering Project B focus mid-transition.
+   - **Verification:** Project A is superseded; `CancellationCoordinator` increments the monotonic transition ID and aborts token A. When the Project A camera transition promise resolves, `cancellation.isCurrent(tokenA.id, tokenA.signal)` returns `false`. Project A **never** navigates. Navigation executes exclusively for Project B.
+   - **Evidence:** `tests/unit/interaction-controller.test.ts` (Attack 3) PASS.
 
-## 7. Verification Evidence & Test Execution
+4. **Painting During Camera Movement:**
+   - **Behavior:** Dragging the decorative wall painting while a camera travel is in flight.
+   - **Verification:** Kinetic drag is dropped/coalesced without disrupting active camera travel or character state.
+   - **Evidence:** `tests/unit/interaction-controller.test.ts` (Attack 4) PASS.
 
-### A. TypeScript Typecheck
-- **Command:** `pnpm typecheck` (`tsc --noEmit`)
-- **Log:** `deliveries/C1/evidence/18-typecheck.log`
-- **Result:** **EXIT 0 (0 errors)**
+5. **Escape During Interaction (Safe Base-State Restoration):**
+   - **Behavior:** User presses Escape key during monitor focus or project transition.
+   - **Verification:** Aborts active transition, closes all open panels (`launcher`, `room-controls`), commands resident to safe `coding_idle`, resets camera preset to `home-desktop`, and restores phase to `explore`. Existing user environment preferences (`lampOn: false`, `blindsOpen: false`) are strictly preserved without mutation.
+   - **Evidence:** `tests/unit/interaction-controller.test.ts` (Attack 5) PASS · E2E Test 3 PASS.
 
-### B. Unit & Integration Tests (Vitest)
-- **Command:** `pnpm test:unit`
-- **Log:** `deliveries/C1/evidence/16-unit-tests.log`
-- **Result:** **14/14 suites passed, 122/122 tests passed (100% PASS)**
-  - `lifecycle-manager.test.ts` (10 tests)
-  - `character-director.test.ts` (4 tests)
-  - `contracts.test.ts` (51 tests)
-  - `scene-integrator.test.ts` (2 tests)
-  - `entrance-coordinator.test.ts` (5 tests)
-  - `interaction-registry.test.ts` (3 tests)
-  - `painting-interaction.test.ts` (6 tests)
-  - `camera-director.test.ts` (5 tests)
-  - `preferences-resilience.test.ts` (4 tests)
-  - `interaction-controller.test.ts` (14 tests)
-  - `boundaries.test.ts` (9 tests)
-  - `asset-loader.test.ts` (3 tests)
-  - `contract-types.test.ts` (1 test)
-  - `intent-arbitration.test.ts` (5 tests)
+6. **Back & Route Navigation During Interaction:**
+   - **Behavior:** Browser back button or top navigation link clicked mid-greeting.
+   - **Verification:** In-flight asynchronous work is aborted; canvas cleanly unmounts without hanging promises or console errors.
+   - **Evidence:** `tests/unit/interaction-controller.test.ts` (Attack 6) PASS · E2E Test 6 PASS.
 
-### C. Production Build (Next.js Turbopack)
-- **Command:** `pnpm build` (`next build`)
-- **Log:** `deliveries/C1/evidence/19-build.log`
-- **Result:** **EXIT 0 (Compiled 7/7 static routes: `/`, `/_not-found`, `/about`, `/contact`, `/projects`, `/resume`)**
+7. **Hide / Show Visibility Suspension:**
+   - **Behavior:** Document visibility changes to `hidden` during animation loop.
+   - **Verification:** `WorldRuntime` enters suspended mode; animation frame loops freeze; upon `SHOW`, timing clock is resynchronized to avoid visual time leaps.
+   - **Evidence:** `tests/unit/interaction-controller.test.ts` (Attack 7) PASS.
 
-### D. Playwright E2E Browser Tests
-- **Command:** `pnpm test:e2e tests/e2e/physical-interactions.spec.ts`
-- **Log:** `deliveries/C1/evidence/20-e2e-tests.log`
-- **Result:** **12/12 passed (Chromium + Microsoft Edge, 100% PASS)**
+8. **Renderer Failure (Context Loss):**
+   - **Behavior:** WebGL context lost or `RENDERER_FAILED` intent received.
+   - **Verification:** Lifecycle manager transitions to `FAILURE`; in-flight transitions abort; DOM unmounts canvas and cleanly displays accessible fallback with retry option.
+   - **Evidence:** `tests/unit/interaction-controller.test.ts` (Attack 8) PASS.
 
-### E. ESLint
-- **Command:** `pnpm lint`
-- **Log:** `deliveries/C1/evidence/22-lint.log`
-- **Result:** **EXIT 0 (0 lint warnings or errors)**
+9. **Unmount & Cleanup:**
+   - **Behavior:** Component unmounts while interactions or transitions are active.
+   - **Verification:** `stop()` / `dispose()` cleans up event listeners, cancels RAF IDs, settles character to neutral, and marks cancellation coordinator disposed.
+   - **Evidence:** `tests/unit/interaction-controller.test.ts` (Attack 9) PASS · E2E Test 6 PASS.
 
----
+10. **Reduced Motion Mode:**
+    - **Behavior:** User enables `prefers-reduced-motion`.
+    - **Verification:** Camera transitions become instantaneous ($0.0$s duration); project navigation opens immediately without panning; painting tilt animates without yaw; avatar acknowledgment executes without heavy yaw rotation.
+    - **Evidence:** `tests/unit/interaction-controller.test.ts` (Attack 10) PASS.
 
-## 8. Artifacts, Traces, & Browser Recordings
-
-### Browser Recordings (`deliveries/C1/evidence/recordings/`)
-1. `physical-interactions-Phys-6c254-h-level-experience-snapshot-chrome_video.webm`
-2. `physical-interactions-Phys-6c254-h-level-experience-snapshot-edge_video.webm`
-3. `physical-interactions-Phys-7693f-onditions-or-double-queuing-chrome_video.webm`
-4. `physical-interactions-Phys-7693f-onditions-or-double-queuing-edge_video.webm`
-5. `physical-interactions-Phys-5d650-res-safe-explore-base-state-chrome_video.webm`
-6. `physical-interactions-Phys-5d650-res-safe-explore-base-state-edge_video.webm`
-7. `physical-interactions-Phys-3a5aa-oggles-environment-settings-chrome_video.webm`
-8. `physical-interactions-Phys-3a5aa-oggles-environment-settings-edge_video.webm`
-9. `physical-interactions-Phys-67e8e-e-and-discovers-hidden-mark-chrome_video.webm`
-10. `physical-interactions-Phys-67e8e-e-and-discovers-hidden-mark-edge_video.webm`
-11. `physical-interactions-Phys-7901e-unts-cleanly-without-errors-chrome_video.webm`
-12. `physical-interactions-Phys-7901e-unts-cleanly-without-errors-edge_video.webm`
-
-### Playwright Traces (`deliveries/C1/evidence/traces/`)
-1. `physical-interactions-Phys-6c254-h-level-experience-snapshot-chrome_trace.zip`
-2. `physical-interactions-Phys-6c254-h-level-experience-snapshot-edge_trace.zip`
-3. `physical-interactions-Phys-7693f-onditions-or-double-queuing-chrome_trace.zip`
-4. `physical-interactions-Phys-7693f-onditions-or-double-queuing-edge_trace.zip`
-5. `physical-interactions-Phys-5d650-res-safe-explore-base-state-chrome_trace.zip`
-6. `physical-interactions-Phys-5d650-res-safe-explore-base-state-edge_trace.zip`
-7. `physical-interactions-Phys-3a5aa-oggles-environment-settings-chrome_trace.zip`
-8. `physical-interactions-Phys-3a5aa-oggles-environment-settings-edge_trace.zip`
-9. `physical-interactions-Phys-67e8e-e-and-discovers-hidden-mark-chrome_trace.zip`
-10. `physical-interactions-Phys-67e8e-e-and-discovers-hidden-mark-edge_trace.zip`
-11. `physical-interactions-Phys-7901e-unts-cleanly-without-errors-chrome_trace.zip`
-12. `physical-interactions-Phys-7901e-unts-cleanly-without-errors-edge_trace.zip`
+11. **Storage Denied & Corrupt Preferences Resilience:**
+    - **Behavior:** `localStorage` throws `SecurityError: Access is denied` or contains corrupt JSON / invalid schema.
+    - **Verification:** `PreferencesStore` catches storage exceptions and falls back cleanly to in-memory state; Zod parse failures safely return `defaultPreferences` without throwing or crashing the runtime.
+    - **Evidence:** `tests/unit/preferences-resilience.test.ts` (4/4 PASS).
 
 ---
 
-## 9. Conclusion & Governance Hand-Off
+## 4. Execution Logs & Test Results Matrix
 
-Packet C1 satisfies every technical requirement and architectural invariant:
-- Exactly 1 high-level experience state snapshot.
-- Exactly 1 camera director owner (`primary-camera-director`).
-- Exactly 1 character director owner (`primary-character-director`).
-- Exactly 1 current interaction intent (`ExperienceIntent`).
-- Explicit monotonic cancellation IDs and stale completion rejection.
-- All 21 frozen V1 catalog items mapped to accessible non-geometry equivalents.
-- All 10 adversarial attacks verified with 100% test pass rate across unit, build, and browser E2E suites.
+All validation steps were executed repeatably using the self-contained harness `deliveries/C1/tools/proof.py` in an isolated temporary environment outside the git workspace.
 
-**Stopping for GPT Plus #2 audit.**
+| Step | Command | Exit Code | Time | Evidence Log | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Typecheck** | `tsc --noEmit` | `0` | 6.8s | `evidence/20-typecheck.log` | **PASS** (0 errors) |
+| **Lint** | `eslint . --max-warnings=0` | `0` | 5.8s | `evidence/21-lint.log` | **PASS** (0 errors, 0 warnings) |
+| **Unit Tests** | `vitest run --config vitest.config.ts` | `0` | 1.1s | `evidence/21-unit-tests.log` | **PASS** (122/122 passed, 14 suites) |
+| **Production Build** | `next build` (Turbopack) | `0` | 10.2s | `evidence/22-build.log` | **PASS** (Static routes compiled) |
+| **Playwright E2E** | `playwright test` (Chrome + Edge) | `0` | 1.8m | `evidence/23-e2e-tests.log` | **PASS** (12/12 tests passed) |
+
+### Playwright E2E Test Results:
+- `1. Invariants: verifies single owners and high-level experience snapshot` (Chrome: 9.7s, Edge: 9.5s) → **PASS**
+- `2. Attack: rapid resident greeting clicks without race conditions or double-queuing` (Chrome: 7.6s, Edge: 7.2s) → **PASS**
+- `3. Attack: Escape key cancels interaction and restores safe explore base state` (Chrome: 8.5s, Edge: 8.6s) → **PASS**
+- `4. Non-geometry equivalent: accessible Room Controls toggles environment settings` (Chrome: 8.2s, Edge: 7.1s) → **PASS**
+- `5. Painting interaction: inspection tilt triggers spring response and discovers hidden mark` (Chrome: 7.8s, Edge: 11.5s) → **PASS**
+- `6. Attack: route navigation during interaction unmounts cleanly without errors` (Chrome: 8.0s, Edge: 7.0s) → **PASS**
+
+---
+
+## 5. Evidence Artifacts Ledger
+
+### Browser Recordings (`deliveries/C1/evidence/recordings/`):
+- `physical-interactions-Phys-6c254-h-level-experience-snapshot-chrome_video.webm` (256 KB)
+- `physical-interactions-Phys-6c254-h-level-experience-snapshot-edge_video.webm` (258 KB)
+- `physical-interactions-Phys-7693f-onditions-or-double-queuing-chrome_video.webm` (273 KB)
+- `physical-interactions-Phys-7693f-onditions-or-double-queuing-edge_video.webm` (277 KB)
+- `physical-interactions-Phys-5d650-res-safe-explore-base-state-chrome_video.webm` (350 KB)
+- `physical-interactions-Phys-5d650-res-safe-explore-base-state-edge_video.webm` (351 KB)
+- `physical-interactions-Phys-3a5aa-oggles-environment-settings-chrome_video.webm` (314 KB)
+- `physical-interactions-Phys-3a5aa-oggles-environment-settings-edge_video.webm` (272 KB)
+- `physical-interactions-Phys-67e8e-e-and-discovers-hidden-mark-chrome_video.webm` (276 KB)
+- `physical-interactions-Phys-67e8e-e-and-discovers-hidden-mark-edge_video.webm` (311 KB)
+- `physical-interactions-Phys-7901e-unts-cleanly-without-errors-chrome_video.webm` (311 KB)
+- `physical-interactions-Phys-7901e-unts-cleanly-without-errors-edge_video.webm` (276 KB)
+
+### Playwright Event Traces (`deliveries/C1/evidence/traces/`):
+- `physical-interactions-Phys-6c254-h-level-experience-snapshot-chrome_trace.zip` (1.97 MB)
+- `physical-interactions-Phys-6c254-h-level-experience-snapshot-edge_trace.zip` (2.92 MB)
+- `physical-interactions-Phys-7693f-onditions-or-double-queuing-chrome_trace.zip` (4.26 MB)
+- `physical-interactions-Phys-7693f-onditions-or-double-queuing-edge_trace.zip` (3.39 MB)
+- `physical-interactions-Phys-5d650-res-safe-explore-base-state-chrome_trace.zip` (5.54 MB)
+- `physical-interactions-Phys-5d650-res-safe-explore-base-state-edge_trace.zip` (4.85 MB)
+- `physical-interactions-Phys-3a5aa-oggles-environment-settings-chrome_trace.zip` (4.85 MB)
+- `physical-interactions-Phys-3a5aa-oggles-environment-settings-edge_trace.zip` (3.71 MB)
+- `physical-interactions-Phys-67e8e-e-and-discovers-hidden-mark-chrome_trace.zip` (2.88 MB)
+- `physical-interactions-Phys-67e8e-e-and-discovers-hidden-mark-edge_trace.zip` (3.09 MB)
+- `physical-interactions-Phys-7901e-unts-cleanly-without-errors-chrome_trace.zip` (4.18 MB)
+- `physical-interactions-Phys-7901e-unts-cleanly-without-errors-edge_trace.zip` (2.49 MB)
+
+---
+
+## 6. Delivery Manifest & Packaging
+
+All delivery assets, test recordings, execution traces, and sources have been packaged into `c1-interaction-proof.zip`:
+- Archive path: `deliveries/C1/c1-interaction-proof.zip`
+- SHA-256 Digest: recorded in `deliveries/C1/c1-interaction-proof.zip.sha256`
+
+**STATUS: DELIVERED AND READY FOR INDEPENDENT AUDIT (STOPPED FOR GPT #2 AUDIT).**
