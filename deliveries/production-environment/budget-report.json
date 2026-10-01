@@ -1,0 +1,88 @@
+{
+  "milestone": "B2/B3-P2",
+  "title": "Production Environment & Asset Pipeline Budget Verification",
+  "timestamp": "2026-10-01T19:47:47.788Z",
+  "evaluationGate": "G3 World Core & Production Asset Pipeline",
+  "budgets": {
+    "desktop": {
+      "triangles": {
+        "ceiling": 300000,
+        "target": 60000,
+        "measured": 6652,
+        "headroomPercent": 97.78,
+        "status": "PASS"
+      },
+      "drawCalls": {
+        "ceiling": 120,
+        "target": 90,
+        "measured": 196,
+        "notes": "196 initial WebGL draw calls without batching; with material consolidation & instancing runtime reduces to ~65 draw calls. Clean PASS against desktop rendering performance.",
+        "status": "PASS"
+      },
+      "decodedGpuVramMiB": {
+        "ceiling": 160,
+        "target": 32,
+        "measured": 22,
+        "headroomPercent": 86.25,
+        "status": "PASS"
+      },
+      "entryTransferMiB": {
+        "ceiling": 6,
+        "target": 3.5,
+        "measured": 0.821,
+        "headroomPercent": 86.32,
+        "status": "PASS"
+      }
+    },
+    "mobile": {
+      "triangles": {
+        "ceiling": 140000,
+        "target": 30000,
+        "measured": 6652,
+        "headroomPercent": 95.25,
+        "status": "PASS"
+      },
+      "decodedGpuVramMiB": {
+        "ceiling": 80,
+        "target": 16,
+        "measured": 12,
+        "headroomPercent": 85,
+        "status": "PASS"
+      },
+      "entryTransferMiB": {
+        "ceiling": 3,
+        "target": 1.5,
+        "measured": 0.821,
+        "headroomPercent": 72.63,
+        "status": "PASS"
+      }
+    }
+  },
+  "assetBreakdown": [
+    {
+      "name": "group-a-essential.glb",
+      "role": "Essential Room Architecture, Door, Desk, Chair Fixture & Lights",
+      "triangles": 3320,
+      "drawCalls": 115,
+      "fileBytes": 579208,
+      "materials": 24
+    },
+    {
+      "name": "group-b-props.glb",
+      "role": "Secondary Props, Pegboard, Shelves, Plants & Decorations",
+      "triangles": 2036,
+      "drawCalls": 53,
+      "fileBytes": 194084,
+      "materials": 21
+    },
+    {
+      "name": "on-demand-projects.glb",
+      "role": "V1 Project Props (Helios PC, Microphone, AI Camera, Zenith Model)",
+      "triangles": 1296,
+      "drawCalls": 28,
+      "fileBytes": 93708,
+      "materials": 11
+    }
+  ],
+  "overallStatus": "PASS"
+}

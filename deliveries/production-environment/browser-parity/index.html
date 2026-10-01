@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YOR WORLD - Production Environment Browser Parity Harness</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body, html { width: 100%; height: 100%; overflow: hidden; background: #0a0a10; font-family: monospace; }
+    #canvas-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+    #status-overlay {
+      position: absolute; top: 12px; left: 12px; z-index: 100;
+      color: #00e5ff; background: rgba(10, 10, 20, 0.85);
+      padding: 8px 14px; border: 1px solid #00e5ff; border-radius: 4px;
+      font-size: 13px; pointer-events: none;
+    }
+  </style>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./libs/three.module.js",
+        "three/addons/": "./libs/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="status-overlay">Initializing Three.js WebGL...</div>
+  <div id="canvas-container"></div>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/GLTFLoader.js';
+
+    const container = document.getElementById('canvas-container');
+    const statusEl = document.getElementById('status-overlay');
+
+    // 1. Scene, Renderer, Camera
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0e0e16);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.0));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
+
+    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.05, 20.0);
+
+    // 2. Camera Presets (F1 Runtime Y-up coordinates)
+    const CAMERA_PRESETS = {
+      'entry': {
+        pos: [0.0, 1.45, 1.65],
+        target: [0.0, 0.95, -1.15],
+        fov: 65.0,
+        aspect: [1920, 1080]
+      },
+      'home-desktop': {
+        pos: [0.25, 1.25, 0.45],
+        target: [0.05, 0.95, -1.15],
+        fov: 50.0,
+        aspect: [1920, 1080]
+      },
+      'monitor-detail': {
+        pos: [0.0, 1.05, -0.65],
+        target: [0.0, 1.05, -1.35],
+        fov: 45.0,
+        aspect: [1920, 1080]
+      },
+      'reverse-doorway': {
+        pos: [0.0, 1.20, -1.30],
+        target: [0.0, 1.30, 1.70],
+        fov: 60.0,
+        aspect: [1920, 1080]
+      },
+      'mobile-portrait': {
+        pos: [0.15, 1.35, 0.85],
+        target: [0.05, 0.90, -1.15],
+        fov: 55.0,
+        aspect: [720, 1280]
+      }
+    };
+
+    function applyCameraPreset(presetName) {
+      const cfg = CAMERA_PRESETS[presetName];
+      if (!cfg) return;
+      camera.fov = cfg.fov;
+      camera.position.set(cfg.pos[0], cfg.pos[1], cfg.pos[2]);
+      camera.lookAt(cfg.target[0], cfg.target[1], cfg.target[2]);
+      camera.updateProjectionMatrix();
+      statusEl.textContent = `Camera: ${presetName}`;
+      renderer.render(scene, camera);
+    }
+
+    // 3. Lighting Setup
+    const ambientLight = new THREE.AmbientLight(0xf0f0ff, 0.35);
+    scene.add(ambientLight);
+
+    const ceilingFill = new THREE.PointLight(0xfafaff, 1.2, 8.0);
+    ceilingFill.position.set(0.0, 2.65, 0.0);
+    scene.add(ceilingFill);
+
+    const hexWallLight = new THREE.PointLight(0xf1a5f3, 2.2, 5.0);
+    hexWallLight.position.set(0.0, 1.82, -1.65);
+    scene.add(hexWallLight);
+
+    const warmTaskLight = new THREE.SpotLight(0xffe2a0, 2.5, 3.5, Math.PI / 3, 0.4);
+    warmTaskLight.position.set(0.0, 1.28, -1.30);
+    warmTaskLight.target.position.set(0.0, 0.75, -1.05);
+    scene.add(warmTaskLight);
+    scene.add(warmTaskLight.target);
+
+    const cyanUnderdeskLight = new THREE.PointLight(0x00e5ff, 1.8, 2.5);
+    cyanUnderdeskLight.position.set(0.0, 0.40, -1.15);
+    scene.add(cyanUnderdeskLight);
+
+    // 4. Load Production Environment GLB
+    let loadedScene = null;
+    const loader = new GLTFLoader();
+    const modelUrl = '../runtime/production-room-full.glb';
+
+    statusEl.textContent = `Loading GLB: ${modelUrl}...`;
+
+    loader.load(
+      modelUrl,
+      (gltf) => {
+        loadedScene = gltf.scene;
+        scene.add(loadedScene);
+
+        // Apply shadow properties and material sanity
+        loadedScene.traverse((child) => {
+          if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+          }
+        });
+
+        statusEl.textContent = `Ready: production-room-full.glb loaded (${gltf.scene.children.length} roots)`;
+        window.__YOR_SCENE_READY = true;
+        applyCameraPreset('home-desktop');
+      },
+      (xhr) => {
+        const pct = Math.round((xhr.loaded / (xhr.total || 1)) * 100);
+        statusEl.textContent = `Loading: ${pct}%`;
+      },
+      (error) => {
+        console.error('Failed to load GLB', error);
+        statusEl.textContent = `Error: ${error.message}`;
+        window.__YOR_SCENE_ERROR = error.message;
+      }
+    );
+
+    // 5. Lighting State Invariant Verification API
+    window.__YOR_API = {
+      applyCameraPreset,
+      getLightingSnapshot: () => ({
+        ambient: ambientLight.intensity,
+        ceiling: ceilingFill.intensity,
+        hex: hexWallLight.intensity,
+        warmTask: warmTaskLight.intensity,
+        cyanUnderdesk: cyanUnderdeskLight.intensity
+      }),
+      setLightingFocus: (enabled) => {
+        if (enabled) {
+          hexWallLight.intensity = 4.0;
+          warmTaskLight.intensity = 1.0;
+        } else {
+          hexWallLight.intensity = 2.2;
+          warmTaskLight.intensity = 2.5;
+        }
+        renderer.render(scene, camera);
+      },
+      render: () => renderer.render(scene, camera),
+      getScreenshot: () => {
+        statusEl.style.display = 'none';
+        renderer.render(scene, camera);
+        const data = renderer.domElement.toDataURL('image/png');
+        statusEl.style.display = 'block';
+        return data;
+      },
+      resize: (w, h) => {
+        renderer.setSize(w, h);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.render(scene, camera);
+      }
+    };
+
+    function animate() {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
+</body>
+</html>
