@@ -1,0 +1,84 @@
+   1: "use client";
+   2: 
+   3: import React, { useState, useSyncExternalStore } from "react";
+   4: import dynamic from "next/dynamic";
+   5: import styles from "./world.module.css";
+   6: import portfolioStyles from "@/features/portfolio/portfolio.module.css";
+   7: 
+   8: const emptySubscribe = () => () => {};
+   9: 
+  10: function getSearchSnapshot(): string {
+  11:   return typeof window !== "undefined" ? window.location.search : "";
+  12: }
+  13: 
+  14: function getServerSearchSnapshot(): string {
+  15:   return "";
+  16: }
+  17: 
+  18: // Dynamic import with ssr: false ensures ZERO Three.js code is loaded pre-entry
+  19: const DynamicWorldRoot = dynamic(() => import("./WorldRoot"), {
+  20:   ssr: false,
+  21:   loading: () => (
+  22:     <div className={styles.stageContainer} data-testid="world-loading-placeholder">
+  23:       <div style={{ padding: "2rem", color: "#cadbee", textAlign: "center" }}>
+  24:         Loading 3D Studio Environment...
+  25:       </div>
+  26:     </div>
+  27:   ),
+  28: });
+  29: 
+  30: export function StudioLauncher() {
+  31:   const search = useSyncExternalStore(emptySubscribe, getSearchSnapshot, getServerSearchSnapshot);
+  32:   const params = new URLSearchParams(search);
+  33:   const autoEnter =
+  34:     params.get("studio") === "enter" ||
+  35:     params.get("simulateAssetError") === "1" ||
+  36:     params.get("simulateRendererError") === "1";
+  37:   const simulateAssetError = params.get("simulateAssetError") === "1";
+  38:   const simulateRendererError = params.get("simulateRendererError") === "1";
+  39: 
+  40:   const [manuallyClosed, setManuallyClosed] = useState<boolean>(false);
+  41:   const [manuallyOpened, setManuallyOpened] = useState<boolean>(false);
+  42: 
+  43:   const isEntered = (autoEnter && !manuallyClosed) || manuallyOpened;
+  44: 
+  45:   return (
+  46:     <div>
+  47:       {!isEntered ? (
+  48:         <details className={portfolioStyles.studioDisclosure} data-testid="studio-disclosure">
+  49:           <summary>Enter studio <span aria-hidden="true">+</span></summary>
+  50:           <div className={portfolioStyles.studioMessage}>
+  51:             <p>The studio is not yet available.</p>
+  52:             <p>
+  53:               Launch the <strong>G1 Interactive 3D Studio Feasibility Proof</strong> to experience the integrated bright white workstation, blue moving chair, resident, and ambient lighting:
+  54:             </p>
+  55:             <div style={{ marginTop: "0.75rem" }}>
+  56:               <button
+  57:                 type="button"
+  58:                 id="enter-studio-btn"
+  59:                 data-testid="enter-studio-btn"
+  60:                 onClick={() => {
+  61:                   setManuallyOpened(true);
+  62:                   setManuallyClosed(false);
+  63:                 }}
+  64:                 className={portfolioStyles.primaryAction}
+  65:                 style={{ cursor: "pointer", border: "none" }}
+  66:               >
+  67:                 Launch 3D Studio
+  68:               </button>
+  69:             </div>
+  70:           </div>
+  71:         </details>
+  72:       ) : (
+  73:         <DynamicWorldRoot
+  74:           onClose={() => {
+  75:             setManuallyClosed(true);
+  76:             setManuallyOpened(false);
+  77:           }}
+  78:           simulateAssetError={simulateAssetError}
+  79:           simulateRendererError={simulateRendererError}
+  80:         />
+  81:       )}
+  82:     </div>
+  83:   );
+  84: }

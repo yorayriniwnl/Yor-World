@@ -1,0 +1,90 @@
+   1: import * as THREE from "three";
+   2: import type { CameraConfig, CameraPreset } from "./types";
+   3: 
+   4: export const CAMERA_PRESETS: Record<CameraPreset, CameraConfig> = {
+   5:   "home-desktop": {
+   6:     position: [-2.15, 1.7, 1.55],
+   7:     target: [0.12, 1.25, -1.15],
+   8:     fov: 60,
+   9:   },
+  10:   "home-mobile": {
+  11:     position: [-1.25, 1.48, 1.15],
+  12:     target: [0.16, 1.08, -0.95],
+  13:     fov: 52,
+  14:   },
+  15:   monitor: {
+  16:     position: [0.0, 1.08, -0.5],
+  17:     target: [0.0, 1.08, -1.35],
+  18:     fov: 50,
+  19:   },
+  20:   "reverse-doorway": {
+  21:     position: [0.2, 1.25, -1.0],
+  22:     target: [-1.2, 1.1, 1.8],
+  23:     fov: 56,
+  24:   },
+  25: };
+  26: 
+  27: export class CameraDirector {
+  28:   public camera: THREE.PerspectiveCamera;
+  29:   public currentPreset: CameraPreset = "home-desktop";
+  30:   public reducedMotion: boolean = false;
+  31:   private currentTarget: THREE.Vector3 = new THREE.Vector3();
+  32: 
+  33:   constructor(camera: THREE.PerspectiveCamera, initialPreset: CameraPreset = "home-desktop") {
+  34:     this.camera = camera;
+  35:     this.setPreset(initialPreset, true);
+  36:   }
+  37: 
+  38:   public setReducedMotion(enabled: boolean) {
+  39:     this.reducedMotion = enabled;
+  40:   }
+  41: 
+  42:   public setPreset(preset: CameraPreset, immediate: boolean = false) {
+  43:     const config = CAMERA_PRESETS[preset];
+  44:     if (!config) throw new Error(`Unknown camera preset: ${preset}`);
+  45: 
+  46:     this.currentPreset = preset;
+  47:     const targetVec = new THREE.Vector3(...config.target);
+  48: 
+  49:     // With reducedMotion active, transitions are ALWAYS immediate (no cinematic travel)
+  50:     if (this.reducedMotion || immediate) {
+  51:       this.camera.position.set(...config.position);
+  52:       this.camera.fov = config.fov;
+  53:       this.currentTarget.copy(targetVec);
+  54:       this.camera.lookAt(targetVec);
+  55:       this.camera.updateProjectionMatrix();
+  56:     } else {
+  57:       // Direct positioning per proof specification
+  58:       this.camera.position.set(...config.position);
+  59:       this.camera.fov = config.fov;
+  60:       this.currentTarget.copy(targetVec);
+  61:       this.camera.lookAt(targetVec);
+  62:       this.camera.updateProjectionMatrix();
+  63:     }
+  64:   }
+  65: 
+  66:   public resize(width: number, height: number) {
+  67:     if (width <= 0 || height <= 0) return;
+  68:     this.camera.aspect = width / height;
+  69: 
+  70:     const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+  71:     if (isMobile && this.currentPreset === "home-desktop") {
+  72:       this.setPreset("home-mobile", true);
+  73:     } else if (!isMobile && this.currentPreset === "home-mobile") {
+  74:       this.setPreset("home-desktop", true);
+  75:     } else {
+  76:       this.camera.updateProjectionMatrix();
+  77:     }
+  78:   }
+  79: 
+  80:   public getDiagnostics() {
+  81:     return {
+  82:       preset: this.currentPreset,
+  83:       position: this.camera.position.toArray() as [number, number, number],
+  84:       target: this.currentTarget.toArray() as [number, number, number],
+  85:       fov: this.camera.fov,
+  86:       aspect: this.camera.aspect,
+  87:       reducedMotion: this.reducedMotion,
+  88:     };
+  89:   }
+  90: }

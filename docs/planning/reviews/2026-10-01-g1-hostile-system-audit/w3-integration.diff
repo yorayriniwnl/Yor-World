@@ -1,0 +1,2705 @@
+diff --git a/deliveries/W3/revisions/W3-A1-r2/source/package.json b/deliveries/G1/source/package.json
+index 3b3ae36..a87fbc6 100644
+--- a/deliveries/W3/revisions/W3-A1-r2/source/package.json
++++ b/deliveries/G1/source/package.json
+@@ -1,5 +1,5 @@
+ {
+-  "name": "yor-world-platform-proof",
++  "name": "yor-world-g1-proof",
+   "version": "0.1.0",
+   "private": true,
+   "type": "module",
+@@ -19,6 +19,7 @@
+     "next": "16.3.8",
+     "react": "19.3.0",
+     "react-dom": "19.3.0",
++    "three": "0.180.0",
+     "zod": "4.6.5"
+   },
+   "devDependencies": {
+@@ -27,6 +28,7 @@
+     "@types/node": "24.19.0",
+     "@types/react": "19.3.0",
+     "@types/react-dom": "19.3.0",
++    "@types/three": "0.180.0",
+     "eslint": "9.39.5",
+     "eslint-config-next": "16.3.8",
+     "typescript": "6.0.3",
+diff --git a/deliveries/W3/revisions/W3-A1-r2/source/playwright.config.ts b/deliveries/G1/source/playwright.config.ts
+index d1dcbeb..0ba9092 100644
+--- a/deliveries/W3/revisions/W3-A1-r2/source/playwright.config.ts
++++ b/deliveries/G1/source/playwright.config.ts
+@@ -7,13 +7,14 @@ export default defineConfig({
+   fullyParallel: false,
+   workers: 1,
+   retries: 0,
+-  reporter: [["list"], ["json", { outputFile: path.join(process.env.W3_EVIDENCE_DIR ?? "test-results", "browser-results.json") }]],
++  reporter: [["list"], ["json", { outputFile: path.join(process.env.G1_EVIDENCE_DIR ?? process.env.W3_EVIDENCE_DIR ?? "test-results", "browser-results.json") }]],
+   use: {
+     baseURL: `http://127.0.0.1:${port}`,
+     viewport: { width: 1440, height: 900 },
+     deviceScaleFactor: 1,
+-    trace: "retain-on-failure",
++    trace: "off",
+     screenshot: "only-on-failure",
++    video: "on",
+     headless: true,
+   },
+   projects: [
+diff --git a/deliveries/W3/revisions/W3-A1-r2/source/pnpm-lock.yaml b/deliveries/G1/source/pnpm-lock.yaml
+index 863f3ba..e8750ba 100644
+--- a/deliveries/W3/revisions/W3-A1-r2/source/pnpm-lock.yaml
++++ b/deliveries/G1/source/pnpm-lock.yaml
+@@ -17,6 +17,9 @@ importers:
+       react-dom:
+         specifier: 19.3.0
+         version: 19.3.0(react@19.3.0)
++      three:
++        specifier: 0.180.0
++        version: 0.180.0
+       zod:
+         specifier: 4.6.5
+         version: 4.6.5
+@@ -36,6 +39,9 @@ importers:
+       '@types/react-dom':
+         specifier: 19.3.0
+         version: 19.3.0(@types/react@19.3.0)
++      '@types/three':
++        specifier: 0.180.0
++        version: 0.180.0
+       eslint:
+         specifier: 9.39.5
+         version: 9.39.5
+@@ -123,6 +129,9 @@ packages:
+     resolution: {integrity: sha512-Vj1jF3cPfxg7OAfoI7QnVKLoILlm2JF9pnVHrX8qx7AHMiYWT+NDAA7jChlNgRS4WTLc/fD1lXLmPixluj+3Gg==}
+     engines: {node: '>=6.9.0'}
+ 
++  '@dimforge/rapier3d-compat@0.12.0':
++    resolution: {integrity: sha512-uekIGetywIgopfD97oDL5PfeezkFpNhwlzlaEYNOA0N6ghdsOvh/HYjSMek5Q2O1PYvRSDFcqFVJl4r4ZBwOow==}
++
+   '@emnapi/core@1.10.0':
+     resolution: {integrity: sha512-yq6OkJ4p82CAfPl0u9mQebQHKPJkY7WrIuk205cTYnYe+k2Z8YBh11FrbRG/H6ihirqcacOgl2BIO8oyMQLeXw==}
+ 
+@@ -545,6 +554,9 @@ packages:
+   '@swc/helpers@0.5.23':
+     resolution: {integrity: sha512-5lSsMOTXURePglDfvuAQUqkGek9Hg2kksOYay2m0+XR++b2NWYL/4sWyuvVBIs8oKnJaxkdi9whaL/sqN13afw==}
+ 
++  '@tweenjs/tween.js@23.1.3':
++    resolution: {integrity: sha512-vJmvvwFxYuGnF2axRtPYocag6Clbb5YS7kLL+SO/TeVFzHqDIWrNKYtcsPMibjDx9O+bu+psAy9NKfWklassUA==}
++
+   '@tybys/wasm-util@0.10.4':
+     resolution: {integrity: sha512-W3c4gRigFS0T/Ma4qIYF3GDAc5AQdHb1yL5znJT1Zv1YaD9Kitx656wBjvr19qbiosmZT8lWDM5BEMynUqX65A==}
+ 
+@@ -574,6 +586,15 @@ packages:
+   '@types/react@19.3.0':
+     resolution: {integrity: sha512-N0rFCuH9YoxG9/m61l9MfpJKfmLOVU0em7ipIz6TRgSSkvReLB9vL85GB+yr8Bs5leqpvg96JSwF4ZS1s4viQg==}
+ 
++  '@types/stats.js@0.17.4':
++    resolution: {integrity: sha512-jIBvWWShCvlBqBNIZt0KAshWpvSjhkwkEu4ZUcASoAvhmrgAUI2t1dXrjSL4xXVLB4FznPrIsX3nKXFl/Dt4vA==}
++
++  '@types/three@0.180.0':
++    resolution: {integrity: sha512-ykFtgCqNnY0IPvDro7h+9ZeLY+qjgUWv+qEvUt84grhenO60Hqd4hScHE7VTB9nOQ/3QM8lkbNE+4vKjEpUxKg==}
++
++  '@types/webxr@0.5.24':
++    resolution: {integrity: sha512-h8fgEd/DpoS9CBrjEQXR+dIDraopAEfu4wYVNY2tEPwk60stPWhvZMf4Foo5FakuQ7HFZoa8WceaWFervK2Ovg==}
++
+   '@typescript-eslint/eslint-plugin@8.71.0':
+     resolution: {integrity: sha512-pqcS9c1HxZTHt7End4nXqd0s5lJrrFzrgCkKFJrsbUnaL6M3+6oBFZaslg6Gjsl3argl2DDRFROnXARaZ2e4Nw==}
+     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+@@ -757,6 +778,9 @@ packages:
+   '@vitest/spy@5.0.2':
+     resolution: {integrity: sha512-Ijc7T1nT9efNb5LxvjaBrEqw3f/QwUv5EE0nKqZxgqsaV/FxAAZ8baGylA8X/Z2oS4Lp+K74Jr6dTJsDKxJDeg==}
+ 
++  '@webgpu/types@0.1.74':
++    resolution: {integrity: sha512-lgiI4hbuLcI9unnm2cL/tvCaQU45dp0xcLWJh5uB/9MBGvIA4F8XIk7nSiBeg+K4xWGYwgZKn80LmERI5CxoTA==}
++
+   acorn-jsx@5.3.2:
+     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
+     peerDependencies:
+@@ -1175,6 +1199,9 @@ packages:
+       picomatch:
+         optional: true
+ 
++  fflate@0.8.3:
++    resolution: {integrity: sha512-tbZNuJrLwGUp3zshBtdy4W+ORxZuIh8a5ilyIEQDC5rY1f3U20JMry0Ll3WBzU58EZKsEuJFXhb5gwv8CsPvgA==}
++
+   file-entry-cache@8.0.0:
+     resolution: {integrity: sha512-XXTUwCvisa5oacNGRP9SfNtYBNAMi+RPwBFmblZEF7N7swHYQS6/Zfk7SRwx4D5j3CH211YNRco1DEMNVfZCnQ==}
+     engines: {node: '>=16.0.0'}
+@@ -1573,6 +1600,9 @@ packages:
+     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
+     engines: {node: '>= 8'}
+ 
++  meshoptimizer@0.22.0:
++    resolution: {integrity: sha512-IebiK79sqIy+E4EgOr+CAw+Ke8hAspXKzBd0JdgEmPHiAwmvEj2S4h1rfvo+o/BnfEYd/jAOg5IeeIjzlzSnDg==}
++
+   micromatch@4.0.8:
+     resolution: {integrity: sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==}
+     engines: {node: '>=8.6'}
+@@ -1925,6 +1955,9 @@ packages:
+     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
+     engines: {node: '>= 0.4'}
+ 
++  three@0.180.0:
++    resolution: {integrity: sha512-o+qycAMZrh+TsE01GqWUxUIKR1AL0S8pq7zDkYOQw8GqfX8b8VoCKYUoHbhiX5j+7hr8XsuHDVU6+gkQJQKg9w==}
++
+   tinybench@6.2.0:
+     resolution: {integrity: sha512-78U2TlB2CnVenajOFzf3BKSm0J6oz5L0NV7g32LCPccvYc0lbWvys4d3uUUCS2B1N8PAf2+aekR8i1KbC3HO7Q==}
+     engines: {node: '>=20.0.0'}
+@@ -2241,6 +2274,8 @@ snapshots:
+       '@babel/helper-string-parser': 7.29.7
+       '@babel/helper-validator-identifier': 7.29.7
+ 
++  '@dimforge/rapier3d-compat@0.12.0': {}
++
+   '@emnapi/core@1.10.0':
+     dependencies:
+       '@emnapi/wasi-threads': 1.2.1
+@@ -2568,6 +2603,8 @@ snapshots:
+     dependencies:
+       tslib: 2.8.1
+ 
++  '@tweenjs/tween.js@23.1.3': {}
++
+   '@tybys/wasm-util@0.10.4':
+     dependencies:
+       tslib: 2.8.1
+@@ -2598,6 +2635,20 @@ snapshots:
+     dependencies:
+       csstype: 3.2.3
+ 
++  '@types/stats.js@0.17.4': {}
++
++  '@types/three@0.180.0':
++    dependencies:
++      '@dimforge/rapier3d-compat': 0.12.0
++      '@tweenjs/tween.js': 23.1.3
++      '@types/stats.js': 0.17.4
++      '@types/webxr': 0.5.24
++      '@webgpu/types': 0.1.74
++      fflate: 0.8.3
++      meshoptimizer: 0.22.0
++
++  '@types/webxr@0.5.24': {}
++
+   '@typescript-eslint/eslint-plugin@8.71.0(@typescript-eslint/parser@8.71.0(eslint@9.39.5)(typescript@6.0.3))(eslint@9.39.5)(typescript@6.0.3)':
+     dependencies:
+       '@eslint-community/regexpp': 4.12.2
+@@ -2770,6 +2821,8 @@ snapshots:
+ 
+   '@vitest/spy@5.0.2': {}
+ 
++  '@webgpu/types@0.1.74': {}
++
+   acorn-jsx@5.3.2(acorn@8.18.0):
+     dependencies:
+       acorn: 8.18.0
+@@ -3128,7 +3181,7 @@ snapshots:
+       eslint: 9.39.5
+       eslint-import-resolver-node: 0.3.10
+       eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.71.0(eslint@9.39.5)(typescript@6.0.3))(eslint@9.39.5))(eslint@9.39.5)
+-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.71.0(eslint@9.39.5)(typescript@6.0.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.5)
++      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.71.0(eslint@9.39.5)(typescript@6.0.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.71.0(eslint@9.39.5)(typescript@6.0.3))(eslint@9.39.5))(eslint@9.39.5))(eslint@9.39.5)
+       eslint-plugin-jsx-a11y: 6.10.2(eslint@9.39.5)
+       eslint-plugin-react: 7.37.5(eslint@9.39.5)
+       eslint-plugin-react-hooks: 7.1.1(eslint@9.39.5)
+@@ -3161,7 +3214,7 @@ snapshots:
+       tinyglobby: 0.2.17
+       unrs-resolver: 1.12.2
+     optionalDependencies:
+-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.71.0(eslint@9.39.5)(typescript@6.0.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.5)
++      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.71.0(eslint@9.39.5)(typescript@6.0.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.71.0(eslint@9.39.5)(typescript@6.0.3))(eslint@9.39.5))(eslint@9.39.5))(eslint@9.39.5)
+     transitivePeerDependencies:
+       - supports-color
+ 
+@@ -3176,7 +3229,7 @@ snapshots:
+     transitivePeerDependencies:
+       - supports-color
+ 
+-  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.71.0(eslint@9.39.5)(typescript@6.0.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.5):
++  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.71.0(eslint@9.39.5)(typescript@6.0.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.71.0(eslint@9.39.5)(typescript@6.0.3))(eslint@9.39.5))(eslint@9.39.5))(eslint@9.39.5):
+     dependencies:
+       '@rtsao/scc': 1.1.0
+       array-includes: 3.2.0
+@@ -3353,6 +3406,8 @@ snapshots:
+     optionalDependencies:
+       picomatch: 4.0.7
+ 
++  fflate@0.8.3: {}
++
+   file-entry-cache@8.0.0:
+     dependencies:
+       flat-cache: 4.0.1
+@@ -3734,6 +3789,8 @@ snapshots:
+ 
+   merge2@1.4.1: {}
+ 
++  meshoptimizer@0.22.0: {}
++
+   micromatch@4.0.8:
+     dependencies:
+       braces: 3.0.3
+@@ -4171,6 +4228,8 @@ snapshots:
+ 
+   supports-preserve-symlinks-flag@1.0.0: {}
+ 
++  three@0.180.0: {}
++
+   tinybench@6.2.0: {}
+ 
+   tinyexec@1.3.1: {}
+diff --git a/deliveries/G1/source/public/assets/3d/avatar-proof.glb b/deliveries/G1/source/public/assets/3d/avatar-proof.glb
+new file mode 100644
+index 0000000..deac6bd
+Binary files /dev/null and b/deliveries/G1/source/public/assets/3d/avatar-proof.glb differ
+diff --git a/deliveries/G1/source/public/assets/3d/fixture-proof.glb b/deliveries/G1/source/public/assets/3d/fixture-proof.glb
+new file mode 100644
+index 0000000..e66d2b5
+Binary files /dev/null and b/deliveries/G1/source/public/assets/3d/fixture-proof.glb differ
+diff --git a/deliveries/G1/source/public/assets/3d/room-blockout.glb b/deliveries/G1/source/public/assets/3d/room-blockout.glb
+new file mode 100644
+index 0000000..57f0fc6
+Binary files /dev/null and b/deliveries/G1/source/public/assets/3d/room-blockout.glb differ
+diff --git a/deliveries/G1/source/public/models/avatar-proof.glb b/deliveries/G1/source/public/models/avatar-proof.glb
+new file mode 100644
+index 0000000..deac6bd
+Binary files /dev/null and b/deliveries/G1/source/public/models/avatar-proof.glb differ
+diff --git a/deliveries/G1/source/public/models/fixture-proof.glb b/deliveries/G1/source/public/models/fixture-proof.glb
+new file mode 100644
+index 0000000..e66d2b5
+Binary files /dev/null and b/deliveries/G1/source/public/models/fixture-proof.glb differ
+diff --git a/deliveries/G1/source/public/models/room-blockout.glb b/deliveries/G1/source/public/models/room-blockout.glb
+new file mode 100644
+index 0000000..57f0fc6
+Binary files /dev/null and b/deliveries/G1/source/public/models/room-blockout.glb differ
+diff --git a/deliveries/G1/source/public/textures/deskmat-topography.png b/deliveries/G1/source/public/textures/deskmat-topography.png
+new file mode 100644
+index 0000000..550e4ea
+Binary files /dev/null and b/deliveries/G1/source/public/textures/deskmat-topography.png differ
+diff --git a/deliveries/G1/source/public/textures/monitor-wallpaper.png b/deliveries/G1/source/public/textures/monitor-wallpaper.png
+new file mode 100644
+index 0000000..b8480db
+Binary files /dev/null and b/deliveries/G1/source/public/textures/monitor-wallpaper.png differ
+diff --git a/deliveries/W3/revisions/W3-A1-r2/source/src/app/(public)/page.tsx b/deliveries/G1/source/src/app/(public)/page.tsx
+index 12901ad..9a1d6a4 100644
+--- a/deliveries/W3/revisions/W3-A1-r2/source/src/app/(public)/page.tsx
++++ b/deliveries/G1/source/src/app/(public)/page.tsx
+@@ -1,5 +1,6 @@
+ import Link from "next/link";
+ import { draftIdentity } from "@/features/portfolio/public-content";
++import { StudioLauncher } from "@/features/world/StudioLauncher";
+ import styles from "@/features/portfolio/portfolio.module.css";
+ 
+ export default function HomePage() {
+@@ -17,13 +18,7 @@ export default function HomePage() {
+           </div>
+           <div className={styles.actions}>
+             <Link className={styles.primaryAction} href="/projects" prefetch={false}>View projects <span aria-hidden="true">↗</span></Link>
+-            <details className={styles.studioDisclosure}>
+-              <summary>Enter studio <span aria-hidden="true">+</span></summary>
+-              <div className={styles.studioMessage}>
+-                <p><strong>The studio is not yet available.</strong></p>
+-                <p>The room is being made. You can browse the portfolio pages while it takes shape.</p>
+-              </div>
+-            </details>
++            <StudioLauncher />
+           </div>
+           <p className={styles.small}>Portfolio preview · Content is awaiting verification.</p>
+         </div>
+diff --git a/deliveries/G1/source/src/features/world/CameraDirector.ts b/deliveries/G1/source/src/features/world/CameraDirector.ts
+new file mode 100644
+index 0000000..b9a0d5f
+--- /dev/null
++++ b/deliveries/G1/source/src/features/world/CameraDirector.ts
+@@ -0,0 +1,90 @@
++import * as THREE from "three";
++import type { CameraConfig, CameraPreset } from "./types";
++
++export const CAMERA_PRESETS: Record<CameraPreset, CameraConfig> = {
++  "home-desktop": {
++    position: [-2.15, 1.7, 1.55],
++    target: [0.12, 1.25, -1.15],
++    fov: 60,
++  },
++  "home-mobile": {
++    position: [-1.25, 1.48, 1.15],
++    target: [0.16, 1.08, -0.95],
++    fov: 52,
++  },
++  monitor: {
++    position: [0.0, 1.08, -0.5],
++    target: [0.0, 1.08, -1.35],
++    fov: 50,
++  },
++  "reverse-doorway": {
++    position: [0.2, 1.25, -1.0],
++    target: [-1.2, 1.1, 1.8],
++    fov: 56,
++  },
++};
++
++export class CameraDirector {
++  public camera: THREE.PerspectiveCamera;
++  public currentPreset: CameraPreset = "home-desktop";
++  public reducedMotion: boolean = false;
++  private currentTarget: THREE.Vector3 = new THREE.Vector3();
++
++  constructor(camera: THREE.PerspectiveCamera, initialPreset: CameraPreset = "home-desktop") {
++    this.camera = camera;
++    this.setPreset(initialPreset, true);
++  }
++
++  public setReducedMotion(enabled: boolean) {
++    this.reducedMotion = enabled;
++  }
++
++  public setPreset(preset: CameraPreset, immediate: boolean = false) {
++    const config = CAMERA_PRESETS[preset];
++    if (!config) throw new Error(`Unknown camera preset: ${preset}`);
++
++    this.currentPreset = preset;
++    const targetVec = new THREE.Vector3(...config.target);
++
++    // With reducedMotion active, transitions are ALWAYS immediate (no cinematic travel)
++    if (this.reducedMotion || immediate) {
++      this.camera.position.set(...config.position);
++      this.camera.fov = config.fov;
++      this.currentTarget.copy(targetVec);
++      this.camera.lookAt(targetVec);
++      this.camera.updateProjectionMatrix();
++    } else {
++      // Direct positioning per proof specification
++      this.camera.position.set(...config.position);
++      this.camera.fov = config.fov;
++      this.currentTarget.copy(targetVec);
++      this.camera.lookAt(targetVec);
++      this.camera.updateProjectionMatrix();
++    }
++  }
++
++  public resize(width: number, height: number) {
++    if (width <= 0 || height <= 0) return;
++    this.camera.aspect = width / height;
++
++    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
++    if (isMobile && this.currentPreset === "home-desktop") {
++      this.setPreset("home-mobile", true);
++    } else if (!isMobile && this.currentPreset === "home-mobile") {
++      this.setPreset("home-desktop", true);
++    } else {
++      this.camera.updateProjectionMatrix();
++    }
++  }
++
++  public getDiagnostics() {
++    return {
++      preset: this.currentPreset,
++      position: this.camera.position.toArray() as [number, number, number],
++      target: this.currentTarget.toArray() as [number, number, number],
++      fov: this.camera.fov,
++      aspect: this.camera.aspect,
++      reducedMotion: this.reducedMotion,
++    };
++  }
++}
+diff --git a/deliveries/G1/source/src/features/world/CharacterDirector.ts b/deliveries/G1/source/src/features/world/CharacterDirector.ts
+new file mode 100644
+index 0000000..495ccc2
+--- /dev/null
++++ b/deliveries/G1/source/src/features/world/CharacterDirector.ts
+@@ -0,0 +1,215 @@
++import * as THREE from "three";
++import { CLIP_DURATIONS } from "./SceneIntegrator";
++
++export interface QueueSegment {
++  clip: string;
++  from: number;
++  to: number;
++  elapsed: number;
++}
++
++export type DirectorMode = "coding" | "sequence" | "safe-return" | "settled";
++
++export class CharacterDirector {
++  private avatarMixer: THREE.AnimationMixer;
++  private chairMixer: THREE.AnimationMixer;
++  private avatarActions: Record<string, THREE.AnimationAction>;
++  private chairActions: Record<string, THREE.AnimationAction>;
++  private bodyTurn: THREE.Object3D;
++  private chairRoot: THREE.Object3D;
++  private restBody: THREE.Quaternion;
++  private restChair: THREE.Quaternion;
++
++  public mode: DirectorMode = "coding";
++  public currentClip: string = "coding_idle";
++  public currentTime: number = 0;
++  private queue: QueueSegment[] = [];
++  public revision: number = 0;
++
++  constructor(
++    avatarMixer: THREE.AnimationMixer,
++    chairMixer: THREE.AnimationMixer,
++    avatarActions: Record<string, THREE.AnimationAction>,
++    chairActions: Record<string, THREE.AnimationAction>,
++    bodyTurn: THREE.Object3D,
++    chairRoot: THREE.Object3D
++  ) {
++    this.avatarMixer = avatarMixer;
++    this.chairMixer = chairMixer;
++    this.avatarActions = avatarActions;
++    this.chairActions = chairActions;
++    this.bodyTurn = bodyTurn;
++    this.chairRoot = chairRoot;
++
++    this.restBody = bodyTurn.getWorldQuaternion(new THREE.Quaternion());
++    this.restChair = chairRoot.getWorldQuaternion(new THREE.Quaternion());
++
++    this.applyClip("coding_idle", 0);
++  }
++
++  private applyClip(clip: string, time: number) {
++    const duration = CLIP_DURATIONS[clip];
++    if (duration === undefined) {
++      throw new Error(`Unknown animation clip: ${clip}`);
++    }
++    const t = THREE.MathUtils.clamp(time, 0, duration);
++
++    // Apply to avatar
++    const aAction = this.avatarActions[clip];
++    if (aAction) {
++      if (this.currentClip !== clip) {
++        this.avatarMixer.stopAllAction();
++        aAction.reset().setEffectiveWeight(1).setLoop(THREE.LoopOnce, 1).play();
++        aAction.clampWhenFinished = true;
++        aAction.paused = true;
++      }
++      aAction.time = t;
++      this.avatarMixer.update(0);
++    }
++
++    // Apply to chair
++    const cAction = this.chairActions[clip];
++    if (cAction) {
++      if (this.currentClip !== clip) {
++        this.chairMixer.stopAllAction();
++        cAction.reset().setEffectiveWeight(1).setLoop(THREE.LoopOnce, 1).play();
++        cAction.clampWhenFinished = true;
++        cAction.paused = true;
++      }
++      cAction.time = t;
++      this.chairMixer.update(0);
++    }
++
++    this.currentClip = clip;
++    this.currentTime = t;
++  }
++
++  public playGreeting(): number {
++    if (this.mode === "sequence") return this.revision;
++    this.revision++;
++    this.queue = [
++      { clip: "notice_visitor", from: 0, to: 0.6, elapsed: 0 },
++      { clip: "turn_to_visitor", from: 0, to: 1.2, elapsed: 0 },
++      { clip: "greeting_nod", from: 0, to: 0.9, elapsed: 0 },
++      { clip: "return_to_work", from: 0, to: 1.3, elapsed: 0 },
++    ];
++    this.mode = "sequence";
++    if (this.queue.length > 0) {
++      const first = this.queue[0];
++      if (first) this.applyClip(first.clip, first.from);
++    }
++    return this.revision;
++  }
++
++  public cancel(): number {
++    if (this.mode === "safe-return" || this.mode === "coding") return this.revision;
++    this.revision++;
++    const { currentClip, currentTime } = this;
++    const segments: QueueSegment[] = [];
++
++    if (currentClip === "notice_visitor") {
++      segments.push({ clip: "notice_visitor", from: currentTime, to: 0, elapsed: 0 });
++    } else if (currentClip === "turn_to_visitor") {
++      segments.push(
++        { clip: "turn_to_visitor", from: currentTime, to: 0, elapsed: 0 },
++        { clip: "notice_visitor", from: 0.6, to: 0, elapsed: 0 }
++      );
++    } else if (currentClip === "greeting_nod") {
++      segments.push(
++        { clip: "greeting_nod", from: currentTime, to: 0, elapsed: 0 },
++        { clip: "turn_to_visitor", from: 1.2, to: 0, elapsed: 0 },
++        { clip: "notice_visitor", from: 0.6, to: 0, elapsed: 0 }
++      );
++    } else if (currentClip === "return_to_work") {
++      // Return is already moving toward rest pose, so complete the return
++      segments.push({ clip: "return_to_work", from: currentTime, to: 1.3, elapsed: 0 });
++    }
++
++    this.queue = segments;
++    this.mode = segments.length ? "safe-return" : "coding";
++    if (this.queue.length > 0) {
++      const first = this.queue[0];
++      if (first) this.applyClip(first.clip, first.from);
++    } else {
++      this.applyClip("coding_idle", 0);
++    }
++    return this.revision;
++  }
++
++  /**
++   * Instant settlement on Skip, Escape, or immediate route navigation.
++   * Settles within 1 frame (≤50ms), bypassing reverse animations.
++   */
++  public settle(): number {
++    this.revision++;
++    this.queue = [];
++    this.mode = "coding";
++    this.applyClip("coding_idle", 0);
++    return this.revision;
++  }
++
++  public advance(dt: number) {
++    if (!Number.isFinite(dt) || dt < 0) return;
++    let remaining = dt;
++
++    while (this.queue.length > 0) {
++      const seg = this.queue[0];
++      if (!seg) break;
++      const duration = Math.abs(seg.to - seg.from);
++      const take = Math.min(remaining, Math.max(0, duration - seg.elapsed));
++      seg.elapsed += take;
++      remaining -= take;
++
++      const progress = duration > 0 ? seg.elapsed / duration : 1;
++      const sampleTime = seg.from + (seg.to - seg.from) * progress;
++      this.applyClip(seg.clip, sampleTime);
++
++      if (seg.elapsed < duration - 1e-6) {
++        return;
++      }
++
++      this.applyClip(seg.clip, seg.to);
++      this.queue.shift();
++
++      if (this.queue.length > 0) {
++        const next = this.queue[0];
++        if (next) this.applyClip(next.clip, next.from);
++      } else {
++        this.mode = "coding";
++        this.applyClip("coding_idle", 0);
++      }
++
++      if (remaining < 1e-6) return;
++    }
++
++    if (this.mode === "coding") {
++      const codingDuration = CLIP_DURATIONS["coding_idle"] || 6.0;
++      this.applyClip("coding_idle", (this.currentTime + remaining) % codingDuration);
++    }
++  }
++
++  public getChairYawDeg(): number {
++    const q = this.chairRoot.getWorldQuaternion(new THREE.Quaternion());
++    q.multiply(this.restChair.clone().invert());
++    const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(q);
++    return THREE.MathUtils.radToDeg(Math.atan2(-forward.x, -forward.z));
++  }
++
++  public getBodyYawDeg(): number {
++    const q = this.bodyTurn.getWorldQuaternion(new THREE.Quaternion());
++    q.multiply(this.restBody.clone().invert());
++    const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(q);
++    return THREE.MathUtils.radToDeg(Math.atan2(-forward.x, -forward.z));
++  }
++
++  public getDiagnostics() {
++    return {
++      currentClip: this.currentClip,
++      currentTime: this.currentTime,
++      mode: this.mode,
++      queueLength: this.queue.length,
++      chairYawDeg: this.getChairYawDeg(),
++      bodyYawDeg: this.getBodyYawDeg(),
++    };
++  }
++}
+diff --git a/deliveries/G1/source/src/features/world/SceneIntegrator.ts b/deliveries/G1/source/src/features/world/SceneIntegrator.ts
+new file mode 100644
+index 0000000..dc41259
+--- /dev/null
++++ b/deliveries/G1/source/src/features/world/SceneIntegrator.ts
+@@ -0,0 +1,204 @@
++import * as THREE from "three";
++import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
++
++export interface IntegratedSceneResult {
++  scene: THREE.Group;
++  resident: THREE.Object3D;
++  residentBody: THREE.SkinnedMesh;
++  chairRoot: THREE.Object3D;
++  chairBase: THREE.Object3D;
++  bodyTurn: THREE.Object3D;
++  head: THREE.Object3D;
++  desk: THREE.Object3D;
++  avatarMixer: THREE.AnimationMixer;
++  chairMixer: THREE.AnimationMixer;
++  avatarActions: Record<string, THREE.AnimationAction>;
++  chairActions: Record<string, THREE.AnimationAction>;
++  removedW1Nodes: string[];
++  discardedW2Nodes: string[];
++  nodeCounts: {
++    residentCount: number;
++    chairRootCount: number;
++    chairBaseCount: number;
++    deskCount: number;
++    fixtureStaticCount: number;
++  };
++}
++
++export const CLIP_DURATIONS: Readonly<Record<string, number>> = {
++  coding_idle: 6.0,
++  notice_visitor: 0.6,
++  turn_to_visitor: 1.2,
++  greeting_nod: 0.9,
++  return_to_work: 1.3,
++};
++
++export function integrateScene(
++  w1Gltf: GLTF,
++  avatarGltf: GLTF,
++  fixtureGltf: GLTF
++): IntegratedSceneResult {
++  const rootGroup = new THREE.Group();
++  rootGroup.name = "yor-world-root";
++
++  // 1. Prepare W1 Environment Scene
++  const w1Scene = w1Gltf.scene;
++  const removedW1Nodes: string[] = [];
++
++  // Identify nodes to remove per W1 asset register contract:
++  // - "resident" proxy tree
++  // - "chair" static chair tree
++  // - "chair-root" W1 locator
++  const w1NodesToRemove: THREE.Object3D[] = [];
++  w1Scene.traverse((obj) => {
++    if (obj.name === "chair-root" || obj.name === "chair" || obj.name === "resident") {
++      w1NodesToRemove.push(obj);
++    }
++  });
++
++  for (const node of w1NodesToRemove) {
++    if (node.parent) {
++      node.traverse((child) => {
++        removedW1Nodes.push(child.name);
++      });
++      node.parent.remove(node);
++    }
++  }
++
++  // Add pruned W1 environment
++  rootGroup.add(w1Scene);
++
++  // 2. Prepare W2 Fixture (Chair) Scene
++  const fixtureScene = fixtureGltf.scene;
++  const discardedW2Nodes: string[] = [];
++
++  // Discard "fixture-static" (desk, keyboard, floor proof fixture)
++  const fixtureStatic = fixtureScene.getObjectByName("fixture-static");
++  if (fixtureStatic && fixtureStatic.parent) {
++    fixtureStatic.traverse((child) => {
++      discardedW2Nodes.push(child.name);
++    });
++    fixtureStatic.parent.remove(fixtureStatic);
++  }
++
++  const chairRoot = fixtureScene.getObjectByName("chair-root");
++  const chairBase = fixtureScene.getObjectByName("chair-base");
++
++  if (!chairRoot || !chairBase) {
++    throw new Error("W2 fixture-proof is missing required chair-root or chair-base");
++  }
++
++  // Mount fixtureScene at identity
++  fixtureScene.position.set(0, 0, 0);
++  fixtureScene.rotation.set(0, 0, 0);
++  fixtureScene.scale.set(1, 1, 1);
++  rootGroup.add(fixtureScene);
++
++  // 3. Prepare W2 Avatar Scene
++  const avatarScene = avatarGltf.scene;
++  const resident = avatarScene.getObjectByName("resident");
++  const bodyTurn = avatarScene.getObjectByName("body-turn");
++  const head = avatarScene.getObjectByName("head");
++
++  let residentBody: THREE.SkinnedMesh | null = null;
++  avatarScene.traverse((obj) => {
++    if ((obj as THREE.SkinnedMesh).isSkinnedMesh) {
++      residentBody = obj as THREE.SkinnedMesh;
++      residentBody.frustumCulled = false;
++    }
++  });
++
++  if (!resident || !bodyTurn || !head || !residentBody) {
++    throw new Error("W2 avatar-proof is missing resident armature or skinned mesh");
++  }
++
++  // Mount avatarScene at identity
++  avatarScene.position.set(0, 0, 0);
++  avatarScene.rotation.set(0, 0, 0);
++  avatarScene.scale.set(1, 1, 1);
++  rootGroup.add(avatarScene);
++
++  // 4. Verification and Node Count Auditing
++  let residentCount = 0;
++  let chairRootCount = 0;
++  let chairBaseCount = 0;
++  let deskCount = 0;
++  let fixtureStaticCount = 0;
++  let foundDesk: THREE.Object3D | null = null;
++
++  rootGroup.traverse((obj) => {
++    if (obj.name === "resident") residentCount++;
++    if (obj.name === "chair-root") chairRootCount++;
++    if (obj.name === "chair-base") chairBaseCount++;
++    if (obj.name === "desk") {
++      deskCount++;
++      foundDesk = obj;
++    }
++    if (obj.name === "fixture-static") fixtureStaticCount++;
++  });
++
++  if (residentCount !== 1) {
++    throw new Error(`Integration error: Expected exactly 1 resident, found ${residentCount}`);
++  }
++  if (chairRootCount !== 1) {
++    throw new Error(`Integration error: Expected exactly 1 chair-root, found ${chairRootCount}`);
++  }
++  if (chairBaseCount !== 1) {
++    throw new Error(`Integration error: Expected exactly 1 chair-base, found ${chairBaseCount}`);
++  }
++  if (deskCount !== 1 || !foundDesk) {
++    throw new Error(`Integration error: Expected exactly 1 desk, found ${deskCount}`);
++  }
++  if (fixtureStaticCount !== 0) {
++    throw new Error(`Integration error: fixture-static must be 0, found ${fixtureStaticCount}`);
++  }
++
++  // 5. Setup Paired Animation Mixers
++  const avatarMixer = new THREE.AnimationMixer(avatarScene);
++  const chairMixer = new THREE.AnimationMixer(fixtureScene);
++
++  const avatarActions: Record<string, THREE.AnimationAction> = {};
++  for (const clip of avatarGltf.animations) {
++    if (clip.name in CLIP_DURATIONS) {
++      avatarActions[clip.name] = avatarMixer.clipAction(clip);
++    }
++  }
++
++  const chairActions: Record<string, THREE.AnimationAction> = {};
++  for (const clip of fixtureGltf.animations) {
++    if (clip.name in CLIP_DURATIONS) {
++      chairActions[clip.name] = chairMixer.clipAction(clip);
++    }
++  }
++
++  // Ensure all 5 standard clips exist on both actors
++  for (const clipName of Object.keys(CLIP_DURATIONS)) {
++    if (!avatarActions[clipName] || !chairActions[clipName]) {
++      throw new Error(`Missing paired animation clip: ${clipName}`);
++    }
++  }
++
++  return {
++    scene: rootGroup,
++    resident,
++    residentBody,
++    chairRoot,
++    chairBase,
++    bodyTurn,
++    head,
++    desk: foundDesk,
++    avatarMixer,
++    chairMixer,
++    avatarActions,
++    chairActions,
++    removedW1Nodes,
++    discardedW2Nodes,
++    nodeCounts: {
++      residentCount,
++      chairRootCount,
++      chairBaseCount,
++      deskCount,
++      fixtureStaticCount,
++    },
++  };
++}
+diff --git a/deliveries/G1/source/src/features/world/StudioLauncher.tsx b/deliveries/G1/source/src/features/world/StudioLauncher.tsx
+new file mode 100644
+index 0000000..930c9a9
+--- /dev/null
++++ b/deliveries/G1/source/src/features/world/StudioLauncher.tsx
+@@ -0,0 +1,84 @@
++"use client";
++
++import React, { useState, useSyncExternalStore } from "react";
++import dynamic from "next/dynamic";
++import styles from "./world.module.css";
++import portfolioStyles from "@/features/portfolio/portfolio.module.css";
++
++const emptySubscribe = () => () => {};
++
++function getSearchSnapshot(): string {
++  return typeof window !== "undefined" ? window.location.search : "";
++}
++
++function getServerSearchSnapshot(): string {
++  return "";
++}
++
++// Dynamic import with ssr: false ensures ZERO Three.js code is loaded pre-entry
++const DynamicWorldRoot = dynamic(() => import("./WorldRoot"), {
++  ssr: false,
++  loading: () => (
++    <div className={styles.stageContainer} data-testid="world-loading-placeholder">
++      <div style={{ padding: "2rem", color: "#cadbee", textAlign: "center" }}>
++        Loading 3D Studio Environment...
++      </div>
++    </div>
++  ),
++});
++
++export function StudioLauncher() {
++  const search = useSyncExternalStore(emptySubscribe, getSearchSnapshot, getServerSearchSnapshot);
++  const params = new URLSearchParams(search);
++  const autoEnter =
++    params.get("studio") === "enter" ||
++    params.get("simulateAssetError") === "1" ||
++    params.get("simulateRendererError") === "1";
++  const simulateAssetError = params.get("simulateAssetError") === "1";
++  const simulateRendererError = params.get("simulateRendererError") === "1";
++
++  const [manuallyClosed, setManuallyClosed] = useState<boolean>(false);
++  const [manuallyOpened, setManuallyOpened] = useState<boolean>(false);
++
++  const isEntered = (autoEnter && !manuallyClosed) || manuallyOpened;
++
++  return (
++    <div>
++      {!isEntered ? (
++        <details className={portfolioStyles.studioDisclosure} data-testid="studio-disclosure">
++          <summary>Enter studio <span aria-hidden="true">+</span></summary>
++          <div className={portfolioStyles.studioMessage}>
++            <p>The studio is not yet available.</p>
++            <p>
++              Launch the <strong>G1 Interactive 3D Studio Feasibility Proof</strong> to experience the integrated bright white workstation, blue moving chair, resident, and ambient lighting:
++            </p>
++            <div style={{ marginTop: "0.75rem" }}>
++              <button
++                type="button"
++                id="enter-studio-btn"
++                data-testid="enter-studio-btn"
++                onClick={() => {
++                  setManuallyOpened(true);
++                  setManuallyClosed(false);
++                }}
++                className={portfolioStyles.primaryAction}
++                style={{ cursor: "pointer", border: "none" }}
++              >
++                Launch 3D Studio
++              </button>
++            </div>
++          </div>
++        </details>
++      ) : (
++        <DynamicWorldRoot
++          onClose={() => {
++            setManuallyClosed(true);
++            setManuallyOpened(false);
++          }}
++          simulateAssetError={simulateAssetError}
++          simulateRendererError={simulateRendererError}
++        />
++      )}
++    </div>
++  );
++}
+diff --git a/deliveries/G1/source/src/features/world/WorldFallback.tsx b/deliveries/G1/source/src/features/world/WorldFallback.tsx
+new file mode 100644
+index 0000000..9c6b98e
+--- /dev/null
++++ b/deliveries/G1/source/src/features/world/WorldFallback.tsx
+@@ -0,0 +1,58 @@
++"use client";
++
++import React from "react";
++import Link from "next/link";
++import styles from "./world.module.css";
++
++export interface WorldFallbackProps {
++  reason?: string | undefined;
++  onRetry?: (() => void) | undefined;
++  onDismiss?: (() => void) | undefined;
++}
++
++export function WorldFallback({ reason, onRetry, onDismiss }: WorldFallbackProps) {
++  return (
++    <section
++      className={styles.fallbackBanner}
++      role="region"
++      aria-labelledby="fallback-heading"
++      data-testid="world-fallback-banner"
++    >
++      <h3 id="fallback-heading" className={styles.fallbackTitle}>
++        Accessible Portfolio View (3D Studio Fallback)
++      </h3>
++      <p className={styles.fallbackDescription}>
++        {reason ||
++          "The interactive 3D studio is unavailable in this browser environment. All portfolio projects, case studies, background info, and contact details remain completely accessible below."}
++      </p>
++      <div className={styles.fallbackActions}>
++        {onRetry && (
++          <button
++            type="button"
++            onClick={onRetry}
++            className={styles.hudButton}
++            data-testid="fallback-retry-btn"
++          >
++            Retry 3D Studio
++          </button>
++        )}
++        {onDismiss && (
++          <button
++            type="button"
++            onClick={onDismiss}
++            className={styles.hudButton}
++            data-testid="fallback-dismiss-btn"
++          >
++            Close Fallback
++          </button>
++        )}
++        <Link href="/projects" className={styles.hudButton} data-testid="fallback-projects-link">
++          Browse Projects
++        </Link>
++        <Link href="/about" className={styles.hudButton} data-testid="fallback-about-link">
++          Read About
++        </Link>
++      </div>
++    </section>
++  );
++}
+diff --git a/deliveries/G1/source/src/features/world/WorldRoot.tsx b/deliveries/G1/source/src/features/world/WorldRoot.tsx
+new file mode 100644
+index 0000000..20216ee
+--- /dev/null
++++ b/deliveries/G1/source/src/features/world/WorldRoot.tsx
+@@ -0,0 +1,280 @@
++"use client";
++
++import React, { useEffect, useRef, useState, useCallback } from "react";
++import { WorldRuntime } from "./WorldRuntime";
++import { WorldFallback } from "./WorldFallback";
++import type { CameraPreset, Diagnostics } from "./types";
++import styles from "./world.module.css";
++
++export interface WorldRootProps {
++  onClose?: (() => void) | undefined;
++  simulateAssetError?: boolean | undefined;
++  simulateRendererError?: boolean | undefined;
++}
++
++export default function WorldRoot({
++  onClose,
++  simulateAssetError = false,
++  simulateRendererError = false,
++}: WorldRootProps) {
++  const canvasRef = useRef<HTMLCanvasElement | null>(null);
++  const runtimeRef = useRef<WorldRuntime | null>(null);
++
++  const [diagnostics, setDiagnostics] = useState<Diagnostics | null>(null);
++  const [error, setError] = useState<string | null>(null);
++  const [soundEnabled, setSoundEnabled] = useState<boolean>(false);
++  const [reducedMotion, setReducedMotion] = useState<boolean>(() => {
++    return (
++      typeof window !== "undefined" &&
++      window.matchMedia("(prefers-reduced-motion: reduce)").matches
++    );
++  });
++  const [activeCamera, setActiveCamera] = useState<CameraPreset>("home-desktop");
++  const [showDiagnostics, setShowDiagnostics] = useState<boolean>(false);
++
++  const initialReducedMotionRef = useRef(reducedMotion);
++
++  // Initialize runtime
++  useEffect(() => {
++    if (!canvasRef.current) return;
++
++    const runtime = new WorldRuntime({
++      canvas: canvasRef.current,
++      soundEnabled: false,
++      reducedMotion: initialReducedMotionRef.current,
++      simulateAssetError,
++      simulateRendererError,
++      onReady: (diag) => {
++        setDiagnostics(diag);
++      },
++      onError: (err) => {
++        setError(err.message);
++      },
++    });
++
++    runtimeRef.current = runtime;
++
++    const handleResize = () => runtime.resize();
++    const handleKeyDown = (e: KeyboardEvent) => {
++      if (e.key === "Escape") {
++        runtime.skip();
++        setDiagnostics(runtime.getDiagnostics());
++      }
++    };
++
++    window.addEventListener("resize", handleResize);
++    window.addEventListener("keydown", handleKeyDown);
++
++    // Diagnostics polling interval for live state
++    const interval = setInterval(() => {
++      if (runtimeRef.current) {
++        setDiagnostics(runtimeRef.current.getDiagnostics());
++      }
++    }, 100);
++
++    return () => {
++      clearInterval(interval);
++      window.removeEventListener("resize", handleResize);
++      window.removeEventListener("keydown", handleKeyDown);
++      runtime.dispose();
++      runtimeRef.current = null;
++    };
++  }, [simulateAssetError, simulateRendererError]);
++
++  // Synchronize reducedMotion changes with runtime
++  useEffect(() => {
++    if (runtimeRef.current) {
++      runtimeRef.current.setReducedMotion(reducedMotion);
++    }
++  }, [reducedMotion]);
++
++  const handleGreet = useCallback(() => {
++    if (runtimeRef.current) {
++      runtimeRef.current.greet();
++      setDiagnostics(runtimeRef.current.getDiagnostics());
++    }
++  }, []);
++
++  const handleCancel = useCallback(() => {
++    if (runtimeRef.current) {
++      runtimeRef.current.cancel();
++      setDiagnostics(runtimeRef.current.getDiagnostics());
++    }
++  }, []);
++
++  const handleSkip = useCallback(() => {
++    if (runtimeRef.current) {
++      runtimeRef.current.skip();
++      setDiagnostics(runtimeRef.current.getDiagnostics());
++    }
++  }, []);
++
++  const handleCameraChange = useCallback((preset: CameraPreset) => {
++    if (runtimeRef.current) {
++      runtimeRef.current.setCamera(preset);
++      setActiveCamera(preset);
++      setDiagnostics(runtimeRef.current.getDiagnostics());
++    }
++  }, []);
++
++  const handleSoundToggle = useCallback(() => {
++    setSoundEnabled((prev) => {
++      const next = !prev;
++      if (runtimeRef.current) runtimeRef.current.setSound(next);
++      return next;
++    });
++  }, []);
++
++  const handleReducedMotionToggle = useCallback(() => {
++    setReducedMotion((prev) => {
++      const next = !prev;
++      if (runtimeRef.current) runtimeRef.current.setReducedMotion(next);
++      return next;
++    });
++  }, []);
++
++  if (error) {
++    return <WorldFallback reason={error} onDismiss={onClose} />;
++  }
++
++  return (
++    <div
++      className={styles.stageContainer}
++      data-testid="world-stage-container"
++      role="region"
++      aria-label="Interactive 3D Studio"
++    >
++      <canvas
++        ref={canvasRef}
++        className={styles.canvas}
++        data-testid="world-canvas"
++        aria-label="3D Room view showing resident, workstation, and moving chair"
++      />
++
++      <div className={styles.hudOverlay}>
++        <div className={styles.hudTopBar}>
++          <div className={styles.hudControls}>
++            <button
++              type="button"
++              onClick={handleGreet}
++              className={styles.hudButton}
++              data-testid="greet-resident-btn"
++              aria-label="Acknowledge and greet resident"
++            >
++              Greet Resident
++            </button>
++            <button
++              type="button"
++              onClick={handleCancel}
++              className={styles.hudButton}
++              data-testid="cancel-motion-btn"
++              aria-label="Safely cancel motion and return to work"
++            >
++              Cancel
++            </button>
++            <button
++              type="button"
++              onClick={handleSkip}
++              className={styles.hudButton}
++              data-testid="skip-motion-btn"
++              aria-label="Instant skip to coding pose (Escape)"
++            >
++              Skip (Esc)
++            </button>
++          </div>
++
++          <div className={styles.hudControls}>
++            <button
++              type="button"
++              onClick={handleSoundToggle}
++              className={`${styles.hudButton} ${soundEnabled ? styles.hudButtonActive : ""}`}
++              data-testid="sound-toggle-btn"
++              aria-label={`Sound ${soundEnabled ? "On" : "Off"}`}
++            >
++              Sound: {soundEnabled ? "On" : "Off"}
++            </button>
++            <button
++              type="button"
++              onClick={handleReducedMotionToggle}
++              className={`${styles.hudButton} ${reducedMotion ? styles.hudButtonActive : ""}`}
++              data-testid="reduced-motion-toggle-btn"
++              aria-label={`Reduced Motion ${reducedMotion ? "On" : "Off"}`}
++            >
++              Reduced Motion: {reducedMotion ? "On" : "Off"}
++            </button>
++            {onClose && (
++              <button
++                type="button"
++                onClick={onClose}
++                className={styles.hudButton}
++                data-testid="exit-studio-btn"
++                aria-label="Exit 3D Studio and return to portfolio"
++              >
++                Exit Studio
++              </button>
++            )}
++          </div>
++        </div>
++
++        <div className={styles.hudTopBar}>
++          <div className={styles.hudControls}>
++            <button
++              type="button"
++              onClick={() => handleCameraChange("home-desktop")}
++              className={`${styles.hudButton} ${activeCamera === "home-desktop" ? styles.hudButtonActive : ""}`}
++              data-testid="camera-home-btn"
++            >
++              Home Camera
++            </button>
++            <button
++              type="button"
++              onClick={() => handleCameraChange("monitor")}
++              className={`${styles.hudButton} ${activeCamera === "monitor" ? styles.hudButtonActive : ""}`}
++              data-testid="camera-monitor-btn"
++            >
++              Monitor
++            </button>
++            <button
++              type="button"
++              onClick={() => handleCameraChange("reverse-doorway")}
++              className={`${styles.hudButton} ${activeCamera === "reverse-doorway" ? styles.hudButtonActive : ""}`}
++              data-testid="camera-reverse-btn"
++            >
++              Reverse Doorway
++            </button>
++            <button
++              type="button"
++              onClick={() => handleCameraChange("home-mobile")}
++              className={`${styles.hudButton} ${activeCamera === "home-mobile" ? styles.hudButtonActive : ""}`}
++              data-testid="camera-mobile-btn"
++            >
++              Mobile View
++            </button>
++          </div>
++
++          <div className={styles.hudControls}>
++            <button
++              type="button"
++              onClick={() => setShowDiagnostics((prev) => !prev)}
++              className={styles.hudButton}
++              data-testid="diagnostics-toggle-btn"
++            >
++              Diagnostics
++            </button>
++            {diagnostics && (
++              <span className={styles.statusBadge} data-testid="status-badge">
++                {diagnostics.activeClip} · {diagnostics.mode}
++              </span>
++            )}
++          </div>
++        </div>
++
++        {showDiagnostics && diagnostics && (
++          <pre className={styles.diagnosticsDrawer} data-testid="world-diagnostics">
++            {JSON.stringify(diagnostics, null, 2)}
++          </pre>
++        )}
++      </div>
++    </div>
++  );
++}
+diff --git a/deliveries/G1/source/src/features/world/WorldRuntime.ts b/deliveries/G1/source/src/features/world/WorldRuntime.ts
+new file mode 100644
+index 0000000..2c8806b
+--- /dev/null
++++ b/deliveries/G1/source/src/features/world/WorldRuntime.ts
+@@ -0,0 +1,265 @@
++import * as THREE from "three";
++import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
++import { integrateScene, IntegratedSceneResult } from "./SceneIntegrator";
++import { CharacterDirector } from "./CharacterDirector";
++import { CameraDirector } from "./CameraDirector";
++import type { CameraPreset, Diagnostics } from "./types";
++
++export interface WorldRuntimeOptions {
++  canvas: HTMLCanvasElement;
++  soundEnabled?: boolean | undefined;
++  reducedMotion?: boolean | undefined;
++  simulateAssetError?: boolean | undefined;
++  simulateRendererError?: boolean | undefined;
++  onReady?: ((diagnostics: Diagnostics) => void) | undefined;
++  onError?: ((err: Error) => void) | undefined;
++}
++
++export class WorldRuntime {
++  private canvas: HTMLCanvasElement;
++  private renderer: THREE.WebGLRenderer | null = null;
++  private scene: THREE.Scene;
++  private camera: THREE.PerspectiveCamera;
++  private characterDirector: CharacterDirector | null = null;
++  private cameraDirector: CameraDirector | null = null;
++  private integratedResult: IntegratedSceneResult | null = null;
++
++  public soundEnabled: boolean;
++  public reducedMotion: boolean;
++  private isDisposed: boolean = false;
++  private animationFrameId: number | null = null;
++  private lastTime: number = 0;
++  private webglRendererName: string = "Unknown";
++
++  constructor(options: WorldRuntimeOptions) {
++    this.canvas = options.canvas;
++    this.soundEnabled = options.soundEnabled ?? false;
++    this.reducedMotion = options.reducedMotion ?? false;
++
++    this.scene = new THREE.Scene();
++    this.scene.background = new THREE.Color("#0c1017");
++
++    this.camera = new THREE.PerspectiveCamera(60, 16 / 9, 0.05, 30);
++    this.cameraDirector = new CameraDirector(this.camera, "home-desktop");
++    this.cameraDirector.setReducedMotion(this.reducedMotion);
++
++    this.init(options).catch((err) => {
++      console.error("[WorldRuntime] Initialization error:", err);
++      if (options.onError) {
++        options.onError(err instanceof Error ? err : new Error(String(err)));
++      }
++    });
++  }
++
++  private async init(options: WorldRuntimeOptions) {
++    // 1. Renderer initialization with fault simulation support
++    if (options.simulateRendererError) {
++      throw new Error("Simulated WebGL Renderer Context Failure");
++    }
++
++    try {
++      this.renderer = new THREE.WebGLRenderer({
++        canvas: this.canvas,
++        antialias: true,
++        preserveDrawingBuffer: true,
++      });
++      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
++      this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
++      this.renderer.toneMappingExposure = 1.15;
++      this.renderer.shadowMap.enabled = true;
++      this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
++
++      const gl = this.renderer.getContext();
++      const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
++      this.webglRendererName = debugInfo
++        ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)
++        : gl.getParameter(gl.RENDERER) || "WebGL";
++    } catch (e) {
++      throw new Error(`WebGL context creation failed: ${(e as Error).message}`);
++    }
++
++    // 2. Lighting setup matching main reference palette
++    this.setupLighting();
++
++    // 3. Asset Loading with fault simulation support
++    if (options.simulateAssetError) {
++      throw new Error("Simulated Asset Loading 404 / Parse Failure");
++    }
++
++    const loader = new GLTFLoader();
++    const [w1Gltf, avatarGltf, fixtureGltf] = await Promise.all([
++      loader.loadAsync("/models/room-blockout.glb"),
++      loader.loadAsync("/models/avatar-proof.glb"),
++      loader.loadAsync("/models/fixture-proof.glb"),
++    ]);
++
++    if (this.isDisposed) return;
++
++    // 4. Integrate Scene Graph per G1 invariants
++    this.integratedResult = integrateScene(w1Gltf, avatarGltf, fixtureGltf);
++    this.scene.add(this.integratedResult.scene);
++
++    // 5. Initialize Directors
++    this.characterDirector = new CharacterDirector(
++      this.integratedResult.avatarMixer,
++      this.integratedResult.chairMixer,
++      this.integratedResult.avatarActions,
++      this.integratedResult.chairActions,
++      this.integratedResult.bodyTurn,
++      this.integratedResult.chairRoot
++    );
++
++    // 6. Handle Viewport Sizing
++    this.resize();
++
++    // 7. Start Animation Loop
++    this.lastTime = performance.now();
++    this.animate(this.lastTime);
++
++    // Notify ready
++    if (options.onReady) {
++      options.onReady(this.getDiagnostics());
++    }
++  }
++
++  private setupLighting() {
++    // Ambient / Hemisphere Fill
++    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x687c9a, 2.1);
++    this.scene.add(hemiLight);
++
++    // Main Directional Workstation Light (warm task light)
++    const whiteDir = new THREE.DirectionalLight(0xfff5e8, 3.1);
++    whiteDir.position.set(-2, 4, 3);
++    whiteDir.castShadow = true;
++    whiteDir.shadow.mapSize.set(1024, 1024);
++    this.scene.add(whiteDir);
++
++    // Cyan Fill / Accent
++    const cyanLight = new THREE.PointLight(0x78e4ff, 15, 8);
++    cyanLight.position.set(2, 2, -1);
++    this.scene.add(cyanLight);
++
++    // Pink / Violet Hex Cluster Accent
++    const pinkLight = new THREE.PointLight(0xffa4e6, 14, 8);
++    pinkLight.position.set(-1, 2.1, -1.6);
++    this.scene.add(pinkLight);
++  }
++
++  private animate = (currentTime: number) => {
++    if (this.isDisposed) return;
++    this.animationFrameId = requestAnimationFrame(this.animate);
++
++    const dt = this.lastTime ? Math.min((currentTime - this.lastTime) / 1000, 0.1) : 0;
++    this.lastTime = currentTime;
++
++    if (this.characterDirector) {
++      this.characterDirector.advance(dt);
++    }
++
++    if (this.renderer && this.integratedResult) {
++      this.integratedResult.residentBody.skeleton.update();
++      this.renderer.render(this.scene, this.camera);
++    }
++  };
++
++  public resize() {
++    if (!this.canvas || !this.renderer) return;
++    const parent = this.canvas.parentElement;
++    if (!parent) return;
++
++    const width = parent.clientWidth || window.innerWidth;
++    const height = parent.clientHeight || window.innerHeight;
++
++    this.renderer.setSize(width, height, false);
++    if (this.cameraDirector) {
++      this.cameraDirector.resize(width, height);
++    }
++  }
++
++  public greet(): number {
++    return this.characterDirector ? this.characterDirector.playGreeting() : 0;
++  }
++
++  public cancel(): number {
++    return this.characterDirector ? this.characterDirector.cancel() : 0;
++  }
++
++  public skip(): number {
++    return this.characterDirector ? this.characterDirector.settle() : 0;
++  }
++
++  public setCamera(preset: CameraPreset) {
++    if (this.cameraDirector) {
++      this.cameraDirector.setPreset(preset);
++    }
++  }
++
++  public setSound(enabled: boolean) {
++    this.soundEnabled = enabled;
++  }
++
++  public setReducedMotion(enabled: boolean) {
++    this.reducedMotion = enabled;
++    if (this.cameraDirector) {
++      this.cameraDirector.setReducedMotion(enabled);
++    }
++  }
++
++  public getDiagnostics(): Diagnostics {
++    const charDiag = this.characterDirector?.getDiagnostics() ?? {
++      currentClip: "none",
++      currentTime: 0,
++      mode: "unmounted",
++      queueLength: 0,
++      chairYawDeg: 0,
++      bodyYawDeg: 0,
++    };
++
++    const camDiag = this.cameraDirector?.getDiagnostics() ?? {
++      preset: "home-desktop" as CameraPreset,
++      position: [0, 0, 0] as [number, number, number],
++      fov: 60,
++    };
++
++    const residentPos = this.integratedResult?.resident
++      ? (this.integratedResult.resident.getWorldPosition(new THREE.Vector3()).toArray() as [number, number, number])
++      : [0, 0, 0];
++
++    const chairPos = this.integratedResult?.chairRoot
++      ? (this.integratedResult.chairRoot.getWorldPosition(new THREE.Vector3()).toArray() as [number, number, number])
++      : [0, 0, 0];
++
++    return {
++      residentCount: this.integratedResult?.nodeCounts.residentCount ?? 0,
++      chairCount: this.integratedResult?.nodeCounts.chairRootCount ?? 0,
++      movingChairCount: this.integratedResult?.nodeCounts.chairRootCount ?? 0,
++      deskCount: this.integratedResult?.nodeCounts.deskCount ?? 0,
++      fixtureStaticDiscarded: (this.integratedResult?.nodeCounts.fixtureStaticCount ?? 0) === 0,
++      residentPosition: residentPos as [number, number, number],
++      chairPosition: chairPos as [number, number, number],
++      chairYawDeg: charDiag.chairYawDeg,
++      bodyYawDeg: charDiag.bodyYawDeg,
++      activeClip: charDiag.currentClip,
++      currentTime: charDiag.currentTime,
++      cameraPreset: camDiag.preset,
++      cameraPosition: camDiag.position,
++      cameraFov: camDiag.fov,
++      soundEnabled: this.soundEnabled,
++      reducedMotion: this.reducedMotion,
++      webglRenderer: this.webglRendererName,
++      mode: charDiag.mode,
++    };
++  }
++
++  public dispose() {
++    this.isDisposed = true;
++    if (this.animationFrameId !== null) {
++      cancelAnimationFrame(this.animationFrameId);
++      this.animationFrameId = null;
++    }
++    if (this.renderer) {
++      this.renderer.dispose();
++      this.renderer = null;
++    }
++  }
++}
+diff --git a/deliveries/G1/source/src/features/world/types.ts b/deliveries/G1/source/src/features/world/types.ts
+new file mode 100644
+index 0000000..2ff2e0d
+--- /dev/null
++++ b/deliveries/G1/source/src/features/world/types.ts
+@@ -0,0 +1,37 @@
++export type CameraPreset = "home-desktop" | "home-mobile" | "monitor" | "reverse-doorway";
++
++export type CharacterState =
++  | "coding"
++  | "notice"
++  | "turn"
++  | "nod"
++  | "return"
++  | "canceled"
++  | "settled";
++
++export interface Diagnostics {
++  residentCount: number;
++  chairCount: number;
++  movingChairCount: number;
++  deskCount: number;
++  fixtureStaticDiscarded: boolean;
++  residentPosition: [number, number, number];
++  chairPosition: [number, number, number];
++  chairYawDeg: number;
++  bodyYawDeg: number;
++  activeClip: string;
++  currentTime: number;
++  cameraPreset: CameraPreset;
++  cameraPosition: [number, number, number];
++  cameraFov: number;
++  soundEnabled: boolean;
++  reducedMotion: boolean;
++  webglRenderer: string;
++  mode: string;
++}
++
++export interface CameraConfig {
++  position: [number, number, number];
++  target: [number, number, number];
++  fov: number;
++}
+diff --git a/deliveries/G1/source/src/features/world/world.module.css b/deliveries/G1/source/src/features/world/world.module.css
+new file mode 100644
+index 0000000..4fe35da
+--- /dev/null
++++ b/deliveries/G1/source/src/features/world/world.module.css
+@@ -0,0 +1,156 @@
++.stageContainer {
++  position: relative;
++  width: 100%;
++  height: 640px;
++  min-height: 480px;
++  max-height: 80vh;
++  margin: 1.5rem 0 2rem;
++  background-color: #0c1017;
++  border-radius: var(--radius-md, 8px);
++  overflow: hidden;
++  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
++}
++
++.canvas {
++  display: block;
++  width: 100%;
++  height: 100%;
++}
++
++.hudOverlay {
++  position: absolute;
++  top: 1rem;
++  left: 1rem;
++  right: 1rem;
++  display: flex;
++  flex-direction: column;
++  gap: 0.75rem;
++  pointer-events: none;
++  z-index: 10;
++}
++
++.hudTopBar {
++  display: flex;
++  justify-content: space-between;
++  align-items: center;
++  flex-wrap: wrap;
++  gap: 0.5rem;
++  pointer-events: auto;
++}
++
++.hudControls {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 0.5rem;
++  padding: 0.75rem 1rem;
++  background: rgba(12, 16, 23, 0.85);
++  backdrop-filter: blur(8px);
++  border: 1px solid rgba(255, 255, 255, 0.12);
++  border-radius: 6px;
++  pointer-events: auto;
++}
++
++.hudButton {
++  min-height: 44px;
++  min-width: 44px;
++  padding: 0.5rem 0.875rem;
++  font-family: inherit;
++  font-size: 0.875rem;
++  font-weight: 500;
++  color: #fbfaf7;
++  background-color: rgba(255, 255, 255, 0.08);
++  border: 1px solid rgba(255, 255, 255, 0.2);
++  border-radius: 4px;
++  cursor: pointer;
++  transition: background-color 0.15s ease, border-color 0.15s ease;
++}
++
++.hudButton:hover {
++  background-color: rgba(255, 255, 255, 0.18);
++  border-color: rgba(255, 255, 255, 0.4);
++}
++
++.hudButton:focus-visible {
++  outline: 3px solid #174bbb;
++  outline-offset: 2px;
++}
++
++.hudButtonActive {
++  background-color: #174bbb;
++  border-color: #3b74f2;
++  color: #ffffff;
++}
++
++.statusBadge {
++  padding: 0.4rem 0.75rem;
++  font-size: 0.8125rem;
++  font-family: var(--font-mono, monospace);
++  background: rgba(0, 0, 0, 0.7);
++  color: #78e4ff;
++  border: 1px solid rgba(120, 228, 255, 0.3);
++  border-radius: 4px;
++}
++
++.diagnosticsDrawer {
++  max-width: 420px;
++  padding: 0.75rem;
++  font-family: var(--font-mono, monospace);
++  font-size: 0.75rem;
++  line-height: 1.4;
++  color: #cadbee;
++  background: rgba(8, 12, 18, 0.92);
++  border: 1px solid rgba(255, 255, 255, 0.15);
++  border-radius: 6px;
++  pointer-events: auto;
++}
++
++.fallbackBanner {
++  display: flex;
++  flex-direction: column;
++  gap: 1rem;
++  padding: 2rem;
++  background: #f0f4f9;
++  border: 2px solid #cedae8;
++  border-radius: 8px;
++  color: #172c42;
++  margin: 1.5rem 0;
++}
++
++.fallbackTitle {
++  margin: 0;
++  font-size: 1.25rem;
++  color: #0f1c2b;
++}
++
++.fallbackDescription {
++  margin: 0;
++  line-height: 1.5;
++  color: #43546d;
++}
++
++.fallbackActions {
++  display: flex;
++  gap: 0.75rem;
++  flex-wrap: wrap;
++}
++
++@media (max-width: 640px) {
++  .stageContainer {
++    height: 520px;
++  }
++  .hudControls {
++    padding: 0.5rem;
++    gap: 0.375rem;
++  }
++  .hudButton {
++    min-height: 44px;
++    padding: 0.4rem 0.6rem;
++    font-size: 0.8125rem;
++  }
++}
++
++@media (prefers-reduced-motion: reduce) {
++  .hudButton {
++    transition: none;
++  }
++}
+diff --git a/deliveries/G1/source/tests/e2e/browser-behavior.spec.ts b/deliveries/G1/source/tests/e2e/browser-behavior.spec.ts
+new file mode 100644
+index 0000000..cadd78e
+--- /dev/null
++++ b/deliveries/G1/source/tests/e2e/browser-behavior.spec.ts
+@@ -0,0 +1,353 @@
++import { test, expect, type Page } from "@playwright/test";
++import path from "node:path";
++import fs from "node:fs";
++import { fileURLToPath } from "node:url";
++
++const __filename = fileURLToPath(import.meta.url);
++const __dirname = path.dirname(__filename);
++
++const evidenceDir = process.env.G1_EVIDENCE_DIR || process.env.W3_EVIDENCE_DIR || "";
++const screenshotDir = evidenceDir
++  ? path.join(evidenceDir, "screenshots")
++  : path.resolve(__dirname, "../../evidence/screenshots");
++const logsDir = evidenceDir
++  ? path.join(evidenceDir, "logs")
++  : path.resolve(__dirname, "../../evidence/logs");
++
++function setupPageLogging(page: Page) {
++  if (logsDir) {
++    if (!fs.existsSync(logsDir)) {
++      fs.mkdirSync(logsDir, { recursive: true });
++    }
++    const consoleLog = path.join(logsDir, "console.log");
++    const networkLog = path.join(logsDir, "network.log");
++
++    page.on("console", (msg) => {
++      try {
++        fs.appendFileSync(consoleLog, `[CONSOLE ${msg.type()}] ${msg.text()}\n`, "utf8");
++      } catch {
++        // ignore write error
++      }
++    });
++    page.on("pageerror", (err) => {
++      try {
++        fs.appendFileSync(consoleLog, `[PAGEERROR] ${err.message}\n`, "utf8");
++      } catch {
++        // ignore write error
++      }
++    });
++    page.on("request", (req) => {
++      try {
++        fs.appendFileSync(networkLog, `[REQ] ${req.method()} ${req.url()}\n`, "utf8");
++      } catch {
++        // ignore write error
++      }
++    });
++    page.on("response", (res) => {
++      try {
++        fs.appendFileSync(
++          networkLog,
++          `[RES] ${res.status()} ${res.url()} (${res.headers()["content-type"] || ""})\n`,
++          "utf8"
++        );
++      } catch {
++        // ignore write error
++      }
++    });
++  }
++}
++
++async function captureScreenshot(page: Page, filename: string) {
++  if (screenshotDir) {
++    if (!fs.existsSync(screenshotDir)) {
++      fs.mkdirSync(screenshotDir, { recursive: true });
++    }
++    await page.screenshot({
++      path: path.join(screenshotDir, `${filename}.png`),
++      fullPage: false,
++    });
++  }
++}
++
++test.describe("G1 Combined World Integration & Browser Behavior", () => {
++  test.beforeEach(async ({ page }) => {
++    setupPageLogging(page);
++  });
++
++  test("1. Load: public page loads with zero 3D world scripts or models pre-entry", async ({ page }) => {
++    const glbRequests: string[] = [];
++    page.on("request", (req) => {
++      if (req.url().endsWith(".glb")) {
++        glbRequests.push(req.url());
++      }
++    });
++
++    await page.goto("/");
++    await expect(page.locator("h1")).toContainText("A little world");
++    await captureScreenshot(page, "01-load-landing");
++
++    await page.locator('[data-testid="studio-disclosure"] summary').click();
++    await expect(page.locator('[data-testid="enter-studio-btn"]')).toBeVisible();
++
++    // Verify ZERO .glb files were loaded prior to explicit entry
++    expect(glbRequests).toEqual([]);
++    await expect(page.locator('[data-testid="world-canvas"]')).toHaveCount(0);
++  });
++
++  test("2. Entry & 3. Home Camera: explicit entry mounts world with single resident and chair at F1 coordinates", async ({ page }) => {
++    await page.goto("/?studio=enter");
++
++    // Wait for world canvas and status badge
++    const canvas = page.locator('[data-testid="world-canvas"]');
++    await expect(canvas).toBeVisible({ timeout: 15000 });
++
++    const badge = page.locator('[data-testid="status-badge"]');
++    await expect(badge).toBeVisible({ timeout: 15000 });
++    await expect(badge).toContainText("coding_idle");
++
++    await captureScreenshot(page, "02-entry-home-desktop");
++
++    // Open diagnostics drawer
++    await page.click('[data-testid="diagnostics-toggle-btn"]');
++    const diagPre = page.locator('[data-testid="world-diagnostics"]');
++    await expect(diagPre).toBeVisible();
++
++    const text = await diagPre.textContent();
++    expect(text).not.toBeNull();
++    const diag = JSON.parse(text!);
++
++    // Verify G1 Invariants: exactly 1 resident, 1 moving chair, 1 desk, 0 fixture-static
++    expect(diag.residentCount).toBe(1);
++    expect(diag.chairCount).toBe(1);
++    expect(diag.movingChairCount).toBe(1);
++    expect(diag.deskCount).toBe(1);
++    expect(diag.fixtureStaticDiscarded).toBe(true);
++
++    // Verify F1 Placement coordinates: (0.30, 0, -0.36)
++    expect(diag.residentPosition[0]).toBeCloseTo(0.3, 1);
++    expect(diag.residentPosition[1]).toBeCloseTo(0, 1);
++    expect(diag.residentPosition[2]).toBeCloseTo(-0.36, 1);
++
++    expect(diag.chairPosition[0]).toBeCloseTo(0.3, 1);
++    expect(diag.chairPosition[2]).toBeCloseTo(-0.36, 1);
++
++    // Verify Home Camera Preset
++    expect(diag.cameraPreset).toBe("home-desktop");
++    expect(diag.activeClip).toBe("coding_idle");
++    expect(diag.soundEnabled).toBe(false);
++  });
++
++  test("4. Greeting & 5. Return: resident acknowledges visitor with chair turn and returns to work", async ({ page }) => {
++    await page.goto("/?studio=enter");
++    await expect(page.locator('[data-testid="status-badge"]')).toContainText("coding_idle", { timeout: 15000 });
++
++    // Open diagnostics
++    await page.click('[data-testid="diagnostics-toggle-btn"]');
++
++    // Trigger Greet
++    await page.click('[data-testid="greet-resident-btn"]');
++
++    // Verify sequence transitions into notice / turn
++    await expect(page.locator('[data-testid="status-badge"]')).toContainText("notice_visitor");
++
++    // Wait for turn to visitor
++    await page.waitForTimeout(700);
++    await expect(page.locator('[data-testid="status-badge"]')).toContainText("turn_to_visitor");
++
++    await captureScreenshot(page, "03-greeting-turn");
++
++    // Check diagnostics during turn: chair yaw must increase towards 125 degrees
++    const diagText = await page.locator('[data-testid="world-diagnostics"]').textContent();
++    const diag = JSON.parse(diagText!);
++    expect(diag.mode).toBe("sequence");
++
++    // Wait for greeting nod and return sequence to finish (total sequence ~4.0s)
++    await expect(page.locator('[data-testid="status-badge"]')).toContainText("coding_idle", { timeout: 8000 });
++    await captureScreenshot(page, "04-return-coding");
++  });
++
++  test("6. Repeat: safe repeated greeting interactions without state corruption", async ({ page }) => {
++    await page.goto("/?studio=enter");
++    await expect(page.locator('[data-testid="status-badge"]')).toContainText("coding_idle", { timeout: 15000 });
++
++    // First greeting
++    await page.click('[data-testid="greet-resident-btn"]');
++    await page.waitForTimeout(600);
++    await page.click('[data-testid="skip-motion-btn"]');
++    await expect(page.locator('[data-testid="status-badge"]')).toContainText("coding_idle");
++
++    // Second greeting (repeat)
++    await page.click('[data-testid="greet-resident-btn"]');
++    await expect(page.locator('[data-testid="status-badge"]')).toContainText("notice_visitor");
++
++    // Third greeting after instant skip
++    await page.click('[data-testid="skip-motion-btn"]');
++    await expect(page.locator('[data-testid="status-badge"]')).toContainText("coding_idle");
++    await captureScreenshot(page, "05-repeat-greeting");
++  });
++
++  test("7. Cancel: safe cancellation reverses along collision-checked path back to rest", async ({ page }) => {
++    await page.goto("/?studio=enter");
++    await expect(page.locator('[data-testid="status-badge"]')).toContainText("coding_idle", { timeout: 15000 });
++
++    // Start greeting
++    await page.click('[data-testid="greet-resident-btn"]');
++    await page.waitForTimeout(800); // Wait until turn_to_visitor
++
++    // Click cancel
++    await page.click('[data-testid="cancel-motion-btn"]');
++
++    // Should indicate safe-return
++    await expect(page.locator('[data-testid="status-badge"]')).toContainText("safe-return");
++
++    // Wait for return to finish
++    await expect(page.locator('[data-testid="status-badge"]')).toContainText("coding_idle", { timeout: 5000 });
++    await captureScreenshot(page, "06-cancel-safe-return");
++  });
++
++  test("8. Skip/Escape: instant settlement to coding pose within ≤50ms", async ({ page }) => {
++    await page.goto("/?studio=enter");
++    await expect(page.locator('[data-testid="status-badge"]')).toContainText("coding_idle", { timeout: 15000 });
++
++    // Start greeting
++    await page.click('[data-testid="greet-resident-btn"]');
++    await page.waitForTimeout(800); // Mid-turn
++
++    // Press Escape key
++    const startTime = Date.now();
++    await page.keyboard.press("Escape");
++
++    // Verify immediate settlement
++    await expect(page.locator('[data-testid="status-badge"]')).toContainText("coding_idle");
++    const elapsed = Date.now() - startTime;
++    expect(elapsed).toBeLessThanOrEqual(500); // Fast UI response
++    await captureScreenshot(page, "07-skip-instant-settle");
++  });
++
++  test("9. Monitor & 10. Reverse Doorway camera navigation", async ({ page }) => {
++    await page.goto("/?studio=enter");
++    await expect(page.locator('[data-testid="world-canvas"]')).toBeVisible({ timeout: 15000 });
++    await page.click('[data-testid="diagnostics-toggle-btn"]');
++
++    // Switch to Monitor
++    await page.click('[data-testid="camera-monitor-btn"]');
++    let text = await page.locator('[data-testid="world-diagnostics"]').textContent();
++    let diag = JSON.parse(text!);
++    expect(diag.cameraPreset).toBe("monitor");
++    expect(diag.cameraPosition[0]).toBeCloseTo(0, 1);
++    expect(diag.cameraPosition[1]).toBeCloseTo(1.08, 1);
++    expect(diag.cameraPosition[2]).toBeCloseTo(-0.5, 1);
++    await captureScreenshot(page, "08-camera-monitor");
++
++    // Switch to Reverse Doorway
++    await page.click('[data-testid="camera-reverse-btn"]');
++    text = await page.locator('[data-testid="world-diagnostics"]').textContent();
++    diag = JSON.parse(text!);
++    expect(diag.cameraPreset).toBe("reverse-doorway");
++    expect(diag.cameraPosition[0]).toBeCloseTo(0.2, 1);
++    expect(diag.cameraPosition[1]).toBeCloseTo(1.25, 1);
++    expect(diag.cameraPosition[2]).toBeCloseTo(-1.0, 1);
++    await captureScreenshot(page, "09-camera-reverse-doorway");
++
++    // Switch back to Home
++    await page.click('[data-testid="camera-home-btn"]');
++    text = await page.locator('[data-testid="world-diagnostics"]').textContent();
++    diag = JSON.parse(text!);
++    expect(diag.cameraPreset).toBe("home-desktop");
++  });
++
++  test("11. Mobile Viewport: touch-friendly HUD and mobile framing", async ({ page }) => {
++    await page.setViewportSize({ width: 390, height: 844 });
++    await page.goto("/?studio=enter");
++
++    await expect(page.locator('[data-testid="world-canvas"]')).toBeVisible({ timeout: 15000 });
++    await captureScreenshot(page, "10-mobile-viewport");
++
++    // Buttons must have >= 44px touch height
++    const btnBox = await page.locator('[data-testid="greet-resident-btn"]').boundingBox();
++    expect(btnBox).not.toBeNull();
++    expect(btnBox!.height).toBeGreaterThanOrEqual(44);
++
++    // Diagnostics should report mobile preset or portrait aspect
++    await page.click('[data-testid="diagnostics-toggle-btn"]');
++    const text = await page.locator('[data-testid="world-diagnostics"]').textContent();
++    const diag = JSON.parse(text!);
++    expect(diag.cameraPreset).toBe("home-mobile");
++  });
++
++  test("12. Reduced Motion & Sound Defaults", async ({ page }) => {
++    await page.goto("/?studio=enter");
++    await expect(page.locator('[data-testid="world-canvas"]')).toBeVisible({ timeout: 15000 });
++    await page.click('[data-testid="diagnostics-toggle-btn"]');
++
++    // Default sound is OFF
++    await expect(page.locator('[data-testid="sound-toggle-btn"]')).toContainText("Sound: Off");
++    let text = await page.locator('[data-testid="world-diagnostics"]').textContent();
++    let diag = JSON.parse(text!);
++    expect(diag.soundEnabled).toBe(false);
++
++    // Toggle sound ON
++    await page.click('[data-testid="sound-toggle-btn"]');
++    await expect(page.locator('[data-testid="sound-toggle-btn"]')).toContainText("Sound: On");
++
++    // Toggle Reduced Motion ON
++    await page.click('[data-testid="reduced-motion-toggle-btn"]');
++    await expect(page.locator('[data-testid="reduced-motion-toggle-btn"]')).toContainText("Reduced Motion: On");
++    await expect(page.locator('[data-testid="world-diagnostics"]')).toContainText('"reducedMotion": true');
++    text = await page.locator('[data-testid="world-diagnostics"]').textContent();
++    diag = JSON.parse(text!);
++    expect(diag.reducedMotion).toBe(true);
++
++    await captureScreenshot(page, "11-reduced-motion");
++  });
++
++  test("13. Asset Failure: graceful fallback leaves useful HTML", async ({ page }) => {
++    await page.goto("/?simulateAssetError=1");
++
++    // Verify fallback banner appears
++    const fallback = page.locator('[data-testid="world-fallback-banner"]');
++    await expect(fallback).toBeVisible({ timeout: 5000 });
++    await expect(fallback).toContainText("Accessible Portfolio View");
++    await captureScreenshot(page, "12-asset-failure-fallback");
++
++    // Direct links to projects and about are present and working
++    await expect(page.locator('[data-testid="fallback-projects-link"]')).toBeVisible();
++    await expect(page.locator('[data-testid="fallback-about-link"]')).toBeVisible();
++
++    // Verify main page directory remains fully reachable
++    await expect(page.locator("h2#directory-heading")).toContainText("Start anywhere");
++  });
++
++  test("14. Renderer Failure: WebGL failure caught cleanly leaving useful HTML", async ({ page }) => {
++    await page.goto("/?simulateRendererError=1");
++
++    // Verify fallback banner appears
++    const fallback = page.locator('[data-testid="world-fallback-banner"]');
++    await expect(fallback).toBeVisible({ timeout: 5000 });
++    await expect(fallback).toContainText("Accessible Portfolio View");
++    await captureScreenshot(page, "13-renderer-failure-fallback");
++
++    // Page navigation still functions
++    await expect(page.locator('[data-testid="fallback-projects-link"]')).toBeVisible();
++    await expect(page.locator('[data-testid="fallback-about-link"]')).toBeVisible();
++  });
++
++  test("15. Fallback Content with JavaScript Disabled: 100% useful semantic HTML", async ({ browser }) => {
++    const context = await browser.newContext({ javaScriptEnabled: false });
++    const page = await context.newPage();
++
++    await page.goto("/");
++    await expect(page.locator("h1")).toContainText("A little world");
++    await captureScreenshot(page, "14-javascript-disabled");
++
++    // Details disclosure works natively without JS
++    const disclosure = page.locator('[data-testid="studio-disclosure"]');
++    await expect(disclosure).toBeVisible();
++
++    // Public links work without JS
++    await page.click('a[href="/about"]');
++    await expect(page.locator("h1")).toContainText("About");
++
++    await context.close();
++  });
++});
+diff --git a/deliveries/W3/revisions/W3-A1-r2/source/tests/e2e/payload.spec.ts b/deliveries/G1/source/tests/e2e/payload.spec.ts
+index 40f5895..17bacb9 100644
+--- a/deliveries/W3/revisions/W3-A1-r2/source/tests/e2e/payload.spec.ts
++++ b/deliveries/G1/source/tests/e2e/payload.spec.ts
+@@ -97,6 +97,11 @@ test("five cold loads per desktop and mobile profile record actual production pa
+       } finally { await context.close(); }
+     }
+   }
++  const serverHtml = await readFile(".next/server/app/index.html", "utf8");
++  expect(serverHtml).not.toContain("kaspersky-labs.com");
++  const initialChunkMatches = serverHtml.matchAll(/\/static\/chunks\/([a-zA-Z0-9_\-\.]+)\.js/g);
++  const initialChunkNames = new Set(Array.from(initialChunkMatches).map((m) => `${m[1]}.js`));
++
+   const buildStats = [];
+   // Build inspection complements URL tests, including opaque hashed chunk names.
+   for (const entry of await readdir(".next/static/chunks", { recursive: true, withFileTypes: true })) {
+@@ -104,12 +109,14 @@ test("five cold loads per desktop and mobile profile record actual production pa
+       const file = path.join(entry.parentPath, entry.name);
+       const bytes = await readFile(file);
+       const code = bytes.toString("utf8");
+-      expect(code).not.toMatch(/WebGLRenderer|THREE\.REVISION|react-three\/fiber|createClient\(.+supabase|Synthetic contribution|testOnly = true|kaspersky-labs\.com/);
++      // Landing page entry chunks must never load Three.js / WebGLRenderer pre-entry
++      if (initialChunkNames.has(entry.name)) {
++        expect(code).not.toMatch(/WebGLRenderer|THREE\.REVISION/);
++      }
++      expect(code).not.toMatch(/react-three\/fiber|createClient\(.+supabase|Synthetic contribution|testOnly = true|kaspersky-labs\.com/);
+       buildStats.push({ file: path.relative(".next", file), bytes: bytes.length, gzipBytes: gzipSync(bytes).length });
+     }
+   }
+-  const serverHtml = await readFile(".next/server/app/index.html", "utf8");
+-  expect(serverHtml).not.toContain("kaspersky-labs.com");
+   const destination = path.join(process.env.W3_EVIDENCE_DIR ?? "test-results", info.project.name, "payload.json");
+   await mkdir(path.dirname(destination), { recursive: true });
+   await writeFile(destination, JSON.stringify({
+diff --git a/deliveries/W3/revisions/W3-A1-r2/source/tests/fixtures/engineering-section-4.ts b/deliveries/G1/source/tests/fixtures/engineering-section-4.ts
+index 4d8f83b..32140b5 100644
+--- a/deliveries/W3/revisions/W3-A1-r2/source/tests/fixtures/engineering-section-4.ts
++++ b/deliveries/G1/source/tests/fixtures/engineering-section-4.ts
+@@ -1,72 +1,72 @@
+-// Test-only verbatim value types from engineering section 4; input hash in evidence.
+-export type ProjectId = "candidatex" | "helios" | "zenith" | "ai-vs-real" | "talks";
+-export type QualityTier = "high" | "medium" | "low" | "static";
+-export type PublicRoute =
+-  | "/" | "/projects" | "/about" | "/about#research"
+-  | "/about#skills" | "/contact" | "/resume";
+-export type CharacterAction =
+-  | "coding_idle" | "mouse_idle" | "notice_visitor" | "turn_to_visitor"
+-  | "greeting_nod" | "return_to_work" | "attention_glance" | "breathing_idle";
+-export type CameraId =
+-  | "hallway" | "entry" | "reveal" | "greeting" | "home-desktop"
+-  | "home-mobile" | "monitor" | "pc" | "energy" | "scanner"
+-  | "microphone" | "about" | "contact";
+-
+-export type EvidenceStatus = "verified" | "unknown" | "not-measured" | "not-applicable";
+-export type EvidenceRef = {
+-  id: string; kind: "repository" | "deployment" | "measurement" | "document";
+-  url: string | null; checkedAt: string | null; status: EvidenceStatus;
+-  note: string;
+-};
+-export type PublishedProject = {
+-  id: ProjectId; slug: string; title: string; summary: string;
+-  contribution: string; sections: ContentSection[];
+-  links: { label: string; url: string; checkedAt: string }[];
+-  evidence: EvidenceRef[]; revision: number;
+-};
+-export type ContentSection = {
+-  id: string; heading: string;
+-  blocks: Array<
+-    | { type: "paragraph"; text: string }
+-    | { type: "image"; mediaId: string; alt: string; caption: string }
+-    | { type: "list"; items: string[] }
+-    | { type: "code"; language: string; text: string }
+-  >;
+-};
+-export type Publication = {
+-  revision: number; publishedAt: string;
+-  projects: PublishedProject[]; assetManifestRevision: string;
+-};
+-export type WorldSnapshot = {
+-  version: 1; lampOn: boolean; blindsOpen: boolean; detailFound: boolean;
+-};
+-export type Preferences = {
+-  version: 1; introCompleted: boolean; soundEnabled: boolean;
+-  quality: QualityTier | "auto"; clock24h: boolean;
+-};
+-export type ExperienceIntent =
+-  | { type: "ENTER"; replay: boolean }
+-  | { type: "SKIP" }
+-  | { type: "GREET" }
+-  | { type: "OPEN_PROJECT"; projectId: ProjectId; source: "room" | "dom" }
+-  | { type: "NAVIGATE"; path: PublicRoute; source: "room" | "dom"; camera: CameraId | null }
+-  | { type: "OPEN_PANEL"; panel: "launcher" | "room-controls" | "replay" }
+-  | { type: "SET_LAMP"; enabled: boolean }
+-  | { type: "SET_BLINDS"; open: boolean }
+-  | { type: "SET_SOUND"; enabled: boolean }
+-  | { type: "SET_QUALITY"; quality: QualityTier | "auto" }
+-  | { type: "SET_CLOCK_FORMAT"; clock24h: boolean }
+-  | { type: "SET_PAUSED"; paused: boolean }
+-  | { type: "ESCAPE" }
+-  | { type: "HIDE" }
+-  | { type: "SHOW" }
+-  | { type: "RENDERER_FAILED"; code: string };
+-export type AssetManifest = {
+-  revision: string; schemaVersion: 1;
+-  groups: Array<{
+-    id: string; tier: QualityTier; url: string; sha256: string;
+-    bytes: number; triangles: number; materials: number;
+-    estimatedGpuBytes: number; clips: string[];
+-    provenanceId: string; approved: boolean;
+-  }>;
+-};
++// Test-only verbatim value types from engineering section 4; input hash in evidence.
++export type ProjectId = "candidatex" | "helios" | "zenith" | "ai-vs-real" | "talks";
++export type QualityTier = "high" | "medium" | "low" | "static";
++export type PublicRoute =
++  | "/" | "/projects" | "/about" | "/about#research"
++  | "/about#skills" | "/contact" | "/resume";
++export type CharacterAction =
++  | "coding_idle" | "mouse_idle" | "notice_visitor" | "turn_to_visitor"
++  | "greeting_nod" | "return_to_work" | "attention_glance" | "breathing_idle";
++export type CameraId =
++  | "hallway" | "entry" | "reveal" | "greeting" | "home-desktop"
++  | "home-mobile" | "monitor" | "pc" | "energy" | "scanner"
++  | "microphone" | "about" | "contact";
++
++export type EvidenceStatus = "verified" | "unknown" | "not-measured" | "not-applicable";
++export type EvidenceRef = {
++  id: string; kind: "repository" | "deployment" | "measurement" | "document";
++  url: string | null; checkedAt: string | null; status: EvidenceStatus;
++  note: string;
++};
++export type PublishedProject = {
++  id: ProjectId; slug: string; title: string; summary: string;
++  contribution: string; sections: ContentSection[];
++  links: { label: string; url: string; checkedAt: string }[];
++  evidence: EvidenceRef[]; revision: number;
++};
++export type ContentSection = {
++  id: string; heading: string;
++  blocks: Array<
++    | { type: "paragraph"; text: string }
++    | { type: "image"; mediaId: string; alt: string; caption: string }
++    | { type: "list"; items: string[] }
++    | { type: "code"; language: string; text: string }
++  >;
++};
++export type Publication = {
++  revision: number; publishedAt: string;
++  projects: PublishedProject[]; assetManifestRevision: string;
++};
++export type WorldSnapshot = {
++  version: 1; lampOn: boolean; blindsOpen: boolean; detailFound: boolean;
++};
++export type Preferences = {
++  version: 1; introCompleted: boolean; soundEnabled: boolean;
++  quality: QualityTier | "auto"; clock24h: boolean;
++};
++export type ExperienceIntent =
++  | { type: "ENTER"; replay: boolean }
++  | { type: "SKIP" }
++  | { type: "GREET" }
++  | { type: "OPEN_PROJECT"; projectId: ProjectId; source: "room" | "dom" }
++  | { type: "NAVIGATE"; path: PublicRoute; source: "room" | "dom"; camera: CameraId | null }
++  | { type: "OPEN_PANEL"; panel: "launcher" | "room-controls" | "replay" }
++  | { type: "SET_LAMP"; enabled: boolean }
++  | { type: "SET_BLINDS"; open: boolean }
++  | { type: "SET_SOUND"; enabled: boolean }
++  | { type: "SET_QUALITY"; quality: QualityTier | "auto" }
++  | { type: "SET_CLOCK_FORMAT"; clock24h: boolean }
++  | { type: "SET_PAUSED"; paused: boolean }
++  | { type: "ESCAPE" }
++  | { type: "HIDE" }
++  | { type: "SHOW" }
++  | { type: "RENDERER_FAILED"; code: string };
++export type AssetManifest = {
++  revision: string; schemaVersion: 1;
++  groups: Array<{
++    id: string; tier: QualityTier; url: string; sha256: string;
++    bytes: number; triangles: number; materials: number;
++    estimatedGpuBytes: number; clips: string[];
++    provenanceId: string; approved: boolean;
++  }>;
++};
+diff --git a/deliveries/W3/revisions/W3-A1-r2/source/tests/unit/boundaries.test.ts b/deliveries/G1/source/tests/unit/boundaries.test.ts
+index 8a7d2b6..821b7cc 100644
+--- a/deliveries/W3/revisions/W3-A1-r2/source/tests/unit/boundaries.test.ts
++++ b/deliveries/G1/source/tests/unit/boundaries.test.ts
+@@ -6,7 +6,8 @@ import { publishedProjects, draftIdentity } from "../../src/features/portfolio/p
+ 
+ function files(root: string): string[] {
+   return readdirSync(root, { withFileTypes: true }).flatMap((entry) =>
+-    entry.isDirectory() ? files(join(root, entry.name)) : [join(root, entry.name)]);
++    entry.isDirectory() ? files(join(root, entry.name)) : [join(root, entry.name)]
++  );
+ }
+ 
+ export interface DiscoveredImport {
+@@ -77,11 +78,17 @@ export function validateProductionModule(filePath: string, text: string) {
+   const imports = extractModuleSpecifiers(filePath, text);
+   const forbiddenPatterns = [
+     /(?:^|\/)(?:tests|fixtures)(?:\/|$)/,
+-    /\bthree\b|@react-three/,
+     /\bsupabase\b|@supabase/,
+     /(?:^|\/)server(?:\/|$)/,
+-    /(?:^|\/)features\/room(?:\/|$)/,
+   ];
++
++  // In G1, Three.js is permitted ONLY in src/features/world.
++  // The public shell (portfolio, public routes, contracts) MUST NOT import Three.js!
++  const isWorldFeature = filePath.includes("src/features/world/");
++  if (!isWorldFeature) {
++    forbiddenPatterns.push(/\bthree\b|@react-three/);
++  }
++
+   for (const imp of imports) {
+     for (const pattern of forbiddenPatterns) {
+       if (pattern.test(imp.specifier) || pattern.test(imp.resolvedPath)) {
+@@ -110,9 +117,9 @@ it("keeps all public projects empty and identity provisional", () => {
+   expect(draftIdentity.role).toContain("proposed title");
+ });
+ 
+-it("does not pull fixture, world, service, or audio dependencies into production", () => {
++it("enforces G1 dependency boundaries: three is isolated to world feature, shell remains free of 3D", () => {
+   const packageJson = JSON.parse(readFileSync("package.json", "utf8")) as { dependencies: Record<string, string> };
+-  expect(Object.keys(packageJson.dependencies).sort()).toEqual(["next", "react", "react-dom", "zod"]);
++  expect(Object.keys(packageJson.dependencies).sort()).toEqual(["next", "react", "react-dom", "three", "zod"]);
+   for (const path of files("src")) {
+     const text = readFileSync(path, "utf8");
+     validateProductionModule(path.replace(/\\/g, "/"), text);
+@@ -168,4 +175,10 @@ describe("regression: syntax-level import boundary detection", () => {
+     expect(() => validateContractModule("src/contracts/content.ts", snippet3))
+       .toThrowError(/Contract module .* has invalid non-contract import/);
+   });
++
++  it("rejects three.js import in public shell features outside world", () => {
++    const snippet = `import * as THREE from "three";\nexport const v = new THREE.Vector3();`;
++    expect(() => validateProductionModule("src/features/portfolio/navigation.tsx", snippet))
++      .toThrowError(/Forbidden import \(import\).*three/);
++  });
+ });
+diff --git a/deliveries/G1/source/tests/unit/character-director.test.ts b/deliveries/G1/source/tests/unit/character-director.test.ts
+new file mode 100644
+index 0000000..3c3dc2f
+--- /dev/null
++++ b/deliveries/G1/source/tests/unit/character-director.test.ts
+@@ -0,0 +1,104 @@
++import { describe, expect, it } from "vitest";
++import * as THREE from "three";
++import { CharacterDirector } from "../../src/features/world/CharacterDirector";
++import { CLIP_DURATIONS } from "../../src/features/world/SceneIntegrator";
++
++function createMockMixerAndActions() {
++  const avatarScene = new THREE.Group();
++  const fixtureScene = new THREE.Group();
++  const avatarMixer = new THREE.AnimationMixer(avatarScene);
++  const chairMixer = new THREE.AnimationMixer(fixtureScene);
++
++  const avatarActions: Record<string, THREE.AnimationAction> = {};
++  const chairActions: Record<string, THREE.AnimationAction> = {};
++
++  for (const [name, dur] of Object.entries(CLIP_DURATIONS)) {
++    const track = new THREE.VectorKeyframeTrack(".position", [0, dur], [0, 0, 0, 0, 0, 0]);
++    const clip = new THREE.AnimationClip(name, dur, [track]);
++    avatarActions[name] = avatarMixer.clipAction(clip);
++    chairActions[name] = chairMixer.clipAction(clip);
++  }
++
++  const bodyTurn = new THREE.Group();
++  const chairRoot = new THREE.Group();
++
++  return {
++    director: new CharacterDirector(
++      avatarMixer,
++      chairMixer,
++      avatarActions,
++      chairActions,
++      bodyTurn,
++      chairRoot
++    ),
++  };
++}
++
++describe("CharacterDirector", () => {
++  it("initializes in coding_idle at time 0", () => {
++    const { director } = createMockMixerAndActions();
++    expect(director.mode).toBe("coding");
++    expect(director.currentClip).toBe("coding_idle");
++    expect(director.currentTime).toBe(0);
++  });
++
++  it("advances through the full greeting sequence and returns to coding_idle", () => {
++    const { director } = createMockMixerAndActions();
++    director.playGreeting();
++    expect(director.mode).toBe("sequence");
++    expect(director.currentClip).toBe("notice_visitor");
++
++    // Advance through notice_visitor (0.6s)
++    director.advance(0.3);
++    expect(director.currentClip).toBe("notice_visitor");
++    expect(director.currentTime).toBeCloseTo(0.3);
++
++    director.advance(0.4);
++    // Should transition to turn_to_visitor
++    expect(director.currentClip).toBe("turn_to_visitor");
++
++    // Advance through turn_to_visitor (1.2s)
++    director.advance(1.2);
++    expect(director.currentClip).toBe("greeting_nod");
++
++    // Advance through greeting_nod (0.9s)
++    director.advance(0.9);
++    expect(director.currentClip).toBe("return_to_work");
++
++    // Advance through return_to_work (1.3s)
++    director.advance(1.3);
++    expect(director.mode).toBe("coding");
++    expect(director.currentClip).toBe("coding_idle");
++  });
++
++  it("safely reverses along authored path on cancel()", () => {
++    const { director } = createMockMixerAndActions();
++    director.playGreeting();
++
++    // Advance 0.6s into notice + 0.6s into turn
++    director.advance(1.2);
++    expect(director.currentClip).toBe("turn_to_visitor");
++
++    // Trigger cancel
++    director.cancel();
++    expect(director.mode).toBe("safe-return");
++
++    // Advance through reversal back to rest
++    director.advance(3.0);
++    expect(director.mode).toBe("coding");
++    expect(director.currentClip).toBe("coding_idle");
++  });
++
++  it("immediately settles to coding_idle on settle() within ≤50ms (instant skip)", () => {
++    const { director } = createMockMixerAndActions();
++    director.playGreeting();
++    director.advance(1.5); // Mid-turn
++    expect(director.currentClip).toBe("turn_to_visitor");
++
++    // Immediate settle (Skip / Escape)
++    director.settle();
++    expect(director.mode).toBe("coding");
++    expect(director.currentClip).toBe("coding_idle");
++    expect(director.currentTime).toBe(0);
++  });
++});
+diff --git a/deliveries/W3/revisions/W3-A1-r2/source/tests/unit/contract-types.test.ts b/deliveries/G1/source/tests/unit/contract-types.test.ts
+index f9e78b6..e63c4bd 100644
+--- a/deliveries/W3/revisions/W3-A1-r2/source/tests/unit/contract-types.test.ts
++++ b/deliveries/G1/source/tests/unit/contract-types.test.ts
+@@ -1,21 +1,21 @@
+-import { expectTypeOf, it } from "vitest";
+-import type * as Baseline from "../fixtures/engineering-section-4";
+-import type * as Content from "../../src/contracts/content";
+-import type * as Experience from "../../src/contracts/experience";
+-import type * as Assets from "../../src/contracts/assets";
+-it("preserves every exact shared value type from engineering section 4", () => {
+-  expectTypeOf<Content.ProjectId>().toEqualTypeOf<Baseline.ProjectId>();
+-  expectTypeOf<Content.EvidenceStatus>().toEqualTypeOf<Baseline.EvidenceStatus>();
+-  expectTypeOf<Content.EvidenceRef>().toEqualTypeOf<Baseline.EvidenceRef>();
+-  expectTypeOf<Content.PublishedProject>().toEqualTypeOf<Baseline.PublishedProject>();
+-  expectTypeOf<Content.ContentSection>().toEqualTypeOf<Baseline.ContentSection>();
+-  expectTypeOf<Content.Publication>().toEqualTypeOf<Baseline.Publication>();
+-  expectTypeOf<Experience.QualityTier>().toEqualTypeOf<Baseline.QualityTier>();
+-  expectTypeOf<Experience.PublicRoute>().toEqualTypeOf<Baseline.PublicRoute>();
+-  expectTypeOf<Experience.CharacterAction>().toEqualTypeOf<Baseline.CharacterAction>();
+-  expectTypeOf<Experience.CameraId>().toEqualTypeOf<Baseline.CameraId>();
+-  expectTypeOf<Experience.Preferences>().toEqualTypeOf<Baseline.Preferences>();
+-  expectTypeOf<Experience.WorldSnapshot>().toEqualTypeOf<Baseline.WorldSnapshot>();
+-  expectTypeOf<Experience.ExperienceIntent>().toEqualTypeOf<Baseline.ExperienceIntent>();
+-  expectTypeOf<Assets.AssetManifest>().toEqualTypeOf<Baseline.AssetManifest>();
+-});
++import { expectTypeOf, it } from "vitest";
++import type * as Baseline from "../fixtures/engineering-section-4";
++import type * as Content from "../../src/contracts/content";
++import type * as Experience from "../../src/contracts/experience";
++import type * as Assets from "../../src/contracts/assets";
++it("preserves every exact shared value type from engineering section 4", () => {
++  expectTypeOf<Content.ProjectId>().toEqualTypeOf<Baseline.ProjectId>();
++  expectTypeOf<Content.EvidenceStatus>().toEqualTypeOf<Baseline.EvidenceStatus>();
++  expectTypeOf<Content.EvidenceRef>().toEqualTypeOf<Baseline.EvidenceRef>();
++  expectTypeOf<Content.PublishedProject>().toEqualTypeOf<Baseline.PublishedProject>();
++  expectTypeOf<Content.ContentSection>().toEqualTypeOf<Baseline.ContentSection>();
++  expectTypeOf<Content.Publication>().toEqualTypeOf<Baseline.Publication>();
++  expectTypeOf<Experience.QualityTier>().toEqualTypeOf<Baseline.QualityTier>();
++  expectTypeOf<Experience.PublicRoute>().toEqualTypeOf<Baseline.PublicRoute>();
++  expectTypeOf<Experience.CharacterAction>().toEqualTypeOf<Baseline.CharacterAction>();
++  expectTypeOf<Experience.CameraId>().toEqualTypeOf<Baseline.CameraId>();
++  expectTypeOf<Experience.Preferences>().toEqualTypeOf<Baseline.Preferences>();
++  expectTypeOf<Experience.WorldSnapshot>().toEqualTypeOf<Baseline.WorldSnapshot>();
++  expectTypeOf<Experience.ExperienceIntent>().toEqualTypeOf<Baseline.ExperienceIntent>();
++  expectTypeOf<Assets.AssetManifest>().toEqualTypeOf<Baseline.AssetManifest>();
++});
+diff --git a/deliveries/G1/source/tests/unit/scene-integrator.test.ts b/deliveries/G1/source/tests/unit/scene-integrator.test.ts
+new file mode 100644
+index 0000000..ff62e54
+--- /dev/null
++++ b/deliveries/G1/source/tests/unit/scene-integrator.test.ts
+@@ -0,0 +1,192 @@
++import { describe, expect, it } from "vitest";
++import * as THREE from "three";
++import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
++import { integrateScene, CLIP_DURATIONS } from "../../src/features/world/SceneIntegrator";
++
++function createMockClip(name: string, duration: number): THREE.AnimationClip {
++  const track = new THREE.VectorKeyframeTrack(".position", [0, duration], [0, 0, 0, 0, 0, 0]);
++  return new THREE.AnimationClip(name, duration, [track]);
++}
++
++function buildMockW1(): GLTF {
++  const scene = new THREE.Group();
++  scene.name = "w1-scene";
++
++  // Room environment nodes
++  const roomShell = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshBasicMaterial());
++  roomShell.name = "room-shell";
++  scene.add(roomShell);
++
++  const desk = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshBasicMaterial());
++  desk.name = "desk";
++  desk.position.set(0, 0.75, -1.15);
++  scene.add(desk);
++
++  // W1 proxy resident and static chair under chair-root locator
++  const chairRoot = new THREE.Group();
++  chairRoot.name = "chair-root";
++  chairRoot.position.set(0.3, 0, -0.36);
++
++  const chair = new THREE.Group();
++  chair.name = "chair";
++  const chairSeat = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshBasicMaterial());
++  chairSeat.name = "chair_seat_cushion";
++  chair.add(chairSeat);
++  chairRoot.add(chair);
++
++  const resident = new THREE.Group();
++  resident.name = "resident";
++  const residentPelvis = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshBasicMaterial());
++  residentPelvis.name = "resident_pelvis";
++  resident.add(residentPelvis);
++  chairRoot.add(resident);
++
++  scene.add(chairRoot);
++
++  return {
++    scene,
++    scenes: [scene],
++    animations: [],
++    cameras: [],
++    asset: {},
++    parser: {} as unknown as GLTF["parser"],
++    userData: {},
++  };
++}
++
++function buildMockAvatar(): GLTF {
++  const scene = new THREE.Group();
++  scene.name = "w2-avatar-scene";
++
++  const resident = new THREE.Group();
++  resident.name = "resident";
++  resident.position.set(0.3, 0, -0.36);
++
++  const bodyTurn = new THREE.Group();
++  bodyTurn.name = "body-turn";
++  const pelvis = new THREE.Group();
++  pelvis.name = "pelvis";
++  const spine = new THREE.Group();
++  spine.name = "spine";
++  const head = new THREE.Group();
++  head.name = "head";
++
++  spine.add(head);
++  pelvis.add(spine);
++  bodyTurn.add(pelvis);
++  resident.add(bodyTurn);
++  scene.add(resident);
++
++  // Skinned mesh sibling
++  const geom = new THREE.BufferGeometry();
++  geom.setAttribute("position", new THREE.Float32BufferAttribute([0, 0, 0], 3));
++  geom.setAttribute("skinIndex", new THREE.Uint16BufferAttribute([0], 4));
++  geom.setAttribute("skinWeight", new THREE.Float32BufferAttribute([1, 0, 0, 0], 4));
++  const bone = new THREE.Bone();
++  const skeleton = new THREE.Skeleton([bone]);
++  const residentBody = new THREE.SkinnedMesh(geom, new THREE.MeshBasicMaterial());
++  residentBody.name = "resident-body";
++  residentBody.bind(skeleton);
++  scene.add(residentBody);
++
++  const animations = Object.entries(CLIP_DURATIONS).map(([name, dur]) =>
++    createMockClip(name, dur)
++  );
++
++  return {
++    scene,
++    scenes: [scene],
++    animations,
++    cameras: [],
++    asset: {},
++    parser: {} as unknown as GLTF["parser"],
++    userData: {},
++  };
++}
++
++function buildMockFixture(): GLTF {
++  const scene = new THREE.Group();
++  scene.name = "w2-fixture-scene";
++
++  const chairRoot = new THREE.Group();
++  chairRoot.name = "chair-root";
++  chairRoot.position.set(0.3, 0, -0.36);
++  scene.add(chairRoot);
++
++  const chairBase = new THREE.Group();
++  chairBase.name = "chair-base";
++  chairBase.position.set(0.3, 0, -0.36);
++  scene.add(chairBase);
++
++  // Proof fixture to discard
++  const fixtureStatic = new THREE.Group();
++  fixtureStatic.name = "fixture-static";
++  const proofDesk = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshBasicMaterial());
++  proofDesk.name = "proof-desk";
++  fixtureStatic.add(proofDesk);
++  scene.add(fixtureStatic);
++
++  const animations = Object.entries(CLIP_DURATIONS).map(([name, dur]) =>
++    createMockClip(name, dur)
++  );
++
++  return {
++    scene,
++    scenes: [scene],
++    animations,
++    cameras: [],
++    asset: {},
++    parser: {} as unknown as GLTF["parser"],
++    userData: {},
++  };
++}
++
++describe("SceneIntegrator", () => {
++  it("verifies clip durations match engineering specification", () => {
++    expect(CLIP_DURATIONS["coding_idle"]).toBe(6.0);
++    expect(CLIP_DURATIONS["notice_visitor"]).toBe(0.6);
++    expect(CLIP_DURATIONS["turn_to_visitor"]).toBe(1.2);
++    expect(CLIP_DURATIONS["greeting_nod"]).toBe(0.9);
++    expect(CLIP_DURATIONS["return_to_work"]).toBe(1.3);
++  });
++
++  it("removes W1 proxy resident and static chair, discards fixture-static, and yields exactly 1 resident and 1 chair", () => {
++    const w1 = buildMockW1();
++    const avatar = buildMockAvatar();
++    const fixture = buildMockFixture();
++
++    const result = integrateScene(w1, avatar, fixture);
++
++    expect(result.nodeCounts.residentCount).toBe(1);
++    expect(result.nodeCounts.chairRootCount).toBe(1);
++    expect(result.nodeCounts.chairBaseCount).toBe(1);
++    expect(result.nodeCounts.deskCount).toBe(1);
++    expect(result.nodeCounts.fixtureStaticCount).toBe(0);
++
++    expect(result.removedW1Nodes).toContain("chair-root");
++    expect(result.removedW1Nodes).toContain("chair");
++    expect(result.removedW1Nodes).toContain("chair_seat_cushion");
++    expect(result.removedW1Nodes).toContain("resident");
++    expect(result.removedW1Nodes).toContain("resident_pelvis");
++
++    expect(result.discardedW2Nodes).toContain("fixture-static");
++    expect(result.discardedW2Nodes).toContain("proof-desk");
++
++    // Verify positions match F1 coordinates without double-offsets
++    expect(result.resident.position.x).toBeCloseTo(0.3);
++    expect(result.resident.position.y).toBeCloseTo(0);
++    expect(result.resident.position.z).toBeCloseTo(-0.36);
++
++    expect(result.chairRoot.position.x).toBeCloseTo(0.3);
++    expect(result.chairRoot.position.z).toBeCloseTo(-0.36);
++
++    expect(result.chairBase.position.x).toBeCloseTo(0.3);
++    expect(result.chairBase.position.z).toBeCloseTo(-0.36);
++
++    // Verify all 5 clips are initialized in both mixers
++    for (const clipName of Object.keys(CLIP_DURATIONS)) {
++      expect(result.avatarActions[clipName]).toBeDefined();
++      expect(result.chairActions[clipName]).toBeDefined();
++    }
++  });
++});

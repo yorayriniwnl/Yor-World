@@ -1,0 +1,204 @@
+   1: import * as THREE from "three";
+   2: import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
+   3: 
+   4: export interface IntegratedSceneResult {
+   5:   scene: THREE.Group;
+   6:   resident: THREE.Object3D;
+   7:   residentBody: THREE.SkinnedMesh;
+   8:   chairRoot: THREE.Object3D;
+   9:   chairBase: THREE.Object3D;
+  10:   bodyTurn: THREE.Object3D;
+  11:   head: THREE.Object3D;
+  12:   desk: THREE.Object3D;
+  13:   avatarMixer: THREE.AnimationMixer;
+  14:   chairMixer: THREE.AnimationMixer;
+  15:   avatarActions: Record<string, THREE.AnimationAction>;
+  16:   chairActions: Record<string, THREE.AnimationAction>;
+  17:   removedW1Nodes: string[];
+  18:   discardedW2Nodes: string[];
+  19:   nodeCounts: {
+  20:     residentCount: number;
+  21:     chairRootCount: number;
+  22:     chairBaseCount: number;
+  23:     deskCount: number;
+  24:     fixtureStaticCount: number;
+  25:   };
+  26: }
+  27: 
+  28: export const CLIP_DURATIONS: Readonly<Record<string, number>> = {
+  29:   coding_idle: 6.0,
+  30:   notice_visitor: 0.6,
+  31:   turn_to_visitor: 1.2,
+  32:   greeting_nod: 0.9,
+  33:   return_to_work: 1.3,
+  34: };
+  35: 
+  36: export function integrateScene(
+  37:   w1Gltf: GLTF,
+  38:   avatarGltf: GLTF,
+  39:   fixtureGltf: GLTF
+  40: ): IntegratedSceneResult {
+  41:   const rootGroup = new THREE.Group();
+  42:   rootGroup.name = "yor-world-root";
+  43: 
+  44:   // 1. Prepare W1 Environment Scene
+  45:   const w1Scene = w1Gltf.scene;
+  46:   const removedW1Nodes: string[] = [];
+  47: 
+  48:   // Identify nodes to remove per W1 asset register contract:
+  49:   // - "resident" proxy tree
+  50:   // - "chair" static chair tree
+  51:   // - "chair-root" W1 locator
+  52:   const w1NodesToRemove: THREE.Object3D[] = [];
+  53:   w1Scene.traverse((obj) => {
+  54:     if (obj.name === "chair-root" || obj.name === "chair" || obj.name === "resident") {
+  55:       w1NodesToRemove.push(obj);
+  56:     }
+  57:   });
+  58: 
+  59:   for (const node of w1NodesToRemove) {
+  60:     if (node.parent) {
+  61:       node.traverse((child) => {
+  62:         removedW1Nodes.push(child.name);
+  63:       });
+  64:       node.parent.remove(node);
+  65:     }
+  66:   }
+  67: 
+  68:   // Add pruned W1 environment
+  69:   rootGroup.add(w1Scene);
+  70: 
+  71:   // 2. Prepare W2 Fixture (Chair) Scene
+  72:   const fixtureScene = fixtureGltf.scene;
+  73:   const discardedW2Nodes: string[] = [];
+  74: 
+  75:   // Discard "fixture-static" (desk, keyboard, floor proof fixture)
+  76:   const fixtureStatic = fixtureScene.getObjectByName("fixture-static");
+  77:   if (fixtureStatic && fixtureStatic.parent) {
+  78:     fixtureStatic.traverse((child) => {
+  79:       discardedW2Nodes.push(child.name);
+  80:     });
+  81:     fixtureStatic.parent.remove(fixtureStatic);
+  82:   }
+  83: 
+  84:   const chairRoot = fixtureScene.getObjectByName("chair-root");
+  85:   const chairBase = fixtureScene.getObjectByName("chair-base");
+  86: 
+  87:   if (!chairRoot || !chairBase) {
+  88:     throw new Error("W2 fixture-proof is missing required chair-root or chair-base");
+  89:   }
+  90: 
+  91:   // Mount fixtureScene at identity
+  92:   fixtureScene.position.set(0, 0, 0);
+  93:   fixtureScene.rotation.set(0, 0, 0);
+  94:   fixtureScene.scale.set(1, 1, 1);
+  95:   rootGroup.add(fixtureScene);
+  96: 
+  97:   // 3. Prepare W2 Avatar Scene
+  98:   const avatarScene = avatarGltf.scene;
+  99:   const resident = avatarScene.getObjectByName("resident");
+ 100:   const bodyTurn = avatarScene.getObjectByName("body-turn");
+ 101:   const head = avatarScene.getObjectByName("head");
+ 102: 
+ 103:   let residentBody: THREE.SkinnedMesh | null = null;
+ 104:   avatarScene.traverse((obj) => {
+ 105:     if ((obj as THREE.SkinnedMesh).isSkinnedMesh) {
+ 106:       residentBody = obj as THREE.SkinnedMesh;
+ 107:       residentBody.frustumCulled = false;
+ 108:     }
+ 109:   });
+ 110: 
+ 111:   if (!resident || !bodyTurn || !head || !residentBody) {
+ 112:     throw new Error("W2 avatar-proof is missing resident armature or skinned mesh");
+ 113:   }
+ 114: 
+ 115:   // Mount avatarScene at identity
+ 116:   avatarScene.position.set(0, 0, 0);
+ 117:   avatarScene.rotation.set(0, 0, 0);
+ 118:   avatarScene.scale.set(1, 1, 1);
+ 119:   rootGroup.add(avatarScene);
+ 120: 
+ 121:   // 4. Verification and Node Count Auditing
+ 122:   let residentCount = 0;
+ 123:   let chairRootCount = 0;
+ 124:   let chairBaseCount = 0;
+ 125:   let deskCount = 0;
+ 126:   let fixtureStaticCount = 0;
+ 127:   let foundDesk: THREE.Object3D | null = null;
+ 128: 
+ 129:   rootGroup.traverse((obj) => {
+ 130:     if (obj.name === "resident") residentCount++;
+ 131:     if (obj.name === "chair-root") chairRootCount++;
+ 132:     if (obj.name === "chair-base") chairBaseCount++;
+ 133:     if (obj.name === "desk") {
+ 134:       deskCount++;
+ 135:       foundDesk = obj;
+ 136:     }
+ 137:     if (obj.name === "fixture-static") fixtureStaticCount++;
+ 138:   });
+ 139: 
+ 140:   if (residentCount !== 1) {
+ 141:     throw new Error(`Integration error: Expected exactly 1 resident, found ${residentCount}`);
+ 142:   }
+ 143:   if (chairRootCount !== 1) {
+ 144:     throw new Error(`Integration error: Expected exactly 1 chair-root, found ${chairRootCount}`);
+ 145:   }
+ 146:   if (chairBaseCount !== 1) {
+ 147:     throw new Error(`Integration error: Expected exactly 1 chair-base, found ${chairBaseCount}`);
+ 148:   }
+ 149:   if (deskCount !== 1 || !foundDesk) {
+ 150:     throw new Error(`Integration error: Expected exactly 1 desk, found ${deskCount}`);
+ 151:   }
+ 152:   if (fixtureStaticCount !== 0) {
+ 153:     throw new Error(`Integration error: fixture-static must be 0, found ${fixtureStaticCount}`);
+ 154:   }
+ 155: 
+ 156:   // 5. Setup Paired Animation Mixers
+ 157:   const avatarMixer = new THREE.AnimationMixer(avatarScene);
+ 158:   const chairMixer = new THREE.AnimationMixer(fixtureScene);
+ 159: 
+ 160:   const avatarActions: Record<string, THREE.AnimationAction> = {};
+ 161:   for (const clip of avatarGltf.animations) {
+ 162:     if (clip.name in CLIP_DURATIONS) {
+ 163:       avatarActions[clip.name] = avatarMixer.clipAction(clip);
+ 164:     }
+ 165:   }
+ 166: 
+ 167:   const chairActions: Record<string, THREE.AnimationAction> = {};
+ 168:   for (const clip of fixtureGltf.animations) {
+ 169:     if (clip.name in CLIP_DURATIONS) {
+ 170:       chairActions[clip.name] = chairMixer.clipAction(clip);
+ 171:     }
+ 172:   }
+ 173: 
+ 174:   // Ensure all 5 standard clips exist on both actors
+ 175:   for (const clipName of Object.keys(CLIP_DURATIONS)) {
+ 176:     if (!avatarActions[clipName] || !chairActions[clipName]) {
+ 177:       throw new Error(`Missing paired animation clip: ${clipName}`);
+ 178:     }
+ 179:   }
+ 180: 
+ 181:   return {
+ 182:     scene: rootGroup,
+ 183:     resident,
+ 184:     residentBody,
+ 185:     chairRoot,
+ 186:     chairBase,
+ 187:     bodyTurn,
+ 188:     head,
+ 189:     desk: foundDesk,
+ 190:     avatarMixer,
+ 191:     chairMixer,
+ 192:     avatarActions,
+ 193:     chairActions,
+ 194:     removedW1Nodes,
+ 195:     discardedW2Nodes,
+ 196:     nodeCounts: {
+ 197:       residentCount,
+ 198:       chairRootCount,
+ 199:       chairBaseCount,
+ 200:       deskCount,
+ 201:       fixtureStaticCount,
+ 202:     },
+ 203:   };
+ 204: }
