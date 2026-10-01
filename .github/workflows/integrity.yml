@@ -1,0 +1,107 @@
+name: Repository integrity
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Verify reference manifest hashes
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          root = Path(".")
+          manifest = json.loads((root / "references/manifest.json").read_text(encoding="utf-8"))
+          files = manifest["files"]
+          assert manifest["fileCount"] == len(files), (manifest["fileCount"], len(files))
+
+          total = 0
+          failures = []
+          for item in files:
+              path = root / item["destination"]
+              if not path.is_file():
+                  failures.append(f"missing: {path}")
+                  continue
+              data = path.read_bytes()
+              total += len(data)
+              actual = hashlib.sha256(data).hexdigest()
+              if len(data) != item["bytes"]:
+                  failures.append(f"size mismatch: {path}")
+              if actual != item["sha256"]:
+                  failures.append(f"sha mismatch: {path}")
+
+          assert total == manifest["totalBytes"], (total, manifest["totalBytes"])
+          assert not failures, "\n".join(failures)
+          print(f"Verified {len(files)} reference files ({total} bytes)")
+          PY
+
+      - name: Verify live status surfaces agree
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          readme = Path("README.md").read_text(encoding="utf-8")
+          start = Path("START_HERE.md").read_text(encoding="utf-8")
+          board = Path("docs/planning/delegation-and-work-orders.md").read_text(encoding="utf-8")
+
+          required = ["G1 ACCEPTED", "G1-R1", "PARENT-RECON-03"]
+          for token in required:
+              assert token in readme, f"README missing {token}"
+              assert token in start, f"START_HERE missing {token}"
+              assert token in board, f"work-order board missing {token}"
+
+          stale = [
+              "W1 REWORK; W2 INSUFFICIENT EVIDENCE; W3 REWORK; G1 LOCKED",
+              "W1/W2/W3 remain unaccepted",
+              "No proof is formally accepted",
+          ]
+          for phrase in stale:
+              assert phrase not in readme, f"README contains stale status: {phrase}"
+
+          print("Status surfaces agree with PARENT-RECON-03")
+          PY
+
+      - name: Reject oversized new scratch archives
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch --no-tags --depth=1 origin "${{ github.base_ref }}"
+          python - <<'PY'
+          import subprocess
+          from pathlib import Path
+
+          base = "origin/${{ github.base_ref }}"
+          added = subprocess.check_output(
+              ["git", "diff", "--name-only", "--diff-filter=A", f"{base}...HEAD"],
+              text=True,
+          ).splitlines()
+
+          violations = []
+          for name in added:
+              path = Path(name)
+              if path.suffix.lower() not in {".zip", ".trace"}:
+                  continue
+              if not path.exists():
+                  continue
+              size = path.stat().st_size
+              if size > 10 * 1024 * 1024:
+                  violations.append(f"{name}: {size} bytes")
+
+          assert not violations, (
+              "New >10 MiB archives require an explicit artifact-storage decision; "
+              "prefer canonical source + hash manifest or a release/artifact store:\n"
+              + "\n".join(violations)
+          )
+          PY
