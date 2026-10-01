@@ -480,7 +480,147 @@ Return the shared review plus a requirement/evidence matrix and scoped accept/re
 Local archive label: reviews/claude-15/review.md; the parent or local worker saves this text there with the reviewed revision.
 ~~~
 
+## Gate G7 — Production Release Verification Prompts (5 Accounts)
+
+> [!CAUTION]
+> **BINDING RELEASE CONSTRAINT: ONLY AFTER OWNER AUTHORIZES DEPLOYMENT.**  
+> **CORE GOVERNANCE MANDATE: G7 IS NOT COMPLETE MERELY BECAUSE A DEPLOYMENT COMMAND SUCCEEDED.**  
+> Every verification check below must run freshly against the public production domain. Stale pre-deployment or local evidence is rejected.
+
+### Gemini #3 — Deployment Candidate & Smoke Verification
+
+~~~text
+You are Gemini #3, assigned to Gate G7: deployment candidate / smoke verification.
+Open C:/Users/yoray/Projects/Yor World/START_HERE.md, AGENTS.md, docs/planning/releases/2026-10-02-g7-production-release-protocol.md, and docs/planning/account-prompts.md.
+Binding rule: Only after owner authorizes deployment. G7 is not complete merely because a deployment command succeeded.
+
+CURRENT PACKET: G7 deployment candidate and live smoke verification. Own only deliveries/G7/gemini-3-smoke-report.md and evidence under deliveries/G7/evidence/gemini-3/.
+Prerequisite: Explicit human owner deployment authorization. If unauthorized, report BLOCKED: WAITING FOR OWNER AUTHORIZATION.
+
+Tasks:
+1. Candidate Packaging Audit:
+   - Verify clean git status and release commit hash.
+   - Run production build (`pnpm build`) and assert zero build warnings/errors.
+   - Validate release manifest (`ReleaseManifest` schema) ensuring zero placeholder URLs.
+2. Fresh Live Smoke Verification:
+   - Immediately post-deployment to the live production domain, execute live HTTP probes against the root `/`.
+   - Verify initial HTML payload contains semantic navigation and portfolio content.
+   - Verify 3D world stage initialization hook executes without client exceptions.
+   - Record response status codes, TTFB, and initial paint metrics under live CDN.
+
+Return deliveries/G7/gemini-3-smoke-report.md with actual commands, versions, HTTP response status codes, console logs, and pass/fail evidence.
+~~~
+
+### Gemini #1 — Backend / Service Production Verification
+
+~~~text
+You are Gemini #1, assigned to Gate G7: backend/service production verification.
+Open C:/Users/yoray/Projects/Yor World/START_HERE.md, AGENTS.md, docs/planning/releases/2026-10-02-g7-production-release-protocol.md, and docs/planning/account-prompts.md.
+Binding rule: Only after owner authorizes deployment. G7 is not complete merely because a deployment command succeeded.
+
+CURRENT PACKET: G7 backend and service production verification. Own only deliveries/G7/gemini-1-backend-report.md and evidence under deliveries/G7/evidence/gemini-1/.
+Prerequisite: Explicit human owner deployment authorization and live deployed endpoint.
+
+Tasks:
+1. Production Configuration & Security Audit:
+   - Verify zero development/staging secrets in client bundles or public responses.
+   - Verify live response security headers: CSP, HSTS, X-Content-Type-Options: nosniff, X-Frame-Options: DENY, and strict CORS.
+2. Live Database & RLS Verification:
+   - Verify connectivity to production Supabase / PostgreSQL instance across all 15 tables.
+   - Execute live RLS policy verification: assert anonymous reads cannot access private tables (`admin_users`, `contact_submissions`, `draft_revisions`, `audit_log`).
+   - Verify AAL2 TOTP MFA gate strictly returns HTTP 401/403 for unauthorized requests to `/api/admin/*`.
+3. Contact Behavior in Production:
+   - Submit live test contact payload to `/api/contact`. Verify atomic DB persistence, outbox queueing, and unique receipt generation.
+   - Verify honeypot rejection (HTTP 400 for bot fields) and rate limiting (HTTP 429 for burst submissions).
+   - Verify zero PII leakage in application logs or telemetry.
+4. Monitoring & Health Probe:
+   - Probe live `/api/health` endpoint; assert HTTP 200 and healthy database connectivity response.
+
+Return deliveries/G7/gemini-1-backend-report.md with sanitized API traces, RLS denial receipts, rate-limit logs, and health probe evidence.
+~~~
+
+### Gemini #2 — Asset / CDN Production Verification
+
+~~~text
+You are Gemini #2, assigned to Gate G7: asset/CDN production verification.
+Open C:/Users/yoray/Projects/Yor World/START_HERE.md, AGENTS.md, docs/planning/releases/2026-10-02-g7-production-release-protocol.md, and docs/planning/account-prompts.md.
+Binding rule: Only after owner authorizes deployment. G7 is not complete merely because a deployment command succeeded.
+
+CURRENT PACKET: G7 asset and CDN production verification. Own only deliveries/G7/gemini-2-asset-cdn-report.md and evidence under deliveries/G7/evidence/gemini-2/.
+Prerequisite: Explicit human owner deployment authorization and live deployed endpoint.
+
+Tasks:
+1. Asset Manifest Cryptographic Audit:
+   - Fetch live production `manifest.json`.
+   - Download every referenced asset (`room-shell.glb`, `resident-production.glb`, `fixture-production.glb`, `interactive-props.glb`, audio, textures) directly from live CDN URLs.
+   - Calculate actual SHA-256 digests of downloaded binaries and assert 100% cryptographic match with manifest.
+2. CDN & Cache Behavior:
+   - Verify static assets serve `Cache-Control: public, max-age=31536000, immutable`.
+   - Verify root/manifest responses serve appropriate revalidation headers (`must-revalidate`, short TTL).
+   - Verify Brotli/Gzip compression enabled for all text/JSON payloads.
+   - Verify byte-range requests (`Accept-Ranges: bytes`, HTTP 206) function for large binary assets.
+3. Asset Transfer Budgets:
+   - Assert total compressed transfer for essential entry assets $\le 6\text{ MiB}$ (desktop) / $\le 3\text{ MiB}$ (mobile).
+   - Assert zero broken asset URLs (404/403/500).
+
+Return deliveries/G7/gemini-2-asset-cdn-report.md with CDN response headers, SHA-256 cryptographic ledger, and byte-budget audit table.
+~~~
+
+### GPT #2 — Live Smoke + Rollback-Path Audit
+
+~~~text
+You are GPT #2, assigned to Gate G7: live smoke + rollback-path audit.
+Open C:/Users/yoray/Projects/Yor World/START_HERE.md, AGENTS.md, docs/planning/releases/2026-10-02-g7-production-release-protocol.md, and docs/planning/account-prompts.md.
+Binding rule: Only after owner authorizes deployment. G7 is not complete merely because a deployment command succeeded.
+
+CURRENT PACKET: G7 live smoke and rollback-path audit. Own only deliveries/G7/gpt-2-smoke-and-rollback-report.md and evidence under deliveries/G7/evidence/gpt-2/.
+Prerequisite: Explicit human owner deployment authorization and live deployed endpoint.
+
+Tasks:
+1. Live Adversarial Smoke Test Battery:
+   - Execute Playwright live test suite against public production domain (Chromium, Edge, Firefox, WebKit).
+   - Public routes: verify direct load, hard refresh, and navigation for `/`, `/about`, `/contact`, `/resume`, and all 4 verified project routes (`/projects/ai-vs-real`, `/projects/zenith`, `/projects/helios`, `/projects/talks`).
+   - Unverified candidate protection: verify `/projects/candidatex` returns HTTP 404 page and is unlaunchable from UI.
+   - World entry sequence: test live doorway entry ($\le 8.0\text{s}$), instant skip ($\le 50\text{ms}$ directly to settled `HOME`), camera presets, and resident acknowledgment.
+   - Fallback verification: test page with JavaScript disabled (complete HTML portfolio rendered, all content readable); test WebGL disabled / context loss (graceful notification, zero crash).
+2. Rollback-Path Audit & Rehearsal:
+   - Audit hosting provider instant deployment rollback capability to previous immutable snapshot.
+   - Verify database schema backward compatibility: verify previous application code functions without error against current database state ($RPO = 0$).
+   - Rehearse emergency rollback execution steps under synthetic trigger; verify target recovery time $\le 5\text{ minutes}$ ($RTO \le 300\text{s}$).
+
+Return deliveries/G7/gpt-2-smoke-and-rollback-report.md with recorded Playwright traces, route matrix results, and verified rollback runbook receipt.
+~~~
+
+### GPT #1 — Final Acceptance Authority
+
+~~~text
+You are GPT #1, Lead Architect and Technical Gate Authority for YOR WORLD.
+Open C:/Users/yoray/Projects/Yor World/START_HERE.md, AGENTS.md, docs/planning/releases/2026-10-02-g7-production-release-protocol.md, and docs/planning/account-prompts.md.
+Binding rule: Only after owner authorizes deployment. G7 is not complete merely because a deployment command succeeded.
+
+CURRENT PACKET: Gate G7 Final Acceptance Adjudication.
+Prerequisite: Human owner deployment authorization, live deployment execution, and returned verification reports from Gemini #3, Gemini #1, Gemini #2, and GPT #2.
+
+Tasks:
+1. Multi-Lane Evidence Dossier Reconciliation:
+   - Reconcile reports and evidence from all 4 verification lanes:
+     - Gemini #3 (Deployment Candidate & Smoke)
+     - Gemini #1 (Backend, RLS, Auth, Contact, Config)
+     - Gemini #2 (CDN Assets, Manifest Integrity, Budgets)
+     - GPT #2 (Live Smoke, Routes, World Entry, Fallbacks, Rollback Audit)
+2. Evaluation of 10 Mandatory Exit Requirements:
+   - Verify empirical PASS evidence for every required item:
+     (1) live domain, (2) fresh smoke, (3) public routes, (4) world entry, (5) fallback,
+     (6) contact behavior, (7) production configuration, (8) asset loading, (9) monitoring, (10) rollback readiness.
+3. Final Acceptance Ruling:
+   - If any requirement fails, is unverified, or relies on stale pre-deployment data: issue G7 REWORK with defect assignments.
+   - If and only if all 10 requirements have conclusive empirical proof from the live domain: issue formal ruling: G7 ACCEPTED (G7-R1).
+
+Return docs/planning/reviews/2026-10-02-g7-gate-acceptance.md with formal ruling, evidence ledger, and signed release summary.
+~~~
+
 ## Handoff sequence
+
 
 1. The initial W1/W2/W3 wave has returned. Use the [current bounded corrections and reviews](reconciliation-packets/2026-10-01-next-packets.md): W1 geometry/evidence correction, W2 interface/provenance reviews, and W3 dependency correction followed by reviews. Preserve earlier evidence; do not restart or integrate the original packets speculatively.
 2. On actual return, assign applicable bounded reviews to **Gemini-3, Claude-01, Claude-02, Claude-05, Claude-13**. Send Claude reviewers the current packet envelope and changed source/evidence via the browser workflow, reusing current Project instructions and knowledge. Include the full shared rules only when those instructions are unavailable. A parent/local worker archives returned text. Parent returns defects and records exact accepted revisions.

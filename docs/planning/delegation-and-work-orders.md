@@ -31,6 +31,33 @@ The user reports 2 GPT Plus, 3 Gemini AI Pro, and 15 Claude free browser account
 | **GPT Plus #1** | **Architect + acceptance authority** | Lead architect, coordinator, packet issuance, frozen baselines, gate evaluation, and final acceptance sign-off. |
 | Claude C01–C15 | Specialized browser reviews | Reserve pool for targeted browser reviews (contracts, a11y, auth/RLS, outbox, legal/provenance) per [browser review workflow](browser-review-workflow.md). |
 
+### Gate G7 Production Release Verification Assignments
+*Prerequisite: Only after human owner explicitly authorizes deployment.*  
+*Core Mandate: G7 is not complete merely because a deployment command succeeded.*  
+*Full specification: [Gate G7 Production Release Protocol](releases/2026-10-02-g7-production-release-protocol.md).*
+
+| Alias | G7 Release Responsibility | Specific Scope & Verification Deliverables |
+| --- | --- | --- |
+| **Gemini #3** | **Deployment candidate / smoke verification** | Packaging, release manifest validation, pre-flight candidate integrity, initial live smoke HTTP probes on live domain. |
+| **Gemini #1** | **Backend/service production verification** | Live Supabase/database connectivity, RLS enforcement on 15 tables, AAL2 MFA protection, contact submission & durable outbox, rate limiting (HTTP 429), production config/secrets isolation, security headers. |
+| **Gemini #2** | **Asset/CDN production verification** | Production CDN asset distribution, manifest SHA-256 integrity against live URLs, immutable cache headers, compression, adherence to transfer budgets ($\le 6\text{ MB}$ entry). |
+| **GPT #2** | **Live smoke + rollback-path audit** | Adversarial live smoke test battery on public domain (routes, 3D world entry $\le 8\text{s}$, skip $\le 50\text{ms}$, fallbacks, no-JS/zero-WebGL), and independent audit/rehearsal of the zero-downtime rollback path ($RTO \le 5\text{m}$, $RPO = 0$). |
+| **GPT #1** | **Final acceptance** | Final gate evaluation, multi-lane evidence dossier reconciliation across all 10 required items, issuance of formal G7 Acceptance Ruling. |
+
+**Mandatory G7 Exit Requirements (All 10 Required):**
+1. **live domain**: DNS resolution, valid TLS/SSL, HTTPS redirect, canonical headers.
+2. **fresh smoke**: Executed live against production domain post-deployment; stale/staging logs rejected.
+3. **public routes**: Direct load, refresh, deep links for `/`, `/about`, `/contact`, `/resume`, 4 verified projects; 404 for CandidateX.
+4. **world entry**: On-demand 3D room, loading spinner, $\le 8.0\text{s}$ entrance, $\le 50\text{ms}$ instant skip, settled `HOME`, avatar acknowledgment.
+5. **fallback**: Complete HTML portfolio without WebGL, JS-disabled usability, context-loss recovery, responsive mobile viewports.
+6. **contact behavior**: Sanitized form submission, honeypot spam protection, HTTP 429 rate limit, atomic DB persistence, outbox delivery, zero PII leak.
+7. **production configuration**: Zero dev/staging secrets leaked, production env vars, strict CSP/security headers, Supabase production RLS.
+8. **asset loading**: CDN delivery, immutable cache headers, 100% SHA-256 match against manifest, transfer budget compliance.
+9. **monitoring**: `/api/health` 200, error logging active, uptime probe operational, zero visitor PII retained in telemetry.
+10. **rollback readiness**: Rehearsed instant rollback mechanism, backward-compatible DB schema, $RTO \le 5\text{m}$, $RPO = 0$.
+
+
+
 ### Execution Pipeline Flow
 ```
 PARENT PACKET
@@ -86,6 +113,8 @@ W1/W2/W3 are independent: W1 owns room geometry; W2 uses its own F1 furniture fi
 | **A4 CMS & publishing** | **Gemini #1** / Claude-08 + parent | Accepted A2 + A3 | **ACTIVE / DISPATCHED:** `deliveries/A4/` (drafts, approved media, revisions, rollback) |
 | **B3-P3 interactive props** | **Gemini #2** / Gemini-3, Claude-13 + parent | B3-P1 sample + G1 | **ACTIVE / DISPATCHED:** `deliveries/B3-P3/` (18 interactive prop assets, 5 visual states) |
 | **C1 experience & interactions** | **Gemini #3** / Claude-03, Claude-11 + parent | G1 + B5 + contracts | **ACTIVE / DISPATCHED:** `deliveries/C1/` (ExperienceController, arbitration, physical room) |
+| **G3 World Core** | Evaluator / Parent | B3-P1 + W1 + W2 + B5 | **ACCEPTED:** 13/13 exit requirements met ([Gate Review](reviews/2026-10-02-g3-gate-evaluation.md)) |
+| **G7 Production Release** | **Gemini #3, #1, #2; GPT #2, #1** | Owner Authorization + G1–G6 | **GATED / LOCKED:** Only after owner authorizes deployment. Requires 10 live criteria ([Protocol](releases/2026-10-02-g7-production-release-protocol.md)). |
 
 **FROZEN CONTRACTS FOR NEW PACKETS:**
 - **Freeze G3 revision:** World core milestone, $\le 300\text{k}$ tris / $\le 120$ draw calls / $\le 160\text{MB}$ VRAM, main reference + B3-P1 visual baseline.
