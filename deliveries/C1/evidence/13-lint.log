@@ -1,0 +1,110 @@
+COMMAND: "C:\Program Files\nodejs\node.EXE" C:\Users\yoray\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs lint
+CWD: C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app
+
+> yor-world-g1-proof@0.1.0 lint C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app
+> eslint . --max-warnings=0
+
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app\src\features\experience\controller.ts
+  22:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  22:50  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  22:68  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  23:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  97:68  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app\src\features\experience\interaction-registry.ts
+  1:33  warning  'PublicRoute' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app\src\features\room\painting-controller.ts
+   73:91  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  122:55  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  147:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app\src\features\world\WorldRoot.tsx
+  433:28  error  Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app\src\features\world\WorldRoot.tsx:433:28
+  431 |       </div>
+  432 |
+> 433 |       {showRoomControls && runtimeRef.current && (
+      |                            ^^^^^^^^^^^^^^^^^^ Cannot access ref value during render
+  434 |         <div className={styles.modalOverlay} data-testid="room-controls-modal">
+  435 |           <RoomControls
+  436 |             controller={runtimeRef.current.experienceController}                                                                                                react-hooks/refs
+  433:28  error  Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app\src\features\world\WorldRoot.tsx:433:28
+  431 |       </div>
+  432 |
+> 433 |       {showRoomControls && runtimeRef.current && (
+      |                            ^^^^^^^^^^^^^^^^^^ Cannot access ref value during render
+  434 |         <div className={styles.modalOverlay} data-testid="room-controls-modal">
+  435 |           <RoomControls
+  436 |             controller={runtimeRef.current.experienceController}                                                                                                react-hooks/refs
+  436:25  error  Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app\src\features\world\WorldRoot.tsx:436:25
+  434 |         <div className={styles.modalOverlay} data-testid="room-controls-modal">
+  435 |           <RoomControls
+> 436 |             controller={runtimeRef.current.experienceController}
+      |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Cannot access ref value during render
+  437 |             snapshot={
+  438 |               diagnostics?.experienceSnapshot ??
+  439 |               runtimeRef.current.experienceController.getSnapshot()  react-hooks/refs
+  439:15  error  Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app\src\features\world\WorldRoot.tsx:439:15
+  437 |             snapshot={
+  438 |               diagnostics?.experienceSnapshot ??
+> 439 |               runtimeRef.current.experienceController.getSnapshot()
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Passing a ref to a function may read its value during render
+  440 |             }
+  441 |             onClose={() => setShowRoomControls(false)}
+  442 |           />                                                                            react-hooks/refs
+  439:15  error  Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app\src\features\world\WorldRoot.tsx:439:15
+  437 |             snapshot={
+  438 |               diagnostics?.experienceSnapshot ??
+> 439 |               runtimeRef.current.experienceController.getSnapshot()
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Passing a ref to a function may read its value during render
+  440 |             }
+  441 |             onClose={() => setShowRoomControls(false)}
+  442 |           />                                                                react-hooks/refs
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app\src\features\world\WorldRuntime.ts
+  220:89  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app\src\features\world\types.ts
+  88:24  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app\tests\unit\interaction-controller.test.ts
+   5:3   warning  'ExperienceDependencies' is defined but never used  @typescript-eslint/no-unused-vars
+   7:10  warning  'defaultPreferences' is defined but never used      @typescript-eslint/no-unused-vars
+   7:30  warning  'defaultWorldSnapshot' is defined but never used    @typescript-eslint/no-unused-vars
+  46:30  error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  47:34  error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  48:38  error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app\tests\unit\interaction-registry.test.ts
+  2:31  warning  'FROZEN_V1_CATALOG' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app\tests\unit\preferences-resilience.test.ts
+  1:36  warning  'beforeEach' is defined but never used                     @typescript-eslint/no-unused-vars
+  6:9   warning  'originalLocalStorage' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+✖ 25 problems (18 errors, 7 warnings)
+
+ ELIFECYCLE  Command failed with exit code 1.
+
+EXIT: 1

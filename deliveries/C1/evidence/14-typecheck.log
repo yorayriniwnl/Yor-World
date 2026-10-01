@@ -1,0 +1,35 @@
+COMMAND: "C:\Program Files\nodejs\node.EXE" C:\Users\yoray\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs typecheck
+CWD: C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app
+
+> yor-world-g1-proof@0.1.0 typecheck C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app
+> tsc --noEmit
+
+src/features/character/greeting-controller.ts(107,32): error TS2339: Property 'mode' does not exist on type 'GreetingCharacterTarget'.
+src/features/world/WorldRuntime.ts(69,9): error TS2322: Type 'CameraDirector' is not assignable to type 'CameraDirectorAdapter'.
+  Types of property 'transitionTo' are incompatible.
+    Type '(preset: CameraPreset, signalOrDuration?: number | AbortSignal | undefined, durationMsParam?: number) => Promise<void>' is not assignable to type '(preset: string, signalOrDuration?: number | AbortSignal | undefined, durationMs?: number | undefined) => Promise<void>'.
+      Types of parameters 'preset' and 'preset' are incompatible.
+        Type 'string' is not assignable to type 'CameraPreset'.
+tests/unit/interaction-controller.test.ts(30,7): error TS2322: Type 'Mock<Procedure | Constructable>' is not assignable to type '((projectId: string) => void) & Mock<Procedure | Constructable>'.
+  Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' is not assignable to type '((projectId: string) => void) & Mock<Procedure | Constructable>'.
+    Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' is not assignable to type '((projectId: string) => void) & MockInstance<Procedure | Constructable> & { (...args: any[]): any; new (...args: any[]): any; } & {}'.
+      Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' is not assignable to type '(projectId: string) => void'.
+        Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' provides no match for the signature '(projectId: string): void'.
+tests/unit/interaction-controller.test.ts(31,7): error TS2322: Type 'Mock<Procedure | Constructable>' is not assignable to type '((path: string) => void) & Mock<Procedure | Constructable>'.
+  Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' is not assignable to type '((path: string) => void) & Mock<Procedure | Constructable>'.
+    Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' is not assignable to type '((path: string) => void) & MockInstance<Procedure | Constructable> & { (...args: any[]): any; new (...args: any[]): any; } & {}'.
+      Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' is not assignable to type '(path: string) => void'.
+        Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' provides no match for the signature '(path: string): void'.
+tests/unit/interaction-controller.test.ts(35,7): error TS2322: Type 'Mock<Procedure | Constructable>' is not assignable to type '((preset: string, immediate?: boolean | undefined) => void) & Mock<Procedure | Constructable>'.
+  Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' is not assignable to type '((preset: string, immediate?: boolean | undefined) => void) & Mock<Procedure | Constructable>'.
+    Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' is not assignable to type '((preset: string, immediate?: boolean | undefined) => void) & MockInstance<Procedure | Constructable> & { (...args: any[]): any; new (...args: any[]): any; } & {}'.
+      Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' is not assignable to type '(preset: string, immediate?: boolean | undefined) => void'.
+        Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' provides no match for the signature '(preset: string, immediate?: boolean | undefined): void'.
+tests/unit/interaction-controller.test.ts(36,7): error TS2322: Type 'Mock<Procedure | Constructable>' is not assignable to type '((enabled: boolean) => void) & Mock<Procedure | Constructable>'.
+  Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' is not assignable to type '((enabled: boolean) => void) & Mock<Procedure | Constructable>'.
+    Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' is not assignable to type '((enabled: boolean) => void) & MockInstance<Procedure | Constructable> & { (...args: any[]): any; new (...args: any[]): any; } & {}'.
+      Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' is not assignable to type '(enabled: boolean) => void'.
+        Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' provides no match for the signature '(enabled: boolean): void'.
+ ELIFECYCLE  Command failed with exit code 2.
+
+EXIT: 2

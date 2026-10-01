@@ -64,6 +64,7 @@ test.describe("Milestone A4: Project Editor & Publication Management E2E", () =>
     const heading = page.getByRole("heading", { level: 1, name: /Project Content & Draft Editor/i });
     await expect(heading).toBeVisible();
     await captureScreenshot(page, "a4-project-editor");
+    await captureScreenshot(page, "a4-admin-editor");
 
     // Project select dropdown
     const select = page.getByLabel(/Select Project:/i);
@@ -114,6 +115,7 @@ test.describe("Milestone A4: Project Editor & Publication Management E2E", () =>
     await expect(table.getByText(/Revision/i).first()).toBeVisible();
     await expect(table.getByText(/r1/i).first()).toBeVisible();
     await captureScreenshot(page, "a4-publish-review");
+    await captureScreenshot(page, "a4-admin-publish");
   });
 
   test("editor and publish interfaces require zero WebGL, canvas, or 3D models", async ({ page }) => {

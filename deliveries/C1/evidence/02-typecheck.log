@@ -1,0 +1,43 @@
+COMMAND: "C:\Program Files\nodejs\node.EXE" C:\Users\yoray\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs typecheck
+CWD: C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app
+
+> yor-world-g1-proof@0.1.0 typecheck C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app
+> tsc --noEmit
+
+src/features/experience/controller.ts(94,5): error TS2412: Type 'CameraDirectorAdapter | undefined' is not assignable to type 'CameraDirectorAdapter' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the type of the target.
+  Type 'undefined' is not assignable to type 'CameraDirectorAdapter'.
+src/features/experience/controller.ts(95,5): error TS2412: Type 'CharacterDirectorAdapter | undefined' is not assignable to type 'CharacterDirectorAdapter' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the type of the target.
+  Type 'undefined' is not assignable to type 'CharacterDirectorAdapter'.
+src/features/experience/interaction-registry.ts(24,14): error TS2322: Type 'readonly ({ id: string; label: string; category: "navigation"; accessibleControlLabel: string; accessibleControlType: "button"; cameraPreset: string; cooldownMs: number; reducedMotionBehavior: string; destinationRoute: null; createIntent: () => { ...; }; } | ... 14 more ... | { ...; })[]' is not assignable to type 'readonly InteractiveCatalogEntry[]'.
+  Type '{ id: string; label: string; category: "navigation"; accessibleControlLabel: string; accessibleControlType: "button"; cameraPreset: string; cooldownMs: number; reducedMotionBehavior: string; destinationRoute: null; createIntent: () => { ...; }; } | ... 14 more ... | { ...; }' is not assignable to type 'InteractiveCatalogEntry'.
+    Type '{ id: string; label: string; category: "navigation"; accessibleControlLabel: string; accessibleControlType: "button"; cameraPreset: string; cooldownMs: number; reducedMotionBehavior: string; destinationRoute: null; createIntent: () => { ...; }; }' is not assignable to type 'InteractiveCatalogEntry'.
+      The types returned by 'createIntent()' are incompatible between these types.
+        Type '{ type: string; replay: boolean; }' is not assignable to type '{ type: "ENTER"; replay: boolean; } | { type: "SKIP"; } | { type: "GREET"; } | { type: "OPEN_PROJECT"; projectId: "candidatex" | "helios" | "zenith" | "ai-vs-real" | "talks"; source: "room" | "dom"; } | ... 17 more ... | { ...; }'.
+          Type '{ type: string; replay: boolean; }' is not assignable to type '{ type: "ENTER"; replay: boolean; }'.
+            Types of property 'type' are incompatible.
+              Type 'string' is not assignable to type '"ENTER"'.
+src/features/world/WorldRuntime.ts(69,9): error TS2739: Type 'CameraDirector' is missing the following properties from type 'CameraDirectorAdapter': setCameraPreset, getCurrentPreset
+tests/unit/contract-types.test.ts(14,56): error TS2344: Type 'PublicRoute' does not satisfy the constraint '"Expected: literal string: /, Actual: literal string: /projects/candidatex" | "Expected: literal string: /, Actual: literal string: /projects/helios" | "Expected: literal string: /, Actual: literal string: /projects/zenith" | ... 31 more ... | "Expected: literal string: /resume, Actual: literal string: /projects/yor...'.
+  Type '"/"' is not assignable to type '"Expected: literal string: /, Actual: literal string: /projects/candidatex" | "Expected: literal string: /, Actual: literal string: /projects/helios" | "Expected: literal string: /, Actual: literal string: /projects/zenith" | ... 31 more ... | "Expected: literal string: /resume, Actual: literal string: /projects/yor...'.
+tests/unit/contract-types.test.ts(16,53): error TS2344: Type 'CameraId' does not satisfy the constraint '"Expected: literal string: hallway, Actual: literal string: reverse-doorway" | "Expected: literal string: entry, Actual: literal string: reverse-doorway" | "Expected: literal string: reveal, Actual: literal string: reverse-doorway" | ... 9 more ... | "Expected: literal string: contact, Actual: literal string: revers...'.
+  Type '"hallway"' is not assignable to type '"Expected: literal string: hallway, Actual: literal string: reverse-doorway" | "Expected: literal string: entry, Actual: literal string: reverse-doorway" | "Expected: literal string: reveal, Actual: literal string: reverse-doorway" | ... 9 more ... | "Expected: literal string: contact, Actual: literal string: revers...'.
+tests/unit/contract-types.test.ts(19,61): error TS2344: Type 'ExperienceIntent' does not satisfy the constraint '{ type: "Expected: literal string: ENTER, Actual: literal string: CLOSE_PANEL" | "Expected: literal string: ENTER, Actual: literal string: TILT_PAINTING" | "Expected: literal string: ENTER, Actual: literal string: NUDGE_PLANT" | ... 92 more ... | "Expected: literal string: RENDERER_FAILED, Actual: literal string: RE...'.
+  Type '{ type: "ENTER"; replay: boolean; }' is missing the following properties from type '{ type: "Expected: literal string: ENTER, Actual: literal string: CLOSE_PANEL" | "Expected: literal string: ENTER, Actual: literal string: TILT_PAINTING" | "Expected: literal string: ENTER, Actual: literal string: NUDGE_PLANT" | ... 92 more ... | "Expected: literal string: RENDERER_FAILED, Actual: literal string: RE...': code, quality, clock24h, projectId, and 9 more.
+tests/unit/interaction-controller.test.ts(46,7): error TS2322: Type '{ openProject: Mock<Procedure | Constructable>; openRoute: Mock<Procedure | Constructable>; }' is not assignable to type 'NavigationAdapter'.
+  Types of property 'openProject' are incompatible.
+    Type 'Mock<Procedure | Constructable>' is not assignable to type '(projectId: string) => void'.
+      Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' is not assignable to type '(projectId: string) => void'.
+        Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' provides no match for the signature '(projectId: string): void'.
+tests/unit/interaction-controller.test.ts(47,7): error TS2322: Type '{ transitionTo: Mock<Procedure | Constructable>; setCameraPreset: Mock<Procedure | Constructable>; setReducedMotion: Mock<...>; getCurrentPreset: Mock<...>; }' is not assignable to type 'CameraDirectorAdapter'.
+  Types of property 'transitionTo' are incompatible.
+    Type 'Mock<Procedure | Constructable>' is not assignable to type '(preset: string, durationSec?: number | undefined) => Promise<void>'.
+      Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' is not assignable to type '(preset: string, durationSec?: number | undefined) => Promise<void>'.
+        Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' provides no match for the signature '(preset: string, durationSec?: number | undefined): Promise<void>'.
+tests/unit/interaction-controller.test.ts(48,7): error TS2322: Type '{ playGreeting: Mock<Procedure | Constructable>; cancel: Mock<Procedure | Constructable>; settle: Mock<Procedure | Constructable>; mode: string; currentClip: string; }' is not assignable to type 'CharacterDirectorAdapter'.
+  Types of property 'playGreeting' are incompatible.
+    Type 'Mock<Procedure | Constructable>' is not assignable to type '() => number'.
+      Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' is not assignable to type '() => number'.
+        Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' provides no match for the signature '(): number'.
+ ELIFECYCLE  Command failed with exit code 2.
+
+EXIT: 2

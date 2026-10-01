@@ -1,0 +1,137 @@
+COMMAND: "C:\Program Files\nodejs\node.EXE" C:\Users\yoray\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs test:unit
+CWD: C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app
+
+> yor-world-g1-proof@0.1.0 test:unit C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app
+> vitest run --config vitest.config.ts
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.2 [39m[90mC:/Users/yoray/AppData/Local/Temp/yor-world-c1-proof-psav0kdc/app[39m
+
+[90mstderr[2m | tests/unit/lifecycle-manager.test.ts[2m > [22m[2mLifecycleManager - 8 Explicit States and Adversarial Guarantees[2m > [22m[2menforces bounded retries (maxRetries = 3)
+[22m[39m[LifecycleManager] Bounded retry limit reached.
+
+[90mstderr[2m | tests/unit/lifecycle-manager.test.ts[2m > [22m[2mLifecycleManager - 8 Explicit States and Adversarial Guarantees[2m > [22m[2mDISPOSING cleans up all listeners and returns to STATIC
+[22m[39m[LifecycleManager] Cannot request entry: manager is disposed.
+
+ [32m✓[39m tests/unit/lifecycle-manager.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m tests/unit/scene-integrator.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m tests/unit/intent-arbitration.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [31m❯[39m tests/unit/painting-interaction.test.ts [2m([22m[2m6 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 20[2mms[22m[39m
+   [31m❯[39m PaintingController (Task C1: Wall Painting Interactions) [2m(6)[22m
+     [32m✓[39m suppresses click when movement reaches or exceeds 8 CSS px threshold[32m 5[2mms[22m[39m
+     [32m✓[39m treats movement < 8px as a tap/click and triggers preset tilt[32m 1[2mms[22m[39m
+     [32m✓[39m strictly clamps tilt angle to [-6, +6] degrees[32m 0[2mms[22m[39m
+     [32m✓[39m reveals hidden detail when tilt reaches >= 5.0 degrees[32m 0[2mms[22m[39m
+[31m     [31m×[31m returns to neutral (0 degrees) with damped spring within 1.2 seconds[39m[32m 9[2mms[22m[39m
+     [32m✓[39m ignores secondary multitouch pointers while capturing primary pointer[32m 0[2mms[22m[39m
+[90mstderr[2m | tests/unit/entrance-coordinator.test.ts[2m > [22m[2mEntranceCoordinator - Single Active Entrance and Bounded Duration[2m > [22m[2mPROVE: only one active entrance exists at any time
+[22m[39m[EntranceCoordinator] Entrance already running; returning active entrance promise.
+
+ [32m✓[39m tests/unit/character-director.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m tests/unit/entrance-coordinator.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m tests/unit/contracts.test.ts [2m([22m[2m51 tests[22m[2m)[22m[32m 72[2mms[22m[39m
+ [32m✓[39m tests/unit/camera-director.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [31m❯[39m tests/unit/interaction-registry.test.ts [2m([22m[2m3 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 22[2mms[22m[39m
+   [31m❯[39m InteractionRegistry & Frozen V1 Catalog Mapping (Task C1) [2m(3)[22m
+     [32m✓[39m contains all required entities from the frozen V1 catalog[32m 5[2mms[22m[39m
+     [32m✓[39m ensures every meaningful geometry interaction has an accessible non-geometry equivalent[32m 3[2mms[22m[39m
+[31m     [31m×[31m provides direct navigation destinations for all 5 verified project objects[39m[32m 11[2mms[22m[39m
+ [32m✓[39m tests/unit/preferences-resilience.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+[90mstderr[2m | tests/unit/interaction-controller.test.ts[2m > [22m[2mExperienceController & Interaction Arbitration (Task C1)[2m > [22m[2mAttack 8: renderer failure[2m > [22m[2mtransitions cleanly to static fallback and aborts in-flight work on RENDERER_FAILED
+[22m[39m[ExperienceController] Renderer failed (CONTEXT_LOST), falling back to static presentation.
+
+ [31m❯[39m tests/unit/interaction-controller.test.ts [2m([22m[2m14 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 40[2mms[22m[39m
+   [31m❯[39m ExperienceController & Interaction Arbitration (Task C1) [2m(14)[22m
+     [32m✓[39m Invariants: Single Owners and High-Level State [2m(3)[22m
+       [32m✓[39m exposes exactly one canonical owner for each subsystem[32m 5[2mms[22m[39m
+       [32m✓[39m maintains a coherent high-level experience state snapshot[32m 1[2mms[22m[39m
+       [32m✓[39m assigns monotonically increasing transition IDs[32m 3[2mms[22m[39m
+     [32m✓[39m Attack 1: resident -> resident rapidly [2m(2)[22m
+       [32m✓[39m rejects duplicate greeting clicks during active sequence without queuing[32m 1[2mms[22m[39m
+       [32m✓[39m triggers attention glance when clicked during 7s cooldown after sequence[32m 1[2mms[22m[39m
+     [31m❯[39m Attack 2: resident -> project preemption [2m(1)[22m
+[31m       [31m×[31m immediately cancels resident greeting and transitions to project[39m[32m 8[2mms[22m[39m
+     [32m✓[39m Attack 3: project A -> project B (stale-completion rejection) [2m(1)[22m
+       [32m✓[39m aborts Project A, rejects stale completion, and navigates only to Project B[32m 2[2mms[22m[39m
+     [32m✓[39m Attack 4: painting during camera movement [2m(1)[22m
+       [32m✓[39m drops or coalesces decorative painting drag during active project transition[32m 1[2mms[22m[39m
+     [32m✓[39m Attack 5: Escape during interaction (safe base-state restoration) [2m(1)[22m
+       [32m✓[39m cancels project focus, restores explore phase, and preserves base preferences[32m 1[2mms[22m[39m
+     [32m✓[39m Attack 6: Back & route navigation during interaction [2m(1)[22m
+       [32m✓[39m aborts active interaction and navigates to route without hanging promises[32m 8[2mms[22m[39m
+     [32m✓[39m Attack 7: hide/show visibility suspension [2m(1)[22m
+       [32m✓[39m sets suspended state on HIDE and restores on SHOW without time leaps[32m 1[2mms[22m[39m
+     [32m✓[39m Attack 8: renderer failure [2m(1)[22m
+       [32m✓[39m transitions cleanly to static fallback and aborts in-flight work on RENDERER_FAILED[32m 2[2mms[22m[39m
+     [32m✓[39m Attack 9: unmount cleanup [2m(1)[22m
+       [32m✓[39m disposes cancellation coordinator and settles character on stop()[32m 0[2mms[22m[39m
+     [32m✓[39m Attack 10: reduced motion [2m(1)[22m
+       [32m✓[39m bypasses camera travel and opens project immediately under reduced motion[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/contract-types.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m tests/unit/boundaries.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 758[2mms[22m[39m
+   [33m[2m✓[22m[39m enforces G1 dependency boundaries: three is isolated to world feature, shell remains free of 3D[33m 712[2mms[22m[39m
+ [32m✓[39m tests/unit/asset-loader.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 3 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/unit/interaction-controller.test.ts[2m > [22mExperienceController & Interaction Arbitration (Task C1)[2m > [22mAttack 2: resident -> project preemption[2m > [22mimmediately cancels resident greeting and transitions to project
+[31m[1mAssertionError[22m: expected "vi.fn()" to be called at least once[39m
+[36m [2m❯[22m tests/unit/interaction-controller.test.ts:[2m128:31[22m[39m
+    [90m126|[39m
+    [90m127|[39m       // Character must be settled immediately to safe coding pose (<=…
+    [90m128|[39m       expect(mockChar.settle).toHaveBeenCalled();
+    [90m   |[39m                               [31m^[39m
+    [90m129|[39m       expect(controller.greeting.isBusy()).toBe(false);
+    [90m130|[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/interaction-registry.test.ts[2m > [22mInteractionRegistry & Frozen V1 Catalog Mapping (Task C1)[2m > [22mprovides direct navigation destinations for all 5 verified project objects
+[31m[1mAssertionError[22m: expected '/projects' to be '/projects/candidatex' // Object.is equality[39m
+
+Expected: [32m"/projects[7m/candidatex[27m"[39m
+Received: [31m"/projects"[39m
+
+[36m [2m❯[22m tests/unit/interaction-registry.test.ts:[2m66:39[22m[39m
+    [90m 64|[39m     for (const p of projectEntries) {
+    [90m 65|[39m       const entry = registry.get(p.id);
+    [90m 66|[39m       expect(entry?.destinationRoute).toBe(p.route);
+    [90m   |[39m                                       [31m^[39m
+    [90m 67|[39m       expect(entry?.accessibleControlType).toBe("link");
+    [90m 68|[39m     }
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/painting-interaction.test.ts[2m > [22mPaintingController (Task C1: Wall Painting Interactions)[2m > [22mreturns to neutral (0 degrees) with damped spring within 1.2 seconds
+[31m[1mAssertionError[22m: expected 0.017318184834131112 to be +0 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 0[39m
+[31m+ 0.017318184834131112[39m
+
+[36m [2m❯[22m tests/unit/painting-interaction.test.ts:[2m79:28[22m[39m
+    [90m 77|[39m
+    [90m 78|[39m     const state = controller.getState();
+    [90m 79|[39m     expect(state.angleDeg).toBe(0);
+    [90m   |[39m                            [31m^[39m
+    [90m 80|[39m     expect(state.isSettled).toBe(true);
+    [90m 81|[39m   });
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m11 passed[39m[22m[90m (14)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m119 passed[39m[22m[90m (122)[39m
+[2m   Start at [22m 00:18:19
+[2m   Duration [22m 2.69s[2m (transform 48%, import 40%, tests 10%, worker 1%)[22m
+
+[2m  Transform [22m [33mtransforming modules took 5.03s[39m[2m · 48% of tracked time, re-done on every run[22m
+[2m            [22m [2mpersist transforms across runs with [22m[33mfsModuleCache: true[39m
+[2m            [22m [2mon CI this only helps when the cache directory is persisted between runs[22m
+[2m            [22m [2mlearn more: https://vitest.dev/guide/improving-performance#caching-between-reruns[22m
+
+ ELIFECYCLE  Command failed with exit code 1.
+
+EXIT: 1

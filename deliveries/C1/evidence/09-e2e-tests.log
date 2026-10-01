@@ -1,0 +1,272 @@
+COMMAND: "C:\Program Files\nodejs\node.EXE" C:\Users\yoray\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs test:e2e tests/e2e/physical-interactions.spec.ts
+CWD: C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app
+
+> yor-world-g1-proof@0.1.0 test:e2e C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app
+> playwright test "tests/e2e/physical-interactions.spec.ts"
+
+
+Running 12 tests using 1 worker
+
+  ok  1 [chrome] › tests\e2e\physical-interactions.spec.ts:21:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 1. Invariants: verifies single owners and high-level experience snapshot (10.4s)
+  ok  2 [chrome] › tests\e2e\physical-interactions.spec.ts:45:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 2. Attack: rapid resident greeting clicks without race conditions or double-queuing (10.0s)
+  x   3 [chrome] › tests\e2e\physical-interactions.spec.ts:63:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 3. Attack: Escape key cancels interaction and restores safe explore base state (8.8s)
+  x   4 [chrome] › tests\e2e\physical-interactions.spec.ts:81:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 4. Non-geometry equivalent: accessible Room Controls toggles environment settings (11.1s)
+  ok  5 [chrome] › tests\e2e\physical-interactions.spec.ts:112:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 5. Painting interaction: inspection tilt triggers spring response and discovers hidden mark (12.3s)
+  x   6 [chrome] › tests\e2e\physical-interactions.spec.ts:129:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 6. Attack: route navigation during interaction unmounts cleanly without errors (15.2s)
+  ok  7 [edge] › tests\e2e\physical-interactions.spec.ts:21:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 1. Invariants: verifies single owners and high-level experience snapshot (11.2s)
+  ok  8 [edge] › tests\e2e\physical-interactions.spec.ts:45:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 2. Attack: rapid resident greeting clicks without race conditions or double-queuing (8.7s)
+  x   9 [edge] › tests\e2e\physical-interactions.spec.ts:63:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 3. Attack: Escape key cancels interaction and restores safe explore base state (10.2s)
+  x  10 [edge] › tests\e2e\physical-interactions.spec.ts:81:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 4. Non-geometry equivalent: accessible Room Controls toggles environment settings (11.0s)
+  ok 11 [edge] › tests\e2e\physical-interactions.spec.ts:112:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 5. Painting interaction: inspection tilt triggers spring response and discovers hidden mark (10.6s)
+  x  12 [edge] › tests\e2e\physical-interactions.spec.ts:129:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 6. Attack: route navigation during interaction unmounts cleanly without errors (13.8s)
+
+
+  1) [chrome] › tests\e2e\physical-interactions.spec.ts:63:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 3. Attack: Escape key cancels interaction and restores safe explore base state 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "home-desktop"
+    Received: "monitor"
+
+      75 |     const diag = JSON.parse(await diagPre.innerText());
+      76 |
+    > 77 |     expect(diag.cameraPreset).toBe("home-desktop");
+         |                               ^
+      78 |     expect(diag.activeClip).toBe("coding_idle");
+      79 |   });
+      80 |
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app\tests\e2e\physical-interactions.spec.ts:77:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\physical-interactions-Phys-5d650-res-safe-explore-base-state-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\physical-interactions-Phys-5d650-res-safe-explore-base-state-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\physical-interactions-Phys-5d650-res-safe-explore-base-state-chrome\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\physical-interactions-Phys-5d650-res-safe-explore-base-state-chrome\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\physical-interactions-Phys-5d650-res-safe-explore-base-state-chrome\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chrome] › tests\e2e\physical-interactions.spec.ts:81:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 4. Non-geometry equivalent: accessible Room Controls toggles environment settings 
+
+    Error: locator.uncheck: Clicking the checkbox did not change its state
+    Call log:
+      - waiting for locator('[data-testid="control-toggle-lamp"]')
+        - locator resolved to <input checked type="checkbox" data-testid="control-toggle-lamp"/>
+      - attempting click action
+        - waiting for element to be visible, enabled and stable
+        - element is visible, enabled and stable
+        - scrolling into view if needed
+        - done scrolling
+        - performing click action
+        - click action done
+        - waiting for scheduled navigations to finish
+        - navigations have finished
+
+
+      88 |     const lampCheckbox = page.locator('[data-testid="control-toggle-lamp"]');
+      89 |     await expect(lampCheckbox).toBeChecked();
+    > 90 |     await lampCheckbox.uncheck();
+         |                        ^
+      91 |     await expect(lampCheckbox).not.toBeChecked();
+      92 |
+      93 |     // Toggle Window Blinds
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app\tests\e2e\physical-interactions.spec.ts:90:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\physical-interactions-Phys-3a5aa-oggles-environment-settings-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\physical-interactions-Phys-3a5aa-oggles-environment-settings-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\physical-interactions-Phys-3a5aa-oggles-environment-settings-chrome\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\physical-interactions-Phys-3a5aa-oggles-environment-settings-chrome\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\physical-interactions-Phys-3a5aa-oggles-environment-settings-chrome\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chrome] › tests\e2e\physical-interactions.spec.ts:129:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 6. Attack: route navigation during interaction unmounts cleanly without errors 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('nav[aria-label="Site navigation"] a[href="/about"]')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('nav[aria-label="Site navigation"] a[href="/about"]') with timeout 5000ms
+      - waiting for locator('nav[aria-label="Site navigation"] a[href="/about"]')
+
+
+      133 |     // Click direct accessible navigation link in header to exit studio
+      134 |     const aboutLink = page.locator('nav[aria-label="Site navigation"] a[href="/about"]');
+    > 135 |     await expect(aboutLink).toBeVisible();
+          |                             ^
+      136 |     await aboutLink.click();
+      137 |
+      138 |     // Verify clean navigation to About page
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app\tests\e2e\physical-interactions.spec.ts:135:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\physical-interactions-Phys-7901e-unts-cleanly-without-errors-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\physical-interactions-Phys-7901e-unts-cleanly-without-errors-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\physical-interactions-Phys-7901e-unts-cleanly-without-errors-chrome\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\physical-interactions-Phys-7901e-unts-cleanly-without-errors-chrome\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\physical-interactions-Phys-7901e-unts-cleanly-without-errors-chrome\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [edge] › tests\e2e\physical-interactions.spec.ts:63:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 3. Attack: Escape key cancels interaction and restores safe explore base state 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "home-desktop"
+    Received: "monitor"
+
+      75 |     const diag = JSON.parse(await diagPre.innerText());
+      76 |
+    > 77 |     expect(diag.cameraPreset).toBe("home-desktop");
+         |                               ^
+      78 |     expect(diag.activeClip).toBe("coding_idle");
+      79 |   });
+      80 |
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app\tests\e2e\physical-interactions.spec.ts:77:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\physical-interactions-Phys-5d650-res-safe-explore-base-state-edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\physical-interactions-Phys-5d650-res-safe-explore-base-state-edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\physical-interactions-Phys-5d650-res-safe-explore-base-state-edge\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\physical-interactions-Phys-5d650-res-safe-explore-base-state-edge\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\physical-interactions-Phys-5d650-res-safe-explore-base-state-edge\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [edge] › tests\e2e\physical-interactions.spec.ts:81:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 4. Non-geometry equivalent: accessible Room Controls toggles environment settings 
+
+    Error: locator.uncheck: Clicking the checkbox did not change its state
+    Call log:
+      - waiting for locator('[data-testid="control-toggle-lamp"]')
+        - locator resolved to <input checked type="checkbox" data-testid="control-toggle-lamp"/>
+      - attempting click action
+        - waiting for element to be visible, enabled and stable
+        - element is visible, enabled and stable
+        - scrolling into view if needed
+        - done scrolling
+        - performing click action
+        - click action done
+        - waiting for scheduled navigations to finish
+        - navigations have finished
+
+
+      88 |     const lampCheckbox = page.locator('[data-testid="control-toggle-lamp"]');
+      89 |     await expect(lampCheckbox).toBeChecked();
+    > 90 |     await lampCheckbox.uncheck();
+         |                        ^
+      91 |     await expect(lampCheckbox).not.toBeChecked();
+      92 |
+      93 |     // Toggle Window Blinds
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app\tests\e2e\physical-interactions.spec.ts:90:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\physical-interactions-Phys-3a5aa-oggles-environment-settings-edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\physical-interactions-Phys-3a5aa-oggles-environment-settings-edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\physical-interactions-Phys-3a5aa-oggles-environment-settings-edge\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\physical-interactions-Phys-3a5aa-oggles-environment-settings-edge\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\physical-interactions-Phys-3a5aa-oggles-environment-settings-edge\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) [edge] › tests\e2e\physical-interactions.spec.ts:129:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 6. Attack: route navigation during interaction unmounts cleanly without errors 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('nav[aria-label="Site navigation"] a[href="/about"]')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('nav[aria-label="Site navigation"] a[href="/about"]') with timeout 5000ms
+      - waiting for locator('nav[aria-label="Site navigation"] a[href="/about"]')
+
+
+      133 |     // Click direct accessible navigation link in header to exit studio
+      134 |     const aboutLink = page.locator('nav[aria-label="Site navigation"] a[href="/about"]');
+    > 135 |     await expect(aboutLink).toBeVisible();
+          |                             ^
+      136 |     await aboutLink.click();
+      137 |
+      138 |     // Verify clean navigation to About page
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-c1-proof-psav0kdc\app\tests\e2e\physical-interactions.spec.ts:135:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\physical-interactions-Phys-7901e-unts-cleanly-without-errors-edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\physical-interactions-Phys-7901e-unts-cleanly-without-errors-edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\physical-interactions-Phys-7901e-unts-cleanly-without-errors-edge\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\physical-interactions-Phys-7901e-unts-cleanly-without-errors-edge\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\physical-interactions-Phys-7901e-unts-cleanly-without-errors-edge\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6 failed
+    [chrome] › tests\e2e\physical-interactions.spec.ts:63:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 3. Attack: Escape key cancels interaction and restores safe explore base state 
+    [chrome] › tests\e2e\physical-interactions.spec.ts:81:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 4. Non-geometry equivalent: accessible Room Controls toggles environment settings 
+    [chrome] › tests\e2e\physical-interactions.spec.ts:129:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 6. Attack: route navigation during interaction unmounts cleanly without errors 
+    [edge] › tests\e2e\physical-interactions.spec.ts:63:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 3. Attack: Escape key cancels interaction and restores safe explore base state 
+    [edge] › tests\e2e\physical-interactions.spec.ts:81:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 4. Non-geometry equivalent: accessible Room Controls toggles environment settings 
+    [edge] › tests\e2e\physical-interactions.spec.ts:129:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 6. Attack: route navigation during interaction unmounts cleanly without errors 
+  6 passed (2.7m)
+ ELIFECYCLE  Command failed with exit code 1.
+
+EXIT: 1

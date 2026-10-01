@@ -1,0 +1,32 @@
+{
+  "gate": "G4",
+  "packet": "C1",
+  "archive": "c1-interaction-proof.zip",
+  "generatedAt": "2026-10-01T23:58:00Z",
+  "environment": {
+    "node": "v24.19.0",
+    "pnpm": "9.15.9",
+    "next": "16.3.8",
+    "react": "19.3.0",
+    "three": "0.180.0",
+    "vitest": "5.0.2",
+    "playwright": "1.63.0"
+  },
+  "invariants": {
+    "singleOwners": {
+      "renderer": "primary-renderer-lifecycle",
+      "camera": "primary-camera-director",
+      "transition": "primary-transition-coordinator",
+      "characterAction": "primary-character-director",
+      "experienceController": "primary-experience-controller"
+    },
+    "highLevelExperienceState": "single ExperienceSnapshot managed by ExperienceController",
+    "explicitCancellationIdentity": "monotonic transitionId + AbortSignal + explicit cancellation reason",
+    "staleCompletionRejection": "obsolete async operations never navigate, restart animation, change camera, restore old state, or reopen UI",
+    "nonGeometryEquivalents": "every meaningful geometry interaction mapped to accessible DOM equivalent in Room Controls",
+    "residentCooldownMs": 7000,
+    "paintingMaxTiltDeg": 6.0,
+    "paintingDragThresholdPx": 8.0,
+    "paintingSettleSec": 1.2
+  }
+}
