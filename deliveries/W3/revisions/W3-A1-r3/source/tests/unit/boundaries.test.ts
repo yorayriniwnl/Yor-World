@@ -1,0 +1,206 @@
+import { readdirSync, readFileSync } from "node:fs";
+import { dirname, join, normalize } from "node:path";
+import { describe, expect, it } from "vitest";
+import ts from "typescript";
+import { publishedProjects, draftIdentity } from "../../src/features/portfolio/public-content";
+
+function files(root: string): string[] {
+  return readdirSync(root, { withFileTypes: true }).flatMap((entry) =>
+    entry.isDirectory() ? files(join(root, entry.name)) : [join(root, entry.name)]);
+}
+
+export interface DiscoveredImport {
+  specifier: string;
+  kind: "import" | "side-effect-import" | "export-from" | "dynamic-import" | "require" | "import-type";
+  line: number;
+  resolvedPath: string;
+}
+
+export function extractModuleSpecifiers(filePath: string, text: string): DiscoveredImport[] {
+  const sourceFile = ts.createSourceFile(filePath, text, ts.ScriptTarget.Latest, true);
+  const results: DiscoveredImport[] = [];
+
+  function record(specifier: string, kind: DiscoveredImport["kind"], node: ts.Node) {
+    const line = sourceFile.getLineAndCharacterOfPosition(node.getStart()).line + 1;
+    let resolved = specifier;
+    if (specifier.startsWith("@/")) {
+      resolved = normalize(join("src", specifier.slice(2))).replace(/\\/g, "/");
+    } else if (specifier.startsWith(".")) {
+      resolved = normalize(join(dirname(filePath), specifier)).replace(/\\/g, "/");
+    }
+    results.push({ specifier, kind, line, resolvedPath: resolved });
+  }
+
+  function getSpecifierText(node: ts.Node | undefined): string | null {
+    if (!node) return null;
+    if (ts.isStringLiteral(node)) return node.text;
+    if (ts.isNoSubstitutionTemplateLiteral(node)) return node.text;
+    if (ts.isTemplateExpression(node)) {
+      return node.getText(sourceFile).slice(1, -1);
+    }
+    return null;
+  }
+
+  function visit(node: ts.Node) {
+    if (ts.isImportDeclaration(node)) {
+      const text = getSpecifierText(node.moduleSpecifier);
+      if (text !== null) {
+        record(text, node.importClause ? "import" : "side-effect-import", node);
+      }
+    } else if (ts.isExportDeclaration(node)) {
+      if (node.moduleSpecifier) {
+        const text = getSpecifierText(node.moduleSpecifier);
+        if (text !== null) {
+          record(text, "export-from", node);
+        }
+      }
+    } else if (ts.isCallExpression(node)) {
+      if (node.expression.kind === ts.SyntaxKind.ImportKeyword) {
+        const arg = node.arguments[0];
+        const text = getSpecifierText(arg);
+        if (text !== null) {
+          record(text, "dynamic-import", node);
+        }
+      } else if (ts.isIdentifier(node.expression) && node.expression.text === "require") {
+        const arg = node.arguments[0];
+        const text = getSpecifierText(arg);
+        if (text !== null) {
+          record(text, "require", node);
+        }
+      }
+    } else if (ts.isImportTypeNode(node)) {
+      if (ts.isLiteralTypeNode(node.argument)) {
+        const text = getSpecifierText(node.argument.literal);
+        if (text !== null) {
+          record(text, "import-type", node);
+        }
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return results;
+}
+
+export function validateProductionModule(filePath: string, text: string) {
+  if (/\b(fetch|Audio|AudioContext|WebSocket)\s*\(/.test(text)) {
+    throw new Error(`${filePath} contains forbidden runtime call (fetch/Audio/WebSocket)`);
+  }
+  if (text.includes("dangerouslySetInnerHTML")) {
+    throw new Error(`${filePath} contains dangerouslySetInnerHTML`);
+  }
+  if (filePath.endsWith(".css")) {
+    return;
+  }
+  const imports = extractModuleSpecifiers(filePath, text);
+  const forbiddenPatterns = [
+    /(?:^|\/)(?:tests|fixtures)(?:\/|$)/,
+    /\bthree\b|@react-three/,
+    /\bsupabase\b|@supabase/,
+    /(?:^|\/)server(?:\/|$)/,
+    /(?:^|\/)features\/room(?:\/|$)/,
+  ];
+  for (const imp of imports) {
+    for (const pattern of forbiddenPatterns) {
+      if (pattern.test(imp.specifier) || pattern.test(imp.resolvedPath)) {
+        throw new Error(
+          `Forbidden import (${imp.kind}) in ${filePath}:${imp.line}: specifier "${imp.specifier}" resolves to "${imp.resolvedPath}" matching ${pattern}`
+        );
+      }
+    }
+  }
+}
+
+export function validateContractModule(filePath: string, text: string) {
+  const imports = extractModuleSpecifiers(filePath, text);
+  const contractDir = "src/contracts";
+  for (const imp of imports) {
+    const isZod = imp.specifier === "zod" || imp.specifier.startsWith("zod/");
+    const isInternalContract =
+      imp.resolvedPath.startsWith(`${contractDir}/`) || imp.resolvedPath === contractDir;
+    if (!isZod && !isInternalContract) {
+      throw new Error(
+        `Contract module ${filePath}:${imp.line} has invalid non-contract import "${imp.specifier}" (${imp.kind}) resolving to "${imp.resolvedPath}"`
+      );
+    }
+  }
+}
+
+it("keeps all public projects empty and identity provisional", () => {
+  expect(publishedProjects).toEqual([]);
+  expect(draftIdentity.note).toContain("await owner confirmation");
+  expect(draftIdentity.role).toContain("proposed title");
+});
+
+it("does not pull fixture, world, service, or audio dependencies into production", () => {
+  const packageJson = JSON.parse(readFileSync("package.json", "utf8")) as { dependencies: Record<string, string> };
+  expect(Object.keys(packageJson.dependencies).sort()).toEqual(["next", "react", "react-dom", "zod"]);
+  for (const path of files("src")) {
+    const text = readFileSync(path, "utf8");
+    validateProductionModule(path.replace(/\\/g, "/"), text);
+  }
+});
+
+it("keeps shared contracts independent of framework and server imports", () => {
+  for (const path of files("src/contracts")) {
+    const text = readFileSync(path, "utf8");
+    validateContractModule(path.replace(/\\/g, "/"), text);
+  }
+});
+
+describe("regression: syntax-level import boundary detection", () => {
+  it("rejects dynamic import of test fixture in production module", () => {
+    const snippet = `
+      export async function loadData() {
+        const fixture = await import("../../../tests/fixtures/reviewer-fixture");
+        return fixture.unverifiedName;
+      }
+    `;
+    expect(() => validateProductionModule("src/features/portfolio/public-content.ts", snippet))
+      .toThrowError(/Forbidden import \(dynamic-import\)/);
+  });
+
+  it("rejects side-effect import of test fixture in production module", () => {
+    const snippet = `import "../../../tests/fixtures/reviewer-fixture";\nexport const x = 1;`;
+    expect(() => validateProductionModule("src/features/portfolio/public-content.ts", snippet))
+      .toThrowError(/Forbidden import \(side-effect-import\)/);
+  });
+
+  it("rejects export-from of test fixture in production module", () => {
+    const snippet = `export * from "../../../tests/fixtures/reviewer-fixture";`;
+    expect(() => validateProductionModule("src/features/portfolio/public-content.ts", snippet))
+      .toThrowError(/Forbidden import \(export-from\)/);
+  });
+
+  it("rejects aliased import of test fixture in production module", () => {
+    const snippet = `import { unverifiedName } from "@/fixtures/reviewer-fixture";`;
+    expect(() => validateProductionModule("src/features/portfolio/public-content.ts", snippet))
+      .toThrowError(/Forbidden import \(import\)/);
+  });
+
+  it("rejects framework or dynamic imports in contracts", () => {
+    const snippet1 = `import { useState } from "react";\nexport const a = 1;`;
+    expect(() => validateContractModule("src/contracts/content.ts", snippet1))
+      .toThrowError(/Contract module .* has invalid non-contract import/);
+
+    const snippet2 = `export async function getMore() { return await import("./assets"); }`;
+    expect(() => validateContractModule("src/contracts/content.ts", snippet2)).not.toThrow();
+
+    const snippet3 = `export async function getMore() { return await import("next"); }`;
+    expect(() => validateContractModule("src/contracts/content.ts", snippet3))
+      .toThrowError(/Contract module .* has invalid non-contract import/);
+  });
+
+  it("rejects a no-substitution template-literal dynamic fixture import", () => {
+    const text = "export async function f() { return import(`../../../tests/fixtures/reviewer-fixture`); }";
+    expect(() => validateProductionModule("src/features/portfolio/public-content.ts", text))
+      .toThrowError(/Forbidden import \(dynamic-import\)/);
+  });
+
+  it("rejects a normalized relative contract escape into framework-bearing app code", () => {
+    const text = 'export { default } from "./../app/layout";';
+    expect(() => validateContractModule("src/contracts/content.ts", text))
+      .toThrowError(/Contract module .* has invalid non-contract import/);
+  });
+});
