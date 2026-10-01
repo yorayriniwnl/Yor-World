@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { LightingController } from './lighting-controller.js';
 
 const canvas = document.getElementById('webgl-canvas');
 const statusEl = document.getElementById('status');
@@ -110,6 +111,20 @@ scene.add(keyTarget);
 keyFill.target = keyTarget;
 scene.add(keyFill);
 
+const lights = {
+  ambient,
+  hexLight,
+  lightbarSpot,
+  cyanUnderdesk,
+  cyanHalo,
+  pcRgb,
+  pegSpot,
+  keyFill
+};
+
+const materials = {};
+let lightingController = null;
+
 // 5. Load GLTF
 const loader = new GLTFLoader();
 loader.load(
@@ -123,15 +138,28 @@ loader.load(
     let totalTriangles = 0;
     let totalMeshes = 0;
     gltf.scene.traverse((obj) => {
-      if (obj.isMesh && obj.geometry) {
+      if (obj.isMesh) {
         totalMeshes++;
-        if (obj.geometry.index) {
-          totalTriangles += obj.geometry.index.count / 3;
-        } else if (obj.geometry.attributes.position) {
-          totalTriangles += obj.geometry.attributes.position.count / 3;
+        if (obj.material) {
+          if (Array.isArray(obj.material)) {
+            obj.material.forEach(m => materials[m.name] = m);
+          } else {
+            materials[obj.material.name] = obj.material;
+          }
+        }
+        if (obj.geometry) {
+          if (obj.geometry.index) {
+            totalTriangles += obj.geometry.index.count / 3;
+          } else if (obj.geometry.attributes.position) {
+            totalTriangles += obj.geometry.attributes.position.count / 3;
+          }
         }
       }
     });
+
+    // Initialize LightingController
+    lightingController = new LightingController(lights, materials);
+    window.WorldLighting = lightingController;
 
     window.__DIAGNOSTICS__ = {
       loaded: true,
@@ -143,6 +171,9 @@ loader.load(
 
     window.__WORLD_READY__ = true;
     console.log('Three.js Workstation Sample Loaded Successfully:', window.__DIAGNOSTICS__);
+
+    // Signal UI update if present
+    if (window.__UPDATE_UI__) window.__UPDATE_UI__();
   },
   undefined,
   (error) => {

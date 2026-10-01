@@ -5,13 +5,37 @@
   <title>YOR WORLD - Workstation Sample Three.js Browser Parity Viewer</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body, html { width: 100%; height: 100%; overflow: hidden; background: #0b0c10; font-family: sans-serif; }
+    body, html { width: 100%; height: 100%; overflow: hidden; background: #0b0c10; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     #canvas-container { width: 100%; height: 100%; position: relative; }
     canvas { width: 100%; height: 100%; display: block; }
     #status {
-      position: absolute; top: 12px; left: 12px; background: rgba(15, 23, 42, 0.85);
+      position: absolute; top: 12px; left: 12px; background: rgba(15, 23, 42, 0.88);
       color: #38bdf8; padding: 8px 14px; border-radius: 6px; font-size: 13px;
-      border: 1px solid rgba(56, 189, 248, 0.3); pointer-events: none;
+      border: 1px solid rgba(56, 189, 248, 0.3); pointer-events: none; z-index: 10;
+    }
+    #control-panel {
+      position: absolute; top: 12px; right: 12px; background: rgba(15, 23, 42, 0.92);
+      color: #f1f5f9; padding: 14px 18px; border-radius: 8px; font-size: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.25); z-index: 20; width: 280px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+    #control-panel h3 { font-size: 13px; margin-bottom: 10px; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.05em; }
+    .control-group { margin-bottom: 10px; }
+    .control-label { display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: 500; }
+    .control-row { display: flex; align-items: center; gap: 8px; }
+    input[type="range"] { flex: 1; accent-color: #38bdf8; }
+    .btn-row { display: flex; gap: 6px; margin-top: 10px; }
+    button {
+      flex: 1; padding: 6px 8px; font-size: 11px; font-weight: 600; border-radius: 4px;
+      border: 1px solid rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8; cursor: pointer; transition: all 0.15s ease;
+    }
+    button:hover { background: rgba(56, 189, 248, 0.3); }
+    button.active { background: #38bdf8; color: #0f172a; }
+    #restoration-status {
+      margin-top: 10px; padding: 6px 8px; border-radius: 4px; font-size: 11px;
+      background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #4ade80; text-align: center;
     }
   </style>
   <script type="importmap">
@@ -26,8 +50,134 @@
 <body>
   <div id="canvas-container">
     <div id="status">Loading Workstation GLTF...</div>
+    <div id="control-panel">
+      <h3>Interactive Lighting Rig</h3>
+      <div class="control-group">
+        <div class="control-label">
+          <span>Task Lamp (3200K Amber)</span>
+          <span id="val-lightbar">4.5</span>
+        </div>
+        <div class="control-row">
+          <input type="checkbox" id="chk-lightbar" checked>
+          <input type="range" id="rng-lightbar" min="0" max="8" step="0.1" value="4.5">
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="control-label">
+          <span>Hex Lights (Pink/Lilac)</span>
+          <span id="val-hex">3.2</span>
+        </div>
+        <div class="control-row">
+          <input type="checkbox" id="chk-hex" checked>
+          <input type="range" id="rng-hex" min="0" max="8" step="0.1" value="3.2">
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="control-label">
+          <span>Cyan Fill (Bounce/Halo)</span>
+          <span id="val-cyan">3.0</span>
+        </div>
+        <div class="control-row">
+          <input type="checkbox" id="chk-cyan" checked>
+          <input type="range" id="rng-cyan" min="0" max="6" step="0.1" value="3.0">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button id="btn-focus">Toggle Project Focus</button>
+        <button id="btn-restore">Restore Base State</button>
+      </div>
+      <div id="restoration-status">Base State Synced (Δ = 0.00)</div>
+    </div>
     <canvas id="webgl-canvas"></canvas>
   </div>
   <script type="module" src="./viewer.js"></script>
+  <script type="module">
+    // Interactive UI Event Handlers
+    window.__UPDATE_UI__ = function() {
+      if (!window.WorldLighting) return;
+      const base = window.WorldLighting.getBase();
+      document.getElementById('chk-lightbar').checked = base.lightbar.enabled;
+      document.getElementById('rng-lightbar').value = base.lightbar.intensity;
+      document.getElementById('chk-hex').checked = base.hexLight.enabled;
+      document.getElementById('rng-hex').value = base.hexLight.intensity;
+      document.getElementById('chk-cyan').checked = base.cyanFill.underdeskEnabled;
+      document.getElementById('rng-cyan').value = base.cyanFill.underdeskIntensity;
+    };
+
+    let focusActive = false;
+    document.getElementById('btn-focus').addEventListener('click', () => {
+      if (!window.WorldLighting) return;
+      focusActive = !focusActive;
+      if (focusActive) {
+        window.WorldLighting.setFocus('sample-project');
+        document.getElementById('btn-focus').classList.add('active');
+        document.getElementById('btn-focus').textContent = 'Clear Focus';
+        document.getElementById('restoration-status').textContent = 'Project Focus Active';
+        document.getElementById('restoration-status').style.color = '#38bdf8';
+      } else {
+        window.WorldLighting.setFocus(null);
+        document.getElementById('btn-focus').classList.remove('active');
+        document.getElementById('btn-focus').textContent = 'Toggle Project Focus';
+        document.getElementById('restoration-status').textContent = 'Base State Restored (Δ = 0.00)';
+        document.getElementById('restoration-status').style.color = '#4ade80';
+      }
+    });
+
+    document.getElementById('btn-restore').addEventListener('click', () => {
+      if (!window.WorldLighting) return;
+      focusActive = false;
+      document.getElementById('btn-focus').classList.remove('active');
+      document.getElementById('btn-focus').textContent = 'Toggle Project Focus';
+      window.WorldLighting.restoreState();
+      window.__UPDATE_UI__();
+      document.getElementById('restoration-status').textContent = 'Base State Restored (Δ = 0.00)';
+      document.getElementById('restoration-status').style.color = '#4ade80';
+    });
+
+    document.getElementById('chk-lightbar').addEventListener('change', (e) => {
+      if (!window.WorldLighting) return;
+      window.WorldLighting.setInteractiveVariable('lightbar.enabled', e.target.checked);
+      document.getElementById('restoration-status').textContent = 'User Modified';
+      document.getElementById('restoration-status').style.color = '#f59e0b';
+    });
+    document.getElementById('rng-lightbar').addEventListener('input', (e) => {
+      if (!window.WorldLighting) return;
+      const v = parseFloat(e.target.value);
+      document.getElementById('val-lightbar').textContent = v.toFixed(1);
+      window.WorldLighting.setInteractiveVariable('lightbar.intensity', v);
+      document.getElementById('restoration-status').textContent = 'User Modified';
+      document.getElementById('restoration-status').style.color = '#f59e0b';
+    });
+
+    document.getElementById('chk-hex').addEventListener('change', (e) => {
+      if (!window.WorldLighting) return;
+      window.WorldLighting.setInteractiveVariable('hexLight.enabled', e.target.checked);
+      document.getElementById('restoration-status').textContent = 'User Modified';
+      document.getElementById('restoration-status').style.color = '#f59e0b';
+    });
+    document.getElementById('rng-hex').addEventListener('input', (e) => {
+      if (!window.WorldLighting) return;
+      const v = parseFloat(e.target.value);
+      document.getElementById('val-hex').textContent = v.toFixed(1);
+      window.WorldLighting.setInteractiveVariable('hexLight.intensity', v);
+      document.getElementById('restoration-status').textContent = 'User Modified';
+      document.getElementById('restoration-status').style.color = '#f59e0b';
+    });
+
+    document.getElementById('chk-cyan').addEventListener('change', (e) => {
+      if (!window.WorldLighting) return;
+      window.WorldLighting.setInteractiveVariable('cyanFill.enabled', e.target.checked);
+      document.getElementById('restoration-status').textContent = 'User Modified';
+      document.getElementById('restoration-status').style.color = '#f59e0b';
+    });
+    document.getElementById('rng-cyan').addEventListener('input', (e) => {
+      if (!window.WorldLighting) return;
+      const v = parseFloat(e.target.value);
+      document.getElementById('val-cyan').textContent = v.toFixed(1);
+      window.WorldLighting.setInteractiveVariable('cyanFill.intensity', v);
+      document.getElementById('restoration-status').textContent = 'User Modified';
+      document.getElementById('restoration-status').style.color = '#f59e0b';
+    });
+  </script>
 </body>
 </html>
