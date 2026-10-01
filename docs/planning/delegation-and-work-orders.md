@@ -6,6 +6,8 @@ Date: 2026-09-30; living status reconciled 2026-10-01 (PARENT-RECON-03). W1-F1-r
 
 **Latest receipt state:** [2026-10-01 intake](post-g1-wave-01/intake/2026-10-01/README.md). A2/B5 returns remain REWORK; A2-CORR-01 is queued for Gemini #1 and B5-CORR-01 remains active. PARENT-RECON-04's B3 benchmark acceptance and append-only digest clarification are preserved. Its B3-BIND-01 obligations are now the first B2/B3-P2 checkpoint; do not run competing room-file packets concurrently. New roots are `deliveries/A3/revisions/A3-r1/` and `deliveries/B2-B3-P2/revisions/B2-B3-P2-r1/`. No production-camera ledger or combined integration is accepted. Shared contracts remain unchanged; wave-02 explicitly adds auth/pipeline ownership and reassigns Gemini #2's room paths.
 
+**Publication-time receipt:** [A3 at main ac56097](post-g1-wave-02/intake/A3-receipt.md) is RETURNED / HOLD FOR GPT PLUS #2 REVIEW / NOT PARENT-ACCEPTED. Gemini #1 waits for findings; do not start duplicate A3 or A4. Existing legacy `deliveries/A3/` evidence is preserved. The new bounded return root is used only by the subsequently assigned handoff/correction; receipt chronology does not fabricate prior maker receipt of this packet.
+
 The user authorized the full vision and delegated production. The parent Codex chat owns architecture, task assignment, audits, and acceptance. Workers make and integrate the product. This hub operates the existing plans; it does not replace them with another design exercise.
 
 ## One specification and a small shared baseline

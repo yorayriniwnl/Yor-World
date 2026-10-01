@@ -37,6 +37,10 @@ def main():
     original = manifest["inheritedBaseline"]
     baseline = json.loads(blob(original["gitCommit"], original["path"]))
     unique = {(r["gitCommit"], r["path"]): r for r in records(manifest)}
+    receipt_path = HERE / "intake" / "A3-receipt.json"
+    if receipt_path.exists():
+        for r in records(json.loads(receipt_path.read_text(encoding="utf-8"))):
+            unique[(r["gitCommit"], r["path"])] = r
     for record in unique.values():
         data = blob(record["gitCommit"], record["path"])
         if len(data) != record["bytes"] or sha(data) != record["sha256"]:
@@ -80,7 +84,7 @@ def main():
                 frozen_prefix = frozen.split("*", 1)[0]
                 if prefix.startswith(frozen_prefix) or frozen_prefix.startswith(prefix):
                     errors.append(f"Read-only target granted: {lane}:{rule} / {frozen}")
-    files = list(HERE.glob("*.md")) + [ROOT / name for name in ["README.md", "START_HERE.md", "docs/planning/delegation-and-work-orders.md", "docs/planning/account-prompts.md", "docs/planning/local-tool-access.md"]]
+    files = list(HERE.rglob("*.md")) + [ROOT / name for name in ["README.md", "START_HERE.md", "docs/planning/delegation-and-work-orders.md", "docs/planning/account-prompts.md", "docs/planning/local-tool-access.md"]]
     link_count = 0
     for file in files:
         content = file.read_text(encoding="utf-8")
@@ -97,11 +101,15 @@ def main():
     dispatch_count = 0
     if dispatch_path.exists():
         dispatch = json.loads(dispatch_path.read_text(encoding="utf-8"))
+        # Living entrypoints may advance after issuance. Bind the immutable dispatch
+        # to its introducing commit rather than rewriting historical hash evidence.
+        introduction = subprocess.check_output(["git", "log", "--diff-filter=A", "--format=%H", "--", dispatch_path.relative_to(ROOT).as_posix()], cwd=ROOT).decode().splitlines()
+        issued_commit = introduction[-1] if introduction else None
         for name, record in dispatch["files"].items():
             if name == str(dispatch_path.relative_to(ROOT)).replace("\\", "/"):
                 errors.append("Dispatch manifest must not hash itself")
                 continue
-            data = (ROOT / name).read_bytes().replace(b"\r\n", b"\n")
+            data = blob(issued_commit, name) if issued_commit else (ROOT / name).read_bytes().replace(b"\r\n", b"\n")
             dispatch_count += 1
             if len(data) != record["bytes"] or sha(data) != record["sha256"]:
                 errors.append("Issued dispatch file mismatch: " + name)

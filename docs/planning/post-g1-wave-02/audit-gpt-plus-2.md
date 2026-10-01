@@ -2,6 +2,8 @@
 
 Requested reviewer: **GPT Plus #2**, GPT-6.1 Sol xHigh by default. Declare actual provider/model, capability and independence. Parent is sole final technical acceptance authority. Review under `reviews/gpt-plus-2/post-g1-wave-02/<packet>/<revision>/` only; no maker fixes or cross-lane merge.
 
+**Current A3 input:** [receipt](intake/A3-receipt.md) / [exact identities](intake/A3-receipt.json), main commit `ac56097f5e42acbbced234f3551970e7eb9f798c`, ZIP SHA-256 `4ff13e9c4ad1807e7f2e7dd9c82946feaa29dc556b7161094a68898aaad05949`. It predates confirmed maker pickup of this new coordination packet; review original user requirements/approved architecture/exact accepted baseline, rather than inventing a retrospective format violation. Use review revision label `A3-ac56097` until a new formal revision is returned. Source-only priorities in the receipt are leads for independent reproduction, not parent runtime PASS or final acceptance.
+
 ## Identity, ownership and evidence
 
 Require exact source/evidence commits, input/output manifests and digests, actual files, change-map and execution-source binding. Verify accepted G1/W1/W2/W3 and archive-bound B3 donor bytes; validate every overlay destination against ownership.json. Check hidden dependency/configuration/schema changes, historical evidence edits and fake service/storage URLs. The two makers must not edit the same production file or import another unaccepted lane.

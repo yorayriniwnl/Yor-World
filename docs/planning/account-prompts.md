@@ -4,6 +4,8 @@ Status, 2026-10-01: **G1 accepted; next assigned work is A3 and B2/B3-P2.** Use 
 
 Parent Codex owns architecture, coordination, audit, and acceptance. Makers return files; independent reviewers return findings; the parent assigns corrections. The user reviews personal identity, likeness, final visual direction, and publication decisions.
 
+[A3 returned during packet publication](post-g1-wave-02/intake/A3-receipt.md): Gemini #1 now holds for GPT Plus #2 review; maker PASS is not acceptance. B2/B3-P2 remains ready. Do not launch duplicate A3 or A4.
+
 For a three-track production overview, see [production prompts](production-prompts/README.md). This account map still controls provider roles and bounded handoffs; the track prompts do not dispatch accounts or replace per-task work orders.
 
 GPT/Gemini blocks target local tools with access to C:\Users\yoray\Projects\Yor World. Claude blocks target browser chats receiving attached or pasted review packets. Include the current packet envelope with each prompt; reuse current shared rules in Project instructions and stable briefs in Project knowledge. Include the full shared-rules block only when that session lacks the current instructions. Repository paths in packets are citation labels, not browser-accessible locations. Follow [Browser review workflow](browser-review-workflow.md) for packet preparation and local archival.
