@@ -112,7 +112,8 @@ W1/W2/W3 are independent: W1 owns room geometry; W2 uses its own F1 furniture fi
 | B5-P1 runtime lifecycle | GPT-2 / Claude-10 + parent | G1 accepted baseline | DELIVERED: 5 single owners, 8-state FSM, 90 unit / 66 E2E PASS, GPU cleanup verified |
 | **A4 CMS & publishing** | **Gemini #1** / Claude-08 + parent | Accepted A2 + A3 | **ACTIVE / DISPATCHED:** `deliveries/A4/` (drafts, approved media, revisions, rollback) |
 | **B3-P3 interactive props** | **Gemini #2** / Gemini-3, Claude-13 + parent | B3-P1 sample + G1 | **ACTIVE / DISPATCHED:** `deliveries/B3-P3/` (18 interactive prop assets, 5 visual states) |
-| **C1 experience & interactions** | **Gemini #3** / Claude-03, Claude-11 + parent | G1 + B5 + contracts | **ACTIVE / DISPATCHED:** `deliveries/C1/` (ExperienceController, arbitration, physical room) |
+| **IA interaction assets** | **Gemini #2** / GPT #2, Parent | Frozen Catalog | ACCEPTED: IA-R1 verified (25/25 entities, Khronos 0/0, delta=0.00000000, [Ruling](reviews/2026-10-02-interaction-assets-acceptance.md)) |
+| **C1 experience & interactions** | **Gemini #3** / Claude-03, Claude-11 + parent | G1 + B5 + IA-R1 | **ACTIVE / DISPATCHED:** `deliveries/C1/` (ExperienceController, arbitration, physical room) |
 | **G3 World Core** | Evaluator / Parent | B3-P1 + W1 + W2 + B5 | **ACCEPTED:** 13/13 exit requirements met ([Gate Review](reviews/2026-10-02-g3-gate-evaluation.md)) |
 | **G7 Production Release** | **Gemini #3, #1, #2; GPT #2, #1** | Owner Authorization + G1–G6 | **GATED / LOCKED:** Only after owner authorizes deployment. Requires 10 live criteria ([Protocol](releases/2026-10-02-g7-production-release-protocol.md)). |
 
