@@ -1,0 +1,100 @@
+{
+  "integration": "G1 Combined World & Platform Integration",
+  "invariants": {
+    "residentCount": 1,
+    "movingChairCount": 1,
+    "staticChairCount": 0,
+    "deskCount": 1,
+    "fixtureStaticDiscarded": true
+  },
+  "w1RoomBlockout": {
+    "sourceFile": "public/models/room-blockout.glb",
+    "retainedNodes": [
+      "desk",
+      "desk-top",
+      "desk-legs",
+      "desk-tray-recessed",
+      "deskmat",
+      "monitor-curved",
+      "monitor-stand",
+      "keyboard",
+      "mouse",
+      "lamp-task",
+      "plant-shelf",
+      "book-stack",
+      "cable-tray",
+      "room-shell",
+      "walls",
+      "floor",
+      "door-frame"
+    ],
+    "prunedNodes": [
+      {
+        "name": "chair-root",
+        "nodeIndex": 47,
+        "reason": "Pruned entire W1 static chair and proxy resident hierarchy at the parent locator"
+      },
+      {
+        "name": "chair",
+        "nodeIndex": 28,
+        "reason": "W1 static blockout chair replaced by W2 articulated chair"
+      },
+      {
+        "name": "resident",
+        "nodeIndex": 46,
+        "reason": "W1 proxy resident geometry replaced by W2 articulated skinned avatar"
+      }
+    ]
+  },
+  "w2AvatarProof": {
+    "sourceFile": "public/models/avatar-proof.glb",
+    "importedNodes": [
+      "resident",
+      "resident-body",
+      "armature-root",
+      "spine",
+      "neck",
+      "head",
+      "shoulder-l",
+      "arm-l",
+      "hand-l",
+      "shoulder-r",
+      "arm-r",
+      "hand-r",
+      "pelvis",
+      "leg-l",
+      "leg-r"
+    ],
+    "animationClips": [
+      "coding_idle",
+      "notice_visitor",
+      "turn_to_visitor",
+      "greeting_nod",
+      "return_to_work"
+    ]
+  },
+  "w2FixtureProof": {
+    "sourceFile": "public/models/fixture-proof.glb",
+    "importedNodes": [
+      "chair-root",
+      "chair-base",
+      "chair-seat",
+      "chair-back",
+      "chair-arm-l",
+      "chair-arm-r",
+      "chair-gaslift"
+    ],
+    "discardedNodes": [
+      {
+        "name": "fixture-static",
+        "nodeIndex": 61,
+        "reason": "Discarded W2 proof desk and floor to preserve genuine W1 workstation and avoid duplicate geometry"
+      }
+    ],
+    "animationClips": [
+      "chair_idle",
+      "chair_turn_to_visitor",
+      "chair_return_to_work"
+    ]
+  }
+}

@@ -1,0 +1,450 @@
+COMMAND: "C:\Program Files\nodejs\node.EXE" C:\Users\yoray\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs test:e2e
+CWD: C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app
+
+> yor-world-g1-proof@0.1.0 test:e2e C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app
+> playwright test
+
+
+Running 66 tests using 1 worker
+
+  ok  1 [chrome] › tests\e2e\browser-behavior.spec.ts:89:3 › G1 Combined World Integration & Browser Behavior › 1. Load: public page loads with zero 3D world scripts or models pre-entry (1.4s)
+  ok  2 [chrome] › tests\e2e\browser-behavior.spec.ts:109:3 › G1 Combined World Integration & Browser Behavior › 2. Entry & 3. Home Camera: explicit entry mounts world with single resident and chair at F1 coordinates (4.7s)
+  x   3 [chrome] › tests\e2e\browser-behavior.spec.ts:152:3 › G1 Combined World Integration & Browser Behavior › 4. Greeting & 5. Return: resident acknowledges visitor with chair turn and returns to work (7.0s)
+  ok  4 [chrome] › tests\e2e\browser-behavior.spec.ts:181:3 › G1 Combined World Integration & Browser Behavior › 6. Repeat: safe repeated greeting interactions without state corruption (7.6s)
+  x   5 [chrome] › tests\e2e\browser-behavior.spec.ts:201:3 › G1 Combined World Integration & Browser Behavior › 7. Cancel: safe cancellation reverses along collision-checked path back to rest (11.3s)
+  ok  6 [chrome] › tests\e2e\browser-behavior.spec.ts:220:3 › G1 Combined World Integration & Browser Behavior › 8. Skip/Escape: instant settlement to coding pose within ≤50ms (4.8s)
+  x   7 [chrome] › tests\e2e\browser-behavior.spec.ts:239:3 › G1 Combined World Integration & Browser Behavior › 9. Monitor & 10. Reverse Doorway camera navigation (1.3s)
+  ok  8 [chrome] › tests\e2e\browser-behavior.spec.ts:271:3 › G1 Combined World Integration & Browser Behavior › 11. Mobile Viewport: touch-friendly HUD and mobile framing (2.5s)
+  ok  9 [chrome] › tests\e2e\browser-behavior.spec.ts:292:3 › G1 Combined World Integration & Browser Behavior › 12. Reduced Motion & Sound Defaults (1.6s)
+  ok 10 [chrome] › tests\e2e\browser-behavior.spec.ts:318:3 › G1 Combined World Integration & Browser Behavior › 13. Asset Failure: graceful fallback leaves useful HTML (1.7s)
+  ok 11 [chrome] › tests\e2e\browser-behavior.spec.ts:335:3 › G1 Combined World Integration & Browser Behavior › 14. Renderer Failure: WebGL failure caught cleanly leaving useful HTML (1.2s)
+  ok 12 [chrome] › tests\e2e\browser-behavior.spec.ts:349:3 › G1 Combined World Integration & Browser Behavior › 15. Fallback Content with JavaScript Disabled: 100% useful semantic HTML (856ms)
+  ok 13 [chrome] › tests\e2e\payload.spec.ts:7:1 › five cold loads per desktop and mobile profile record actual production payloads (15.3s)
+  ok 14 [chrome] › tests\e2e\public-shell.spec.ts:54:1 › direct loads, refreshes, route headings, honest empty states and 404 (2.1s)
+  ok 15 [chrome] › tests\e2e\public-shell.spec.ts:87:1 › keyboard skip link and all primary destinations work without pointer input (1.4s)
+  ok 16 [chrome] › tests\e2e\public-shell.spec.ts:113:1 › useful HTML and native navigation remain with JavaScript disabled (1.8s)
+  ok 17 [chrome] › tests\e2e\public-shell.spec.ts:139:1 › world and backend requests blocked; entry reports unavailable; sound and WebGL stay off (1.8s)
+  ok 18 [chrome] › tests\e2e\public-shell.spec.ts:200:1 › reduced motion has no active animation or smooth travel and keeps all routes (1.2s)
+  ok 19 [chrome] › tests\e2e\public-shell.spec.ts:217:1 › direct section anchors and browser Back preserve reachable content (1.2s)
+  ok 20 [chrome] › tests\e2e\public-shell.spec.ts:234:1 › automated axe scan of every public route and open studio disclosure (3.6s)
+  ok 21 [chrome] › tests\e2e\public-shell.spec.ts:246:1 › mobile, narrow and landscape reflow preserve controls (3.0s)
+  ok 22 [chrome] › tests\e2e\world-lifecycle.spec.ts:67:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 1. Enter -> repeated Enter: rapid enter requests never create duplicate canvas or renderer (1.4s)
+  ok 23 [chrome] › tests\e2e\world-lifecycle.spec.ts:90:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 2. Enter -> Skip -> late load completion: Skip settles instantly to HOME; late tasks cannot corrupt state (8.3s)
+  x  24 [chrome] › tests\e2e\world-lifecycle.spec.ts:123:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 3. Enter -> Escape: pressing Escape during entrance skips directly to HOME (31.9s)
+  ok 25 [chrome] › tests\e2e\world-lifecycle.spec.ts:144:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 4. Enter -> route navigation: navigating to portfolio routes cancels world and unmounts canvas cleanly (4.8s)
+  ok 26 [chrome] › tests\e2e\world-lifecycle.spec.ts:160:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 5. Enter -> Back: browser back button returns to clean static portfolio without errors (2.5s)
+  ok 27 [chrome] › tests\e2e\world-lifecycle.spec.ts:177:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 6. loading -> renderer failure: simulated renderer failure gracefully renders accessible fallback (1.5s)
+  ok 28 [chrome] › tests\e2e\world-lifecycle.spec.ts:196:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 7. failed asset -> Retry: simulated asset failure shows bounded retry (1.6s)
+  ok 29 [chrome] › tests\e2e\world-lifecycle.spec.ts:208:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 8. failure -> Continue with portfolio: dismisses fallback and returns to clean portfolio (1.6s)
+  x  30 [chrome] › tests\e2e\world-lifecycle.spec.ts:223:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 9. reduced-motion enabled before entry: bypasses camera travel directly to HOME (1.8s)
+  x  31 [chrome] › tests\e2e\world-lifecycle.spec.ts:244:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 10. reduced-motion toggled during active experience: updates camera transition travel (4.5s)
+  ok 32 [chrome] › tests\e2e\world-lifecycle.spec.ts:264:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 11. PROVE: single owners verified across all domains (3.4s)
+  ok 33 [chrome] › tests\e2e\world-lifecycle.spec.ts:282:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 12. PROVE: semantic navigation survives renderer failure (1.3s)
+  ok 34 [edge] › tests\e2e\browser-behavior.spec.ts:89:3 › G1 Combined World Integration & Browser Behavior › 1. Load: public page loads with zero 3D world scripts or models pre-entry (3.1s)
+  ok 35 [edge] › tests\e2e\browser-behavior.spec.ts:109:3 › G1 Combined World Integration & Browser Behavior › 2. Entry & 3. Home Camera: explicit entry mounts world with single resident and chair at F1 coordinates (3.3s)
+  x  36 [edge] › tests\e2e\browser-behavior.spec.ts:152:3 › G1 Combined World Integration & Browser Behavior › 4. Greeting & 5. Return: resident acknowledges visitor with chair turn and returns to work (6.8s)
+  ok 37 [edge] › tests\e2e\browser-behavior.spec.ts:181:3 › G1 Combined World Integration & Browser Behavior › 6. Repeat: safe repeated greeting interactions without state corruption (10.0s)
+  x  38 [edge] › tests\e2e\browser-behavior.spec.ts:201:3 › G1 Combined World Integration & Browser Behavior › 7. Cancel: safe cancellation reverses along collision-checked path back to rest (11.7s)
+  ok 39 [edge] › tests\e2e\browser-behavior.spec.ts:220:3 › G1 Combined World Integration & Browser Behavior › 8. Skip/Escape: instant settlement to coding pose within ≤50ms (5.9s)
+  x  40 [edge] › tests\e2e\browser-behavior.spec.ts:239:3 › G1 Combined World Integration & Browser Behavior › 9. Monitor & 10. Reverse Doorway camera navigation (1.7s)
+  ok 41 [edge] › tests\e2e\browser-behavior.spec.ts:271:3 › G1 Combined World Integration & Browser Behavior › 11. Mobile Viewport: touch-friendly HUD and mobile framing (3.6s)
+  ok 42 [edge] › tests\e2e\browser-behavior.spec.ts:292:3 › G1 Combined World Integration & Browser Behavior › 12. Reduced Motion & Sound Defaults (2.0s)
+  ok 43 [edge] › tests\e2e\browser-behavior.spec.ts:318:3 › G1 Combined World Integration & Browser Behavior › 13. Asset Failure: graceful fallback leaves useful HTML (2.2s)
+  ok 44 [edge] › tests\e2e\browser-behavior.spec.ts:335:3 › G1 Combined World Integration & Browser Behavior › 14. Renderer Failure: WebGL failure caught cleanly leaving useful HTML (1.4s)
+  ok 45 [edge] › tests\e2e\browser-behavior.spec.ts:349:3 › G1 Combined World Integration & Browser Behavior › 15. Fallback Content with JavaScript Disabled: 100% useful semantic HTML (1.4s)
+  ok 46 [edge] › tests\e2e\payload.spec.ts:7:1 › five cold loads per desktop and mobile profile record actual production payloads (17.3s)
+  ok 47 [edge] › tests\e2e\public-shell.spec.ts:54:1 › direct loads, refreshes, route headings, honest empty states and 404 (2.9s)
+  ok 48 [edge] › tests\e2e\public-shell.spec.ts:87:1 › keyboard skip link and all primary destinations work without pointer input (1.9s)
+  ok 49 [edge] › tests\e2e\public-shell.spec.ts:113:1 › useful HTML and native navigation remain with JavaScript disabled (2.0s)
+  ok 50 [edge] › tests\e2e\public-shell.spec.ts:139:1 › world and backend requests blocked; entry reports unavailable; sound and WebGL stay off (2.1s)
+  ok 51 [edge] › tests\e2e\public-shell.spec.ts:200:1 › reduced motion has no active animation or smooth travel and keeps all routes (1.3s)
+  ok 52 [edge] › tests\e2e\public-shell.spec.ts:217:1 › direct section anchors and browser Back preserve reachable content (1.6s)
+  ok 53 [edge] › tests\e2e\public-shell.spec.ts:234:1 › automated axe scan of every public route and open studio disclosure (5.4s)
+  ok 54 [edge] › tests\e2e\public-shell.spec.ts:246:1 › mobile, narrow and landscape reflow preserve controls (4.3s)
+  ok 55 [edge] › tests\e2e\world-lifecycle.spec.ts:67:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 1. Enter -> repeated Enter: rapid enter requests never create duplicate canvas or renderer (1.6s)
+  ok 56 [edge] › tests\e2e\world-lifecycle.spec.ts:90:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 2. Enter -> Skip -> late load completion: Skip settles instantly to HOME; late tasks cannot corrupt state (8.7s)
+  x  57 [edge] › tests\e2e\world-lifecycle.spec.ts:123:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 3. Enter -> Escape: pressing Escape during entrance skips directly to HOME (33.9s)
+  ok 58 [edge] › tests\e2e\world-lifecycle.spec.ts:144:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 4. Enter -> route navigation: navigating to portfolio routes cancels world and unmounts canvas cleanly (4.3s)
+  ok 59 [edge] › tests\e2e\world-lifecycle.spec.ts:160:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 5. Enter -> Back: browser back button returns to clean static portfolio without errors (1.4s)
+  ok 60 [edge] › tests\e2e\world-lifecycle.spec.ts:177:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 6. loading -> renderer failure: simulated renderer failure gracefully renders accessible fallback (1.2s)
+  ok 61 [edge] › tests\e2e\world-lifecycle.spec.ts:196:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 7. failed asset -> Retry: simulated asset failure shows bounded retry (1.1s)
+  ok 62 [edge] › tests\e2e\world-lifecycle.spec.ts:208:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 8. failure -> Continue with portfolio: dismisses fallback and returns to clean portfolio (1.0s)
+  x  63 [edge] › tests\e2e\world-lifecycle.spec.ts:223:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 9. reduced-motion enabled before entry: bypasses camera travel directly to HOME (3.6s)
+  x  64 [edge] › tests\e2e\world-lifecycle.spec.ts:244:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 10. reduced-motion toggled during active experience: updates camera transition travel (3.7s)
+  ok 65 [edge] › tests\e2e\world-lifecycle.spec.ts:264:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 11. PROVE: single owners verified across all domains (2.5s)
+  ok 66 [edge] › tests\e2e\world-lifecycle.spec.ts:282:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 12. PROVE: semantic navigation survives renderer failure (1.2s)
+
+
+  1) [chrome] › tests\e2e\browser-behavior.spec.ts:152:3 › G1 Combined World Integration & Browser Behavior › 4. Greeting & 5. Return: resident acknowledges visitor with chair turn and returns to work 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('[data-testid="status-badge"]')
+    Expected substring: "notice_visitor"
+    Received string:    "HOME · coding_idle"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" locator('[data-testid="status-badge"]') with timeout 5000ms
+      - waiting for locator('[data-testid="status-badge"]')
+        13 × locator resolved to <span data-testid="status-badge" class="world-module__FC9lxW__statusBadge">ENTRANCE · coding_idle</span>
+           - unexpected value "ENTRANCE · coding_idle"
+        - locator resolved to <span data-testid="status-badge" class="world-module__FC9lxW__statusBadge">HOME · coding_idle</span>
+        - unexpected value "HOME · coding_idle"
+
+
+      161 |
+      162 |     // Verify sequence transitions into notice / turn
+    > 163 |     await expect(page.locator('[data-testid="status-badge"]')).toContainText("notice_visitor");
+          |                                                                ^
+      164 |
+      165 |     // Wait for turn to visitor
+      166 |     await page.waitForTimeout(700);
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app\tests\e2e\browser-behavior.spec.ts:163:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\browser-behavior-G1-Combin-2a8b2-ir-turn-and-returns-to-work-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\browser-behavior-G1-Combin-2a8b2-ir-turn-and-returns-to-work-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\browser-behavior-G1-Combin-2a8b2-ir-turn-and-returns-to-work-chrome\error-context.md
+
+  2) [chrome] › tests\e2e\browser-behavior.spec.ts:201:3 › G1 Combined World Integration & Browser Behavior › 7. Cancel: safe cancellation reverses along collision-checked path back to rest 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('[data-testid="status-badge"]')
+    Expected substring: "safe-return"
+    Received string:    "HOME · coding_idle"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" locator('[data-testid="status-badge"]') with timeout 5000ms
+      - waiting for locator('[data-testid="status-badge"]')
+        14 × locator resolved to <span data-testid="status-badge" class="world-module__FC9lxW__statusBadge">HOME · coding_idle</span>
+           - unexpected value "HOME · coding_idle"
+
+
+      211 |
+      212 |     // Should indicate safe-return
+    > 213 |     await expect(page.locator('[data-testid="status-badge"]')).toContainText("safe-return");
+          |                                                                ^
+      214 |
+      215 |     // Wait for return to finish
+      216 |     await expect(page.locator('[data-testid="status-badge"]')).toContainText("coding_idle", { timeout: 5000 });
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app\tests\e2e\browser-behavior.spec.ts:213:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\browser-behavior-G1-Combin-ef535-n-checked-path-back-to-rest-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\browser-behavior-G1-Combin-ef535-n-checked-path-back-to-rest-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\browser-behavior-G1-Combin-ef535-n-checked-path-back-to-rest-chrome\error-context.md
+
+  3) [chrome] › tests\e2e\browser-behavior.spec.ts:239:3 › G1 Combined World Integration & Browser Behavior › 9. Monitor & 10. Reverse Doorway camera navigation 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "monitor"
+    Received: "home-desktop"
+
+      246 |     let text = await page.locator('[data-testid="world-diagnostics"]').textContent();
+      247 |     let diag = JSON.parse(text!);
+    > 248 |     expect(diag.cameraPreset).toBe("monitor");
+          |                               ^
+      249 |     expect(diag.cameraPosition[0]).toBeCloseTo(0, 1);
+      250 |     expect(diag.cameraPosition[1]).toBeCloseTo(1.08, 1);
+      251 |     expect(diag.cameraPosition[2]).toBeCloseTo(-0.5, 1);
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app\tests\e2e\browser-behavior.spec.ts:248:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\browser-behavior-G1-Combin-33bf6-e-Doorway-camera-navigation-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\browser-behavior-G1-Combin-33bf6-e-Doorway-camera-navigation-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\browser-behavior-G1-Combin-33bf6-e-Doorway-camera-navigation-chrome\error-context.md
+
+  4) [chrome] › tests\e2e\world-lifecycle.spec.ts:123:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 3. Enter -> Escape: pressing Escape during entrance skips directly to HOME 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="diagnostics-toggle-btn"]')
+
+
+      130 |
+      131 |     // Verify settled to HOME
+    > 132 |     await page.locator('[data-testid="diagnostics-toggle-btn"]').click();
+          |                                                                  ^
+      133 |     const diagPre = page.locator('[data-testid="world-diagnostics"]');
+      134 |     await expect(diagPre).toBeVisible();
+      135 |
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app\tests\e2e\world-lifecycle.spec.ts:132:66
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-lifecycle-B5-Product-6738c-ance-skips-directly-to-HOME-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\world-lifecycle-B5-Product-6738c-ance-skips-directly-to-HOME-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-lifecycle-B5-Product-6738c-ance-skips-directly-to-HOME-chrome\error-context.md
+
+  5) [chrome] › tests\e2e\world-lifecycle.spec.ts:223:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 9. reduced-motion enabled before entry: bypasses camera travel directly to HOME 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "settled"
+    Received: "not_started"
+
+      236 |     expect(diag.reducedMotion).toBe(true);
+      237 |     expect(diag.lifecycleState).toBe("HOME");
+    > 238 |     expect(diag.entrance?.phase).toBe("settled");
+          |                                  ^
+      239 |     expect(diag.entrance?.progress).toBe(1.0);
+      240 |
+      241 |     await captureScreenshot(page, "b5-09-reduced-motion-direct-home.png");
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app\tests\e2e\world-lifecycle.spec.ts:238:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-lifecycle-B5-Product-48aca-era-travel-directly-to-HOME-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\world-lifecycle-B5-Product-48aca-era-travel-directly-to-HOME-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-lifecycle-B5-Product-48aca-era-travel-directly-to-HOME-chrome\error-context.md
+
+  6) [chrome] › tests\e2e\world-lifecycle.spec.ts:244:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 10. reduced-motion toggled during active experience: updates camera transition travel 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "monitor"
+    Received: "home-desktop"
+
+      257 |     const diag = JSON.parse((await page.locator('[data-testid="world-diagnostics"]').textContent()) || "{}");
+      258 |     expect(diag.reducedMotion).toBe(true);
+    > 259 |     expect(diag.cameraPreset).toBe("monitor");
+          |                               ^
+      260 |
+      261 |     await captureScreenshot(page, "b5-10-dynamic-reduced-motion.png");
+      262 |   });
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app\tests\e2e\world-lifecycle.spec.ts:259:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-lifecycle-B5-Product-0ebcd-es-camera-transition-travel-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\world-lifecycle-B5-Product-0ebcd-es-camera-transition-travel-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-lifecycle-B5-Product-0ebcd-es-camera-transition-travel-chrome\error-context.md
+
+  7) [edge] › tests\e2e\browser-behavior.spec.ts:152:3 › G1 Combined World Integration & Browser Behavior › 4. Greeting & 5. Return: resident acknowledges visitor with chair turn and returns to work 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('[data-testid="status-badge"]')
+    Expected substring: "notice_visitor"
+    Received string:    "HOME · coding_idle"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" locator('[data-testid="status-badge"]') with timeout 5000ms
+      - waiting for locator('[data-testid="status-badge"]')
+        13 × locator resolved to <span data-testid="status-badge" class="world-module__FC9lxW__statusBadge">ENTRANCE · coding_idle</span>
+           - unexpected value "ENTRANCE · coding_idle"
+        - locator resolved to <span data-testid="status-badge" class="world-module__FC9lxW__statusBadge">HOME · coding_idle</span>
+        - unexpected value "HOME · coding_idle"
+
+
+      161 |
+      162 |     // Verify sequence transitions into notice / turn
+    > 163 |     await expect(page.locator('[data-testid="status-badge"]')).toContainText("notice_visitor");
+          |                                                                ^
+      164 |
+      165 |     // Wait for turn to visitor
+      166 |     await page.waitForTimeout(700);
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app\tests\e2e\browser-behavior.spec.ts:163:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\browser-behavior-G1-Combin-2a8b2-ir-turn-and-returns-to-work-edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\browser-behavior-G1-Combin-2a8b2-ir-turn-and-returns-to-work-edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\browser-behavior-G1-Combin-2a8b2-ir-turn-and-returns-to-work-edge\error-context.md
+
+  8) [edge] › tests\e2e\browser-behavior.spec.ts:201:3 › G1 Combined World Integration & Browser Behavior › 7. Cancel: safe cancellation reverses along collision-checked path back to rest 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('[data-testid="status-badge"]')
+    Expected substring: "safe-return"
+    Received string:    "HOME · coding_idle"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" locator('[data-testid="status-badge"]') with timeout 5000ms
+      - waiting for locator('[data-testid="status-badge"]')
+        14 × locator resolved to <span data-testid="status-badge" class="world-module__FC9lxW__statusBadge">HOME · coding_idle</span>
+           - unexpected value "HOME · coding_idle"
+
+
+      211 |
+      212 |     // Should indicate safe-return
+    > 213 |     await expect(page.locator('[data-testid="status-badge"]')).toContainText("safe-return");
+          |                                                                ^
+      214 |
+      215 |     // Wait for return to finish
+      216 |     await expect(page.locator('[data-testid="status-badge"]')).toContainText("coding_idle", { timeout: 5000 });
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app\tests\e2e\browser-behavior.spec.ts:213:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\browser-behavior-G1-Combin-ef535-n-checked-path-back-to-rest-edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\browser-behavior-G1-Combin-ef535-n-checked-path-back-to-rest-edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\browser-behavior-G1-Combin-ef535-n-checked-path-back-to-rest-edge\error-context.md
+
+  9) [edge] › tests\e2e\browser-behavior.spec.ts:239:3 › G1 Combined World Integration & Browser Behavior › 9. Monitor & 10. Reverse Doorway camera navigation 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "monitor"
+    Received: "home-desktop"
+
+      246 |     let text = await page.locator('[data-testid="world-diagnostics"]').textContent();
+      247 |     let diag = JSON.parse(text!);
+    > 248 |     expect(diag.cameraPreset).toBe("monitor");
+          |                               ^
+      249 |     expect(diag.cameraPosition[0]).toBeCloseTo(0, 1);
+      250 |     expect(diag.cameraPosition[1]).toBeCloseTo(1.08, 1);
+      251 |     expect(diag.cameraPosition[2]).toBeCloseTo(-0.5, 1);
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app\tests\e2e\browser-behavior.spec.ts:248:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\browser-behavior-G1-Combin-33bf6-e-Doorway-camera-navigation-edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\browser-behavior-G1-Combin-33bf6-e-Doorway-camera-navigation-edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\browser-behavior-G1-Combin-33bf6-e-Doorway-camera-navigation-edge\error-context.md
+
+  10) [edge] › tests\e2e\world-lifecycle.spec.ts:123:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 3. Enter -> Escape: pressing Escape during entrance skips directly to HOME 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="diagnostics-toggle-btn"]')
+
+
+      130 |
+      131 |     // Verify settled to HOME
+    > 132 |     await page.locator('[data-testid="diagnostics-toggle-btn"]').click();
+          |                                                                  ^
+      133 |     const diagPre = page.locator('[data-testid="world-diagnostics"]');
+      134 |     await expect(diagPre).toBeVisible();
+      135 |
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app\tests\e2e\world-lifecycle.spec.ts:132:66
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-lifecycle-B5-Product-6738c-ance-skips-directly-to-HOME-edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\world-lifecycle-B5-Product-6738c-ance-skips-directly-to-HOME-edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-lifecycle-B5-Product-6738c-ance-skips-directly-to-HOME-edge\error-context.md
+
+  11) [edge] › tests\e2e\world-lifecycle.spec.ts:223:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 9. reduced-motion enabled before entry: bypasses camera travel directly to HOME 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "settled"
+    Received: "not_started"
+
+      236 |     expect(diag.reducedMotion).toBe(true);
+      237 |     expect(diag.lifecycleState).toBe("HOME");
+    > 238 |     expect(diag.entrance?.phase).toBe("settled");
+          |                                  ^
+      239 |     expect(diag.entrance?.progress).toBe(1.0);
+      240 |
+      241 |     await captureScreenshot(page, "b5-09-reduced-motion-direct-home.png");
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app\tests\e2e\world-lifecycle.spec.ts:238:34
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-lifecycle-B5-Product-48aca-era-travel-directly-to-HOME-edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\world-lifecycle-B5-Product-48aca-era-travel-directly-to-HOME-edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-lifecycle-B5-Product-48aca-era-travel-directly-to-HOME-edge\error-context.md
+
+  12) [edge] › tests\e2e\world-lifecycle.spec.ts:244:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 10. reduced-motion toggled during active experience: updates camera transition travel 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "monitor"
+    Received: "home-desktop"
+
+      257 |     const diag = JSON.parse((await page.locator('[data-testid="world-diagnostics"]').textContent()) || "{}");
+      258 |     expect(diag.reducedMotion).toBe(true);
+    > 259 |     expect(diag.cameraPreset).toBe("monitor");
+          |                               ^
+      260 |
+      261 |     await captureScreenshot(page, "b5-10-dynamic-reduced-motion.png");
+      262 |   });
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app\tests\e2e\world-lifecycle.spec.ts:259:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-lifecycle-B5-Product-0ebcd-es-camera-transition-travel-edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\world-lifecycle-B5-Product-0ebcd-es-camera-transition-travel-edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-lifecycle-B5-Product-0ebcd-es-camera-transition-travel-edge\error-context.md
+
+  12 failed
+    [chrome] › tests\e2e\browser-behavior.spec.ts:152:3 › G1 Combined World Integration & Browser Behavior › 4. Greeting & 5. Return: resident acknowledges visitor with chair turn and returns to work 
+    [chrome] › tests\e2e\browser-behavior.spec.ts:201:3 › G1 Combined World Integration & Browser Behavior › 7. Cancel: safe cancellation reverses along collision-checked path back to rest 
+    [chrome] › tests\e2e\browser-behavior.spec.ts:239:3 › G1 Combined World Integration & Browser Behavior › 9. Monitor & 10. Reverse Doorway camera navigation 
+    [chrome] › tests\e2e\world-lifecycle.spec.ts:123:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 3. Enter -> Escape: pressing Escape during entrance skips directly to HOME 
+    [chrome] › tests\e2e\world-lifecycle.spec.ts:223:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 9. reduced-motion enabled before entry: bypasses camera travel directly to HOME 
+    [chrome] › tests\e2e\world-lifecycle.spec.ts:244:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 10. reduced-motion toggled during active experience: updates camera transition travel 
+    [edge] › tests\e2e\browser-behavior.spec.ts:152:3 › G1 Combined World Integration & Browser Behavior › 4. Greeting & 5. Return: resident acknowledges visitor with chair turn and returns to work 
+    [edge] › tests\e2e\browser-behavior.spec.ts:201:3 › G1 Combined World Integration & Browser Behavior › 7. Cancel: safe cancellation reverses along collision-checked path back to rest 
+    [edge] › tests\e2e\browser-behavior.spec.ts:239:3 › G1 Combined World Integration & Browser Behavior › 9. Monitor & 10. Reverse Doorway camera navigation 
+    [edge] › tests\e2e\world-lifecycle.spec.ts:123:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 3. Enter -> Escape: pressing Escape during entrance skips directly to HOME 
+    [edge] › tests\e2e\world-lifecycle.spec.ts:223:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 9. reduced-motion enabled before entry: bypasses camera travel directly to HOME 
+    [edge] › tests\e2e\world-lifecycle.spec.ts:244:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 10. reduced-motion toggled during active experience: updates camera transition travel 
+  54 passed (5.5m)
+ ELIFECYCLE  Command failed with exit code 1.
+
+EXIT: 1
