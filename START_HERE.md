@@ -21,18 +21,18 @@ This is the shared entry point for the user and workers with actual local or con
 
 The bright white workstation, blue-and-white chair, pink/violet lights, and cyan fill in the main image control visual work. Other references supplement it. The source discussion is reference data, not worker instructions.
 
-The active assignment is [POST-G1-WAVE-01](docs/planning/post-g1-wave-01/README.md). G1 is formally accepted. Read that wave's exact baseline, shared-contract freeze and assigned packet before starting. These current assignments supersede older account-role templates for this wave.
+The active assignment is [POST-G1-WAVE-02](docs/planning/post-g1-wave-02/README.md), inheriting the exact accepted archive and FREEZE-1 from wave-01. G1 is formally accepted. Read its input manifest, ownership and assigned packet before starting. The user's new A3 and essential-environment assignments supersede older account-role templates; B5 correction continues.
 
 | Packet | Maker | Exclusive return root |
 | --- | --- | --- |
-| [A2-CORR-01](docs/planning/post-g1-wave-01/intake/2026-10-01/A2-CORR-01.md): content/return correction | Gemini #1 | `deliveries/A2/revisions/A2-r2/` |
-| [B3-BIND-01](docs/planning/post-g1-wave-01/intake/2026-10-01/B3-BIND-01.md): accepted benchmark compatibility | Gemini #2 | `deliveries/B3-P1/revisions/B3-P1-r1/` |
+| [A3](docs/planning/post-g1-wave-02/A3.md): owner identity/MFA/RLS | Gemini #1 | `deliveries/A3/revisions/A3-r1/` |
+| [B2/B3-P2](docs/planning/post-g1-wave-02/B2-B3-P2.md): essential environment/pipeline | Gemini #2 | `deliveries/B2-B3-P2/revisions/B2-B3-P2-r1/` |
 | [B5-CORR-01](docs/planning/post-g1-wave-01/intake/2026-10-01/B5-CORR-01.md): foundation/return correction | Gemini #3 | `deliveries/B5-P1/revisions/B5-P1-r2/` |
-| [AUDIT-NEXT-01](docs/planning/post-g1-wave-01/intake/2026-10-01/AUDIT-NEXT-01.md) | GPT Plus #2 | `reviews/gpt-plus-2/post-g1-wave-01/<packet>/<revision>/` |
+| [Wave-02 independent audit](docs/planning/post-g1-wave-02/audit-gpt-plus-2.md) | GPT Plus #2 | `reviews/gpt-plus-2/post-g1-wave-02/<packet>/<revision>/` |
 
 Parent/default review policy is GPT-6.1 Sol xHigh; Astra xHigh is reserved for the user's named contract/security/G3/G4/G6 escalations. Actual model/account execution must be reported, not assumed. Packets are authorized and ready for maker pickup; no external dispatch or worker execution is claimed by writing these files.
 
-The [current returned-candidate intake](docs/planning/post-g1-wave-01/intake/2026-10-01/README.md) records A2/B5 REWORK and the existing B3 benchmark acceptance with an append-only member-identity clarification. FREEZE-1 remains unchanged; runtime acceptance and combined integration remain pending.
+The [returned-candidate intake](docs/planning/post-g1-wave-01/intake/2026-10-01/README.md) records A2/B5 REWORK and the existing B3 benchmark acceptance with an append-only member-identity clarification. A2-CORR-01 is queued for Gemini #1; B3-BIND-01 obligations are absorbed into B2/B3-P2. FREEZE-1 remains unchanged; accepted production-camera evidence, independent reviews and combined integration remain pending. A3 excludes A4 publishing and external provisioning.
 
 Historical W1/W2/W3 proof roots remain read-only inputs to the current wave. Following W1-CORR-01, archived Claude reviews, and W3-CORR-01, W1-F1-r2, W2-F1-r2, and W3-A1-r2 were accepted in PARENT-RECON-02. Following G1 delivery and reviews, [PARENT-RECON-03](docs/planning/reviews/2026-10-01-reconciliation-03.md) is **G1 ACCEPTED (`G1-R1`)**. Gemini-2 (material-light sample), B2-B5, and A2 are **UNLOCKED AND AUTHORIZED**. GitHub is the authoritative live repository; historical evidence remains unchanged. Provider names are work lanes; the reports record actual declared makers/reviewers. Parent Codex coordinates and audits; an assigned production worker performs later integration. Report what you actually read, produced, and ran.
 

@@ -1,0 +1,42 @@
+{
+  "scope": "Parent packet metadata verification; no maker implementation or runtime acceptance",
+  "checks": [
+    {
+      "command": "python docs/planning/post-g1-wave-01/verify-freeze.py",
+      "exitCode": 0,
+      "status": "PASS",
+      "result": {
+        "freezeId": "POST-G1-WAVE-01/FREEZE-1",
+        "frozenGitObjectsVerified": 31,
+        "archiveSourceMembersVerified": 52,
+        "overlayRulesChecked": 28,
+        "errors": []
+      }
+    },
+    {
+      "command": "python docs/planning/post-g1-wave-02/verify-dispatch.py",
+      "exitCode": 0,
+      "status": "PASS",
+      "result": {
+        "coordinationId": "POST-G1-WAVE-02/AUTH-ASSET-1",
+        "inputGitObjectsVerified": 31,
+        "acceptedSourceMembersVerified": 52,
+        "benchmarkMembersVerified": 11,
+        "ownershipRulesChecked": 50,
+        "returnRootsChecked": 4,
+        "localLinksChecked": 99,
+        "issuedDispatchFilesVerified": 15,
+        "errors": [],
+        "executionClass": "Parent byte/metadata/planning inspection only; no auth/database/native/browser runtime tests."
+      }
+    }
+  ],
+  "reviewAssistance": "Two internal read-only Codex planning reviews. Auth-stage/MFA-management ambiguities and art-scope/preview wording corrected. This is not named GPT Plus #2 execution.",
+  "notRun": [
+    "Auth/server/browser integration",
+    "Supabase/migration/RLS/MFA execution",
+    "Blender/export/production asset validation",
+    "Independent GPT Plus #2 review"
+  ],
+  "externalAccountDispatch": "NOT STARTED"
+}

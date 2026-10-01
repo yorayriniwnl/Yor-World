@@ -1,0 +1,141 @@
+{
+  "coordinationId": "POST-G1-WAVE-02/AUTH-ASSET-1",
+  "inheritsFreezeId": "POST-G1-WAVE-01/FREEZE-1",
+  "applicationRoot": "Unassigned. Overlay destinations are application-relative; later single-owner integration assigns the production repository root.",
+  "makers": {
+    "A3": {
+      "maker": "Gemini #1",
+      "requestedModel": "Gemini Pro / Extended Thinking",
+      "revision": "A3-r1",
+      "branch": "maker/a3-r1",
+      "repositoryWriteRoot": "deliveries/A3/revisions/A3-r1/",
+      "overlayTargets": [
+        "src/server/auth/**",
+        "src/server/db/database.types.ts",
+        "src/app/admin/layout.tsx",
+        "src/app/admin/(auth)/login/**",
+        "src/app/admin/(auth)/mfa/**",
+        "src/app/admin/(auth)/callback/**",
+        "src/app/admin/(auth)/logout/**",
+        "src/app/admin/(protected)/layout.tsx",
+        "src/app/admin/(protected)/page.tsx",
+        "src/app/api/admin/auth/**",
+        "src/features/admin/auth/**",
+        "supabase/config.toml",
+        "supabase/migrations/**",
+        "supabase/tests/a3-*",
+        "docs/security/a3/**",
+        "tests/unit/a3-*",
+        "tests/integration/a3-*",
+        "tests/e2e/a3-*"
+      ],
+      "sharedFileWrites": []
+    },
+    "B2-B3-P2": {
+      "maker": "Gemini #2",
+      "requestedModel": "Gemini Pro / Extended Thinking",
+      "revision": "B2-B3-P2-r1",
+      "branch": "maker/b2-b3-p2-r1",
+      "repositoryWriteRoot": "deliveries/B2-B3-P2/revisions/B2-B3-P2-r1/",
+      "overlayTargets": [
+        "assets-source/environment/essential/**",
+        "assets-runtime/environment/essential/**",
+        "scripts/assets/export.py",
+        "scripts/assets/validate.mjs",
+        "scripts/assets/optimize.mjs",
+        "src/features/room/room-scene.tsx",
+        "src/features/room/lighting.ts",
+        "src/features/room/anchors.ts",
+        "docs/art/b2-b3-p2/**",
+        "tests/unit/b2-b3-p2-*",
+        "tests/integration/b2-b3-p2-*"
+      ],
+      "sharedFileWrites": []
+    }
+  },
+  "continuingMakers": {
+    "B5-P1": {
+      "maker": "Gemini #3",
+      "revision": "B5-P1-r2",
+      "repositoryWriteRoot": "deliveries/B5-P1/revisions/B5-P1-r2/",
+      "overlayTargets": [
+        "src/features/world/**",
+        "src/features/experience/**",
+        "src/features/room/world-root.tsx",
+        "src/features/room/asset-loader.ts",
+        "docs/runtime/b5-p1/**",
+        "tests/unit/b5-p1-*",
+        "tests/integration/b5-p1-*",
+        "tests/e2e/b5-p1-*"
+      ],
+      "sharedFileWrites": []
+    }
+  },
+  "queuedMakers": {
+    "A2": {
+      "maker": "Gemini #1",
+      "packet": "A2-CORR-01",
+      "revision": "A2-r2",
+      "repositoryWriteRoot": "deliveries/A2/revisions/A2-r2/",
+      "ownershipSource": "docs/planning/post-g1-wave-01/ownership.json",
+      "state": "Queued for the same account; returned A2 remains unaccepted."
+    }
+  },
+  "supersededAssignments": [
+    {
+      "packet": "B3-BIND-01",
+      "replacement": "B2-B3-P2 first compatibility checkpoint",
+      "reason": "Same Gemini #2 now owns production environment and room adapters. Do not run both room-file assignments concurrently. Preserve historical benchmark and reports."
+    }
+  ],
+  "sharedReadOnlyTargets": [
+    "src/contracts/**",
+    "package.json",
+    "pnpm-lock.yaml",
+    "next.config.ts",
+    "next-env.d.ts",
+    "tsconfig.json",
+    "eslint.config.mjs",
+    "playwright.config.ts",
+    "vitest.config.ts",
+    "vitest.integration.config.ts",
+    "src/proxy.ts",
+    "src/middleware.ts",
+    "src/app/layout.tsx",
+    "src/app/(public)/**",
+    "src/app/not-found.tsx",
+    "src/app/sitemap.ts",
+    "src/server/content/**",
+    "src/features/portfolio/**",
+    "src/features/character/**",
+    "src/styles/**",
+    "public/**",
+    "assets-runtime/manifest.json",
+    "publication-manifest.json",
+    "release-manifest.json",
+    ".github/**"
+  ],
+  "notAssignedThisWave": [
+    "src/server/contact/**",
+    "src/app/api/contact/**",
+    "src/app/api/admin/publish/**",
+    "src/app/api/admin/rollback/**",
+    "src/features/admin/editor/**",
+    "assets-source/character/**",
+    "assets-runtime/character/**"
+  ],
+  "parentOnlyRepositoryPaths": [
+    "docs/planning/post-g1-wave-02/**",
+    "START_HERE.md",
+    "docs/planning/delegation-and-work-orders.md",
+    "docs/planning/account-prompts.md",
+    "docs/planning/local-tool-access.md"
+  ],
+  "independentAuditor": {
+    "account": "GPT Plus #2",
+    "repositoryWriteRoot": "reviews/gpt-plus-2/post-g1-wave-02/<packet>/<revision>/",
+    "productionWriteAccess": false
+  },
+  "writePolicy": "Only enumerated destinations are allowed. Unlisted paths are denied; no wildcard shared-file exception. Private harness/integration proposals remain inside the owned delivery root, outside the production overlay.",
+  "integration": "A separate single-owner packet after individual parent ACCEPT records; no speculative assembly, deployment or contract changes."
+}

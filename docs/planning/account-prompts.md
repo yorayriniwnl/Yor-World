@@ -1,6 +1,6 @@
 # YOR WORLD — prompts for 20 reported accounts
 
-Status, 2026-10-01: **G1 formally accepted; A2/B5 returned and require bounded correction; existing B3 benchmark acceptance preserved.** Use [the current intake/next packets](post-g1-wave-01/intake/2026-10-01/README.md): Gemini #1 A2-CORR-01, Gemini #2 B3-BIND-01, Gemini #3 B5-CORR-01, GPT Plus #2 AUDIT-NEXT-01; parent final technical acceptance. Model policy and FREEZE-1 remain unchanged. The older templates below are retained for other/historical assignments and do not supersede this wave or start workers. No external account dispatch is claimed.
+Status, 2026-10-01: **G1 accepted; next assigned work is A3 and B2/B3-P2.** Use [POST-G1-WAVE-02](post-g1-wave-02/README.md): Gemini #1 A3, Gemini #2 combined B2/B3-P2 (both requested Gemini Pro / Extended Thinking), Gemini #3 continuing B5-CORR-01, GPT Plus #2 independent review; parent final technical acceptance. A2 correction is queued, not accepted; B3-BIND-01 is absorbed into the environment packet. Model policy and shared FREEZE-1 contracts remain unchanged. Older templates below are historical/other-role prompts, not current dispatch authority. No external account dispatch or maker execution is claimed.
 
 Parent Codex owns architecture, coordination, audit, and acceptance. Makers return files; independent reviewers return findings; the parent assigns corrections. The user reviews personal identity, likeness, final visual direction, and publication decisions.
 
