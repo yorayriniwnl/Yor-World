@@ -35,7 +35,7 @@ Never run all five accounts on the same problem:
 **Model Policy:** Use **GPT-6.1 Sol** for ordinary coordination/auditing; use **Astra** only for dangerous cross-lane decisions and major gates.  
 **Invariants:** Auditor does not become fixer; maker does not approve itself; later work cannot silently alter an accepted revision.
 
-Historic proof output roots (W1, W2, W3, G1) were reconciled and accepted in PARENT-RECON-02/03. Production now proceeds under this operating pipeline.
+Historic proof output roots W1/W2/W3 are accepted under **PARENT-RECON-02**; **G1 ACCEPTED (`G1-R1`)** under **PARENT-RECON-03**. Production now proceeds under this operating pipeline.
 
 Local access must be real: a GPT/Gemini worker that can open this folder can reuse its files without repeated attachments; if it cannot, it reports **NO FILE ACCESS**. Claude browser reviewers instead read supplied project knowledge and review packets, flag absent items as **MISSING INPUT**, and review available material. No external account connection or automatic local-file synchronization has been configured.
 
