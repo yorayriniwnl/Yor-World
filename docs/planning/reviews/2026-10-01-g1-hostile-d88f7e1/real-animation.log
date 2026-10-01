@@ -1,0 +1,36 @@
+
+ RUN  v5.0.2 C:/Users/yoray/AppData/Local/Temp/yor-g1-hostile-run-y77xxbm4/app
+
+stdout | tests/reviewer/real-animation.test.ts > initial real coding_idle must be scheduled for both actual GLBs
+INITIAL_ACTUAL_ACTIONS {"clip":"coding_idle","time":1,"avatarScheduled":false,"chairScheduled":false}
+
+ ❯ tests/reviewer/real-animation.test.ts (2 tests | 1 failed) 72ms
+   × initial real coding_idle must be scheduled for both actual GLBs 30ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/reviewer/real-animation.test.ts > initial real coding_idle must be scheduled for both actual GLBs
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/reviewer/real-animation.test.ts:28:36
+     26|   console.log('INITIAL_ACTUAL_ACTIONS',JSON.stringify(observed));
+     27|   fs.writeFileSync(path.join(process.env.REVIEWER_EVIDENCE!,'real-anim…
+     28|   expect(observed.avatarScheduled).toBe(true);
+       |                                    ^
+     29|   expect(observed.chairScheduled).toBe(true);
+     30| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  09:29:09
+   Duration  343ms (tests 37%, import 35%, transform 26%, worker 2%)
+
