@@ -160,12 +160,13 @@ for action in sys.argv[1:]:
         print(f"Creating archive {zip_path}...")
         with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
             for p in root.rglob("*"):
-                if p == zip_path or ".git" in p.parts:
+                if p == zip_path or p.name == "g1-integration-proof.zip.sha256" or ".git" in p.parts:
                     continue
                 if p.is_file():
                     arcname = p.relative_to(root).as_posix()
                     zf.write(p, arcname)
         sha = hashlib.sha256(zip_path.read_bytes()).hexdigest()
+        (root / "g1-integration-proof.zip.sha256").write_text(f"{sha} *g1-integration-proof.zip\n", encoding="utf-8")
         print(f"Packaged {zip_path} ({zip_path.stat().st_size} bytes, SHA-256: {sha})")
     else:
         raise SystemExit(f"Unknown action: {action}")

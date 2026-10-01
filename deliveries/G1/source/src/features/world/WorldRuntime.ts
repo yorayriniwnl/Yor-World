@@ -40,7 +40,7 @@ export class WorldRuntime {
     this.scene.background = new THREE.Color("#0c1017");
 
     this.camera = new THREE.PerspectiveCamera(60, 16 / 9, 0.05, 30);
-    this.cameraDirector = new CameraDirector(this.camera, "home-desktop");
+    this.cameraDirector = new CameraDirector(this.camera);
     this.cameraDirector.setReducedMotion(this.reducedMotion);
 
     this.init(options).catch((err) => {

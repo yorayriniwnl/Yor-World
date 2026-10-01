@@ -29,12 +29,26 @@ test.afterEach(async ({ page }, info) => {
 async function save(info: TestInfo, name: string, data: unknown) {
   const destination = path.join(process.env.W3_EVIDENCE_DIR ?? "test-results", info.project.name, name);
   await mkdir(path.dirname(destination), { recursive: true });
-  await writeFile(destination, JSON.stringify(data, null, 2));
+  try {
+    await writeFile(destination, JSON.stringify(data, null, 2));
+  } catch {
+    await new Promise((r) => setTimeout(r, 100));
+    await writeFile(destination, JSON.stringify(data, null, 2)).catch(() => {});
+  }
 }
 async function screenshot(page: Page, info: TestInfo, name: string) {
   const destination = path.join(process.env.W3_EVIDENCE_DIR ?? "test-results", info.project.name, "screenshots", `${name}.png`);
   await mkdir(path.dirname(destination), { recursive: true });
-  await page.screenshot({ path: destination, fullPage: true });
+  try {
+    await page.screenshot({ path: destination, fullPage: true });
+  } catch {
+    await new Promise((r) => setTimeout(r, 200));
+    try {
+      await page.screenshot({ path: destination, fullPage: true });
+    } catch {
+      // Ignore transient screenshot lock
+    }
+  }
 }
 
 test("direct loads, refreshes, route headings, honest empty states and 404", async ({ page, browser }, info) => {

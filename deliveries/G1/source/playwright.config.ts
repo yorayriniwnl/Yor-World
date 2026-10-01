@@ -27,7 +27,7 @@ export default defineConfig({
     reuseExistingServer: false,
     timeout: 60_000,
     env: { NEXT_TELEMETRY_DISABLED: "1" },
-    stdout: "pipe",
+    stdout: "ignore",
     stderr: "pipe",
   },
 });
