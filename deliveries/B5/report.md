@@ -7,8 +7,7 @@
 **Execution Environment:** Node.js v24.19.0, pnpm 9.15.9, Next.js 16.3.8, React 19.3.0, Three.js 0.180.0  
 **Test Matrix:** 90 Unit Tests (Vitest, 9/9 suites) · 66 E2E Browser Behavior Tests (Playwright Chromium + Microsoft Edge) · **100% PASS**  
 **Delivery Archive:** `deliveries/B5/b5-lifecycle-proof.zip`  
-**Archive SHA-256:** `05b43772c859c4d9c61247dab81f0d7457b27c88fb272e14d47f255e7d87389d`  
-**Archive Size:** `20,135,606` bytes  
+**Archive Hash File:** `deliveries/B5/b5-lifecycle-proof.zip.sha256`  
 
 ---
 
@@ -192,14 +191,18 @@ All 66 tests were verified in full against production `next start` on Chromium (
 
 ---
 
-## 6. Manifest & Hashes
+## 6. Manifest & Delivery Package
 
 The delivery package archive was generated via `python tools/proof.py package`:
 
 - **Archive File:** `deliveries/B5/b5-lifecycle-proof.zip`
 - **Hash File:** `deliveries/B5/b5-lifecycle-proof.zip.sha256`
-- **SHA-256 Digest:** `05b43772c859c4d9c61247dab81f0d7457b27c88fb272e14d47f255e7d87389d`
-- **Archive Size:** 20,135,606 bytes
+- **Manifests:**
+  - `deliveries/B5/accepted-input-manifest.json`
+  - `deliveries/B5/accepted-inputs.json`
+  - `deliveries/B5/asset-manifest.json`
+  - `deliveries/B5/coordinate-mapping.json`
+  - `deliveries/B5/node-mapping.json`
 
 ### Verified Source File Hashes
 | File Path | Description | SHA-256 Hash |
