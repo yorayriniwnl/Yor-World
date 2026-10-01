@@ -30,9 +30,11 @@ export class CameraDirector {
   public reducedMotion: boolean = false;
   private currentTarget: THREE.Vector3 = new THREE.Vector3();
 
-  constructor(camera: THREE.PerspectiveCamera, initialPreset: CameraPreset = "home-desktop") {
+  constructor(camera: THREE.PerspectiveCamera, initialPreset?: CameraPreset) {
     this.camera = camera;
-    this.setPreset(initialPreset, true);
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+    const preset = initialPreset ?? (isMobile ? "home-mobile" : "home-desktop");
+    this.setPreset(preset, true);
   }
 
   public setReducedMotion(enabled: boolean) {
