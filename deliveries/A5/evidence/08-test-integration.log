@@ -1,0 +1,73 @@
+COMMAND: "C:\Program Files\nodejs\node.EXE" C:\Users\yoray\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs test:integration
+CWD: C:\Users\yoray\AppData\Local\Temp\yor-world-a5-proof-w60a8aal\app
+
+> yor-world-a5-proof@0.1.0 test:integration C:\Users\yoray\AppData\Local\Temp\yor-world-a5-proof-w60a8aal\app
+> vitest run --config vitest.integration.config.ts
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.2 [39m[90mC:/Users/yoray/AppData/Local/Temp/yor-world-a5-proof-w60a8aal/app[39m
+
+ [32m✓[39m tests/integration/media-access.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 61[2mms[22m[39m
+ [32m✓[39m tests/integration/publication.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 262[2mms[22m[39m
+ [32m✓[39m tests/integration/owner-auth.test.ts [2m([22m[2m18 tests[22m[2m)[22m[32m 87[2mms[22m[39m
+ [32m✓[39m tests/integration/database-authorization.test.ts [2m([22m[2m13 tests[22m[2m)[22m[33m 4713[2mms[22m[39m
+ [31m❯[39m tests/integration/contact.test.ts [2m([22m[2m13 tests[22m[2m | [22m[31m13 failed[39m[2m)[22m[33m 24259[2mms[22m[39m
+   [31m❯[39m Milestone A5: Durable Contact, Idempotency & Outbox Engine [2m(13)[22m
+     [31m❯[39m 1. Schema & Field Boundaries [2m(4)[22m
+[31m       [31m×[31m rejects name shorter than 2 characters or longer than 100[39m[33m 3950[2mms[22m[39m
+[31m       [31m×[31m rejects invalid email formats or email longer than 254 characters[39m[33m 2174[2mms[22m[39m
+[31m       [31m×[31m rejects message shorter than 20 characters or longer than 4000[39m[33m 1814[2mms[22m[39m
+[31m       [31m×[31m triggers spam protection and rejects when honeypot website is filled[39m[33m 2080[2mms[22m[39m
+     [31m❯[39m 2. Idempotency & 24-Hour Replay Guarantee [2m(2)[22m
+[31m       [31m×[31m replays the original durable receipt[39m[33m 1818[2mms[22m[39m
+[31m       [31m×[31m rejects duplicate key with conflicting payload with 409 Conflict[39m[33m 1814[2mms[22m[39m
+     [31m❯[39m 3. Quota Enforcement [2m(2)[22m
+[31m       [31m×[31m enforces network quota (3 requests per 10 minutes)[39m[33m 1603[2mms[22m[39m
+[31m       [31m×[31m enforces email quota (10 requests per day)[39m[33m 1508[2mms[22m[39m
+     [31m❯[39m 4. Critical Proof: Persistence Failure Handling [2m(1)[22m
+[31m       [31m×[31m does not claim receipt when persistence fails[39m[33m 1455[2mms[22m[39m
+     [31m❯[39m 5. Leased Outbox Worker & Retry Progression [2m(3)[22m
+[31m       [31m×[31m processes pending outbox records and sends notifications[39m[33m 1396[2mms[22m[39m
+[31m       [31m×[31m leases prevent two concurrent workers from duplicating delivery[39m[33m 1552[2mms[22m[39m
+[31m       [31m×[31m retries failed attempts with exponential backoff and marks permanent failure[39m[33m 1659[2mms[22m[39m
+     [31m❯[39m 6. Email HTML Escaping & Notification Formatter [2m(1)[22m
+[31m       [31m×[31m escapes malicious scripts and HTML entities in email body[39m[33m 1429[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 13 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/integration/contact.test.ts[2m > [22mMilestone A5: Durable Contact, Idempotency & Outbox Engine[2m > [22m1. Schema & Field Boundaries[2m > [22mrejects name shorter than 2 characters or longer than 100
+[41m[1m FAIL [22m[49m tests/integration/contact.test.ts[2m > [22mMilestone A5: Durable Contact, Idempotency & Outbox Engine[2m > [22m1. Schema & Field Boundaries[2m > [22mrejects invalid email formats or email longer than 254 characters
+[41m[1m FAIL [22m[49m tests/integration/contact.test.ts[2m > [22mMilestone A5: Durable Contact, Idempotency & Outbox Engine[2m > [22m1. Schema & Field Boundaries[2m > [22mrejects message shorter than 20 characters or longer than 4000
+[41m[1m FAIL [22m[49m tests/integration/contact.test.ts[2m > [22mMilestone A5: Durable Contact, Idempotency & Outbox Engine[2m > [22m1. Schema & Field Boundaries[2m > [22mtriggers spam protection and rejects when honeypot website is filled
+[41m[1m FAIL [22m[49m tests/integration/contact.test.ts[2m > [22mMilestone A5: Durable Contact, Idempotency & Outbox Engine[2m > [22m2. Idempotency & 24-Hour Replay Guarantee[2m > [22mreplays the original durable receipt
+[41m[1m FAIL [22m[49m tests/integration/contact.test.ts[2m > [22mMilestone A5: Durable Contact, Idempotency & Outbox Engine[2m > [22m2. Idempotency & 24-Hour Replay Guarantee[2m > [22mrejects duplicate key with conflicting payload with 409 Conflict
+[41m[1m FAIL [22m[49m tests/integration/contact.test.ts[2m > [22mMilestone A5: Durable Contact, Idempotency & Outbox Engine[2m > [22m3. Quota Enforcement[2m > [22menforces network quota (3 requests per 10 minutes)
+[41m[1m FAIL [22m[49m tests/integration/contact.test.ts[2m > [22mMilestone A5: Durable Contact, Idempotency & Outbox Engine[2m > [22m3. Quota Enforcement[2m > [22menforces email quota (10 requests per day)
+[41m[1m FAIL [22m[49m tests/integration/contact.test.ts[2m > [22mMilestone A5: Durable Contact, Idempotency & Outbox Engine[2m > [22m4. Critical Proof: Persistence Failure Handling[2m > [22mdoes not claim receipt when persistence fails
+[41m[1m FAIL [22m[49m tests/integration/contact.test.ts[2m > [22mMilestone A5: Durable Contact, Idempotency & Outbox Engine[2m > [22m5. Leased Outbox Worker & Retry Progression[2m > [22mprocesses pending outbox records and sends notifications
+[41m[1m FAIL [22m[49m tests/integration/contact.test.ts[2m > [22mMilestone A5: Durable Contact, Idempotency & Outbox Engine[2m > [22m5. Leased Outbox Worker & Retry Progression[2m > [22mleases prevent two concurrent workers from duplicating delivery
+[41m[1m FAIL [22m[49m tests/integration/contact.test.ts[2m > [22mMilestone A5: Durable Contact, Idempotency & Outbox Engine[2m > [22m5. Leased Outbox Worker & Retry Progression[2m > [22mretries failed attempts with exponential backoff and marks permanent failure
+[41m[1m FAIL [22m[49m tests/integration/contact.test.ts[2m > [22mMilestone A5: Durable Contact, Idempotency & Outbox Engine[2m > [22m6. Email HTML Escaping & Notification Formatter[2m > [22mescapes malicious scripts and HTML entities in email body
+[31m[1merror[22m: cannot insert multiple commands into a prepared statement[39m
+[90m [2m❯[22m pe.Ue node_modules/.pnpm/@electric-sql+pglite@0.5.8/node_modules/@electric-sql/pg-protocol/src/parser.ts:[2m442:11[22m[39m
+[90m [2m❯[22m pe.tt node_modules/.pnpm/@electric-sql+pglite@0.5.8/node_modules/@electric-sql/pg-protocol/src/parser.ts:[2m220:16[22m[39m
+[90m [2m❯[22m pe.parse node_modules/.pnpm/@electric-sql+pglite@0.5.8/node_modules/@electric-sql/pg-protocol/src/parser.ts:[2m104:21[22m[39m
+[90m [2m❯[22m N.qe node_modules/.pnpm/@electric-sql+pglite@0.5.8/node_modules/@electric-sql/pglite/src/pglite.ts:[2m753:26[22m[39m
+[90m [2m❯[22m node_modules/.pnpm/@electric-sql+pglite@0.5.8/node_modules/@electric-sql/pglite/src/pglite.ts:[2m706:14[22m[39m
+[90m [2m❯[22m null.<anonymous> wasm:/wasm/0267bb86:[2m1:5922000[22m[39m
+[90m [2m❯[22m null.<anonymous> wasm:/wasm/0267bb86:[2m1:2616044[22m[39m
+[90m [2m❯[22m null.<anonymous> wasm:/wasm/0267bb86:[2m1:2648530[22m[39m
+[90m [2m❯[22m null.<anonymous> wasm:/wasm/0267bb86:[2m1:2649134[22m[39m
+[90m [2m❯[22m null.<anonymous> wasm:/wasm/0267bb86:[2m1:5569870[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/13]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m4 passed[39m[22m[90m (5)[39m
+[2m      Tests [22m [1m[31m13 failed[39m[22m[2m | [22m[1m[32m61 passed[39m[22m[90m (74)[39m
+[2m   Start at [22m 00:58:54
+[2m   Duration [22m 25.24s[2m (tests 91%, import 7%, transform 2%)[22m
+
+ ELIFECYCLE  Command failed with exit code 1.
+
+EXIT: 1
