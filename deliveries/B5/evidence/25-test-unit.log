@@ -1,0 +1,78 @@
+COMMAND: "C:\Program Files\nodejs\node.EXE" C:\Users\yoray\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs test:unit
+CWD: C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app
+
+> yor-world-g1-proof@0.1.0 test:unit C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app
+> vitest run --config vitest.config.ts
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.2 [39m[90mC:/Users/yoray/AppData/Local/Temp/yor-world-b5-proof-xc9mhki2/app[39m
+
+ [32m✓[39m tests/unit/contract-types.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 5[2mms[22m[39m
+[90mstderr[2m | tests/unit/lifecycle-manager.test.ts[2m > [22m[2mLifecycleManager - 8 Explicit States and Adversarial Guarantees[2m > [22m[2menforces bounded retries (maxRetries = 3)
+[22m[39m[LifecycleManager] Bounded retry limit reached.
+
+[90mstderr[2m | tests/unit/lifecycle-manager.test.ts[2m > [22m[2mLifecycleManager - 8 Explicit States and Adversarial Guarantees[2m > [22m[2mDISPOSING cleans up all listeners and returns to STATIC
+[22m[39m[LifecycleManager] Cannot request entry: manager is disposed.
+
+ [32m✓[39m tests/unit/lifecycle-manager.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m tests/unit/scene-integrator.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32m✓[39m tests/unit/camera-director.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+[90mstderr[2m | tests/unit/entrance-coordinator.test.ts[2m > [22m[2mEntranceCoordinator - Production Entrance Choreography (Task B5)[2m > [22m[2mPROVE: only one active entrance exists at any time
+[22m[39m[EntranceCoordinator] Entrance already running; returning active entrance promise.
+
+[90mstderr[2m | tests/unit/character-director.test.ts[2m > [22m[2mCharacterDirector - Production Resident Behavior (Task B4 / B5)[2m > [22m[2menforces priority arbitration: ambient request rejected when interaction is running
+[22m[39m[CharacterDirector] Request "mouse_idle" rejected by priority arbitration (1 < 2)
+
+ [32m✓[39m tests/unit/entrance-coordinator.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+ [32m✓[39m tests/unit/asset-loader.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [31m❯[39m tests/unit/character-director.test.ts [2m([22m[2m14 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 50[2mms[22m[39m
+   [31m❯[39m CharacterDirector - Production Resident Behavior (Task B4 / B5) [2m(14)[22m
+     [32m✓[39m establishes single full-body action ownership[32m 8[2mms[22m[39m
+     [32m✓[39m initializes in coding_idle at time 0 with IDLE priority[32m 1[2mms[22m[39m
+     [32m✓[39m supports all 8 clips in the V1 art and interaction specification[32m 1[2mms[22m[39m
+     [32m✓[39m advances through the full greeting sequence and returns to coding_idle[32m 3[2mms[22m[39m
+     [32m✓[39m enforces priority arbitration: ambient request rejected when interaction is running[32m 6[2mms[22m[39m
+     [32m✓[39m enforces priority arbitration: entrance overrides lower-priority actions[32m 4[2mms[22m[39m
+     [32m✓[39m fixes W2 velocity discontinuity: cancel() uses 150-250ms smooth transition blending[32m 2[2mms[22m[39m
+     [32m✓[39m safe cancellation from notice_visitor smoothly blends back to coding_idle[32m 2[2mms[22m[39m
+     [32m✓[39m playAttentionGlance resolves upon 1.2s finite clip completion[32m 1[2mms[22m[39m
+     [32m✓[39m playMouseIdle resolves upon 2.0s finite clip completion[32m 1[2mms[22m[39m
+     [32m✓[39m immediately settles to coding_idle on settle() within <=50ms (instant skip / escape)[32m 1[2mms[22m[39m
+     [32m✓[39m alias settleToWork() conforms to canonical B4/B5 interface[32m 1[2mms[22m[39m
+[31m     [31m×[31m survives 20 repeated greeting, glance, and cancel cycles without root drift or stuck state[39m[32m 17[2mms[22m[39m
+     [32m✓[39m dispose() cleanly halts mixers, actions, and resets state[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/boundaries.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 200[2mms[22m[39m
+ [32m✓[39m tests/unit/contracts.test.ts [2m([22m[2m51 tests[22m[2m)[22m[32m 49[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/unit/character-director.test.ts[2m > [22mCharacterDirector - Production Resident Behavior (Task B4 / B5)[2m > [22msurvives 20 repeated greeting, glance, and cancel cycles without root drift or stuck state
+[31m[1mAssertionError[22m: expected 'safe-return' to be 'coding' // Object.is equality[39m
+
+Expected: [32m"coding"[39m
+Received: [31m"safe-return"[39m
+
+[36m [2m❯[22m tests/unit/character-director.test.ts:[2m256:29[22m[39m
+    [90m254|[39m         director.advance(1.5);
+    [90m255|[39m       }
+    [90m256|[39m       expect(director.mode).toBe("coding");
+    [90m   |[39m                             [31m^[39m
+    [90m257|[39m       expect(director.currentClip).toBe("coding_idle");
+    [90m258|[39m     }
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m8 passed[39m[22m[90m (9)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m101 passed[39m[22m[90m (102)[39m
+[2m   Start at [22m 00:06:30
+[2m   Duration [22m 2.80s[2m (import 62%, transform 30%, worker 4%, tests 4%)[22m
+
+[2m  Transform [22m [33mtransforming modules took 2.88s[39m[2m · 30% of tracked time, re-done on every run[22m
+[2m            [22m [2mpersist transforms across runs with [22m[33mfsModuleCache: true[39m
+[2m            [22m [2mon CI this only helps when the cache directory is persisted between runs[22m
+[2m            [22m [2mlearn more: https://vitest.dev/guide/improving-performance#caching-between-reruns[22m
+
+ ELIFECYCLE  Command failed with exit code 1.
+
+EXIT: 1

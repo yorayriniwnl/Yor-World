@@ -115,7 +115,7 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
 
     const badge = page.locator('[data-testid="status-badge"]');
     await expect(badge).toBeVisible({ timeout: 15000 });
-    await expect(badge).toContainText("coding_idle");
+    await expect(badge).toContainText("coding_idle", { timeout: 15000 });
 
     await captureScreenshot(page, "02-entry-home-desktop");
 

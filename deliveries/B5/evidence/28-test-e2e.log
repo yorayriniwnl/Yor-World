@@ -1,0 +1,392 @@
+COMMAND: "C:\Program Files\nodejs\node.EXE" C:\Users\yoray\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs test:e2e
+CWD: C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app
+
+> yor-world-g1-proof@0.1.0 test:e2e C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app
+> playwright test
+
+
+Running 78 tests using 1 worker
+
+  ok  1 [chrome] › tests\e2e\browser-behavior.spec.ts:89:3 › G1 Combined World Integration & Browser Behavior › 1. Load: public page loads with zero 3D world scripts or models pre-entry (24.6s)
+  x   2 [chrome] › tests\e2e\browser-behavior.spec.ts:109:3 › G1 Combined World Integration & Browser Behavior › 2. Entry & 3. Home Camera: explicit entry mounts world with single resident and chair at F1 coordinates (25.6s)
+  ok  3 [chrome] › tests\e2e\browser-behavior.spec.ts:152:3 › G1 Combined World Integration & Browser Behavior › 4. Greeting & 5. Return: resident acknowledges visitor with chair turn and returns to work (11.6s)
+  ok  4 [chrome] › tests\e2e\browser-behavior.spec.ts:181:3 › G1 Combined World Integration & Browser Behavior › 6. Repeat: safe repeated greeting interactions without state corruption (4.9s)
+  ok  5 [chrome] › tests\e2e\browser-behavior.spec.ts:201:3 › G1 Combined World Integration & Browser Behavior › 7. Cancel: safe cancellation reverses along collision-checked path back to rest (4.9s)
+  ok  6 [chrome] › tests\e2e\browser-behavior.spec.ts:220:3 › G1 Combined World Integration & Browser Behavior › 8. Skip/Escape: instant settlement to coding pose within ≤50ms (3.9s)
+  ok  7 [chrome] › tests\e2e\browser-behavior.spec.ts:239:3 › G1 Combined World Integration & Browser Behavior › 9. Monitor & 10. Reverse Doorway camera navigation (6.5s)
+  ok  8 [chrome] › tests\e2e\browser-behavior.spec.ts:271:3 › G1 Combined World Integration & Browser Behavior › 11. Mobile Viewport: touch-friendly HUD and mobile framing (8.8s)
+  ok  9 [chrome] › tests\e2e\browser-behavior.spec.ts:292:3 › G1 Combined World Integration & Browser Behavior › 12. Reduced Motion & Sound Defaults (25.9s)
+  ok 10 [chrome] › tests\e2e\browser-behavior.spec.ts:318:3 › G1 Combined World Integration & Browser Behavior › 13. Asset Failure: graceful fallback leaves useful HTML (18.0s)
+  ok 11 [chrome] › tests\e2e\browser-behavior.spec.ts:335:3 › G1 Combined World Integration & Browser Behavior › 14. Renderer Failure: WebGL failure caught cleanly leaving useful HTML (6.8s)
+  ok 12 [chrome] › tests\e2e\browser-behavior.spec.ts:349:3 › G1 Combined World Integration & Browser Behavior › 15. Fallback Content with JavaScript Disabled: 100% useful semantic HTML (7.2s)
+  ok 13 [chrome] › tests\e2e\payload.spec.ts:7:1 › five cold loads per desktop and mobile profile record actual production payloads (20.9s)
+  ok 14 [chrome] › tests\e2e\public-shell.spec.ts:54:1 › direct loads, refreshes, route headings, honest empty states and 404 (1.9s)
+  ok 15 [chrome] › tests\e2e\public-shell.spec.ts:87:1 › keyboard skip link and all primary destinations work without pointer input (1.5s)
+  ok 16 [chrome] › tests\e2e\public-shell.spec.ts:113:1 › useful HTML and native navigation remain with JavaScript disabled (1.8s)
+  ok 17 [chrome] › tests\e2e\public-shell.spec.ts:139:1 › world and backend requests blocked; entry reports unavailable; sound and WebGL stay off (1.5s)
+  ok 18 [chrome] › tests\e2e\public-shell.spec.ts:200:1 › reduced motion has no active animation or smooth travel and keeps all routes (919ms)
+  ok 19 [chrome] › tests\e2e\public-shell.spec.ts:217:1 › direct section anchors and browser Back preserve reachable content (977ms)
+  ok 20 [chrome] › tests\e2e\public-shell.spec.ts:234:1 › automated axe scan of every public route and open studio disclosure (3.4s)
+  ok 21 [chrome] › tests\e2e\public-shell.spec.ts:246:1 › mobile, narrow and landscape reflow preserve controls (2.7s)
+  x  22 [chrome] › tests\e2e\resident-behavior.spec.ts:51:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 1. Resident interaction after entrance: greet sequence plays and returns cleanly to coding (16.4s)
+  x  23 [chrome] › tests\e2e\resident-behavior.spec.ts:78:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 2. Repeated greet: rapid clicks coalesce gracefully without state corruption (13.2s)
+  x  24 [chrome] › tests\e2e\resident-behavior.spec.ts:104:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 3. Greet interrupted by route navigation: unmounts cleanly without console error (13.5s)
+  x  25 [chrome] › tests\e2e\resident-behavior.spec.ts:128:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 4. Escape key during entrance: settles immediately to HOME within <=50ms (38.0s)
+  ok 26 [chrome] › tests\e2e\resident-behavior.spec.ts:147:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 5. Browser Back button during entrance: unmounts world stage cleanly (3.6s)
+  ok 27 [chrome] › tests\e2e\resident-behavior.spec.ts:165:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 6. Page hide and show (visibilitychange): preserves runtime state without crashing (3.9s)
+  ok 28 [chrome] › tests\e2e\world-lifecycle.spec.ts:67:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 1. Enter -> repeated Enter: rapid enter requests never create duplicate canvas or renderer (3.6s)
+  ok 29 [chrome] › tests\e2e\world-lifecycle.spec.ts:90:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 2. Enter -> Skip -> late load completion: Skip settles instantly to HOME; late tasks cannot corrupt state (10.6s)
+  ok 30 [chrome] › tests\e2e\world-lifecycle.spec.ts:123:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 3. Enter -> Escape: pressing Escape during entrance skips directly to HOME (3.6s)
+  ok 31 [chrome] › tests\e2e\world-lifecycle.spec.ts:146:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 4. Enter -> route navigation: navigating to portfolio routes cancels world and unmounts canvas cleanly (2.0s)
+  ok 32 [chrome] › tests\e2e\world-lifecycle.spec.ts:162:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 5. Enter -> Back: browser back button returns to clean static portfolio without errors (3.3s)
+  ok 33 [chrome] › tests\e2e\world-lifecycle.spec.ts:179:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 6. loading -> renderer failure: simulated renderer failure gracefully renders accessible fallback (2.8s)
+  ok 34 [chrome] › tests\e2e\world-lifecycle.spec.ts:198:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 7. failed asset -> Retry: simulated asset failure shows bounded retry (2.5s)
+  ok 35 [chrome] › tests\e2e\world-lifecycle.spec.ts:210:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 8. failure -> Continue with portfolio: dismisses fallback and returns to clean portfolio (2.4s)
+  ok 36 [chrome] › tests\e2e\world-lifecycle.spec.ts:225:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 9. reduced-motion enabled before entry: bypasses camera travel directly to HOME (2.7s)
+  ok 37 [chrome] › tests\e2e\world-lifecycle.spec.ts:246:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 10. reduced-motion toggled during active experience: updates camera transition travel (3.4s)
+  ok 38 [chrome] › tests\e2e\world-lifecycle.spec.ts:267:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 11. PROVE: single owners verified across all domains (3.0s)
+  ok 39 [chrome] › tests\e2e\world-lifecycle.spec.ts:286:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 12. PROVE: semantic navigation survives renderer failure (2.4s)
+  ok 40 [edge] › tests\e2e\browser-behavior.spec.ts:89:3 › G1 Combined World Integration & Browser Behavior › 1. Load: public page loads with zero 3D world scripts or models pre-entry (6.3s)
+  ok 41 [edge] › tests\e2e\browser-behavior.spec.ts:109:3 › G1 Combined World Integration & Browser Behavior › 2. Entry & 3. Home Camera: explicit entry mounts world with single resident and chair at F1 coordinates (6.1s)
+  ok 42 [edge] › tests\e2e\browser-behavior.spec.ts:152:3 › G1 Combined World Integration & Browser Behavior › 4. Greeting & 5. Return: resident acknowledges visitor with chair turn and returns to work (8.3s)
+  ok 43 [edge] › tests\e2e\browser-behavior.spec.ts:181:3 › G1 Combined World Integration & Browser Behavior › 6. Repeat: safe repeated greeting interactions without state corruption (4.6s)
+  ok 44 [edge] › tests\e2e\browser-behavior.spec.ts:201:3 › G1 Combined World Integration & Browser Behavior › 7. Cancel: safe cancellation reverses along collision-checked path back to rest (5.3s)
+  ok 45 [edge] › tests\e2e\browser-behavior.spec.ts:220:3 › G1 Combined World Integration & Browser Behavior › 8. Skip/Escape: instant settlement to coding pose within ≤50ms (5.6s)
+  ok 46 [edge] › tests\e2e\browser-behavior.spec.ts:239:3 › G1 Combined World Integration & Browser Behavior › 9. Monitor & 10. Reverse Doorway camera navigation (5.0s)
+  ok 47 [edge] › tests\e2e\browser-behavior.spec.ts:271:3 › G1 Combined World Integration & Browser Behavior › 11. Mobile Viewport: touch-friendly HUD and mobile framing (2.2s)
+  ok 48 [edge] › tests\e2e\browser-behavior.spec.ts:292:3 › G1 Combined World Integration & Browser Behavior › 12. Reduced Motion & Sound Defaults (2.3s)
+  ok 49 [edge] › tests\e2e\browser-behavior.spec.ts:318:3 › G1 Combined World Integration & Browser Behavior › 13. Asset Failure: graceful fallback leaves useful HTML (1.5s)
+  ok 50 [edge] › tests\e2e\browser-behavior.spec.ts:335:3 › G1 Combined World Integration & Browser Behavior › 14. Renderer Failure: WebGL failure caught cleanly leaving useful HTML (2.2s)
+  ok 51 [edge] › tests\e2e\browser-behavior.spec.ts:349:3 › G1 Combined World Integration & Browser Behavior › 15. Fallback Content with JavaScript Disabled: 100% useful semantic HTML (1.6s)
+  ok 52 [edge] › tests\e2e\payload.spec.ts:7:1 › five cold loads per desktop and mobile profile record actual production payloads (17.6s)
+  ok 53 [edge] › tests\e2e\public-shell.spec.ts:54:1 › direct loads, refreshes, route headings, honest empty states and 404 (2.5s)
+  ok 54 [edge] › tests\e2e\public-shell.spec.ts:87:1 › keyboard skip link and all primary destinations work without pointer input (2.2s)
+  ok 55 [edge] › tests\e2e\public-shell.spec.ts:113:1 › useful HTML and native navigation remain with JavaScript disabled (2.6s)
+  ok 56 [edge] › tests\e2e\public-shell.spec.ts:139:1 › world and backend requests blocked; entry reports unavailable; sound and WebGL stay off (2.3s)
+  ok 57 [edge] › tests\e2e\public-shell.spec.ts:200:1 › reduced motion has no active animation or smooth travel and keeps all routes (2.0s)
+  ok 58 [edge] › tests\e2e\public-shell.spec.ts:217:1 › direct section anchors and browser Back preserve reachable content (2.3s)
+  ok 59 [edge] › tests\e2e\public-shell.spec.ts:234:1 › automated axe scan of every public route and open studio disclosure (4.9s)
+  ok 60 [edge] › tests\e2e\public-shell.spec.ts:246:1 › mobile, narrow and landscape reflow preserve controls (4.7s)
+  x  61 [edge] › tests\e2e\resident-behavior.spec.ts:51:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 1. Resident interaction after entrance: greet sequence plays and returns cleanly to coding (17.5s)
+  x  62 [edge] › tests\e2e\resident-behavior.spec.ts:78:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 2. Repeated greet: rapid clicks coalesce gracefully without state corruption (14.0s)
+  x  63 [edge] › tests\e2e\resident-behavior.spec.ts:104:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 3. Greet interrupted by route navigation: unmounts cleanly without console error (15.7s)
+  x  64 [edge] › tests\e2e\resident-behavior.spec.ts:128:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 4. Escape key during entrance: settles immediately to HOME within <=50ms (32.1s)
+  ok 65 [edge] › tests\e2e\resident-behavior.spec.ts:147:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 5. Browser Back button during entrance: unmounts world stage cleanly (3.0s)
+  ok 66 [edge] › tests\e2e\resident-behavior.spec.ts:165:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 6. Page hide and show (visibilitychange): preserves runtime state without crashing (3.2s)
+  ok 67 [edge] › tests\e2e\world-lifecycle.spec.ts:67:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 1. Enter -> repeated Enter: rapid enter requests never create duplicate canvas or renderer (2.0s)
+  ok 68 [edge] › tests\e2e\world-lifecycle.spec.ts:90:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 2. Enter -> Skip -> late load completion: Skip settles instantly to HOME; late tasks cannot corrupt state (8.3s)
+  ok 69 [edge] › tests\e2e\world-lifecycle.spec.ts:123:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 3. Enter -> Escape: pressing Escape during entrance skips directly to HOME (1.7s)
+  ok 70 [edge] › tests\e2e\world-lifecycle.spec.ts:146:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 4. Enter -> route navigation: navigating to portfolio routes cancels world and unmounts canvas cleanly (1.5s)
+  ok 71 [edge] › tests\e2e\world-lifecycle.spec.ts:162:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 5. Enter -> Back: browser back button returns to clean static portfolio without errors (1.8s)
+  ok 72 [edge] › tests\e2e\world-lifecycle.spec.ts:179:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 6. loading -> renderer failure: simulated renderer failure gracefully renders accessible fallback (1.5s)
+  ok 73 [edge] › tests\e2e\world-lifecycle.spec.ts:198:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 7. failed asset -> Retry: simulated asset failure shows bounded retry (1.3s)
+  ok 74 [edge] › tests\e2e\world-lifecycle.spec.ts:210:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 8. failure -> Continue with portfolio: dismisses fallback and returns to clean portfolio (1.4s)
+  ok 75 [edge] › tests\e2e\world-lifecycle.spec.ts:225:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 9. reduced-motion enabled before entry: bypasses camera travel directly to HOME (2.0s)
+  ok 76 [edge] › tests\e2e\world-lifecycle.spec.ts:246:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 10. reduced-motion toggled during active experience: updates camera transition travel (2.1s)
+  ok 77 [edge] › tests\e2e\world-lifecycle.spec.ts:267:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 11. PROVE: single owners verified across all domains (2.0s)
+  ok 78 [edge] › tests\e2e\world-lifecycle.spec.ts:286:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 12. PROVE: semantic navigation survives renderer failure (1.4s)
+
+
+  1) [chrome] › tests\e2e\browser-behavior.spec.ts:109:3 › G1 Combined World Integration & Browser Behavior › 2. Entry & 3. Home Camera: explicit entry mounts world with single resident and chair at F1 coordinates 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('[data-testid="status-badge"]')
+    Expected substring: "coding_idle"
+    Received string:    "none · unmounted"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" locator('[data-testid="status-badge"]') with timeout 5000ms
+      - waiting for locator('[data-testid="status-badge"]')
+        8 × locator resolved to <span data-testid="status-badge" data-lifecycle-state="LOADING" class="world-module__FC9lxW__statusBadge">none · unmounted</span>
+          - unexpected value "none · unmounted"
+
+
+      116 |     const badge = page.locator('[data-testid="status-badge"]');
+      117 |     await expect(badge).toBeVisible({ timeout: 15000 });
+    > 118 |     await expect(badge).toContainText("coding_idle");
+          |                         ^
+      119 |
+      120 |     await captureScreenshot(page, "02-entry-home-desktop");
+      121 |
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app\tests\e2e\browser-behavior.spec.ts:118:25
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\browser-behavior-G1-Combin-3f036-and-chair-at-F1-coordinates-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\browser-behavior-G1-Combin-3f036-and-chair-at-F1-coordinates-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\browser-behavior-G1-Combin-3f036-and-chair-at-F1-coordinates-chrome\error-context.md
+
+  2) [chrome] › tests\e2e\resident-behavior.spec.ts:51:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 1. Resident interaction after entrance: greet sequence plays and returns cleanly to coding 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[data-testid="resident-greet-btn"]')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('[data-testid="resident-greet-btn"]') with timeout 10000ms
+      - waiting for locator('[data-testid="resident-greet-btn"]')
+
+
+      62 |     // Trigger greet interaction
+      63 |     const greetBtn = page.locator('[data-testid="resident-greet-btn"]');
+    > 64 |     await expect(greetBtn).toBeVisible({ timeout: 10000 });
+         |                            ^
+      65 |     await greetBtn.click();
+      66 |
+      67 |     // Verify diagnostics indicate sequence
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app\tests\e2e\resident-behavior.spec.ts:64:28
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\resident-behavior-Producti-2a147-d-returns-cleanly-to-coding-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\resident-behavior-Producti-2a147-d-returns-cleanly-to-coding-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\resident-behavior-Producti-2a147-d-returns-cleanly-to-coding-chrome\error-context.md
+
+  3) [chrome] › tests\e2e\resident-behavior.spec.ts:78:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 2. Repeated greet: rapid clicks coalesce gracefully without state corruption 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[data-testid="resident-greet-btn"]')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('[data-testid="resident-greet-btn"]') with timeout 5000ms
+      - waiting for locator('[data-testid="resident-greet-btn"]')
+
+
+      87 |
+      88 |     const greetBtn = page.locator('[data-testid="resident-greet-btn"]');
+    > 89 |     await expect(greetBtn).toBeVisible();
+         |                            ^
+      90 |
+      91 |     // Click 5 times in rapid succession
+      92 |     await greetBtn.click();
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app\tests\e2e\resident-behavior.spec.ts:89:28
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\resident-behavior-Producti-2a2cc-ly-without-state-corruption-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\resident-behavior-Producti-2a2cc-ly-without-state-corruption-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\resident-behavior-Producti-2a2cc-ly-without-state-corruption-chrome\error-context.md
+
+  4) [chrome] › tests\e2e\resident-behavior.spec.ts:104:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 3. Greet interrupted by route navigation: unmounts cleanly without console error 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[data-testid="resident-greet-btn"]')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('[data-testid="resident-greet-btn"]') with timeout 5000ms
+      - waiting for locator('[data-testid="resident-greet-btn"]')
+
+
+      113 |
+      114 |     const greetBtn = page.locator('[data-testid="resident-greet-btn"]');
+    > 115 |     await expect(greetBtn).toBeVisible();
+          |                            ^
+      116 |     await greetBtn.click();
+      117 |
+      118 |     // Immediately navigate away mid-greeting
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app\tests\e2e\resident-behavior.spec.ts:115:28
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\resident-behavior-Producti-4c82a-eanly-without-console-error-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\resident-behavior-Producti-4c82a-eanly-without-console-error-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\resident-behavior-Producti-4c82a-eanly-without-console-error-chrome\error-context.md
+
+  5) [chrome] › tests\e2e\resident-behavior.spec.ts:128:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 4. Escape key during entrance: settles immediately to HOME within <=50ms 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="diagnostics-toggle-btn"]')
+
+
+      134 |
+      135 |     // Check diagnostics: must be HOME and coding_idle
+    > 136 |     await page.locator('[data-testid="diagnostics-toggle-btn"]').click();
+          |                                                                  ^
+      137 |     const diagPre = page.locator('[data-testid="world-diagnostics"]');
+      138 |     await expect(diagPre).toBeVisible();
+      139 |
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app\tests\e2e\resident-behavior.spec.ts:136:66
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\resident-behavior-Producti-a8ff1-diately-to-HOME-within-50ms-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\resident-behavior-Producti-a8ff1-diately-to-HOME-within-50ms-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\resident-behavior-Producti-a8ff1-diately-to-HOME-within-50ms-chrome\error-context.md
+
+  6) [edge] › tests\e2e\resident-behavior.spec.ts:51:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 1. Resident interaction after entrance: greet sequence plays and returns cleanly to coding 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[data-testid="resident-greet-btn"]')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('[data-testid="resident-greet-btn"]') with timeout 10000ms
+      - waiting for locator('[data-testid="resident-greet-btn"]')
+
+
+      62 |     // Trigger greet interaction
+      63 |     const greetBtn = page.locator('[data-testid="resident-greet-btn"]');
+    > 64 |     await expect(greetBtn).toBeVisible({ timeout: 10000 });
+         |                            ^
+      65 |     await greetBtn.click();
+      66 |
+      67 |     // Verify diagnostics indicate sequence
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app\tests\e2e\resident-behavior.spec.ts:64:28
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\resident-behavior-Producti-2a147-d-returns-cleanly-to-coding-edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\resident-behavior-Producti-2a147-d-returns-cleanly-to-coding-edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\resident-behavior-Producti-2a147-d-returns-cleanly-to-coding-edge\error-context.md
+
+  7) [edge] › tests\e2e\resident-behavior.spec.ts:78:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 2. Repeated greet: rapid clicks coalesce gracefully without state corruption 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[data-testid="resident-greet-btn"]')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('[data-testid="resident-greet-btn"]') with timeout 5000ms
+      - waiting for locator('[data-testid="resident-greet-btn"]')
+
+
+      87 |
+      88 |     const greetBtn = page.locator('[data-testid="resident-greet-btn"]');
+    > 89 |     await expect(greetBtn).toBeVisible();
+         |                            ^
+      90 |
+      91 |     // Click 5 times in rapid succession
+      92 |     await greetBtn.click();
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app\tests\e2e\resident-behavior.spec.ts:89:28
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\resident-behavior-Producti-2a2cc-ly-without-state-corruption-edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\resident-behavior-Producti-2a2cc-ly-without-state-corruption-edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\resident-behavior-Producti-2a2cc-ly-without-state-corruption-edge\error-context.md
+
+  8) [edge] › tests\e2e\resident-behavior.spec.ts:104:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 3. Greet interrupted by route navigation: unmounts cleanly without console error 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[data-testid="resident-greet-btn"]')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('[data-testid="resident-greet-btn"]') with timeout 5000ms
+      - waiting for locator('[data-testid="resident-greet-btn"]')
+
+
+      113 |
+      114 |     const greetBtn = page.locator('[data-testid="resident-greet-btn"]');
+    > 115 |     await expect(greetBtn).toBeVisible();
+          |                            ^
+      116 |     await greetBtn.click();
+      117 |
+      118 |     // Immediately navigate away mid-greeting
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app\tests\e2e\resident-behavior.spec.ts:115:28
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\resident-behavior-Producti-4c82a-eanly-without-console-error-edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\resident-behavior-Producti-4c82a-eanly-without-console-error-edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\resident-behavior-Producti-4c82a-eanly-without-console-error-edge\error-context.md
+
+  9) [edge] › tests\e2e\resident-behavior.spec.ts:128:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 4. Escape key during entrance: settles immediately to HOME within <=50ms 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="diagnostics-toggle-btn"]')
+
+
+      134 |
+      135 |     // Check diagnostics: must be HOME and coding_idle
+    > 136 |     await page.locator('[data-testid="diagnostics-toggle-btn"]').click();
+          |                                                                  ^
+      137 |     const diagPre = page.locator('[data-testid="world-diagnostics"]');
+      138 |     await expect(diagPre).toBeVisible();
+      139 |
+        at C:\Users\yoray\AppData\Local\Temp\yor-world-b5-proof-xc9mhki2\app\tests\e2e\resident-behavior.spec.ts:136:66
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\resident-behavior-Producti-a8ff1-diately-to-HOME-within-50ms-edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\resident-behavior-Producti-a8ff1-diately-to-HOME-within-50ms-edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\resident-behavior-Producti-a8ff1-diately-to-HOME-within-50ms-edge\error-context.md
+
+  9 failed
+    [chrome] › tests\e2e\browser-behavior.spec.ts:109:3 › G1 Combined World Integration & Browser Behavior › 2. Entry & 3. Home Camera: explicit entry mounts world with single resident and chair at F1 coordinates 
+    [chrome] › tests\e2e\resident-behavior.spec.ts:51:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 1. Resident interaction after entrance: greet sequence plays and returns cleanly to coding 
+    [chrome] › tests\e2e\resident-behavior.spec.ts:78:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 2. Repeated greet: rapid clicks coalesce gracefully without state corruption 
+    [chrome] › tests\e2e\resident-behavior.spec.ts:104:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 3. Greet interrupted by route navigation: unmounts cleanly without console error 
+    [chrome] › tests\e2e\resident-behavior.spec.ts:128:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 4. Escape key during entrance: settles immediately to HOME within <=50ms 
+    [edge] › tests\e2e\resident-behavior.spec.ts:51:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 1. Resident interaction after entrance: greet sequence plays and returns cleanly to coding 
+    [edge] › tests\e2e\resident-behavior.spec.ts:78:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 2. Repeated greet: rapid clicks coalesce gracefully without state corruption 
+    [edge] › tests\e2e\resident-behavior.spec.ts:104:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 3. Greet interrupted by route navigation: unmounts cleanly without console error 
+    [edge] › tests\e2e\resident-behavior.spec.ts:128:3 › Production Resident Behavior & Entrance Runtime - Adversarial E2E Suite › 4. Escape key during entrance: settles immediately to HOME within <=50ms 
+  69 passed (9.7m)
+ ELIFECYCLE  Command failed with exit code 1.
+
+EXIT: 1
