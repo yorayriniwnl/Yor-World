@@ -1,0 +1,120 @@
+COMMAND: "C:\Program Files\nodejs\node.EXE" C:\Users\yoray\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs test:integration
+CWD: C:\Users\yoray\AppData\Local\Temp\yor-world-a3-proof-65el__7z\app
+
+> yor-world-a3-proof@0.1.0 test:integration C:\Users\yoray\AppData\Local\Temp\yor-world-a3-proof-65el__7z\app
+> vitest run --config vitest.integration.config.ts
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.2 [39m[90mC:/Users/yoray/AppData/Local/Temp/yor-world-a3-proof-65el__7z/app[39m
+
+ [32m✓[39m tests/integration/owner-auth.test.ts [2m([22m[2m18 tests[22m[2m)[22m[32m 41[2mms[22m[39m
+ [31m❯[39m tests/integration/database-authorization.test.ts [2m([22m[2m11 tests[22m[2m | [22m[31m5 failed[39m[2m)[22m[33m 2178[2mms[22m[39m
+   [31m❯[39m Milestone A3: PostgreSQL Database Grants & Row Level Security (RLS) [2m(11)[22m
+     [31m❯[39m Identity Authorization Matrix: projects table [2m(5)[22m
+       [32m✓[39m anonymous: denied SELECT, INSERT, UPDATE, DELETE[32m 10[2mms[22m[39m
+       [32m✓[39m authenticated non-owner: denied SELECT, INSERT, UPDATE, DELETE (0 rows or error)[32m 8[2mms[22m[39m
+       [32m✓[39m owner without MFA (AAL1): denied SELECT, INSERT, UPDATE, DELETE[32m 5[2mms[22m[39m
+       [32m✓[39m revoked owner with otherwise-valid session: denied IMMEDIATELY on all operations[32m 5[2mms[22m[39m
+[31m       [31m×[31m active owner with MFA (AAL2): allowed SELECT, INSERT, UPDATE, DELETE[39m[32m 6[2mms[22m[39m
+     [31m❯[39m published_content table (Public read, Owner-only write) [2m(2)[22m
+       [32m✓[39m anonymous: ALLOWED SELECT, but DENIED INSERT, UPDATE, DELETE[32m 6[2mms[22m[39m
+[31m       [31m×[31m active owner with AAL2: ALLOWED SELECT, INSERT, UPDATE, DELETE[39m[32m 4[2mms[22m[39m
+     [31m❯[39m audit_events table (Append-only security guarantee) [2m(1)[22m
+[31m       [31m×[31m active owner with AAL2: ALLOWED SELECT and INSERT, but strictly DENIED UPDATE and DELETE[39m[32m 2[2mms[22m[39m
+     [31m❯[39m admin_users table (No self-tampering or role escalation) [2m(1)[22m
+[31m       [31m×[31m active owner with AAL2: CAN SELECT their own record, but CANNOT INSERT, UPDATE, or DELETE admin_users[39m[32m 5[2mms[22m[39m
+     [31m❯[39m contact_messages table [2m(2)[22m
+       [32m✓[39m unauthenticated / non-owner: DENIED SELECT, UPDATE, DELETE[32m 2[2mms[22m[39m
+[31m       [31m×[31m active owner with AAL2: ALLOWED SELECT, UPDATE status, DELETE[39m[32m 2[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 5 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/integration/database-authorization.test.ts[2m > [22mMilestone A3: PostgreSQL Database Grants & Row Level Security (RLS)[2m > [22mIdentity Authorization Matrix: projects table[2m > [22mactive owner with MFA (AAL2): allowed SELECT, INSERT, UPDATE, DELETE
+[31m[1mAssertionError[22m: expected 0 to be greater than or equal to 1[39m
+[36m [2m❯[22m tests/integration/database-authorization.test.ts:[2m163:31[22m[39m
+    [90m161|[39m       await setContext("active_owner_aal2");
+    [90m162|[39m       const sel = await db.query("SELECT * FROM public.projects");
+    [90m163|[39m       expect(sel.rows.length).toBeGreaterThanOrEqual(1);
+    [90m   |[39m                               [31m^[39m
+    [90m164|[39m
+    [90m165|[39m       await db.query("INSERT INTO public.projects (slug, title) VALUES…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/integration/database-authorization.test.ts[2m > [22mMilestone A3: PostgreSQL Database Grants & Row Level Security (RLS)[2m > [22mpublished_content table (Public read, Owner-only write)[2m > [22mactive owner with AAL2: ALLOWED SELECT, INSERT, UPDATE, DELETE
+[31m[1merror[22m: new row violates row-level security policy for table "published_content"[39m
+[90m [2m❯[22m pe.Ue node_modules/.pnpm/@electric-sql+pglite@0.5.8/node_modules/@electric-sql/pg-protocol/src/parser.ts:[2m442:11[22m[39m
+[90m [2m❯[22m pe.tt node_modules/.pnpm/@electric-sql+pglite@0.5.8/node_modules/@electric-sql/pg-protocol/src/parser.ts:[2m220:16[22m[39m
+[90m [2m❯[22m pe.parse node_modules/.pnpm/@electric-sql+pglite@0.5.8/node_modules/@electric-sql/pg-protocol/src/parser.ts:[2m104:21[22m[39m
+[90m [2m❯[22m N.qe node_modules/.pnpm/@electric-sql+pglite@0.5.8/node_modules/@electric-sql/pglite/src/pglite.ts:[2m753:26[22m[39m
+[90m [2m❯[22m node_modules/.pnpm/@electric-sql+pglite@0.5.8/node_modules/@electric-sql/pglite/src/pglite.ts:[2m706:14[22m[39m
+[90m [2m❯[22m null.<anonymous> wasm:/wasm/0267bb86:[2m1:5922000[22m[39m
+[90m [2m❯[22m null.<anonymous> wasm:/wasm/0267bb86:[2m1:2616044[22m[39m
+[90m [2m❯[22m null.<anonymous> wasm:/wasm/0267bb86:[2m1:2648530[22m[39m
+[90m [2m❯[22m null.<anonymous> wasm:/wasm/0267bb86:[2m1:2649134[22m[39m
+[90m [2m❯[22m null.<anonymous> wasm:/wasm/0267bb86:[2m1:5569870[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/integration/database-authorization.test.ts[2m > [22mMilestone A3: PostgreSQL Database Grants & Row Level Security (RLS)[2m > [22maudit_events table (Append-only security guarantee)[2m > [22mactive owner with AAL2: ALLOWED SELECT and INSERT, but strictly DENIED UPDATE and DELETE
+[31m[1merror[22m: new row violates row-level security policy for table "audit_events"[39m
+[90m [2m❯[22m pe.Ue node_modules/.pnpm/@electric-sql+pglite@0.5.8/node_modules/@electric-sql/pg-protocol/src/parser.ts:[2m442:11[22m[39m
+[90m [2m❯[22m pe.tt node_modules/.pnpm/@electric-sql+pglite@0.5.8/node_modules/@electric-sql/pg-protocol/src/parser.ts:[2m220:16[22m[39m
+[90m [2m❯[22m pe.parse node_modules/.pnpm/@electric-sql+pglite@0.5.8/node_modules/@electric-sql/pg-protocol/src/parser.ts:[2m104:21[22m[39m
+[90m [2m❯[22m N.qe node_modules/.pnpm/@electric-sql+pglite@0.5.8/node_modules/@electric-sql/pglite/src/pglite.ts:[2m753:26[22m[39m
+[90m [2m❯[22m node_modules/.pnpm/@electric-sql+pglite@0.5.8/node_modules/@electric-sql/pglite/src/pglite.ts:[2m706:14[22m[39m
+[90m [2m❯[22m null.<anonymous> wasm:/wasm/0267bb86:[2m1:5922000[22m[39m
+[90m [2m❯[22m null.<anonymous> wasm:/wasm/0267bb86:[2m1:2616044[22m[39m
+[90m [2m❯[22m null.<anonymous> wasm:/wasm/0267bb86:[2m1:2648530[22m[39m
+[90m [2m❯[22m null.<anonymous> wasm:/wasm/0267bb86:[2m1:2649134[22m[39m
+[90m [2m❯[22m null.<anonymous> wasm:/wasm/0267bb86:[2m1:5569870[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/integration/database-authorization.test.ts[2m > [22mMilestone A3: PostgreSQL Database Grants & Row Level Security (RLS)[2m > [22madmin_users table (No self-tampering or role escalation)[2m > [22mactive owner with AAL2: CAN SELECT their own record, but CANNOT INSERT, UPDATE, or DELETE admin_users
+[31m[1mAssertionError[22m: expected [] to have a length of 1 but got +0[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 1[39m
+[31m+ 0[39m
+
+[36m [2m❯[22m tests/integration/database-authorization.test.ts:[2m223:24[22m[39m
+    [90m221|[39m       await setContext("active_owner_aal2");
+    [90m222|[39m       const sel = await db.query(`SELECT * FROM public.admin_users WHE…
+    [90m223|[39m       expect(sel.rows).toHaveLength(1);
+    [90m   |[39m                        [31m^[39m
+    [90m224|[39m
+    [90m225|[39m       // Cannot see other users' records
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/integration/database-authorization.test.ts[2m > [22mMilestone A3: PostgreSQL Database Grants & Row Level Security (RLS)[2m > [22mcontact_messages table[2m > [22mactive owner with AAL2: ALLOWED SELECT, UPDATE status, DELETE
+[31m[1mAssertionError[22m: expected [] to have a length of 1 but got +0[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 1[39m
+[31m+ 0[39m
+
+[36m [2m❯[22m tests/integration/database-authorization.test.ts:[2m252:24[22m[39m
+    [90m250|[39m       await setContext("active_owner_aal2");
+    [90m251|[39m       const sel = await db.query("SELECT * FROM public.contact_message…
+    [90m252|[39m       expect(sel.rows).toHaveLength(1);
+    [90m   |[39m                        [31m^[39m
+    [90m253|[39m
+    [90m254|[39m       const upd = await db.query("UPDATE public.contact_messages SET s…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[31m5 failed[39m[22m[2m | [22m[1m[32m24 passed[39m[22m[90m (29)[39m
+[2m   Start at [22m 23:37:30
+[2m   Duration [22m 2.81s[2m (tests 80%, import 13%, transform 6%)[22m
+
+ ELIFECYCLE  Command failed with exit code 1.
+
+EXIT: 1
