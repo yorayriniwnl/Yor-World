@@ -1,0 +1,92 @@
+COMMAND: "C:\Program Files\nodejs\node.EXE" C:\Users\yoray\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs lint
+CWD: C:\Users\yoray\AppData\Local\Temp\yor-world-a6-proof-db188nmu\app
+
+> yor-world-a4-proof@0.1.0 lint C:\Users\yoray\AppData\Local\Temp\yor-world-a6-proof-db188nmu\app
+> eslint . --max-warnings=0
+
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-a6-proof-db188nmu\app\src\app\api\contact\route.ts
+  94:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-a6-proof-db188nmu\app\src\features\contact\contact-form.tsx
+  19:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-a6-proof-db188nmu\app\src\features\contact\contact-form.tsx:19:7
+  17 |   useEffect(() => {
+  18 |     if (!idempotencyKey) {
+> 19 |       setIdempotencyKey(crypto.randomUUID());
+     |       ^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  20 |     }
+  21 |   }, [idempotencyKey]);
+  22 |  react-hooks/set-state-in-effect
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-a6-proof-db188nmu\app\src\server\contact\db.ts
+   9:10  warning  'readFileSync' is defined but never used  @typescript-eslint/no-unused-vars
+  10:10  warning  'join' is defined but never used          @typescript-eslint/no-unused-vars
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-a6-proof-db188nmu\app\src\server\contact\quota.ts
+  12:15  warning  'PGlite' is defined but never used        @typescript-eslint/no-unused-vars
+  54:63  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-a6-proof-db188nmu\app\src\server\contact\receive.ts
+  27:3   warning  'PersistenceError' is defined but never used  @typescript-eslint/no-unused-vars
+  71:25  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+  72:18  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-a6-proof-db188nmu\app\src\server\integrations\github.ts
+  12:10  warning  'z' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-a6-proof-db188nmu\app\src\server\operations\backup-restore.ts
+  126:49  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  135:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  144:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  153:58  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-a6-proof-db188nmu\app\tests\integration\contact.test.ts
+   26:3    warning  'checkContactQuotas' is defined but never used         @typescript-eslint/no-unused-vars
+   27:3    warning  'enforceAtomicQuota' is defined but never used         @typescript-eslint/no-unused-vars
+   30:3    warning  'persistContactTransaction' is defined but never used  @typescript-eslint/no-unused-vars
+   31:3    warning  'findIdempotencyRecord' is defined but never used      @typescript-eslint/no-unused-vars
+   32:3    warning  'PersistenceError' is defined but never used           @typescript-eslint/no-unused-vars
+   36:3    warning  'calculateNextRetry' is defined but never used         @typescript-eslint/no-unused-vars
+   43:3    warning  'hashIdempotencyKey' is defined but never used         @typescript-eslint/no-unused-vars
+   44:3    warning  'hashPayload' is defined but never used                @typescript-eslint/no-unused-vars
+   45:3    warning  'hashQuotaKey' is defined but never used               @typescript-eslint/no-unused-vars
+   46:3    warning  'normalizePayload' is defined but never used           @typescript-eslint/no-unused-vars
+   47:3    warning  'escapeHtml' is defined but never used                 @typescript-eslint/no-unused-vars
+  198:60   error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  199:62   error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  336:21   error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  388:39   error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  445:118  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  454:118  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  464:105  error    Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-a6-proof-db188nmu\app\tests\integration\github-metadata.test.ts
+    7:3   warning  'ALLOWLISTED_REPOSITORIES' is defined but never used  @typescript-eslint/no-unused-vars
+   55:33  error    Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
+   77:33  error    Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
+   85:33  error    Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
+  124:36  error    Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-a6-proof-db188nmu\app\tests\integration\internal-jobs.test.ts
+  27:83  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-a6-proof-db188nmu\app\tests\integration\operations-restore.test.ts
+   5:8   warning  'DatabaseBackupSnapshot' is defined but never used  @typescript-eslint/no-unused-vars
+   7:30  warning  'RETRY_DELAYS_SECONDS' is defined but never used    @typescript-eslint/no-unused-vars
+   8:33  warning  'EmailSendResult' is defined but never used         @typescript-eslint/no-unused-vars
+  13:33  error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  30:65  error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+
+✖ 43 problems (23 errors, 20 warnings)
+
+ ELIFECYCLE  Command failed with exit code 1.
+
+EXIT: 1

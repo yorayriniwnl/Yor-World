@@ -1,0 +1,28 @@
+COMMAND: "C:\Program Files\nodejs\node.EXE" C:\Users\yoray\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs typecheck
+CWD: C:\Users\yoray\AppData\Local\Temp\yor-world-a6-proof-db188nmu\app
+
+> yor-world-a4-proof@0.1.0 typecheck C:\Users\yoray\AppData\Local\Temp\yor-world-a6-proof-db188nmu\app
+> tsc --noEmit
+
+src/server/jobs/outbox-worker.ts(137,9): error TS18048: 'msg' is possibly 'undefined'.
+src/server/jobs/outbox-worker.ts(137,9): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/server/jobs/outbox-worker.ts(138,9): error TS18048: 'msg' is possibly 'undefined'.
+src/server/jobs/outbox-worker.ts(139,9): error TS18048: 'msg' is possibly 'undefined'.
+src/server/jobs/outbox-worker.ts(140,9): error TS18048: 'msg' is possibly 'undefined'.
+src/server/jobs/outbox-worker.ts(141,18): error TS18048: 'msg' is possibly 'undefined'.
+src/server/jobs/outbox-worker.ts(141,18): error TS2769: No overload matches this call.
+  Overload 1 of 4, '(value: string | number | Date): Date', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type 'string | number | Date'.
+  Overload 2 of 4, '(value: string | number): Date', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type 'string | number'.
+src/server/jobs/outbox-worker.ts(150,11): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/server/jobs/outbox-worker.ts(150,20): error TS18048: 'msg' is possibly 'undefined'.
+src/server/jobs/runner.ts(98,57): error TS2379: Argument of type '{ now: Date; customFetch: { (input: RequestInfo | URL, init?: RequestInit): Promise<Response>; (input: string | URL | Request, init?: RequestInit): Promise<Response>; } | undefined; }' is not assignable to parameter of type 'FetchGitHubOptions' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'customFetch' are incompatible.
+    Type '{ (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<Response>; (input: string | URL | Request, init?: RequestInit | undefined): Promise<...>; } | undefined' is not assignable to type '{ (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<Response>; (input: string | URL | Request, init?: RequestInit | undefined): Promise<...>; }'.
+      Type 'undefined' is not assignable to type '{ (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<Response>; (input: string | URL | Request, init?: RequestInit | undefined): Promise<...>; }'.
+tests/integration/operations-restore.test.ts(155,12): error TS18048: 'contactMsg' is possibly 'undefined'.
+tests/integration/operations-restore.test.ts(156,12): error TS18048: 'contactMsg' is possibly 'undefined'.
+ ELIFECYCLE  Command failed with exit code 2.
+
+EXIT: 2
