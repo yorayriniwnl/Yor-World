@@ -1,10 +1,10 @@
 # YOR WORLD — planning package
 
-Prepared 30 September 2026; status reconciled 1 October 2026. GitHub is the authoritative live repository. **W1-F1-r2, W2-F1-r2, and W3-A1-r2 are ACCEPTED; G1 is ACCEPTED (`G1-R1`).** The current authority is [PARENT-RECON-03](docs/planning/reviews/2026-10-01-reconciliation-03.md), following the [accepted W1/W2/W3 ruling](docs/planning/reviews/2026-10-01-reconciliation-02.md). B2-B5 and A2 are unlocked; C1-C4 and production release remain gated.
+Prepared 30 September 2026; status reconciled 1 October 2026. GitHub is the authoritative live repository. **W1-F1-r2, W2-F1-r2, and W3-A1-r2 are ACCEPTED; G1 ACCEPTED (`G1-R1`).** The current authority is [PARENT-RECON-03](docs/planning/reviews/2026-10-01-reconciliation-03.md), following the [accepted W1/W2/W3 ruling](docs/planning/reviews/2026-10-01-reconciliation-02.md). B2-B5 and A2 are unlocked; C1-C4 and production release remain gated.
 
 YOR WORLD is a personal portfolio experienced as an inhabited developer studio. A visitor can enter through a cinematic doorway, meet the creator, touch objects that respond physically, and explore real work. Projects, résumé, and contact remain directly accessible through ordinary web pages.
 
-This workspace contains the project specification, local reference library, returned isolated proofs under `deliveries/`, independent reviews, and parent acceptance records. The W1/W2/W3 correction findings were resolved and accepted in PARENT-RECON-02. The combined G1 feasibility proof was subsequently accepted in PARENT-RECON-03 after adversarial and independent review. This acceptance is bounded: final art, likeness approval, later runtime work, content publication, production deployment, and release operations are not implied.
+This workspace contains the project specification, local reference library, returned isolated proofs under `deliveries/`, independent reviews, and parent acceptance records. The W1/W2/W3 correction findings were resolved and accepted in PARENT-RECON-02. The combined G1 feasibility proof was subsequently **G1 ACCEPTED (`G1-R1`)** in PARENT-RECON-03 after adversarial and independent review. This acceptance is bounded: final art, likeness approval, later runtime work, content publication, production deployment, and release operations are not implied.
 
 The work is grouped into three [production prompts](docs/planning/production-prompts/README.md): platform/content (A), world/art (B), and integration/release (C). They follow the existing plans and preserve task-level assignment and review gates.
 
