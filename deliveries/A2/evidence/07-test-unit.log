@@ -1,0 +1,131 @@
+COMMAND: "C:\Program Files\nodejs\node.EXE" C:\Users\yoray\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs test:unit
+CWD: C:\Users\yoray\AppData\Local\Temp\yor-world-a2-proof-zp8y9unc\app
+
+> yor-world-g1-proof@0.1.0 test:unit C:\Users\yoray\AppData\Local\Temp\yor-world-a2-proof-zp8y9unc\app
+> vitest run --config vitest.config.ts
+
+[33m(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vitest.config.ts:7:25). Use `import.meta.dirname` instead
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.[39m
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.2 [39m[90mC:/Users/yoray/AppData/Local/Temp/yor-world-a2-proof-zp8y9unc/app[39m
+
+ [32m✓[39m tests/unit/contract-types.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m tests/unit/scene-integrator.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m tests/unit/character-director.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m tests/unit/contracts.test.ts [2m([22m[2m51 tests[22m[2m)[22m[32m 35[2mms[22m[39m
+ [31m❯[39m tests/unit/boundaries.test.ts [2m([22m[2m9 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 221[2mms[22m[39m
+   [32m✓[39m publishes verified projects and verified owner identity[32m 2[2mms[22m[39m
+[31m   [31m×[31m enforces G1 dependency boundaries: three is isolated to world feature, shell remains free of 3D[39m[32m 203[2mms[22m[39m
+   [32m✓[39m keeps shared contracts independent of framework and server imports[32m 7[2mms[22m[39m
+   [32m✓[39m regression: syntax-level import boundary detection [2m(6)[22m
+     [32m✓[39m rejects dynamic import of test fixture in production module[32m 2[2mms[22m[39m
+     [32m✓[39m rejects side-effect import of test fixture in production module[32m 1[2mms[22m[39m
+     [32m✓[39m rejects export-from of test fixture in production module[32m 1[2mms[22m[39m
+     [32m✓[39m rejects aliased import of test fixture in production module[32m 1[2mms[22m[39m
+     [32m✓[39m rejects framework or dynamic imports in contracts[32m 1[2mms[22m[39m
+     [32m✓[39m rejects three.js import in public shell features outside world[32m 1[2mms[22m[39m
+ [31m❯[39m tests/unit/content-visibility.test.ts [2m([22m[2m17 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[32m 47[2mms[22m[39m
+   [31m❯[39m Content Visibility & Publication Contracts (Milestone A2) [2m(17)[22m
+     [32m✓[39m loads the approved publication with exactly the verified candidate projects[32m 12[2mms[22m[39m
+     [32m✓[39m Verified Projects Lookup [2m(4)[22m
+       [32m✓[39m successfully finds verified project 'ai-vs-real' with all required case-study blocks[32m 1[2mms[22m[39m
+       [32m✓[39m successfully finds verified project 'zenith'[32m 1[2mms[22m[39m
+       [32m✓[39m successfully finds verified project 'helios'[32m 1[2mms[22m[39m
+       [32m✓[39m successfully finds verified project 'talks'[32m 1[2mms[22m[39m
+     [32m✓[39m Unpublished Candidate & Unknown Slug Behavior [2m(2)[22m
+       [32m✓[39m returns null for unpublished candidate CandidateX[32m 0[2mms[22m[39m
+       [32m✓[39m returns null for completely unknown / arbitrary slugs[32m 0[2mms[22m[39m
+     [31m❯[39m Unsupported Claim Rejection [2m(4)[22m
+[31m       [31m×[31m rejects publication fixtures containing unverified evidence status ('unknown')[39m[32m 7[2mms[22m[39m
+       [32m✓[39m rejects publication fixtures with projects lacking any verified evidence[32m 1[2mms[22m[39m
+       [32m✓[39m rejects publication fixtures with duplicate slugs[32m 0[2mms[22m[39m
+[31m       [31m×[31m rejects insecure or non-HTTPS links in project evidence or links[39m[32m 2[2mms[22m[39m
+     [31m❯[39m Accessible Figures & Missing Media Handling [2m(2)[22m
+       [32m✓[39m renders figure markup cleanly when mediaId is provided[32m 7[2mms[22m[39m
+[31m       [31m×[31m renders accessible non-crashing fallback placeholder when mediaId is missing or empty[39m[32m 5[2mms[22m[39m
+     [32m✓[39m Long Title & Typography Resilience [2m(1)[22m
+       [32m✓[39m renders case study with an unusually long title without throwing or breaking structure[32m 5[2mms[22m[39m
+     [32m✓[39m Safe External Links & Security [2m(3)[22m
+       [32m✓[39m validates HTTPS URLs correctly and rejects dangerous protocols[32m 0[2mms[22m[39m
+       [32m✓[39m renders external links with target='_blank' and rel='noopener noreferrer'[32m 0[2mms[22m[39m
+       [32m✓[39m renders disabled fallback if an unsafe URL is passed to SafeExternalLink[32m 0[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 4 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/unit/boundaries.test.ts[2m > [22menforces G1 dependency boundaries: three is isolated to world feature, shell remains free of 3D
+[31m[1mError[22m: Forbidden import (import) in src/server/content/publication-reader.ts:6: specifier "./approved-publication" resolves to "src/server/content/approved-publication" matching /(?:^|\/)server(?:\/|$)/[39m
+[36m [2m❯[22m validateProductionModule tests/unit/boundaries.test.ts:[2m95:15[22m[39m
+    [90m 93|[39m     for (const pattern of forbiddenPatterns) {
+    [90m 94|[39m       if (pattern.test(imp.specifier) || pattern.test(imp.resolvedPath…
+    [90m 95|[39m         throw new Error(
+    [90m   |[39m               [31m^[39m
+    [90m 96|[39m           `Forbidden import (${imp.kind}) in ${filePath}:${imp.line}: …
+    [90m 97|[39m         );
+[90m [2m❯[22m tests/unit/boundaries.test.ts:[2m125:5[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/content-visibility.test.ts[2m > [22mContent Visibility & Publication Contracts (Milestone A2)[2m > [22mUnsupported Claim Rejection[2m > [22mrejects publication fixtures containing unverified evidence status ('unknown')
+[31m[1mAssertionError[22m: expected [Function] to throw error matching /contains unverified claim 'ev-unverif…/ but got 'Project \'candidatex\' has no verifie…'[39m
+
+[32m- Expected:[39m
+/contains unverified claim 'ev-unverified' with status 'unknown'/
+
+[31m+ Received:[39m
+"Project 'candidatex' has no verified evidence. Projects cannot be published without verifiable owner evidence."
+
+[36m [2m❯[22m tests/unit/content-visibility.test.ts:[2m131:61[22m[39m
+    [90m129|[39m
+    [90m130|[39m       expect(() => validatePublication(invalidPublication)).toThrow(Pu…
+    [90m131|[39m       expect(() => validatePublication(invalidPublication)).toThrow(
+    [90m   |[39m                                                             [31m^[39m
+    [90m132|[39m         /contains unverified claim 'ev-unverified' with status 'unknow…
+    [90m133|[39m       );
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/content-visibility.test.ts[2m > [22mContent Visibility & Publication Contracts (Milestone A2)[2m > [22mUnsupported Claim Rejection[2m > [22mrejects insecure or non-HTTPS links in project evidence or links
+[31m[1mAssertionError[22m: expected [Function] to throw error matching /insecure link URL|Only https:\/\/ UR…/\ but got 'Structural publication schema error: …'[39m
+
+[32m- Expected:[39m
+/insecure link URL|Only https:\/\/ URLs are allowed/
+
+[31m+ Received:[39m
+"Structural publication schema error: projects.0.links.0.url: Invalid URL"
+
+[36m [2m❯[22m tests/unit/content-visibility.test.ts:[2m204:62[22m[39m
+    [90m202|[39m       };
+    [90m203|[39m
+    [90m204|[39m       expect(() => validatePublication(insecureLinkProject)).toThrow(
+    [90m   |[39m                                                              [31m^[39m
+    [90m205|[39m         /insecure link URL|Only https:\/\/ URLs are allowed/
+    [90m206|[39m       );
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/content-visibility.test.ts[2m > [22mContent Visibility & Publication Contracts (Milestone A2)[2m > [22mAccessible Figures & Missing Media Handling[2m > [22mrenders accessible non-crashing fallback placeholder when mediaId is missing or empty
+[31m[1mAssertionError[22m: expected '<figure class="_caseStudyFigure_ba8b0…' to contain 'Diagram / figure pending asset review'[39m
+
+Expected: [32m"Diagram / figure pending asset review"[39m
+Received: [31m"<figure class="_caseStudyFigure_ba8b06"><div class="_figureFallback_ba8b06" role="img" aria-label="Expected architecture diagram"><span class="_figureFallbackIcon_ba8b06" aria-hidden="true">📊</span><span class="_figureFallbackText_ba8b06">Figure: Expected architecture diagram</span></div><figcaption class="_caseStudyFigcaption_ba8b06">Fig 2: Architecture diagram under review.</figcaption></figure>"[39m
+
+[36m [2m❯[22m tests/unit/content-visibility.test.ts:[2m238:20[22m[39m
+    [90m236|[39m       expect(html).toContain('role="img"');
+    [90m237|[39m       expect(html).toContain('aria-label="Expected architecture diagra…
+    [90m238|[39m       expect(html).toContain("Diagram / figure pending asset review");
+    [90m   |[39m                    [31m^[39m
+    [90m239|[39m       expect(html).toContain("<figcaption");
+    [90m240|[39m       expect(html).not.toContain("<img"); // Zero broken image tags
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m4 passed[39m[22m[90m (6)[39m
+[2m      Tests [22m [1m[31m4 failed[39m[22m[2m | [22m[1m[32m80 passed[39m[22m[90m (84)[39m
+[2m   Start at [22m 15:04:51
+[2m   Duration [22m 1.59s[2m (import 44%, transform 43%, tests 11%, worker 2%)[22m
+
+ ELIFECYCLE  Command failed with exit code 1.
+
+EXIT: 1

@@ -1,0 +1,149 @@
+COMMAND: "C:\Program Files\nodejs\node.EXE" C:\Users\yoray\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs test:unit
+CWD: C:\Users\yoray\AppData\Local\Temp\yor-world-a2-proof-zp8y9unc\app
+
+> yor-world-g1-proof@0.1.0 test:unit C:\Users\yoray\AppData\Local\Temp\yor-world-a2-proof-zp8y9unc\app
+> vitest run --config vitest.config.ts
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.2 [39m[90mC:/Users/yoray/AppData/Local/Temp/yor-world-a2-proof-zp8y9unc/app[39m
+
+ [32m✓[39m tests/unit/contract-types.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m tests/unit/scene-integrator.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m tests/unit/character-director.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m tests/unit/contracts.test.ts [2m([22m[2m51 tests[22m[2m)[22m[32m 27[2mms[22m[39m
+ [31m❯[39m tests/unit/content-visibility.test.ts [2m([22m[2m17 tests[22m[2m | [22m[31m7 failed[39m[2m)[22m[32m 33[2mms[22m[39m
+   [31m❯[39m Content Visibility & Publication Contracts (Milestone A2) [2m(17)[22m
+[31m     [31m×[31m loads the approved publication with exactly the verified candidate projects[39m[32m 10[2mms[22m[39m
+     [31m❯[39m Verified Projects Lookup [2m(4)[22m
+[31m       [31m×[31m successfully finds verified project 'ai-vs-real' with all required case-study blocks[39m[32m 1[2mms[22m[39m
+[31m       [31m×[31m successfully finds verified project 'zenith'[39m[32m 1[2mms[22m[39m
+[31m       [31m×[31m successfully finds verified project 'helios'[39m[32m 1[2mms[22m[39m
+[31m       [31m×[31m successfully finds verified project 'talks'[39m[32m 1[2mms[22m[39m
+     [31m❯[39m Unpublished Candidate & Unknown Slug Behavior [2m(2)[22m
+[31m       [31m×[31m returns null for unpublished candidate CandidateX[39m[32m 1[2mms[22m[39m
+[31m       [31m×[31m returns null for completely unknown / arbitrary slugs[39m[32m 1[2mms[22m[39m
+     [32m✓[39m Unsupported Claim Rejection [2m(4)[22m
+       [32m✓[39m rejects publication fixtures containing unverified evidence status ('unknown')[32m 1[2mms[22m[39m
+       [32m✓[39m rejects publication fixtures with projects lacking any verified evidence[32m 0[2mms[22m[39m
+       [32m✓[39m rejects publication fixtures with duplicate slugs[32m 0[2mms[22m[39m
+       [32m✓[39m rejects insecure or non-HTTPS links in project evidence or links[32m 0[2mms[22m[39m
+     [32m✓[39m Accessible Figures & Missing Media Handling [2m(2)[22m
+       [32m✓[39m renders figure markup cleanly when mediaId is provided[32m 7[2mms[22m[39m
+       [32m✓[39m renders accessible non-crashing fallback placeholder when mediaId is missing or empty[32m 1[2mms[22m[39m
+     [32m✓[39m Long Title & Typography Resilience [2m(1)[22m
+       [32m✓[39m renders case study with an unusually long title without throwing or breaking structure[32m 5[2mms[22m[39m
+     [32m✓[39m Safe External Links & Security [2m(3)[22m
+       [32m✓[39m validates HTTPS URLs correctly and rejects dangerous protocols[32m 0[2mms[22m[39m
+       [32m✓[39m renders external links with target='_blank' and rel='noopener noreferrer'[32m 0[2mms[22m[39m
+       [32m✓[39m renders disabled fallback if an unsafe URL is passed to SafeExternalLink[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/boundaries.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 104[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 7 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/unit/content-visibility.test.ts[2m > [22mContent Visibility & Publication Contracts (Milestone A2)[2m > [22mloads the approved publication with exactly the verified candidate projects
+[31m[1mPublicationValidationError[22m: Structural publication schema error: projects.2.sections.0.blocks.2.type: Invalid discriminator value. Expected 'paragraph' | 'image' | 'list' | 'code'[39m
+[36m [2m❯[22m validatePublication src/content/publication-reader.ts:[2m23:11[22m[39m
+    [90m 21|[39m   const result = PublicationSchema.safeParse(data);
+    [90m 22|[39m   if (!result.success) {
+    [90m 23|[39m     throw new PublicationValidationError(
+    [90m   |[39m           [31m^[39m
+    [90m 24|[39m       `Structural publication schema error: ${result.error.issues.map(…
+    [90m 25|[39m     );
+[90m [2m❯[22m readPublication src/content/publication-reader.ts:[2m98:10[22m[39m
+[90m [2m❯[22m tests/unit/content-visibility.test.ts:[2m17:31[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/content-visibility.test.ts[2m > [22mContent Visibility & Publication Contracts (Milestone A2)[2m > [22mVerified Projects Lookup[2m > [22msuccessfully finds verified project 'ai-vs-real' with all required case-study blocks
+[31m[1mPublicationValidationError[22m: Structural publication schema error: projects.2.sections.0.blocks.2.type: Invalid discriminator value. Expected 'paragraph' | 'image' | 'list' | 'code'[39m
+[36m [2m❯[22m validatePublication src/content/publication-reader.ts:[2m23:11[22m[39m
+    [90m 21|[39m   const result = PublicationSchema.safeParse(data);
+    [90m 22|[39m   if (!result.success) {
+    [90m 23|[39m     throw new PublicationValidationError(
+    [90m   |[39m           [31m^[39m
+    [90m 24|[39m       `Structural publication schema error: ${result.error.issues.map(…
+    [90m 25|[39m     );
+[90m [2m❯[22m readPublication src/content/publication-reader.ts:[2m98:10[22m[39m
+[90m [2m❯[22m tests/unit/content-visibility.test.ts:[2m31:33[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/content-visibility.test.ts[2m > [22mContent Visibility & Publication Contracts (Milestone A2)[2m > [22mVerified Projects Lookup[2m > [22msuccessfully finds verified project 'zenith'
+[31m[1mPublicationValidationError[22m: Structural publication schema error: projects.2.sections.0.blocks.2.type: Invalid discriminator value. Expected 'paragraph' | 'image' | 'list' | 'code'[39m
+[36m [2m❯[22m validatePublication src/content/publication-reader.ts:[2m23:11[22m[39m
+    [90m 21|[39m   const result = PublicationSchema.safeParse(data);
+    [90m 22|[39m   if (!result.success) {
+    [90m 23|[39m     throw new PublicationValidationError(
+    [90m   |[39m           [31m^[39m
+    [90m 24|[39m       `Structural publication schema error: ${result.error.issues.map(…
+    [90m 25|[39m     );
+[90m [2m❯[22m readPublication src/content/publication-reader.ts:[2m98:10[22m[39m
+[90m [2m❯[22m tests/unit/content-visibility.test.ts:[2m48:33[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/content-visibility.test.ts[2m > [22mContent Visibility & Publication Contracts (Milestone A2)[2m > [22mVerified Projects Lookup[2m > [22msuccessfully finds verified project 'helios'
+[31m[1mPublicationValidationError[22m: Structural publication schema error: projects.2.sections.0.blocks.2.type: Invalid discriminator value. Expected 'paragraph' | 'image' | 'list' | 'code'[39m
+[36m [2m❯[22m validatePublication src/content/publication-reader.ts:[2m23:11[22m[39m
+    [90m 21|[39m   const result = PublicationSchema.safeParse(data);
+    [90m 22|[39m   if (!result.success) {
+    [90m 23|[39m     throw new PublicationValidationError(
+    [90m   |[39m           [31m^[39m
+    [90m 24|[39m       `Structural publication schema error: ${result.error.issues.map(…
+    [90m 25|[39m     );
+[90m [2m❯[22m readPublication src/content/publication-reader.ts:[2m98:10[22m[39m
+[90m [2m❯[22m tests/unit/content-visibility.test.ts:[2m56:33[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/content-visibility.test.ts[2m > [22mContent Visibility & Publication Contracts (Milestone A2)[2m > [22mVerified Projects Lookup[2m > [22msuccessfully finds verified project 'talks'
+[31m[1mPublicationValidationError[22m: Structural publication schema error: projects.2.sections.0.blocks.2.type: Invalid discriminator value. Expected 'paragraph' | 'image' | 'list' | 'code'[39m
+[36m [2m❯[22m validatePublication src/content/publication-reader.ts:[2m23:11[22m[39m
+    [90m 21|[39m   const result = PublicationSchema.safeParse(data);
+    [90m 22|[39m   if (!result.success) {
+    [90m 23|[39m     throw new PublicationValidationError(
+    [90m   |[39m           [31m^[39m
+    [90m 24|[39m       `Structural publication schema error: ${result.error.issues.map(…
+    [90m 25|[39m     );
+[90m [2m❯[22m readPublication src/content/publication-reader.ts:[2m98:10[22m[39m
+[90m [2m❯[22m tests/unit/content-visibility.test.ts:[2m64:33[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/content-visibility.test.ts[2m > [22mContent Visibility & Publication Contracts (Milestone A2)[2m > [22mUnpublished Candidate & Unknown Slug Behavior[2m > [22mreturns null for unpublished candidate CandidateX
+[31m[1mPublicationValidationError[22m: Structural publication schema error: projects.2.sections.0.blocks.2.type: Invalid discriminator value. Expected 'paragraph' | 'image' | 'list' | 'code'[39m
+[36m [2m❯[22m validatePublication src/content/publication-reader.ts:[2m23:11[22m[39m
+    [90m 21|[39m   const result = PublicationSchema.safeParse(data);
+    [90m 22|[39m   if (!result.success) {
+    [90m 23|[39m     throw new PublicationValidationError(
+    [90m   |[39m           [31m^[39m
+    [90m 24|[39m       `Structural publication schema error: ${result.error.issues.map(…
+    [90m 25|[39m     );
+[90m [2m❯[22m readPublication src/content/publication-reader.ts:[2m98:10[22m[39m
+[90m [2m❯[22m tests/unit/content-visibility.test.ts:[2m74:33[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/content-visibility.test.ts[2m > [22mContent Visibility & Publication Contracts (Milestone A2)[2m > [22mUnpublished Candidate & Unknown Slug Behavior[2m > [22mreturns null for completely unknown / arbitrary slugs
+[31m[1mPublicationValidationError[22m: Structural publication schema error: projects.2.sections.0.blocks.2.type: Invalid discriminator value. Expected 'paragraph' | 'image' | 'list' | 'code'[39m
+[36m [2m❯[22m validatePublication src/content/publication-reader.ts:[2m23:11[22m[39m
+    [90m 21|[39m   const result = PublicationSchema.safeParse(data);
+    [90m 22|[39m   if (!result.success) {
+    [90m 23|[39m     throw new PublicationValidationError(
+    [90m   |[39m           [31m^[39m
+    [90m 24|[39m       `Structural publication schema error: ${result.error.issues.map(…
+    [90m 25|[39m     );
+[90m [2m❯[22m readPublication src/content/publication-reader.ts:[2m98:10[22m[39m
+[90m [2m❯[22m tests/unit/content-visibility.test.ts:[2m81:33[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m5 passed[39m[22m[90m (6)[39m
+[2m      Tests [22m [1m[31m7 failed[39m[22m[2m | [22m[1m[32m77 passed[39m[22m[90m (84)[39m
+[2m   Start at [22m 15:16:56
+[2m   Duration [22m 697ms[2m (import 52%, transform 34%, tests 12%, worker 2%)[22m
+
+ ELIFECYCLE  Command failed with exit code 1.
+
+EXIT: 1
