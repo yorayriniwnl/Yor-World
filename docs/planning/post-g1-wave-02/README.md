@@ -4,6 +4,8 @@ Status: **AUTHORIZED FOR INDEPENDENT OWNED WORK / READY FOR MAKER PICKUP**. The 
 
 **Latest receipt:** main advanced to `ac56097f5e42acbbced234f3551970e7eb9f798c` during publication with a legacy A3 return. [Exact receipt/review priorities](intake/A3-receipt.md): A3 is now **RETURNED / HOLD FOR GPT PLUS #2 REVIEW / NOT PARENT-ACCEPTED**. Do not launch a duplicate A3 build; Gemini #1 waits for findings. B2/B3-P2 remains ready for its owned work. Initial dispatch bytes/snapshot are preserved at `06a0d7152b8557d0f07090f8f2a6a0dd079dfcc1`; no newer maker bytes replace the accepted baseline.
 
+**Main planning advance:** `67a501bbf4402e85f2bdfb32d4b5da94f6620fcd` adds later A4/B3-P3/C1 packets. Their [exact record](intake/planning-advance.json) and unchanged file are preserved. The living hub keeps them behind missing prerequisite acceptance and subsequent ownership; their presence creates no accepted G3 revision or permission to overlap this wave. Main was merged into the isolated planning branch to resolve the hub conflict, without maker-source changes or a merge to GitHub main.
+
 ## Exact baseline and current prerequisites
 
 | Input | Revision / authority | Exact identity |

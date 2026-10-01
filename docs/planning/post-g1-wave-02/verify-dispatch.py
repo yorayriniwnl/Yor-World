@@ -37,10 +37,11 @@ def main():
     original = manifest["inheritedBaseline"]
     baseline = json.loads(blob(original["gitCommit"], original["path"]))
     unique = {(r["gitCommit"], r["path"]): r for r in records(manifest)}
-    receipt_path = HERE / "intake" / "A3-receipt.json"
-    if receipt_path.exists():
-        for r in records(json.loads(receipt_path.read_text(encoding="utf-8"))):
-            unique[(r["gitCommit"], r["path"])] = r
+    for receipt_name in ["A3-receipt.json", "planning-advance.json"]:
+        receipt_path = HERE / "intake" / receipt_name
+        if receipt_path.exists():
+            for r in records(json.loads(receipt_path.read_text(encoding="utf-8"))):
+                unique[(r["gitCommit"], r["path"])] = r
     for record in unique.values():
         data = blob(record["gitCommit"], record["path"])
         if len(data) != record["bytes"] or sha(data) != record["sha256"]:
