@@ -1,6 +1,6 @@
 # YOR WORLD delegation and work orders
 
-Date: 2026-09-30; living status reconciled 2026-10-01 (PARENT-RECON-03). W1-F1-r2, W2-F1-r2, and W3-A1-r2 were ACCEPTED in the [second parent ruling](reviews/2026-10-01-reconciliation-02.md). Following G1 delivery and independent reviews (Claude-10, Claude-13, Claude-15, and GPT-6 Astra audit), the [third parent ruling](reviews/2026-10-01-reconciliation-03.md) is **G1 ACCEPTED (`G1-R1`)**. Gemini-2 (material-light sample), B2-B5, and A2 are **UNLOCKED AND AUTHORIZED**.
+Date: 2026-09-30; living status reconciled 2026-10-01 (PARENT-RECON-04). W1-F1-r2, W2-F1-r2, and W3-A1-r2 were ACCEPTED in PARENT-RECON-02. G1 was ACCEPTED (`G1-R1`) in [PARENT-RECON-03](reviews/2026-10-01-reconciliation-03.md). Workstation sample B3-P1 was ACCEPTED (`B3-P1-R1`) in [PARENT-RECON-04](reviews/2026-10-01-reconciliation-04.md). Milestones A2, A3, and B5-P1 are delivered. Three new bounded packets are dispatched: **Gemini #1 → A4**, **Gemini #2 → B3-P3**, and **Gemini #3 → C1** (see [Bounded Packets A4, B3-P3, C1](reconciliation-packets/2026-10-01-bounded-packets-a4-b3p3-c1.md)).
 
 The user authorized the full vision and delegated production. The parent Codex chat owns architecture, task assignment, audits, and acceptance. Workers make and integrate the product. This hub operates the existing plans; it does not replace them with another design exercise.
 
@@ -22,9 +22,9 @@ The user reports 2 GPT Plus, 3 Gemini AI Pro, and 15 Claude free browser account
 | --- | --- |
 | GPT-1 | Semantic platform; later A1–A6 backend/content implementation |
 | GPT-2 | Avatar/export first (W2, B2/B4), then combined proof, browser runtime and integration (G1, B5, C1–C4); sequential packets |
-| Gemini-1 | Reference analysis, room blockout; later B1/B3 environment |
-| Gemini-2 | Later materials, lighting, prop variations, visual comparisons |
-| Gemini-3 | Independent reference, export, and camera review |
+| Gemini-1 | Reference analysis, room blockout; currently assigned Milestone A4 (CMS & publishing) |
+| Gemini-2 | Materials, lighting, prop detail; currently assigned Milestone B3-P3 (Interactive prop assets) |
+| Gemini-3 | Independent visual/camera review; currently assigned Milestone C1 (Experience state & interactions) |
 | Claude C01–C03 | Narrow contract/state/code reviews |
 | Claude C04–C06 | Content evidence and accessibility reviews |
 | Claude C07–C09 | Auth/data/contact failure reviews |
@@ -42,7 +42,7 @@ Claude aliases are a reserve review pool, not fifteen simultaneous sessions. Rea
 1. The parent issues one bounded packet with local input paths, output root, acceptance evidence, and independent reviewer. Workers read only relevant sections, not every previous chat.
 2. Production workers declare actual capabilities, then return real source files or a patch plus a short `report.md`: input revisions, changed paths, commands/results, screenshots or recordings, limits, and open defects. Return a zip when supported. If attachments are unavailable, return complete file contents with filenames; prose instructions alone are insufficient.
 3. Browser-generated scripts are **NOT RUN** until a capable local worker or the user executes them. Capture actual tool versions, exit codes, logs, and output hashes. Never invent `.blend`/`.glb` files or screenshots, and never call source inspection reproduced validation.
-4. Deliver under `deliveries/W1/`, `deliveries/W2/`, or `deliveries/W3/`; workers do not edit each other's roots or shared production files. The parent reviews source/evidence and obtains maker-independent review. A maker cannot accept its own task. Return concrete defects to that maker.
+4. Deliver under `deliveries/<packet>/`; workers do not edit each other's roots or shared production files. The parent reviews source/evidence and obtains maker-independent review. A maker cannot accept its own task. Return concrete defects to that maker.
 5. After acceptance, assign integration to GPT-2 or another verified local-capable worker. Only that assignment maps accepted outputs into final paths, resolves conflicts, updates shared contracts/configuration/manifests, and runs combined checks. The parent audits; it does not absorb production labor.
 
 Browser reviewers return a structured review in chat or an actually generated downloadable file; the coordinator/local worker archives it under the assigned reviews/claude-NN/ path with packet/revision identity. They do not claim to have written that local folder or executed the maker’s tests.
@@ -57,16 +57,33 @@ Execution clarification for the local proof run: W2 and W3 may resolve exact-pin
 
 ## Dependencies and status board
 
-W1/W2/W3 are independent: W1 owns room geometry; W2 uses its own F1 furniture fixture; W3 needs neither world exports nor backend services. Their accepted outputs feed a delegated combined G1 proof. Then finish B2/B3/B4 → B5 → C1/C2 → C3/C4, while A2–A6 progress against accepted contracts. Keep all required room interactions, five evidence-dependent project destinations, admin/contact, mobile, accessibility, and release work. Named later extensions remain queued. Early proofs are not feature cuts or the finished V1; V1 acceptance does not complete the extension queue.
+W1/W2/W3 are independent: W1 owns room geometry; W2 uses its own F1 furniture fixture; W3 needs neither world exports nor backend services. Their accepted outputs fed the combined G1 proof. Following G1 acceptance, B3-P1 workstation sample acceptance, and B5-P1 lifecycle delivery, production proceeds along parallel tracks:
 
 | Packet | Maker / independent reviewer | Depends on | Current state / exit |
 | --- | --- | --- | --- |
-| W1 reference/blockout | Reported Gemini-1 / Gemini-3, Claude-13 + parent | Image + F1 | ACCEPTED: W1-F1-r2 verified (nested transforms, geometry clearances, cameras, Khronos 0/0) |
-| W2 avatar/export | Reported GPT-2/Codex / Gemini-3, Claude-01/13 + parent | F1 fixture + clip names | ACCEPTED: W2-F1-r2 verified (clips, rig, Khronos 0/0; adapter invariants pinned) |
-| W3 semantic platform | Reported GPT-1/Codex / independent Codex audit returned; Claude-01/02/05 + parent | Engineering contracts | ACCEPTED: W3-A1-r2 verified (Next 16.3.8, preloads counted, AST guards, 60/60 unit, 18/18 E2E) |
-| G1 integration | Integration Maker / parent audit | Explicitly accepted exact W1/W2/W3 revisions | UNLOCKED AND ACTIVE: combining W1-F1-r2, W2-F1-r2, and W3-A1-r2 in deliveries/G1/ |
+| W1 reference/blockout | Gemini-1 / Gemini-3, Claude-13 + parent | Image + F1 | ACCEPTED: W1-F1-r2 verified (nested transforms, geometry clearances, cameras, Khronos 0/0) |
+| W2 avatar/export | GPT-2/Codex / Gemini-3, Claude-01/13 + parent | F1 fixture + clip names | ACCEPTED: W2-F1-r2 verified (clips, rig, Khronos 0/0; adapter invariants pinned) |
+| W3 semantic platform | GPT-1/Codex / independent Codex audit; Claude-01/02/05 + parent | Engineering contracts | ACCEPTED: W3-A1-r2 verified (Next 16.3.8, preloads counted, AST guards, 60/60 unit, 18/18 E2E) |
+| G1 integration | Integration Maker / parent audit | Accepted W1/W2/W3 revisions | ACCEPTED: G1-R1 verified (67/67 unit, 42/42 E2E, Next 16.3.8 build, coordinate bindings) |
+| B3-P1 workstation sample | Gemini-2 / Gemini-3, Claude-13 + parent | G1 proof + F1 anchors | ACCEPTED: B3-P1-R1 verified (743KB GLB, 0/0 Khronos, state restoration Δ=0.00000000) |
+| A2 verified content | GPT-1 / Claude-04 + parent | W3 accepted baseline | DELIVERED: 4 verified projects published, CandidateX unverified 404, 84 unit / 62 E2E PASS |
+| A3 owner auth & RLS | Gemini-1 / Claude-07 + parent | A2 delivery | DELIVERED: admin_users + AAL2 TOTP MFA + 15 tables RLS, 84 unit / 29 int / 68 E2E PASS |
+| B5-P1 runtime lifecycle | GPT-2 / Claude-10 + parent | G1 accepted baseline | DELIVERED: 5 single owners, 8-state FSM, 90 unit / 66 E2E PASS, GPU cleanup verified |
+| **A4 CMS & publishing** | **Gemini #1** / Claude-08 + parent | Accepted A2 + A3 | **ACTIVE / DISPATCHED:** `deliveries/A4/` (drafts, approved media, revisions, rollback) |
+| **B3-P3 interactive props** | **Gemini #2** / Gemini-3, Claude-13 + parent | B3-P1 sample + G1 | **ACTIVE / DISPATCHED:** `deliveries/B3-P3/` (18 interactive prop assets, 5 visual states) |
+| **C1 experience & interactions** | **Gemini #3** / Claude-03, Claude-11 + parent | G1 + B5 + contracts | **ACTIVE / DISPATCHED:** `deliveries/C1/` (ExperienceController, arbitration, physical room) |
 
-Use states `ready → sent → returned → review → accepted`, or `rework/blocked`. Record actual account/profile alias, input revision, delivery path, evidence, reviewer, and next action when a state changes. The prior 430–690-hour estimate is uncalibrated; subscriptions do not multiply throughput. Re-estimate using accepted work and review/rework effort after G1.
+**FROZEN CONTRACTS FOR NEW PACKETS:**
+- **Freeze G3 revision:** World core milestone, $\le 300\text{k}$ tris / $\le 120$ draw calls / $\le 160\text{MB}$ VRAM, main reference + B3-P1 visual baseline.
+- **Freeze asset manifest:** Schema v1, quality tiers high/medium/low/static, manifest URL validation.
+- **Freeze interaction catalog revision:** V1 matrix of 23 registered entities. Every interaction from C1 must consume a known catalog entry. No maker may invent new user-visible interactions.
+- **Freeze ExperienceIntent:** 16 discriminated variants in `src/contracts/experience.ts`.
+- **Freeze CharacterAction:** 8 named clips (`coding_idle`, `mouse_idle`, `notice_visitor`, `turn_to_visitor`, `greeting_nod`, `return_to_work`, `attention_glance`, `breathing_idle`).
+- **Freeze CameraId:** 13 camera presets (`hallway`, `entry`, `reveal`, `greeting`, `home-desktop`, `home-mobile`, `monitor`, `pc`, `energy`, `scanner`, `microphone`, `about`, `contact`).
+- **Freeze Project IDs:** 5 IDs (`candidatex`, `helios`, `zenith`, `ai-vs-real`, `talks`).
+- **Freeze Asset IDs:** `room-shell`, `desk`, `door`, `chair`, `monitor`, `resident`; anchors `door-hinge`, `chair-root`, `monitor-surface`, `painting-pivot`; interactive props `wall-painting`, `helios-pc`, `zenith-model`, `ai-real-camera`, `talks-microphone`, `desk-lamp`, `window-blinds`, `desk-clock`, `speakers`, `plant-leaves`, `keyboard`, `mouse`, `about-personal-object`, `certificate-frame`, `contact-phone`, `research-books`, `skills-board`, `hidden-yor-mark`.
+
+Detailed packets are specified in [Bounded Packets A4, B3-P3, C1](reconciliation-packets/2026-10-01-bounded-packets-a4-b3p3-c1.md).
 
 ### Earlier local run record — 2026-09-30
 
