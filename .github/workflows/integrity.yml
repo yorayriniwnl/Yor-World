@@ -15,6 +15,9 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
+        with:
+          # The PR archive check needs the merge base, including both parents.
+          fetch-depth: 0
 
       - name: Verify reference manifest hashes
         run: |
@@ -77,7 +80,7 @@ jobs:
       - name: Reject oversized new scratch archives
         if: github.event_name == 'pull_request'
         run: |
-          git fetch --no-tags --depth=1 origin "${{ github.base_ref }}"
+          git fetch --no-tags origin "${{ github.base_ref }}"
           python - <<'PY'
           import subprocess
           from pathlib import Path
