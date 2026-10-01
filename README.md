@@ -1,10 +1,10 @@
 # YOR WORLD — planning package
 
-Prepared 30 September 2026; status reconciled 1 October 2026. GitHub is the authoritative live repository. **W1 REWORK; W2 INSUFFICIENT EVIDENCE; W3 REWORK; G1 LOCKED.** See the [parent ruling and exact revisions](docs/planning/reviews/2026-10-01-reconciliation.md) and [next packets](docs/planning/reconciliation-packets/2026-10-01-next-packets.md).
+Prepared 30 September 2026; status reconciled 1 October 2026. GitHub is the authoritative live repository. **W1-F1-r2, W2-F1-r2, and W3-A1-r2 are ACCEPTED; G1 is ACCEPTED (`G1-R1`).** The current authority is [PARENT-RECON-03](docs/planning/reviews/2026-10-01-reconciliation-03.md), following the [accepted W1/W2/W3 ruling](docs/planning/reviews/2026-10-01-reconciliation-02.md). B2-B5 and A2 are unlocked; C1-C4 and production release remain gated.
 
 YOR WORLD is a personal portfolio experienced as an inhabited developer studio. A visitor can enter through a cinematic doorway, meet the creator, touch objects that respond physically, and explore real work. Projects, résumé, and contact remain directly accessible through ordinary web pages.
 
-This workspace contains the project specification, local reference library, and returned isolated proofs under `deliveries/`. W1/W2 have Gemini independent reviews; W3 now has an independent Codex implementation audit with reproduced tests. Assigned Claude reviews remain unarchived. Parent inspection found W1 spatial/camera defects; W3 requires dependency, payload-accounting, import-guard and helper-exit corrections. No proof is formally accepted, and no G1 implementation or production deployment is authorized by this reconciliation.
+This workspace contains the project specification, local reference library, returned isolated proofs under `deliveries/`, independent reviews, and parent acceptance records. The W1/W2/W3 correction findings were resolved and accepted in PARENT-RECON-02. The combined G1 feasibility proof was subsequently accepted in PARENT-RECON-03 after adversarial and independent review. This acceptance is bounded: final art, likeness approval, later runtime work, content publication, production deployment, and release operations are not implied.
 
 The work is grouped into three [production prompts](docs/planning/production-prompts/README.md): platform/content (A), world/art (B), and integration/release (C). They follow the existing plans and preserve task-level assignment and review gates.
 
@@ -51,9 +51,9 @@ The entry point is [START_HERE.md](START_HERE.md); worker rules are in [AGENTS.m
 8. [Integration and release plan](docs/superpowers/plans/2026-09-30-03-integration.md) — physical interactions, project transitions, resilience, and release.
 9. [Delegation and work orders](docs/planning/delegation-and-work-orders.md) — coordinator responsibilities, worker assignments, handoffs, and evidence gates.
 
-## The first evidence gate
+## Feasibility gate status
 
-Before final environment modeling, prove a coarse room and a coarse rig can support the doorway camera path, seated turn, look-back, return to typing, and interruption. Also prove the HTML portfolio works with 3D disabled. These establish the two essential halves of the product.
+The initial evidence gate is complete. W1/W2/W3 established the room, seated-avatar motion/export, and semantic HTML/platform foundations, and G1 demonstrated the accepted combined feasibility integration. The next work is the bounded refinement authorized by PARENT-RECON-03, not a repeat of the original proof gate.
 
 ## What is verified today
 
@@ -64,8 +64,20 @@ Before final environment modeling, prove a coarse room and a coarse rig can supp
 - The user-designated main image was inspected for this revision; the account counts above remain user-reported, with no provider access verified.
 - Editable room/avatar proof scenes and GLB exports are returned and independently reopened/validated. Final art, likeness, publication rights and production asset approval remain unverified.
 - The saved reference library has been rechecked: all 12 files match their recorded SHA-256 hashes and available originals; its missing index and manifest bookkeeping are repaired. [Integrity evidence](docs/planning/reviews/2026-09-30-reference-audit.json).
-- W1/W2/W3 remain unaccepted for the specific reasons in the parent ruling. No external account was newly dispatched by this reconciliation; the [work-order board](docs/planning/delegation-and-work-orders.md) records current decisions. Historical no-Git statements in proof reports remain evidence of their earlier environment.
+- W1-F1-r2, W2-F1-r2, and W3-A1-r2 are accepted under [PARENT-RECON-02](docs/planning/reviews/2026-10-01-reconciliation-02.md). G1-R1 is accepted under [PARENT-RECON-03](docs/planning/reviews/2026-10-01-reconciliation-03.md). Historical maker/reviewer reports remain evidence of their original execution context and must not be rewritten to match later repository state.
 - Official framework, rendering, accessibility, and backend documentation informed the proposed architecture. Source links are included beside relevant decisions.
+
+
+## Repository storage hygiene
+
+This repository intentionally preserves substantial maker/reviewer evidence, including binary proof artifacts. Existing Git history is **not** rewritten during routine cleanup because commit identity and audit traceability matter.
+
+Going forward:
+
+- Prefer one canonical proof archive plus its SHA-256 manifest instead of repeated equivalent ZIP snapshots.
+- Keep reproducibility scripts, reports, manifests, and compact logs in Git.
+- Treat large generated screenshots, traces, and archives as evidence artifacts rather than source code; when a release/artifact store is available, publish bulky immutable bundles there and retain their hashes and provenance here.
+- Never delete unique review evidence solely to reduce repository size. Consolidate only after the parent record identifies the canonical accepted revision.
 
 ## Reading estimates correctly
 
