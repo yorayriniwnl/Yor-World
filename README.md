@@ -1,6 +1,6 @@
 # YOR WORLD — planning package
 
-Prepared 30 September 2026; status reconciled 1 October 2026. GitHub is the authoritative live repository. **W1-F1-r2, W2-F1-r2, and W3-A1-r2 are ACCEPTED; G1 ACCEPTED (`G1-R1`).** The current authority is [PARENT-RECON-03](docs/planning/reviews/2026-10-01-reconciliation-03.md), following the [accepted W1/W2/W3 ruling](docs/planning/reviews/2026-10-01-reconciliation-02.md). B2-B5 and A2 are unlocked; C1-C4 and production release remain gated.
+Prepared 30 September 2026; status reconciled 2 October 2026. GitHub is the authoritative live repository. **W1-F1-r2, W2-F1-r2, and W3-A1-r2 are ACCEPTED; G1 ACCEPTED (`G1-R1`). Gates G1-G5 ACCEPTED. Gate G6 ACTIVE / REWORK (RC1 superseded by RC2 candidate). Gate G7 LOCKED pending owner authorization.** The current authority is [PARENT-RECON-03](docs/planning/reviews/2026-10-01-reconciliation-03.md), following the [accepted W1/W2/W3 ruling](docs/planning/reviews/2026-10-01-reconciliation-02.md). B2-B5 and A2 are unlocked; C1-C4 and production release remain gated.
 
 YOR WORLD is a personal portfolio experienced as an inhabited developer studio. A visitor can enter through a cinematic doorway, meet the creator, touch objects that respond physically, and explore real work. Projects, résumé, and contact remain directly accessible through ordinary web pages.
 
@@ -68,16 +68,25 @@ The initial evidence gate is complete. W1/W2/W3 established the room, seated-ava
 - Official framework, rendering, accessibility, and backend documentation informed the proposed architecture. Source links are included beside relevant decisions.
 
 
-## Repository storage hygiene
+## Repository storage hygiene & forward-looking policy
 
 This repository intentionally preserves substantial maker/reviewer evidence, including binary proof artifacts. Existing Git history is **not** rewritten during routine cleanup because commit identity and audit traceability matter.
 
-Going forward:
-
-- Prefer one canonical proof archive plus its SHA-256 manifest instead of repeated equivalent ZIP snapshots.
-- Keep reproducibility scripts, reports, manifests, and compact logs in Git.
-- Treat large generated screenshots, traces, and archives as evidence artifacts rather than source code; when a release/artifact store is available, publish bulky immutable bundles there and retain their hashes and provenance here.
-- Never delete unique review evidence solely to reduce repository size. Consolidate only after the parent record identifies the canonical accepted revision.
+### Forward-Looking Storage Policy:
+- **Keep in Git:**
+  - Application source code and configurations
+  - Reproducibility and validation scripts
+  - Cryptographic manifests (release manifests, asset registers)
+  - Delivery reports and audit dossiers
+  - Small representative evidence artifacts
+  - Authoritative checksum files (`SHA256SUMS.txt`)
+- **Future large items:**
+  - Bulky candidate ZIPs
+  - Playwright traces and video recordings
+  - Large screenshot sets
+  - Raw compilation bundles
+  Should use GitHub Actions artifacts, GitHub Release assets, or Git LFS/object storage where appropriate, with hashes, manifests, and provenance retained in Git.
+- **Historic evidence:** Never delete unique accepted historical evidence during Gate G6 or subsequent gates. Consolidate only after explicit parent authorization.
 
 ## Reading estimates correctly
 

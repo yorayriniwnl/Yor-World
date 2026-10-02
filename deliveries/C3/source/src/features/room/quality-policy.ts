@@ -141,7 +141,6 @@ export function updateTier(
     return currentTier;
   }
 
-  const slowThreshold = options?.slowThresholdMs ?? (options?.targetFps === 30 ? 33.3 : 25.0);
   const slowCount = options?.consecutiveSlowWindows ?? 0;
   const headroomCount = options?.consecutiveHeadroomWindows ?? 0;
   const slowRequired = options?.consecutiveSlowWindowsToDowngrade ?? 3;

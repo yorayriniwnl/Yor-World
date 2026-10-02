@@ -67,10 +67,10 @@ test("direct loads, refreshes, route headings, honest empty states and 404", asy
   }
   await page.goto("/");
   await expect(page.getByText("Draft identity", { exact: true })).toBeVisible();
-  await expect(page.getByText("Name and professional title await owner confirmation.")).toBeVisible();
+  await expect(page.getByText("Verified identity grounded in owner repository and profile receipts.")).toBeVisible();
   await page.goto("/projects");
-  await expect(page.getByText("0 published projects")).toBeVisible();
-  await expect(page.locator('a[href^="/projects/"]')).toHaveCount(0);
+  await expect(page.getByText(/verified projects published/i)).toBeVisible();
+  await expect(page.locator('a[href^="/projects/"]')).toHaveCount(4);
   await page.goto("/contact");
   await expect(page.getByRole("heading", { name: "Messaging is not available yet." })).toBeVisible();
   await expect(page.locator("form, input, textarea")).toHaveCount(0);
@@ -227,7 +227,7 @@ test("direct section anchors and browser Back preserve reachable content", async
   await expect(page).toHaveURL(/\/about$/);
   await page.goBack();
   await expect(page).toHaveURL(/\/projects$/);
-  await expect(page.getByText("0 published projects")).toBeVisible();
+  await expect(page.getByText(/verified projects published/i)).toBeVisible();
   await save(info, "history.json", { anchors: ["/about#research", "/about#skills"], back: "/projects" });
 });
 

@@ -25,14 +25,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js runtime
+      - name: Setup Node.js runtime (Node 24.19.x)
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24.19.0
 
-      - name: Setup pnpm package manager
+      - name: Setup pnpm package manager (v9.15.9)
         uses: pnpm/action-setup@v4
         with:
+          version: 9.15.9
           run_install: false
 
       - name: Get pnpm store directory
@@ -44,75 +45,51 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('deliveries/C3/source/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
       - name: 1. Frozen dependency install
+        working-directory: deliveries/C3/source
         run: pnpm install --frozen-lockfile
 
       - name: 2. ESLint code standard verification
+        working-directory: deliveries/C3/source
         run: pnpm lint
 
       - name: 3. TypeScript strict typecheck
+        working-directory: deliveries/C3/source
         run: pnpm typecheck
 
       - name: 4. Vitest unit tests
+        working-directory: deliveries/C3/source
         run: pnpm test:unit
 
       - name: 5. Vitest integration & policy tests
-        run: |
-          if pnpm run | grep -q "test:integration"; then
-            pnpm test:integration
-          else
-            echo "test:integration script not defined; skipping."
-          fi
+        working-directory: deliveries/C3/source
+        run: pnpm test:integration
 
-      - name: 6. 3D GLTF/GLB Asset validation
-        run: |
-          node -e "
-            const fs = require('fs');
-            const path = require('path');
-            const files = [
-              'deliveries/production-environment/runtime/production-room-full.glb',
-              'deliveries/production-environment/runtime/group-a-essential.glb',
-              'deliveries/production-environment/runtime/group-b-props.glb',
-              'deliveries/B4/resident-production.glb',
-              'deliveries/B4/fixture-production.glb',
-              'deliveries/interaction-assets/runtime/interaction-assets.glb'
-            ];
-            for (const f of files) {
-              if (!fs.existsSync(f)) throw new Error('Missing release asset: ' + f);
-              const sz = fs.statSync(f).size;
-              if (sz === 0) throw new Error('Empty release asset: ' + f);
-              console.log('Asset verified:', f, sz, 'bytes');
-            }
-          "
+      - name: 6. 3D GLTF/GLB Asset validation (Khronos glTF-Validator)
+        run: node scripts/release/validate-gltf-assets.mjs
 
       - name: 7. Next.js production build
+        working-directory: deliveries/C3/source
         run: pnpm build
 
       - name: Install Playwright browsers
+        working-directory: deliveries/C3/source
         run: pnpm exec playwright install --with-deps chromium
 
       - name: 8. Playwright E2E & interaction navigation tests
+        working-directory: deliveries/C3/source
         run: pnpm exec playwright test tests/e2e/room-project-navigation.spec.ts
 
       - name: 9. WCAG 2.2 AA Accessibility automated audit
+        working-directory: deliveries/C3/source
         run: pnpm exec playwright test tests/e2e/accessibility.spec.ts
 
       - name: 10. Performance budget regression inspection
-        run: |
-          node -e "
-            const fs = require('fs');
-            const buildManifest = '.next/build-manifest.json';
-            if (fs.existsSync(buildManifest)) {
-              const data = JSON.parse(fs.readFileSync(buildManifest, 'utf8'));
-              console.log('Build manifest verified with', Object.keys(data.pages || {}).length, 'pages.');
-            } else {
-              console.log('Build output verified.');
-            }
-          "
+        run: node scripts/release/check-performance-budgets.mjs
 
       - name: 11. Canonical Release Manifest Validation
         run: node scripts/release/validate-release.mjs --manifest deliveries/C4/release-manifest.json --strict

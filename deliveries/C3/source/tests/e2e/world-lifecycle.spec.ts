@@ -149,7 +149,7 @@ test.describe("B5 Production Runtime Lifecycle Foundation - Adversarial & Invari
     expect(await page.locator("canvas").count()).toBe(1);
 
     // Navigate to Projects via semantic navigation
-    await page.locator('nav a[href="/projects"]').click();
+    await page.locator('nav a[href="/projects"]').first().click();
     await page.waitForURL("**/projects");
 
     // Canvas must be completely removed from DOM

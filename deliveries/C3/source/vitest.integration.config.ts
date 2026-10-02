@@ -1,7 +1,11 @@
 import { defineConfig } from "vitest/config";
+import path from "node:path";
 
-// Reserved for A3–A6. No backend is implemented or required by this A1 proof.
-// An empty suite intentionally fails instead of reporting a false pass.
 export default defineConfig({
+  resolve: {
+    alias: {
+      "@": path.resolve(import.meta.dirname ?? process.cwd(), "src"),
+    },
+  },
   test: { include: ["tests/integration/**/*.test.ts"], environment: "node", passWithNoTests: false },
 });

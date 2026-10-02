@@ -131,7 +131,7 @@ test.describe("Physical & Room Interactions: Task C1 Arbitration & Robustness", 
     await page.click('[data-testid="greet-resident-btn"]');
 
     // Click direct accessible navigation link in header to exit studio
-    const aboutLink = page.locator('nav a[href="/about"]');
+    const aboutLink = page.locator('nav a[href="/about"]').first();
     await expect(aboutLink).toBeVisible();
     await aboutLink.click();
 

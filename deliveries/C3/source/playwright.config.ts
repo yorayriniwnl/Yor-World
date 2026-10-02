@@ -17,10 +17,12 @@ export default defineConfig({
     video: "on",
     headless: true,
   },
-  projects: [
-    { name: "chrome", use: { browserName: "chromium", channel: "chrome" } },
-    { name: "edge", use: { browserName: "chromium", channel: "msedge" } },
-  ],
+  projects: process.env.CI
+    ? [{ name: "chromium", use: { browserName: "chromium" as const } }]
+    : [
+        { name: "chrome", use: { browserName: "chromium" as const, channel: "chrome" } },
+        ...(process.platform === "win32" ? [{ name: "edge", use: { browserName: "chromium" as const, channel: "msedge" } }] : []),
+      ],
   webServer: {
     command: `node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port ${port}`,
     url: `http://127.0.0.1:${port}`,

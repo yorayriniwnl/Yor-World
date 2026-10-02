@@ -59,7 +59,13 @@ jobs:
           start = Path("START_HERE.md").read_text(encoding="utf-8")
           board = Path("docs/planning/delegation-and-work-orders.md").read_text(encoding="utf-8")
 
-          required = ["G1 ACCEPTED", "G1-R1", "PARENT-RECON-03"]
+          required = [
+              "G1 ACCEPTED",
+              "G1-G5 ACCEPTED",
+              "G6 ACTIVE / REWORK",
+              "RC1 superseded by RC2 candidate",
+              "G7 LOCKED",
+          ]
           for token in required:
               assert token in readme, f"README missing {token}"
               assert token in start, f"START_HERE missing {token}"
@@ -73,7 +79,7 @@ jobs:
           for phrase in stale:
               assert phrase not in readme, f"README contains stale status: {phrase}"
 
-          print("Status surfaces agree with PARENT-RECON-03")
+          print("Status surfaces agree with G6 REWORK baseline")
           PY
 
       - name: Reject oversized new scratch archives
