@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YOR WORLD - G6 World & Art Release Candidate Harness</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body, html { width: 100%; height: 100%; overflow: hidden; background: #0a0a10; font-family: monospace; }
+    #canvas-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+    #status-overlay {
+      position: absolute; top: 12px; left: 12px; z-index: 100;
+      color: #00e5ff; background: rgba(10, 10, 20, 0.85);
+      padding: 8px 14px; border: 1px solid #00e5ff; border-radius: 4px;
+      font-size: 13px; pointer-events: none;
+    }
+  </style>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "/libs/three.module.js",
+        "three/addons/": "/libs/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="status-overlay">Initializing Three.js WebGL...</div>
+  <div id="canvas-container"></div>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/GLTFLoader.js';
+
+    const container = document.getElementById('canvas-container');
+    const statusEl = document.getElementById('status-overlay');
+
+    // Scene & Renderer
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0e0e16);
+
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: false,
+      preserveDrawingBuffer: true,
+      powerPreference: 'high-performance'
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.0));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
+
+    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.05, 25.0);
+
+    // 5 Accepted Fixed Camera Presets
+    const CAMERA_PRESETS = {
+      'entry': {
+        pos: [0.0, 1.45, 1.65],
+        target: [0.0, 0.95, -1.15],
+        fov: 65.0
+      },
+      'home-desktop': {
+        pos: [0.25, 1.25, 0.45],
+        target: [0.05, 0.95, -1.15],
+        fov: 50.0
+      },
+      'home-mobile': {
+        pos: [0.15, 1.35, 0.85],
+        target: [0.05, 0.90, -1.15],
+        fov: 55.0
+      },
+      'monitor': {
+        pos: [0.0, 1.05, -0.75],
+        target: [0.0, 1.05, -1.30],
+        fov: 45.0
+      },
+      'reverse-doorway': {
+        pos: [0.0, 1.20, -1.00],
+        target: [0.0, 1.40, 1.80],
+        fov: 60.0
+      }
+    };
+
+    function setCamera(presetName) {
+      const cfg = CAMERA_PRESETS[presetName];
+      if (!cfg) throw new Error(`Unknown preset: ${presetName}`);
+      camera.fov = cfg.fov;
+      camera.position.set(cfg.pos[0], cfg.pos[1], cfg.pos[2]);
+      camera.lookAt(cfg.target[0], cfg.target[1], cfg.target[2]);
+      camera.updateProjectionMatrix();
+      statusEl.textContent = `Camera: ${presetName}`;
+      renderer.render(scene, camera);
+    }
+    window.setCamera = setCamera;
+
+    // Ambient and lighting setup matching production environment
+    const ambientLight = new THREE.AmbientLight(0xf0f0ff, 0.45);
+    scene.add(ambientLight);
+
+    const taskSpotLight = new THREE.SpotLight(0xffe28a, 8.0, 4.0, Math.PI / 4, 0.4, 1.5);
+    taskSpotLight.position.set(0.0, 1.35, -1.30);
+    taskSpotLight.target.position.set(0.0, 0.75, -1.15);
+    taskSpotLight.castShadow = true;
+    taskSpotLight.shadow.mapSize.width = 1024;
+    taskSpotLight.shadow.mapSize.height = 1024;
+    scene.add(taskSpotLight);
+    scene.add(taskSpotLight.target);
+
+    const cyanUnderdesk = new THREE.PointLight(0x00e5ff, 5.0, 2.5);
+    cyanUnderdesk.position.set(0.0, 0.40, -1.15);
+    scene.add(cyanUnderdesk);
+
+    const hexWallLight = new THREE.PointLight(0xf1a5f3, 6.5, 3.0);
+    hexWallLight.position.set(0.0, 1.82, -1.65);
+    scene.add(hexWallLight);
+
+    const fillLight = new THREE.DirectionalLight(0xdde5ff, 0.6);
+    fillLight.position.set(-1.0, 2.2, 1.0);
+    scene.add(fillLight);
+
+    // Loader & Scene Storage
+    const gltfLoader = new GLTFLoader();
+    let loadedModels = {};
+    let residentMixer = null;
+    let residentActions = {};
+    let interactionMixer = null;
+    let interactionActions = {};
+
+    window.initWorld = async function(useMobile = false) {
+      statusEl.textContent = "Loading Release Candidate Assets...";
+      const envUrl = useMobile ? '/models/mobile-room-lod.glb' : '/models/production-room-full.glb';
+      const residentUrl = '/models/resident-production.glb';
+      const iaUrl = useMobile ? '/models/interaction-assets-mobile.glb' : '/models/interaction-assets.glb';
+
+      const t0 = performance.now();
+
+      // 1. Load Room Environment
+      const envGltf = await gltfLoader.loadAsync(envUrl);
+      loadedModels.env = envGltf;
+
+      // Integrator Safety Rule: prune static chair from env before adding dynamic resident
+      const staticChair = envGltf.scene.getObjectByName('chair-root');
+      if (staticChair && staticChair.parent) {
+        console.log('[Integrator Rule] Removing static chair-root from production-room-full');
+        staticChair.parent.remove(staticChair);
+      }
+      scene.add(envGltf.scene);
+
+      // 2. Load Resident Avatar
+      const residentGltf = await gltfLoader.loadAsync(residentUrl);
+      loadedModels.resident = residentGltf;
+      residentMixer = new THREE.AnimationMixer(residentGltf.scene);
+      for (const clip of residentGltf.animations) {
+        residentActions[clip.name] = residentMixer.clipAction(clip);
+      }
+      // Start in coding_idle
+      if (residentActions['coding_idle']) {
+        residentActions['coding_idle'].play();
+      }
+      scene.add(residentGltf.scene);
+
+      // 3. Load Interaction Assets
+      const iaGltf = await gltfLoader.loadAsync(iaUrl);
+      loadedModels.ia = iaGltf;
+      interactionMixer = new THREE.AnimationMixer(iaGltf.scene);
+      for (const clip of iaGltf.animations) {
+        interactionActions[clip.name] = interactionMixer.clipAction(clip);
+      }
+      scene.add(iaGltf.scene);
+
+      const loadTimeMs = performance.now() - t0;
+      setCamera('home-desktop');
+
+      return {
+        loadTimeMs,
+        clips: Object.keys(residentActions),
+        iaClips: Object.keys(interactionActions),
+        triangles: renderer.info.render.triangles,
+        drawCalls: renderer.info.render.calls
+      };
+    };
+
+    window.getFrameStats = function() {
+      return {
+        triangles: renderer.info.render.triangles,
+        points: renderer.info.render.points,
+        lines: renderer.info.render.lines,
+        calls: renderer.info.render.calls,
+        geometries: renderer.info.memory.geometries,
+        textures: renderer.info.memory.textures
+      };
+    };
+
+    window.playAction = function(actionName) {
+      if (!residentActions[actionName]) return false;
+      residentMixer.stopAllAction();
+      const act = residentActions[actionName];
+      act.reset().play();
+      return true;
+    };
+
+    window.setQualityTier = function(tier) {
+      if (tier === 'high') {
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.shadowMap.enabled = true;
+        renderer.setPixelRatio(1.5);
+      } else if (tier === 'medium') {
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.shadowMap.enabled = true;
+        renderer.setPixelRatio(1.25);
+      } else if (tier === 'low') {
+        renderer.toneMapping = THREE.LinearToneMapping;
+        renderer.shadowMap.enabled = false;
+        renderer.setPixelRatio(1.0);
+      } else if (tier === 'static') {
+        renderer.setPixelRatio(1.0);
+      }
+      renderer.render(scene, camera);
+      return { tier, dpr: renderer.getPixelRatio() };
+    };
+
+    // State restoration test (lamp & blinds)
+    window.testLightingStateRestoration = function() {
+      const initialTaskEnergy = taskSpotLight.intensity;
+      const initialCyanEnergy = cyanUnderdesk.intensity;
+      const initialHexEnergy = hexWallLight.intensity;
+
+      // 1. Toggle state
+      taskSpotLight.intensity = 0.0;
+      cyanUnderdesk.intensity = 1.0;
+      hexWallLight.intensity = 12.0;
+      renderer.render(scene, camera);
+
+      // 2. Restore state
+      taskSpotLight.intensity = initialTaskEnergy;
+      cyanUnderdesk.intensity = initialCyanEnergy;
+      hexWallLight.intensity = initialHexEnergy;
+      renderer.render(scene, camera);
+
+      const delta = Math.abs(taskSpotLight.intensity - initialTaskEnergy) +
+                    Math.abs(cyanUnderdesk.intensity - initialCyanEnergy) +
+                    Math.abs(hexWallLight.intensity - initialHexEnergy);
+
+      return {
+        initial: { task: initialTaskEnergy, cyan: initialCyanEnergy, hex: initialHexEnergy },
+        restored: { task: taskSpotLight.intensity, cyan: cyanUnderdesk.intensity, hex: hexWallLight.intensity },
+        delta: delta.toFixed(8),
+        pass: delta < 1e-7
+      };
+    };
+
+    // Animation loop & frame pacing recorder
+    let isRecordingPacing = false;
+    let pacingDeltas = [];
+    let lastTime = performance.now();
+
+    window.startPacingRecording = function() {
+      pacingDeltas = [];
+      isRecordingPacing = true;
+      lastTime = performance.now();
+    };
+
+    window.stopPacingRecording = function() {
+      isRecordingPacing = false;
+      pacingDeltas.sort((a, b) => a - b);
+      const median = pacingDeltas[Math.floor(pacingDeltas.length * 0.5)] || 0;
+      const p95 = pacingDeltas[Math.floor(pacingDeltas.length * 0.95)] || 0;
+      const p99 = pacingDeltas[Math.floor(pacingDeltas.length * 0.99)] || 0;
+      const min = pacingDeltas[0] || 0;
+      const max = pacingDeltas[pacingDeltas.length - 1] || 0;
+      return {
+        frameCount: pacingDeltas.length,
+        medianMs: Number(median.toFixed(2)),
+        p95Ms: Number(p95.toFixed(2)),
+        p99Ms: Number(p99.toFixed(2)),
+        minMs: Number(min.toFixed(2)),
+        maxMs: Number(max.toFixed(2))
+      };
+    };
+
+    function animate(time) {
+      requestAnimationFrame(animate);
+      const dt = (time - lastTime) / 1000;
+      const deltaMs = time - lastTime;
+      lastTime = time;
+
+      if (isRecordingPacing && deltaMs > 0 && deltaMs < 500) {
+        pacingDeltas.push(deltaMs);
+      }
+
+      if (residentMixer) residentMixer.update(dt);
+      if (interactionMixer) interactionMixer.update(dt);
+
+      renderer.render(scene, camera);
+    }
+    requestAnimationFrame(animate);
+
+    statusEl.textContent = "Three.js Ready";
+    window.__harnessReady = true;
+  </script>
+</body>
+</html>
