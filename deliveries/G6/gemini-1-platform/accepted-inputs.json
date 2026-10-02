@@ -1,0 +1,112 @@
+{
+  "packet": "G6-PLATFORM-RC",
+  "generatedAt": "2026-10-02T13:12:30.000Z",
+  "authority": "Gemini #1 — Platform / Backend Release-Candidate Evidence Maker",
+  "candidateCommit": "f60a0e93023c04ef168e760f5504b5ed9265bfac",
+  "observedDispatchHead": "e441f74d6656559f83e2ac089fb14dd1a8f524fc",
+  "waveClosureCommit": "cf8140673cdac93aae34689bdffafb28651a4788",
+  "acceptedMilestones": {
+    "A2": {
+      "milestone": "A2",
+      "name": "Verified Portfolio Content & Semantic Shell",
+      "acceptedRevision": "A2-R1",
+      "ruling": "docs/planning/reviews/2026-10-02-g4-gate-evaluation.md",
+      "deliverableRoot": "deliveries/A2/",
+      "bundle": "deliveries/A2/a2-verified-portfolio.zip",
+      "bundleSha256": "12f3ff9a520d205d2774498f87d7fbc76d80e3c8d56c26e3d63d1b8e8a41fbd6",
+      "verifiedProjects": ["helios", "zenith", "ai-vs-real", "talks"],
+      "candidateXStatus": "404 Not Found (unverified draft held back)"
+    },
+    "A3": {
+      "milestone": "A3",
+      "name": "Authoritative Owner Administration, Grants & RLS",
+      "acceptedRevision": "A3-R1",
+      "ruling": "docs/planning/reviews/2026-10-02-g5-gate-evaluation.md",
+      "deliverableRoot": "deliveries/A3/",
+      "bundle": "deliveries/A3/a3-owner-auth.zip",
+      "bundleSha256": "4ff13e9c4ad1807e7f2e7dd9c82946feaa29dc556b7161094a68898aaad05949",
+      "migration": "supabase/migrations/20261001000000_a3_owner_auth_rls.sql",
+      "protectedTablesCount": 15,
+      "mfaStandard": "AAL2 TOTP"
+    },
+    "A4": {
+      "milestone": "A4",
+      "name": "CMS Drafts, Media Approval, Publishing & Rollback",
+      "acceptedRevision": "A4-R1",
+      "ruling": "docs/planning/reviews/2026-10-02-a4-acceptance.md",
+      "deliverableRoot": "deliveries/A4/",
+      "bundle": "deliveries/A4/a4-publishing-rollback.zip",
+      "bundleSha256": "3632bc58124a0ca71a71b3e87fe9cae31313c746432cbf7aab097ceef39126a2",
+      "migration": "supabase/migrations/20261001000001_a4_publication_media.sql",
+      "concurrencyBehavior": "HTTP 409 Conflict on stale baseRevision",
+      "validationGateBehavior": "HTTP 422 Unprocessable Entity on schema/media invalidity",
+      "rollbackGuarantee": "Creates new revision from historical snapshot, preserving immutable history"
+    },
+    "A5": {
+      "milestone": "A5",
+      "name": "Durable Contact Persistence, Idempotency & Outbox Retry",
+      "acceptedRevision": "A5-R1",
+      "ruling": "docs/planning/reviews/2026-10-02-a5-contact-acceptance.md",
+      "deliverableRoot": "deliveries/A5/",
+      "bundle": "deliveries/A5/a5-durable-contact.zip",
+      "bundleSha256": "5396bc60adfdd00ac266655913b16c9e2cbf09f708bdfd03166bc025247f5954",
+      "persistenceGuarantee": "Honest receipt: HTTP 503 on database failure, never false 'received'",
+      "idempotencyWindowHours": 24,
+      "quotaLimits": {
+        "networkIp": "3 per 10 minutes",
+        "email": "10 per 24 hours",
+        "global": "100 per 1 hour"
+      },
+      "outboxRetryBackoff": ["60s", "300s", "1800s", "7200s"]
+    },
+    "A6": {
+      "milestone": "A6",
+      "name": "Cached Project Metadata, Telemetry & Observable Operations",
+      "acceptedRevision": "A6-R1",
+      "ruling": "docs/planning/reviews/2026-10-02-a6-operations-acceptance.md",
+      "baseCommit": "10169fe",
+      "deliverableRoot": "deliveries/A6/",
+      "bundle": "deliveries/A6/a6-operations-metadata.zip",
+      "bundleSha256": "d4ff6c698475cf4a561631fd93ceee74d8dd746b84314dd4290bbeba4e62b3c3",
+      "githubAllowlist": [
+        "yorayriniwnl/Yor-World",
+        "yorayriniwnl/helios",
+        "yorayriniwnl/zenith",
+        "yorayriniwnl/ai-vs-real",
+        "yorayriniwnl/talks"
+      ],
+      "telemetryAllowlist": [
+        "studio_entry_requested",
+        "studio_ready",
+        "intro_completed",
+        "intro_skipped",
+        "project_opened",
+        "fallback_used",
+        "contact_received",
+        "renderer_failed"
+      ],
+      "telemetryPayloadCeilingBytes": 4096,
+      "jobAuthentication": "Secret Bearer token / X-Cron-Secret header",
+      "backupRestoreGuarantee": "Atomic transactional restore with automatic rollback on error"
+    },
+    "G5": {
+      "gate": "Gate G5",
+      "name": "Managed Content & Operations Gate",
+      "acceptedRevision": "G5-R1",
+      "ruling": "docs/planning/reviews/2026-10-02-g5-gate-evaluation.md",
+      "status": "ACCEPTED",
+      "exitRequirementsPassed": "10 / 10"
+    }
+  },
+  "candidatePlatformSource": {
+    "sourceTree": "deliveries/A6/source",
+    "packageJsonSha256": "df0a53650c070228bf7207c6574ab86fdf09d2dac3a66ede20a3b85999c1d9ac",
+    "lockfileSha256": "9064d74aa05c285ed683cbd5d837d05d059bf06eb85265046cf7d4c2c91e8798",
+    "nextVersion": "16.3.8",
+    "reactVersion": "19.3.0",
+    "threeVersion": "0.180.0",
+    "typescriptVersion": "6.0.3",
+    "vitestVersion": "5.0.2",
+    "playwrightVersion": "1.63.0"
+  }
+}

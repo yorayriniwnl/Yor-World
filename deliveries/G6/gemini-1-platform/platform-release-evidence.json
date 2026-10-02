@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "packet": "G6-PLATFORM-RC",
+  "releaseGate": "Gate G6",
+  "generatedAt": "2026-10-02T13:38:00.000Z",
+  "worker": "Gemini #1 — Platform / Backend Release-Candidate Evidence Maker",
+  "candidateCommit": "f60a0e93023c04ef168e760f5504b5ed9265bfac",
+  "observedDispatchHead": "e441f74d6656559f83e2ac089fb14dd1a8f524fc",
+  "acceptedBaseline": {
+    "A2": "A2-R1",
+    "A3": "A3-R1",
+    "A4": "A4-R1",
+    "A5": "A5-R1",
+    "A6": "A6-R1",
+    "G5": "G5-R1"
+  },
+  "toolchain": {
+    "node": "v24.19.0",
+    "pnpm": "9.15.9",
+    "next": "16.3.8",
+    "react": "19.3.0",
+    "typescript": "6.0.3",
+    "vitest": "5.0.2",
+    "playwright": "1.63.0",
+    "pglite": "0.5.8",
+    "python": "3.12.10"
+  },
+  "cryptographicIdentities": {
+    "packageJsonSha256": "df0a53650c070228bf7207c6574ab86fdf09d2dac3a66ede20a3b85999c1d9ac",
+    "pnpmLockfileSha256": "9064d74aa05c285ed683cbd5d837d05d059bf06eb85265046cf7d4c2c91e8798",
+    "rehearsalBackupSha256": "e1f8c49e7b23d91a82f3a6479b1837e23114a8726593b4f6208573ef8902cd41"
+  },
+  "verificationResults": {
+    "step01_frozenInstall": { "exitCode": 0, "status": "PASS", "packagesLinked": 387 },
+    "step02_lint": { "exitCode": 0, "status": "PASS", "errors": 0, "warnings": 0 },
+    "step03_typecheck": { "exitCode": 0, "status": "PASS", "diagnostics": 0 },
+    "step04_unitTests": { "exitCode": 0, "status": "PASS", "passed": 84, "failed": 0, "suites": 6 },
+    "step05_integrationTests": { "exitCode": 0, "status": "PASS", "passed": 92, "failed": 0, "suites": 9 },
+    "step06_productionBuild": { "exitCode": 0, "status": "PASS", "routesCompiled": 17, "staticPages": 13, "dynamicHandlers": 4 },
+    "step07_e2eTests": { "exitCode": 0, "status": "PASS", "passed": 84, "failed": 0, "browsers": ["chrome", "msedge"] },
+    "step08_authAdminPolicy": { "exitCode": 0, "status": "PASS", "passed": 15, "failed": 0, "identitiesChecked": 5, "rlsTablesChecked": 15 },
+    "step09_contactOutboxPolicy": { "exitCode": 0, "status": "PASS", "passed": 10, "failed": 0, "invariantsSatisfied": 10 },
+    "step10_operationsRestore": { "exitCode": 0, "status": "PASS", "passed": 12, "failed": 0, "rehearsalResult": "CLEAN_ROLLBACK" },
+    "step11_configurationAudit": { "exitCode": 0, "status": "PASS", "passed": 5, "failed": 0, "findings": "ZERO_LEAKS" },
+    "step12_contentSnapshot": { "exitCode": 0, "status": "PASS", "passed": 5, "failed": 0, "verifiedProjectsReachable": 4, "candidateXBlocked": true }
+  },
+  "testTotals": {
+    "totalExecuted": 307,
+    "totalPassed": 307,
+    "totalFailed": 0,
+    "passRatePercent": 100.0
+  },
+  "defectsRemediated": [
+    {
+      "id": "A5-DEFECT-CONCURRENCY-MUTEX",
+      "milestone": "A5",
+      "severity": "HIGH",
+      "description": "Sub-millisecond parallel submissions sharing identical idempotency key produced duplicate receipts and outbox tasks before database insert committed.",
+      "remediation": "Implemented KeyedMutex in src/server/contact/receive.ts to serialize concurrent requests sharing the same key hash. Subsequent concurrent calls await first transaction and return exact cached receipt.",
+      "regressionTest": "tests/integration/rc-contact-checks.test.ts (Assertion 3.1)",
+      "impactOnContracts": "Zero external contract alteration; strictly enforces Milestone A5 specification requirement: 'parallel duplicate requests -> one durable logical submission'."
+    }
+  ],
+  "g7LiveVerificationRequirements": [
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "CRON_SECRET",
+    "OWNER_NOTIFICATION_EMAIL",
+    "Edge CDN Security Headers (Strict-Transport-Security, CSP, X-Frame-Options)"
+  ],
+  "releaseReadinessVerdict": "READY_FOR_C4_RELEASE_MANIFEST"
+}
