@@ -1,0 +1,503 @@
+{
+  "milestone": "C2",
+  "lane": "Gemini #3 \u2014 Runtime/Integration",
+  "title": "Monitor Launcher, Project Transitions & History Navigation",
+  "provider": "Google",
+  "model": "Gemini 3.8 Flash (High)",
+  "generatedAt": "2026-10-02T07:28:23.143254+00:00",
+  "package": {
+    "name": "c2-monitor-transitions.zip",
+    "sha256": "b43b518c78faa7ebc404c85fd7f967cb93d0acc62a317b98057551730df976c6"
+  },
+  "proof": {
+    "install": "PASS",
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "unitTests": "144 passed, 0 failed",
+    "build": "PASS",
+    "e2eChrome": "12 passed",
+    "e2eEdge": "11 passed, 1 flaky C1 teardown timeout"
+  },
+  "sourceFiles": [
+    {
+      "path": ".gitignore",
+      "sha256": "0ea2cf0559f1a933bbaee648ed6e2faa115958adc1f431dead8d249b4f0a1273",
+      "bytes": 88
+    },
+    {
+      "path": ".npmrc",
+      "sha256": "b6d0f23f4c7f0336f6ae25a5258297c989d9d6cda6b8ee3edf1a5e953fdf0dd9",
+      "bytes": 46
+    },
+    {
+      "path": "eslint.config.mjs",
+      "sha256": "c66fb24bf88c9e0bfba1e838de9656093cdfb4e435465529afc4c551c32d1cbc",
+      "bytes": 346
+    },
+    {
+      "path": "next-env.d.ts",
+      "sha256": "879741880b6ab48da99dcc06dcc674d381c9826137b0496bf7bb368f302de9fc",
+      "bytes": 81
+    },
+    {
+      "path": "next.config.ts",
+      "sha256": "5467704d5aaa85b5027212fd1fccef5e7df7abcf30e22f56f2ea250191f0b054",
+      "bytes": 148
+    },
+    {
+      "path": "package.json",
+      "sha256": "1ca3fbb3afab75940a455416d46c3b0fc5860d53a0298e19075ad788e10e439a",
+      "bytes": 1027
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "2448254818ce3fbffd32014005df81faa6c78aacc4bf1006a342dd36006d696a",
+      "bytes": 1141
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "4f02784775189fc59a4441c5f4e9e670f086cd35057908de94612054d9e53682",
+      "bytes": 146659
+    },
+    {
+      "path": "public/assets/3d/avatar-proof.glb",
+      "sha256": "eba336b923e7fd8caf20fc006221934bd820f1f61812a0965833c109d7525511",
+      "bytes": 230360
+    },
+    {
+      "path": "public/assets/3d/fixture-proof.glb",
+      "sha256": "7c9b2358b898a26b40baae799506cf3be26a54019f7e14826b7d3b2c9a94a4d7",
+      "bytes": 307852
+    },
+    {
+      "path": "public/assets/3d/room-blockout.glb",
+      "sha256": "cb9dbe01a8325933cac3e83003358dad096c0c5be9b9da76bc60bd2f47079d0f",
+      "bytes": 925024
+    },
+    {
+      "path": "public/models/avatar-proof.glb",
+      "sha256": "eba336b923e7fd8caf20fc006221934bd820f1f61812a0965833c109d7525511",
+      "bytes": 230360
+    },
+    {
+      "path": "public/models/fixture-proof.glb",
+      "sha256": "7c9b2358b898a26b40baae799506cf3be26a54019f7e14826b7d3b2c9a94a4d7",
+      "bytes": 307852
+    },
+    {
+      "path": "public/models/interaction-assets-mobile.glb",
+      "sha256": "9dd2933d64dbe947328ee600a1608de07016a5aa01cad027881d33e738cd190e",
+      "bytes": 263364
+    },
+    {
+      "path": "public/models/interaction-assets.glb",
+      "sha256": "1d965a9fe9b58a9f485b0145161bc38a75e4ccb9113ce83211db503a5b1e6b6d",
+      "bytes": 262868
+    },
+    {
+      "path": "public/models/room-blockout.glb",
+      "sha256": "cb9dbe01a8325933cac3e83003358dad096c0c5be9b9da76bc60bd2f47079d0f",
+      "bytes": 925024
+    },
+    {
+      "path": "public/models/workstation-sample.glb",
+      "sha256": "aa1618d690f0e65db4c072adb5bf83db259d03b55ab65db9bcd6f4e55df8d4c0",
+      "bytes": 743232
+    },
+    {
+      "path": "public/textures/deskmat-topography.png",
+      "sha256": "8e57eda8b12b18ef9f8cd3b08f015a707dd735a559f14bda2903dfcab5e65685",
+      "bytes": 18211
+    },
+    {
+      "path": "public/textures/monitor-wallpaper.png",
+      "sha256": "0c50d9b4499772e9ffeb07c94ae0ea0c6e49972398003cce269824d51cf4c5c1",
+      "bytes": 43358
+    },
+    {
+      "path": "src/app/(public)/about/page.tsx",
+      "sha256": "dd6492fc406de17ab7cabb81889eba4a422e6c3f719c00da5678902ac287e161",
+      "bytes": 1134
+    },
+    {
+      "path": "src/app/(public)/contact/page.tsx",
+      "sha256": "8212b837b76935a8892126bafe96f41cf59a7ad7b9ae78eb38843926b50b9ee9",
+      "bytes": 998
+    },
+    {
+      "path": "src/app/(public)/page.tsx",
+      "sha256": "d24d616aab0ff4857b5b8e33c5ccfef41c1bcdbeba2e67053d342904b0fad45e",
+      "bytes": 2974
+    },
+    {
+      "path": "src/app/(public)/projects/[slug]/page.tsx",
+      "sha256": "d464880b7352bb651b77abaac451d2f3d55a487a8a3e0c0b2784d2b663679ffb",
+      "bytes": 1697
+    },
+    {
+      "path": "src/app/(public)/projects/page.tsx",
+      "sha256": "32f65b34e6877e101ee681527804ed95f90699b54f8e44aa272d01971b89c313",
+      "bytes": 3711
+    },
+    {
+      "path": "src/app/(public)/resume/page.tsx",
+      "sha256": "58a7ec88ec425d5a492cbbf13778d72cdd0a21037ab9e979abb0d1e866d44e71",
+      "bytes": 936
+    },
+    {
+      "path": "src/app/layout.tsx",
+      "sha256": "0eae20e13e2ebb27dab936289ad7fa57d7435892761a773eacfcd5afb4b7ab34",
+      "bytes": 1186
+    },
+    {
+      "path": "src/app/not-found.tsx",
+      "sha256": "f7855c7eb9d0a8f387cefb1d81ed29ae71f9dee14f34302fbe3dcebd2acffebc",
+      "bytes": 366
+    },
+    {
+      "path": "src/app/robots.ts",
+      "sha256": "d3c0916ca2a3c9bed2c0eba7a6fa50aac9bbdc2a130f0454837e774b63320ca0",
+      "bytes": 314
+    },
+    {
+      "path": "src/app/sitemap.ts",
+      "sha256": "cf98db8941c15d293ee8ad083c9c5fa1ea6dcf61660f30c3340f505d644ee2ad",
+      "bytes": 1246
+    },
+    {
+      "path": "src/content/approved-publication.ts",
+      "sha256": "0a3b8f7e6682ae3baff933f5f7d38892e2d7265c634c9b20bbb6cf17a24bd7c8",
+      "bytes": 20488
+    },
+    {
+      "path": "src/content/publication-reader.ts",
+      "sha256": "a23d03c00d3e6f267cc8894e08908e85a4bbe3fe14a3572463a2a07fc59ae3f4",
+      "bytes": 4331
+    },
+    {
+      "path": "src/contracts/assets.ts",
+      "sha256": "5c61117a8ed66f6acfef3ecfeb9742530320ba6d58713c94d6f6375044419f00",
+      "bytes": 659
+    },
+    {
+      "path": "src/contracts/content.ts",
+      "sha256": "5e341e5a875743439b057df7ebc6c8a7d31b921af8dd7f2576af7765974ce34f",
+      "bytes": 2217
+    },
+    {
+      "path": "src/contracts/experience.ts",
+      "sha256": "88727c6fd98fa4562d28e1700658285e73e225281b02414a1ab6c82afe86771f",
+      "bytes": 4167
+    },
+    {
+      "path": "src/features/character/greeting-controller.ts",
+      "sha256": "cebc0c1ab4979fb7c190ddc224ad26d0c869e3947afa6edc777f6c48e470f356",
+      "bytes": 2954
+    },
+    {
+      "path": "src/features/experience/cancellation-coordinator.ts",
+      "sha256": "6eb35ad2716ee7c097b04545272fa37c52e1b7d45b6668da369aa0d141715365",
+      "bytes": 3235
+    },
+    {
+      "path": "src/features/experience/controller.ts",
+      "sha256": "df0474a6dfa5d98585b3c1d0e3e010c989792234bd4ab0061c00e055f7cb5aaa",
+      "bytes": 15089
+    },
+    {
+      "path": "src/features/experience/intent-arbitration.ts",
+      "sha256": "2bc943c700172611be65757f73f6ba81493b79bcdfdb28dbae7833c50403da13",
+      "bytes": 6527
+    },
+    {
+      "path": "src/features/experience/interaction-registry.ts",
+      "sha256": "03cc10c739d0884a0154946494cf5497a0983e58ceca176cbfaae4ed0bee1e58",
+      "bytes": 10312
+    },
+    {
+      "path": "src/features/experience/navigation-adapter.ts",
+      "sha256": "0dbe295a0df359654095783fcd330782a51f03c836e5306419eaab9b7df0f1cb",
+      "bytes": 4599
+    },
+    {
+      "path": "src/features/experience/preferences-store.ts",
+      "sha256": "7055bff8c22a3a0d21027f6ef8177b2e890648cc47d7d5e8cd9ceb19c99c1f82",
+      "bytes": 2571
+    },
+    {
+      "path": "src/features/experience/project-transition.ts",
+      "sha256": "f410fc41f8fbcc0ede09ceabe28a8036423868ce231e890775a33530c03c86f9",
+      "bytes": 5126
+    },
+    {
+      "path": "src/features/experience/return-snapshot.ts",
+      "sha256": "5de2aab40a19c78a20df0b7713e77c9f68b5d3bd9e264046f01c3d1980a48aa1",
+      "bytes": 2757
+    },
+    {
+      "path": "src/features/monitor/ambient-display.tsx",
+      "sha256": "c016bfa99c42ae0879773fa1a6c9f87627c2d84bef7e97e51adc46a1dd647827",
+      "bytes": 3839
+    },
+    {
+      "path": "src/features/monitor/commands.ts",
+      "sha256": "f1dda1581146d11e120b8d90dbdfc37f7a656222a8e33734e8ec5afc7f277cb8",
+      "bytes": 6763
+    },
+    {
+      "path": "src/features/monitor/launcher.tsx",
+      "sha256": "700332b811e9653aaf70fa4fa9f3e63f966a8916c6193611c5532a2a0d242f73",
+      "bytes": 12474
+    },
+    {
+      "path": "src/features/monitor/monitor.module.css",
+      "sha256": "ea1f4e58a4b47aaa0b2661b9f588b16e2baa960eb165de39b578b3ced6880b2a",
+      "bytes": 7441
+    },
+    {
+      "path": "src/features/portfolio/case-study.tsx",
+      "sha256": "d67af42824bd89a58f04f5c2325353e6270e16fd24ab53e66d779413697bee49",
+      "bytes": 6879
+    },
+    {
+      "path": "src/features/portfolio/navigation.tsx",
+      "sha256": "d8614fe2fd694763727c76fa0e23febee1376f098f83b0fad457af4d57d2f739",
+      "bytes": 970
+    },
+    {
+      "path": "src/features/portfolio/page-intro.tsx",
+      "sha256": "e675f345d7c38b4ff4b4f1acd05253bc5366c8d589775fd2aa5ab4ab7296907a",
+      "bytes": 363
+    },
+    {
+      "path": "src/features/portfolio/portfolio.module.css",
+      "sha256": "da8547cf4526f7e71b8b2c822deaaa22824315893c2e736f4ada8ee0d2c8fcda",
+      "bytes": 19765
+    },
+    {
+      "path": "src/features/portfolio/public-content.ts",
+      "sha256": "29d85d02da7e6a67ce4f12cec65927b0427fe3a02184a3d765eb4509dc932a78",
+      "bytes": 1442
+    },
+    {
+      "path": "src/features/portfolio/safe-link.tsx",
+      "sha256": "68f66ee21221534f47e6d4e65ddbd74e2890453ec0af035cbb8d94a64f0dbe04",
+      "bytes": 1434
+    },
+    {
+      "path": "src/features/room/environment-controller.ts",
+      "sha256": "3fdd9a7866e905f73cd73237a72860b9edf72daa2c307d21571de8c9ae3f0ac3",
+      "bytes": 3919
+    },
+    {
+      "path": "src/features/room/painting-controller.ts",
+      "sha256": "e4940816f2c511e78d4b8a1efb952fafdcacb67c9eb880cafab0abb039edb786",
+      "bytes": 6531
+    },
+    {
+      "path": "src/features/room/room-controls.module.css",
+      "sha256": "7b59fe71ec13de2ceeeb1d909cfd523b4e2e0661c0feb8eb27edb10b53ec13cd",
+      "bytes": 2466
+    },
+    {
+      "path": "src/features/room/room-controls.tsx",
+      "sha256": "20083d87c411769cf8fc8d4f0572cf55a4886bc9f4b9066986f31fa63397b399",
+      "bytes": 7757
+    },
+    {
+      "path": "src/features/world/AssetLoader.ts",
+      "sha256": "ac1dcaac2b2e619a866e84dbd6380872f3398b629571d543370fb3814047038c",
+      "bytes": 5906
+    },
+    {
+      "path": "src/features/world/CameraDirector.ts",
+      "sha256": "c4b91f52e3dec5f16644bc55095997a4b0a47434cd52947c2d09d8001f74f3fa",
+      "bytes": 8280
+    },
+    {
+      "path": "src/features/world/CharacterDirector.ts",
+      "sha256": "5a3cb8a341ec5cea721f55b8fc049cda41a500d80bca566afb3a5b53f81348d4",
+      "bytes": 7538
+    },
+    {
+      "path": "src/features/world/EntranceCoordinator.ts",
+      "sha256": "87cedf8400f5db61342720cd342bfa4d71e1859bc42a25b682333b9294871de5",
+      "bytes": 7829
+    },
+    {
+      "path": "src/features/world/LifecycleManager.ts",
+      "sha256": "f7300e53793ae112ce9bc4293836d5a14bc739b310d9b870de511ea74722c29c",
+      "bytes": 8207
+    },
+    {
+      "path": "src/features/world/SceneIntegrator.ts",
+      "sha256": "b5a5941769ca9ef183492843dd6e55702102445ca5db5b8f5cff0650a3b4c63b",
+      "bytes": 6198
+    },
+    {
+      "path": "src/features/world/StudioLauncher.tsx",
+      "sha256": "978a72421b15849127e88ce6ee33c30359a89dc9a809dc03731905518ff6d3a3",
+      "bytes": 3021
+    },
+    {
+      "path": "src/features/world/TransitionCoordinator.ts",
+      "sha256": "7cda44dbbbb9fc24326b091ad8790eb1e451f05f4258fc4cb018ea4d26821edf",
+      "bytes": 2248
+    },
+    {
+      "path": "src/features/world/types.ts",
+      "sha256": "71c56485ee13b412cf3ca5d686bf8ea82a844ec44912d0f47f409aba573369f3",
+      "bytes": 2175
+    },
+    {
+      "path": "src/features/world/world.module.css",
+      "sha256": "f70e02d49d5fe385ac245b974136b6ac5d37c3fd9a6df44a28ad3c24dec5ffd9",
+      "bytes": 4755
+    },
+    {
+      "path": "src/features/world/WorldFallback.tsx",
+      "sha256": "8df22ffe49c71569f663de8e230b0fb929d9ea637eb3ccb76322af6a81da15b0",
+      "bytes": 1798
+    },
+    {
+      "path": "src/features/world/WorldRoot.tsx",
+      "sha256": "60c85a648ded28c8231b55f9f033315c8567e63d82143f94364697fd35fc90ba",
+      "bytes": 16290
+    },
+    {
+      "path": "src/features/world/WorldRuntime.ts",
+      "sha256": "28acc91654384cacf19fecb9a3e8fa4cdea0ea8dcdcb894e19ad2a4b6ad7af58",
+      "bytes": 18664
+    },
+    {
+      "path": "src/styles/tokens.css",
+      "sha256": "3ad920d1021bc0c59f34c5ebb619108d016e30e4a91a8d82aa6c6cb3f171832d",
+      "bytes": 1288
+    },
+    {
+      "path": "tests/e2e/browser-behavior.spec.ts",
+      "sha256": "c91cf96c72bbc3d2adbb30992fed0a9fd372e76cab708729794f179c2da8f2ff",
+      "bytes": 15408
+    },
+    {
+      "path": "tests/e2e/payload.spec.ts",
+      "sha256": "1677d34abf0a19d13b70f637ea4be78deabd6b248b4032790b764d5989f48d6f",
+      "bytes": 7686
+    },
+    {
+      "path": "tests/e2e/physical-interactions.spec.ts",
+      "sha256": "94c45fa3a9589f1b8a87b26ef946f7a8384370e3a9b658065897fa91da27042f",
+      "bytes": 6425
+    },
+    {
+      "path": "tests/e2e/public-shell.spec.ts",
+      "sha256": "61eee3b79822019b670686ad286a835b29003c0a4b650accc311ac0742b66e41",
+      "bytes": 14401
+    },
+    {
+      "path": "tests/e2e/room-project-navigation.spec.ts",
+      "sha256": "54305a4b6ac05dd5263e47efa830badd44ed0a7ffc64731e569c8f90a97993a2",
+      "bytes": 4771
+    },
+    {
+      "path": "tests/e2e/world-lifecycle.spec.ts",
+      "sha256": "f50b6eb034fe289e95845eb4fa5b2b71e4f652fec098f2a3519b96b41e5e01ef",
+      "bytes": 12930
+    },
+    {
+      "path": "tests/fixtures/engineering-section-4.ts",
+      "sha256": "196475f225add02806e8a0e38406b32523fe5607607f8e77b47f559d95eb50cc",
+      "bytes": 3089
+    },
+    {
+      "path": "tests/unit/asset-loader.test.ts",
+      "sha256": "4bcc9a7d1fd130063a9048f5ef955125583b47f37f28a03707b014c775dc6088",
+      "bytes": 1495
+    },
+    {
+      "path": "tests/unit/boundaries.test.ts",
+      "sha256": "9f8f3c70621967b4741d60baf5f4565f56492b16584ef1d2e1a1c484a70918c0",
+      "bytes": 8144
+    },
+    {
+      "path": "tests/unit/camera-director.test.ts",
+      "sha256": "5ca3c11ae745218b0a2154250399f058d98d9656998ec1d12be4dfef60368f84",
+      "bytes": 2633
+    },
+    {
+      "path": "tests/unit/character-director.test.ts",
+      "sha256": "f439d166f91376ecd401b618f1f5a1dc3f7839c4f638fc54beac98404027281f",
+      "bytes": 3537
+    },
+    {
+      "path": "tests/unit/contract-types.test.ts",
+      "sha256": "6d72adddf4dc2821267907b2bb21447d876638c2c96715cdf138d881175989ff",
+      "bytes": 1540
+    },
+    {
+      "path": "tests/unit/contracts.test.ts",
+      "sha256": "01da88816f39271e0c3ed0bb3f13954c86db65a2ffa337030e47bf2148d1aacf",
+      "bytes": 7726
+    },
+    {
+      "path": "tests/unit/entrance-coordinator.test.ts",
+      "sha256": "d62edcbc0f79bad8b576234cf5d9018d6111b77753b2c1c6c0ec896653087aa2",
+      "bytes": 4065
+    },
+    {
+      "path": "tests/unit/intent-arbitration.test.ts",
+      "sha256": "32888e5b7cc778bce21a34ad2a6042fa96f7c9734994800f85be1ad89e524492",
+      "bytes": 3783
+    },
+    {
+      "path": "tests/unit/interaction-controller.test.ts",
+      "sha256": "b3f1353de2350a6b38a4f345c25c8abbefd42baf80f353d9cb9b084fbac90374",
+      "bytes": 12718
+    },
+    {
+      "path": "tests/unit/interaction-registry.test.ts",
+      "sha256": "66dfa00ec2472328579646c279a8363a835dcb1d5a8c361b04d84c9cd6b8eef9",
+      "bytes": 2411
+    },
+    {
+      "path": "tests/unit/lifecycle-manager.test.ts",
+      "sha256": "dcacf4cdb607affe50607c39d976269bda082f00fd725c9279313964f897234a",
+      "bytes": 6607
+    },
+    {
+      "path": "tests/unit/painting-interaction.test.ts",
+      "sha256": "a9f204a3c6003c56c159f7c1000855c65c39115f6df6c3bb0d696ec946288794",
+      "bytes": 3638
+    },
+    {
+      "path": "tests/unit/preferences-resilience.test.ts",
+      "sha256": "fe08cce22a573d5a5eb2db70187b7f98fca6fb13df3dd2f43f2ef0e1e1a58428",
+      "bytes": 2629
+    },
+    {
+      "path": "tests/unit/project-transition.test.ts",
+      "sha256": "22488f232911ab2a0bbd00be080a11fb78926020b4ff3e46ee80a250eff77ac7",
+      "bytes": 10298
+    },
+    {
+      "path": "tests/unit/scene-integrator.test.ts",
+      "sha256": "da38a701b29f9fbc07d60d8759d261b17301f297290a82a3e87e41473f75e4bc",
+      "bytes": 6276
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "106e43bfb259e9de311f2c88f6a5a3908c4d699698ae07c8c2de8bc87789bf11",
+      "bytes": 673
+    },
+    {
+      "path": "vitest.config.ts",
+      "sha256": "08c5dd0e0ed7a97c1dfb52db16e3963179e8ef03f76cf4c7f052cd41a88f94a6",
+      "bytes": 258
+    },
+    {
+      "path": "vitest.integration.config.ts",
+      "sha256": "f0e6d64846b46c3ee70187607a35eb1355bf02defbbf8271844516e7478bac4c",
+      "bytes": 337
+    }
+  ]
+}

@@ -1,0 +1,585 @@
+COMMAND: "C:\Program Files\nodejs\node.EXE" C:\Users\yoray\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs test:unit
+CWD: C:\Users\yoray\AppData\Local\Temp\yor-world-c2-proof-qkortug2\app
+
+> yor-world-g1-proof@0.1.0 test:unit C:\Users\yoray\AppData\Local\Temp\yor-world-c2-proof-qkortug2\app
+> vitest run --config vitest.config.ts
+
+[33m(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vitest.config.ts:7:25). Use `import.meta.dirname` instead
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.[39m
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.2 [39m[90mC:/Users/yoray/AppData/Local/Temp/yor-world-c2-proof-qkortug2/app[39m
+
+ [32m✓[39m tests/unit/scene-integrator.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m tests/unit/character-director.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m tests/unit/camera-director.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+[90mstderr[2m | tests/unit/entrance-coordinator.test.ts[2m > [22m[2mEntranceCoordinator - Single Active Entrance and Bounded Duration[2m > [22m[2mPROVE: only one active entrance exists at any time
+[22m[39m[EntranceCoordinator] Entrance already running; returning active entrance promise.
+
+[90mstderr[2m | tests/unit/lifecycle-manager.test.ts[2m > [22m[2mLifecycleManager - 8 Explicit States and Adversarial Guarantees[2m > [22m[2menforces bounded retries (maxRetries = 3)
+[22m[39m[LifecycleManager] Bounded retry limit reached.
+
+[90mstderr[2m | tests/unit/lifecycle-manager.test.ts[2m > [22m[2mLifecycleManager - 8 Explicit States and Adversarial Guarantees[2m > [22m[2mDISPOSING cleans up all listeners and returns to STATIC
+[22m[39m[LifecycleManager] Cannot request entry: manager is disposed.
+
+ [32m✓[39m tests/unit/entrance-coordinator.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m tests/unit/lifecycle-manager.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m tests/unit/interaction-registry.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m tests/unit/contracts.test.ts [2m([22m[2m51 tests[22m[2m)[22m[32m 40[2mms[22m[39m
+ [32m✓[39m tests/unit/painting-interaction.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m tests/unit/preferences-resilience.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m tests/unit/intent-arbitration.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+[90mstderr[2m | tests/unit/interaction-controller.test.ts[2m > [22m[2mExperienceController & Interaction Arbitration (Task C1)[2m > [22m[2mAttack 8: renderer failure[2m > [22m[2mtransitions cleanly to static fallback and aborts in-flight work on RENDERER_FAILED
+[22m[39m[ExperienceController] Renderer failed (CONTEXT_LOST), falling back to static presentation.
+
+ [32m✓[39m tests/unit/interaction-controller.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32m✓[39m tests/unit/contract-types.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m tests/unit/asset-loader.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [31m❯[39m tests/unit/boundaries.test.ts [2m([22m[2m9 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 414[2mms[22m[39m
+[31m   [31m×[31m keeps all public projects empty and identity provisional[39m[32m 19[2mms[22m[39m
+   [33m[2m✓[22m[39m enforces G1 dependency boundaries: three is isolated to world feature, shell remains free of 3D[33m 383[2mms[22m[39m
+   [32m✓[39m keeps shared contracts independent of framework and server imports[32m 5[2mms[22m[39m
+   [32m✓[39m regression: syntax-level import boundary detection [2m(6)[22m
+     [32m✓[39m rejects dynamic import of test fixture in production module[32m 2[2mms[22m[39m
+     [32m✓[39m rejects side-effect import of test fixture in production module[32m 1[2mms[22m[39m
+     [32m✓[39m rejects export-from of test fixture in production module[32m 1[2mms[22m[39m
+     [32m✓[39m rejects aliased import of test fixture in production module[32m 1[2mms[22m[39m
+     [32m✓[39m rejects framework or dynamic imports in contracts[32m 1[2mms[22m[39m
+     [32m✓[39m rejects three.js import in public shell features outside world[32m 1[2mms[22m[39m
+ [31m❯[39m tests/unit/project-transition.test.ts [2m([22m[2m22 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[33m 1190[2mms[22m[39m
+   [31m❯[39m Milestone C2 Unit Tests: Project Transitions, Motifs, and Navigation [2m(22)[22m
+     [32m✓[39m 1. Bounded Project Transitions & Motifs [2m(5)[22m
+       [33m[2m✓[22m[39m completes verified project transition within the 1.4-second budget[33m 961[2mms[22m[39m
+       [32m✓[39m respects reduced-motion setting with 0ms transition duration[32m 0[2mms[22m[39m
+       [32m✓[39m defines 5 distinct project motifs matching engineering specifications[32m 0[2mms[22m[39m
+       [32m✓[39m rejects unknown project identifiers immediately[32m 1[2mms[22m[39m
+       [32m✓[39m rejects unpublished candidate 'candidatex' with UnpublishedProjectError[32m 0[2mms[22m[39m
+     [32m✓[39m 2. Transition Cancellation & Abort Safety [2m(3)[22m
+       [32m✓[39m immediately rejects with TransitionAbortedError if signal is already aborted[32m 0[2mms[22m[39m
+       [32m✓[39m cancels transition mid-flight when signal aborts (e.g. Browser Back)[32m 214[2mms[22m[39m
+       [32m✓[39m guarantees no navigation occurs from an aborted transition promise[32m 1[2mms[22m[39m
+     [31m❯[39m 3. NavigationAdapter Coordination & Rapid Switching [2m(5)[22m
+       [32m✓[39m openProject validates project and dispatches to router[32m 1[2mms[22m[39m
+       [32m✓[39m openProject rejects unknown projects[32m 0[2mms[22m[39m
+       [32m✓[39m openProject rejects unpublished candidatex[32m 0[2mms[22m[39m
+[31m       [31m×[31m rapid project switching aborts the previous transition immediately[39m[32m 5[2mms[22m[39m
+[31m       [31m×[31m openRoute cancels active project transitions before DOM navigation[39m[32m 1[2mms[22m[39m
+     [32m✓[39m 4. Terminal Allowlisted Commands & Security Rejection [2m(7)[22m
+       [32m✓[39m executes allowlisted help command[32m 1[2mms[22m[39m
+       [32m✓[39m executes allowlisted projects command listing verified case studies[32m 0[2mms[22m[39m
+       [32m✓[39m executes allowlisted open command with valid target[32m 0[2mms[22m[39m
+       [32m✓[39m rejects opening unpublished candidatex via terminal[32m 0[2mms[22m[39m
+       [32m✓[39m rejects opening unknown project via terminal[32m 0[2mms[22m[39m
+       [32m✓[39m treats shell and code execution attempts as unsupported text without executing[32m 1[2mms[22m[39m
+       [32m✓[39m reports unrecognized command cleanly for unallowlisted keywords[32m 0[2mms[22m[39m
+     [32m✓[39m 5. Return Snapshot & State Restoration [2m(2)[22m
+       [32m✓[39m saves and retrieves return snapshot accurately[32m 0[2mms[22m[39m
+       [32m✓[39m restoreReturnSnapshot returns snapshot and clears storage[32m 0[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 3 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/unit/boundaries.test.ts[2m > [22mkeeps all public projects empty and identity provisional
+[31m[1mAssertionError[22m: expected [ { id: 'ai-vs-real', …(8) }, …(3) ] to deeply equal [][39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- [][39m
+[31m+ [[39m
+[31m+   {[39m
+[31m+     "contribution": "Sole developer. Designed and implemented the complete computer vision pipeline, including illumination-invariant preprocessing, LBP and GLCM feature extraction, RBF SVM training and probability calibration, model persistence, and the Streamlit demonstration interface.",[39m
+[31m+     "evidence": [[39m
+[31m+       {[39m
+[31m+         "checkedAt": "2026-10-01T12:00:00Z",[39m
+[31m+         "id": "ev-air-repo",[39m
+[31m+         "kind": "repository",[39m
+[31m+         "note": "Public repository with committed Python training pipeline, OpenCV preprocessing, and Streamlit application.",[39m
+[31m+         "status": "verified",[39m
+[31m+         "url": "https://github.com/yorayriniwnl/Yor-Ai-vs-real-image",[39m
+[31m+       },[39m
+[31m+       {[39m
+[31m+         "checkedAt": "2026-10-01T12:00:00Z",[39m
+[31m+         "id": "ev-air-demo",[39m
+[31m+         "kind": "deployment",[39m
+[31m+         "note": "Live Vercel demonstration running interactive image classification.",[39m
+[31m+         "status": "verified",[39m
+[31m+         "url": "https://yor-ai-vs-real-image.vercel.app",[39m
+[31m+       },[39m
+[31m+       {[39m
+[31m+         "checkedAt": "2026-10-01T12:00:00Z",[39m
+[31m+         "id": "ev-air-accuracy",[39m
+[31m+         "kind": "measurement",[39m
+[31m+         "note": "78.5% held-out test accuracy on deterministic 80/20 train/test evaluation split using LBP and GLCM features with calibrated RBF SVM.",[39m
+[31m+         "status": "verified",[39m
+[31m+         "url": null,[39m
+[31m+       },[39m
+[31m+     ],[39m
+[31m+     "id": "ai-vs-real",[39m
+[31m+     "links": [[39m
+[31m+       {[39m
+[31m+         "checkedAt": "2026-10-01T12:00:00Z",[39m
+[31m+         "label": "Source Repository",[39m
+[31m+         "url": "https://github.com/yorayriniwnl/Yor-Ai-vs-real-image",[39m
+[31m+       },[39m
+[31m+       {[39m
+[31m+         "checkedAt": "2026-10-01T12:00:00Z",[39m
+[31m+         "label": "Live Demonstration",[39m
+[31m+         "url": "https://yor-ai-vs-real-image.vercel.app",[39m
+[31m+       },[39m
+[31m+     ],[39m
+[31m+     "revision": 1,[39m
+[31m+     "sections": [[39m
+[31m+       {[39m
+[31m+         "blocks": [[39m
+[31m+           {[39m
+[31m+             "text": "Generative image models frequently produce convincing macro-level compositions while leaving subtle micro-texture irregularities, pixel correlation shifts, and boundary artifacts across spatial domains.",[39m
+[31m+             "type": "paragraph",[39m
+[31m+           },[39m
+[31m+           {[39m
+[31m+             "text": "Traditional deep learning forensic detectors often overfit to specific generator architectures and require heavy GPU runtimes for inference. This project sought a transparent, lightweight, CPU-runnable classifier that operates directly on interpretable spatial texture statistics rather than opaque neural embeddings.",[39m
+[31m+             "type": "paragraph",[39m
+[31m+           },[39m
+[31m+         ],[39m
+[31m+         "heading": "Forensic Challenge & Motivation",[39m
+[31m+         "id": "challenge",[39m
+[31m+       },[39m
+[31m+       {[39m
+[31m+         "blocks": [[39m
+[31m+           {[39m
+[31m+             "text": "The extraction pipeline combines two complementary structural texture descriptors to capture both fine-grained roughness and broader spatial pixel relationships:",[39m
+[31m+             "type": "paragraph",[39m
+[31m+           },[39m
+[31m+           {[39m
+[31m+             "items": [[39m
+[31m+               "Local Binary Patterns (LBP): Computes circular neighborhood comparisons (P=8, R=1) to capture micro-edge distributions and high-frequency noise typical of generative upscalers.",[39m
+[31m+               "Gray-Level Co-occurrence Matrix (GLCM): Evaluates second-order joint probability distributions of gray-level transitions across multiple orientations (0°, 45°, 90°, 135°), extracting contrast, dissimilarity, homogeneity, energy, and correlation.",[39m
+[31m+               "Illumination Invariance: Normalizes input images prior to matrix computation to prevent ambient lighting gradients from confounding textural feature calculation.",[39m
+[31m+             ],[39m
+[31m+             "type": "list",[39m
+[31m+           },[39m
+[31m+           {[39m
+[31m+             "language": "python",[39m
+[31m+             "text": "# Illustrative feature extraction pipeline snippet[39m
+[31m+ import cv2[39m
+[31m+ from skimage.feature import local_binary_pattern, graycomatrix, graycoprops[39m
+[31m+[39m
+[31m+ def extract_texture_vector(image_gray):[39m
+[31m+     lbp = local_binary_pattern(image_gray, P=8, R=1, method='uniform')[39m
+[31m+     lbp_hist, _ = np.histogram(lbp.ravel(), bins=10, range=(0, 10), density=True)[39m
+[31m+     glcm = graycomatrix(image_gray, distances=[1], angles=[0, np.pi/4, np.pi/2, 3*np.pi/4], symmetric=True, normed=True)[39m
+[31m+     contrast = graycoprops(glcm, 'contrast').mean()[39m
+[31m+     homogeneity = graycoprops(glcm, 'homogeneity').mean()[39m
+[31m+     energy = graycoprops(glcm, 'energy').mean()[39m
+[31m+     correlation = graycoprops(glcm, 'correlation').mean()[39m
+[31m+     return np.hstack([lbp_hist, [contrast, homogeneity, energy, correlation]])",[39m
+[31m+             "type": "code",[39m
+[31m+           },[39m
+[31m+         ],[39m
+[31m+         "heading": "Texture Feature Extraction Pipeline",[39m
+[31m+         "id": "feature-engineering",[39m
+[31m+       },[39m
+[31m+       {[39m
+[31m+         "blocks": [[39m
+[31m+           {[39m
+[31m+             "text": "Extracted feature vectors are standardized and passed to a Support Vector Machine with a Radial Basis Function (RBF) kernel. To provide meaningful risk scores rather than binary decisions, the classifier applies Platt scaling via probability calibration.",[39m
+[31m+             "type": "paragraph",[39m
+[31m+           },[39m
+[31m+           {[39m
+[31m+             "text": "Trained scaler and model artifacts are serialized using joblib, enabling instant local CPU inference with zero external API dependencies or network latency.",[39m
+[31m+             "type": "paragraph",[39m
+[31m+           },[39m
+[31m+         ],[39m
+[31m+         "heading": "Classifier Training and Probability Calibration",[39m
+[31m+         "id": "model-architecture",[39m
+[31m+       },[39m
+[31m+       {[39m
+[31m+         "blocks": [[39m
+[31m+           {[39m
+[31m+             "text": "On a deterministic 80/20 train/test evaluation split, the calibrated model demonstrated 78.5% held-out test accuracy across test sets.",[39m
+[31m+             "type": "paragraph",[39m
+[31m+           },[39m
+[31m+           {[39m
+[31m+             "items": [[39m
+[31m+               "Heavy JPEG re-compression degrades high-frequency LBP micro-textures, reducing detection confidence.",[39m
+[31m+               "Handcrafted texture features remain sensitive to input scaling; images should be evaluated at native or standardized resolutions.",[39m
+[31m+               "Designed for forensic exploration; not claimed as an adversarial-grade enterprise defense system.",[39m
+[31m+             ],[39m
+[31m+             "type": "list",[39m
+[31m+           },[39m
+[31m+         ],[39m
+[31m+         "heading": "Verified Performance and Forensic Boundaries",[39m
+[31m+         "id": "results-and-limitations",[39m
+[31m+       },[39m
+[31m+     ],[39m
+[31m+     "slug": "ai-vs-real",[39m
+[31m+     "summary": "A probability-aware image classifier built from handcrafted texture features and a calibrated support vector machine.",[39m
+[31m+     "title": "AI vs. Real Image Detector",[39m
+[31m+   },[39m
+[31m+   {[39m
+[31m+     "contribution": "Sole developer. Architected the full-stack system, implemented the 3D roof planning viewer in Three.js and React, developed mathematical solar irradiance calculations, and integrated financial subsidy and ROI modeling.",[39m
+[31m+     "evidence": [[39m
+[31m+       {[39m
+[31m+         "checkedAt": "2026-10-01T12:00:00Z",[39m
+[31m+         "id": "ev-zen-repo",[39m
+[31m+         "kind": "repository",[39m
+[31m+         "note": "Public repository with Three.js/React frontend and Python/FastAPI backend.",[39m
+[31m+         "status": "verified",[39m
+[31m+         "url": "https://github.com/yorayriniwnl/Yor-Zenith",[39m
+[31m+       },[39m
+[31m+       {[39m
+[31m+         "checkedAt": "2026-10-01T12:00:00Z",[39m
+[31m+         "id": "ev-zen-demo",[39m
+[31m+         "kind": "deployment",[39m
+[31m+         "note": "Live interactive 3D solar feasibility planner hosted on Vercel.",[39m
+[31m+         "status": "verified",[39m
+[31m+         "url": "https://zenith-xi-snowy.vercel.app",[39m
+[31m+       },[39m
+[31m+     ],[39m
+[31m+     "id": "zenith",[39m
+[31m+     "links": [[39m
+[31m+       {[39m
+[31m+         "checkedAt": "2026-10-01T12:00:00Z",[39m
+[31m+         "label": "Source Repository",[39m
+[31m+         "url": "https://github.com/yorayriniwnl/Yor-Zenith",[39m
+[31m+       },[39m
+[31m+       {[39m
+[31m+         "checkedAt": "2026-10-01T12:00:00Z",[39m
+[31m+         "label": "Live Demonstration",[39m
+[31m+         "url": "https://zenith-xi-snowy.vercel.app",[39m
+[31m+       },[39m
+[31m+     ],[39m
+[31m+     "revision": 1,[39m
+[31m+     "sections": [[39m
+[31m+       {[39m
+[31m+         "blocks": [[39m
+[31m+           {[39m
+[31m+             "text": "Residential and commercial rooftop solar planning typically requires expensive specialized CAD modeling or on-site engineering surveys. Property owners lack accessible tools to quickly visualize panel arrangements, understand seasonal yield variation, and calculate capital payback timelines.",[39m
+[31m+             "type": "paragraph",[39m
+[31m+           },[39m
+[31m+           {[39m
+[31m+             "text": "Yor Zenith delivers an integrated browser-based workflow bridging spatial layout and investment decision-making in one interface.",[39m
+[31m+             "type": "paragraph",[39m
+[31m+           },[39m
+[31m+         ],[39m
+[31m+         "heading": "Solar Feasibility Decision Support",[39m
+[31m+         "id": "domain-context",[39m
+[31m+       },[39m
+[31m+       {[39m
+[31m+         "blocks": [[39m
+[31m+           {[39m
+[31m+             "text": "The frontend provides a real-time 3D workspace authored with Three.js and React. Users configure parametric roof dimensions, pitch angles, azimuth orientation, and perimeter setbacks.",[39m
+[31m+             "type": "paragraph",[39m
+[31m+           },[39m
+[31m+           {[39m
+[31m+             "items": [[39m
+[31m+               "Interactive raycasting to test solar module grid arrangements and surface fit.",[39m
+[31m+               "Obstacle boundary definition for roof vents, chimneys, and skylights.",[39m
+[31m+               "Real-time visual shadow direction cues based on solar elevation angles.",[39m
+[31m+             ],[39m
+[31m+             "type": "list",[39m
+[31m+           },[39m
+[31m+         ],[39m
+[31m+         "heading": "3D Spatial Modeling & Panel Placement",[39m
+[31m+         "id": "spatial-engine",[39m
+[31m+       },[39m
+[31m+       {[39m
+[31m+         "blocks": [[39m
+[31m+           {[39m
+[31m+             "text": "The simulation engine models seasonal incident solar energy based on geographical latitude, roof tilt, and compass orientation:",[39m
+[31m+             "type": "paragraph",[39m
+[31m+           },[39m
+[31m+           {[39m
+[31m+             "language": "typescript",[39m
+[31m+             "text": "// Mathematical solar irradiance estimation model[39m
+[31m+ export function calculateSolarYield(params: {[39m
+[31m+   panelCapacityKw: number;[39m
+[31m+   tiltDegrees: number;[39m
+[31m+   azimuthDegrees: number;[39m
+[31m+   annualSunHours: number;[39m
+[31m+   systemEfficiency: number;[39m
+[31m+ }): { annualKwh: number; monthlyDistribution: number[] } {[39m
+[31m+   const orientationFactor = Math.cos((params.azimuthDegrees - 180) * (Math.PI / 180)) * 0.15 + 0.85;[39m
+[31m+   const tiltFactor = Math.cos((params.tiltDegrees - 25) * (Math.PI / 180)) * 0.10 + 0.90;[39m
+[31m+   const annualKwh = params.panelCapacityKw * params.annualSunHours * params.systemEfficiency * orientationFactor * tiltFactor;[39m
+[31m+   // Monthly irradiance distribution coefficients[39m
+[31m+   const weights = [0.06, 0.07, 0.09, 0.10, 0.11, 0.11, 0.10, 0.09, 0.09, 0.08, 0.05, 0.05];[39m
+[31m+   return { annualKwh: Math.round(annualKwh), monthlyDistribution: weights.map(w => Math.round(annualKwh * w)) };[39m
+[31m+ }",[39m
+[31m+             "type": "code",[39m
+[31m+           },[39m
+[31m+           {[39m
+[31m+             "text": "Financial modeling factors in gross equipment cost, estimated national/state clean energy subsidies, electricity tariff savings, and projected investment payback periods.",[39m
+[31m+             "type": "paragraph",[39m
+[31m+           },[39m
+[31m+         ],[39m
+[31m+         "heading": "Irradiance Calculation & Financial Return",[39m
+[31m+         "id": "simulation-and-finance",[39m
+[31m+       },[39m
+[31m+       {[39m
+[31m+         "blocks": [[39m
+[31m+           {[39m
+[31m+             "text": "The irradiance model uses trigonometric solar path equations rather than high-resolution satellite LIDAR point clouds. Financial projections use user-configurable utility rate presets rather than live dynamic utility billing API feeds.",[39m
+[31m+             "type": "paragraph",[39m
+[31m+           },[39m
+[31m+         ],[39m
+[31m+         "heading": "Technical Invariants and Limitations",[39m
+[31m+         "id": "limitations",[39m
+[31m+       },[39m
+[31m+     ],[39m
+[31m+     "slug": "zenith",[39m
+[31m+     "summary": "A full-stack solar feasibility platform combining 3D roof planning, energy-output simulation, and financial analysis.",[39m
+[31m+     "title": "Yor Zenith",[39m
+[31m+   },[39m
+[31m+   {[39m
+[31m+     "contribution": "Sole developer. Architected the asynchronous event-streaming backend using Python and FastAPI, designed WebSocket subscription channels, built threshold anomaly detection rules, and containerized the system with Docker Compose.",[39m
+[31m+     "evidence": [[39m
+[31m+       {[39m
+[31m+         "checkedAt": "2026-10-01T12:00:00Z",[39m
+[31m+         "id": "ev-hel-repo",[39m
+[31m+         "kind": "repository",[39m
+[31m+         "note": "Public repository with FastAPI asynchronous streaming server and Docker Compose orchestration.",[39m
+[31m+         "status": "verified",[39m
+[31m+         "url": "https://github.com/yorayriniwnl/Yor-Helios",[39m
+[31m+       },[39m
+[31m+       {[39m
+[31m+         "checkedAt": "2026-10-01T12:00:00Z",[39m
+[31m+         "id": "ev-hel-status",[39m
+[31m+         "kind": "document",[39m
+[31m+         "note": "Project is in active development with runnable Docker Compose local environment; live cloud production hosting is not deployed.",[39m
+[31m+         "status": "verified",[39m
+[31m+         "url": null,[39m
+[31m+       },[39m
+[31m+     ],[39m
+[31m+     "id": "helios",[39m
+[31m+     "links": [[39m
+[31m+       {[39m
+[31m+         "checkedAt": "2026-10-01T12:00:00Z",[39m
+[31m+         "label": "Source Repository",[39m
+[31m+         "url": "https://github.com/yorayriniwnl/Yor-Helios",[39m
+[31m+       },[39m
+[31m+     ],[39m
+[31m+     "revision": 1,[39m
+[31m+     "sections": [[39m
+[31m+       {[39m
+[31m+         "blocks": [[39m
+[31m+           {[39m
+[31m+             "text": "Industrial and commercial facility power monitoring requires immediate detection of voltage spikes, sustained overcurrent, and phase imbalances. Yor Helios provides a lightweight event pipeline designed for low-overhead local or edge deployment.",[39m
+[31m+             "type": "paragraph",[39m
+[31m+           },[39m
+[31m+           {[39m
+[31m+             "text": "Built on FastAPI and Python's asyncio event loop, the backend ingests incoming energy telemetry streams and broadcasts parsed anomaly events over persistent WebSocket connections.",[39m
+[31m+             "type": "paragraph",[39m
+[31m+           },[39m
+[31m+           {[39m
+[31m+             "alt": "Yor Helios edge telemetry architecture diagram",[39m
+[31m+             "caption": "Figure 1: Architectural topology under review for public asset publication.",[39m
+[31m+             "mediaId": "missing-helios-diagram",[39m
+[31m+             "type": "image",[39m
+[31m+           },[39m
+[31m+         ],[39m
+[31m+         "heading": "Streaming Architecture & Event Broker",[39m
+[31m+         "id": "architecture",[39m
+[31m+       },[39m
+[31m+       {[39m
+[31m+         "blocks": [[39m
+[31m+           {[39m
+[31m+             "items": [[39m
+[31m+               "Channel-Specific Subscriptions: Operators can isolate alerts by electrical bus, facility zone, or severity rating.",[39m
+[31m+               "Sliding Window Anomaly Rules: Tracks short-term rolling averages to differentiate transient motor inrush spikes from sustained overloads.",[39m
+[31m+               "Heartbeat & Reconnection Protocol: Provides connection liveness verification and resilient automated client re-connection.",[39m
+[31m+             ],[39m
+[31m+             "type": "list",[39m
+[31m+           },[39m
+[31m+           {[39m
+[31m+             "language": "python",[39m
+[31m+             "text": "# WebSocket broadcaster and channel routing[39m
+[31m+ from fastapi import FastAPI, WebSocket, WebSocketDisconnect[39m
+[31m+[39m
+[31m+ class ConnectionManager:[39m
+[31m+     def __init__(self):[39m
+[31m+         self.active_channels: dict[str, list[WebSocket]] = {}[39m
+[31m+[39m
+[31m+     async def connect(self, channel: str, websocket: WebSocket):[39m
+[31m+         await websocket.accept()[39m
+[31m+         self.active_channels.setdefault(channel, []).append(websocket)[39m
+[31m+[39m
+[31m+     def disconnect(self, channel: str, websocket: WebSocket):[39m
+[31m+         if channel in self.active_channels and websocket in self.active_channels[channel]:[39m
+[31m+             self.active_channels[channel].remove(websocket)[39m
+[31m+[39m
+[31m+     async def broadcast_alert(self, channel: str, event: dict):[39m
+[31m+         for connection in self.active_channels.get(channel, []):[39m
+[31m+             await connection.send_json(event)",[39m
+[31m+             "type": "code",[39m
+[31m+           },[39m
+[31m+         ],[39m
+[31m+         "heading": "Threshold Engine & Channel Subscriptions",[39m
+[31m+         "id": "anomaly-engine",[39m
+[31m+       },[39m
+[31m+       {[39m
+[31m+         "blocks": [[39m
+[31m+           {[39m
+[31m+             "text": "Yor Helios is containerized using Docker Compose for one-command local reproduction. In accordance with honest disclosure standards, this platform is in development: no live cloud production cluster or physical sensor hardware integration is active.",[39m
+[31m+             "type": "paragraph",[39m
+[31m+           },[39m
+[31m+         ],[39m
+[31m+         "heading": "Development Status & Scope",[39m
+[31m+         "id": "deployment-status",[39m
+[31m+       },[39m
+[31m+     ],[39m
+[31m+     "slug": "helios",[39m
+[31m+     "summary": "An energy-monitoring platform streaming anomaly and threshold events into channel-specific operator dashboards.",[39m
+[31m+     "title": "Yor Helios",[39m
+[31m+   },[39m
+[31m+   {[39m
+[31m+     "contribution": "Sole developer. Built the reactive user interface in React, Vite, and TypeScript; engineered the Express backend and WebSocket event broker with Socket.IO; designed the relational database schema and queries using Drizzle ORM and PostgreSQL.",[39m
+[31m+     "evidence": [[39m
+[31m+       {[39m
+[31m+         "checkedAt": "2026-10-01T12:00:00Z",[39m
+[31m+         "id": "ev-tlk-repo",[39m
+[31m+         "kind": "repository",[39m
+[31m+         "note": "Public repository containing full-stack TypeScript codebase, Drizzle ORM migrations, and Socket.IO server.",[39m
+[31m+         "status": "verified",[39m
+[31m+         "url": "https://github.com/yorayriniwnl/yor-talksv2",[39m
+[31m+       },[39m
+[31m+       {[39m
+[31m+         "checkedAt": "2026-10-01T12:00:00Z",[39m
+[31m+         "id": "ev-tlk-demo",[39m
+[31m+         "kind": "deployment",[39m
+[31m+         "note": "Live demonstration instance hosted on Vercel.",[39m
+[31m+         "status": "verified",[39m
+[31m+         "url": "https://yor-talks.vercel.app",[39m
+[31m+       },[39m
+[31m+     ],[39m
+[31m+     "id": "talks",[39m
+[31m+     "links": [[39m
+[31m+       {[39m
+[31m+         "checkedAt": "2026-10-01T12:00:00Z",[39m
+[31m+         "label": "Source Repository",[39m
+[31m+         "url": "https://github.com/yorayriniwnl/yor-talksv2",[39m
+[31m+       },[39m
+[31m+       {[39m
+[31m+         "checkedAt": "2026-10-01T12:00:00Z",[39m
+[31m+         "label": "Live Demonstration",[39m
+[31m+         "url": "https://yor-talks.vercel.app",[39m
+[31m+       },[39m
+[31m+     ],[39m
+[31m+     "revision": 1,[39m
+[31m+     "sections": [[39m
+[31m+       {[39m
+[31m+         "blocks": [[39m
+[31m+           {[39m
+[31m+             "text": "Yor Talks V2 was engineered to explore responsive messaging patterns, end-to-end TypeScript type safety, and efficient relational persistence for multi-channel chat environments.",[39m
+[31m+             "type": "paragraph",[39m
+[31m+           },[39m
+[31m+           {[39m
+[31m+             "text": "The application separates concerns between an Express-based HTTP REST API for authentication and workspace operations, and a Socket.IO broker for bidirectional conversation rooms and typing telemetry.",[39m
+[31m+             "type": "paragraph",[39m
+[31m+           },[39m
+[31m+         ],[39m
+[31m+         "heading": "Realtime Communication Architecture",[39m
+[31m+         "id": "communication-layer",[39m
+[31m+       },[39m
+[31m+       {[39m
+[31m+         "blocks": [[39m
+[31m+           {[39m
+[31m+             "text": "Database access is governed by PostgreSQL with schemas defined in TypeScript via Drizzle ORM:",[39m
+[31m+             "type": "paragraph",[39m
+[31m+           },[39m
+[31m+           {[39m
+[31m+             "items": [[39m
+[31m+               "Workspaces and Channels: Structured isolation with foreign-key referential integrity.",[39m
+[31m+               "Messages & Receipts: Indexed conversation history optimized for chronological cursor pagination.",[39m
+[31m+               "Optimistic Client Updates: Messages render immediately in the client UI and update upon server confirmation.",[39m
+[31m+             ],[39m
+[31m+             "type": "list",[39m
+[31m+           },[39m
+[31m+           {[39m
+[31m+             "language": "typescript",[39m
+[31m+             "text": "// Relational message schema declaration in Drizzle ORM[39m
+[31m+ import { pgTable, uuid, text, timestamp } from 'drizzle-orm/pg-core';[39m
+[31m+[39m
+[31m+ export const messages = pgTable('messages', {[39m
+[31m+   id: uuid('id').defaultRandom().primaryKey(),[39m
+[31m+   channelId: uuid('channel_id').notNull(),[39m
+[31m+   userId: uuid('user_id').notNull(),[39m
+[31m+   content: text('content').notNull(),[39m
+[31m+   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),[39m
+[31m+ });",[39m
+[31m+             "type": "code",[39m
+[31m+           },[39m
+[31m+         ],[39m
+[31m+         "heading": "Relational Persistence & Schemas",[39m
+[31m+         "id": "data-model",[39m
+[31m+       },[39m
+[31m+       {[39m
+[31m+         "blocks": [[39m
+[31m+           {[39m
+[31m+             "text": "Yor Talks V2 operates as a publicly accessible demonstration. It does not provide end-to-end encryption or multi-region database clustering. All claims reflect the verified repository and live demonstration instance.",[39m
+[31m+             "type": "paragraph",[39m
+[31m+           },[39m
+[31m+         ],[39m
+[31m+         "heading": "Demo Status & Limitations",[39m
+[31m+         "id": "current-status",[39m
+[31m+       },[39m
+[31m+     ],[39m
+[31m+     "slug": "talks",[39m
+[31m+     "summary": "A full-stack communication platform with realtime messaging, typed interface components, and a documented public-beta path.",[39m
+[31m+     "title": "Yor Talks V2",[39m
+[31m+   },[39m
+[31m+ ][39m
+
+[36m [2m❯[22m tests/unit/boundaries.test.ts:[2m115:29[22m[39m
+    [90m113|[39m
+    [90m114|[39m it("keeps all public projects empty and identity provisional", () => {
+    [90m115|[39m   expect(publishedProjects).toEqual([]);
+    [90m   |[39m                             [31m^[39m
+    [90m116|[39m   expect(draftIdentity.note).toContain("await owner confirmation");
+    [90m117|[39m   expect(draftIdentity.role).toContain("proposed title");
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/project-transition.test.ts[2m > [22mMilestone C2 Unit Tests: Project Transitions, Motifs, and Navigation[2m > [22m3. NavigationAdapter Coordination & Rapid Switching[2m > [22mrapid project switching aborts the previous transition immediately
+[31m[1mAssertionError[22m: expected "vi.fn()" to be called with arguments: [ 'helios' ][90m
+
+Number of calls: [1m0[22m
+[31m[39m
+[36m [2m❯[22m tests/unit/project-transition.test.ts:[2m159:30[22m[39m
+    [90m157|[39m       // Rapidly switch to zenith
+    [90m158|[39m       adapter.openProject("zenith");
+    [90m159|[39m       expect(cancelListener).toHaveBeenCalledWith("helios");
+    [90m   |[39m                              [31m^[39m
+    [90m160|[39m       expect(startListener).toHaveBeenCalledWith("zenith");
+    [90m161|[39m     });
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/project-transition.test.ts[2m > [22mMilestone C2 Unit Tests: Project Transitions, Motifs, and Navigation[2m > [22m3. NavigationAdapter Coordination & Rapid Switching[2m > [22mopenRoute cancels active project transitions before DOM navigation
+[31m[1mAssertionError[22m: expected "vi.fn()" to be called with arguments: [ 'talks' ][90m
+
+Number of calls: [1m0[22m
+[31m[39m
+[36m [2m❯[22m tests/unit/project-transition.test.ts:[2m175:30[22m[39m
+    [90m173|[39m       adapter.openRoute("/about");
+    [90m174|[39m
+    [90m175|[39m       expect(cancelListener).toHaveBeenCalledWith("talks");
+    [90m   |[39m                              [31m^[39m
+    [90m176|[39m       expect(pushFn).toHaveBeenCalledWith("/about");
+    [90m177|[39m     });
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m13 passed[39m[22m[90m (15)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m141 passed[39m[22m[90m (144)[39m
+[2m   Start at [22m 12:23:52
+[2m   Duration [22m 2.70s[2m (import 38%, transform 33%, tests 26%, worker 2%)[22m
+
+[2m  Transform [22m [33mtransforming modules took 2.26s[39m[2m · 33% of tracked time, re-done on every run[22m
+[2m            [22m [2mpersist transforms across runs with [22m[33mfsModuleCache: true[39m
+[2m            [22m [2mon CI this only helps when the cache directory is persisted between runs[22m
+[2m            [22m [2mlearn more: https://vitest.dev/guide/improving-performance#caching-between-reruns[22m
+
+ ELIFECYCLE  Command failed with exit code 1.
+
+EXIT: 1

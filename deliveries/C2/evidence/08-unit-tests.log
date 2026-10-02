@@ -1,0 +1,85 @@
+COMMAND: "C:\Program Files\nodejs\node.EXE" C:\Users\yoray\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs test:unit
+CWD: C:\Users\yoray\AppData\Local\Temp\yor-world-c2-proof-qkortug2\app
+
+> yor-world-g1-proof@0.1.0 test:unit C:\Users\yoray\AppData\Local\Temp\yor-world-c2-proof-qkortug2\app
+> vitest run --config vitest.config.ts
+
+[33m(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vitest.config.ts:7:25). Use `import.meta.dirname` instead
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.[39m
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.2 [39m[90mC:/Users/yoray/AppData/Local/Temp/yor-world-c2-proof-qkortug2/app[39m
+
+ [32m✓[39m tests/unit/scene-integrator.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+[90mstderr[2m | tests/unit/lifecycle-manager.test.ts[2m > [22m[2mLifecycleManager - 8 Explicit States and Adversarial Guarantees[2m > [22m[2menforces bounded retries (maxRetries = 3)
+[22m[39m[LifecycleManager] Bounded retry limit reached.
+
+[90mstderr[2m | tests/unit/lifecycle-manager.test.ts[2m > [22m[2mLifecycleManager - 8 Explicit States and Adversarial Guarantees[2m > [22m[2mDISPOSING cleans up all listeners and returns to STATIC
+[22m[39m[LifecycleManager] Cannot request entry: manager is disposed.
+
+ [32m✓[39m tests/unit/lifecycle-manager.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m tests/unit/interaction-registry.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+[90mstderr[2m | tests/unit/entrance-coordinator.test.ts[2m > [22m[2mEntranceCoordinator - Single Active Entrance and Bounded Duration[2m > [22m[2mPROVE: only one active entrance exists at any time
+[22m[39m[EntranceCoordinator] Entrance already running; returning active entrance promise.
+
+ [32m✓[39m tests/unit/character-director.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m tests/unit/entrance-coordinator.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m tests/unit/camera-director.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+ [32m✓[39m tests/unit/contracts.test.ts [2m([22m[2m51 tests[22m[2m)[22m[32m 42[2mms[22m[39m
+ [32m✓[39m tests/unit/preferences-resilience.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m tests/unit/painting-interaction.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+[90mstderr[2m | tests/unit/interaction-controller.test.ts[2m > [22m[2mExperienceController & Interaction Arbitration (Task C1)[2m > [22m[2mAttack 8: renderer failure[2m > [22m[2mtransitions cleanly to static fallback and aborts in-flight work on RENDERER_FAILED
+[22m[39m[ExperienceController] Renderer failed (CONTEXT_LOST), falling back to static presentation.
+
+ [32m✓[39m tests/unit/interaction-controller.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32m✓[39m tests/unit/asset-loader.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [31m❯[39m tests/unit/boundaries.test.ts [2m([22m[2m9 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 228[2mms[22m[39m
+[31m   [31m×[31m validates published projects are structurally sound and identity is provisional[39m[32m 12[2mms[22m[39m
+   [32m✓[39m enforces G1 dependency boundaries: three is isolated to world feature, shell remains free of 3D[32m 205[2mms[22m[39m
+   [32m✓[39m keeps shared contracts independent of framework and server imports[32m 5[2mms[22m[39m
+   [32m✓[39m regression: syntax-level import boundary detection [2m(6)[22m
+     [32m✓[39m rejects dynamic import of test fixture in production module[32m 1[2mms[22m[39m
+     [32m✓[39m rejects side-effect import of test fixture in production module[32m 0[2mms[22m[39m
+     [32m✓[39m rejects export-from of test fixture in production module[32m 0[2mms[22m[39m
+     [32m✓[39m rejects aliased import of test fixture in production module[32m 0[2mms[22m[39m
+     [32m✓[39m rejects framework or dynamic imports in contracts[32m 1[2mms[22m[39m
+     [32m✓[39m rejects three.js import in public shell features outside world[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/contract-types.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/intent-arbitration.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m tests/unit/project-transition.test.ts [2m([22m[2m22 tests[22m[2m)[22m[33m 1182[2mms[22m[39m
+   [32m✓[39m Milestone C2 Unit Tests: Project Transitions, Motifs, and Navigation [2m(22)[22m
+     [32m✓[39m 1. Bounded Project Transitions & Motifs [2m(5)[22m
+       [33m[2m✓[22m[39m completes verified project transition within the 1.4-second budget[33m 958[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/unit/boundaries.test.ts[2m > [22mvalidates published projects are structurally sound and identity is provisional
+[31m[1mAssertionError[22m: expected 'Verified identity grounded in owner r…' to contain 'await owner confirmation'[39m
+
+Expected: [32m"await owner confirmation"[39m
+Received: [31m"Verified identity grounded in owner repository and profile receipts."[39m
+
+[36m [2m❯[22m tests/unit/boundaries.test.ts:[2m124:30[22m[39m
+    [90m122|[39m     expect(p.evidence.length).toBeGreaterThan(0);
+    [90m123|[39m   }
+    [90m124|[39m   expect(draftIdentity.note).toContain("await owner confirmation");
+    [90m   |[39m                              [31m^[39m
+    [90m125|[39m   expect(draftIdentity.role).toContain("proposed title");
+    [90m126|[39m });
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m14 passed[39m[22m[90m (15)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m143 passed[39m[22m[90m (144)[39m
+[2m   Start at [22m 12:28:28
+[2m   Duration [22m 2.14s[2m (transform 40%, import 37%, tests 22%, worker 2%)[22m
+
+[2m  Transform [22m [33mtransforming modules took 2.95s[39m[2m · 40% of tracked time, re-done on every run[22m
+[2m            [22m [2mpersist transforms across runs with [22m[33mfsModuleCache: true[39m
+[2m            [22m [2mon CI this only helps when the cache directory is persisted between runs[22m
+[2m            [22m [2mlearn more: https://vitest.dev/guide/improving-performance#caching-between-reruns[22m
+
+ ELIFECYCLE  Command failed with exit code 1.
+
+EXIT: 1
