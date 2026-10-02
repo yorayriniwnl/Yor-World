@@ -225,14 +225,37 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
     await page.click('[data-testid="greet-resident-btn"]');
     await page.waitForTimeout(800); // Mid-turn
 
-    // Press Escape key
-    const startTime = Date.now();
+    // Measure the actual browser key event -> DOM settlement, excluding test-driver IPC/polling.
+    await expect(page.locator('[data-testid="status-badge"]')).not.toContainText("coding_idle");
+    await page.evaluate(() => {
+      const state = window as typeof window & { __yorEscapeSettlement?: Promise<number> };
+      state.__yorEscapeSettlement = new Promise<number>((resolve, reject) => {
+        const onKey = (event: KeyboardEvent) => {
+          if (event.key !== "Escape") return;
+          window.removeEventListener("keydown", onKey, true);
+          const started = performance.now();
+          const badge = document.querySelector('[data-testid="status-badge"]');
+          if (!badge) { reject(new Error("Missing active studio badge.")); return; }
+          const observer = new MutationObserver(check);
+          const timeout = setTimeout(() => { observer.disconnect(); reject(new Error("Escape did not settle the active world.")); }, 5000);
+          function check() {
+            if (!badge?.textContent?.includes("coding_idle")) return;
+            observer.disconnect();
+            clearTimeout(timeout);
+            resolve(performance.now() - started);
+          }
+          observer.observe(badge, { childList: true, characterData: true, subtree: true });
+          queueMicrotask(check);
+        };
+        window.addEventListener("keydown", onKey, true);
+      });
+    });
     await page.keyboard.press("Escape");
 
     // Verify immediate settlement
     await expect(page.locator('[data-testid="status-badge"]')).toContainText("coding_idle");
-    const elapsed = Date.now() - startTime;
-    expect(elapsed).toBeLessThanOrEqual(500); // Fast UI response
+    const elapsed = await page.evaluate(() => (window as typeof window & { __yorEscapeSettlement: Promise<number> }).__yorEscapeSettlement);
+    expect(elapsed).toBeLessThanOrEqual(50);
     await captureScreenshot(page, "07-skip-instant-settle");
   });
 

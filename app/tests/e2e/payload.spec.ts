@@ -145,9 +145,13 @@ test("five cold loads per desktop and mobile profile record actual production pa
       const code = bytes.toString("utf8");
       // Landing page entry chunks must never load Three.js / WebGLRenderer pre-entry
       if (initialChunkPaths.has(path.relative(".next", file).split(path.sep).join("/"))) {
-        expect(code).not.toMatch(/WebGLRenderer|THREE\.REVISION/);
+        expect(/WebGLRenderer|THREE\.REVISION|@supabase\/supabase-js|createBrowserClient/.test(code), `Pre-entry world/backend client in ${file}`).toBe(false);
       }
-      expect(code).not.toMatch(/react-three\/fiber|createClient\(.+supabase|Synthetic contribution|testOnly = true|kaspersky-labs\.com/);
+      // Owner login legitimately includes the client-safe Supabase SDK in its own route chunks.
+      expect(/react-three\/fiber|Synthetic contribution|testOnly = true|kaspersky-labs\.com/.test(code), `Forbidden proof dependency/marker in ${file}`).toBe(false);
+      for (const name of ["SUPABASE_SERVICE_ROLE_KEY", "SUPABASE_SERVICE_KEY", "DATABASE_URL", "CONTACT_HASH_SECRET", "QUOTA_HASH_SECRET", "RESEND_API_KEY", "CRON_SECRET", "INTERNAL_JOB_KEY"]) {
+        expect(code.includes(name), `Server-only credential reference ${name} in ${file}`).toBe(false);
+      }
       buildStats.push({ file: path.relative(".next", file), bytes: bytes.length, gzipBytes: gzipSync(bytes).length });
     }
   }
