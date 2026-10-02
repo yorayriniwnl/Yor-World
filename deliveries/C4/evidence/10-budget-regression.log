@@ -1,0 +1,39 @@
+﻿
+======================================================
+  YOR WORLD ΓÇö PERFORMANCE BUDGET REGRESSION INSPECTION
+  Source Root:   C:\Users\yoray\Projects\Yor World\deliveries\C3\source
+  Timestamp:     2026-10-02T11:58:31.462Z
+======================================================
+
+--- 1. Critical Application Payload Budgets (Next.js Build) ---
+  [PASS] Application Payload  | Shared Core JS (gzipped)         | Budget:      250 KB | Measured:    127.3 KB
+  [PASS] Application Payload  | Prerendered Static Pages         | Budget:       10 pages | Measured:       13 pages
+  [PASS] Route HTML Payload   | Page '/' HTML                    | Budget:       50 KB | Measured:     17.4 KB
+  [PASS] Route HTML Payload   | Page '/about' HTML               | Budget:       50 KB | Measured:     12.1 KB
+  [PASS] Route HTML Payload   | Page '/contact' HTML             | Budget:       50 KB | Measured:     11.7 KB
+  [PASS] Route HTML Payload   | Page '/resume' HTML              | Budget:       50 KB | Measured:     11.5 KB
+  [PASS] Route HTML Payload   | Page '/projects' HTML            | Budget:       50 KB | Measured:     29.2 KB
+
+--- 2. 3D Model Transfer Budget & Asset Integrity ---
+  [PASS] 3D Transfer          | Essential Entry 3D Stream        | Budget:        3 MB | Measured:     1.66 MB
+  [PASS] 3D Transfer          | Total Production Assets (13)     | Budget:       10 MB | Measured:     5.93 MB
+
+--- 3. Geometry & Triangle Ceilings ---
+  [PASS] Mesh Geometry        | Total Active Scene Triangles     | Budget:   300000 tris | Measured:    73064 tris
+  [PASS] Mesh Geometry        | Mobile Geometry Ceiling          | Budget:   140000 tris | Measured:    73064 tris
+
+--- 4. GPU Memory Estimate Ceilings ---
+  [PASS] GPU VRAM Estimate    | Total Model Texture & Buffer VRAM | Budget:      160 MB | Measured:     68.6 MB
+
+--- 5. Automated Performance Thresholds ---
+  [PASS] Runtime Benchmarks   | Cold Load Median                 | Budget:      500 ms | Measured:       70 ms
+  [PASS] Runtime Benchmarks   | 60 FPS Frame Time Median         | Budget:     16.6 ms | Measured:      6.1 ms
+  [PASS] Runtime Benchmarks   | Frame Time P95                   | Budget:       20 ms | Measured:      6.2 ms
+
+Performance budget receipt written to: C:\Users\yoray\Projects\Yor World\deliveries\C4\budget-validation-receipt.json
+
+------------------------------------------------------
+Summary: 15 Budgets Inspected | 0 Failure(s)
+------------------------------------------------------
+
+[PERFORMANCE BUDGET PASSED] All deterministic performance and payload budgets satisfied.
