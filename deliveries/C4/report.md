@@ -50,7 +50,7 @@ node scripts/release/validate-release.mjs --manifest deliveries/C4/release-manif
   Strict Mode:     true
 ======================================================
 
-  [PASS]   Git Commit Binding: Exact SHA bound: dfab25448da5a5d7032dffbf13c49a78545cba52
+  [PASS]   Git Commit Binding: Exact SHA bound: 52049804245035c574cc5ca4b31f260e0e707156
   [PASS]   Asset Revision: Matches accepted G6 art freeze: g6-world-art-freeze-20261002
   [PASS]   Publication Revision: Matches accepted publication baseline: A4-R1-20260928
   [PASS]   Schema Revision: Matches accepted migration schema: 20261002000000_schema_v1
