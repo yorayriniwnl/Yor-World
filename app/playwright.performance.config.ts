@@ -23,7 +23,7 @@ export default defineConfig({
     headless: true,
   },
   projects: process.env.CI
-    ? [{ name: "chromium", use: { browserName: "chromium" } }]
+    ? [{ name: "chromium", use: { browserName: "chromium", channel: "chromium" } }]
     : [{ name: "chrome", use: { browserName: "chromium", channel: "chrome" } }],
   webServer: {
     command: `node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port ${port}`,

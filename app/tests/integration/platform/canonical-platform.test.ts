@@ -108,6 +108,40 @@ describe("Canonical production provider and actual platform route integration",(
     expect((await db.query("SELECT COUNT(*)::int AS count FROM public.contact_idempotency")).rows).toEqual([{ count: 1 }]);
   });
 
+  it("retains only the exact accepted unavailable-figure placeholder when publishing and rolling back",async () => {
+    const next=await publishRevision({ expectedRevision: approvedPublication.revision },actor);
+    expect(next.projects.find((project) => project.id === "helios")?.sections.flatMap((section) => section.blocks)
+      .find((block) => block.type === "image")?.mediaId).toBe("missing-helios-diagram");
+    expect((await rollbackPublication(approvedPublication.revision,actor)).revision).toBe(next.revision+1);
+    const forged={ ...approvedPublication,projects: approvedPublication.projects.map((project) => ({ ...project,sections: project.sections.map((section) => ({ ...section,blocks: section.blocks.map((block) => block.type === "image" ? { ...block,mediaId: "missing-invented-asset" } : block) })) })) };
+    await expect(publishRevision({ expectedRevision: next.revision+1,customProjects: forged.projects },actor)).rejects.toThrow(/unapproved or missing media/);
+  });
+
+  it("validates and locks approved image records on the publication transaction connection",async () => {
+    const mediaId="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa";
+    await db.query("INSERT INTO public.media_assets(id,object_key,hash,mime,bytes,approval_status) VALUES($1,'approved.png','synthetic','image/png',1,'approved')",[mediaId]);
+    const projects=approvedPublication.projects.map((project) => ({ ...project,sections: project.sections.map((section) => ({ ...section,blocks: section.blocks.map((block) => block.type === "image" ? { ...block,mediaId } : block) })) }));
+    let inTransaction=false;
+    let lockedMediaChecks=0;
+    const provider: QueryableDb={ query: async (sql,params) => {
+      if (inTransaction) throw new Error("Publication escaped its transaction connection.");
+      return db.query(sql,params);
+    },transaction: async (run) => db.transaction(async (tx) => {
+      inTransaction=true;
+      try { return await run({ query: async (sql,params) => {
+        if (sql.includes("FROM public.media_assets") && sql.includes("FOR SHARE")) lockedMediaChecks++;
+        return tx.query(sql,params);
+      } }); } finally { inTransaction=false; }
+    }) };
+    setPlatformDbForTests(provider);
+    const next=await publishRevision({ expectedRevision: approvedPublication.revision,customProjects: projects },actor);
+    expect(lockedMediaChecks).toBe(1);
+    expect(next.revision).toBe(2);
+    await db.query("UPDATE public.media_assets SET approval_status='rejected' WHERE id=$1",[mediaId]);
+    await expect(rollbackPublication(next.revision,actor)).rejects.toThrow(/unapproved or missing media/);
+    expect((await readPublicPublication())?.revision).toBe(next.revision);
+  });
+
   it("missing configured database fails closed and never selects ephemeral storage",async () => {
     setPlatformDbForTests(null);
     const original=process.env.DATABASE_URL;

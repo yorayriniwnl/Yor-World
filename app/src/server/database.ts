@@ -13,7 +13,11 @@ export function isE2EFixture(): boolean {
 
 let overrideDb: QueryableDb | null = null;
 let pool: Pool | null = null;
-let fixtureDb: Promise<QueryableDb> | null = null;
+// Next route bundles can instantiate this module separately in the same Node process.
+// One explicit test database must have one initializer/connection owner across those bundles.
+const fixtureState = globalThis as typeof globalThis & {
+  __yorRc3FixtureDatabases?: Map<string, Promise<QueryableDb>>;
+};
 
 export function setPlatformDbForTests(db: QueryableDb | null): void {
   if (!isTestRuntime()) throw new Error("Database test injection is disabled outside tests.");
@@ -32,7 +36,13 @@ function clientHandle(client: PoolClient): QueryableDb {
 export async function getPlatformDb(): Promise<QueryableDb> {
   if (overrideDb) return overrideDb;
   if (isE2EFixture()) {
-    fixtureDb ??= import("./test-fixture").then(({ createFixtureDb }) => createFixtureDb());
+    const fixturePath = process.env.YOR_TEST_DATABASE_PATH!;
+    const databases = fixtureState.__yorRc3FixtureDatabases ??= new Map();
+    let fixtureDb = databases.get(fixturePath);
+    if (!fixtureDb) {
+      fixtureDb = import("./test-fixture").then(({ createFixtureDb }) => createFixtureDb());
+      databases.set(fixturePath, fixtureDb);
+    }
     return fixtureDb;
   }
   const connectionString = process.env.DATABASE_URL;

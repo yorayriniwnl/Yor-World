@@ -90,7 +90,7 @@ export function resetPublicationState() {
  * - Verified evidence (no unknown claims)
  * - Approved media assets
  */
-export async function validatePublicationContent(publication: Publication): Promise<void> {
+export async function validatePublicationContent(publication: Publication, transaction?: QueryableDb): Promise<void> {
   const parsed = PublicationSchema.safeParse(publication);
   if (!parsed.success) {
     throw new ContentValidationError(
@@ -174,7 +174,7 @@ export async function validatePublicationContent(publication: Publication): Prom
   }
 
   // Rule: Check that all media assets referenced in sections are approved!
-  await verifyPublicationAssets(publication);
+  await verifyPublicationAssets(publication, transaction);
 }
 
 /**
@@ -387,7 +387,7 @@ async function publishDurable(input: { projectId?: ProjectId; expectedRevision: 
     if (projects.some((project) => project.id === "candidatex")) throw new ContentValidationError("CandidateX has no accepted public content decision.");
     const next: Publication = { revision: current.revision + 1,publishedAt: new Date().toISOString(),projects,
       assetManifestRevision: current.assetManifestRevision };
-    await validatePublicationContent(next);
+    await validatePublicationContent(next,tx);
     await writeSnapshot(tx,next,actor);
     return next;
   });
@@ -403,7 +403,7 @@ async function rollbackDurable(targetRevision: number, actor: OwnerContext) {
     const rows = await tx.query("SELECT snapshot FROM public.publication_history WHERE revision=$1 ORDER BY created_at DESC LIMIT 1", [targetRevision]);
     const target = rows.rows[0] ? PublicationSchema.parse(rows.rows[0]["snapshot"]) : targetRevision === approvedPublication.revision ? approvedPublication : null;
     if (!target) throw new ContentValidationError("Rollback target does not exist.");
-    await validatePublicationContent(target);
+    await validatePublicationContent(target,tx);
     const current = await readDurablePublication(tx);
     const next = { ...target,revision: current.revision + 1,publishedAt: new Date().toISOString() };
     await writeSnapshot(tx,next,actor,targetRevision);

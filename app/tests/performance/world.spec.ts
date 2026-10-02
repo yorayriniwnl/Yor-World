@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { mkdir, writeFile, readFile } from "node:fs/promises";
 import path from "node:path";
+import type { RenderedWorldFrame } from "../../src/features/world/types";
 
 function calculateStats(samples: number[]): { samples: number[]; median: number; p95: number } {
   if (samples.length === 0) throw new Error("Missing frame samples cannot prove performance.");
@@ -76,58 +77,109 @@ test.describe("C3 Performance Benchmarks & Budget Verification", () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/?studio=1", { waitUntil: "domcontentloaded" });
 
-    // Wait for world canvas to mount
     const canvas = page.locator('[data-testid="world-canvas"]');
-    await expect(canvas).toBeVisible({ timeout: 10000 });
+    await expect(canvas).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('[data-testid="world-stage-container"]')).toHaveAttribute("data-lifecycle-state", "HOME", { timeout: 15000 });
+    await expect.poll(async () => Number(await canvas.getAttribute("data-rendered-frames"))).toBeGreaterThan(1);
+    await page.getByTestId("diagnostics-toggle-btn").click();
+    const rendererIdentity = JSON.parse((await page.getByTestId("world-diagnostics").textContent())!).webglRenderer as string;
+    await page.getByTestId("diagnostics-toggle-btn").click();
 
-    // Record frame timings across active interactions
+    // Samples come from completed production renders, never an independent empty-page RAF.
     const framePacingData = await page.evaluate(async () => {
+      const worldCanvas = document.querySelector<HTMLCanvasElement>('[data-testid="world-canvas"]');
+      if (!worldCanvas) throw new Error("Missing production world canvas.");
       const frameTimes: number[] = [];
-      let last = performance.now();
-
-      return new Promise<{ frameTimes: number[]; interactionsCompleted: number }>((resolve) => {
-        let interactions = 0;
+      const tierCounts: Record<string, number> = {};
+      const actions: Array<{ action: string; latencyMs: number }> = [];
+      const steps = [
+        { id: "greet-resident-btn", accepts: (frame: RenderedWorldFrame) => frame.characterMode === "sequence" },
+        { id: "cancel-motion-btn", accepts: (frame: RenderedWorldFrame) => frame.characterMode === "safe-return" },
+        { id: "skip-motion-btn", accepts: (frame: RenderedWorldFrame) => frame.activeClip === "coding_idle" && frame.characterMode === "coding" },
+        { id: "camera-monitor-btn", accepts: (frame: RenderedWorldFrame) => frame.cameraPreset === "monitor" },
+        { id: "camera-reverse-btn", accepts: (frame: RenderedWorldFrame) => frame.cameraPreset === "reverse-doorway" },
+        { id: "camera-home-btn", accepts: (frame: RenderedWorldFrame) => frame.cameraPreset === "home-desktop" },
+      ];
+      return new Promise<{
+        frameTimes: number[]; interactionsCompleted: number; actions: typeof actions; tierCounts: typeof tierCounts;
+        routeDurationMs: number; worldContinuouslyActive: boolean; failureReason: string | null; maxRenderCalls: number; maxRenderedTriangles: number;
+      }>((resolve) => {
         const startTime = performance.now();
-
-        const onFrame = (now: number) => {
-          const delta = now - last;
-          last = now;
-          if (delta > 0) {
-            frameTimes.push(Number(delta.toFixed(2)));
+        let lastRenderedAt = startTime;
+        let failureReason: string | null = null;
+        let nextAction = 0;
+        let pending: { step: (typeof steps)[number]; sentAt: number } | null = null;
+        let maxRenderCalls = 0;
+        let maxRenderedTriangles = 0;
+        let finished = false;
+        const finish = (reason: string | null) => {
+          if (finished) return;
+          finished = true;
+          failureReason ??= reason;
+          clearInterval(watchdog);
+          clearTimeout(deadline);
+          worldCanvas.removeEventListener("yor-world-rendered-frame", onFrame);
+          resolve({ frameTimes, interactionsCompleted: actions.length, actions, tierCounts, routeDurationMs: performance.now() - startTime,
+            worldContinuouslyActive: failureReason === null, failureReason, maxRenderCalls, maxRenderedTriangles });
+        };
+        const onFrame = (event: Event) => {
+          const frame = (event as CustomEvent<RenderedWorldFrame>).detail;
+          lastRenderedAt = performance.now();
+          if (document.visibilityState === "hidden" || !worldCanvas.isConnected || frame.qualityTier === "static"
+            || !["HOME", "TRANSITION"].includes(frame.lifecycleState) || frame.renderCalls === 0 || frame.renderedTriangles === 0) {
+            finish("Production world stopped rendering a visible integrated scene.");
+            return;
           }
-
-          // Trigger interaction shifts every 500ms
-          if (now - startTime > interactions * 500 && interactions < 120) {
-            interactions++;
-            const greetBtn = document.querySelector('[data-testid="greet-resident-btn"]') as HTMLButtonElement | null;
-            if (greetBtn) greetBtn.click();
+          if (frame.durationMs > 0) frameTimes.push(frame.durationMs);
+          tierCounts[frame.qualityTier] = (tierCounts[frame.qualityTier] ?? 0) + 1;
+          maxRenderCalls = Math.max(maxRenderCalls, frame.renderCalls);
+          maxRenderedTriangles = Math.max(maxRenderedTriangles, frame.renderedTriangles);
+          if (pending && pending.step.accepts(frame)) {
+            actions.push({ action: pending.step.id, latencyMs: lastRenderedAt - pending.sentAt });
+            pending = null;
           }
-
-          // Sample for 60 seconds of active interaction in automated test
-          if (now - startTime < 60_000) {
-            requestAnimationFrame(onFrame);
-          } else {
-            resolve({ frameTimes, interactionsCompleted: interactions });
+          if (pending && lastRenderedAt - pending.sentAt > 900) {
+            finish(`World action was not acknowledged: ${pending.step.id}`);
+            return;
+          }
+          if (!pending && lastRenderedAt - startTime >= nextAction * 1000 && nextAction < 60) {
+            const step = steps[nextAction % steps.length];
+            if (!step) return;
+            const button = document.querySelector<HTMLButtonElement>(`[data-testid="${step.id}"]`);
+            if (!button || button.disabled) { finish(`Missing live action: ${step.id}`); return; }
+            pending = { step, sentAt: performance.now() };
+            button.click();
+            nextAction++;
           }
         };
-
-        requestAnimationFrame(onFrame);
+        const watchdog = setInterval(() => {
+          if (!worldCanvas.isConnected || document.visibilityState === "hidden" || performance.now() - lastRenderedAt > 1000) {
+            finish("World canvas detached, hidden, or renderer stopped for more than one second.");
+          }
+        }, 100);
+        const deadline = setTimeout(() => finish(null), 60_000);
+        worldCanvas.addEventListener("yor-world-rendered-frame", onFrame);
       });
     });
 
     const stats = calculateStats(framePacingData.frameTimes);
     await savePerformanceReport("active-route-frame-pacing.json", {
-      routeDurationMs: 60000,
+      ...framePacingData,
+      rendererIdentity,
+      measurementSource: "Completed production WebGLRenderer renders and acknowledged world actions",
+      frameTimes: undefined,
       totalFramesSampled: framePacingData.frameTimes.length,
-      interactionsCompleted: framePacingData.interactionsCompleted,
       medianFrameTimeMs: stats.median,
       p95FrameTimeMs: stats.p95,
       rawSamples: stats.samples,
     });
 
-    // Budget: Median frame time <= 33.3ms (30fps) or <= 18.2ms (60fps), p95 <= 45ms
-    expect(stats.median).toBeLessThanOrEqual(35.0);
-    expect(stats.p95).toBeLessThanOrEqual(50.0);
+    expect(framePacingData.failureReason).toBeNull();
+    expect(framePacingData.worldContinuouslyActive).toBe(true);
+    expect(framePacingData.routeDurationMs).toBeGreaterThanOrEqual(60_000);
+    expect(framePacingData.interactionsCompleted).toBe(60);
+    expect(stats.median).toBeLessThanOrEqual(33.3);
+    expect(stats.p95).toBeLessThanOrEqual(45.0);
   });
 
   test("Enter/exit resource stability over multiple studio cycles", async ({ page }) => {

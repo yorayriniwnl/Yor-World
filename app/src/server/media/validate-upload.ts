@@ -8,7 +8,7 @@
 import { createHash } from "node:crypto";
 import type { OwnerContext } from "../auth/types";
 import { createAdminServiceRoleClient } from "../auth/clients";
-import { getPlatformDb, isE2EFixture } from "../database";
+import { getPlatformDb } from "../database";
 import { isDraftTestRegistryEnabled } from "../content/revisions";
 
 export const ALLOWED_MIME_TYPES = ["image/png", "image/jpeg", "image/webp"] as const;
@@ -261,8 +261,4 @@ export async function getMediaAsset(id: string): Promise<MediaAssetRecord | null
   const db=await getPlatformDb();
   const result=await db.query("SELECT * FROM public.media_assets WHERE id::text=$1 LIMIT 1",[id]);
   return result.rows[0] ? rowToMedia(result.rows[0]) : null;
-}
-
-export function fixtureApprovedMedia(id: string): boolean {
-  return isE2EFixture() && id === "missing-helios-diagram";
 }

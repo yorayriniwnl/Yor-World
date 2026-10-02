@@ -6,12 +6,14 @@
  */
 
 import type { Publication } from "@/contracts/content";
-import { getTestMediaRegistry, MediaValidationError,fixtureApprovedMedia } from "./validate-upload";
+import { getTestMediaRegistry, MediaValidationError } from "./validate-upload";
 import { isDraftTestRegistryEnabled } from "../content/revisions";
 import { getPlatformDb } from "../database";
 import { createAdminServiceRoleClient } from "../auth/clients";
 import { readPublicPublication } from "../content/publish";
 import { validatePublication } from "@/content/publication-reader";
+import { approvedPublication } from "@/content/approved-publication";
+import type { QueryableDb } from "../contact/quota";
 
 
 export interface MediaCheckResult {
@@ -22,13 +24,13 @@ export interface MediaCheckResult {
 /**
  * Checks a list of media IDs to verify they exist and are approved.
  */
-export async function checkMediaApproved(mediaIds: string[]): Promise<MediaCheckResult> {
+export async function checkMediaApproved(mediaIds: string[], transaction?: QueryableDb): Promise<MediaCheckResult> {
   if (mediaIds.length === 0) {
     return { approved: true, unapprovedIds: [] };
   }
 
   const uniqueIds = Array.from(new Set(mediaIds));
-  const testRegistry = isDraftTestRegistryEnabled() ? getTestMediaRegistry() : null;
+  const testRegistry = !transaction && isDraftTestRegistryEnabled() ? getTestMediaRegistry() : null;
 
   if (testRegistry) {
     const unapproved: string[] = [];
@@ -45,10 +47,9 @@ export async function checkMediaApproved(mediaIds: string[]): Promise<MediaCheck
   }
 
   try {
-    const db=await getPlatformDb();
-    const { rows } = await db.query("SELECT id,approval_status FROM public.media_assets WHERE id::text = ANY($1::text[])",[uniqueIds]);
+    const db=transaction ?? await getPlatformDb();
+    const { rows } = await db.query("SELECT id,approval_status FROM public.media_assets WHERE id::text = ANY($1::text[])" + (transaction ? " FOR SHARE" : ""),[uniqueIds]);
     const approvedSet = new Set(rows.filter((row) => row["approval_status"] === "approved").map((row) => String(row["id"])));
-    for (const id of uniqueIds) if (fixtureApprovedMedia(id)) approvedSet.add(id);
 
     const unapproved = uniqueIds.filter((id) => !approvedSet.has(id));
     return {
@@ -65,13 +66,18 @@ export async function checkMediaApproved(mediaIds: string[]): Promise<MediaCheck
  * Verifies that all image blocks in a publication snapshot reference approved media.
  * Throws MediaValidationError (422) if unapproved or missing media is detected.
  */
-export async function verifyPublicationAssets(publication: Publication): Promise<void> {
+export async function verifyPublicationAssets(publication: Publication, transaction?: QueryableDb): Promise<void> {
   const referencedMediaIds: string[] = [];
 
   for (const project of publication.projects) {
     for (const section of project.sections) {
       for (const block of section.blocks) {
         if (block.type === "image" && block.mediaId) {
+          // Retain the exact accepted honest placeholder; it never resolves to a media URL.
+          const acceptedPlaceholder = block.mediaId.startsWith("missing-") && approvedPublication.projects
+            .flatMap((item) => item.sections.flatMap((section) => section.blocks))
+            .some((accepted) => accepted.type === "image" && JSON.stringify(accepted) === JSON.stringify(block));
+          if (acceptedPlaceholder) continue;
           referencedMediaIds.push(block.mediaId);
         }
       }
@@ -82,7 +88,7 @@ export async function verifyPublicationAssets(publication: Publication): Promise
     return;
   }
 
-  const check = await checkMediaApproved(referencedMediaIds);
+  const check = await checkMediaApproved(referencedMediaIds, transaction);
   if (!check.approved) {
     throw new MediaValidationError(
       `Publication rejected: contains unapproved or missing media assets: [${check.unapprovedIds.join(", ")}]. All media must be verified and approved before publication.`

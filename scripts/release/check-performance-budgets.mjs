@@ -76,10 +76,15 @@ try {
   }
   const pacing = report("active-route-frame-pacing.json");
   const frameSamples = pacing.rawSamples || pacing.frameTimes;
-  if (!(pacing.routeDurationMs >= 60000) || !(pacing.totalFramesSampled >= 100) || frameSamples?.length !== pacing.totalFramesSampled || !(pacing.interactionsCompleted > 0)) throw new Error("Frame pacing requires a measured 60-second active route and complete raw samples");
+  if (!(pacing.routeDurationMs >= 60000) || !(pacing.totalFramesSampled >= 100) || frameSamples?.length !== pacing.totalFramesSampled
+    || pacing.worldContinuouslyActive !== true || pacing.failureReason !== null || pacing.interactionsCompleted !== 60
+    || pacing.actions?.length !== 60 || !(pacing.maxRenderCalls > 0) || !(pacing.maxRenderedTriangles > 0)) {
+    throw new Error("Frame pacing requires 60 seconds of continuous integrated-world renders, 60 acknowledged actions, and complete raw samples");
+  }
   const frameStats = stats(frameSamples);
-  metric("active route frame median", frameStats.median, 33.3, "ms software-rendered lab");
-  metric("active route frame p95", frameStats.p95, 45, "ms software-rendered lab");
-  writeJson(values.output, { checkId: "budget-regression", canonicalApplicationRoot: policy.canonicalApplicationRoot, buildId, overallStatus: failures.length ? "FAIL" : "PASS", metrics, publicPayloads: payloadMeasurements, failures, benchmarkDirectory: path.relative(ROOT, benchmarkDir).split(path.sep).join("/"), limitations: ["Cold timings are localhost lab measurements, not throttled production readiness or field Web Vitals.", "Software browser frame pacing is a local regression check; physical iOS/Android and sustained thermal testing remain unverified.", "Asset-derived GPU figures are accepted inventory estimates, not measured total GPU allocation."] });
+  if (typeof pacing.rendererIdentity !== "string" || !pacing.rendererIdentity) throw new Error("Actual WebGL renderer identity is required");
+  metric("active route frame median", frameStats.median, 33.3, "ms browser lab");
+  metric("active route frame p95", frameStats.p95, 45, "ms browser lab");
+  writeJson(values.output, { checkId: "budget-regression", canonicalApplicationRoot: policy.canonicalApplicationRoot, buildId, rendererIdentity: pacing.rendererIdentity, overallStatus: failures.length ? "FAIL" : "PASS", metrics, publicPayloads: payloadMeasurements, failures, benchmarkDirectory: path.relative(ROOT, benchmarkDir).split(path.sep).join("/"), limitations: ["Cold timings are localhost lab measurements, not throttled production readiness or field Web Vitals.", "Frame pacing uses the reported actual browser renderer; physical iOS/Android and sustained thermal testing remain unverified.", "Asset-derived GPU figures are accepted inventory estimates, not measured total GPU allocation."] });
   if (failures.length) process.exitCode = 1;
 } catch (error) { console.error(`FAIL canonical performance budgets: ${error.message}`); process.exitCode = 1; }

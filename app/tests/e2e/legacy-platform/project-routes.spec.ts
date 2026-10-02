@@ -77,7 +77,7 @@ test.describe("A2 Verified Portfolio Content & Project Routes", () => {
     const res = await page.goto("/projects/candidatex");
     expect(res?.status()).toBe(404);
     await expect(page.getByRole("heading", { name: "Page not found" })).toBeVisible();
-    await expect(page.getByText("The requested route does not exist")).toBeVisible();
+    await expect(page.getByText("This page is not available. Only verified projects will have published case studies.")).toBeVisible();
 
     // Verify CandidateX internal details or unverified metrics are never leaked
     const bodyText = await page.innerText("body");

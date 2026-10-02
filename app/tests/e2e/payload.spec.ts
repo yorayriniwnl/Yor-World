@@ -4,7 +4,7 @@ import { gzipSync } from "node:zlib";
 import path from "node:path";
 import os from "node:os";
 
-test("five cold loads per desktop and mobile profile record actual production payloads", async ({ browser, baseURL }, info) => {
+test("five cold loads per desktop and mobile profile record actual production payloads", async ({ browser, baseURL, request }, info) => {
   if (!baseURL) throw new Error("The production server baseURL must be configured.");
   test.setTimeout(180_000);
   const runs = [];
@@ -97,10 +97,44 @@ test("five cold loads per desktop and mobile profile record actual production pa
       } finally { await context.close(); }
     }
   }
-  const serverHtml = await readFile(".next/server/app/index.html", "utf8");
+  const serverResponse = await request.get("/");
+  expect(serverResponse.status()).toBe(200);
+  expect(serverResponse.headers()["content-type"]).toContain("text/html");
+  const serverHtml = await serverResponse.text();
+  expect(serverHtml).toMatch(/<html[\s>]/i);
   expect(serverHtml).not.toContain("kaspersky-labs.com");
-  const initialChunkMatches = serverHtml.matchAll(/\/static\/chunks\/([a-zA-Z0-9_\-\.]+)\.js/g);
-  const initialChunkNames = new Set(Array.from(initialChunkMatches).map((m) => `${m[1]}.js`));
+  const resourceUrls = [...new Set([...serverHtml.matchAll(/(?:src|href)="([^"]+)"/g)]
+    .map((match) => new URL(match[1]!.replace(/&amp;/g, "&"), baseURL).href)
+    .filter((url) => {
+      const resource = new URL(url);
+      return resource.origin === new URL(baseURL).origin && (
+        resource.pathname.startsWith("/_next/static/") ||
+        (/^\/(?:images|fonts|textures|assets)\//.test(resource.pathname) && /\.(?:png|jpe?g|webp|avif|svg|woff2?)$/.test(resource.pathname))
+      );
+    }))];
+  expect(resourceUrls.length).toBeGreaterThan(0);
+  const initialChunkPaths = new Set(resourceUrls
+    .map((url) => new URL(url).pathname)
+    .filter((name) => name.startsWith("/_next/static/chunks/") && name.endsWith(".js"))
+    .map((name) => name.slice("/_next/".length)));
+  expect(initialChunkPaths.size).toBeGreaterThan(0);
+  const serverPayloadResources = [];
+  let serverJavascriptGzipBytes = 0;
+  let serverCriticalTransferBytes = gzipSync(Buffer.from(serverHtml, "utf8")).length;
+  for (const url of resourceUrls) {
+    const response = await request.get(url);
+    expect(response.status(), `Production HTML resource ${url}`).toBe(200);
+    const bytes = await response.body();
+    expect(bytes.length, `Production HTML resource ${url}`).toBeGreaterThan(0);
+    const resourcePath = new URL(url).pathname;
+    const transferBytes = /\.(?:js|css)$/.test(resourcePath) ? gzipSync(bytes).length : bytes.length;
+    serverCriticalTransferBytes += transferBytes;
+    if (resourcePath.endsWith(".js")) serverJavascriptGzipBytes += transferBytes;
+    serverPayloadResources.push({ url, status: response.status(), bytes: bytes.length, budgetTransferBytes: transferBytes });
+  }
+  expect(serverJavascriptGzipBytes).toBeGreaterThan(0);
+  expect(serverJavascriptGzipBytes).toBeLessThanOrEqual(250 * 1024);
+  expect(serverCriticalTransferBytes).toBeLessThanOrEqual(650 * 1024);
 
   const buildStats = [];
   // Build inspection complements URL tests, including opaque hashed chunk names.
@@ -110,18 +144,20 @@ test("five cold loads per desktop and mobile profile record actual production pa
       const bytes = await readFile(file);
       const code = bytes.toString("utf8");
       // Landing page entry chunks must never load Three.js / WebGLRenderer pre-entry
-      if (initialChunkNames.has(entry.name)) {
+      if (initialChunkPaths.has(path.relative(".next", file).split(path.sep).join("/"))) {
         expect(code).not.toMatch(/WebGLRenderer|THREE\.REVISION/);
       }
       expect(code).not.toMatch(/react-three\/fiber|createClient\(.+supabase|Synthetic contribution|testOnly = true|kaspersky-labs\.com/);
       buildStats.push({ file: path.relative(".next", file), bytes: bytes.length, gzipBytes: gzipSync(bytes).length });
     }
   }
-  const destination = path.join(process.env.W3_EVIDENCE_DIR ?? "test-results", info.project.name, "payload.json");
+  const destination = path.join(process.env.W3_EVIDENCE_DIR ?? process.env.C3_EVIDENCE_DIR ?? "test-results", info.project.name, "payload.json");
   await mkdir(path.dirname(destination), { recursive: true });
   await writeFile(destination, JSON.stringify({
-    scope: "Local next start; CDP throttling; all off-origin requests blocked. Application-origin byte totals exclude host antivirus injection. Payload budgets only; no field, GPU, or sustained-device claims.",
+    scope: "Local next start; fresh production HTTP HTML and referenced resource bodies, plus five CDP-throttled cold contexts/profile. All browser off-origin requests blocked. Application-origin byte totals exclude host antivirus injection. HTTP budget transfer uses gzip HTML/JS/CSS and raw binary bytes; actual browser transfer is recorded separately. No field, GPU, or sustained-device claims.",
+    canonicalApplicationRoot: "app",
     serverHtmlHasHostInjection: false,
+    serverPayload: { route: "/", status: serverResponse.status(), html: serverHtml, htmlBytes: Buffer.byteLength(serverHtml, "utf8"), javascriptGzipBytes: serverJavascriptGzipBytes, criticalTransferBytes: serverCriticalTransferBytes, resources: serverPayloadResources },
     browser: browser.version(), os: `${os.type()} ${os.release()}`, cpu: os.cpus()[0]?.model,
     ramBytes: os.totalmem(), tier: "static A1", assetManifestRevision: null, publicationRevision: null,
     buildId: (await readFile(".next/BUILD_ID", "utf8")).trim(), runs, buildStats,

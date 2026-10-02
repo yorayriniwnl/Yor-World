@@ -18,7 +18,7 @@ export default defineConfig({
     headless: true,
   },
   projects: process.env.CI
-    ? [{ name: "chromium", use: { browserName: "chromium" as const } }]
+    ? [{ name: "chromium", use: { browserName: "chromium" as const, channel: "chromium" } }]
     : [
         { name: "chrome", use: { browserName: "chromium" as const, channel: "chrome" } },
         ...(process.platform === "win32" ? [{ name: "edge", use: { browserName: "chromium" as const, channel: "msedge" } }] : []),

@@ -8,6 +8,7 @@ import { TransitionCoordinator } from "./TransitionCoordinator";
 import { LifecycleManager } from "./LifecycleManager";
 import { ExperienceController } from "../experience/controller";
 import type { CameraPreset, Diagnostics, WorldLifecycleState } from "./types";
+import { WORLD_RENDERED_FRAME_EVENT, type RenderedWorldFrame } from "./types";
 import type { QualityTier } from "../../contracts/experience";
 import type { PublishedProject } from "../../contracts/content";
 import { publishedProjects } from "../portfolio/public-content";
@@ -64,6 +65,8 @@ export class WorldRuntime {
   private lastTime: number = 0;
   private webglRendererName: string = "Unknown";
   private sessionToken: number = 0;
+  private renderedFrames = 0;
+  private lastRenderedAt = 0;
 
   constructor(options: WorldRuntimeOptions) {
     this.onFrameDuration = options.onFrameDuration;
@@ -174,7 +177,8 @@ export class WorldRuntime {
       this.renderer = new THREE.WebGLRenderer({
         canvas: this.canvas,
         antialias: this.qualityTier !== "low",
-        preserveDrawingBuffer: true,
+        // Continuous rendering supplies screenshots; preserving every frame adds GPU copies.
+        preserveDrawingBuffer: false,
       });
       const maxDpr = this.qualityTier === "high" ? 1.5 : this.qualityTier === "medium" ? 1.25 : 1.0;
       this.renderer.setPixelRatio(Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, maxDpr));
@@ -333,6 +337,7 @@ export class WorldRuntime {
 
     const durationMs = this.lastTime ? currentTime - this.lastTime : 0;
     if (durationMs > 0) this.onFrameDuration?.(durationMs, currentTime);
+    if (this.isPaused || this.isDisposed) return;
     const dt = Math.min(durationMs / 1000, 0.1);
     this.lastTime = currentTime;
 
@@ -345,8 +350,17 @@ export class WorldRuntime {
     }
 
     if (this.renderer && this.integratedResult) {
-      this.integratedResult.residentBody.skeleton.update();
       this.renderer.render(this.scene, this.camera);
+      this.renderedFrames++;
+      this.lastRenderedAt = currentTime;
+      this.canvas.dataset.renderedFrames = String(this.renderedFrames);
+      const frame: RenderedWorldFrame = {
+        frame: this.renderedFrames, timestamp: currentTime, durationMs, qualityTier: this.qualityTier,
+        activeClip: this.characterDirector?.currentClip ?? "none", characterMode: this.characterDirector?.mode ?? "unmounted",
+        cameraPreset: this.cameraDirector?.getCurrentPreset() ?? "home-desktop", lifecycleState: this.lifecycleManager.getState(),
+        renderCalls: this.renderer.info.render.calls, renderedTriangles: this.renderer.info.render.triangles,
+      };
+      this.canvas.dispatchEvent(new CustomEvent(WORLD_RENDERED_FRAME_EVENT, { detail: frame }));
     }
   };
 
@@ -496,6 +510,11 @@ export class WorldRuntime {
       : [0, 0, 0];
 
     return {
+      renderedFrames: this.renderedFrames,
+      lastRenderedAt: this.lastRenderedAt,
+      renderCalls: this.renderer?.info.render.calls ?? 0,
+      renderedTriangles: this.renderer?.info.render.triangles ?? 0,
+      renderPixelRatio: this.renderer?.getPixelRatio() ?? 0,
       lifecycleState: this.lifecycleManager.getState(),
       residentCount: this.integratedResult?.nodeCounts.residentCount ?? 0,
       chairCount: this.integratedResult?.nodeCounts.chairRootCount ?? 0,

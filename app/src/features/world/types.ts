@@ -62,6 +62,11 @@ export interface SingleOwnersDiagnostics {
 }
 
 export interface Diagnostics {
+  renderedFrames?: number | undefined;
+  lastRenderedAt?: number | undefined;
+  renderCalls?: number | undefined;
+  renderedTriangles?: number | undefined;
+  renderPixelRatio?: number | undefined;
   interactions?: { boundProductionTargets: number; frozenHitProxyCount: number; lastActivatedId: string | null } | undefined;
   lifecycleState: WorldLifecycleState;
   residentCount: number;
@@ -88,6 +93,22 @@ export interface Diagnostics {
   canvasCount?: number | undefined;
   experienceSnapshot?: import("../../contracts/experience").ExperienceSnapshot | undefined;
   qualityTier?: import("../../contracts/experience").QualityTier | undefined;
+}
+
+export const WORLD_RENDERED_FRAME_EVENT = "yor-world-rendered-frame";
+
+/** Emitted only after the production renderer has rendered the integrated world. */
+export interface RenderedWorldFrame {
+  frame: number;
+  timestamp: number;
+  durationMs: number;
+  qualityTier: import("../../contracts/experience").QualityTier;
+  activeClip: string;
+  characterMode: string;
+  cameraPreset: CameraPreset;
+  lifecycleState: WorldLifecycleState;
+  renderCalls: number;
+  renderedTriangles: number;
 }
 
 export interface CameraConfig {

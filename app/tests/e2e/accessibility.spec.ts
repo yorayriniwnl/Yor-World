@@ -28,6 +28,10 @@ test.describe("C3 WCAG 2.2 AA Accessibility & Assistive Navigation", () => {
   for (const route of routes) {
     test(`Axe automated accessibility audit on ${route}`, async ({ page }, info) => {
       await page.goto(route, { waitUntil: "domcontentloaded" });
+      // Streamed notFound initially supplies an error shell; audit the completed public layout.
+      await expect(page.locator("main h1")).toBeVisible();
+      if (route === "/projects/candidatex") await expect(page.locator("main h1")).toHaveText("Page not found");
+      await expect(page.locator("html")).toHaveAttribute("lang", "en");
 
       const axeResults = await new AxeBuilder({ page })
         .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
