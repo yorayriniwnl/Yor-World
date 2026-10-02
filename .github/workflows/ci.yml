@@ -15,81 +15,153 @@ concurrency:
 
 jobs:
   verify:
-    name: Verify & Validate Release Candidate
+    name: Verify & Validate Full-Stack RC3
     runs-on: ubuntu-latest
-    timeout-minutes: 25
-
+    timeout-minutes: 40
+    env:
+      CI: "true"
+      NEXT_TELEMETRY_DISABLED: "1"
     steps:
-      - name: Checkout repository
+      - name: Checkout exact candidate
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js runtime (Node 24.19.x)
+      - name: Setup Node 24.19.0
         uses: actions/setup-node@v4
         with:
           node-version: 24.19.0
 
-      - name: Setup pnpm package manager (v9.15.9)
+      - name: Setup pnpm 9.15.9
         uses: pnpm/action-setup@v4
         with:
           version: 9.15.9
           run_install: false
 
-      - name: Get pnpm store directory
+      - name: Prepare isolated fresh CI evidence
         shell: bash
         run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+          mkdir -p .rc3-ci/e2e .rc3-ci/accessibility .rc3-ci/performance
+          echo "STORE_PATH=$(pnpm store path --silent)" >> "$GITHUB_ENV"
+          echo "B5_EVIDENCE_DIR=$GITHUB_WORKSPACE/.rc3-ci/e2e" >> "$GITHUB_ENV"
+          echo "C3_EVIDENCE_DIR=$GITHUB_WORKSPACE/.rc3-ci/e2e" >> "$GITHUB_ENV"
 
-      - name: Setup pnpm cache
+      - name: Cache pinned dependency downloads
         uses: actions/cache@v4
         with:
           path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('deliveries/C3/source/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          key: ${{ runner.os }}-pnpm-rc3-${{ hashFiles('app/pnpm-lock.yaml') }}
 
-      - name: 1. Frozen dependency install
-        working-directory: deliveries/C3/source
-        run: pnpm install --frozen-lockfile
+      - name: 1. Frozen canonical dependency install
+        working-directory: app
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm install --frozen-lockfile | tee ../.rc3-ci/01-frozen-install.log
 
-      - name: 2. ESLint code standard verification
-        working-directory: deliveries/C3/source
-        run: pnpm lint
+      - name: 2. Lint canonical application
+        working-directory: app
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm lint | tee ../.rc3-ci/02-lint.log
 
-      - name: 3. TypeScript strict typecheck
-        working-directory: deliveries/C3/source
-        run: pnpm typecheck
+      - name: 3. Typecheck canonical application
+        working-directory: app
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm typecheck | tee ../.rc3-ci/03-typecheck.log
 
-      - name: 4. Vitest unit tests
-        working-directory: deliveries/C3/source
-        run: pnpm test:unit
+      - name: 4. Unified unit tests
+        working-directory: app
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm test:unit | tee ../.rc3-ci/04-unit-tests.log
 
-      - name: 5. Vitest integration & policy tests
-        working-directory: deliveries/C3/source
-        run: pnpm test:integration
+      - name: 5. Unified backend/runtime integration tests
+        working-directory: app
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm test:integration | tee ../.rc3-ci/05-integration-tests.log
 
-      - name: 6. 3D GLTF/GLB Asset validation (Khronos glTF-Validator)
-        run: node scripts/release/validate-gltf-assets.mjs
+      - name: 6. Khronos frozen canonical asset validation
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/release/validate-gltf-assets.mjs --output .rc3-ci/gltf-validation-receipt.json | tee .rc3-ci/06-asset-validation.log
 
-      - name: 7. Next.js production build
-        working-directory: deliveries/C3/source
-        run: pnpm build
+      - name: 7. Full-stack production build
+        working-directory: app
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm build | tee ../.rc3-ci/07-production-build.log
+          echo "RC3_BUILD_ID=$(cat .next/BUILD_ID)" >> "$GITHUB_ENV"
 
-      - name: Install Playwright browsers
-        working-directory: deliveries/C3/source
+      - name: Install Chromium browser dependencies
+        working-directory: app
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: 8. Playwright E2E & interaction navigation tests
-        working-directory: deliveries/C3/source
-        run: pnpm exec playwright test tests/e2e/room-project-navigation.spec.ts
+      - name: 8. Full unified Playwright E2E
+        working-directory: app
+        shell: bash
+        env:
+          YOR_E2E_FIXTURE: "1"
+          YOR_TEST_DATABASE_PATH: ${{ runner.temp }}/yor-world-rc3-e2e-db
+          CRON_SECRET: rc3-ci-synthetic-job-secret
+        run: |
+          set -o pipefail
+          pnpm test:e2e | tee ../.rc3-ci/08-e2e-tests.log
+          node ../scripts/release/verify-playwright-results.mjs ../.rc3-ci/e2e/browser-results.json
 
-      - name: 9. WCAG 2.2 AA Accessibility automated audit
-        working-directory: deliveries/C3/source
-        run: pnpm exec playwright test tests/e2e/accessibility.spec.ts
+      - name: 9. Automated accessibility
+        working-directory: app
+        shell: bash
+        env:
+          B5_EVIDENCE_DIR: ${{ github.workspace }}/.rc3-ci/accessibility
+          C3_EVIDENCE_DIR: ${{ github.workspace }}/.rc3-ci/accessibility
+          YOR_E2E_FIXTURE: "1"
+          YOR_TEST_DATABASE_PATH: ${{ runner.temp }}/yor-world-rc3-a11y-db
+        run: |
+          set -o pipefail
+          pnpm exec playwright test tests/e2e/accessibility.spec.ts | tee ../.rc3-ci/09-accessibility.log
+          node ../scripts/release/verify-playwright-results.mjs ../.rc3-ci/accessibility/browser-results.json
 
-      - name: 10. Performance budget regression inspection
-        run: node scripts/release/check-performance-budgets.mjs
+      - name: 10. Fresh canonical performance browser measurements
+        working-directory: app
+        shell: bash
+        env:
+          C3_EVIDENCE_DIR: ${{ github.workspace }}/.rc3-ci/performance
+        run: |
+          set -o pipefail
+          pnpm test:performance | tee ../.rc3-ci/10-performance-tests.log
+          node ../scripts/release/verify-playwright-results.mjs ../.rc3-ci/performance/performance-results.json
 
-      - name: 11. Canonical Release Manifest Validation
-        run: node scripts/release/validate-release.mjs --manifest deliveries/C4/release-manifest.json --strict
+      - name: 11. Actual production route/module composition
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/release/check-release-composition.mjs --output .rc3-ci/release-composition.json | tee .rc3-ci/11-release-composition.log
+
+      - name: 12. Fresh canonical performance budgets
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/release/check-performance-budgets.mjs --benchmark-dir .rc3-ci/performance --output .rc3-ci/budget-validation-receipt.json | tee .rc3-ci/12-budget-regression.log
+
+      - name: 13. Exact committed RC3 manifest/archive validation
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/release/validate-release.mjs --strict --receipt .rc3-ci/release-manifest-validation.receipt.json | tee .rc3-ci/13-release-manifest-validation.log
+
+      - name: Upload fresh CI execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc3-quality-${{ github.sha }}
+          path: .rc3-ci/
+          retention-days: 14

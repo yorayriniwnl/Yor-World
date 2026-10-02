@@ -1,0 +1,410 @@
+.monitorContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #0b0f19;
+  color: #e2e8f0;
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace);
+  font-size: 13px;
+  line-height: 1.5;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), 0 0 10px rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  user-select: none;
+}
+
+.monitorContainer.framedFallback {
+  border: 2px solid #38bdf8;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.85);
+}
+
+.monitorHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background: rgba(15, 23, 42, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.titleGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statusLed {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+.headerTitle {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+.headerControls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.headerBadge {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.closeButton:hover,
+.closeButton:focus-visible {
+  color: #f1f5f9;
+  background: rgba(255, 255, 255, 0.1);
+  outline: 2px solid #38bdf8;
+}
+
+.monitorBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+/* Ambient Display Styles */
+.ambientScreen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 12px;
+  background: radial-gradient(circle at 50% 30%, #0f172a 0%, #030712 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.ambientScanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%,
+    rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+  opacity: 0.6;
+}
+
+.codeStream {
+  font-size: 12px;
+  color: #64748b;
+  overflow: hidden;
+  max-height: 180px;
+}
+
+.codeLine {
+  white-space: pre;
+  opacity: 0.85;
+}
+
+.codeLineHighlight {
+  color: #38bdf8;
+  font-weight: 500;
+}
+
+.ambientPrompt {
+  margin-top: 16px;
+  padding: 12px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px dashed rgba(56, 189, 248, 0.3);
+  border-radius: 6px;
+  text-align: center;
+}
+
+.openLauncherBtn {
+  background: #0284c7;
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.openLauncherBtn:hover,
+.openLauncherBtn:focus-visible {
+  background: #0369a1;
+  outline: 2px solid #bae6fd;
+}
+
+/* Launcher Content */
+.launcherSection {
+  margin-bottom: 20px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 6px;
+}
+
+.sectionTitle {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #cbd5e1;
+}
+
+.projectGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.projectCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 14px;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  transition: transform 0.15s, border-color 0.15s, background-color 0.15s;
+}
+
+.projectCard:hover,
+.projectCard:focus-within {
+  border-color: #38bdf8;
+  background: rgba(30, 41, 59, 0.8);
+  transform: translateY(-2px);
+}
+
+.projectCard.unpublished {
+  opacity: 0.65;
+  border-style: dashed;
+}
+
+.projectCard.unpublished:hover {
+  border-color: #ef4444;
+}
+
+.cardTop {
+  margin-bottom: 12px;
+}
+
+.cardBadgeStrip {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.cardBadge {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.cardBadgeUnpublished {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.cardTitle {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 6px 0;
+  color: #f8fafc;
+}
+
+.cardSummary {
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.cardActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  gap: 8px;
+}
+
+.actionBtn {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.actionBtn:hover,
+.actionBtn:focus-visible {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+  outline: 2px solid #bae6fd;
+}
+
+.directLink {
+  font-size: 11px;
+  color: #94a3b8;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.directLink:hover,
+.directLink:focus-visible {
+  color: #38bdf8;
+  outline: 2px solid #38bdf8;
+}
+
+/* Terminal Section */
+.terminalContainer {
+  background: #030712;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  min-height: 140px;
+  max-height: 220px;
+}
+
+.terminalOutput {
+  flex: 1;
+  overflow-y: auto;
+  font-size: 12px;
+  color: #a1a1aa;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.terminalOutputLine {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.terminalForm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 8px;
+}
+
+.promptLabel {
+  color: #10b981;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.terminalInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #f4f4f5;
+  font-family: inherit;
+  font-size: 12px;
+  outline: none;
+}
+
+.terminalInput::placeholder {
+  color: #52525b;
+}
+
+/* Transition Overlay */
+.transitionOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 15, 25, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 24px;
+  text-align: center;
+}
+
+.motifBadge {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.motifProgressBar {
+  width: 200px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 16px 0;
+}
+
+.motifProgressFill {
+  height: 100%;
+  background: #38bdf8;
+  transition: width 0.05s linear;
+}
+
+.cancelTransitionBtn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #cbd5e1;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.cancelTransitionBtn:hover,
+.cancelTransitionBtn:focus-visible {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #f1f5f9;
+}

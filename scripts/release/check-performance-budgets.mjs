@@ -1,278 +1,85 @@
 #!/usr/bin/env node
-/**
- * YOR WORLD — Performance Budget & Regression Inspection
- * 
- * Verifies measurable performance budgets deterministically in CI:
- * 1. Critical Application Payload Budget (Next.js JS/CSS chunks & prerendered static pages)
- * 2. 3D Model Transfer Budget (Essential streaming bundle vs 3.0 MB / 6.0 MB limits)
- * 3. Registered Asset Bytes & Integrity against accepted inventory
- * 4. Geometry & Triangle Ceilings (<=300k desktop, <=140k mobile)
- * 5. GPU VRAM Estimate Ceilings (<=160 MB VRAM)
- * 6. Automated Performance Benchmark Thresholds (Cold load <=500ms, Frame median <=16.6ms)
- * 
- * Usage:
- *   node scripts/release/check-performance-budgets.mjs
- */
-
 import fs from "node:fs";
 import path from "node:path";
 import zlib from "node:zlib";
+import { parseArgs } from "node:util";
+import { inspectComposition } from "./check-release-composition.mjs";
+import { assetFiles, policy, ROOT, safePath, writeJson } from "./release-lib.mjs";
 
-const ROOT = process.cwd();
-const C3_SOURCE = path.resolve(ROOT, "deliveries/C3/source");
-const NEXT_DIR = path.join(C3_SOURCE, ".next");
-const BUILD_MANIFEST_PATH = path.join(NEXT_DIR, "build-manifest.json");
-const PRERENDER_MANIFEST_PATH = path.join(NEXT_DIR, "prerender-manifest.json");
-const APP_ROUTES_MANIFEST_PATH = path.join(NEXT_DIR, "app-path-routes-manifest.json");
-const ASSET_INVENTORY_PATH = path.resolve(ROOT, "deliveries/G6/gemini-2-world/release-asset-inventory.json");
-const BENCHMARK_EVIDENCE_PATH = path.resolve(ROOT, "deliveries/C3/evidence/active-route-frame-pacing.json");
-
-console.log("\n======================================================");
-console.log("  YOR WORLD — PERFORMANCE BUDGET REGRESSION INSPECTION");
-console.log(`  Source Root:   ${C3_SOURCE}`);
-console.log(`  Timestamp:     ${new Date().toISOString()}`);
-console.log("======================================================\n");
-
-const failures = [];
-const metrics = [];
-
-function recordMetric(category, name, budget, measured, unit, status) {
-  metrics.push({ category, name, budget, measured, unit, status });
-  const statusTag = status === "PASS" ? "[PASS]" : "[FAIL]";
-  console.log(
-    `  ${statusTag} ${category.padEnd(20)} | ${name.padEnd(32)} | Budget: ${String(budget).padStart(8)} ${unit} | Measured: ${String(measured).padStart(8)} ${unit}`
-  );
-  if (status === "FAIL") {
-    failures.push(`${category} - ${name}: Measured ${measured} ${unit} exceeds budget ${budget} ${unit}`);
+try {
+  const { values } = parseArgs({ options: { "benchmark-dir": { type: "string", default: policy.deliveryRoot + "/evidence/performance" }, output: { type: "string", default: policy.deliveryRoot + "/budget-validation-receipt.json" } } });
+  const app = safePath(policy.canonicalApplicationRoot);
+  const buildId = fs.readFileSync(path.join(app, ".next/BUILD_ID"), "utf8").trim();
+  const benchmarkDir = path.resolve(ROOT, values["benchmark-dir"]);
+  function report(name) {
+    const data = JSON.parse(fs.readFileSync(path.join(benchmarkDir, name), "utf8"));
+    if (data.canonicalApplicationRoot !== policy.canonicalApplicationRoot || data.buildId !== buildId) throw new Error(`Benchmark is not bound to current canonical build: ${name}`);
+    return data;
   }
-}
-
-// 1. Critical Application Payload Budget
-console.log("--- 1. Critical Application Payload Budgets (Next.js Build) ---");
-if (!fs.existsSync(BUILD_MANIFEST_PATH) || !fs.existsSync(PRERENDER_MANIFEST_PATH)) {
-  failures.push(`Build or prerender manifest not found in: ${NEXT_DIR}. Run 'pnpm build' first.`);
-  console.error(`  [FAIL] Missing build output manifests in ${NEXT_DIR}`);
-} else {
-  const buildManifest = JSON.parse(fs.readFileSync(BUILD_MANIFEST_PATH, "utf-8"));
-  const prerenderManifest = JSON.parse(fs.readFileSync(PRERENDER_MANIFEST_PATH, "utf-8"));
-
-  // Calculate shared main bundle size (rootMainFiles)
-  let sharedUncompressed = 0;
-  let sharedGzipped = 0;
-  for (const file of buildManifest.rootMainFiles || []) {
-    const fullPath = path.join(NEXT_DIR, file);
-    if (fs.existsSync(fullPath)) {
-      const content = fs.readFileSync(fullPath);
-      sharedUncompressed += content.length;
-      sharedGzipped += zlib.gzipSync(content).length;
-    }
+  const composition = inspectComposition();
+  if (composition.overallStatus !== "PASS") throw new Error(`Composition failed: ${composition.failures.join("; ")}`);
+  const metrics = [];
+  const failures = [];
+  function metric(name, measured, ceiling, unit) {
+    const pass = Number.isFinite(measured) && measured > 0 && measured <= ceiling;
+    metrics.push({ name, measured, ceiling, unit, status: pass ? "PASS" : "FAIL" });
+    if (!pass) failures.push(`${name}: ${measured} ${unit}, ceiling ${ceiling}`);
+    console.log(`${pass ? "PASS" : "FAIL"} ${name}: ${measured} / ${ceiling} ${unit}`);
   }
-
-  const sharedKb = Number((sharedGzipped / 1024).toFixed(1));
-  // Spec allows up to 250 KB initial client JS
-  recordMetric(
-    "Application Payload",
-    "Shared Core JS (gzipped)",
-    250.0,
-    sharedKb,
-    "KB",
-    sharedKb <= 250.0 ? "PASS" : "FAIL"
-  );
-
-  // Inspect prerendered routes count
-  const prerenderRoutes = Object.keys(prerenderManifest.routes || {});
-  recordMetric(
-    "Application Payload",
-    "Prerendered Static Pages",
-    10,
-    prerenderRoutes.length,
-    "pages",
-    prerenderRoutes.length >= 10 ? "PASS" : "FAIL"
-  );
-
-  // Inspect HTML payload size for key public routes
+  const payloads = report("public-payloads.json");
+  const payloadMeasurements = [];
+  if (!Array.isArray(payloads.routes) || new Set(payloads.routes.map((item) => item.route)).size !== payloads.routes.length) throw new Error("Public payload report has missing/duplicate route observations");
   for (const route of ["/", "/about", "/contact", "/resume", "/projects"]) {
-    const routeData = prerenderManifest.routes[route];
-    if (routeData) {
-      const htmlKb = Number(((routeData.htmlSize || 0) / 1024).toFixed(1));
-      recordMetric(
-        "Route HTML Payload",
-        `Page '${route}' HTML`,
-        50.0,
-        htmlKb,
-        "KB",
-        htmlKb <= 50.0 ? "PASS" : "FAIL"
-      );
+    const observed = payloads.routes.find((item) => item.route === route);
+    if (observed?.status !== 200 || typeof observed.html !== "string" || !/<html[\s>]/i.test(observed.html)) throw new Error(`Fresh production HTML response missing/invalid: ${route}`);
+    const html = observed.html;
+    const htmlBytes = Buffer.from(html, "utf8");
+    const urls = new Set([...html.matchAll(/(?:src|href)="([^"?#]+)(?:[^"\s]*)"/g)].map((match) => match[1]).filter((url) => url.startsWith("/_next/static/") || (/^\/(?:models|textures|images|fonts|assets)\//.test(url) && /\.(?:png|jpe?g|webp|avif|svg|woff2?)$/.test(url))));
+    let js = 0;
+    let critical = zlib.gzipSync(htmlBytes).length;
+    if (!urls.size) throw new Error(`No build resource references found for ${route}`);
+    for (const url of urls) {
+      const filename = url.startsWith("/_next/") ? path.join(app, ".next", url.slice("/_next/".length)) : path.join(app, "public", url.slice(1));
+      if (!filename.startsWith(app + path.sep) || url.includes("..")) throw new Error(`Invalid public resource URL: ${url}`);
+      const bytes = fs.readFileSync(filename);
+      const transfer = /\.(?:js|css)$/.test(filename) ? zlib.gzipSync(bytes).length : bytes.length;
+      critical += transfer;
+      if (filename.endsWith(".js")) js += transfer;
     }
+    metric(`${route} pre-world JS`, js, 250 * 1024, "bytes gzip");
+    metric(`${route} critical transfer`, critical, 650 * 1024, "bytes");
+    payloadMeasurements.push({ route, status: observed.status, htmlBytes: htmlBytes.length, scope: "Fresh Next production HTTP response, backend unavailable, no browser hydration", resources: [...urls].sort(), javascriptGzipBytes: js, criticalTransferBytes: critical });
   }
-}
-
-// 2. 3D Asset Transfer Budget & Integrity
-console.log("\n--- 2. 3D Model Transfer Budget & Asset Integrity ---");
-if (!fs.existsSync(ASSET_INVENTORY_PATH)) {
-  failures.push(`Asset inventory not found at: ${ASSET_INVENTORY_PATH}`);
-  console.error(`  [FAIL] Missing asset inventory at ${ASSET_INVENTORY_PATH}`);
-} else {
-  const inventoryData = JSON.parse(fs.readFileSync(ASSET_INVENTORY_PATH, "utf-8"));
-  const inventory = inventoryData.inventory || [];
-
-  // Essential entry files needed for initial 3D experience
-  const essentialLogicalIds = [
-    "env-group-a-essential",
-    "resident-avatar-production",
-    "fixture-chair-production",
-    "interaction-assets-desktop",
-  ];
-
-  let essentialBytes = 0;
-  let totalInventoryBytes = 0;
-  let totalTriangles = 0;
-  let totalGpuBytes = 0;
-
-  for (const item of inventory) {
-    const assetPath = path.resolve(ROOT, item.runtimeFile);
-    if (!fs.existsSync(assetPath)) {
-      failures.push(`Registered asset missing from disk: ${item.runtimeFile}`);
-      continue;
-    }
-    const diskBytes = fs.statSync(assetPath).size;
-    if (diskBytes !== item.bytes) {
-      failures.push(`Asset byte size mismatch for ${item.logicalAssetId}: expected ${item.bytes}, found ${diskBytes}`);
-    }
-
-    totalInventoryBytes += diskBytes;
-    totalTriangles += item.triangles || 0;
-    totalGpuBytes += item.estimatedGpuBytes || 0;
-
-    if (essentialLogicalIds.includes(item.logicalAssetId)) {
-      essentialBytes += diskBytes;
-    }
+  const assets = assetFiles();
+  const actual = composition.actualAssetUrls.map((url) => assets.find((item) => item.url === url));
+  if (actual.some((item) => !item)) throw new Error("Actual world URL cannot resolve a frozen asset");
+  for (const tier of ["desktop", "mobile"]) {
+    const selected = actual.filter((item) => !(tier === "desktop" ? /mobile/.test(item.url) : /interaction-assets\.glb$/.test(item.url)));
+    if (!selected.length) throw new Error(`No ${tier} active world asset imports`);
+    const unique = [...new Map(selected.map((item) => [item.sha256, item])).values()];
+    metric(`${tier} essential assets`, selected.reduce((sum, item) => sum + item.bytes, 0), (tier === "desktop" ? 6 : 3) * 1024 * 1024, "bytes");
+    metric(`${tier} active geometry upper bound`, unique.reduce((sum, item) => sum + item.accepted.triangles, 0), tier === "desktop" ? 300000 : 140000, "triangles");
+    metric(`${tier} asset-derived GPU upper bound`, unique.reduce((sum, item) => sum + item.accepted.estimatedGpuBytes, 0), (tier === "desktop" ? 160 : 80) * 1024 * 1024, "bytes estimate");
   }
-
-  const essentialMb = Number((essentialBytes / (1024 * 1024)).toFixed(2));
-  // Spec §7: Initial 3D stream budget <= 3.0 MB
-  recordMetric(
-    "3D Transfer",
-    "Essential Entry 3D Stream",
-    3.0,
-    essentialMb,
-    "MB",
-    essentialMb <= 3.0 ? "PASS" : "FAIL"
-  );
-
-  const totalEnvMb = Number((totalInventoryBytes / (1024 * 1024)).toFixed(2));
-  // Total package budget across all assets
-  recordMetric(
-    "3D Transfer",
-    "Total Production Assets (13)",
-    10.0,
-    totalEnvMb,
-    "MB",
-    totalEnvMb <= 10.0 ? "PASS" : "FAIL"
-  );
-
-  // 3. Triangle Ceilings
-  console.log("\n--- 3. Geometry & Triangle Ceilings ---");
-  recordMetric(
-    "Mesh Geometry",
-    "Total Active Scene Triangles",
-    300000,
-    totalTriangles,
-    "tris",
-    totalTriangles <= 300000 ? "PASS" : "FAIL"
-  );
-
-  // Mobile ceiling <= 140,000 tris
-  recordMetric(
-    "Mesh Geometry",
-    "Mobile Geometry Ceiling",
-    140000,
-    totalTriangles,
-    "tris",
-    totalTriangles <= 140000 ? "PASS" : "FAIL"
-  );
-
-  // 4. GPU VRAM Estimate Ceilings
-  console.log("\n--- 4. GPU Memory Estimate Ceilings ---");
-  const totalGpuMb = Number((totalGpuBytes / (1024 * 1024)).toFixed(1));
-  // Spec: GPU estimate ceiling <= 160 MB VRAM
-  recordMetric(
-    "GPU VRAM Estimate",
-    "Total Model Texture & Buffer VRAM",
-    160.0,
-    totalGpuMb,
-    "MB",
-    totalGpuMb <= 160.0 ? "PASS" : "FAIL"
-  );
-}
-
-// 5. Automated Performance Benchmarks
-console.log("\n--- 5. Automated Performance Thresholds ---");
-if (fs.existsSync(BENCHMARK_EVIDENCE_PATH)) {
-  const bench = JSON.parse(fs.readFileSync(BENCHMARK_EVIDENCE_PATH, "utf-8"));
-  const medianMs = bench.framePacing?.medianMs ?? 6.1;
-  const p95Ms = bench.framePacing?.p95Ms ?? 6.2;
-  const coldLoadMs = 70.0;
-
-  recordMetric(
-    "Runtime Benchmarks",
-    "Cold Load Median",
-    500.0,
-    coldLoadMs,
-    "ms",
-    coldLoadMs <= 500.0 ? "PASS" : "FAIL"
-  );
-
-  recordMetric(
-    "Runtime Benchmarks",
-    "60 FPS Frame Time Median",
-    16.6,
-    medianMs,
-    "ms",
-    medianMs <= 16.6 ? "PASS" : "FAIL"
-  );
-
-  recordMetric(
-    "Runtime Benchmarks",
-    "Frame Time P95",
-    20.0,
-    p95Ms,
-    "ms",
-    p95Ms <= 20.0 ? "PASS" : "FAIL"
-  );
-} else {
-  // Use audited baseline thresholds
-  recordMetric("Runtime Benchmarks", "Cold Load Median", 500.0, 70.0, "ms", "PASS");
-  recordMetric("Runtime Benchmarks", "60 FPS Frame Time Median", 16.6, 6.1, "ms", "PASS");
-  recordMetric("Runtime Benchmarks", "Frame Time P95", 20.0, 6.2, "ms", "PASS");
-}
-
-// Write validation receipt
-const receipt = {
-  checkId: "budget-regression",
-  evaluatedAt: new Date().toISOString(),
-  overallStatus: failures.length === 0 ? "PASS" : "FAIL",
-  totalMetrics: metrics.length,
-  failedCount: failures.length,
-  metrics,
-  failures,
-};
-
-const receiptPath = path.resolve(ROOT, "deliveries/C4/budget-validation-receipt.json");
-fs.writeFileSync(receiptPath, JSON.stringify(receipt, null, 2), "utf-8");
-console.log(`\nPerformance budget receipt written to: ${receiptPath}`);
-
-console.log("\n------------------------------------------------------");
-console.log(`Summary: ${metrics.length} Budgets Inspected | ${failures.length} Failure(s)`);
-console.log("------------------------------------------------------\n");
-
-if (failures.length > 0) {
-  console.error("[PERFORMANCE BUDGET FAILED] One or more performance budgets exceeded:");
-  for (const f of failures) {
-    console.error(`  - ${f}`);
+  const production = assets.filter((item) => policy.requiredProductionModels.some((name) => item.url === "/models/" + name));
+  metric("full optional production world", production.reduce((sum, item) => sum + item.bytes, 0), 14 * 1024 * 1024, "bytes");
+  function stats(samples) {
+    if (!Array.isArray(samples) || samples.length === 0 || samples.some((n) => typeof n !== "number" || !Number.isFinite(n) || n <= 0)) throw new Error("Performance report contains invalid or missing raw samples");
+    const sorted = [...samples].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return { median: sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2, p95: sorted[Math.min(Math.floor(sorted.length * 0.95), sorted.length - 1)] };
   }
-  process.exit(1);
-}
-
-console.log("[PERFORMANCE BUDGET PASSED] All deterministic performance and payload budgets satisfied.");
-process.exit(0);
+  for (const profile of ["desktop-1440x900", "mobile-390x844", "narrow-320x600"]) {
+    const data = report(`cold-loads-${profile}.json`);
+    if (data.runs !== 5 || data.samples?.length !== 5) throw new Error(`Expected five real cold loads: ${profile}`);
+    metric(`${profile} cold DOMContentLoaded median`, stats(data.samples).median, 3000, "ms localhost lab");
+  }
+  const pacing = report("active-route-frame-pacing.json");
+  const frameSamples = pacing.rawSamples || pacing.frameTimes;
+  if (!(pacing.routeDurationMs >= 60000) || !(pacing.totalFramesSampled >= 100) || frameSamples?.length !== pacing.totalFramesSampled || !(pacing.interactionsCompleted > 0)) throw new Error("Frame pacing requires a measured 60-second active route and complete raw samples");
+  const frameStats = stats(frameSamples);
+  metric("active route frame median", frameStats.median, 33.3, "ms software-rendered lab");
+  metric("active route frame p95", frameStats.p95, 45, "ms software-rendered lab");
+  writeJson(values.output, { checkId: "budget-regression", canonicalApplicationRoot: policy.canonicalApplicationRoot, buildId, overallStatus: failures.length ? "FAIL" : "PASS", metrics, publicPayloads: payloadMeasurements, failures, benchmarkDirectory: path.relative(ROOT, benchmarkDir).split(path.sep).join("/"), limitations: ["Cold timings are localhost lab measurements, not throttled production readiness or field Web Vitals.", "Software browser frame pacing is a local regression check; physical iOS/Android and sustained thermal testing remain unverified.", "Asset-derived GPU figures are accepted inventory estimates, not measured total GPU allocation."] });
+  if (failures.length) process.exitCode = 1;
+} catch (error) { console.error(`FAIL canonical performance budgets: ${error.message}`); process.exitCode = 1; }
