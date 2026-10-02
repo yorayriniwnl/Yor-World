@@ -80,7 +80,7 @@ try {
   process.exit(1);
 }
 
-const manifestSha256 = crypto.createHash("sha256").update(manifestRaw).digest("hex");
+const manifestSha256 = crypto.createHash("sha256").update(manifestRaw.replace(/\r\n/g, "\n")).digest("hex");
 
 const failures = [];
 const warnings = [];
@@ -312,11 +312,22 @@ if (!Array.isArray(manifest.requiredChecks)) {
     const evidenceData = fs.readFileSync(absEvidencePath);
     const computedEvidenceSha = crypto.createHash("sha256").update(evidenceData).digest("hex");
 
+    // Also compute LF-normalized hash for text evidence to ensure cross-platform reproducibility
+    const isTextEvidence = /\.(log|txt|json|md)$/i.test(check.evidencePath);
+    const lfNormalizedData = isTextEvidence
+      ? Buffer.from(evidenceData.toString("utf-8").replace(/\r\n/g, "\n"), "utf-8")
+      : evidenceData;
+    const computedLfSha = crypto.createHash("sha256").update(lfNormalizedData).digest("hex");
+
     if (check.evidenceSha256) {
-      if (computedEvidenceSha.toLowerCase() !== check.evidenceSha256.toLowerCase()) {
+      const expectedSha = check.evidenceSha256.toLowerCase();
+      const matchesRaw = computedEvidenceSha.toLowerCase() === expectedSha;
+      const matchesLf = computedLfSha.toLowerCase() === expectedSha;
+
+      if (!matchesRaw && !matchesLf) {
         fail(
           "Evidence Hash Mismatch",
-          `Check "${requiredId}" evidence SHA-256 mismatch for ${check.evidencePath}:\nExpected: ${check.evidenceSha256}\nComputed: ${computedEvidenceSha}`
+          `Check "${requiredId}" evidence SHA-256 mismatch for ${check.evidencePath}:\nExpected: ${check.evidenceSha256}\nComputed: ${computedEvidenceSha} (LF: ${computedLfSha})`
         );
         continue;
       }
