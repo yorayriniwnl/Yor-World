@@ -7,7 +7,8 @@
   "assetRevision": "g6-world-art-freeze-20261002",
   "publicationRevision": "A4-R1-20260928",
   "schemaRevision": "20261002000000_schema_v1",
-  "releaseBundleSha256": "4a7baee32c495cf412682f9adde73bea89680fb43168353bae180d1ffc37b517",
+  "contactAmendment": "A5/A6-CONTACT-IDEMPOTENCY-R2",
+  "releaseBundleSha256": "3537b003370ff175ccbfa65e2da9f4fd38546b00831db70a1888ba0e9ec907ee",
   "releaseBundlePath": "deliveries/C4/c4-release-candidate.zip",
   "environment": "staging",
   "governance": {
@@ -193,8 +194,9 @@
     "A2": "A2-R1 (Verified portfolio case studies & static HTML shell)",
     "A3": "A3-R1 (Owner authentication, AAL2 TOTP & 15 RLS tables)",
     "A4": "A4-R1 (Authoritative CMS, draft publishing & rollback)",
-    "A5": "A5-R1 (Durable contact persistence, idempotency & outbox retry)",
-    "A6": "A6-R1 (Operations runbook, telemetry allowlist & disaster recovery)",
+    "A5": "A5-R1 historical baseline + A5/A6-CONTACT-IDEMPOTENCY-R2 amendment (Durable contact persistence & distributed database-safe idempotency)",
+    "A6": "A6-R1 historical baseline + A5/A6-CONTACT-IDEMPOTENCY-R2 amendment (Operations runbook, telemetry allowlist & distributed database-safe idempotency)",
+    "contactAmendment": "A5/A6-CONTACT-IDEMPOTENCY-R2 (Database-Safe Contact Concurrency and Distributed Idempotency Amendment)",
     "TrackB": "W1-F1-r2, W2-F1-r2, B3-P1-R1, B2/B3-P2-R1, B4-R1, B5-R1, IA-R1 (Core 3D Assets)",
     "C1": "C1-R1 (Interaction arbiter & intent controller)",
     "C2": "C2-R1 (Studio monitor launcher & project navigation)",
@@ -203,5 +205,36 @@
     "G5": "G5-R1 (Managed Content & Operations Gate - ACCEPTED)",
     "G6": "G6-RC (Staging Release Candidate 2 - PENDING AUDIT)",
     "G7": "LOCKED (Live production launch)"
-  }
+  },
+  "contactSubsystem": {
+    "historicalBaselines": {
+      "A5": "A5-R1",
+      "A6": "A6-R1"
+    },
+    "activeAmendment": "A5/A6-CONTACT-IDEMPOTENCY-R2",
+    "concurrencyModel": "Database-owned concurrency and atomic key claiming via PostgreSQL ON CONFLICT DO UPDATE",
+    "verificationSummary": "Separate Node processes / separate V8 heaps contending against a shared database service abstraction backed by PGlite. Hosted Supabase/PostgreSQL multi-instance verification remains a Gate G7 live requirement."
+  },
+  "evidenceHashes": [
+    {
+      "path": "deliveries/G6/corrections/contact-idempotency/report.md",
+      "sha256": "8eceee6fc37161220e3eb261be0580befd1b810d1cebadfe92a0a1f8e863d644"
+    },
+    {
+      "path": "deliveries/G6/corrections/contact-idempotency/concurrency-design.md",
+      "sha256": "eab4f7d05aa5a19af22022e5f3815b8ae7de6c1eeeeb391c6abe0203f0a6435a"
+    },
+    {
+      "path": "deliveries/G6/corrections/contact-idempotency/evidence/vitest-idempotency.log",
+      "sha256": "639d25374aa93ca4c36fb3499d0b0b1404935260cd20b41dabb4b40966bf331c"
+    },
+    {
+      "path": "deliveries/G6/corrections/contact-idempotency/evidence/multi-process-runner.log",
+      "sha256": "7defe99fe2a952888afac8bbc5532384b5e57e18781bf73e556441ee0bd0e17a"
+    },
+    {
+      "path": "deliveries/G6/corrections/contact-idempotency/accepted-baseline-mapping.json",
+      "sha256": "92d28ab8d63d4c7d9d01bf06ccafb8576fac2d11268f13b3bb68bd04ad36719b"
+    }
+  ]
 }

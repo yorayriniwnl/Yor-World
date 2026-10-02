@@ -13,13 +13,14 @@
 
 The `v1.0.0-rc2` release candidate supersedes `rc1` (preserved as historical evidence) and resolves all release-engineering defects identified during initial Gate G6 audit:
 
-1. **Accepted Track A Platform Baseline:**
+1. **Accepted Track A Platform Baseline & Active Amendment:**
    - Milestone A1: Design tokens, typography, and semantic color palette (`A1-R1`).
    - Milestone A2: Verified portfolio content and static HTML shell (`A2-R1`).
    - Milestone A3: Owner administration, MFA AAL2 TOTP, and 15 RLS table policies (`A3-R1`).
    - Milestone A4: Authoritative CMS publishing, media approvals, and snapshot rollback (`A4-R1`).
-   - Milestone A5: Durable contact message persistence, 24h idempotency, and leased outbox worker (`A5-R1`).
-   - Milestone A6: Cached project metadata, privacy-safe telemetry, and disaster recovery (`A6-R1`).
+   - Milestone A5: Durable contact message persistence, 24h idempotency, and leased outbox worker (`A5-R1 historical baseline + A5/A6-CONTACT-IDEMPOTENCY-R2 amendment`).
+   - Milestone A6: Cached project metadata, privacy-safe telemetry, and disaster recovery (`A6-R1 historical baseline + A5/A6-CONTACT-IDEMPOTENCY-R2 amendment`).
+   - *Note on Contact Amendment:* The active release candidate explicitly consumes amendment `A5/A6-CONTACT-IDEMPOTENCY-R2` (database-safe concurrency and distributed idempotency via atomic key claiming), superseding the single-process in-memory mutex without rewriting historical A5/A6 acceptance files.
 2. **Accepted Track B World & Art Baseline:**
    - Core Track B Freeze: `W1-F1-r2`, `W2-F1-r2`, `B3-P1-R1`, `B2/B3-P2-R1`, `B4-R1`, `B5-R1`, `IA-R1`.
    - G6 World & Art Freeze: `g6-world-art-freeze-20261002` (15 runtime assets verified with Khronos glTF-Validator; 0 errors, 0 warnings).

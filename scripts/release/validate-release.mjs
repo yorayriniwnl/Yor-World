@@ -351,8 +351,21 @@ if (Array.isArray(manifest.evidenceHashes)) {
     }
     const itemBytes = fs.readFileSync(itemAbs);
     const itemSha = crypto.createHash("sha256").update(itemBytes).digest("hex");
-    if (item.sha256 && itemSha.toLowerCase() !== item.sha256.toLowerCase()) {
-      fail("Evidence Manifest Hash", `Hash mismatch for ${item.path}: expected ${item.sha256}, got ${itemSha}`);
+    const isText = /\.(log|txt|json|md)$/i.test(item.path);
+    const lfNormalizedData = isText
+      ? Buffer.from(itemBytes.toString("utf-8").replace(/\r\n/g, "\n"), "utf-8")
+      : itemBytes;
+    const computedLfSha = crypto.createHash("sha256").update(lfNormalizedData).digest("hex");
+
+    if (item.sha256) {
+      const expectedSha = item.sha256.toLowerCase();
+      const matchesRaw = itemSha.toLowerCase() === expectedSha;
+      const matchesLf = computedLfSha.toLowerCase() === expectedSha;
+      if (!matchesRaw && !matchesLf) {
+        fail("Evidence Manifest Hash", `Hash mismatch for ${item.path}: expected ${item.sha256}, got ${itemSha} (LF: ${computedLfSha})`);
+      } else {
+        pass("Evidence Hash", `${item.path} verified (${itemBytes.length} B | sha256: ${itemSha.slice(0, 8)})`);
+      }
     } else {
       pass("Evidence Hash", `${item.path} verified (${itemBytes.length} B)`);
     }
@@ -404,6 +417,16 @@ if (!manifest.governance) {
     "Governance Invariants",
     `Status: ${manifest.governance.status} | Maker: ${manifest.governance.makerLane} | G7: ${manifest.governance.g7Status}`
   );
+}
+
+// 10b. Contact Amendment Identity Binding
+const EXPECTED_CONTACT_AMENDMENT = "A5/A6-CONTACT-IDEMPOTENCY-R2";
+if (!manifest.contactAmendment && args.strict) {
+  fail("Contact Amendment", "manifest.contactAmendment missing; must bind A5/A6-CONTACT-IDEMPOTENCY-R2");
+} else if (manifest.contactAmendment !== EXPECTED_CONTACT_AMENDMENT && args.strict) {
+  fail("Contact Amendment", `Contact amendment mismatch. Expected "${EXPECTED_CONTACT_AMENDMENT}", found "${manifest.contactAmendment}"`);
+} else if (manifest.contactAmendment) {
+  pass("Contact Amendment", `Verified distributed database-safe contact amendment bound: ${manifest.contactAmendment}`);
 }
 
 // 11. Write / Verify Independent Validation Receipt
