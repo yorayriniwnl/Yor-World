@@ -1,3 +1,33 @@
+# Current RC3 restore and recovery record
+
+Current candidate: **v1.0.0-rc3**. Canonical app: `app/`. G1-G5 ACCEPTED; G6 ACTIVE / REWORK; G7 LOCKED. This living record separates new canonical local SQL evidence from the preserved historical RC1 rehearsal below. Historical snapshot IDs, routes, counts and PASS statements belong only to that historical record; they are not copied forward as RC3 proof.
+
+Canonical implementation is `app/src/server/operations/backup-restore.ts`. Backup reads all fifteen accepted public tables in one repeatable-read transaction and fails if a table cannot be read. Restore uses fixed table/column allowlists, parameterized values, reverse dependency deletion and one transaction for writes. Version1 snapshots remain compatible with their recorded tables, including earlier nine-table snapshots. Auth-service identity/session state and private storage blobs are outside this public-table snapshot.
+
+The current fifteen-table inventory is: `admin_users`, `projects`, `project_revisions`, `evidence_records`, `media_assets`, `site_revisions`, `published_content`, `publication_history`, `contact_messages`, `contact_idempotency`, `email_outbox`, `request_quotas`, `github_snapshots`, `aggregate_events`, `audit_events`.
+
+Final source-bound integration execution passed `tests/integration/platform/canonical-platform.test.ts`: the exact accepted A3/A4 schema was loaded into isolated PGlite, a synthetic owner/contact receipt was created, all fifteen public tables were backed up, contact/idempotency/quota rows were removed, then restore recovered all fifteen tables plus message/outbox/idempotency records. This actual local SQL execution is part of the final 145-test integration suite at source `a48ae908562302b2b5eb2809172f56c1bddb5786`. Exact command, exit code and log hash are in `deliveries/G6/full-stack-integration/commands-and-exit-codes.md`, `evidence/execution.jsonl` and the release manifest. Hosted Supabase recovery remains unverified.
+
+Contact transaction failure/rollback is separately verified by the canonical R2/outbox insertion failure tests. It does not establish an actual failed hosted full-database restore or live rollback RTO/RPO. Driver-mock tests verify that production BEGIN/writes/COMMIT/ROLLBACK use one checked-out connection and release it; hosted independent connection/process behavior remains unverified.
+
+RC3 uses unchanged `20261001000000_a3_owner_auth_rls.sql` and `20261001000001_a4_publication_media.sql`, with logical release binding `20261002000000_schema_v1`. The required candidate operational DCL `app/supabase/operations/harden-publication-grants.sql` is applied after the migrations: deny PUBLIC/anon/authenticated execution of the inherited SECURITY DEFINER publication helper while preserving privileged service-role execution. The local actual-role denial test is separate from table restore and does not claim hosted grants have been configured.
+
+| Scope | RC3 evidence category | Remaining authorized production work |
+| --- | --- | --- |
+| Fifteen public tables and receipt/outbox/idempotency restoration | Final source-bound AUTOMATED local SQL PASS | Fresh managed PostgreSQL/Supabase backup and restore, consistency and production schema/grant checks. |
+| Legacy version1 table snapshot compatibility | Canonical implementation and local suite | Inspect actual retained production snapshot/version compatibility. |
+| Public portfolio/backend outage | Canonical cross-lane browser test | Fresh production smoke after authorized deployment. |
+| Auth identities/TOTP/session state | NOT RUN hosted | Separate Supabase Auth provisioning/recovery and owner revocation/AAL2 validation. |
+| Media storage blobs/object versions | NOT RUN | Actual private bucket backup/object restore and current approved media access policies. |
+| Mail provider and outbox delivery | NOT RUN live | Actual provider delivery/retry/idempotency, safe synthetic receipt/outbox verification. |
+| Live deployment rollback | NOT RUN | Rehearsed rollback, RTO<=5minutes, RPO=0; a header/etag is not rehearsal evidence. |
+
+No hosted DB/blob restoration, live deployment or G7 probe was performed by this packet. Physical/manual and external-service limits remain recorded in the current candidate dossier/checklist. Gemini #1 verifies platform/recovery evidence, GPT Plus #2 independently audits, and GPT Plus #1 adjudicates G6. Owner authorization is required before G7.
+
+## Historical RC1 rehearsal — preserved record
+
+The following text is retained as the prior RC1 operations record, including its original claims and limitations. It has not been re-executed or adopted as fresh RC3 evidence.
+
 # YOR WORLD Operations: Non-Production Restore & Disaster Recovery Record
 
 **Release Candidate:** `v1.0.0-rc1` (Gate G6 Staging Release Candidate)  

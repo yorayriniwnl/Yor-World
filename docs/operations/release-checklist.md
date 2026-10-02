@@ -1,83 +1,48 @@
-# YOR WORLD Production Release Candidate Checklist
+# Current RC3 release candidate checklist
 
-**Release Candidate ID:** `v1.0.0-rc1` (Gate G6 Staging Release Candidate)  
-**Governance Standard:** Account Operating Model & Governance Pipeline (§2)  
-**Responsible Makers:** Gemini #1 (Platform), Gemini #2 (World / Art), Gemini #3 (Runtime / Integration)  
-**Auditor Lane:** GPT Plus #2 (Independent Auditor)  
-**Acceptance Authority:** Parent Codex (GPT Plus #1)  
-**Gate Invariant:** STOP AT G6 HANDOFF. Gate G7 is LOCKED until owner human approval.
+Current release: **v1.0.0-rc3 candidate**. Canonical deployment/CI root: **`app/`**. G1-G5 ACCEPTED; G6 ACTIVE / REWORK; G7 LOCKED. Historic RC1/RC2 dossiers and C4 evidence remain preserved; they do not establish final RC3 success.
 
----
+Architecture/source checks inspected during integration:
 
-## 1. Pre-Flight Repository Integrity
-- [x] **Repository HEAD Bound:** Exact git commit SHA verified and recorded.
-- [x] **No Dirty Working Tree Alterations:** Accepted milestone roots (`deliveries/A1`–`A6`, `deliveries/B1`–`B5`, `deliveries/C1`) remain bit-for-bit immutable.
-- [x] **Dependency Tree Frozen:** `pnpm-lock.yaml` hash matched across all execution environments.
-- [x] **Zero Localhost Leaks:** Release manifest and runtime configurations contain zero references to `localhost`, `127.0.0.1`, or placeholder staging strings.
+- [x] A new single deployable app combines public/runtime, platform/server and frozen world assets; historical accepted roots remain inputs.
+- [x] Every28 overlapping conflict and every58 A6-only input has a recorded semantic merge/destination.
+- [x] Final source-bound build contains all22 required public/admin/API routes, including `/api/contact`, `/admin/login`, `/api/admin/publish`, `/api/internal/jobs/[job]`.
+- [x] Working Contact invokes actual R2 imports; production storage is configured PostgreSQL, with honest503 and no automatic ephemeral fallback.
+- [x] Verified owner/AAL2/current-active-owner checks protect admin pages/APIs; public snapshot/terminal/static fallback exclude private drafts and CandidateX.
+- [x] Nine production GLBs and actual loader URLs resolve from canonical public root; no frozen art regenerated; obsolete proof binaries excluded from canonical app.
+- [x] Exact accepted dependency pins merged; stable server-only contact/quota hash secrets and names-only env contract documented.
+- [x] Original numbered migrations retained. Operational publication RPC grant hardening is included and explicitly identified for audit/G7 application.
+- [x] CI/release scripts target app only and reject missing routes/modules, unbound assets, skipped browser tests and mismatched source/archive/evidence.
 
----
+Final execution and artifact checklist — fill only from definitive parent-captured evidence:
 
-## 2. World & 3D Art Freeze (Track B / Gemini #2)
-- [x] **Asset Inventory Freeze:** 13 registered runtime assets audited with SHA-256 digests (`deliveries/G6/gemini-2-world/release-asset-inventory.json`).
-- [x] **glTF Validation:** 0 errors, 0 warnings across all production GLB files using Khronos glTF-Validator 2.0.0-dev.3.10.
-- [x] **Mobile Geometry Budget:** Combined scene geometry (15,112 triangles) is well within the 140,000 ceiling (>89% margin).
-- [x] **Mobile VRAM Budget:** Combined scene textures and buffers (34.34 MB) remain well under the 90 MB ceiling (>61% margin).
-- [x] **Camera Presets Verified:** `entry`, `home-desktop`, `home-mobile`, `monitor`, and `reverse-doorway` visually verified and locked.
+- [x] Record exact implementation `sourceCommit`, tool versions and unchanged app/tools/CI trees on later evidence-only HEAD.
+- [x] Fresh `pnpm install --frozen-lockfile` from a clean canonical environment.
+- [x] Fresh lint and strict typecheck.
+- [x] Full unified unit and platform/runtime integration tests, including actual R2, role denial and fifteen-table restore.
+- [x] Khronos validation of all final canonical GLBs, exact freeze hash/size checks.
+- [x] Final production build and actual compiled-route/module composition.
+- [x] Full relevant Playwright E2E with isolated new temporary fixture and zero skipped/flaky/failed tests.
+- [x] Automated accessibility/keyboard/reflow checks; clearly separate unrun manual screen-reader/physical checks.
+- [x] Fresh build-bound production HTTP payloads, five cold contexts/profile, complete raw60s frame pacing and cleanup cycles.
+- [x] Measured canonical payload/asset/geometry/GPU estimate/performance budget receipt; no old timings/fallback PASS values.
+- [x] Generate deterministic RC3 app archive; record exact file count, archive bytes, per-file/archive hashes, inclusion/exclusion policy.
+- [x] Detached RC3 manifest binds source, asset/publication/schema/contact identities, composition and all13 required check hashes.
+- [x] Automated final manifest/archive validation receipt binds the final manifest without a circular receipt hash.
+- [ ] Push the source-bound candidate bundle/manifest/local proof; observe **Repository integrity SUCCESS** and **CI / Release Quality Gate SUCCESS** on that exact pushed candidate, with no required skipped step.
+- [ ] Commit `ci-results.json` with the observed candidate SHA/run/job IDs, conclusions and required-step execution; update report/dossier from definitive local and observed CI records.
+- [ ] Push the evidence-only commit containing that record; observe both workflows green on its exact final HEAD. Report the final SHA/run IDs in the handoff and retain provider artifacts/validation `verifiedHead`; do not rewrite the committed record to claim its own future CI result.
 
----
+Authoritative records live in `deliveries/G6/full-stack-integration/`: `release-manifest.json`, `release-composition.json`, `bundle-receipt.json`, `commands-and-exit-codes.md`, `evidence/execution.jsonl`, `release-manifest-validation.receipt.json`, `ci-results.json`, `SHA256SUMS.txt`. These are final only when actually created and verified by the parent. Interim maps and historical logs are not substitutes.
 
-## 3. Platform, Auth & Operations Baseline (Track A / Gemini #1)
-- [x] **Database Schema Migration:** `supabase/migrations/` schema baseline frozen at `20261002000000_schema_v1`.
-- [x] **Row-Level Security (RLS):** 15 protected tables verified; zero public bypasses; authenticated owner access strictly governed by AAL2 TOTP.
-- [x] **Contact Pipeline Invariants:**
-  - Honest receipts: HTTP 503 on database failure, never false "received".
-  - 24-hour idempotency deduplication with HTTP 409 on conflicting payloads.
-  - Rate limits enforced: 3 per 10m (IP), 10 per 24h (email), 100 per 1h (global).
-  - Transactional outbox worker retry schedule: 1m, 5m, 30m, 120m with dead-letter triage.
-  - Zero raw PII in server telemetry or application logs.
-- [x] **Operations & Restore Rehearsal:** Atomic transactional backup restore verified using PGlite; rollback upon error proven (`docs/operations/restore-record.md`).
+Review and release boundary:
 
----
+- [ ] Gemini #1 backend/platform verification.
+- [ ] GPT Plus #2 independent RC3 full-stack audit, followed by assigned-maker correction/delta audit if needed.
+- [ ] GPT Plus #1 final G6 adjudication; maker cannot self-accept.
+- [ ] Separate explicit owner authorization before any G7 deployment/live work.
+- [ ] All ten [G7 requirements](../planning/releases/2026-10-02-g7-production-release-protocol.md) freshly verified on production, including real services, physical/manual limits, actual monitoring and rehearsed rollback RTO<=5m/RPO=0.
 
-## 4. Runtime, Accessibility & Adaptive Quality (Track C / Gemini #3)
-- [x] **Adaptive Quality Policy:**
-  - Automated tier selection: `chooseInitialTier(capabilities)` honors device memory, CPU concurrency, GPU limits, and saveData.
-  - Strict non-negotiable static fallback when WebGL is unavailable.
-  - Downgrades require 3 consecutive slow windows (>25ms / >33.3ms).
-  - Upgrades require 20 seconds of stable headroom (<14ms) strictly at safe HOME state.
-  - Explicit user preference is never overridden by automated scaling.
-- [x] **Accessibility (WCAG 2.2 AA):**
-  - Automated axe-core audit: 0 critical and 0 serious violations across all 8 public routes (`/`, `/about`, `/resume`, `/contact`, `/projects`, `/projects/*`).
-  - Semantic headings (logical H1/H2 hierarchy) and landmark regions (`main`, `nav`).
-  - Direct skip-to-content bypass link verified for keyboard users.
-  - Interactive touch targets satisfy minimum 44×44 CSS px sizing.
-  - Responsive reflow at 320 CSS px viewport width without horizontal scrolling.
-  - Assistive technology disclosure: Every published project and contact destination accessible with zero WebGL/canvas dependencies.
-- [x] **Audio Policy:**
-  - Audio remains OFF by default.
-  - `AudioController.setEnabled(true)` captures browser autoplay rejection and reports actual state (`false`).
-  - Idempotent resource disposal via `AudioController.dispose()`.
-- [x] **Reduced Motion Runtime:**
-  - Removes camera travel duration (0ms) rather than merely slowing down.
-  - Eliminates pointer parallax completely (0.0 factor).
-  - Decorative animation pause toggle verified.
-- [x] **Renderer Failure Recovery:**
-  - WebGL context loss triggers accessible `WorldFallback` banner without trapping user.
-  - Asset failure provides Retry and Continue with Portfolio actions.
-  - Dialog interactivity preserved during renderer crash.
+Before authorized hosted setup: apply the exact A3/A4 migrations in order, then `app/supabase/operations/harden-publication-grants.sql`; configure production secrets/auth/TOTP/private bucket/mail/jobs; prohibit `YOR_E2E_FIXTURE`/`YOR_TEST_DATABASE_PATH` on hosts. Current four baseline response headers do not claim a complete production CSP/HSTS policy. `/api/health`, live monitoring, external service behavior and zero-downtime rollback are G7 prerequisites, not inferred from a deployment command or partial HTTP probe.
 
----
-
-## 5. Release Candidate Validation & Packaging
-- [x] **CI Configuration:** `.github/workflows/ci.yml` incorporates frozen install, lint, typecheck, unit, asset validation, build, e2e, a11y, and budget checks.
-- [x] **Release Manifest Validator:** `scripts/release/validate-release.mjs` enforces commit, asset, publication, and schema bindings.
-- [x] **Immutable Dossier:** `docs/releases/v1.0.0-rc1.md` created with complete P01–P14 requirement traceability.
-
----
-
-## 6. Audit & Acceptance Handoff
-- [x] **Candidate Dossier Assembled:** Both maker roots (`deliveries/C3/`, `deliveries/C4/`) packaged with cryptographic SHA-256 hashes.
-- [x] **Maker Self-Approval Invariant:** Candidate marked `candidate` / `pending_audit`. Zero self-approval by Gemini #3.
-- [ ] **Independent Audit:** Awaiting GPT Plus #2 verification.
-- [ ] **Acceptance Ruling:** Awaiting Parent Codex (GPT Plus #1) Gate G6 sign-off.
-- [ ] **Gate G7 Production Deployment:** GATED / LOCKED until formal owner authorization.
+Physical devices, real screen readers, sustained mobile thermal testing, hosted independent PostgreSQL sessions, Supabase services/Storage/Resend, managed DB/blob restore, CDN cache/compression and live rollback are **NOT RUN / G7 REQUIRED**. Local SQL/browser success remains explicitly local. Stop at G6 handoff; do not deploy or unlock G7.

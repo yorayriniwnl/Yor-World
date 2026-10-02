@@ -35,7 +35,9 @@ Never run all five accounts on the same problem:
 **Model Policy:** Use **GPT-6.1 Sol** for ordinary coordination/auditing; use **Astra** only for dangerous cross-lane decisions and major gates.  
 **Invariants:** Auditor does not become fixer; maker does not approve itself; later work cannot silently alter an accepted revision.
 
-Historic proof output roots W1/W2/W3 are accepted under **PARENT-RECON-02**; **G1 ACCEPTED (`G1-R1`)** under **PARENT-RECON-03**. Gates **G1-G5 ACCEPTED**. Gate **G6 ACTIVE / REWORK** (with RC1 superseded by RC2 candidate). Gate **G7 LOCKED** pending owner authorization. Production now proceeds under this operating pipeline.
+Historic proof output roots W1/W2/W3 are accepted under **PARENT-RECON-02**; **G1 ACCEPTED (`G1-R1`)** under **PARENT-RECON-03**. Gates **G1-G5 ACCEPTED**. Gate **G6 ACTIVE / REWORK** (with RC3 candidate; RC1/RC2 preserved as history). Gate **G7 LOCKED** pending owner authorization. Production now proceeds under this operating pipeline.
+
+**CANONICAL APPLICATION ROOT: `app/`.** Future CI and authorized G7 deployment use this root exclusively. `deliveries/A6/source/` and `deliveries/C3/source/` remain historical proof inputs. Current packet: [RC3 full-stack integration](deliveries/G6/full-stack-integration/report.md), candidate only; see [environment contract](deliveries/G6/full-stack-integration/environment-contract.md).
 
 Local access must be real: a GPT/Gemini worker that can open this folder can reuse its files without repeated attachments; if it cannot, it reports **NO FILE ACCESS**. Claude browser reviewers instead read supplied project knowledge and review packets, flag absent items as **MISSING INPUT**, and review available material. No external account connection or automatic local-file synchronization has been configured.
 

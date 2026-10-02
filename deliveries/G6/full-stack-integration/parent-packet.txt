@@ -1,0 +1,859 @@
+MODEL:
+Gemini Pro
+
+THINKING:
+Extended Thinking / highest available
+
+Repository:
+https://github.com/yorayriniwnl/Yor-World
+
+ROLE:
+Final Full-Stack Integration Maker
+
+CURRENT VERIFIED PROBLEM:
+
+The repository currently contains two individually strong but separate application implementations:
+
+1. Platform/backend application:
+   deliveries/A6/source/
+
+This contains the accepted Track A implementation including:
+- owner authentication
+- MFA/AAL2
+- Supabase integration
+- RLS-facing server logic
+- admin
+- publishing
+- rollback
+- contact persistence
+- outbox
+- telemetry
+- GitHub metadata
+- internal jobs
+- operations
+
+It also contains the active amendment:
+
+A5/A6-CONTACT-IDEMPOTENCY-R2
+
+2. Runtime/world application:
+   deliveries/C3/source/
+
+This contains the accepted Track C experience including:
+- production public portfolio
+- world/runtime integration
+- C1 interaction system
+- C2 navigation
+- C3 adaptive quality
+- WebGL recovery
+- static fallback
+- accessibility
+- reduced motion
+- audio policy
+- mobile behavior
+- project routes
+
+CURRENT RELEASE DEFECT:
+
+The current RC2 bundle is generated from:
+
+deliveries/C3/source/
+
+That application does NOT contain the full Track A backend.
+
+Its production build currently has only public/static routes and does not include the accepted:
+
+/admin/*
+/api/admin/*
+/api/contact
+/api/events
+/api/github
+/api/internal/jobs/*
+
+The current /contact page even states messaging is unavailable.
+
+Therefore RC2 is NOT the complete full-stack product.
+
+============================================================
+ABSOLUTE OBJECTIVE
+============================================================
+
+Create ONE canonical deployable YOR WORLD application containing the accepted:
+
+Track A platform/backend
++
+Track B world/assets
++
+Track C runtime/integration
+
+without corrupting historical delivery evidence.
+
+Then create:
+
+v1.0.0-rc3
+
+as the first genuinely integrated full-stack release candidate.
+
+============================================================
+HISTORICAL IMMUTABILITY
+============================================================
+
+DO NOT mutate historical accepted source roots merely to make integration convenient.
+
+Treat as immutable inputs:
+
+deliveries/A6/source/
+deliveries/C3/source/
+deliveries/C2/
+deliveries/C1/
+accepted Track B assets
+existing acceptance reports
+
+The active contact amendment under:
+
+deliveries/G6/corrections/contact-idempotency/
+
+is an accepted candidate input that supersedes the corresponding old contact concurrency implementation for RC3.
+
+Create a NEW canonical production root.
+
+Preferred root:
+
+app/
+
+If `app/` conflicts with repository architecture or tooling, choose:
+
+production/yor-world/
+
+and document why.
+
+Do not create another delivery-proof application and call it production.
+
+There must be exactly one clearly identified canonical deployable app after this packet.
+
+============================================================
+INTEGRATION STRATEGY
+============================================================
+
+Use:
+
+deliveries/C3/source/
+
+as the baseline for:
+
+public UI
+world/runtime
+C1/C2/C3 behavior
+responsive behavior
+accessibility
+reduced motion
+quality policy
+audio
+3D recovery
+project navigation
+
+Integrate from:
+
+deliveries/A6/source/
+
+the accepted platform/backend capabilities.
+
+Do NOT simply copy directories wholesale.
+
+Perform a file-by-file semantic merge.
+
+Where both A6 and C3 contain a file:
+
+compare purpose and behavior
+preserve the more advanced accepted implementation
+merge required capabilities
+add regression tests
+record the decision
+
+============================================================
+REQUIRED FINAL ROUTES
+============================================================
+
+The integrated production build must include at minimum the accepted public routes:
+
+/
+/about
+/resume
+/contact
+/projects
+/projects/[slug]
+
+and accepted admin/platform routes such as:
+
+/admin
+/admin/login
+/admin/editor
+/admin/publish
+
+and accepted server endpoints such as:
+
+/api/contact
+
+/api/admin/audit
+/api/admin/media
+/api/admin/media/[id]
+/api/admin/media/[id]/approve
+/api/admin/projects
+/api/admin/publish
+/api/admin/rollback
+/api/admin/verify
+
+/api/events
+/api/github
+/api/internal/jobs/[job]
+
+Use the actual accepted route inventory from A6 as authority.
+
+Do not invent routes.
+
+============================================================
+CONTACT PAGE
+============================================================
+
+The current C3 contact page saying:
+
+"Messaging is not available yet"
+
+must NOT survive in the full-stack candidate.
+
+Integrate the accepted working contact experience.
+
+The user-facing contact path must consume the actual accepted contact API.
+
+It must preserve:
+
+validation
+honeypot
+honest receipt semantics
+idempotency
+409 conflict semantics
+quota handling
+503 behavior
+accessible errors
+keyboard usability
+no raw PII logging
+
+The backend must include:
+
+A5-R1
++
+A5/A6-CONTACT-IDEMPOTENCY-R2
+
+Do not regress to the process-local-mutex-only implementation.
+
+============================================================
+CONTACT R2 CORRECTNESS
+============================================================
+
+Confirm RC3 actually executes the R2 implementation containing:
+
+database-owned atomic idempotency claim
+
+claim before contact_messages insert
+
+claim before email_outbox insert
+
+quota inside the winning transaction
+
+same payload replay → same receipt
+
+different payload → 409
+
+transaction rollback → no orphan rows
+
+optional in-process mutex not required for correctness
+
+The final application's actual imports must resolve to the R2 code.
+
+Do not merely cite R2 in a manifest while shipping different source.
+
+============================================================
+AUTH / ADMIN
+============================================================
+
+Integrate the accepted A3/A4/A6 security architecture.
+
+Preserve:
+
+server-side authorization
+owner identity
+AAL2/MFA enforcement
+revoked-owner denial
+RLS assumptions
+admin route protection
+private draft content
+private media
+publication revision checks
+rollback
+audit behavior
+
+Ensure no service-role or other privileged secret is bundled into browser code.
+
+============================================================
+SUPABASE / SERVER DEPENDENCIES
+============================================================
+
+Merge dependency requirements.
+
+The canonical final package should include all actually required dependencies from both accepted implementations.
+
+Expected examples include:
+
+Next
+React
+Three
+Zod
+@supabase/ssr
+@supabase/supabase-js
+
+and appropriate test tooling.
+
+Use exact compatible pinned versions from accepted sources unless a demonstrated conflict requires change.
+
+Do not casually upgrade dependencies during integration.
+
+Use:
+
+Node >=24.19 <25
+pnpm 9.15.9
+
+unless current accepted contracts explicitly differ.
+
+============================================================
+PUBLIC PORTFOLIO / WORLD
+============================================================
+
+Do not regress C3.
+
+Preserve:
+
+semantic HTML before world entry
+world optionality
+static fallback
+direct route access
+Back/Forward behavior
+project URLs
+C1 interaction arbitration
+C2 monitor/project navigation
+C3 adaptive quality
+reduced motion
+audio OFF by default
+renderer failure recovery
+context loss handling
+accessible DOM equivalents
+mobile framing
+quality tiers
+
+Track A integration must not make public portfolio rendering depend on a healthy backend.
+
+If backend is unavailable:
+
+public portfolio should still degrade honestly using accepted cached/static content where specified.
+
+============================================================
+PROJECT CONTENT
+============================================================
+
+Preserve accepted public project truth:
+
+helios
+zenith
+ai-vs-real
+talks
+
+CandidateX remains unavailable unless a later accepted content decision explicitly changes it.
+
+Do not invent project claims.
+
+============================================================
+WORLD / ASSETS
+============================================================
+
+Use the accepted G6 world freeze and current asset manifest.
+
+Do not regenerate art unnecessarily.
+
+Do not fork new asset IDs.
+
+Do not alter frozen geometry merely to simplify integration.
+
+Verify actual production imports resolve correctly from the canonical application root.
+
+============================================================
+MIGRATIONS
+============================================================
+
+Ensure the canonical application has access to the accepted Supabase migrations/schema.
+
+Do not silently duplicate or renumber historical migrations.
+
+Record exact schema revision:
+
+20261002000000_schema_v1
+
+plus any explicitly accepted later migration if one truly exists.
+
+If no new schema is needed for integration, create none.
+
+============================================================
+ENVIRONMENT CONTRACT
+============================================================
+
+Create/update:
+
+.env.example
+
+containing NAMES ONLY / safe dummy descriptions.
+
+Document required production variables for:
+
+Supabase public URL
+Supabase anon/public key where appropriate
+server-only privileged credentials where required
+mail provider
+GitHub metadata integration
+internal job authentication
+public base URL
+
+Never commit real secrets.
+
+Classify each variable:
+
+client-safe
+server-only
+G7-required
+optional
+
+============================================================
+CANONICAL APP OWNERSHIP
+============================================================
+
+After integration, document clearly:
+
+CANONICAL APPLICATION ROOT:
+<path>
+
+Historical proof roots remain:
+
+deliveries/A6/source
+deliveries/C3/source
+
+but they are NOT deployment roots.
+
+Future CI and G7 deployment must use only the canonical application root.
+
+============================================================
+TEST MERGE
+============================================================
+
+Do not throw away either lane's tests.
+
+Create/merge a unified suite covering:
+
+PUBLIC:
+homepage
+projects
+direct project route
+refresh
+Back
+Forward
+404
+CandidateX unavailable
+JS/world fallback
+
+WORLD:
+entry
+interaction controller
+project transitions
+renderer failure
+reduced motion
+quality tiers
+audio
+mobile
+cleanup
+
+CONTACT:
+valid submission
+same idempotency key same payload
+conflicting payload
+parallel duplicate
+quota
+DB outage
+outbox
+R2 transaction behavior
+
+AUTH:
+anonymous denial
+non-owner denial
+owner AAL1 denial
+owner AAL2 success
+revoked owner denial
+
+CMS:
+draft
+publish
+409 stale revision
+422 invalid content
+rollback
+private media
+
+OPS:
+GitHub metadata fallback
+telemetry restrictions
+job auth
+restore compatibility where testable
+
+============================================================
+CRITICAL CROSS-LANE TESTS
+============================================================
+
+Add tests specifically proving integration rather than isolated subsystem behavior.
+
+Required examples:
+
+1.
+Open world → navigate to /contact → submit real contact form
+
+2.
+Renderer fails → contact form remains functional
+
+3.
+Direct /contact load without world → submission works
+
+4.
+Public project route works while backend is unavailable
+
+5.
+Admin route remains protected while public world remains available
+
+6.
+Publishing update changes approved public snapshot without breaking world navigation
+
+7.
+Contact API uses R2 idempotency implementation from canonical app
+
+8.
+Reduced motion + contact/admin DOM flows remain usable
+
+9.
+World navigation cannot bypass auth/admin boundaries
+
+10.
+Static fallback does not expose draft/private data
+
+============================================================
+PRODUCTION BUILD REQUIREMENT
+============================================================
+
+The final Next.js build route table must prove BOTH sides are present.
+
+The build output must show:
+
+public portfolio routes
++
+admin routes
++
+dynamic API routes
+
+If the build resembles the current C3-only static route table, FAIL the packet.
+
+============================================================
+CI REBASE
+============================================================
+
+Update:
+
+.github/workflows/ci.yml
+
+to test the NEW canonical application root.
+
+No longer treat:
+
+deliveries/C3/source
+
+as the deployable candidate root.
+
+CI must run against canonical app:
+
+frozen install
+lint
+typecheck
+unit
+integration
+Khronos asset validation
+production build
+E2E
+accessibility
+performance budgets
+release-manifest validation
+
+Add a deterministic release-composition check.
+
+The check MUST fail if required production routes/modules disappear.
+
+At minimum assert presence of:
+
+/api/contact
+/admin/login
+/api/admin/publish
+/api/internal/jobs/[job]
+
+plus core public routes.
+
+============================================================
+RC3
+============================================================
+
+Do NOT keep mutating RC2.
+
+Create:
+
+v1.0.0-rc3
+
+RC2 remains historical evidence of the pre-integration candidate.
+
+RC3 must bind:
+
+releaseId
+sourceCommit
+assetRevision
+publicationRevision
+schemaRevision
+contactAmendment
+releaseBundleSha256
+required evidence hashes
+
+The RC3 bundle must be generated from the NEW canonical integrated app.
+
+Not from A6 alone.
+Not from C3 alone.
+
+============================================================
+RELEASE BUNDLE
+============================================================
+
+Generate a fresh deterministic RC3 archive.
+
+Exclude:
+
+node_modules
+.next
+.vercel
+.env
+.env.local
+secrets
+caches
+Playwright scratch
+temporary build artifacts
+
+Include exactly what is required to reproduce/deploy the canonical application according to project release policy.
+
+Record:
+
+source root
+file count
+archive bytes
+SHA-256
+inclusion policy
+exclusion policy
+
+============================================================
+RELEASE DOCUMENTATION
+============================================================
+
+Update living release documents for RC3.
+
+Do not rewrite historical RC1/RC2 evidence.
+
+Update current:
+
+README
+START_HERE
+delegation/status board
+release checklist
+restore record where candidate labeling is current/live rather than historical
+current release dossier
+ReleaseManifest
+
+Correct stale RC1 operational labels where those files represent current release operations rather than preserved RC1 history.
+
+Current truth during maker handoff:
+
+G1-G5 ACCEPTED
+
+RC3 = candidate
+
+G6 = ACTIVE / REWORK pending independent audit
+
+G7 = LOCKED
+
+Do NOT mark G6 accepted.
+
+============================================================
+FRESH EXECUTION
+============================================================
+
+From a clean environment execute:
+
+pnpm install --frozen-lockfile
+
+pnpm lint
+
+pnpm typecheck
+
+pnpm test:unit
+
+pnpm test:integration
+
+pnpm build
+
+full relevant Playwright E2E
+
+automated accessibility
+
+asset validation
+
+performance budget checks
+
+release composition check
+
+release manifest validation
+
+Capture exact:
+
+versions
+commands
+exit codes
+test counts
+route table
+hashes
+
+============================================================
+GITHUB ACTIONS
+============================================================
+
+Push the bounded integration.
+
+Observe workflows on the exact pushed HEAD.
+
+Require:
+
+Repository Integrity = SUCCESS
+
+CI / Release Quality Gate = SUCCESS
+
+No required skipped step.
+
+Record:
+
+run IDs
+job IDs
+candidate SHA
+
+============================================================
+DELIVERY ROOT
+============================================================
+
+Create:
+
+deliveries/G6/full-stack-integration/
+
+Return at minimum:
+
+report.md
+integration-map.md
+conflict-resolution.md
+route-inventory.md
+dependency-merge.md
+environment-contract.md
+test-matrix.md
+release-composition.json
+commands-and-exit-codes.md
+SHA256SUMS.txt
+
+The report must identify:
+
+A6 files/capabilities integrated
+C3 files/capabilities preserved
+contact R2 binding
+conflicts encountered
+resolution for each conflict
+canonical application root
+RC3 identity
+bundle hash
+CI results
+known limitations
+G7-only requirements
+
+============================================================
+HARD FAIL CONDITIONS
+============================================================
+
+FAIL this packet if:
+
+canonical app lacks /api/contact
+
+canonical app lacks admin/auth routes
+
+contact page still says messaging unavailable
+
+contact API does not use R2 implementation
+
+world/runtime is lost
+
+static portfolio fallback is lost
+
+private/admin content becomes public
+
+CI only tests one old delivery root
+
+release bundle is created from only A6 or only C3
+
+RC3 manifest claims components not present in the archive
+
+required routes disappear from build output
+
+secrets are committed
+
+maker marks G6 accepted
+
+============================================================
+STOP CONDITION
+============================================================
+
+When:
+
+canonical full-stack app exists
+
+RC3 is assembled
+
+fresh local checks pass
+
+GitHub workflows are green
+
+and evidence is committed,
+
+STOP.
+
+Return the handoff for:
+
+Gemini #1 backend/platform verification
+
+then:
+
+GPT Plus #2 independent RC3 full-stack audit
+
+then:
+
+GPT Plus #1 final G6 adjudication.
+
+DO NOT DEPLOY.
+
+DO NOT START G7.
+
+DO NOT SELF-APPROVE G6.

@@ -1,0 +1,34 @@
+COMMAND: pnpm.cmd exec playwright test --config playwright.performance.config.ts --grep 60-second
+CWD: app
+STARTED: 2026-10-02T21:20:53.504516+00:00
+[WebServer] (node:26252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:27172) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\performance\world.spec.ts:76:3 › C3 Performance Benchmarks & Budget Verification › 60-second active interaction route and frame pacing (27.3s)
+
+
+  1) [chromium] › tests\performance\world.spec.ts:76:3 › C3 Performance Benchmarks & Budget Verification › 60-second active interaction route and frame pacing 
+
+    Error: expect(received).toBeNull()
+
+    Received: "World canvas detached, hidden, or renderer stopped for more than one second."
+
+      170 |     });
+      171 |
+    > 172 |     expect(framePacingData.failureReason).toBeNull();
+          |                                           ^
+      173 |     expect(framePacingData.worldContinuouslyActive).toBe(true);
+      174 |     expect(framePacingData.routeDurationMs).toBeGreaterThanOrEqual(60_000);
+      175 |     expect(framePacingData.interactionsCompleted).toBe(60);
+        at C:\Users\yoray\Projects\Yor World\app\tests\performance\world.spec.ts:172:43
+
+    Error Context: test-results\world-C3-Performance-Bench-abb8e-tion-route-and-frame-pacing-chromium\error-context.md
+
+  1 failed
+    [chromium] › tests\performance\world.spec.ts:76:3 › C3 Performance Benchmarks & Budget Verification › 60-second active interaction route and frame pacing 
+
+EXIT CODE: 1

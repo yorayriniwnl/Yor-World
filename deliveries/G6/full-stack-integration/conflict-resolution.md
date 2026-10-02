@@ -1,0 +1,42 @@
+# RC3 file-by-file conflict resolutions
+
+The base is `2afd129c37cba567ce765eefa069a5ae86ce5773`, specification revision 2. [input-file-comparison.json](input-file-comparison.json) records actual input hashes for 166 distinct paths: 28 overlapping differences, 31 identical overlaps, 49 C3-only files and 58 A6-only files. Historical inputs were not edited. The table covers every one of the 28 overlapping differences; candidate integration deltas are separately named below and require independent review.
+
+| Overlapping path | Semantic resolution and reason |
+| --- | --- |
+| `.gitignore` | Canonical exclusions cover build/dependency/secret/browser scratch; preserve deployable source and exact lockfile. Neither lane's proof-output list defines production ownership. |
+| `next-env.d.ts` | Preserve C3/Next generated type declarations; build-generated route types belong to canonical app, not A6 proof paths. |
+| `package.json` | Keep shared exact C3/A6 pins, C3 performance/world tooling and A6 Supabase/PGlite tests. Add explicit durable `pg`, its types and server-only boundary; version/name identify the single RC3 app. |
+| `playwright.config.ts` | Use C3 world/public browser baseline and unified tests; retain single Chromium CI and local browser projects. Isolate report locations; traces/videos off for routine final runs. Fixture credentials are supplied only by explicit test execution. |
+| `pnpm-lock.yaml` | Generate one real canonical lock from the exact merged dependency requirements, rather than select an incompatible lane lock. Frozen install remains required. |
+| `src/app/(public)/about/page.tsx` | Carry accepted rich A6 identity/education/background content; C3 contained a pre-verification placeholder. Shared C3 public layout/style/navigation remain. No new biography claims. |
+| `src/app/(public)/contact/page.tsx` | Merge A6 working form/API experience into C3 public shell, replacing unavailable-messaging copy. Preserve direct email, honest receipt semantics, keyboard/errors and no-JS explanation. |
+| `src/app/(public)/page.tsx` | Keep advanced C3 composition, poster, world entry and semantic project directory. Read approved publication server-side per request and pass only approved projects/revision into world. |
+| `src/app/(public)/resume/page.tsx` | Carry accepted readable A6 résumé details, replacing C3 placeholder; keep shared C3 styling and accessible public navigation. No invented download file. |
+| `src/app/layout.tsx` | Keep C3 semantic public shell, skip link, navigation, footer and tokens. Canonical public base URL supplies metadata; protected admin pages still authorize on the server. |
+| `src/app/not-found.tsx` | Preserve C3 accessible public 404 presentation and portfolio path; private/unpublished content remains unavailable. |
+| `src/contracts/experience.ts` | Keep advanced C3 discriminated intent/preference/quality/camera/character contracts; do not replace them with A6's earlier subset. Frozen catalog/IDs remain. |
+| `src/features/portfolio/case-study.tsx` | Keep C3 structure, verified claims, direct/return links and safe missing-figure fallback. Canonical approved media URLs now come only from current public snapshot references and HTTPS signing; no hardcoded fictitious asset paths. |
+| `src/features/portfolio/navigation.tsx` | Retain C3 semantic responsive public navigation and no-prefetch world boundary. A6 admin routes do not become public world commands. |
+| `src/features/world/CameraDirector.ts` | Retain advanced C3 camera arbitration, mobile composition, project transitions and reduced-motion behavior. |
+| `src/features/world/CharacterDirector.ts` | Retain C3 interruption-safe paired director; production resident/chair clips are consumed through existing actions. |
+| `src/features/world/SceneIntegrator.ts` | Retain C3 implementation: actual frozen GLB parsing confirms it removes static resident/chair duplicates and fixture-static furniture before identity mounting. No art regeneration. |
+| `src/features/world/StudioLauncher.tsx` | Retain C3 lazy world load, disclosure, enter/return and failure behavior. Pass approved projects/revision from current server snapshot. |
+| `src/features/world/WorldFallback.tsx` | Retain C3 accessible renderer/asset error presentation with Retry/Continue and complete public DOM access. |
+| `src/features/world/WorldRoot.tsx` | Retain C3 experience controller, DOM equivalents, history navigation, quality, audio, reduced motion and recovery. Wire approved publication props and real production-mesh interactions through the existing controller. |
+| `src/features/world/WorldRuntime.ts` | Retain advanced C3 lifecycle/renderer/adaptive quality/disposal. Add production mesh pointer binding and frozen IA proxy metadata ownership, with teardown through the same runtime. |
+| `src/features/world/types.ts` | Preserve C3 richer lifecycle/loading/camera/diagnostic types; extend diagnostics for canonical physical interaction binding. |
+| `src/features/world/world.module.css` | Preserve advanced C3 canvas, loading/error/control responsive styling. |
+| `src/styles/tokens.css` | Preserve C3 shared visual tokens and typography; accepted A6 public content uses this same canonical style system. |
+| `tests/e2e/public-shell.spec.ts` | Preserve C3 direct routes/keyboard/no-JS/world-blocking/a11y scenarios; update obsolete placeholder assertions only for integrated verified content, readable résumé and working contact. |
+| `tests/unit/boundaries.test.ts` | Preserve C3 AST contract/world-loading guards and extend canonical private module/browser credential boundary checks; do not drop A6 security coverage. |
+| `vitest.config.ts` | Unified unit glob includes C3 and accepted A6 content tests; canonical `@` and test-only server-only aliases keep production imports intact. |
+| `vitest.integration.config.ts` | Unified integration glob includes rebased A6 platform, R2 and C3/canonical runtime suites. Require real discovered tests; extend SQL setup timeouts without skipping suites. |
+
+Identical overlaps were reused unless the canonical integration required a named delta: shared approved publication keeps verified claims; pure publication validation now explicitly withholds CandidateX even from structurally plausible backend data; public project routes now read request-time approved snapshots and safe signed-media props. `next.config.ts` externalizes durable/test database packages and adds actual nosniff/frame/referrer/permissions headers. Hosted CSP/HSTS and production service verification remain G7 requirements. Accepted source hashes are retained in provenance, while final canonical hashes bind the candidate manifest/composition/archive.
+
+The 58 A6-only files were integrated individually; their destinations are listed in [integration-map.md](integration-map.md). Inspection also required canonical-only production corrections: durable same-client PostgreSQL transactions; no ephemeral production fallback; verified AAL2/session/active-owner/page authorization; durable revision/publish/rollback/media; configured mail and leased outbox; stable hash-secret separation; durable cache/aggregate telemetry; all-fifteen-table backup/restore. [platform-map.md](platform-map.md) records each source decision and test limitation.
+
+The inherited SECURITY DEFINER publication helper had default PUBLIC execution grants. RC3 adds `supabase/operations/harden-publication-grants.sql` to revoke PUBLIC/anon/authenticated execution and preserve service-role execution after the two unchanged accepted migrations. This is an explicit candidate operational DCL/security delta, not a newly accepted schema or renumbered migration. Actual role-denial tests are in the canonical suite; hosted policy/grant verification remains G7.
+
+Frozen environment and IA coordinates conflict. Production visible nodes take precedence, preserving asset bytes/transforms. Production painting `(2.08,1.75,-0.40)` differs from IA `(-2.07,1.85,0.20)`; monitor and phone also differ. Runtime raycasts the real visible production meshes and uses invisible IA proxies only within a corresponding production object's expanded bounds. This prevents ghost clicks without altering art or IDs. [runtime-map.md](runtime-map.md) records the full coordinate decision and actual GLB tests. The mapping remains a candidate for independent audit.

@@ -1,0 +1,204 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\yoray\\Projects\\Yor World\\app\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "tests/e2e/full-stack-integration.spec.ts",
+      "--grep",
+      "real approved publication|direct contact",
+      "--output",
+      "test-results-correction"
+    ],
+    "configFile": "C:\\Users\\yoray\\Projects\\Yor World\\app\\playwright.config.ts",
+    "rootDir": "C:/Users/yoray/Projects/Yor World/app/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/yoray/Projects/Yor World/app/test-results-correction",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/yoray/Projects/Yor World/app/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\G6\\full-stack-integration\\evidence\\correction-contact-gpu\\browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3134",
+      "url": "http://127.0.0.1:3134",
+      "reuseExistingServer": false,
+      "timeout": 60000,
+      "env": {
+        "NEXT_TELEMETRY_DISABLED": "1"
+      },
+      "stdout": "ignore",
+      "stderr": "pipe"
+    }
+  },
+  "suites": [
+    {
+      "title": "full-stack-integration.spec.ts",
+      "file": "full-stack-integration.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "RC3 cross-lane full stack",
+          "file": "full-stack-integration.spec.ts",
+          "line": 31,
+          "column": 6,
+          "specs": [
+            {
+              "title": "direct contact needs no world and canonical API replays R2 receipts and rejects conflicts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1643,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-02T21:27:47.002Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1c76c374363035215329-0506acd665ba6a1afc9e",
+              "file": "full-stack-integration.spec.ts",
+              "line": 59,
+              "column": 3
+            },
+            {
+              "title": "a real approved publication update reaches project HTML and world navigation across requests",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 30117,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\yoray\\Projects\\Yor World\\app\\tests\\e2e\\full-stack-integration.spec.ts",
+                            "column": 45,
+                            "line": 127
+                          },
+                          "message": "Error: apiRequestContext.post: Target page, context or browser has been closed\n\n  125 |     } finally {\n  126 |       if (savedRevision !== undefined) {\n> 127 |         const restoredDraft = await request.post(\"/api/admin/projects\", {\n      |                                             ^\n  128 |           headers, data: { projectId: \"zenith\", expectedRevision: savedRevision, project: draft.project },\n  129 |         });\n  130 |         expect(restoredDraft.status()).toBe(201);\n    at C:\\Users\\yoray\\Projects\\Yor World\\app\\tests\\e2e\\full-stack-integration.spec.ts:127:45"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-02T21:27:48.931Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\yoray\\Projects\\Yor World\\app\\test-results-correction\\full-stack-integration-RC3-5bdea--navigation-across-requests-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\yoray\\Projects\\Yor World\\app\\test-results-correction\\full-stack-integration-RC3-5bdea--navigation-across-requests-chromium\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "1c76c374363035215329-cd799925e085d59dab2d",
+              "file": "full-stack-integration.spec.ts",
+              "line": 92,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-02T21:27:29.398Z",
+    "duration": 50128.299,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

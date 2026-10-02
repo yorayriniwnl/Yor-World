@@ -1,6 +1,6 @@
 # YOR WORLD — planning package
 
-Prepared 30 September 2026; status reconciled 2 October 2026. GitHub is the authoritative live repository. **W1-F1-r2, W2-F1-r2, and W3-A1-r2 are ACCEPTED; G1 ACCEPTED (`G1-R1`). Gates G1-G5 ACCEPTED. Gate G6 ACTIVE / REWORK (RC1 superseded by RC2 candidate). Gate G7 LOCKED pending owner authorization.** The current authority is [PARENT-RECON-03](docs/planning/reviews/2026-10-01-reconciliation-03.md), following the [accepted W1/W2/W3 ruling](docs/planning/reviews/2026-10-01-reconciliation-02.md). C1-C4 are implemented and assembled in the current RC2 release candidate. Gate G6 is ACTIVE / REWORK pending independent delta audit and Parent decision. Gate G7 remains LOCKED pending owner authorization.
+Prepared 30 September 2026; current integration status 3 October 2026. GitHub is the authoritative live repository. **W1-F1-r2, W2-F1-r2, and W3-A1-r2 are ACCEPTED; G1 ACCEPTED (`G1-R1`). Gates G1-G5 ACCEPTED. Gate G6 ACTIVE / REWORK (RC3 candidate; RC1/RC2 preserved as history). Gate G7 LOCKED pending owner authorization.** The current authority is [PARENT-RECON-03](docs/planning/reviews/2026-10-01-reconciliation-03.md), following the [accepted W1/W2/W3 ruling](docs/planning/reviews/2026-10-01-reconciliation-02.md). C1-C4 are implemented and assembled in the current RC3 full-stack candidate. Gate G6 is ACTIVE / REWORK pending independent delta audit and Parent decision. Gate G7 remains LOCKED pending owner authorization.
 
 YOR WORLD is a personal portfolio experienced as an inhabited developer studio. A visitor can enter through a cinematic doorway, meet the creator, touch objects that respond physically, and explore real work. Projects, résumé, and contact remain directly accessible through ordinary web pages.
 
@@ -9,6 +9,25 @@ This workspace contains the project specification, local reference library, retu
 The work is grouped into three [production prompts](docs/planning/production-prompts/README.md): platform/content (A), world/art (B), and integration/release (C). They follow the existing plans and preserve task-level assignment and review gates.
 
 Start with [START_HERE.md](START_HERE.md). The [account prompt map](docs/planning/account-prompts.md) uses the corrected two-GPT allocation; [local tool access](docs/planning/local-tool-access.md) records startup files, and the [Claude browser workflow](docs/planning/browser-review-workflow.md) defines reusable context and review packets. Workers with verified access to this project folder can read the plans and [local reference library](references/README.md) directly. Saving files here does not connect browser-only AI accounts to the filesystem; no external account connection has been created.
+
+## Canonical application
+
+**CANONICAL APPLICATION ROOT: `app/`.** Run production installation, tests, builds, and future authorized G7 deployment from this root. Historical `deliveries/A6/source/` and `deliveries/C3/source/` are immutable proof inputs, never deployment roots. RC1/RC2 evidence remains historical.
+
+Use Node `>=24.19.0 <25` and pnpm `9.15.9`:
+
+```powershell
+cd app
+pnpm install --frozen-lockfile
+pnpm lint
+pnpm typecheck
+pnpm test:unit
+pnpm test:integration
+pnpm build
+pnpm test:e2e
+```
+
+The [RC3 maker handoff](deliveries/G6/full-stack-integration/report.md) binds the integrated source, production route inventory, frozen assets, contact R2 implementation, release bundle, and fresh verification. The [environment contract](deliveries/G6/full-stack-integration/environment-contract.md) lists safe configuration names. The [current dossier](docs/releases/v1.0.0-rc3.md) is a candidate record; G6 remains ACTIVE / REWORK pending independent audit, and G7 is LOCKED.
 
 ## Confirmed brief
 

@@ -1,0 +1,142 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\yoray\\Projects\\Yor World\\app\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config",
+      "playwright.performance.config.ts",
+      "--grep",
+      "60-second"
+    ],
+    "configFile": "C:\\Users\\yoray\\Projects\\Yor World\\app\\playwright.performance.config.ts",
+    "rootDir": "C:/Users/yoray/Projects/Yor World/app/tests/performance",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/yoray/Projects/Yor World/app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/yoray/Projects/Yor World/app/tests/performance",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\G6\\full-stack-integration\\evidence\\correction-performance-gpu\\performance-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3198",
+      "url": "http://127.0.0.1:3198",
+      "reuseExistingServer": false,
+      "timeout": 60000,
+      "env": {
+        "NEXT_TELEMETRY_DISABLED": "1"
+      },
+      "stdout": "ignore",
+      "stderr": "pipe"
+    }
+  },
+  "suites": [
+    {
+      "title": "world.spec.ts",
+      "file": "world.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "C3 Performance Benchmarks & Budget Verification",
+          "file": "world.spec.ts",
+          "line": 25,
+          "column": 6,
+          "specs": [
+            {
+              "title": "60-second active interaction route and frame pacing",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 70786,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-02T21:25:26.152Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7981c09d23e5ff0a958d-efdc8d13ddd3985109a1",
+              "file": "world.spec.ts",
+              "line": 76,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-02T21:25:23.892Z",
+    "duration": 73978.167,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
