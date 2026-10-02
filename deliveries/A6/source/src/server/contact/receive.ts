@@ -1,13 +1,17 @@
 /**
- * YOR WORLD Milestone A5: Contact Receiver & Idempotency Pipeline
+ * YOR WORLD Milestone A5/A6: Contact Receiver & Idempotency Pipeline
+ * Amendment: A5/A6-CONTACT-IDEMPOTENCY-R2
  *
  * Implements the core business logic for processing incoming contact inquiries:
  * 1. Honeypot check
  * 2. Schema validation
- * 3. 24-hour idempotency lookup & conflict detection
- * 4. Atomic quota enforcement (network, email, global)
- * 5. Atomic transactional persistence (message + outbox + idempotency)
- * 6. Honest receipts: status "received" is returned ONLY after durable persistence.
+ * 3. Fast-path 24-hour idempotency lookup & conflict detection
+ * 4. Database-level transactional claim & persistence (message + outbox + idempotency + quota)
+ * 5. Honest receipts: status "received" is returned ONLY after durable persistence.
+ *
+ * NOTE: Correctness is 100% owned by PostgreSQL transactional semantics and
+ * atomic key claiming in public.contact_idempotency. An in-memory mutex is optional
+ * and NOT required for multi-process, container, or serverless correctness.
  */
 
 import { randomUUID } from "node:crypto";
@@ -20,10 +24,11 @@ import {
   hashIdempotencyKey,
   IDEMPOTENCY_EXPIRY_HOURS,
 } from "./schema";
-import { checkContactQuotas, type QueryableDb, type QuotaConfig } from "./quota";
+import { type QueryableDb, type QuotaConfig } from "./quota";
 import {
   findIdempotencyRecord,
   persistContactTransaction,
+  IdempotencyClaimFailedError,
 } from "./outbox";
 
 export class ContactValidationError extends Error {
@@ -45,6 +50,9 @@ export class IdempotencyConflictError extends Error {
   }
 }
 
+/**
+ * Optional in-process event-loop mutex (optimization only; not required for correctness).
+ */
 class KeyedMutex {
   private locks = new Map<string, Promise<void>>();
 
@@ -70,10 +78,11 @@ export interface ReceiveContactOptions {
   db: QueryableDb;
   now?: Date;
   quotaConfig?: QuotaConfig;
+  useInMemoryMutex?: boolean;
 }
 
 /**
- * Processes incoming contact inquiry with strict guarantees.
+ * Processes incoming contact inquiry with strict database-backed idempotency guarantees.
  */
 export async function receiveContact(
   rawInput: unknown,
@@ -112,15 +121,18 @@ export async function receiveContact(
   const payloadHash = hashPayload(normalized);
   const keyHash = hashIdempotencyKey(input.idempotencyKey);
 
-  const releaseLock = await contactKeyMutex.acquire(keyHash);
+  // Optional in-memory coalescing optimization (disabled by default; database owns correctness)
+  const useMutex = options.useInMemoryMutex ?? false;
+  const releaseLock = useMutex ? await contactKeyMutex.acquire(keyHash) : () => {};
+
   try {
-    // 3. 24-hour Idempotency Check
-    const existingRecord = await findIdempotencyRecord(db, keyHash, now);
-    if (existingRecord) {
-      if (existingRecord.payloadHash === payloadHash) {
+    // 3. Fast-path lookup for committed replays
+    const fastRecord = await findIdempotencyRecord(db, keyHash, now);
+    if (fastRecord) {
+      if (fastRecord.payloadHash === payloadHash) {
         // Replay of identical request: return original receipt with honest status
         return {
-          id: existingRecord.receiptId,
+          id: fastRecord.receiptId,
           status: "received",
         };
       } else {
@@ -131,29 +143,59 @@ export async function receiveContact(
       }
     }
 
-    // 4. Atomic Quota Enforcement
-    await checkContactQuotas(db, networkKey, normalized.email, now, options.quotaConfig);
-
-    // 5. Durable Transactional Persistence (Message + Outbox + Idempotency)
+    // 4. Durable Transactional Persistence (Claim + Quota + Message + Outbox)
     const receiptId = `rcpt_${randomUUID().replace(/-/g, "").slice(0, 16)}`;
     const expiresAt = new Date(now.getTime() + IDEMPOTENCY_EXPIRY_HOURS * 3600 * 1000);
 
-    const persisted = await persistContactTransaction(db, {
-      receiptId,
-      name: normalized.name,
-      email: normalized.email,
-      message: normalized.message,
-      keyHash,
-      payloadHash,
-      expiresAt,
-      receivedAt: now,
-    });
+    try {
+      const persisted = await persistContactTransaction(db, {
+        receiptId,
+        name: normalized.name,
+        email: normalized.email,
+        message: normalized.message,
+        keyHash,
+        payloadHash,
+        expiresAt,
+        receivedAt: now,
+        networkKey,
+        quotaConfig: options.quotaConfig,
+      });
 
-    // 6. Honest Receipt Return
-    return {
-      id: persisted.receiptId,
-      status: "received",
-    };
+      // 5. Honest Receipt Return
+      return {
+        id: persisted.receiptId,
+        status: "received",
+      };
+    } catch (persistErr) {
+      if (persistErr instanceof IdempotencyClaimFailedError) {
+        // Claim lost to concurrent transaction. Read authoritative committed record.
+        let existingRecord = await findIdempotencyRecord(db, keyHash, now);
+        let retries = 0;
+        while (!existingRecord && retries < 25) {
+          await new Promise((resolve) => setTimeout(resolve, 20));
+          existingRecord = await findIdempotencyRecord(db, keyHash, now);
+          retries++;
+        }
+
+        if (existingRecord) {
+          if (existingRecord.payloadHash === payloadHash) {
+            return {
+              id: existingRecord.receiptId,
+              status: "received",
+            };
+          } else {
+            throw new IdempotencyConflictError(
+              "Conflicting idempotency key: a different contact payload was already accepted with this key."
+            );
+          }
+        }
+
+        // If winning transaction aborted/rolled back (leaving no committed row), retry submission
+        return receiveContact(rawInput, networkKey, { ...options, useInMemoryMutex: false });
+      }
+
+      throw persistErr;
+    }
   } finally {
     releaseLock();
   }

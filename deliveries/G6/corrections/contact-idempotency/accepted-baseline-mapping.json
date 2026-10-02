@@ -1,0 +1,47 @@
+{
+  "amendmentId": "A5/A6-CONTACT-IDEMPOTENCY-R2",
+  "title": "Database-Safe Contact Concurrency and Distributed Idempotency Amendment",
+  "historicalAcceptedBaselines": {
+    "A5": {
+      "packet": "A5-R1",
+      "acceptanceScope": "Contact persistence, outbox delivery worker, rate limiting, and sliding window idempotency"
+    },
+    "A6": {
+      "packet": "A6-R1",
+      "acceptanceCommit": "40027c4b12270a2f7902d1d45c58a8a65eb635ef",
+      "acceptanceScope": "Full-stack integration, web form submission, and baseline verification"
+    }
+  },
+  "lastAuditedHead": "17a859c361cf9a1a8908d6e3f761786ff551e65c",
+  "defectDescription": "During G6 platform verification, an in-process KeyedMutex was introduced to solve concurrent replay races. This was insufficient for multi-process Node workers, serverless functions, and containerized clusters where memory is not shared across instances. The database must serve as the authoritative race arbiter.",
+  "governanceResolution": "Bounded amendment A5/A6-CONTACT-IDEMPOTENCY-R2 supersedes the in-process mutex approach, making PostgreSQL transactional semantics and atomic key claiming the authoritative distributed race arbiter.",
+  "modifiedSourceFiles": [
+    "deliveries/A6/source/src/server/contact/db.ts",
+    "deliveries/A6/source/src/server/contact/outbox.ts",
+    "deliveries/A6/source/src/server/contact/quota.ts",
+    "deliveries/A6/source/src/server/contact/receive.ts"
+  ],
+  "amendmentArtifacts": {
+    "report": "deliveries/G6/corrections/contact-idempotency/report.md",
+    "concurrencyDesign": "deliveries/G6/corrections/contact-idempotency/concurrency-design.md",
+    "migrationSchemaNotes": "deliveries/G6/corrections/contact-idempotency/migration-schema-notes.md",
+    "sourceDiff": "deliveries/G6/corrections/contact-idempotency/source-diff.patch",
+    "tests": [
+      "deliveries/G6/corrections/contact-idempotency/tests/contact-idempotency.test.ts",
+      "deliveries/G6/corrections/contact-idempotency/tests/multi-process-runner.cjs",
+      "deliveries/G6/corrections/contact-idempotency/tests/multi-process-worker.cjs"
+    ],
+    "evidence": [
+      "deliveries/G6/corrections/contact-idempotency/evidence/typecheck.log",
+      "deliveries/G6/corrections/contact-idempotency/evidence/vitest-idempotency.log",
+      "deliveries/G6/corrections/contact-idempotency/evidence/vitest-baseline-contact.log",
+      "deliveries/G6/corrections/contact-idempotency/evidence/multi-process-runner.log"
+    ],
+    "checksums": "deliveries/G6/corrections/contact-idempotency/SHA256SUMS.txt"
+  },
+  "governanceGate": {
+    "currentGate": "G6 REWORK",
+    "nextStep": "GPT Plus #2 delta audit (maker cannot self-approve)",
+    "g7Status": "LOCKED"
+  }
+}

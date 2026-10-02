@@ -51,6 +51,8 @@ export class QuotaExceededError extends Error {
 
 export interface QueryableDb {
   query: (sql: string, params?: unknown[]) => Promise<{ rows: Record<string, unknown>[] }>;
+  exec?: (sql: string) => Promise<unknown>;
+  transaction?: <T>(fn: (tx: QueryableDb) => Promise<T>) => Promise<T>;
 }
 
 /**

@@ -58,16 +58,57 @@ interface RequestQuotaRecord {
   expires_at: string;
 }
 
+interface StateSnapshot {
+  messages: Map<string, ContactMessageRecord>;
+  idempotency: Map<string, ContactIdempotencyRecord>;
+  outbox: Map<string, EmailOutboxRecord>;
+  quotas: Map<string, RequestQuotaRecord>;
+}
+
 /**
  * Robust in-memory relational engine for environments without native WASM loader.
  */
-class MemoryContactDb implements QueryableDb {
+export class MemoryContactDb implements QueryableDb {
   public messages = new Map<string, ContactMessageRecord>();
   public idempotency = new Map<string, ContactIdempotencyRecord>();
   public outbox = new Map<string, EmailOutboxRecord>();
   public quotas = new Map<string, RequestQuotaRecord>();
+  private snapshots: StateSnapshot[] = [];
+
+  private createSnapshot(): StateSnapshot {
+    return {
+      messages: new Map(Array.from(this.messages.entries()).map(([k, v]) => [k, { ...v }])),
+      idempotency: new Map(Array.from(this.idempotency.entries()).map(([k, v]) => [k, { ...v }])),
+      outbox: new Map(Array.from(this.outbox.entries()).map(([k, v]) => [k, { ...v }])),
+      quotas: new Map(Array.from(this.quotas.entries()).map(([k, v]) => [k, { ...v }])),
+    };
+  }
+
+  private restoreSnapshot(s: StateSnapshot): void {
+    this.messages = s.messages;
+    this.idempotency = s.idempotency;
+    this.outbox = s.outbox;
+    this.quotas = s.quotas;
+  }
+
+  async transaction<T>(cb: (tx: QueryableDb) => Promise<T>): Promise<T> {
+    if (simulatePersistenceFailure) {
+      throw new Error("Simulated database outage for failure resilience testing");
+    }
+    const snapshot = this.createSnapshot();
+    try {
+      const res = await cb(this);
+      return res;
+    } catch (err) {
+      this.restoreSnapshot(snapshot);
+      throw err;
+    }
+  }
 
   async exec(sql: string): Promise<void> {
+    if (simulatePersistenceFailure) {
+      throw new Error("Simulated database outage for failure resilience testing");
+    }
     if (sql.includes("TRUNCATE")) {
       this.messages.clear();
       this.idempotency.clear();
@@ -84,7 +125,19 @@ class MemoryContactDb implements QueryableDb {
     const trimmed = sql.trim();
 
     // 1. Transaction controls
-    if (trimmed.startsWith("BEGIN") || trimmed.startsWith("COMMIT") || trimmed.startsWith("ROLLBACK")) {
+    if (trimmed.startsWith("BEGIN")) {
+      this.snapshots.push(this.createSnapshot());
+      return { rows: [] };
+    }
+    if (trimmed.startsWith("COMMIT")) {
+      this.snapshots.pop();
+      return { rows: [] };
+    }
+    if (trimmed.startsWith("ROLLBACK")) {
+      const snap = this.snapshots.pop();
+      if (snap) {
+        this.restoreSnapshot(snap);
+      }
       return { rows: [] };
     }
 
@@ -181,12 +234,28 @@ class MemoryContactDb implements QueryableDb {
       return { rows: [{ ...rec }] };
     }
 
-    // 9. Upsert idempotency
+    // 9. Upsert / Claim idempotency
     if (trimmed.includes("INSERT INTO public.contact_idempotency")) {
       const key_hash = String(params[0]);
       const payload_hash = String(params[1]);
       const receipt_id = String(params[2]);
       const expires_at = String(params[3]);
+
+      const existing = this.idempotency.get(key_hash);
+      if (existing) {
+        // Check for WHERE clause (e.g. contact_idempotency.expires_at <= $5)
+        if (trimmed.includes("WHERE") && params.length >= 5) {
+          const nowStr = String(params[4]);
+          const isExpired = new Date(existing.expires_at).getTime() <= new Date(nowStr).getTime();
+          if (!isExpired) {
+            // Claim failed due to existing unexpired key! Return 0 rows.
+            return { rows: [] };
+          }
+        } else if (trimmed.includes("DO NOTHING")) {
+          return { rows: [] };
+        }
+      }
+
       const rec: ContactIdempotencyRecord = {
         key_hash,
         payload_hash,
@@ -194,7 +263,7 @@ class MemoryContactDb implements QueryableDb {
         expires_at,
       };
       this.idempotency.set(key_hash, rec);
-      return { rows: [{ ...rec }] };
+      return { rows: [{ receipt_id: rec.receipt_id }] };
     }
 
     // 10. Claim outbox items with atomic lease
