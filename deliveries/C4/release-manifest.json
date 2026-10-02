@@ -1,0 +1,148 @@
+{
+  "releaseId": "v1.0.0-rc1",
+  "name": "YOR WORLD Gate G6 Staging Release Candidate",
+  "generatedAt": "2026-10-02T13:50:00.000Z",
+  "gitCommit": "dfab25448da5a5d7032dffbf13c49a78545cba52",
+  "assetRevision": "g6-world-art-freeze-20261002",
+  "publicationRevision": "A4-R1-20260928",
+  "schemaRevision": "20261002000000_schema_v1",
+  "environment": "staging",
+  "governance": {
+    "status": "candidate",
+    "targetGate": "Gate G6",
+    "makerLane": "Gemini #3 — Runtime / Integration Maker",
+    "selfApproved": false,
+    "auditLane": "GPT Plus #2 — Independent Auditor",
+    "acceptanceAuthority": "Parent Codex (GPT Plus #1)",
+    "g7Status": "LOCKED"
+  },
+  "requiredChecks": [
+    {
+      "id": "frozen-install",
+      "name": "Frozen Dependency Installation",
+      "status": "pass",
+      "blocking": true,
+      "evidencePath": "deliveries/C3/evidence/11-frozen-install.log",
+      "notes": "pnpm install --frozen-lockfile exited with code 0."
+    },
+    {
+      "id": "lint",
+      "name": "ESLint Code Standards Verification",
+      "status": "pass",
+      "blocking": true,
+      "evidencePath": "deliveries/C3/evidence/04-lint.log",
+      "notes": "ESLint and React 19 rules exited with code 0."
+    },
+    {
+      "id": "typecheck",
+      "name": "TypeScript Strict Typecheck",
+      "status": "pass",
+      "blocking": true,
+      "evidencePath": "deliveries/C3/evidence/07-typecheck.log",
+      "notes": "tsc --noEmit exited with code 0."
+    },
+    {
+      "id": "unit-tests",
+      "name": "Vitest Unit Test Suite",
+      "status": "pass",
+      "blocking": true,
+      "evidencePath": "deliveries/C3/evidence/09-unit-tests.log",
+      "notes": "16 test files, 173 tests passed, exit 0."
+    },
+    {
+      "id": "integration-tests",
+      "name": "Backend & Policy Integration Tests",
+      "status": "pass",
+      "blocking": true,
+      "evidencePath": "deliveries/G6/gemini-1-platform/evidence/05-test-integration.log",
+      "notes": "A3/A4/A5 platform integration suite passed, exit 0."
+    },
+    {
+      "id": "asset-validation",
+      "name": "3D GLTF/GLB Asset Validation",
+      "status": "pass",
+      "blocking": true,
+      "evidencePath": "deliveries/G6/gemini-2-world/fresh-gltf-validation.json",
+      "notes": "Khronos glTF-Validator: 0 errors across all 13 frozen runtime assets."
+    },
+    {
+      "id": "production-build",
+      "name": "Next.js Production Build",
+      "status": "pass",
+      "blocking": true,
+      "evidencePath": "deliveries/C3/evidence/14-build.log",
+      "notes": "Next.js Turbopack build: 13 static pages compiled successfully, exit 0."
+    },
+    {
+      "id": "e2e-tests",
+      "name": "Playwright End-to-End Test Suite",
+      "status": "pass",
+      "blocking": true,
+      "evidencePath": "deliveries/C3/evidence/16-e2e-tests.log",
+      "notes": "50 tests passed across Chromium and Edge, exit 0."
+    },
+    {
+      "id": "accessibility",
+      "name": "WCAG 2.2 AA Automated Accessibility Audit",
+      "status": "pass",
+      "blocking": true,
+      "evidencePath": "deliveries/C3/evidence/chrome/axe-_.json",
+      "notes": "Axe-core audit: 0 critical, 0 serious violations across all 8 routes."
+    },
+    {
+      "id": "budget-regression",
+      "name": "Performance Budget & Frame Pacing Verification",
+      "status": "pass",
+      "blocking": true,
+      "evidencePath": "deliveries/C3/evidence/17-performance-benchmarks.log",
+      "notes": "Cold load median 70ms; 60s active frame time median 6.1ms, p95 6.2ms; exit 0."
+    },
+    {
+      "id": "release-manifest-validation",
+      "name": "Release Candidate Manifest Validation",
+      "status": "pass",
+      "blocking": true,
+      "evidencePath": "deliveries/C4/release-manifest.json",
+      "notes": "Verified by scripts/release/validate-release.mjs."
+    }
+  ],
+  "optionalHardwareChecks": [
+    {
+      "id": "physical-mobile-ios",
+      "name": "Physical iPhone 15 Pro Hardware Test",
+      "status": "unverified",
+      "blocking": false,
+      "notes": "Physical iOS device not attached in CI runner. Emulated 390x844 verified."
+    },
+    {
+      "id": "physical-mobile-android",
+      "name": "Physical Google Pixel 8 Hardware Test",
+      "status": "unverified",
+      "blocking": false,
+      "notes": "Physical Android device not attached in CI runner. Emulated 390x844 verified."
+    },
+    {
+      "id": "physical-screen-reader-nvda",
+      "name": "Physical NVDA Screen Reader Live Session",
+      "status": "unverified",
+      "blocking": false,
+      "notes": "NVDA audio session not automated. Axe automated audit verified."
+    }
+  ],
+  "boundBaselines": {
+    "A1": "A1-R1 (Design tokens & typography baseline)",
+    "A2": "A2-R1 (Verified portfolio case studies & static HTML shell)",
+    "A3": "A3-R1 (Owner authentication, AAL2 TOTP & 15 RLS tables)",
+    "A4": "A4-R1 (Authoritative CMS, draft publishing & rollback)",
+    "A5": "A5-R1 (Durable contact persistence, idempotency & outbox retry)",
+    "A6": "A6-R1 (Operations runbook, telemetry allowlist & disaster recovery)",
+    "TrackB": "W1-F1-r2, W2-F1-r2, B3-P1-R1, B2/B3-P2-R1, B4-R1, B5-R1, IA-R1 (Core 3D Assets)",
+    "C1": "C1-R1 (Interaction arbiter & intent controller)",
+    "C2": "C2-R1 (Studio monitor launcher & project navigation)",
+    "C3": "C3-RC (Mobile resilience, adaptive quality, a11y & failure recovery)",
+    "G4": "G4-R1 (Studio Integration Gate - ACCEPTED)",
+    "G5": "G5-R1 (Managed Content & Operations Gate - ACCEPTED)",
+    "G6": "G6-RC (Staging Release Candidate - PENDING AUDIT)",
+    "G7": "LOCKED (Live production launch)"
+  }
+}

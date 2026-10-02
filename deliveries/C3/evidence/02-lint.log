@@ -1,0 +1,45 @@
+COMMAND: "C:\Program Files\nodejs\node.EXE" C:\Users\yoray\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs lint
+CWD: C:\Users\yoray\AppData\Local\Temp\yor-world-c3-proof-f5zk0hzy\app
+
+> yor-world-g1-proof@0.1.0 lint C:\Users\yoray\AppData\Local\Temp\yor-world-c3-proof-f5zk0hzy\app
+> eslint . --max-warnings=0
+
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-c3-proof-f5zk0hzy\app\src\features\room\quality-policy.ts
+  153:9  warning  'effectiveSlowCount' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-c3-proof-f5zk0hzy\app\src\features\world\WorldRoot.tsx
+   33:8  error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-c3-proof-f5zk0hzy\app\src\features\world\WorldRoot.tsx:33:8
+  31 |   const lifecycleManagerRef = useRef<LifecycleManager | null>(null);
+  32 |   const audioControllerRef = useRef<AudioController | null>(null);
+> 33 |   if (!audioControllerRef.current) {
+     |        ^^^^^^^^^^^^^^^^^^^^^^^^^^ Cannot access ref value during render
+  34 |     audioControllerRef.current = new AudioController();
+  35 |   }
+  36 |   const qualityControllerRef = useRef<AdaptiveQualityController | null>(null);
+
+To initialize a ref only once, check that the ref is null with the pattern `if (ref.current == null) { ref.current = ... }`  react-hooks/refs
+  178:6  warning  React Hook useEffect has a missing dependency: 'qualityPreference'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        react-hooks/exhaustive-deps
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-c3-proof-f5zk0hzy\app\tests\e2e\accessibility.spec.ts
+  1:29  warning  'Page' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-c3-proof-f5zk0hzy\app\tests\e2e\renderer-recovery.spec.ts
+  1:29  warning  'Page' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-c3-proof-f5zk0hzy\app\tests\performance\world.spec.ts
+  1:29  warning  'Page' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\yoray\AppData\Local\Temp\yor-world-c3-proof-f5zk0hzy\app\tests\unit\quality-policy.test.ts
+   7:8   warning  'DeviceCapabilities' is defined but never used  @typescript-eslint/no-unused-vars
+  12:10  warning  'defaultPreferences' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 8 problems (1 error, 7 warnings)
+
+ ELIFECYCLE  Command failed with exit code 1.
+
+EXIT: 1
