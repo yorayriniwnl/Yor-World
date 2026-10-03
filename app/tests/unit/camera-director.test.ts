@@ -15,8 +15,9 @@ describe("CameraDirector - Single Camera Owner and Smooth Transitions", () => {
     expect(diag.preset).toBe("home-desktop");
   });
 
-  it("defines exact specification coordinates for all required presets", () => {
-    expect(CAMERA_PRESETS["home-desktop"].position).toEqual([-2.15, 1.7, 1.55]);
+  it("keeps accepted framing while placing desktop HOME inside the production room", () => {
+    // The frozen production wall spans X=-2.2..-2.1; C3's -2.15 camera was inside it.
+    expect(CAMERA_PRESETS["home-desktop"].position).toEqual([-1.9, 1.7, 1.55]);
     expect(CAMERA_PRESETS["home-desktop"].target).toEqual([0.12, 1.25, -1.15]);
     expect(CAMERA_PRESETS["home-desktop"].fov).toBe(60);
 

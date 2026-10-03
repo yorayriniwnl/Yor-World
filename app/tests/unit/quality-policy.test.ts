@@ -10,6 +10,16 @@ import { ReducedMotionController } from "../../src/features/experience/reduced-m
 import { PreferencesStore } from "../../src/features/experience/preferences-store";
 
 describe("C3 Adaptive Quality Policy & chooseInitialTier", () => {
+  it("starts software rendering conservatively while preserving explicit choices and measured adaptation", () => {
+    expect(chooseInitialTier({ hasWebGL: true, isSoftwareRenderer: true })).toBe("low");
+    expect(chooseInitialTier({ hasWebGL: true, isSoftwareRenderer: true, userPreference: "high" })).toBe("high");
+    const controller = new AdaptiveQualityController({ hasWebGL: true, isSoftwareRenderer: true });
+    for (let window = 0; window < 10; window++) {
+      for (let frame = 0; frame < 120; frame++) controller.recordFrame(10);
+      controller.evaluateWindow();
+    }
+    expect(controller.getTier()).toBe("medium");
+  });
   it("returns 'static' when WebGL is unavailable", () => {
     const tier = chooseInitialTier({ hasWebGL: false });
     expect(tier).toBe("static");

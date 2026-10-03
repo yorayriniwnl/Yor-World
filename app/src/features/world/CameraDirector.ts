@@ -3,7 +3,9 @@ import type { CameraConfig, CameraPreset } from "./types";
 
 export const CAMERA_PRESETS: Record<CameraPreset, CameraConfig> = {
   "home-desktop": {
-    position: [-2.15, 1.7, 1.55],
+    // The frozen production room's left wall occupies x=-2.20..-2.10.
+    // C3's blockout camera at -2.15 was inside that wall.
+    position: [-1.9, 1.7, 1.55],
     target: [0.12, 1.25, -1.15],
     fov: 60,
   },
@@ -23,12 +25,12 @@ export const CAMERA_PRESETS: Record<CameraPreset, CameraConfig> = {
     fov: 56,
   },
   hallway: {
-    position: [-2.15, 1.7, 3.2],
+    position: [-1.2, 1.7, 2.65],
     target: [0.12, 1.25, -1.15],
     fov: 60,
   },
   entry: {
-    position: [-2.15, 1.7, 2.5],
+    position: [-1.2, 1.7, 2.5],
     target: [0.12, 1.25, -1.15],
     fov: 60,
   },

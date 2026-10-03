@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { CameraDirector } from "./CameraDirector";
+import { CameraDirector, CAMERA_PRESETS } from "./CameraDirector";
 import { CharacterDirector } from "./CharacterDirector";
 import type { EntranceDiagnostics } from "./types";
 
@@ -10,6 +10,17 @@ export interface EntranceOptions {
   signal?: AbortSignal | undefined;
   durationSec?: number | undefined;
   onPhaseChange?: ((phase: EntranceDiagnostics["phase"], progress: number) => void) | undefined;
+}
+
+/** Pass through the production doorway before moving toward HOME. */
+export function entrancePositionAt(progress: number, isMobile = false): THREE.Vector3 {
+  const travel = Math.max(0, Math.min(progress, 1));
+  const hallway = new THREE.Vector3(...CAMERA_PRESETS.hallway.position);
+  const doorway = new THREE.Vector3(-1.2, 1.7, 1.5);
+  const home = new THREE.Vector3(...CAMERA_PRESETS[isMobile ? "home-mobile" : "home-desktop"].position);
+  return travel <= 0.65
+    ? hallway.lerp(doorway, travel / 0.65)
+    : doorway.lerp(home, (travel - 0.65) / 0.35);
 }
 
 const safeRaf = (cb: (time: number) => void): number => {
@@ -114,12 +125,11 @@ export class EntranceCoordinator {
       return Promise.resolve();
     }
 
-    // Storyboard coordinates
-    const hallwayPos = new THREE.Vector3(-2.15, 1.70, 3.20);
-    const homeConfig = isMobile
-      ? { pos: new THREE.Vector3(-1.25, 1.48, 1.15), target: new THREE.Vector3(0.16, 1.08, -0.95), fov: 52 }
-      : { pos: new THREE.Vector3(-2.15, 1.70, 1.55), target: new THREE.Vector3(0.12, 1.25, -1.15), fov: 60 };
-    const hallwayTarget = new THREE.Vector3(0.12, 1.25, -1.15);
+    const hallwayConfig = CAMERA_PRESETS.hallway;
+    const hallwayPos = new THREE.Vector3(...hallwayConfig.position);
+    const homeConfig = CAMERA_PRESETS[isMobile ? "home-mobile" : "home-desktop"];
+    const homeTarget = new THREE.Vector3(...homeConfig.target);
+    const hallwayTarget = new THREE.Vector3(...hallwayConfig.target);
 
     // Initial setup at doorway
     this.cameraDirector.setDirect(hallwayPos.toArray() as [number, number, number], hallwayTarget.toArray() as [number, number, number], 60);
@@ -181,8 +191,8 @@ export class EntranceCoordinator {
           ? 2 * progress * progress
           : -1 + (4 - 2 * progress) * progress; // Smooth quadratic ease in-out
 
-        const curPos = new THREE.Vector3().lerpVectors(hallwayPos, homeConfig.pos, ease);
-        const curTarget = new THREE.Vector3().lerpVectors(hallwayTarget, homeConfig.target, ease);
+        const curPos = entrancePositionAt(ease, isMobile);
+        const curTarget = new THREE.Vector3().lerpVectors(hallwayTarget, homeTarget, ease);
         const curFov = 60 + (homeConfig.fov - 60) * ease;
 
         this.cameraDirector.setDirect(

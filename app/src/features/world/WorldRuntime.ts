@@ -14,6 +14,9 @@ import type { PublishedProject } from "../../contracts/content";
 import { publishedProjects } from "../portfolio/public-content";
 import { WorldInteractionBinding } from "./WorldInteractionBinding";
 import { saveReturnSnapshot } from "../experience/return-snapshot";
+import { RuntimeMaterialQuality } from "./RuntimeMaterialQuality";
+import { LowQualityBatch } from "./LowQualityBatch";
+import { isSoftwareRenderer } from "./device-capabilities";
 
 export interface WorldRuntimeOptions {
   onFrameDuration?: ((durationMs: number, timestamp: number) => void) | undefined;
@@ -52,6 +55,8 @@ export class WorldRuntime {
 
   private integratedResult: IntegratedSceneResult | null = null;
   private interactionBinding: WorldInteractionBinding | null = null;
+  private materialQuality: RuntimeMaterialQuality | null = null;
+  private lowQualityBatch: LowQualityBatch | null = null;
   private readonly onFrameDuration: WorldRuntimeOptions["onFrameDuration"];
   private readonly onSamplingPause: WorldRuntimeOptions["onSamplingPause"];
 
@@ -64,6 +69,7 @@ export class WorldRuntime {
   private animationFrameId: number | null = null;
   private lastTime: number = 0;
   private webglRendererName: string = "Unknown";
+  private softwareRenderer = false;
   private sessionToken: number = 0;
   private renderedFrames = 0;
   private lastRenderedAt = 0;
@@ -180,8 +186,6 @@ export class WorldRuntime {
         // Continuous rendering supplies screenshots; preserving every frame adds GPU copies.
         preserveDrawingBuffer: false,
       });
-      const maxDpr = this.qualityTier === "high" ? 1.5 : this.qualityTier === "medium" ? 1.25 : 1.0;
-      this.renderer.setPixelRatio(Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, maxDpr));
       this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
       this.renderer.toneMappingExposure = 1.15;
       this.renderer.shadowMap.enabled = this.qualityTier !== "low" && this.qualityTier !== "static";
@@ -192,6 +196,9 @@ export class WorldRuntime {
       this.webglRendererName = debugInfo
         ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)
         : gl.getParameter(gl.RENDERER) || "WebGL";
+      this.softwareRenderer = isSoftwareRenderer(this.webglRendererName);
+      const maxDpr = this.qualityTier === "high" ? 1.5 : this.qualityTier === "medium" ? 1.25 : this.softwareRenderer ? 0.3 : 1;
+      this.renderer.setPixelRatio(Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, maxDpr));
     } catch (e) {
       const err = new Error(`WebGL context creation failed: ${(e as Error).message}`);
       this.lifecycleManager.fail(err.message, token);
@@ -231,6 +238,10 @@ export class WorldRuntime {
       loadedAssets.fixtureGltf
     );
     this.scene.add(this.integratedResult.scene);
+    // Preserve loader clip provenance for conservative static-batch exclusions.
+    for (const gltf of [loadedAssets.w1Gltf, loadedAssets.avatarGltf, loadedAssets.fixtureGltf]) {
+      gltf.scene.animations = gltf.animations;
+    }
 
     // 5. Initialize Directors
     this.characterDirector = new CharacterDirector(
@@ -267,6 +278,8 @@ export class WorldRuntime {
       onToggleSound: options.onToggleSound,
     });
     if (loadedAssets.interactionGltf) this.scene.add(loadedAssets.interactionGltf.scene);
+    this.materialQuality = new RuntimeMaterialQuality(this.scene);
+    this.applySceneQuality(this.qualityTier);
 
     // 6. Viewport Sizing
     this.resize();
@@ -462,6 +475,7 @@ export class WorldRuntime {
 
   public setQualityTier(tier: QualityTier) {
     this.qualityTier = tier;
+    this.applySceneQuality(tier);
     if (!this.renderer) return;
     if (tier === "high") {
       this.renderer.setPixelRatio(Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, 1.5));
@@ -472,11 +486,23 @@ export class WorldRuntime {
       this.renderer.shadowMap.enabled = true;
       this.renderer.shadowMap.type = THREE.PCFShadowMap;
     } else if (tier === "low") {
-      this.renderer.setPixelRatio(1.0);
+      // Reduce real raster work even when device DPR is already 1. CSS/DOM
+      // controls and camera framing keep their full logical resolution.
+      this.renderer.setPixelRatio(Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, this.softwareRenderer ? 0.3 : 1));
       this.renderer.shadowMap.enabled = false;
     } else if (tier === "static") {
       this.pause();
     }
+  }
+
+  private applySceneQuality(tier: QualityTier): void {
+    this.materialQuality?.apply(tier);
+    // Three's fallback submits each instance separately without this extension.
+    if (tier === "low" && this.materialQuality && !this.lowQualityBatch
+      && this.renderer?.getContext().getExtension("WEBGL_multi_draw")) {
+      this.lowQualityBatch = new LowQualityBatch(this.scene);
+    }
+    this.lowQualityBatch?.apply(tier);
   }
 
   public setDecorativePaused(paused: boolean) {
@@ -559,6 +585,10 @@ export class WorldRuntime {
     this.isDisposed = true;
     this.interactionBinding?.dispose();
     this.interactionBinding = null;
+    this.lowQualityBatch?.dispose();
+    this.lowQualityBatch = null;
+    this.materialQuality?.dispose();
+    this.materialQuality = null;
     this.sessionToken++; // Invalidate stale async operations
     this.lifecycleManager.dispose();
 

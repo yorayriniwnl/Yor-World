@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import type { ExperienceController } from "../experience/controller";
 import { InteractionRegistry } from "../experience/interaction-registry";
+import { LOW_BATCH_ORIGINAL_LAYER } from "./LowQualityBatch";
 
 /** Canonical frozen production node names. Asset transforms are never rewritten. */
 export const PRODUCTION_INTERACTION_NODES: Readonly<Record<string, readonly string[]>> = {
@@ -42,6 +43,7 @@ export class WorldInteractionBinding {
     reducedMotion: () => boolean;
     onToggleSound?: (() => void) | undefined;
   }) {
+    this.raycaster.layers.enable(LOW_BATCH_ORIGINAL_LAYER);
     for (const [id, names] of Object.entries(PRODUCTION_INTERACTION_NODES)) {
       for (const name of names) {
         const node = options.scene.getObjectByName(name);

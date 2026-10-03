@@ -18,6 +18,7 @@ import type { PublishedProject } from "@/contracts/content";
 import { publishedProjects } from "@/features/portfolio/public-content";
 import { useRouter } from "next/navigation";
 import { RuntimeQualitySampler } from "./RuntimeQualitySampler";
+import { readDeviceCapabilities } from "./device-capabilities";
 
 export interface WorldRootProps {
   projects?: readonly PublishedProject[];
@@ -81,23 +82,16 @@ export default function WorldRoot({
     });
 
     audioControllerRef.current = new AudioController();
-    const hasWebGL = typeof window !== "undefined" && !!(window.WebGLRenderingContext || (window as unknown as { WebGL2RenderingContext?: unknown }).WebGL2RenderingContext);
-    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
-    const initialTier = chooseInitialTier({
-      hasWebGL,
-      isMobile,
+    const capabilities = {
+      ...readDeviceCapabilities(),
       prefersReducedMotion: initialReducedMotionRef.current,
       userPreference: qualityPreferenceRef.current,
-    });
+    };
+    const initialTier = chooseInitialTier(capabilities);
     setEffectiveTier(initialTier);
 
     const qc = new AdaptiveQualityController(
-      {
-        hasWebGL,
-        isMobile,
-        prefersReducedMotion: initialReducedMotionRef.current,
-        userPreference: qualityPreferenceRef.current,
-      },
+      capabilities,
       {
         onTierChange: (newTier) => {
           setEffectiveTier(newTier);

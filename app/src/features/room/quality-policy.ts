@@ -8,6 +8,7 @@ export interface DeviceCapabilities {
   saveData?: boolean;
   prefersReducedMotion?: boolean;
   maxTextureSize?: number;
+  isSoftwareRenderer?: boolean;
   userPreference?: QualityTier | "auto";
 }
 
@@ -58,7 +59,7 @@ export function filterNoisySamples(samples: number[]): { median: number; p95: nu
  * Order of checks:
  * 1. Explicit user preference honored if WebGL is supported; missing WebGL forces static.
  * 2. Missing WebGL -> STATIC
- * 3. saveData -> LOW
+ * 3. Actual software renderer or saveData -> LOW
  * 4. maxTextureSize < 4096 -> LOW
  * 5. Mobile devices -> LOW if constrained RAM/cores, else MEDIUM.
  * 6. Desktop devices -> HIGH if capable, else MEDIUM or LOW.
@@ -73,6 +74,10 @@ export function chooseInitialTier(capabilities: DeviceCapabilities): QualityTier
   if (capabilities.userPreference && capabilities.userPreference !== "auto") {
     return capabilities.userPreference;
   }
+
+  // Software rasterization is a conservative startup hint; measured windows
+  // still drive the unchanged adaptive policy and explicit choices stay authoritative.
+  if (capabilities.isSoftwareRenderer) return "low";
 
   // Network / data saving preference
   if (capabilities.saveData) {
