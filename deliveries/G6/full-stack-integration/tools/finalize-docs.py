@@ -44,7 +44,7 @@ for report_name in ["e2e/browser-results.json", "accessibility/browser-results.j
     browser_counts.append(stats["expected"])
 e2e, accessibility, performance = browser_counts
 local = f"Final clean-checkout execution PASS binds implementation `{source}`: frozen install, lint/types, {units} unit tests ({unit_files} files), {integrations} integration tests ({integration_files} files), {e2e} unified E2E tests, {accessibility} dedicated accessibility tests, {performance} performance browser tests, 9 Khronos GLBs (zero errors/warnings), production build, 22 required routes/{len(composition['modules'])} reachable modules, measured budgets and strict detached manifest/archive validation. All browser reports have zero failed/flaky/skipped tests. RC3 archive: {manifest['bundleMetadata']['fileCount']} files, {manifest['bundleMetadata']['bytes']} bytes; SHA-256 `{manifest['releaseBundleSha256']}`. Node 24.19.0/pnpm 9.15.9; raw build-bound frame samples identify the actual renderer. Authoritative commands/logs/hashes are committed in this delivery."
-ci_text = "GitHub verification is pending the bounded candidate push; no workflow SUCCESS is asserted before observation."
+ci_text = "Exact pushed-HEAD GitHub workflow verification is pending observation; no workflow SUCCESS is asserted before observation."
 if args.ci_recorded:
     ci = json.loads((delivery / "ci-results.json").read_text(encoding="utf-8"))
     assert ci["overallStatus"] == "PASS" and ci["sourceCommit"] == source
@@ -53,6 +53,13 @@ if args.ci_recorded:
         assert run["conclusion"] == "success" and not run["requiredSkippedSteps"]
         descriptions.append(f"[{run['workflow']}]({run['url']}) SUCCESS (run {run['runId']}; jobs " + ", ".join(str(job["jobId"]) for job in run["jobs"]) + ")")
     ci_text = f"Observed exact candidate push `{ci['recordedCandidateHead']}`: " + "; ".join(descriptions) + ". All thirteen required quality steps and both required integrity checks executed successfully; no required skipped step. This committed CI record identifies that observed push. The final commit containing the record is verified separately on its exact HEAD after push, with final SHA/run IDs returned in the handoff and retained by GitHub."
+    if "artifactVerification" in ci:
+        artifact = ci["artifactVerification"]
+        assert digest(artifact["path"]) == artifact["sha256"]
+        proof = json.loads((root / artifact["path"]).read_text(encoding="utf-8"))
+        assert proof["overallStatus"] == "PASS" and proof["headSha"] == ci["recordedCandidateHead"] and proof["sourceCommit"] == source
+        assert proof["releaseReceipt"]["manifestSha256"] == receipt["manifestSha256"]
+        ci_text += f" Downloaded [provider evidence]({proof['artifactUrl']}) confirms validation `verifiedHead` and all three zero-failure browser reports. Actual Linux renderer: `{proof['rendererIdentity']}`; {proof['completedFrames']} completed frames over the continuous 60-second route with sixty acknowledged actions, median {proof['frameMedianMs']:.1f} ms / p95 {proof['frameP95Ms']:.1f} ms. This is software-rendered lab evidence, not physical-device certification."
 
 def update(path, transform):
     text = path.read_text(encoding="utf-8")

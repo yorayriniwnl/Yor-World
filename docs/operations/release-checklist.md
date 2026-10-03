@@ -27,10 +27,10 @@ Final execution and artifact checklist — fill only from definitive parent-capt
 - [x] Fresh build-bound production HTTP payloads, five cold contexts/profile, complete raw60s frame pacing and cleanup cycles.
 - [x] Measured canonical payload/asset/geometry/GPU estimate/performance budget receipt; no old timings/fallback PASS values.
 - [x] Generate deterministic RC3 app archive; record exact file count, archive bytes, per-file/archive hashes, inclusion/exclusion policy.
-- [x] Detached RC3 manifest binds source, asset/publication/schema/contact identities, composition and all13 required check hashes.
+- [x] Detached RC3 manifest binds source, asset/publication/schema/contact identities, composition and all 13 required checks: 12 input evidence hashes plus the detached manifest-validation receipt.
 - [x] Automated final manifest/archive validation receipt binds the final manifest without a circular receipt hash.
-- [ ] Push the source-bound candidate bundle/manifest/local proof; observe **Repository integrity SUCCESS** and **CI / Release Quality Gate SUCCESS** on that exact pushed candidate, with no required skipped step.
-- [ ] Commit `ci-results.json` with the observed candidate SHA/run/job IDs, conclusions and required-step execution; update report/dossier from definitive local and observed CI records.
+- [x] Push the source-bound candidate bundle/manifest/local proof; observe **Repository integrity SUCCESS** and **CI / Release Quality Gate SUCCESS** on that exact pushed candidate, with no required skipped step.
+- [x] Commit `ci-results.json` with the observed candidate SHA/run/job IDs, conclusions and required-step execution; update report/dossier from definitive local and observed CI records.
 - [ ] Push the evidence-only commit containing that record; observe both workflows green on its exact final HEAD. Report the final SHA/run IDs in the handoff and retain provider artifacts/validation `verifiedHead`; do not rewrite the committed record to claim its own future CI result.
 
 Authoritative records live in `deliveries/G6/full-stack-integration/`: `release-manifest.json`, `release-composition.json`, `bundle-receipt.json`, `commands-and-exit-codes.md`, `evidence/execution.jsonl`, `release-manifest-validation.receipt.json`, `ci-results.json`, `SHA256SUMS.txt`. These are final only when actually created and verified by the parent. Interim maps and historical logs are not substitutes.
