@@ -17,6 +17,7 @@ import { saveReturnSnapshot } from "../experience/return-snapshot";
 import { RuntimeMaterialQuality } from "./RuntimeMaterialQuality";
 import { LowQualityBatch } from "./LowQualityBatch";
 import { isSoftwareRenderer } from "./device-capabilities";
+import { configureProductionLighting } from "./ProductionLighting";
 
 export interface WorldRuntimeOptions {
   onFrameDuration?: ((durationMs: number, timestamp: number) => void) | undefined;
@@ -238,6 +239,7 @@ export class WorldRuntime {
       loadedAssets.fixtureGltf
     );
     this.scene.add(this.integratedResult.scene);
+    configureProductionLighting(this.integratedResult.scene);
     // Preserve loader clip provenance for conservative static-batch exclusions.
     for (const gltf of [loadedAssets.w1Gltf, loadedAssets.avatarGltf, loadedAssets.fixtureGltf]) {
       gltf.scene.animations = gltf.animations;
