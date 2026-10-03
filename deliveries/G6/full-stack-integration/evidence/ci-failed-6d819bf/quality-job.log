@@ -1,0 +1,1161 @@
+﻿2026-10-02T22:05:23.7087660Z Current runner version: '2.337.0'
+2026-10-02T22:05:23.7114537Z ##[group]Runner Image Provisioner
+2026-10-02T22:05:23.7115439Z Hosted Compute Agent
+2026-10-02T22:05:23.7116010Z Version: 20260901.588
+2026-10-02T22:05:23.7116770Z Commit: f88ec8081b781fac6c440065ac7ff9e710ce3d0b
+2026-10-02T22:05:23.7117493Z Build Date: 2026-09-01T19:56:44Z
+2026-10-02T22:05:23.7118222Z Worker ID: {7ea64924-03df-444c-83d3-64fb0a2a8c9b}
+2026-10-02T22:05:23.7119218Z Azure Region: westus3
+2026-10-02T22:05:23.7119779Z ##[endgroup]
+2026-10-02T22:05:23.7121401Z ##[group]Operating System
+2026-10-02T22:05:23.7122037Z Ubuntu
+2026-10-02T22:05:23.7122616Z 24.04.5
+2026-10-02T22:05:23.7123181Z LTS
+2026-10-02T22:05:23.7123696Z ##[endgroup]
+2026-10-02T22:05:23.7124342Z ##[group]Runner Image
+2026-10-02T22:05:23.7124950Z Image: ubuntu-24.04
+2026-10-02T22:05:23.7125556Z Version: 20260927.320.1
+2026-10-02T22:05:23.7126876Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260927.320/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-02T22:05:23.7128878Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260927.320
+2026-10-02T22:05:23.7129932Z ##[endgroup]
+2026-10-02T22:05:23.7131143Z ##[group]GITHUB_TOKEN Permissions
+2026-10-02T22:05:23.7133532Z Contents: read
+2026-10-02T22:05:23.7134573Z Metadata: read
+2026-10-02T22:05:23.7135486Z ##[endgroup]
+2026-10-02T22:05:23.7138277Z Secret source: Actions
+2026-10-02T22:05:23.7139808Z Cache mode: write
+2026-10-02T22:05:23.7140521Z Prepare workflow directory
+2026-10-02T22:05:23.7553888Z Prepare all required actions
+2026-10-02T22:05:23.7602738Z Getting action download info
+2026-10-02T22:05:24.1072722Z Download action repository 'actions/checkout@v5' (SHA:fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09)
+2026-10-02T22:05:24.2132071Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-10-02T22:05:24.3029574Z Download action repository 'pnpm/action-setup@v4' (SHA:b906affcce14559ad1aafd4ab0e942779e9f58b1)
+2026-10-02T22:05:25.2103609Z Download action repository 'actions/cache@v4' (SHA:0057852bfaa89a56745cba8c7296529d2fc39830)
+2026-10-02T22:05:25.3077330Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-02T22:05:25.5356762Z Complete job name: Verify & Validate Full-Stack RC3
+2026-10-02T22:05:25.6367306Z ##[group]Run actions/checkout@v5
+2026-10-02T22:05:25.6368756Z with:
+2026-10-02T22:05:25.6369479Z   fetch-depth: 0
+2026-10-02T22:05:25.6370194Z   repository: yorayriniwnl/Yor-World
+2026-10-02T22:05:25.6373722Z   token: ***
+2026-10-02T22:05:25.6374419Z   ssh-strict: true
+2026-10-02T22:05:25.6375106Z   ssh-user: git
+2026-10-02T22:05:25.6375795Z   persist-credentials: true
+2026-10-02T22:05:25.6376518Z   clean: true
+2026-10-02T22:05:25.6377227Z   sparse-checkout-cone-mode: true
+2026-10-02T22:05:25.6377983Z   fetch-tags: false
+2026-10-02T22:05:25.6378827Z   show-progress: true
+2026-10-02T22:05:25.6379532Z   lfs: false
+2026-10-02T22:05:25.6380191Z   submodules: false
+2026-10-02T22:05:25.6380916Z   set-safe-directory: true
+2026-10-02T22:05:25.6381675Z   allow-unsafe-pr-checkout: false
+2026-10-02T22:05:25.6382701Z env:
+2026-10-02T22:05:25.6383356Z   CI: true
+2026-10-02T22:05:25.6384038Z   NEXT_TELEMETRY_DISABLED: 1
+2026-10-02T22:05:25.6384767Z ##[endgroup]
+2026-10-02T22:05:25.7526461Z Syncing repository: yorayriniwnl/Yor-World
+2026-10-02T22:05:25.7530305Z ##[group]Getting Git version info
+2026-10-02T22:05:25.7531936Z Working directory is '/home/runner/work/Yor-World/Yor-World'
+2026-10-02T22:05:25.7534185Z [command]/usr/bin/git version
+2026-10-02T22:05:25.7632941Z git version 2.55.0
+2026-10-02T22:05:25.7680954Z ##[endgroup]
+2026-10-02T22:05:25.7704708Z Temporarily overriding HOME='/home/runner/work/_temp/8ce90081-e535-42fc-a78b-cd52a9096163' before making global git config changes
+2026-10-02T22:05:25.7707130Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-02T22:05:25.7709377Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Yor-World/Yor-World
+2026-10-02T22:05:25.7781102Z Deleting the contents of '/home/runner/work/Yor-World/Yor-World'
+2026-10-02T22:05:25.7792369Z ##[group]Initializing the repository
+2026-10-02T22:05:25.7808376Z [command]/usr/bin/git init /home/runner/work/Yor-World/Yor-World
+2026-10-02T22:05:25.7910979Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-02T22:05:25.7921294Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-02T22:05:25.7924078Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-02T22:05:25.7926686Z hint: call:
+2026-10-02T22:05:25.7928444Z hint:
+2026-10-02T22:05:25.7931361Z hint: 	git config --global init.defaultBranch <name>
+2026-10-02T22:05:25.7933549Z hint:
+2026-10-02T22:05:25.7935921Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-02T22:05:25.7938445Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-02T22:05:25.7941052Z hint:
+2026-10-02T22:05:25.7942196Z hint: 	git branch -m <name>
+2026-10-02T22:05:25.7943402Z hint:
+2026-10-02T22:05:25.7945110Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-02T22:05:25.7947052Z Initialized empty Git repository in /home/runner/work/Yor-World/Yor-World/.git/
+2026-10-02T22:05:25.7950906Z [command]/usr/bin/git remote add origin https://github.com/yorayriniwnl/Yor-World
+2026-10-02T22:05:25.8033459Z ##[endgroup]
+2026-10-02T22:05:25.8037549Z ##[group]Disabling automatic garbage collection
+2026-10-02T22:05:25.8041578Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-02T22:05:25.8117737Z ##[endgroup]
+2026-10-02T22:05:25.8120101Z ##[group]Setting up auth
+2026-10-02T22:05:25.8126854Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-02T22:05:25.8206230Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-02T22:05:25.8622466Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-02T22:05:25.8663815Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-02T22:05:25.8911447Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-02T22:05:25.8954159Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-02T22:05:25.9195559Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-02T22:05:25.9247032Z ##[endgroup]
+2026-10-02T22:05:25.9248708Z ##[group]Fetching the repository
+2026-10-02T22:05:25.9258049Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+2026-10-02T22:05:43.8580365Z From https://github.com/yorayriniwnl/Yor-World
+2026-10-02T22:05:43.8581840Z  * [new branch]      audit/g1-hostile-d88f7e1-20261001 -> origin/audit/g1-hostile-d88f7e1-20261001
+2026-10-02T22:05:43.8583121Z  * [new branch]      audit/w1-w2-w3-gate-20261001 -> origin/audit/w1-w2-w3-gate-20261001
+2026-10-02T22:05:43.8584066Z  * [new branch]      backup/main-20261001 -> origin/backup/main-20261001
+2026-10-02T22:05:43.8584907Z  * [new branch]      main                 -> origin/main
+2026-10-02T22:05:43.8596192Z [command]/usr/bin/git branch --list --remote origin/main
+2026-10-02T22:05:43.8629954Z   origin/main
+2026-10-02T22:05:43.8640101Z [command]/usr/bin/git rev-parse refs/remotes/origin/main
+2026-10-02T22:05:43.8668217Z 6d819bf699bbf67a56bd9db5ec7ea33dbf1db833
+2026-10-02T22:05:43.8673838Z ##[endgroup]
+2026-10-02T22:05:43.8674724Z ##[group]Determining the checkout info
+2026-10-02T22:05:43.8675861Z ##[endgroup]
+2026-10-02T22:05:43.8682383Z [command]/usr/bin/git sparse-checkout disable
+2026-10-02T22:05:43.8775439Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-02T22:05:43.8809342Z ##[group]Checking out the ref
+2026-10-02T22:05:43.8815019Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-10-02T22:05:44.8974590Z Updating files:  50% (2216/4349)
+2026-10-02T22:05:44.9331380Z Updating files:  51% (2218/4349)
+2026-10-02T22:05:44.9358259Z Updating files:  52% (2262/4349)
+2026-10-02T22:05:44.9550367Z Updating files:  53% (2305/4349)
+2026-10-02T22:05:44.9563187Z Updating files:  54% (2349/4349)
+2026-10-02T22:05:44.9663821Z Updating files:  55% (2392/4349)
+2026-10-02T22:05:44.9872974Z Updating files:  56% (2436/4349)
+2026-10-02T22:05:45.0120117Z Updating files:  57% (2479/4349)
+2026-10-02T22:05:45.0165014Z Updating files:  58% (2523/4349)
+2026-10-02T22:05:45.0192730Z Updating files:  59% (2566/4349)
+2026-10-02T22:05:45.0256265Z Updating files:  60% (2610/4349)
+2026-10-02T22:05:45.0279903Z Updating files:  61% (2653/4349)
+2026-10-02T22:05:45.0352535Z Updating files:  62% (2697/4349)
+2026-10-02T22:05:45.0928834Z Updating files:  63% (2740/4349)
+2026-10-02T22:05:45.1156087Z Updating files:  64% (2784/4349)
+2026-10-02T22:05:45.1347269Z Updating files:  65% (2827/4349)
+2026-10-02T22:05:45.1669494Z Updating files:  66% (2871/4349)
+2026-10-02T22:05:45.1696657Z Updating files:  67% (2914/4349)
+2026-10-02T22:05:45.1758107Z Updating files:  68% (2958/4349)
+2026-10-02T22:05:45.1801681Z Updating files:  69% (3001/4349)
+2026-10-02T22:05:45.1974684Z Updating files:  70% (3045/4349)
+2026-10-02T22:05:45.2112339Z Updating files:  71% (3088/4349)
+2026-10-02T22:05:45.2303360Z Updating files:  72% (3132/4349)
+2026-10-02T22:05:45.2414896Z Updating files:  73% (3175/4349)
+2026-10-02T22:05:45.2532974Z Updating files:  74% (3219/4349)
+2026-10-02T22:05:45.3217956Z Updating files:  75% (3262/4349)
+2026-10-02T22:05:45.4305016Z Updating files:  76% (3306/4349)
+2026-10-02T22:05:45.5677039Z Updating files:  77% (3349/4349)
+2026-10-02T22:05:45.5933132Z Updating files:  78% (3393/4349)
+2026-10-02T22:05:45.6059183Z Updating files:  79% (3436/4349)
+2026-10-02T22:05:45.6349880Z Updating files:  80% (3480/4349)
+2026-10-02T22:05:45.6689214Z Updating files:  81% (3523/4349)
+2026-10-02T22:05:45.6774288Z Updating files:  82% (3567/4349)
+2026-10-02T22:05:45.6927210Z Updating files:  83% (3610/4349)
+2026-10-02T22:05:45.6952800Z Updating files:  84% (3654/4349)
+2026-10-02T22:05:45.7071318Z Updating files:  85% (3697/4349)
+2026-10-02T22:05:45.7133335Z Updating files:  86% (3741/4349)
+2026-10-02T22:05:45.7247703Z Updating files:  87% (3784/4349)
+2026-10-02T22:05:45.7273595Z Updating files:  88% (3828/4349)
+2026-10-02T22:05:45.7340275Z Updating files:  89% (3871/4349)
+2026-10-02T22:05:45.7427614Z Updating files:  90% (3915/4349)
+2026-10-02T22:05:45.7452501Z Updating files:  91% (3958/4349)
+2026-10-02T22:05:45.7538380Z Updating files:  92% (4002/4349)
+2026-10-02T22:05:45.7753471Z Updating files:  93% (4045/4349)
+2026-10-02T22:05:45.8909011Z Updating files:  94% (4089/4349)
+2026-10-02T22:05:45.8953931Z Updating files:  94% (4124/4349)
+2026-10-02T22:05:45.9640636Z Updating files:  95% (4132/4349)
+2026-10-02T22:05:45.9687552Z Updating files:  96% (4176/4349)
+2026-10-02T22:05:45.9713100Z Updating files:  97% (4219/4349)
+2026-10-02T22:05:45.9746119Z Updating files:  98% (4263/4349)
+2026-10-02T22:05:46.0017031Z Updating files:  99% (4306/4349)
+2026-10-02T22:05:46.0017682Z Updating files: 100% (4349/4349)
+2026-10-02T22:05:46.0018148Z Updating files: 100% (4349/4349), done.
+2026-10-02T22:05:46.0082092Z Switched to a new branch 'main'
+2026-10-02T22:05:46.0087484Z branch 'main' set up to track 'origin/main'.
+2026-10-02T22:05:46.0232230Z ##[endgroup]
+2026-10-02T22:05:46.0284992Z [command]/usr/bin/git log -1 --format=%H
+2026-10-02T22:05:46.0318820Z 6d819bf699bbf67a56bd9db5ec7ea33dbf1db833
+2026-10-02T22:05:46.0609284Z ##[group]Run actions/setup-node@v4
+2026-10-02T22:05:46.0609621Z with:
+2026-10-02T22:05:46.0609826Z   node-version: 24.19.0
+2026-10-02T22:05:46.0610273Z   always-auth: false
+2026-10-02T22:05:46.0610495Z   check-latest: false
+2026-10-02T22:05:46.0612960Z   token: ***
+2026-10-02T22:05:46.0613165Z env:
+2026-10-02T22:05:46.0613346Z   CI: true
+2026-10-02T22:05:46.0613557Z   NEXT_TELEMETRY_DISABLED: 1
+2026-10-02T22:05:46.0613800Z ##[endgroup]
+2026-10-02T22:05:46.2141424Z Attempting to download 24.19.0...
+2026-10-02T22:05:46.2257879Z (node:2321) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-02T22:05:46.2260169Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-02T22:05:47.2191944Z Acquiring 24.19.0 - x64 from https://github.com/actions/node-versions/releases/download/24.19.0-30872449280/node-24.19.0-linux-x64.tar.gz
+2026-10-02T22:05:47.7633483Z Extracting ...
+2026-10-02T22:05:47.7773233Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/13caac45-d78f-411b-a4d5-82031419fd2c -f /home/runner/work/_temp/865ce2dc-4c08-4f46-aabe-e959ca781989
+2026-10-02T22:05:49.0531869Z Adding to the cache ...
+2026-10-02T22:05:51.1211280Z ##[group]Environment details
+2026-10-02T22:05:51.3730513Z node: v24.19.0
+2026-10-02T22:05:51.3730911Z npm: 11.17.0
+2026-10-02T22:05:51.3731242Z yarn: 1.22.22
+2026-10-02T22:05:51.3731837Z ##[endgroup]
+2026-10-02T22:05:51.3913737Z ##[group]Run pnpm/action-setup@v4
+2026-10-02T22:05:51.3914043Z with:
+2026-10-02T22:05:51.3914236Z   version: 9.15.9
+2026-10-02T22:05:51.3914444Z   run_install: false
+2026-10-02T22:05:51.3914660Z   dest: ~/setup-pnpm
+2026-10-02T22:05:51.3914876Z   cache: false
+2026-10-02T22:05:51.3915104Z   cache_dependency_path: pnpm-lock.yaml
+2026-10-02T22:05:51.3915405Z   package_json_file: package.json
+2026-10-02T22:05:51.3915666Z   standalone: false
+2026-10-02T22:05:51.3915870Z env:
+2026-10-02T22:05:51.3916052Z   CI: true
+2026-10-02T22:05:51.3916246Z   NEXT_TELEMETRY_DISABLED: 1
+2026-10-02T22:05:51.3916485Z ##[endgroup]
+2026-10-02T22:05:51.5494646Z ##[group]Running self-installer...
+2026-10-02T22:05:51.9957897Z (node:2368) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-02T22:05:51.9959870Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-02T22:05:52.1946343Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-10-02T22:05:52.2060161Z Packages: +1
+2026-10-02T22:05:52.2079551Z +
+2026-10-02T22:05:52.6158753Z Progress: resolved 1, reused 0, downloaded 1, added 1, done
+2026-10-02T22:05:52.6642580Z 
+2026-10-02T22:05:52.6643319Z dependencies:
+2026-10-02T22:05:52.6644108Z + pnpm 9.15.9 (12.8.1 is available)
+2026-10-02T22:05:52.6644423Z 
+2026-10-02T22:05:52.6672683Z Done in 925ms
+2026-10-02T22:05:52.6852347Z ##[endgroup]
+2026-10-02T22:05:52.6853095Z Installation Completed!
+2026-10-02T22:05:52.6996141Z ##[group]Run mkdir -p .rc3-ci/e2e .rc3-ci/accessibility .rc3-ci/performance
+2026-10-02T22:05:52.6996831Z [36;1mmkdir -p .rc3-ci/e2e .rc3-ci/accessibility .rc3-ci/performance[0m
+2026-10-02T22:05:52.6997347Z [36;1mecho "STORE_PATH=$(pnpm store path --silent)" >> "$GITHUB_ENV"[0m
+2026-10-02T22:05:52.6997845Z [36;1mecho "B5_EVIDENCE_DIR=$GITHUB_WORKSPACE/.rc3-ci/e2e" >> "$GITHUB_ENV"[0m
+2026-10-02T22:05:52.6998374Z [36;1mecho "C3_EVIDENCE_DIR=$GITHUB_WORKSPACE/.rc3-ci/e2e" >> "$GITHUB_ENV"[0m
+2026-10-02T22:05:52.7261293Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-02T22:05:52.7261841Z env:
+2026-10-02T22:05:52.7262123Z   CI: true
+2026-10-02T22:05:52.7262428Z   NEXT_TELEMETRY_DISABLED: 1
+2026-10-02T22:05:52.7262906Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-10-02T22:05:52.7263460Z ##[endgroup]
+2026-10-02T22:05:53.2196078Z ##[group]Run actions/cache@v4
+2026-10-02T22:05:53.2196424Z with:
+2026-10-02T22:05:53.2196709Z   path: /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2026-10-02T22:05:53.2197263Z   key: Linux-pnpm-rc3-5257b2d552cf36ef08eefccbabdc58cf1948e519a471f05ded67bbd09e4dab76
+2026-10-02T22:05:53.2197954Z   enableCrossOsArchive: false
+2026-10-02T22:05:53.2198220Z   fail-on-cache-miss: false
+2026-10-02T22:05:53.2198799Z   lookup-only: false
+2026-10-02T22:05:53.2199154Z   save-always: false
+2026-10-02T22:05:53.2199372Z env:
+2026-10-02T22:05:53.2199562Z   CI: true
+2026-10-02T22:05:53.2199766Z   NEXT_TELEMETRY_DISABLED: 1
+2026-10-02T22:05:53.2200068Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-10-02T22:05:53.2200479Z   STORE_PATH: /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2026-10-02T22:05:53.2200944Z   B5_EVIDENCE_DIR: /home/runner/work/Yor-World/Yor-World/.rc3-ci/e2e
+2026-10-02T22:05:53.2201401Z   C3_EVIDENCE_DIR: /home/runner/work/Yor-World/Yor-World/.rc3-ci/e2e
+2026-10-02T22:05:53.2201804Z ##[endgroup]
+2026-10-02T22:05:53.3304839Z (node:2412) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-02T22:05:53.3306147Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-02T22:05:53.5460334Z Cache not found for input keys: Linux-pnpm-rc3-5257b2d552cf36ef08eefccbabdc58cf1948e519a471f05ded67bbd09e4dab76
+2026-10-02T22:05:53.5548899Z ##[group]Run set -o pipefail
+2026-10-02T22:05:53.5549263Z [36;1mset -o pipefail[0m
+2026-10-02T22:05:53.5549663Z [36;1mpnpm install --frozen-lockfile | tee ../.rc3-ci/01-frozen-install.log[0m
+2026-10-02T22:05:53.5616387Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-02T22:05:53.5616834Z env:
+2026-10-02T22:05:53.5617069Z   CI: true
+2026-10-02T22:05:53.5617321Z   NEXT_TELEMETRY_DISABLED: 1
+2026-10-02T22:05:53.5617708Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-10-02T22:05:53.5618243Z   STORE_PATH: /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2026-10-02T22:05:53.5619147Z   B5_EVIDENCE_DIR: /home/runner/work/Yor-World/Yor-World/.rc3-ci/e2e
+2026-10-02T22:05:53.5619722Z   C3_EVIDENCE_DIR: /home/runner/work/Yor-World/Yor-World/.rc3-ci/e2e
+2026-10-02T22:05:53.5620201Z ##[endgroup]
+2026-10-02T22:05:54.0394201Z Lockfile is up to date, resolution step is skipped
+2026-10-02T22:05:54.0769424Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-10-02T22:05:54.1484724Z Packages: +411
+2026-10-02T22:05:54.1509663Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-10-02T22:05:55.0783637Z Progress: resolved 411, reused 0, downloaded 37, added 26
+2026-10-02T22:05:56.0795651Z Progress: resolved 411, reused 0, downloaded 70, added 64
+2026-10-02T22:05:57.0831506Z Progress: resolved 411, reused 0, downloaded 92, added 83
+2026-10-02T22:05:58.0809711Z Progress: resolved 411, reused 0, downloaded 181, added 180
+2026-10-02T22:05:59.0806680Z Progress: resolved 411, reused 0, downloaded 366, added 356
+2026-10-02T22:05:59.4193207Z Progress: resolved 411, reused 0, downloaded 411, added 411, done
+2026-10-02T22:05:59.5950224Z .../node_modules/unrs-resolver postinstall$ node postinstall.js
+2026-10-02T22:05:59.6615912Z .../node_modules/unrs-resolver postinstall: Done
+2026-10-02T22:05:59.7876552Z 
+2026-10-02T22:05:59.7877211Z dependencies:
+2026-10-02T22:05:59.7877767Z + @supabase/ssr 0.12.7
+2026-10-02T22:05:59.7878264Z + @supabase/supabase-js 2.117.2
+2026-10-02T22:05:59.7879155Z + next 16.3.8
+2026-10-02T22:05:59.7879483Z + pg 8.16.3
+2026-10-02T22:05:59.7879782Z + react 19.3.0
+2026-10-02T22:05:59.7880123Z + react-dom 19.3.0
+2026-10-02T22:05:59.7880568Z + server-only 0.0.1
+2026-10-02T22:05:59.7880898Z + three 0.180.0
+2026-10-02T22:05:59.7881203Z + zod 4.6.5
+2026-10-02T22:05:59.7881380Z 
+2026-10-02T22:05:59.7881523Z devDependencies:
+2026-10-02T22:05:59.7881932Z + @axe-core/playwright 4.13.0
+2026-10-02T22:05:59.7882428Z + @electric-sql/pglite 0.5.8
+2026-10-02T22:05:59.7882914Z + @playwright/test 1.63.0
+2026-10-02T22:05:59.7883356Z + @types/node 24.19.0
+2026-10-02T22:05:59.7883778Z + @types/pg 8.15.5
+2026-10-02T22:05:59.7884187Z + @types/react 19.3.0
+2026-10-02T22:05:59.7884610Z + @types/react-dom 19.3.0
+2026-10-02T22:05:59.7885053Z + @types/three 0.180.0
+2026-10-02T22:05:59.7885882Z + eslint 9.39.5
+2026-10-02T22:05:59.7886323Z + eslint-config-next 16.3.8
+2026-10-02T22:05:59.7886864Z + gltf-validator 2.0.0-dev.3.10
+2026-10-02T22:05:59.7887361Z + typescript 6.0.3
+2026-10-02T22:05:59.7887771Z + vitest 5.0.2
+2026-10-02T22:05:59.7887979Z 
+2026-10-02T22:05:59.8096415Z Done in 6.2s using pnpm v9.15.9
+2026-10-02T22:05:59.8720369Z ##[group]Run set -o pipefail
+2026-10-02T22:05:59.8720899Z [36;1mset -o pipefail[0m
+2026-10-02T22:05:59.8721384Z [36;1mpnpm lint | tee ../.rc3-ci/02-lint.log[0m
+2026-10-02T22:05:59.8815027Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-02T22:05:59.8815661Z env:
+2026-10-02T22:05:59.8815995Z   CI: true
+2026-10-02T22:05:59.8816353Z   NEXT_TELEMETRY_DISABLED: 1
+2026-10-02T22:05:59.8816905Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-10-02T22:05:59.8817641Z   STORE_PATH: /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2026-10-02T22:05:59.8818433Z   B5_EVIDENCE_DIR: /home/runner/work/Yor-World/Yor-World/.rc3-ci/e2e
+2026-10-02T22:05:59.8819530Z   C3_EVIDENCE_DIR: /home/runner/work/Yor-World/Yor-World/.rc3-ci/e2e
+2026-10-02T22:05:59.8820176Z ##[endgroup]
+2026-10-02T22:06:00.3133888Z 
+2026-10-02T22:06:00.3134844Z > yor-world@1.0.0-rc3 lint /home/runner/work/Yor-World/Yor-World/app
+2026-10-02T22:06:00.3135640Z > eslint . --max-warnings=0
+2026-10-02T22:06:00.3136025Z 
+2026-10-02T22:06:06.8284542Z ##[group]Run set -o pipefail
+2026-10-02T22:06:06.8285087Z [36;1mset -o pipefail[0m
+2026-10-02T22:06:06.8285619Z [36;1mpnpm typecheck | tee ../.rc3-ci/03-typecheck.log[0m
+2026-10-02T22:06:06.8352706Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-02T22:06:06.8353063Z env:
+2026-10-02T22:06:06.8353245Z   CI: true
+2026-10-02T22:06:06.8353446Z   NEXT_TELEMETRY_DISABLED: 1
+2026-10-02T22:06:06.8353761Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-10-02T22:06:06.8354167Z   STORE_PATH: /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2026-10-02T22:06:06.8354608Z   B5_EVIDENCE_DIR: /home/runner/work/Yor-World/Yor-World/.rc3-ci/e2e
+2026-10-02T22:06:06.8355069Z   C3_EVIDENCE_DIR: /home/runner/work/Yor-World/Yor-World/.rc3-ci/e2e
+2026-10-02T22:06:06.8355418Z ##[endgroup]
+2026-10-02T22:06:07.2403620Z 
+2026-10-02T22:06:07.2404577Z > yor-world@1.0.0-rc3 typecheck /home/runner/work/Yor-World/Yor-World/app
+2026-10-02T22:06:07.2405301Z > tsc --noEmit
+2026-10-02T22:06:07.2405702Z 
+2026-10-02T22:06:13.1732502Z ##[group]Run set -o pipefail
+2026-10-02T22:06:13.1732828Z [36;1mset -o pipefail[0m
+2026-10-02T22:06:13.1733134Z [36;1mpnpm test:unit | tee ../.rc3-ci/04-unit-tests.log[0m
+2026-10-02T22:06:13.1797511Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-02T22:06:13.1797924Z env:
+2026-10-02T22:06:13.1798137Z   CI: true
+2026-10-02T22:06:13.1798373Z   NEXT_TELEMETRY_DISABLED: 1
+2026-10-02T22:06:13.1798948Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-10-02T22:06:13.1799428Z   STORE_PATH: /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2026-10-02T22:06:13.1799975Z   B5_EVIDENCE_DIR: /home/runner/work/Yor-World/Yor-World/.rc3-ci/e2e
+2026-10-02T22:06:13.1800528Z   C3_EVIDENCE_DIR: /home/runner/work/Yor-World/Yor-World/.rc3-ci/e2e
+2026-10-02T22:06:13.1800943Z ##[endgroup]
+2026-10-02T22:06:13.5867472Z 
+2026-10-02T22:06:13.5868894Z > yor-world@1.0.0-rc3 test:unit /home/runner/work/Yor-World/Yor-World/app
+2026-10-02T22:06:13.5869843Z > vitest run --config vitest.config.ts
+2026-10-02T22:06:13.5870180Z 
+2026-10-02T22:06:13.8947804Z 
+2026-10-02T22:06:13.8960450Z [1m[30m[46m RUN [49m[39m[22m [36mv5.0.2 [39m[90m/home/runner/work/Yor-World/Yor-World/app[39m
+2026-10-02T22:06:13.8969113Z 
+2026-10-02T22:06:14.2879902Z [90mstderr[2m | tests/unit/quality-policy.test.ts[2m > [22m[2mC3 AudioController Opt-in, Denial & Disposal[2m > [22m[2mreports actual disabled state (false) when browser denies audio activation
+2026-10-02T22:06:14.2882287Z [22m[39m[AudioController] Browser denied audio activation: Error: Autoplay not allowed without user interaction
+2026-10-02T22:06:14.2884095Z     at [90m/home/runner/work/Yor-World/Yor-World/app/[39mtests/unit/quality-policy.test.ts:286:50
+2026-10-02T22:06:14.2885756Z     at [90mfile:///home/runner/work/Yor-World/Yor-World/app/[39mnode_modules/[4m.pnpm[24m/vitest@5.0.2_@types+node@24.19.0_vite@8.3.1_@types+node@24.19.0_/node_modules/[4mvitest[24m/dist/chunks/run.C5UmxDPh.js:1628:35
+2026-10-02T22:06:14.2887939Z     at [90mfile:///home/runner/work/Yor-World/Yor-World/app/[39mnode_modules/[4m.pnpm[24m/vitest@5.0.2_@types+node@24.19.0_vite@8.3.1_@types+node@24.19.0_/node_modules/[4mvitest[24m/dist/chunks/run.C5UmxDPh.js:2783:26
+2026-10-02T22:06:14.2890279Z     at [90mfile:///home/runner/work/Yor-World/Yor-World/app/[39mnode_modules/[4m.pnpm[24m/vitest@5.0.2_@types+node@24.19.0_vite@8.3.1_@types+node@24.19.0_/node_modules/[4mvitest[24m/dist/chunks/run.C5UmxDPh.js:3319:20
+2026-10-02T22:06:14.2891372Z     at new Promise (<anonymous>)
+2026-10-02T22:06:14.2892881Z     at runWithCancel [90m(file:///home/runner/work/Yor-World/Yor-World/app/[39mnode_modules/[4m.pnpm[24m/vitest@5.0.2_@types+node@24.19.0_vite@8.3.1_@types+node@24.19.0_/node_modules/[4mvitest[24m/dist/chunks/run.C5UmxDPh.js:3314:10[90m)[39m
+2026-10-02T22:06:14.2894761Z     at [90mfile:///home/runner/work/Yor-World/Yor-World/app/[39mnode_modules/[4m.pnpm[24m/vitest@5.0.2_@types+node@24.19.0_vite@8.3.1_@types+node@24.19.0_/node_modules/[4mvitest[24m/dist/chunks/run.C5UmxDPh.js:3299:20
+2026-10-02T22:06:14.2895638Z     at new Promise (<anonymous>)
+2026-10-02T22:06:14.2896848Z     at runWithTimeout [90m(file:///home/runner/work/Yor-World/Yor-World/app/[39mnode_modules/[4m.pnpm[24m/vitest@5.0.2_@types+node@24.19.0_vite@8.3.1_@types+node@24.19.0_/node_modules/[4mvitest[24m/dist/chunks/run.C5UmxDPh.js:3257:10[90m)[39m
+2026-10-02T22:06:14.2899442Z     at [90mfile:///home/runner/work/Yor-World/Yor-World/app/[39mnode_modules/[4m.pnpm[24m/vitest@5.0.2_@types+node@24.19.0_vite@8.3.1_@types+node@24.19.0_/node_modules/[4mvitest[24m/dist/chunks/run.C5UmxDPh.js:3876:64
+2026-10-02T22:06:14.2900292Z 
+2026-10-02T22:06:14.2930432Z  [32m✓[39m tests/unit/quality-policy.test.ts [2m([22m[2m29 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+2026-10-02T22:06:14.3490481Z [90mstderr[2m | tests/unit/interaction-controller.test.ts[2m > [22m[2mExperienceController & Interaction Arbitration (Task C1)[2m > [22m[2mAttack 8: renderer failure[2m > [22m[2mtransitions cleanly to static fallback and aborts in-flight work on RENDERER_FAILED
+2026-10-02T22:06:14.3493727Z [22m[39m[ExperienceController] Renderer failed (CONTEXT_LOST), falling back to static presentation.
+2026-10-02T22:06:14.3494785Z 
+2026-10-02T22:06:14.3520297Z  [32m✓[39m tests/unit/interaction-controller.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 30[2mms[22m[39m
+2026-10-02T22:06:14.4810876Z  [32m✓[39m tests/unit/content-visibility.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 61[2mms[22m[39m
+2026-10-02T22:06:14.7852117Z  [32m✓[39m tests/unit/contracts.test.ts [2m([22m[2m51 tests[22m[2m)[22m[32m 34[2mms[22m[39m
+2026-10-02T22:06:14.9311829Z [90mstderr[2m | tests/unit/lifecycle-manager.test.ts[2m > [22m[2mLifecycleManager - 8 Explicit States and Adversarial Guarantees[2m > [22m[2menforces bounded retries (maxRetries = 3)
+2026-10-02T22:06:14.9322496Z [22m[39m[LifecycleManager] Bounded retry limit reached.
+2026-10-02T22:06:14.9323907Z  [32m✓[39m tests/unit/lifecycle-manager.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+2026-10-02T22:06:14.9324833Z 
+2026-10-02T22:06:14.9326616Z [90mstderr[2m | tests/unit/lifecycle-manager.test.ts[2m > [22m[2mLifecycleManager - 8 Explicit States and Adversarial Guarantees[2m > [22m[2mDISPOSING cleans up all listeners and returns to STATIC
+2026-10-02T22:06:14.9327742Z [22m[39m[LifecycleManager] Cannot request entry: manager is disposed.
+2026-10-02T22:06:14.9328051Z 
+2026-10-02T22:06:15.1515307Z  [32m✓[39m tests/unit/scene-integrator.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+2026-10-02T22:06:15.3764503Z [90mstderr[2m | tests/unit/entrance-coordinator.test.ts[2m > [22m[2mEntranceCoordinator - Single Active Entrance and Bounded Duration[2m > [22m[2mPROVE: only one active entrance exists at any time
+2026-10-02T22:06:15.3767150Z [22m[39m[EntranceCoordinator] Entrance already running; returning active entrance promise.
+2026-10-02T22:06:15.3768164Z 
+2026-10-02T22:06:15.3802251Z  [32m✓[39m tests/unit/entrance-coordinator.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+2026-10-02T22:06:15.5229515Z  [32m✓[39m tests/unit/intent-arbitration.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+2026-10-02T22:06:15.5405392Z  [32m✓[39m tests/unit/boundaries.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 644[2mms[22m[39m
+2026-10-02T22:06:15.5408365Z    [33m[2m✓[22m[39m enforces integrated dependency boundaries: HTML shell stays free of 3D and browser features stay free of server imports[33m 362[2mms[22m[39m
+2026-10-02T22:06:15.6602588Z  [32m✓[39m tests/unit/painting-interaction.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+2026-10-02T22:06:15.7291373Z  [32m✓[39m tests/unit/character-director.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+2026-10-02T22:06:15.7353775Z  [32m✓[39m tests/unit/project-transition.test.ts [2m([22m[2m22 tests[22m[2m)[22m[33m 1177[2mms[22m[39m
+2026-10-02T22:06:15.7390272Z    [32m✓[39m Milestone C2 Unit Tests: Project Transitions, Motifs, and Navigation [2m(22)[22m
+2026-10-02T22:06:15.7400207Z      [32m✓[39m 1. Bounded Project Transitions & Motifs [2m(5)[22m
+2026-10-02T22:06:15.7402182Z        [33m[2m✓[22m[39m completes verified project transition within the 1.4-second budget[33m 957[2mms[22m[39m
+2026-10-02T22:06:15.8737770Z  [32m✓[39m tests/unit/camera-director.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+2026-10-02T22:06:15.9240418Z  [32m✓[39m tests/unit/interaction-registry.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+2026-10-02T22:06:15.9761459Z  [32m✓[39m tests/unit/preferences-resilience.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+2026-10-02T22:06:16.0120428Z  [32m✓[39m tests/unit/contract-types.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 3[2mms[22m[39m
+2026-10-02T22:06:16.1106809Z  [32m✓[39m tests/unit/asset-loader.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+2026-10-02T22:06:16.1141938Z 
+2026-10-02T22:06:16.1147048Z [2m Test Files [22m [1m[32m17 passed[39m[22m[90m (17)[39m
+2026-10-02T22:06:16.1148340Z [2m      Tests [22m [1m[32m191 passed[39m[22m[90m (191)[39m
+2026-10-02T22:06:16.1149568Z [2m   Start at [22m 22:06:13
+2026-10-02T22:06:16.1160706Z [2m   Duration [22m 2.21s[2m (tests 50%, import 31%, transform 17%, worker 2%)[22m
+2026-10-02T22:06:16.1168446Z 
+2026-10-02T22:06:16.1169870Z [2m    Isolate [22m [33m17 workers spawned[39m[2m · ~122ms startup each (spawn + environment, per file)[22m
+2026-10-02T22:06:16.1171370Z [2m            [22m [2mat least ~569ms faster with [22m[33misolate: false[39m[2m — reuses workers across files instead of one per file[22m
+2026-10-02T22:06:16.1171883Z 
+2026-10-02T22:06:16.1509840Z ##[group]Run set -o pipefail
+2026-10-02T22:06:16.1510161Z [36;1mset -o pipefail[0m
+2026-10-02T22:06:16.1510511Z [36;1mpnpm test:integration | tee ../.rc3-ci/05-integration-tests.log[0m
+2026-10-02T22:06:16.1575603Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-02T22:06:16.1575983Z env:
+2026-10-02T22:06:16.1576191Z   CI: true
+2026-10-02T22:06:16.1576422Z   NEXT_TELEMETRY_DISABLED: 1
+2026-10-02T22:06:16.1576755Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-10-02T22:06:16.1577188Z   STORE_PATH: /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2026-10-02T22:06:16.1577674Z   B5_EVIDENCE_DIR: /home/runner/work/Yor-World/Yor-World/.rc3-ci/e2e
+2026-10-02T22:06:16.1578170Z   C3_EVIDENCE_DIR: /home/runner/work/Yor-World/Yor-World/.rc3-ci/e2e
+2026-10-02T22:06:16.1578956Z ##[endgroup]
+2026-10-02T22:06:16.5624151Z 
+2026-10-02T22:06:16.5625054Z > yor-world@1.0.0-rc3 test:integration /home/runner/work/Yor-World/Yor-World/app
+2026-10-02T22:06:16.5626029Z > vitest run --config vitest.integration.config.ts
+2026-10-02T22:06:16.5626420Z 
+2026-10-02T22:06:16.8817317Z 
+2026-10-02T22:06:16.8822007Z [1m[30m[46m RUN [49m[39m[22m [36mv5.0.2 [39m[90m/home/runner/work/Yor-World/Yor-World/app[39m
+2026-10-02T22:06:16.8823085Z 
+2026-10-02T22:06:17.6235319Z  [32m✓[39m tests/integration/platform/publication.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 98[2mms[22m[39m
+2026-10-02T22:06:21.8261145Z  [32m✓[39m tests/integration/platform/contact-idempotency-r2.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 4505[2mms[22m[39m
+2026-10-02T22:06:21.8290002Z    [32m✓[39m A5/A6-CONTACT-IDEMPOTENCY-R2: Database-Safe Idempotency Suite [2m(11)[22m
+2026-10-02T22:06:21.8309813Z      [32m✓[39m 1. Baseline Ingestion & Idempotency [2m(4)[22m
+2026-10-02T22:06:21.8320123Z        [33m[2m✓[22m[39m 1.4 [100 concurrent requests]: high concurrency stress test verifies database race arbiter[33m 372[2mms[22m[39m
+2026-10-02T22:06:22.1618343Z  [32m✓[39m tests/integration/platform/database-authorization.test.ts [2m([22m[2m13 tests[22m[2m)[22m[33m 4274[2mms[22m[39m
+2026-10-02T22:06:22.1620368Z  [32m✓[39m tests/integration/platform/contact.test.ts [2m([22m[2m13 tests[22m[2m)[22m[33m 4806[2mms[22m[39m
+2026-10-02T22:06:22.3122051Z  [32m✓[39m tests/integration/platform/owner-auth.test.ts [2m([22m[2m18 tests[22m[2m)[22m[32m 59[2mms[22m[39m
+2026-10-02T22:06:22.6289411Z  [32m✓[39m tests/integration/platform/media-access.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 47[2mms[22m[39m
+2026-10-02T22:06:22.8528410Z  [32m✓[39m tests/integration/candidate-integration.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 36[2mms[22m[39m
+2026-10-02T22:06:23.1981155Z  [32m✓[39m tests/integration/runtime/frozen-world-binding.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 180[2mms[22m[39m
+2026-10-02T22:06:23.2171540Z  [32m✓[39m tests/integration/platform/operations-restore.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+2026-10-02T22:06:23.4950896Z  [32m✓[39m tests/integration/platform/github-metadata.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 55[2mms[22m[39m
+2026-10-02T22:06:23.9022774Z  [32m✓[39m tests/integration/runtime/public-snapshot.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 74[2mms[22m[39m
+2026-10-02T22:06:24.5243426Z  [32m✓[39m tests/integration/platform/telemetry.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+2026-10-02T22:06:24.8216698Z  [32m✓[39m tests/integration/platform/session-claims.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 73[2mms[22m[39m
+2026-10-02T22:06:25.0923638Z  [32m✓[39m tests/integration/runtime/adaptive-runtime.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+2026-10-02T22:06:25.5125518Z  [32m✓[39m tests/integration/platform/internal-jobs.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 44[2mms[22m[39m
+2026-10-02T22:06:25.8677561Z  [32m✓[39m tests/integration/platform/postgres-transactions.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 21[2mms[22m[39m
+2026-10-02T22:06:26.5966792Z  [32m✓[39m tests/integration/platform/canonical-platform.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 3913[2mms[22m[39m
+2026-10-02T22:06:26.5990647Z    [32m✓[39m Canonical production provider and actual platform route integration [2m(9)[22m
+2026-10-02T22:06:26.6010999Z      [33m[2m✓[22m[39m executes canonical R2 API for twenty duplicates and a conflicting payload[33m 341[2mms[22m[39m
+2026-10-02T22:06:27.3820402Z  [32m✓[39m tests/integration/platform/published-media.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 3464[2mms[22m[39m
+2026-10-02T22:06:28.7368066Z  [32m✓[39m tests/integration/platform/canonical-fixture.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 2513[2mms[22m[39m
+2026-10-02T22:06:28.7370618Z    [32m✓[39m Explicit browser fixture connection ownership across Next route bundles [2m(1)[22m
+2026-10-02T22:06:28.7372431Z      [33m[2m✓[22m[39m initializes the same file database once across independently loaded route modules[33m 2511[2mms[22m[39m
+2026-10-02T22:06:28.7407208Z 
+2026-10-02T22:06:28.7412592Z [2m Test Files [22m [1m[32m19 passed[39m[22m[90m (19)[39m
+2026-10-02T22:06:28.7413536Z [2m      Tests [22m [1m[32m145 passed[39m[22m[90m (145)[39m
+2026-10-02T22:06:28.7414047Z [2m   Start at [22m 22:06:16
+2026-10-02T22:06:28.7420420Z [2m   Duration [22m 11.85s[2m (tests 85%, import 10%, transform 5%)[22m
+2026-10-02T22:06:28.7435967Z 
+2026-10-02T22:06:28.7437040Z [2m    Isolate [22m [33m19 workers spawned[39m[2m · ~170ms startup each (spawn + environment, per file)[22m
+2026-10-02T22:06:28.7438374Z [2m            [22m [2mat least ~907ms faster with [22m[33misolate: false[39m[2m — reuses workers across files instead of one per file[22m
+2026-10-02T22:06:28.7439609Z 
+2026-10-02T22:06:28.8008323Z ##[group]Run set -o pipefail
+2026-10-02T22:06:28.8009025Z [36;1mset -o pipefail[0m
+2026-10-02T22:06:28.8009916Z [36;1mnode scripts/release/validate-gltf-assets.mjs --output .rc3-ci/gltf-validation-receipt.json | tee .rc3-ci/06-asset-validation.log[0m
+2026-10-02T22:06:28.8076271Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-02T22:06:28.8076685Z env:
+2026-10-02T22:06:28.8076912Z   CI: true
+2026-10-02T22:06:28.8077156Z   NEXT_TELEMETRY_DISABLED: 1
+2026-10-02T22:06:28.8077542Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-10-02T22:06:28.8078061Z   STORE_PATH: /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2026-10-02T22:06:28.8078855Z   B5_EVIDENCE_DIR: /home/runner/work/Yor-World/Yor-World/.rc3-ci/e2e
+2026-10-02T22:06:28.8079430Z   C3_EVIDENCE_DIR: /home/runner/work/Yor-World/Yor-World/.rc3-ci/e2e
+2026-10-02T22:06:28.8079881Z ##[endgroup]
+2026-10-02T22:06:28.9475041Z PASS app/public/models/fixture-production.glb: 0 errors, 0 warnings
+2026-10-02T22:06:28.9926753Z PASS app/public/models/group-a-essential.glb: 0 errors, 0 warnings
+2026-10-02T22:06:29.0157301Z PASS app/public/models/group-b-props.glb: 0 errors, 0 warnings
+2026-10-02T22:06:29.0421231Z PASS app/public/models/interaction-assets-mobile.glb: 0 errors, 0 warnings
+2026-10-02T22:06:29.0700286Z PASS app/public/models/interaction-assets.glb: 0 errors, 0 warnings
+2026-10-02T22:06:29.1118437Z PASS app/public/models/mobile-room-lod.glb: 0 errors, 0 warnings
+2026-10-02T22:06:29.1193665Z PASS app/public/models/on-demand-projects.glb: 0 errors, 0 warnings
+2026-10-02T22:06:29.1536029Z PASS app/public/models/production-room-full.glb: 0 errors, 0 warnings
+2026-10-02T22:06:29.2011364Z PASS app/public/models/resident-production.glb: 0 errors, 0 warnings
+2026-10-02T22:06:29.2172964Z ##[group]Run set -o pipefail
+2026-10-02T22:06:29.2173395Z [36;1mset -o pipefail[0m
+2026-10-02T22:06:29.2173844Z [36;1mpnpm build | tee ../.rc3-ci/07-production-build.log[0m
+2026-10-02T22:06:29.2174479Z [36;1mecho "RC3_BUILD_ID=$(cat .next/BUILD_ID)" >> "$GITHUB_ENV"[0m
+2026-10-02T22:06:29.2240562Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-02T22:06:29.2241011Z env:
+2026-10-02T22:06:29.2241246Z   CI: true
+2026-10-02T22:06:29.2241512Z   NEXT_TELEMETRY_DISABLED: 1
+2026-10-02T22:06:29.2241888Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-10-02T22:06:29.2242394Z   STORE_PATH: /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2026-10-02T22:06:29.2242964Z   B5_EVIDENCE_DIR: /home/runner/work/Yor-World/Yor-World/.rc3-ci/e2e
+2026-10-02T22:06:29.2243539Z   C3_EVIDENCE_DIR: /home/runner/work/Yor-World/Yor-World/.rc3-ci/e2e
+2026-10-02T22:06:29.2243989Z ##[endgroup]
+2026-10-02T22:06:29.6458946Z 
+2026-10-02T22:06:29.6460820Z > yor-world@1.0.0-rc3 build /home/runner/work/Yor-World/Yor-World/app
+2026-10-02T22:06:29.6461809Z > next build
+2026-10-02T22:06:29.6462134Z 
+2026-10-02T22:06:30.0425799Z ▲ Next.js 16.3.8 (Turbopack)
+2026-10-02T22:06:30.0717014Z ✓ Running next.config.ts took 28ms
+2026-10-02T22:06:30.0719589Z ⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
+2026-10-02T22:06:30.0843785Z 
+2026-10-02T22:06:30.1255541Z   Creating an optimized production build ...
+2026-10-02T22:06:38.1246093Z ✓ Compiled successfully in 7.8s
+2026-10-02T22:06:38.1279216Z   Running TypeScript ...
+2026-10-02T22:06:44.3426850Z   Finished TypeScript in 6.2s ...
+2026-10-02T22:06:44.3446311Z   Collecting page data using 3 workers ...
+2026-10-02T22:06:45.3180188Z   Generating static pages using 3 workers (0/7) ...
+2026-10-02T22:06:45.5036597Z   Generating static pages using 3 workers (1/7) 
+2026-10-02T22:06:45.5934787Z   Generating static pages using 3 workers (3/7) 
+2026-10-02T22:06:45.5962124Z   Generating static pages using 3 workers (5/7) 
+2026-10-02T22:06:45.5964410Z ✓ Generating static pages using 3 workers (7/7) in 279ms
+2026-10-02T22:06:45.6004998Z   Finalizing page optimization ...
+2026-10-02T22:06:45.6129768Z 
+2026-10-02T22:06:45.6130573Z Route (app)
+2026-10-02T22:06:45.6131429Z ┌ ƒ /
+2026-10-02T22:06:45.6132027Z ├ ○ /_not-found
+2026-10-02T22:06:45.6132573Z ├ ○ /about
+2026-10-02T22:06:45.6133079Z ├ ƒ /admin
+2026-10-02T22:06:45.6133618Z ├ ƒ /admin/editor
+2026-10-02T22:06:45.6134146Z ├ ○ /admin/login
+2026-10-02T22:06:45.6134781Z ├ ƒ /admin/publish
+2026-10-02T22:06:45.6135360Z ├ ƒ /api/admin/audit
+2026-10-02T22:06:45.6135943Z ├ ƒ /api/admin/media
+2026-10-02T22:06:45.6136535Z ├ ƒ /api/admin/media/[id]
+2026-10-02T22:06:45.6137248Z ├ ƒ /api/admin/media/[id]/approve
+2026-10-02T22:06:45.6138228Z ├ ƒ /api/admin/projects
+2026-10-02T22:06:45.6139552Z ├ ƒ /api/admin/publish
+2026-10-02T22:06:45.6140162Z ├ ƒ /api/admin/rollback
+2026-10-02T22:06:45.6140758Z ├ ƒ /api/admin/verify
+2026-10-02T22:06:45.6141358Z ├ ƒ /api/contact
+2026-10-02T22:06:45.6141900Z ├ ƒ /api/events
+2026-10-02T22:06:45.6142417Z ├ ƒ /api/github
+2026-10-02T22:06:45.6143001Z ├ ƒ /api/internal/jobs/[job]
+2026-10-02T22:06:45.6143582Z ├ ○ /contact
+2026-10-02T22:06:45.6144115Z ├ ƒ /projects
+2026-10-02T22:06:45.6144675Z ├ ƒ /projects/[slug]
+2026-10-02T22:06:45.6145270Z ├ ○ /resume
+2026-10-02T22:06:45.6145779Z ├ ○ /robots.txt
+2026-10-02T22:06:45.6146290Z └ ƒ /sitemap.xml
+2026-10-02T22:06:45.6146637Z 
+2026-10-02T22:06:45.6146782Z 
+2026-10-02T22:06:45.6147284Z ○  (Static)   prerendered as static content
+2026-10-02T22:06:45.6148093Z ƒ  (Dynamic)  server-rendered on demand
+2026-10-02T22:06:45.6153619Z 
+2026-10-02T22:06:45.6639950Z ##[group]Run pnpm exec playwright install --with-deps chromium
+2026-10-02T22:06:45.6640507Z [36;1mpnpm exec playwright install --with-deps chromium[0m
+2026-10-02T22:06:45.6704867Z shell: /usr/bin/bash -e {0}
+2026-10-02T22:06:45.6705195Z env:
+2026-10-02T22:06:45.6705426Z   CI: true
+2026-10-02T22:06:45.6705679Z   NEXT_TELEMETRY_DISABLED: 1
+2026-10-02T22:06:45.6706071Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-10-02T22:06:45.6706591Z   STORE_PATH: /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2026-10-02T22:06:45.6707162Z   B5_EVIDENCE_DIR: /home/runner/work/Yor-World/Yor-World/.rc3-ci/e2e
+2026-10-02T22:06:45.6707771Z   C3_EVIDENCE_DIR: /home/runner/work/Yor-World/Yor-World/.rc3-ci/e2e
+2026-10-02T22:06:45.6708255Z   RC3_BUILD_ID: -eelDFNzmD3GGUIIPChWK
+2026-10-02T22:06:45.6708853Z ##[endgroup]
+2026-10-02T22:06:46.5926778Z Installing dependencies...
+2026-10-02T22:06:46.6015716Z Switching to root user to install dependencies...
+2026-10-02T22:06:46.6881233Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-02T22:06:46.7204014Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+2026-10-02T22:06:46.7210335Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2026-10-02T22:06:46.7230655Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2026-10-02T22:06:46.7260173Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2026-10-02T22:06:46.7370586Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2026-10-02T22:06:46.8524904Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [458 kB]
+2026-10-02T22:06:46.8730419Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [12.6 kB]
+2026-10-02T22:06:46.8787922Z Get:9 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [511 kB]
+2026-10-02T22:06:46.8993445Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1364 kB]
+2026-10-02T22:06:46.9062917Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [304 kB]
+2026-10-02T22:06:46.9084929Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Components [180 kB]
+2026-10-02T22:06:46.9098397Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1699 kB]
+2026-10-02T22:06:46.9190618Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [341 kB]
+2026-10-02T22:06:46.9207116Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Components [388 kB]
+2026-10-02T22:06:46.9251926Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1720 kB]
+2026-10-02T22:06:46.9346051Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [394 kB]
+2026-10-02T22:06:46.9390005Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Components [940 B]
+2026-10-02T22:06:46.9591671Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-backports/main amd64 Components [5764 B]
+2026-10-02T22:06:47.0036489Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 Components [12.6 kB]
+2026-10-02T22:06:47.0125738Z Get:21 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1069 kB]
+2026-10-02T22:06:47.0184616Z Get:22 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [221 kB]
+2026-10-02T22:06:47.0198763Z Get:23 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Components [46.3 kB]
+2026-10-02T22:06:47.0231401Z Get:24 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1216 kB]
+2026-10-02T22:06:47.0292417Z Get:25 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [244 kB]
+2026-10-02T22:06:47.0309874Z Get:26 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Components [76.3 kB]
+2026-10-02T22:06:47.0320556Z Get:27 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1566 kB]
+2026-10-02T22:06:47.0403210Z Get:28 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [361 kB]
+2026-10-02T22:06:51.4103320Z Fetched 12.6 MB in 1s (9278 kB/s)
+2026-10-02T22:06:52.2987387Z Reading package lists...
+2026-10-02T22:06:52.3243490Z Reading package lists...
+2026-10-02T22:06:52.5324279Z Building dependency tree...
+2026-10-02T22:06:52.5332069Z Reading state information...
+2026-10-02T22:06:52.7190928Z libasound2t64 is already the newest version (1.2.11-1ubuntu0.3).
+2026-10-02T22:06:52.7191856Z libasound2t64 set to manually installed.
+2026-10-02T22:06:52.7192752Z libatk-bridge2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-02T22:06:52.7193571Z libatk-bridge2.0-0t64 set to manually installed.
+2026-10-02T22:06:52.7194409Z libatk1.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-02T22:06:52.7195124Z libatk1.0-0t64 set to manually installed.
+2026-10-02T22:06:52.7195936Z libatspi2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-02T22:06:52.7196730Z libatspi2.0-0t64 set to manually installed.
+2026-10-02T22:06:52.7197491Z libcairo2 is already the newest version (1.18.0-3build1).
+2026-10-02T22:06:52.7198264Z libcairo2 set to manually installed.
+2026-10-02T22:06:52.7201901Z libcups2t64 is already the newest version (2.4.7-1.2ubuntu7.14).
+2026-10-02T22:06:52.7202621Z libcups2t64 set to manually installed.
+2026-10-02T22:06:52.7203330Z libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+2026-10-02T22:06:52.7203993Z libdbus-1-3 set to manually installed.
+2026-10-02T22:06:52.7205148Z libdrm2 is already the newest version (2.4.125-1ubuntu0.1~24.04.2).
+2026-10-02T22:06:52.7205573Z libdrm2 set to manually installed.
+2026-10-02T22:06:52.7205989Z libglib2.0-0t64 is already the newest version (2.80.0-6ubuntu3.9).
+2026-10-02T22:06:52.7206411Z libglib2.0-0t64 set to manually installed.
+2026-10-02T22:06:52.7206833Z libnspr4 is already the newest version (2:4.35-1.1build1).
+2026-10-02T22:06:52.7207278Z libnspr4 set to manually installed.
+2026-10-02T22:06:52.7207916Z libnss3 is already the newest version (2:3.98-1ubuntu0.2).
+2026-10-02T22:06:52.7208304Z libnss3 set to manually installed.
+2026-10-02T22:06:52.7208989Z libpango-1.0-0 is already the newest version (1.52.1+ds-1build1).
+2026-10-02T22:06:52.7209512Z libpango-1.0-0 set to manually installed.
+2026-10-02T22:06:52.7210019Z libx11-6 is already the newest version (2:1.8.7-1build1).
+2026-10-02T22:06:52.7210399Z libx11-6 set to manually installed.
+2026-10-02T22:06:52.7210766Z libxcb1 is already the newest version (1.15-1ubuntu2).
+2026-10-02T22:06:52.7211138Z libxcb1 set to manually installed.
+2026-10-02T22:06:52.7211543Z libxcomposite1 is already the newest version (1:0.4.5-1build3).
+2026-10-02T22:06:52.7211955Z libxcomposite1 set to manually installed.
+2026-10-02T22:06:52.7212679Z libxdamage1 is already the newest version (1:1.1.6-1build1).
+2026-10-02T22:06:52.7213364Z libxdamage1 set to manually installed.
+2026-10-02T22:06:52.7214066Z libxext6 is already the newest version (2:1.3.4-1build2).
+2026-10-02T22:06:52.7214703Z libxext6 set to manually installed.
+2026-10-02T22:06:52.7215370Z libxfixes3 is already the newest version (1:6.0.0-2build1).
+2026-10-02T22:06:52.7215774Z libxfixes3 set to manually installed.
+2026-10-02T22:06:52.7216176Z libxkbcommon0 is already the newest version (1.6.0-1build1).
+2026-10-02T22:06:52.7216895Z libxkbcommon0 set to manually installed.
+2026-10-02T22:06:52.7217635Z libxrandr2 is already the newest version (2:1.5.2-2build1).
+2026-10-02T22:06:52.7218314Z libxrandr2 set to manually installed.
+2026-10-02T22:06:52.7219041Z xvfb is already the newest version (2:21.1.12-1ubuntu1.8).
+2026-10-02T22:06:52.7219597Z fonts-noto-color-emoji is already the newest version (2.047-0ubuntu0.24.04.1).
+2026-10-02T22:06:52.7220174Z libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+2026-10-02T22:06:52.7220899Z libfontconfig1 set to manually installed.
+2026-10-02T22:06:52.7222069Z libfreetype6 is already the newest version (2.13.2+dfsg-1ubuntu0.1).
+2026-10-02T22:06:52.7222874Z libfreetype6 set to manually installed.
+2026-10-02T22:06:52.7223606Z fonts-liberation is already the newest version (1:2.1.5-3).
+2026-10-02T22:06:52.7224339Z fonts-liberation set to manually installed.
+2026-10-02T22:06:52.7225053Z The following additional packages will be installed:
+2026-10-02T22:06:52.7225929Z   libgl1-mesa-dri libglx-mesa0 mesa-libgallium xfonts-encodings xfonts-utils
+2026-10-02T22:06:52.7226672Z Recommended packages:
+2026-10-02T22:06:52.7227141Z   fonts-ipafont-mincho fonts-tlwg-loma
+2026-10-02T22:06:52.7698346Z The following NEW packages will be installed:
+2026-10-02T22:06:52.7699748Z   fonts-freefont-ttf fonts-ipafont-gothic fonts-tlwg-loma-otf fonts-unifont
+2026-10-02T22:06:52.7709100Z   fonts-wqy-zenhei xfonts-cyrillic xfonts-encodings xfonts-scalable
+2026-10-02T22:06:52.7710561Z   xfonts-utils
+2026-10-02T22:06:52.7715920Z The following packages will be upgraded:
+2026-10-02T22:06:52.7721646Z   libgbm1 libgl1-mesa-dri libglx-mesa0 mesa-libgallium
+2026-10-02T22:06:52.7898982Z 4 upgraded, 9 newly installed, 0 to remove and 21 not upgraded.
+2026-10-02T22:06:52.7899810Z Need to get 32.1 MB of archives.
+2026-10-02T22:06:52.7900659Z After this operation, 79.5 MB of additional disk space will be used.
+2026-10-02T22:06:52.7901626Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-02T22:06:52.8689245Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-ipafont-gothic all 00303-21ubuntu1 [3513 kB]
+2026-10-02T22:06:53.0021061Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5641 kB]
+2026-10-02T22:06:53.1776884Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [107 kB]
+2026-10-02T22:06:53.2424296Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-unifont all 1:15.1.01-1build1 [2993 kB]
+2026-10-02T22:06:53.3644738Z Get:6 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-wqy-zenhei all 0.9.45-8 [7472 kB]
+2026-10-02T22:06:53.5776018Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libgl1-mesa-dri amd64 25.2.8-0ubuntu0.24.04.4 [38.0 kB]
+2026-10-02T22:06:53.6414935Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libglx-mesa0 amd64 25.2.8-0ubuntu0.24.04.4 [110 kB]
+2026-10-02T22:06:53.7059853Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libgbm1 amd64 25.2.8-0ubuntu0.24.04.4 [34.2 kB]
+2026-10-02T22:06:53.7711665Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 mesa-libgallium amd64 25.2.8-0ubuntu0.24.04.4 [10.8 MB]
+2026-10-02T22:06:54.0624696Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu2 [578 kB]
+2026-10-02T22:06:54.1313211Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-utils amd64 1:7.7+6build3 [94.4 kB]
+2026-10-02T22:06:54.1955615Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 xfonts-cyrillic all 1:1.0.5+nmu1 [384 kB]
+2026-10-02T22:06:54.2615193Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-scalable all 1:1.0.3-1.3 [304 kB]
+2026-10-02T22:06:54.5496031Z Fetched 32.1 MB in 1s (21.6 MB/s)
+2026-10-02T22:06:54.5721876Z Selecting previously unselected package fonts-ipafont-gothic.
+2026-10-02T22:06:54.6014200Z (Reading database ... 
+2026-10-02T22:06:54.6014843Z (Reading database ... 5%
+2026-10-02T22:06:54.6015326Z (Reading database ... 10%
+2026-10-02T22:06:54.6015783Z (Reading database ... 15%
+2026-10-02T22:06:54.6016529Z (Reading database ... 20%
+2026-10-02T22:06:54.6017235Z (Reading database ... 25%
+2026-10-02T22:06:54.6017673Z (Reading database ... 30%
+2026-10-02T22:06:54.6018089Z (Reading database ... 35%
+2026-10-02T22:06:54.6018818Z (Reading database ... 40%
+2026-10-02T22:06:54.6019610Z (Reading database ... 45%
+2026-10-02T22:06:54.6020076Z (Reading database ... 50%
+2026-10-02T22:06:54.6052156Z (Reading database ... 55%
+2026-10-02T22:06:54.7457980Z (Reading database ... 60%
+2026-10-02T22:06:54.9529274Z (Reading database ... 65%
+2026-10-02T22:06:55.1594639Z (Reading database ... 70%
+2026-10-02T22:06:55.3461510Z (Reading database ... 75%
+2026-10-02T22:06:55.5067930Z (Reading database ... 80%
+2026-10-02T22:06:55.6972218Z (Reading database ... 85%
+2026-10-02T22:06:55.8992189Z (Reading database ... 90%
+2026-10-02T22:06:56.0677905Z (Reading database ... 95%
+2026-10-02T22:06:56.0678784Z (Reading database ... 100%
+2026-10-02T22:06:56.0679607Z (Reading database ... 202296 files and directories currently installed.)
+2026-10-02T22:06:56.0728404Z Preparing to unpack .../00-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
+2026-10-02T22:06:56.0822977Z Unpacking fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-10-02T22:06:56.3137925Z Selecting previously unselected package fonts-freefont-ttf.
+2026-10-02T22:06:56.3273396Z Preparing to unpack .../01-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+2026-10-02T22:06:56.3280762Z Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-10-02T22:06:56.4096334Z Selecting previously unselected package fonts-tlwg-loma-otf.
+2026-10-02T22:06:56.4233778Z Preparing to unpack .../02-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+2026-10-02T22:06:56.4241264Z Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-10-02T22:06:56.4454582Z Selecting previously unselected package fonts-unifont.
+2026-10-02T22:06:56.4597892Z Preparing to unpack .../03-fonts-unifont_1%3a15.1.01-1build1_all.deb ...
+2026-10-02T22:06:56.4605226Z Unpacking fonts-unifont (1:15.1.01-1build1) ...
+2026-10-02T22:06:56.5861623Z Selecting previously unselected package fonts-wqy-zenhei.
+2026-10-02T22:06:56.5996088Z Preparing to unpack .../04-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+2026-10-02T22:06:56.6101672Z Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+2026-10-02T22:06:57.0858229Z Preparing to unpack .../05-libgl1-mesa-dri_25.2.8-0ubuntu0.24.04.4_amd64.deb ...
+2026-10-02T22:06:57.1004723Z Unpacking libgl1-mesa-dri:amd64 (25.2.8-0ubuntu0.24.04.4) over (25.2.8-0ubuntu0.24.04.2) ...
+2026-10-02T22:06:57.1587303Z Preparing to unpack .../06-libglx-mesa0_25.2.8-0ubuntu0.24.04.4_amd64.deb ...
+2026-10-02T22:06:57.1615229Z Unpacking libglx-mesa0:amd64 (25.2.8-0ubuntu0.24.04.4) over (25.2.8-0ubuntu0.24.04.2) ...
+2026-10-02T22:06:57.2060650Z Preparing to unpack .../07-libgbm1_25.2.8-0ubuntu0.24.04.4_amd64.deb ...
+2026-10-02T22:06:57.2139796Z Unpacking libgbm1:amd64 (25.2.8-0ubuntu0.24.04.4) over (25.2.8-0ubuntu0.24.04.2) ...
+2026-10-02T22:06:57.2531066Z Preparing to unpack .../08-mesa-libgallium_25.2.8-0ubuntu0.24.04.4_amd64.deb ...
+2026-10-02T22:06:57.2552899Z Unpacking mesa-libgallium:amd64 (25.2.8-0ubuntu0.24.04.4) over (25.2.8-0ubuntu0.24.04.2) ...
+2026-10-02T22:06:57.4332379Z Selecting previously unselected package xfonts-encodings.
+2026-10-02T22:06:57.4463514Z Preparing to unpack .../09-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+2026-10-02T22:06:57.4471168Z Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-10-02T22:06:57.4780447Z Selecting previously unselected package xfonts-utils.
+2026-10-02T22:06:57.4919841Z Preparing to unpack .../10-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+2026-10-02T22:06:57.4927084Z Unpacking xfonts-utils (1:7.7+6build3) ...
+2026-10-02T22:06:57.5802364Z Selecting previously unselected package xfonts-cyrillic.
+2026-10-02T22:06:57.5939247Z Preparing to unpack .../11-xfonts-cyrillic_1%3a1.0.5+nmu1_all.deb ...
+2026-10-02T22:06:57.5946804Z Unpacking xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-10-02T22:06:57.6305142Z Selecting previously unselected package xfonts-scalable.
+2026-10-02T22:06:57.6439792Z Preparing to unpack .../12-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+2026-10-02T22:06:57.6447324Z Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+2026-10-02T22:06:57.6901307Z Setting up mesa-libgallium:amd64 (25.2.8-0ubuntu0.24.04.4) ...
+2026-10-02T22:06:57.6919818Z Setting up libgbm1:amd64 (25.2.8-0ubuntu0.24.04.4) ...
+2026-10-02T22:06:57.6935704Z Setting up libgl1-mesa-dri:amd64 (25.2.8-0ubuntu0.24.04.4) ...
+2026-10-02T22:06:57.7010279Z Setting up fonts-wqy-zenhei (0.9.45-8) ...
+2026-10-02T22:06:57.7126023Z Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-10-02T22:06:57.7142722Z Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-10-02T22:06:57.7160181Z Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-10-02T22:06:57.7177700Z Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-10-02T22:06:57.7246771Z update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+2026-10-02T22:06:57.7260948Z Setting up fonts-unifont (1:15.1.01-1build1) ...
+2026-10-02T22:06:57.7280996Z Setting up libglx-mesa0:amd64 (25.2.8-0ubuntu0.24.04.4) ...
+2026-10-02T22:06:57.7297529Z Setting up xfonts-utils (1:7.7+6build3) ...
+2026-10-02T22:06:57.7337421Z Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-10-02T22:06:57.7626893Z Setting up xfonts-scalable (1:1.0.3-1.3) ...
+2026-10-02T22:06:57.7902907Z Processing triggers for libc-bin (2.39-0ubuntu8.9) ...
+2026-10-02T22:06:57.9046672Z Processing triggers for man-db (2.12.0-4build2) ...
+2026-10-02T22:06:57.9070625Z Not building database; man-db/auto-update is not 'true'.
+2026-10-02T22:06:57.9083875Z Processing triggers for fontconfig (2.15.0-1.1ubuntu2) ...
+2026-10-02T22:06:58.6701264Z 
+2026-10-02T22:06:58.6702096Z Running kernel seems to be up-to-date.
+2026-10-02T22:06:58.6702521Z 
+2026-10-02T22:06:58.6702778Z No services need to be restarted.
+2026-10-02T22:06:58.6703106Z 
+2026-10-02T22:06:58.6703372Z No containers need to be restarted.
+2026-10-02T22:06:58.6703674Z 
+2026-10-02T22:06:58.6703996Z No user sessions are running outdated binaries.
+2026-10-02T22:06:58.6704766Z 
+2026-10-02T22:06:58.6705266Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-10-02T22:06:59.6945486Z Downloading Chrome for Testing 153.0.8010.12 (playwright chromium v1243) from https://cdn.playwright.dev/builds/cft/153.0.8010.12/linux64/chrome-linux64.zip
+2026-10-02T22:07:00.1426306Z |                                                                                |   0% of 186.8 MiB
+2026-10-02T22:07:00.3491172Z |■■■■■■■■                                                                        |  10% of 186.8 MiB
+2026-10-02T22:07:00.4364454Z |■■■■■■■■■■■■■■■■                                                                |  20% of 186.8 MiB
+2026-10-02T22:07:00.5497434Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 186.8 MiB
+2026-10-02T22:07:00.6313289Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 186.8 MiB
+2026-10-02T22:07:00.7170587Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 186.8 MiB
+2026-10-02T22:07:00.8096684Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 186.8 MiB
+2026-10-02T22:07:00.9113826Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 186.8 MiB
+2026-10-02T22:07:01.0323762Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 186.8 MiB
+2026-10-02T22:07:01.1208689Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 186.8 MiB
+2026-10-02T22:07:01.2293887Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 186.8 MiB
+2026-10-02T22:07:04.3392604Z Chrome for Testing 153.0.8010.12 (playwright chromium v1243) downloaded to /home/runner/.cache/ms-playwright/chromium-1243
+2026-10-02T22:07:04.3397452Z Downloading FFmpeg (playwright ffmpeg v1011) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+2026-10-02T22:07:04.6938180Z |                                                                                |   0% of 2.3 MiB
+2026-10-02T22:07:04.6972834Z |■■■■■■■■                                                                        |  10% of 2.3 MiB
+2026-10-02T22:07:04.6994722Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.3 MiB
+2026-10-02T22:07:04.7015638Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.3 MiB
+2026-10-02T22:07:04.7028025Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.3 MiB
+2026-10-02T22:07:04.7045222Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.3 MiB
+2026-10-02T22:07:04.7057701Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.3 MiB
+2026-10-02T22:07:04.7073231Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.3 MiB
+2026-10-02T22:07:04.7092745Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.3 MiB
+2026-10-02T22:07:04.7106259Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+2026-10-02T22:07:04.7121706Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+2026-10-02T22:07:04.7732204Z FFmpeg (playwright ffmpeg v1011) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1011
+2026-10-02T22:07:04.7735900Z Downloading Chrome Headless Shell 153.0.8010.12 (playwright chromium-headless-shell v1243) from https://cdn.playwright.dev/builds/cft/153.0.8010.12/linux64/chrome-headless-shell-linux64.zip
+2026-10-02T22:07:05.2108050Z |                                                                                |   0% of 114.3 MiB
+2026-10-02T22:07:05.3797758Z |■■■■■■■■                                                                        |  10% of 114.3 MiB
+2026-10-02T22:07:05.4515317Z |■■■■■■■■■■■■■■■■                                                                |  20% of 114.3 MiB
+2026-10-02T22:07:05.5429073Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 114.3 MiB
+2026-10-02T22:07:05.6269358Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 114.3 MiB
+2026-10-02T22:07:05.6957073Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 114.3 MiB
+2026-10-02T22:07:05.7829173Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 114.3 MiB
+2026-10-02T22:07:05.8713472Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 114.3 MiB
+2026-10-02T22:07:05.9307827Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 114.3 MiB
+2026-10-02T22:07:05.9909787Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 114.3 MiB
+2026-10-02T22:07:06.0645044Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 114.3 MiB
+2026-10-02T22:07:08.3154984Z Chrome Headless Shell 153.0.8010.12 (playwright chromium-headless-shell v1243) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1243
+2026-10-02T22:07:08.3480736Z ##[group]Run set -o pipefail
+2026-10-02T22:07:08.3481096Z [36;1mset -o pipefail[0m
+2026-10-02T22:07:08.3481432Z [36;1mpnpm test:e2e | tee ../.rc3-ci/08-e2e-tests.log[0m
+2026-10-02T22:07:08.3482043Z [36;1mnode ../scripts/release/verify-playwright-results.mjs ../.rc3-ci/e2e/browser-results.json[0m
+2026-10-02T22:07:08.3547619Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-02T22:07:08.3548070Z env:
+2026-10-02T22:07:08.3548302Z   CI: true
+2026-10-02T22:07:08.3548820Z   NEXT_TELEMETRY_DISABLED: 1
+2026-10-02T22:07:08.3549208Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-10-02T22:07:08.3549741Z   STORE_PATH: /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2026-10-02T22:07:08.3550507Z   B5_EVIDENCE_DIR: /home/runner/work/Yor-World/Yor-World/.rc3-ci/e2e
+2026-10-02T22:07:08.3551076Z   C3_EVIDENCE_DIR: /home/runner/work/Yor-World/Yor-World/.rc3-ci/e2e
+2026-10-02T22:07:08.3551557Z   RC3_BUILD_ID: -eelDFNzmD3GGUIIPChWK
+2026-10-02T22:07:08.3551957Z   YOR_E2E_FIXTURE: 1
+2026-10-02T22:07:08.3552365Z   YOR_TEST_DATABASE_PATH: /home/runner/work/_temp/yor-world-rc3-e2e-db
+2026-10-02T22:07:08.3552871Z   CRON_SECRET: rc3-ci-synthetic-job-secret
+2026-10-02T22:07:08.3553231Z ##[endgroup]
+2026-10-02T22:07:08.7706750Z 
+2026-10-02T22:07:08.7707499Z > yor-world@1.0.0-rc3 test:e2e /home/runner/work/Yor-World/Yor-World/app
+2026-10-02T22:07:08.7707986Z > playwright test
+2026-10-02T22:07:08.7708137Z 
+2026-10-02T22:07:12.6593452Z 
+2026-10-02T22:07:12.6594421Z Running 97 tests using 1 worker
+2026-10-02T22:07:12.6594740Z 
+2026-10-02T22:07:14.6750775Z   ✓   1 [chromium] › tests/e2e/accessibility.spec.ts:29:5 › C3 WCAG 2.2 AA Accessibility & Assistive Navigation › Axe automated accessibility audit on / (1.2s)
+2026-10-02T22:07:15.8310476Z   ✓   2 [chromium] › tests/e2e/accessibility.spec.ts:29:5 › C3 WCAG 2.2 AA Accessibility & Assistive Navigation › Axe automated accessibility audit on /projects (1.1s)
+2026-10-02T22:07:16.9872321Z   ✓   3 [chromium] › tests/e2e/accessibility.spec.ts:29:5 › C3 WCAG 2.2 AA Accessibility & Assistive Navigation › Axe automated accessibility audit on /projects/helios (1.1s)
+2026-10-02T22:07:18.0891495Z   ✓   4 [chromium] › tests/e2e/accessibility.spec.ts:29:5 › C3 WCAG 2.2 AA Accessibility & Assistive Navigation › Axe automated accessibility audit on /projects/zenith (1.1s)
+2026-10-02T22:07:19.2332961Z   ✓   5 [chromium] › tests/e2e/accessibility.spec.ts:29:5 › C3 WCAG 2.2 AA Accessibility & Assistive Navigation › Axe automated accessibility audit on /projects/ai-vs-real (1.1s)
+2026-10-02T22:07:20.3257322Z   ✓   6 [chromium] › tests/e2e/accessibility.spec.ts:29:5 › C3 WCAG 2.2 AA Accessibility & Assistive Navigation › Axe automated accessibility audit on /projects/talks (1.1s)
+2026-10-02T22:07:21.4356442Z   ✓   7 [chromium] › tests/e2e/accessibility.spec.ts:29:5 › C3 WCAG 2.2 AA Accessibility & Assistive Navigation › Axe automated accessibility audit on /admin/login (1.1s)
+2026-10-02T22:07:22.4289210Z   ✓   8 [chromium] › tests/e2e/accessibility.spec.ts:29:5 › C3 WCAG 2.2 AA Accessibility & Assistive Navigation › Axe automated accessibility audit on /projects/candidatex (974ms)
+2026-10-02T22:07:23.5293475Z   ✓   9 [chromium] › tests/e2e/accessibility.spec.ts:29:5 › C3 WCAG 2.2 AA Accessibility & Assistive Navigation › Axe automated accessibility audit on /about (1.1s)
+2026-10-02T22:07:24.6923773Z   ✓  10 [chromium] › tests/e2e/accessibility.spec.ts:29:5 › C3 WCAG 2.2 AA Accessibility & Assistive Navigation › Axe automated accessibility audit on /resume (1.1s)
+2026-10-02T22:07:25.7833495Z   ✓  11 [chromium] › tests/e2e/accessibility.spec.ts:29:5 › C3 WCAG 2.2 AA Accessibility & Assistive Navigation › Axe automated accessibility audit on /contact (1.1s)
+2026-10-02T22:07:26.3428175Z   ✓  12 [chromium] › tests/e2e/accessibility.spec.ts:51:3 › C3 WCAG 2.2 AA Accessibility & Assistive Navigation › Logical heading structure and semantic landmarks exist on public shell (546ms)
+2026-10-02T22:07:26.9442180Z   ✓  13 [chromium] › tests/e2e/accessibility.spec.ts:67:3 › C3 WCAG 2.2 AA Accessibility & Assistive Navigation › Skip to content link allows direct keyboard-only bypass (582ms)
+2026-10-02T22:07:27.5754441Z   ✓  14 [chromium] › tests/e2e/accessibility.spec.ts:79:3 › C3 WCAG 2.2 AA Accessibility & Assistive Navigation › Interactive touch targets meet minimum 44x44 CSS px sizing requirement (615ms)
+2026-10-02T22:07:28.0317566Z   ✓  15 [chromium] › tests/e2e/accessibility.spec.ts:105:3 › C3 WCAG 2.2 AA Accessibility & Assistive Navigation › Reflow check: 320 CSS px viewport width without horizontal scrollbars (435ms)
+2026-10-02T22:07:28.4960936Z   ✓  16 [chromium] › tests/e2e/accessibility.spec.ts:116:3 › C3 WCAG 2.2 AA Accessibility & Assistive Navigation › Zoom / 200% reflow inspection (446ms)
+2026-10-02T22:07:29.0704011Z   ✓  17 [chromium] › tests/e2e/accessibility.spec.ts:129:3 › C3 WCAG 2.2 AA Accessibility & Assistive Navigation › Every published project destination is reachable without canvas or WebGL (560ms)
+2026-10-02T22:07:29.7464557Z   ✓  18 [chromium] › tests/e2e/browser-behavior.spec.ts:89:3 › G1 Combined World Integration & Browser Behavior › 1. Load: public page loads with zero 3D world scripts or models pre-entry (635ms)
+2026-10-02T22:07:54.5154416Z   ✓  19 [chromium] › tests/e2e/browser-behavior.spec.ts:109:3 › G1 Combined World Integration & Browser Behavior › 2. Entry & 3. Home Camera: explicit entry mounts world with single resident and chair at F1 coordinates (24.8s)
+2026-10-02T22:08:21.2475033Z   ✘  20 [chromium] › tests/e2e/browser-behavior.spec.ts:152:3 › G1 Combined World Integration & Browser Behavior › 4. Greeting & 5. Return: resident acknowledges visitor with chair turn and returns to work (26.6s)
+2026-10-02T22:08:52.0989619Z   ✘  21 [chromium] › tests/e2e/browser-behavior.spec.ts:181:3 › G1 Combined World Integration & Browser Behavior › 6. Repeat: safe repeated greeting interactions without state corruption (30.1s)
+2026-10-02T22:09:21.3339779Z   ✘  22 [chromium] › tests/e2e/browser-behavior.spec.ts:201:3 › G1 Combined World Integration & Browser Behavior › 7. Cancel: safe cancellation reverses along collision-checked path back to rest (28.5s)
+2026-10-02T22:09:48.1152244Z   ✓  23 [chromium] › tests/e2e/browser-behavior.spec.ts:220:3 › G1 Combined World Integration & Browser Behavior › 8. Skip/Escape: instant settlement to coding pose within ≤50ms (26.1s)
+2026-10-02T22:10:18.2856810Z   ✘  24 [chromium] › tests/e2e/browser-behavior.spec.ts:262:3 › G1 Combined World Integration & Browser Behavior › 9. Monitor & 10. Reverse Doorway camera navigation (30.1s)
+2026-10-02T22:10:33.7862351Z   ✓  25 [chromium] › tests/e2e/browser-behavior.spec.ts:294:3 › G1 Combined World Integration & Browser Behavior › 11. Mobile Viewport: touch-friendly HUD and mobile framing (14.8s)
+2026-10-02T22:11:03.4560875Z   ✘  26 [chromium] › tests/e2e/browser-behavior.spec.ts:315:3 › G1 Combined World Integration & Browser Behavior › 12. Reduced Motion & Sound Defaults (29.6s)
+2026-10-02T22:11:05.1365827Z   ✓  27 [chromium] › tests/e2e/browser-behavior.spec.ts:341:3 › G1 Combined World Integration & Browser Behavior › 13. Asset Failure: graceful fallback leaves useful HTML (1.0s)
+2026-10-02T22:11:06.1152314Z   ✓  28 [chromium] › tests/e2e/browser-behavior.spec.ts:358:3 › G1 Combined World Integration & Browser Behavior › 14. Renderer Failure: WebGL failure caught cleanly leaving useful HTML (955ms)
+2026-10-02T22:11:07.0010473Z   ✓  29 [chromium] › tests/e2e/browser-behavior.spec.ts:372:3 › G1 Combined World Integration & Browser Behavior › 15. Fallback Content with JavaScript Disabled: 100% useful semantic HTML (865ms)
+2026-10-02T22:11:30.4457757Z   ✓  30 [chromium] › tests/e2e/full-stack-integration.spec.ts:38:3 › RC3 cross-lane full stack › world monitor contact command reaches the real durable contact API (23.4s)
+2026-10-02T22:11:31.4300351Z   ✓  31 [chromium] › tests/e2e/full-stack-integration.spec.ts:52:3 › RC3 cross-lane full stack › renderer failure leaves the real contact form functional (959ms)
+2026-10-02T22:11:32.0273230Z   ✓  32 [chromium] › tests/e2e/full-stack-integration.spec.ts:59:3 › RC3 cross-lane full stack › direct contact needs no world and canonical API replays R2 receipts and rejects conflicts (572ms)
+2026-10-02T22:11:53.7545422Z   ✓  33 [chromium] › tests/e2e/full-stack-integration.spec.ts:76:3 › RC3 cross-lane full stack › public world availability does not grant admin or private API access (21.7s)
+2026-10-02T22:12:17.1864062Z   ✓  34 [chromium] › tests/e2e/full-stack-integration.spec.ts:92:3 › RC3 cross-lane full stack › a real approved publication update reaches project HTML and world navigation across requests (23.4s)
+2026-10-02T22:12:17.8875255Z   ✓  35 [chromium] › tests/e2e/full-stack-integration.spec.ts:137:3 › RC3 cross-lane full stack › reduced motion preserves keyboard contact and protected admin DOM flows (681ms)
+2026-10-02T22:12:18.8702913Z   ✓  36 [chromium] › tests/e2e/full-stack-integration.spec.ts:150:3 › RC3 cross-lane full stack › static fallback uses approved projects and exposes no draft/private data (966ms)
+2026-10-02T22:12:20.5198321Z   ✓  37 [chromium] › tests/e2e/full-stack-integration.spec.ts:164:3 › RC3 cross-lane full stack › production project routes survive an actual backend connection outage (1.6s)
+2026-10-02T22:12:21.4225556Z   ✓  38 [chromium] › tests/e2e/legacy-platform/project-routes.spec.ts:37:3 › A2 Verified Portfolio Content & Project Routes › verified projects render substantive case studies with evidence audit box and valid links (877ms)
+2026-10-02T22:12:21.9122957Z   ✓  39 [chromium] › tests/e2e/legacy-platform/project-routes.spec.ts:76:3 › A2 Verified Portfolio Content & Project Routes › unpublished candidate 'candidatex' returns 404 without leaking unverified data (467ms)
+2026-10-02T22:12:22.3732191Z   ✓  40 [chromium] › tests/e2e/legacy-platform/project-routes.spec.ts:89:3 › A2 Verified Portfolio Content & Project Routes › unknown arbitrary slug returns 404 (451ms)
+2026-10-02T22:12:22.8695444Z   ✓  41 [chromium] › tests/e2e/legacy-platform/project-routes.spec.ts:95:3 › A2 Verified Portfolio Content & Project Routes › missing figure renders accessible fallback without broken img elements (482ms)
+2026-10-02T22:12:23.4151362Z   ✓  42 [chromium] › tests/e2e/legacy-platform/project-routes.spec.ts:111:3 › A2 Verified Portfolio Content & Project Routes › long title and typography resilience does not overflow or break viewport layout (530ms)
+2026-10-02T22:12:23.9571339Z   ✓  43 [chromium] › tests/e2e/legacy-platform/project-routes.spec.ts:125:3 › A2 Verified Portfolio Content & Project Routes › direct refresh preserves 200 OK and rendered state (526ms)
+2026-10-02T22:12:24.5520022Z   ✓  44 [chromium] › tests/e2e/legacy-platform/project-routes.spec.ts:135:3 › A2 Verified Portfolio Content & Project Routes › back navigation from project case study returns cleanly to projects index (576ms)
+2026-10-02T22:12:25.1572961Z   ✓  45 [chromium] › tests/e2e/legacy-platform/project-routes.spec.ts:151:3 › A2 Verified Portfolio Content & Project Routes › JavaScript disabled: all project routes render substantive semantic HTML with zero WebGL/world requests (593ms)
+2026-10-02T22:12:25.9584349Z   ✓  46 [chromium] › tests/e2e/legacy-platform/project-routes.spec.ts:203:3 › A2 Verified Portfolio Content & Project Routes › safe external links enforce strict HTTPS and security attributes across all projects (782ms)
+2026-10-02T22:12:26.4960753Z   ✓  47 [chromium] › tests/e2e/legacy-platform/project-routes.spec.ts:225:3 › A2 Verified Portfolio Content & Project Routes › metadata, canonical URLs, and sitemap.xml strictly include verified projects only (521ms)
+2026-10-02T22:12:40.1745898Z   ✓  48 [chromium] › tests/e2e/payload.spec.ts:7:1 › five cold loads per desktop and mobile profile record actual production payloads (13.7s)
+2026-10-02T22:12:59.7930261Z   ✓  49 [chromium] › tests/e2e/physical-interactions.spec.ts:21:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 1. Invariants: verifies single owners and high-level experience snapshot (19.6s)
+2026-10-02T22:13:29.9852636Z   ✘  50 [chromium] › tests/e2e/physical-interactions.spec.ts:45:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 2. Attack: rapid resident greeting clicks without race conditions or double-queuing (30.1s)
+2026-10-02T22:14:00.8095305Z   ✘  51 [chromium] › tests/e2e/physical-interactions.spec.ts:63:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 3. Attack: Escape key cancels interaction and restores safe explore base state (30.1s)
+2026-10-02T22:14:24.7242209Z   ✓  52 [chromium] › tests/e2e/physical-interactions.spec.ts:81:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 4. Non-geometry equivalent: accessible Room Controls toggles environment settings (23.3s)
+2026-10-02T22:14:47.3734221Z   ✓  53 [chromium] › tests/e2e/physical-interactions.spec.ts:112:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 5. Painting interaction: inspection tilt triggers spring response and discovers hidden mark (22.6s)
+2026-10-02T22:15:11.5740449Z   ✓  54 [chromium] › tests/e2e/physical-interactions.spec.ts:129:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 6. Attack: route navigation during interaction unmounts cleanly without errors (24.2s)
+2026-10-02T22:15:12.1307068Z   ✓  55 [chromium] › tests/e2e/platform/admin-auth.spec.ts:14:3 › Milestone A3: Protected Admin Shell & Login E2E › loads accessible login page with email, password, and TOTP MFA controls (515ms)
+2026-10-02T22:15:12.7192597Z   ✓  56 [chromium] › tests/e2e/platform/admin-auth.spec.ts:42:3 › Milestone A3: Protected Admin Shell & Login E2E › admin dashboard displays security overview and boundary disclosure (568ms)
+2026-10-02T22:15:13.3236733Z   ✓  57 [chromium] › tests/e2e/platform/admin-auth.spec.ts:63:3 › Milestone A3: Protected Admin Shell & Login E2E › admin pages require zero WebGL, canvas, or 3D models (586ms)
+2026-10-02T22:15:14.0812716Z   ✓  58 [chromium] › tests/e2e/platform/admin-auth.spec.ts:79:3 › Milestone A3: Protected Admin Shell & Login E2E › anonymous administration access redirects to login and private APIs deny access (723ms)
+2026-10-02T22:15:14.6027244Z   ✓  59 [chromium] › tests/e2e/platform/admin-publish.spec.ts:48:3 › Milestone A4: Project Editor & Publication Management E2E › admin navigation includes links to Dashboard, Editor, and Publish (486ms)
+2026-10-02T22:15:15.1666250Z   ✓  60 [chromium] › tests/e2e/platform/admin-publish.spec.ts:63:3 › Milestone A4: Project Editor & Publication Management E2E › loads project editor with structured editing controls (544ms)
+2026-10-02T22:15:15.7735070Z   ✓  61 [chromium] › tests/e2e/platform/admin-publish.spec.ts:94:3 › Milestone A4: Project Editor & Publication Management E2E › loads publish review with pre-flight checklist and publication history table (582ms)
+2026-10-02T22:15:16.4181478Z   ✓  62 [chromium] › tests/e2e/platform/admin-publish.spec.ts:122:3 › Milestone A4: Project Editor & Publication Management E2E › editor and publish interfaces require zero WebGL, canvas, or 3D models (625ms)
+2026-10-02T22:15:16.9721475Z   ✓  63 [chromium] › tests/e2e/platform/admin-publish.spec.ts:139:3 › Milestone A4: Project Editor & Publication Management E2E › public portfolio continues to serve approved snapshot with no private media leakage (538ms)
+2026-10-02T22:15:17.4475106Z   ✓  64 [chromium] › tests/e2e/platform/contact-form.spec.ts:15:3 › Milestone A5: Contact Form & Durable Receipt › contact route renders semantic HTML form without WebGL (452ms)
+2026-10-02T22:15:17.9961759Z   ✓  65 [chromium] › tests/e2e/platform/contact-form.spec.ts:38:3 › Milestone A5: Contact Form & Durable Receipt › submits valid contact inquiry and displays honest durable receipt (535ms)
+2026-10-02T22:15:18.5031574Z   ✓  66 [chromium] › tests/e2e/platform/contact-form.spec.ts:67:3 › Milestone A5: Contact Form & Durable Receipt › direct refresh retains accessible page and direct channels (491ms)
+2026-10-02T22:15:20.6278178Z   ✓  67 [chromium] › tests/e2e/public-shell.spec.ts:54:1 › direct loads, refreshes, route headings, honest empty states and 404 (2.0s)
+2026-10-02T22:15:21.8673810Z   ✓  68 [chromium] › tests/e2e/public-shell.spec.ts:88:1 › keyboard skip link and all primary destinations work without pointer input (1.2s)
+2026-10-02T22:15:23.4064641Z   ✓  69 [chromium] › tests/e2e/public-shell.spec.ts:114:1 › useful HTML and native navigation remain with JavaScript disabled (1.5s)
+2026-10-02T22:15:24.9143330Z   ✓  70 [chromium] › tests/e2e/public-shell.spec.ts:140:1 › world and backend requests blocked; entry reports unavailable; sound and WebGL stay off (1.5s)
+2026-10-02T22:15:25.7170996Z   ✓  71 [chromium] › tests/e2e/public-shell.spec.ts:201:1 › reduced motion has no active animation or smooth travel and keeps all routes (783ms)
+2026-10-02T22:15:26.6242416Z   ✓  72 [chromium] › tests/e2e/public-shell.spec.ts:218:1 › direct section anchors and browser Back preserve reachable content (884ms)
+2026-10-02T22:15:29.8200781Z   ✓  73 [chromium] › tests/e2e/public-shell.spec.ts:235:1 › automated axe scan of every public route and open studio disclosure (3.2s)
+2026-10-02T22:15:32.4235406Z   ✓  74 [chromium] › tests/e2e/public-shell.spec.ts:247:1 › mobile, narrow and landscape reflow preserve controls (2.6s)
+2026-10-02T22:15:33.3651995Z   ✓  75 [chromium] › tests/e2e/renderer-recovery.spec.ts:13:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › WebGL context loss triggers accessible WorldFallback without trapping user (918ms)
+2026-10-02T22:15:34.7725076Z   ✓  76 [chromium] › tests/e2e/renderer-recovery.spec.ts:47:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Asset loading failure renders failure banner with Retry and Continue options (1.4s)
+2026-10-02T22:15:35.6251958Z   ✓  77 [chromium] › tests/e2e/renderer-recovery.spec.ts:69:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Renderer failure with dialog open preserves dialog interactivity in DOM (835ms)
+2026-10-02T22:15:36.5722741Z   ✓  78 [chromium] › tests/e2e/renderer-recovery.spec.ts:89:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Mobile portrait (390x844) framing and touch tap interactions (928ms)
+2026-10-02T22:15:44.1111078Z   ✓  79 [chromium] › tests/e2e/renderer-recovery.spec.ts:119:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Mobile landscape (844x390) responsive reflow and orientation change (7.5s)
+2026-10-02T22:15:44.5719052Z   ✓  80 [chromium] › tests/e2e/room-project-navigation.spec.ts:27:3 › Milestone C2: Studio Monitor, Project Navigation, Transitions & History E2E › 1. Direct route loading of verified case studies requires zero WebGL (438ms)
+2026-10-02T22:15:45.0992815Z   ✓  81 [chromium] › tests/e2e/room-project-navigation.spec.ts:42:3 › Milestone C2: Studio Monitor, Project Navigation, Transitions & History E2E › 2. Direct browser refresh preserves 200 OK and rendered case study state (509ms)
+2026-10-02T22:15:45.5632373Z   ✓  82 [chromium] › tests/e2e/room-project-navigation.spec.ts:52:3 › Milestone C2: Studio Monitor, Project Navigation, Transitions & History E2E › 3. Unknown project slug returns 404 Not Found without leaking unverified data (448ms)
+2026-10-02T22:15:46.0421661Z   ✓  83 [chromium] › tests/e2e/room-project-navigation.spec.ts:58:3 › Milestone C2: Studio Monitor, Project Navigation, Transitions & History E2E › 4. Unpublished candidate 'candidatex' returns 404 Not Found (462ms)
+2026-10-02T22:15:46.7700602Z   ✓  84 [chromium] › tests/e2e/room-project-navigation.spec.ts:64:3 › Milestone C2: Studio Monitor, Project Navigation, Transitions & History E2E › 5. Navigation history: Back, Forward, and Return to Studio work smoothly (710ms)
+2026-10-02T22:15:47.2263701Z   ✓  85 [chromium] › tests/e2e/room-project-navigation.spec.ts:94:3 › Milestone C2: Studio Monitor, Project Navigation, Transitions & History E2E › 6. Projects index lists all 4 verified projects with accessible direct links (442ms)
+2026-10-02T22:15:48.4385467Z   ✓  86 [chromium] › tests/e2e/world-lifecycle.spec.ts:67:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 1. Enter -> repeated Enter: rapid enter requests never create duplicate canvas or renderer (1.2s)
+2026-10-02T22:16:13.6841702Z   ✓  87 [chromium] › tests/e2e/world-lifecycle.spec.ts:90:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 2. Enter -> Skip -> late load completion: Skip settles instantly to HOME; late tasks cannot corrupt state (25.2s)
+2026-10-02T22:16:37.4408005Z   ✓  88 [chromium] › tests/e2e/world-lifecycle.spec.ts:123:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 3. Enter -> Escape: pressing Escape during entrance skips directly to HOME (23.7s)
+2026-10-02T22:16:38.4669438Z   ✓  89 [chromium] › tests/e2e/world-lifecycle.spec.ts:146:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 4. Enter -> route navigation: navigating to portfolio routes cancels world and unmounts canvas cleanly (1.0s)
+2026-10-02T22:16:46.9365133Z   ✓  90 [chromium] › tests/e2e/world-lifecycle.spec.ts:162:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 5. Enter -> Back: browser back button returns to clean static portfolio without errors (8.4s)
+2026-10-02T22:16:47.9282233Z   ✓  91 [chromium] › tests/e2e/world-lifecycle.spec.ts:179:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 6. loading -> renderer failure: simulated renderer failure gracefully renders accessible fallback (974ms)
+2026-10-02T22:16:48.9167300Z   ✓  92 [chromium] › tests/e2e/world-lifecycle.spec.ts:198:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 7. failed asset -> Retry: simulated asset failure shows bounded retry (968ms)
+2026-10-02T22:16:49.9622523Z   ✓  93 [chromium] › tests/e2e/world-lifecycle.spec.ts:210:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 8. failure -> Continue with portfolio: dismisses fallback and returns to clean portfolio (1.0s)
+2026-10-02T22:17:08.7986998Z   ✓  94 [chromium] › tests/e2e/world-lifecycle.spec.ts:225:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 9. reduced-motion enabled before entry: bypasses camera travel directly to HOME (18.8s)
+2026-10-02T22:17:31.2075844Z   ✓  95 [chromium] › tests/e2e/world-lifecycle.spec.ts:246:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 10. reduced-motion toggled during active experience: updates camera transition travel (22.4s)
+2026-10-02T22:17:54.0257233Z   ✓  96 [chromium] › tests/e2e/world-lifecycle.spec.ts:267:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 11. PROVE: single owners verified across all domains (22.8s)
+2026-10-02T22:17:55.1319185Z   ✓  97 [chromium] › tests/e2e/world-lifecycle.spec.ts:286:3 › B5 Production Runtime Lifecycle Foundation - Adversarial & Invariant Tests › 12. PROVE: semantic navigation survives renderer failure (1.1s)
+2026-10-02T22:17:55.2423491Z 
+2026-10-02T22:17:55.2431353Z 
+2026-10-02T22:17:55.2442286Z   1) [chromium] › tests/e2e/browser-behavior.spec.ts:152:3 › G1 Combined World Integration & Browser Behavior › 4. Greeting & 5. Return: resident acknowledges visitor with chair turn and returns to work 
+2026-10-02T22:17:55.2443232Z 
+2026-10-02T22:17:55.2443565Z     Error: expect(locator).toContainText(expected) failed
+2026-10-02T22:17:55.2443945Z 
+2026-10-02T22:17:55.2444153Z     Locator: locator('[data-testid="status-badge"]')
+2026-10-02T22:17:55.2444587Z     Expected substring: "turn_to_visitor"
+2026-10-02T22:17:55.2444938Z     Timeout: 5000ms
+2026-10-02T22:17:55.2445410Z     Error: element(s) not found
+2026-10-02T22:17:55.2445709Z 
+2026-10-02T22:17:55.2445887Z     Call log:
+2026-10-02T22:17:55.2446644Z       - Expect "toContainText" locator('[data-testid="status-badge"]') with timeout 5000ms
+2026-10-02T22:17:55.2447658Z       - waiting for locator('[data-testid="status-badge"]')
+2026-10-02T22:17:55.2456374Z         3 × locator resolved to <span data-testid="status-badge" data-lifecycle-state="TRANSITION" class="world-module__FC9lxW__statusBadge">notice_visitor · sequence</span>
+2026-10-02T22:17:55.2457956Z           - unexpected value "notice_visitor · sequence"
+2026-10-02T22:17:55.2458707Z 
+2026-10-02T22:17:55.2458727Z 
+2026-10-02T22:17:55.2458976Z       165 |     // Wait for turn to visitor
+2026-10-02T22:17:55.2459409Z       166 |     await page.waitForTimeout(700);
+2026-10-02T22:17:55.2460015Z     > 167 |     await expect(page.locator('[data-testid="status-badge"]')).toContainText("turn_to_visitor");
+2026-10-02T22:17:55.2460584Z           |                                                                ^
+2026-10-02T22:17:55.2460888Z       168 |
+2026-10-02T22:17:55.2461200Z       169 |     await captureScreenshot(page, "03-greeting-turn");
+2026-10-02T22:17:55.2461534Z       170 |
+2026-10-02T22:17:55.2461958Z         at /home/runner/work/Yor-World/Yor-World/app/tests/e2e/browser-behavior.spec.ts:167:64
+2026-10-02T22:17:55.2462337Z 
+2026-10-02T22:17:55.2462782Z     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-10-02T22:17:55.2463560Z     test-results/browser-behavior-G1-Combin-2a8b2-ir-turn-and-returns-to-work-chromium/test-failed-1.png
+2026-10-02T22:17:55.2464366Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-10-02T22:17:55.2464650Z 
+2026-10-02T22:17:55.2465125Z     Error Context: test-results/browser-behavior-G1-Combin-2a8b2-ir-turn-and-returns-to-work-chromium/error-context.md
+2026-10-02T22:17:55.2465632Z 
+2026-10-02T22:17:55.2466441Z   2) [chromium] › tests/e2e/browser-behavior.spec.ts:181:3 › G1 Combined World Integration & Browser Behavior › 6. Repeat: safe repeated greeting interactions without state corruption 
+2026-10-02T22:17:55.2467113Z 
+2026-10-02T22:17:55.2467240Z     Test timeout of 30000ms exceeded.
+2026-10-02T22:17:55.2467434Z 
+2026-10-02T22:17:55.2467614Z     Error: page.click: Test timeout of 30000ms exceeded.
+2026-10-02T22:17:55.2467926Z     Call log:
+2026-10-02T22:17:55.2468243Z       - waiting for locator('[data-testid="greet-resident-btn"]')
+2026-10-02T22:17:55.2469838Z         - locator resolved to <button type="button" data-testid="greet-resident-btn" class="world-module__FC9lxW__hudButton" aria-label="Acknowledge and greet resident">Greet Resident</button>
+2026-10-02T22:17:55.2471422Z       - attempting click action
+2026-10-02T22:17:55.2471938Z         - waiting for element to be visible, enabled and stable
+2026-10-02T22:17:55.2472345Z         - element is visible, enabled and stable
+2026-10-02T22:17:55.2472678Z         - scrolling into view if needed
+2026-10-02T22:17:55.2472954Z         - done scrolling
+2026-10-02T22:17:55.2473252Z       - element was detached from the DOM, retrying
+2026-10-02T22:17:55.2473469Z 
+2026-10-02T22:17:55.2473475Z 
+2026-10-02T22:17:55.2473559Z       190 |
+2026-10-02T22:17:55.2473789Z       191 |     // Second greeting (repeat)
+2026-10-02T22:17:55.2474202Z     > 192 |     await page.click('[data-testid="greet-resident-btn"]');
+2026-10-02T22:17:55.2474614Z           |                ^
+2026-10-02T22:17:55.2475116Z       193 |     await expect(page.locator('[data-testid="status-badge"]')).toContainText("notice_visitor");
+2026-10-02T22:17:55.2475939Z       194 |
+2026-10-02T22:17:55.2476228Z       195 |     // Third greeting after instant skip
+2026-10-02T22:17:55.2476764Z         at /home/runner/work/Yor-World/Yor-World/app/tests/e2e/browser-behavior.spec.ts:192:16
+2026-10-02T22:17:55.2477136Z 
+2026-10-02T22:17:55.2477817Z     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-10-02T22:17:55.2479249Z     test-results/browser-behavior-G1-Combin-70a4b-ns-without-state-corruption-chromium/test-failed-1.png
+2026-10-02T22:17:55.2480498Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-10-02T22:17:55.2481018Z 
+2026-10-02T22:17:55.2481504Z     Error Context: test-results/browser-behavior-G1-Combin-70a4b-ns-without-state-corruption-chromium/error-context.md
+2026-10-02T22:17:55.2482026Z 
+2026-10-02T22:17:55.2482895Z   3) [chromium] › tests/e2e/browser-behavior.spec.ts:201:3 › G1 Combined World Integration & Browser Behavior › 7. Cancel: safe cancellation reverses along collision-checked path back to rest 
+2026-10-02T22:17:55.2483594Z 
+2026-10-02T22:17:55.2483946Z     Error: expect(locator).toContainText(expected) failed
+2026-10-02T22:17:55.2484394Z 
+2026-10-02T22:17:55.2484610Z     Locator: locator('[data-testid="status-badge"]')
+2026-10-02T22:17:55.2484967Z     Expected substring: "coding_idle"
+2026-10-02T22:17:55.2485243Z     Timeout: 5000ms
+2026-10-02T22:17:55.2485485Z     Error: element(s) not found
+2026-10-02T22:17:55.2485646Z 
+2026-10-02T22:17:55.2485733Z     Call log:
+2026-10-02T22:17:55.2486145Z       - Expect "toContainText" locator('[data-testid="status-badge"]') with timeout 5000ms
+2026-10-02T22:17:55.2486684Z       - waiting for locator('[data-testid="status-badge"]')
+2026-10-02T22:17:55.2487688Z         3 × locator resolved to <span data-testid="status-badge" data-lifecycle-state="HOME" class="world-module__FC9lxW__statusBadge">turn_to_visitor · safe-return</span>
+2026-10-02T22:17:55.2488912Z           - unexpected value "turn_to_visitor · safe-return"
+2026-10-02T22:17:55.2489181Z 
+2026-10-02T22:17:55.2489192Z 
+2026-10-02T22:17:55.2489282Z       214 |
+2026-10-02T22:17:55.2489529Z       215 |     // Wait for return to finish
+2026-10-02T22:17:55.2490152Z     > 216 |     await expect(page.locator('[data-testid="status-badge"]')).toContainText("coding_idle", { timeout: 5000 });
+2026-10-02T22:17:55.2490760Z           |                                                                ^
+2026-10-02T22:17:55.2491203Z       217 |     await captureScreenshot(page, "06-cancel-safe-return");
+2026-10-02T22:17:55.2491549Z       218 |   });
+2026-10-02T22:17:55.2491739Z       219 |
+2026-10-02T22:17:55.2492165Z         at /home/runner/work/Yor-World/Yor-World/app/tests/e2e/browser-behavior.spec.ts:216:64
+2026-10-02T22:17:55.2492543Z 
+2026-10-02T22:17:55.2492962Z     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-10-02T22:17:55.2493739Z     test-results/browser-behavior-G1-Combin-ef535-n-checked-path-back-to-rest-chromium/test-failed-1.png
+2026-10-02T22:17:55.2494546Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-10-02T22:17:55.2494834Z 
+2026-10-02T22:17:55.2495307Z     Error Context: test-results/browser-behavior-G1-Combin-ef535-n-checked-path-back-to-rest-chromium/error-context.md
+2026-10-02T22:17:55.2495808Z 
+2026-10-02T22:17:55.2496508Z   4) [chromium] › tests/e2e/browser-behavior.spec.ts:262:3 › G1 Combined World Integration & Browser Behavior › 9. Monitor & 10. Reverse Doorway camera navigation 
+2026-10-02T22:17:55.2497105Z 
+2026-10-02T22:17:55.2497225Z     Test timeout of 30000ms exceeded.
+2026-10-02T22:17:55.2497590Z 
+2026-10-02T22:17:55.2497811Z     Error: locator.textContent: Test timeout of 30000ms exceeded.
+2026-10-02T22:17:55.2498172Z     Call log:
+2026-10-02T22:17:55.2498826Z       - waiting for locator('[data-testid="world-diagnostics"]')
+2026-10-02T22:17:55.2499172Z 
+2026-10-02T22:17:55.2499181Z 
+2026-10-02T22:17:55.2499631Z       287 |     // Switch back to Home
+2026-10-02T22:17:55.2500094Z       288 |     await page.click('[data-testid="camera-home-btn"]');
+2026-10-02T22:17:55.2500668Z     > 289 |     text = await page.locator('[data-testid="world-diagnostics"]').textContent();
+2026-10-02T22:17:55.2501189Z           |                                                                    ^
+2026-10-02T22:17:55.2501552Z       290 |     diag = JSON.parse(text!);
+2026-10-02T22:17:55.2501933Z       291 |     expect(diag.cameraPreset).toBe("home-desktop");
+2026-10-02T22:17:55.2502260Z       292 |   });
+2026-10-02T22:17:55.2502693Z         at /home/runner/work/Yor-World/Yor-World/app/tests/e2e/browser-behavior.spec.ts:289:68
+2026-10-02T22:17:55.2503070Z 
+2026-10-02T22:17:55.2503505Z     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-10-02T22:17:55.2504714Z     test-results/browser-behavior-G1-Combin-33bf6-e-Doorway-camera-navigation-chromium/test-failed-1.png
+2026-10-02T22:17:55.2505588Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-10-02T22:17:55.2505887Z 
+2026-10-02T22:17:55.2506360Z     Error Context: test-results/browser-behavior-G1-Combin-33bf6-e-Doorway-camera-navigation-chromium/error-context.md
+2026-10-02T22:17:55.2506899Z 
+2026-10-02T22:17:55.2507542Z   5) [chromium] › tests/e2e/browser-behavior.spec.ts:315:3 › G1 Combined World Integration & Browser Behavior › 12. Reduced Motion & Sound Defaults 
+2026-10-02T22:17:55.2508097Z 
+2026-10-02T22:17:55.2508286Z     Error: expect(locator).toContainText(expected) failed
+2026-10-02T22:17:55.2508958Z 
+2026-10-02T22:17:55.2509364Z     Locator: locator('[data-testid="reduced-motion-toggle-btn"]')
+2026-10-02T22:17:55.2509999Z     Expected substring: "Reduced Motion: On"
+2026-10-02T22:17:55.2510400Z     Timeout: 5000ms
+2026-10-02T22:17:55.2510889Z     Error: element(s) not found
+2026-10-02T22:17:55.2511556Z 
+2026-10-02T22:17:55.2511722Z     Call log:
+2026-10-02T22:17:55.2512330Z       - Expect "toContainText" locator('[data-testid="reduced-motion-toggle-btn"]') with timeout 5000ms
+2026-10-02T22:17:55.2513140Z       - waiting for locator('[data-testid="reduced-motion-toggle-btn"]')
+2026-10-02T22:17:55.2513727Z 
+2026-10-02T22:17:55.2513734Z 
+2026-10-02T22:17:55.2513912Z       330 |     // Toggle Reduced Motion ON
+2026-10-02T22:17:55.2527939Z       331 |     await page.click('[data-testid="reduced-motion-toggle-btn"]');
+2026-10-02T22:17:55.2529442Z     > 332 |     await expect(page.locator('[data-testid="reduced-motion-toggle-btn"]')).toContainText("Reduced Motion: On");
+2026-10-02T22:17:55.2530492Z           |                                                                             ^
+2026-10-02T22:17:55.2531550Z       333 |     await expect(page.locator('[data-testid="world-diagnostics"]')).toContainText('"reducedMotion": true');
+2026-10-02T22:17:55.2532742Z       334 |     text = await page.locator('[data-testid="world-diagnostics"]').textContent();
+2026-10-02T22:17:55.2533533Z       335 |     diag = JSON.parse(text!);
+2026-10-02T22:17:55.2534416Z         at /home/runner/work/Yor-World/Yor-World/app/tests/e2e/browser-behavior.spec.ts:332:77
+2026-10-02T22:17:55.2535004Z 
+2026-10-02T22:17:55.2535720Z     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-10-02T22:17:55.2536969Z     test-results/browser-behavior-G1-Combin-f54ae-duced-Motion-Sound-Defaults-chromium/test-failed-1.png
+2026-10-02T22:17:55.2538315Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-10-02T22:17:55.2538996Z 
+2026-10-02T22:17:55.2539819Z     Error Context: test-results/browser-behavior-G1-Combin-f54ae-duced-Motion-Sound-Defaults-chromium/error-context.md
+2026-10-02T22:17:55.2540960Z 
+2026-10-02T22:17:55.2542524Z   6) [chromium] › tests/e2e/physical-interactions.spec.ts:45:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 2. Attack: rapid resident greeting clicks without race conditions or double-queuing 
+2026-10-02T22:17:55.2544001Z 
+2026-10-02T22:17:55.2544214Z     Test timeout of 30000ms exceeded.
+2026-10-02T22:17:55.2544516Z 
+2026-10-02T22:17:55.2544842Z     Error: locator.click: Test timeout of 30000ms exceeded.
+2026-10-02T22:17:55.2545412Z     Call log:
+2026-10-02T22:17:55.2545939Z       - waiting for locator('[data-testid="skip-motion-btn"]')
+2026-10-02T22:17:55.2546386Z 
+2026-10-02T22:17:55.2546394Z 
+2026-10-02T22:17:55.2546801Z       57 |     // Settle back to coding rest pose safely without duplicate queue
+2026-10-02T22:17:55.2547673Z       58 |     const skipBtn = page.locator('[data-testid="skip-motion-btn"]');
+2026-10-02T22:17:55.2548391Z     > 59 |     await skipBtn.click();
+2026-10-02T22:17:55.2549110Z          |                   ^
+2026-10-02T22:17:55.2549865Z       60 |     await expect(statusBadge).toContainText("coding_idle", { timeout: 3000 });
+2026-10-02T22:17:55.2550521Z       61 |   });
+2026-10-02T22:17:55.2550827Z       62 |
+2026-10-02T22:17:55.2551541Z         at /home/runner/work/Yor-World/Yor-World/app/tests/e2e/physical-interactions.spec.ts:59:19
+2026-10-02T22:17:55.2552163Z 
+2026-10-02T22:17:55.2552860Z     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-10-02T22:17:55.2554090Z     test-results/physical-interactions-Phys-7693f-onditions-or-double-queuing-chromium/test-failed-1.png
+2026-10-02T22:17:55.2555402Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-10-02T22:17:55.2555865Z 
+2026-10-02T22:17:55.2556644Z     Error Context: test-results/physical-interactions-Phys-7693f-onditions-or-double-queuing-chromium/error-context.md
+2026-10-02T22:17:55.2557482Z 
+2026-10-02T22:17:55.2559187Z   7) [chromium] › tests/e2e/physical-interactions.spec.ts:63:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 3. Attack: Escape key cancels interaction and restores safe explore base state 
+2026-10-02T22:17:55.2560452Z 
+2026-10-02T22:17:55.2560662Z     Test timeout of 30000ms exceeded.
+2026-10-02T22:17:55.2560955Z 
+2026-10-02T22:17:55.2561280Z     Error: locator.innerText: Test timeout of 30000ms exceeded.
+2026-10-02T22:17:55.2561818Z     Call log:
+2026-10-02T22:17:55.2562335Z       - waiting for locator('[data-testid="world-diagnostics"]')
+2026-10-02T22:17:55.2562817Z 
+2026-10-02T22:17:55.2562825Z 
+2026-10-02T22:17:55.2563238Z       73 |     await page.click('[data-testid="diagnostics-toggle-btn"]');
+2026-10-02T22:17:55.2564153Z       74 |     const diagPre = page.locator('[data-testid="world-diagnostics"]');
+2026-10-02T22:17:55.2565009Z     > 75 |     const diag = JSON.parse(await diagPre.innerText());
+2026-10-02T22:17:55.2565663Z          |                                           ^
+2026-10-02T22:17:55.2566299Z       76 |
+2026-10-02T22:17:55.2566761Z       77 |     expect(diag.cameraPreset).toBe("home-desktop");
+2026-10-02T22:17:55.2567409Z       78 |     expect(diag.activeClip).toBe("coding_idle");
+2026-10-02T22:17:55.2568665Z         at /home/runner/work/Yor-World/Yor-World/app/tests/e2e/physical-interactions.spec.ts:75:43
+2026-10-02T22:17:55.2569386Z 
+2026-10-02T22:17:55.2570137Z     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-10-02T22:17:55.2571475Z     test-results/physical-interactions-Phys-5d650-res-safe-explore-base-state-chromium/test-failed-1.png
+2026-10-02T22:17:55.2572882Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-10-02T22:17:55.2573338Z 
+2026-10-02T22:17:55.2574102Z     Error Context: test-results/physical-interactions-Phys-5d650-res-safe-explore-base-state-chromium/error-context.md
+2026-10-02T22:17:55.2575081Z 
+2026-10-02T22:17:55.2575215Z   7 failed
+2026-10-02T22:17:55.2576956Z     [chromium] › tests/e2e/browser-behavior.spec.ts:152:3 › G1 Combined World Integration & Browser Behavior › 4. Greeting & 5. Return: resident acknowledges visitor with chair turn and returns to work 
+2026-10-02T22:17:55.2579776Z     [chromium] › tests/e2e/browser-behavior.spec.ts:181:3 › G1 Combined World Integration & Browser Behavior › 6. Repeat: safe repeated greeting interactions without state corruption 
+2026-10-02T22:17:55.2582358Z     [chromium] › tests/e2e/browser-behavior.spec.ts:201:3 › G1 Combined World Integration & Browser Behavior › 7. Cancel: safe cancellation reverses along collision-checked path back to rest 
+2026-10-02T22:17:55.2584801Z     [chromium] › tests/e2e/browser-behavior.spec.ts:262:3 › G1 Combined World Integration & Browser Behavior › 9. Monitor & 10. Reverse Doorway camera navigation 
+2026-10-02T22:17:55.2586926Z     [chromium] › tests/e2e/browser-behavior.spec.ts:315:3 › G1 Combined World Integration & Browser Behavior › 12. Reduced Motion & Sound Defaults 
+2026-10-02T22:17:55.2589610Z     [chromium] › tests/e2e/physical-interactions.spec.ts:45:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 2. Attack: rapid resident greeting clicks without race conditions or double-queuing 
+2026-10-02T22:17:55.2592400Z     [chromium] › tests/e2e/physical-interactions.spec.ts:63:3 › Physical & Room Interactions: Task C1 Arbitration & Robustness › 3. Attack: Escape key cancels interaction and restores safe explore base state 
+2026-10-02T22:17:55.2593797Z   90 passed (10.8m)
+2026-10-02T22:17:55.2657452Z  ELIFECYCLE  Command failed with exit code 1.
+2026-10-02T22:17:55.2862472Z ##[error]Process completed with exit code 1.
+2026-10-02T22:17:55.2953886Z ##[group]Run actions/upload-artifact@v4
+2026-10-02T22:17:55.2954195Z with:
+2026-10-02T22:17:55.2954475Z   name: rc3-quality-6d819bf699bbf67a56bd9db5ec7ea33dbf1db833
+2026-10-02T22:17:55.2954818Z   path: .rc3-ci/
+2026-10-02T22:17:55.2955037Z   retention-days: 14
+2026-10-02T22:17:55.2955281Z   if-no-files-found: warn
+2026-10-02T22:17:55.2955515Z   compression-level: 6
+2026-10-02T22:17:55.2955734Z   overwrite: false
+2026-10-02T22:17:55.2955947Z   include-hidden-files: false
+2026-10-02T22:17:55.2956178Z env:
+2026-10-02T22:17:55.2956349Z   CI: true
+2026-10-02T22:17:55.2956543Z   NEXT_TELEMETRY_DISABLED: 1
+2026-10-02T22:17:55.2956831Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2026-10-02T22:17:55.2957226Z   STORE_PATH: /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2026-10-02T22:17:55.2957667Z   B5_EVIDENCE_DIR: /home/runner/work/Yor-World/Yor-World/.rc3-ci/e2e
+2026-10-02T22:17:55.2958102Z   C3_EVIDENCE_DIR: /home/runner/work/Yor-World/Yor-World/.rc3-ci/e2e
+2026-10-02T22:17:55.2958810Z   RC3_BUILD_ID: -eelDFNzmD3GGUIIPChWK
+2026-10-02T22:17:55.2959104Z ##[endgroup]
+2026-10-02T22:17:55.4649426Z (node:8469) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-02T22:17:55.4651646Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-02T22:17:55.4748854Z ##[warning]No files were found with the provided path: .rc3-ci/. No artifacts will be uploaded.
+2026-10-02T22:17:55.4966702Z Post job cleanup.
+2026-10-02T22:17:55.6564740Z Pruning is unnecessary.
+2026-10-02T22:17:55.6769705Z Post job cleanup.
+2026-10-02T22:17:55.7722669Z [command]/usr/bin/git version
+2026-10-02T22:17:55.7800003Z git version 2.55.0
+2026-10-02T22:17:55.7847731Z Temporarily overriding HOME='/home/runner/work/_temp/2fb66c0d-ea73-4d24-a9e1-61f34d686eb3' before making global git config changes
+2026-10-02T22:17:55.7849304Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-02T22:17:55.7856089Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Yor-World/Yor-World
+2026-10-02T22:17:55.7898749Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-02T22:17:55.7942843Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-02T22:17:55.8199722Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-02T22:17:55.8229867Z http.https://github.com/.extraheader
+2026-10-02T22:17:55.8241397Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-02T22:17:55.8281951Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-02T22:17:55.8549706Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-02T22:17:55.8590493Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-02T22:17:55.9000325Z Cleaning up orphan processes
+2026-10-02T22:17:55.9307242Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/cache@v4, actions/setup-node@v4, actions/upload-artifact@v4, pnpm/action-setup@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

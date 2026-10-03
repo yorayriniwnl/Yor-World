@@ -1,6 +1,6 @@
 # Canonical RC3 verification matrix
 
-Both lanes' tests remain represented in `app/`: C3 unit/public/world/performance tests, rebased A6 platform integration/E2E/content tests and contact R2 amendment tests. New tests exercise canonical imports and actual HTTP routes rather than merely cite historical PASS logs. Final clean-checkout execution binds the manifest sourceCommit:191 unit/145 integration/97 unified browser/17 dedicated accessibility/6 performance tests PASS, with zero failed/flaky/skipped browser cases. Component preliminary results remain historical maker diagnostics, distinct from the final hashed proof.
+Both lanes' tests remain represented in `app/`: C3 unit/public/world/performance tests, rebased A6 platform integration/E2E/content tests and contact R2 amendment tests. New tests exercise canonical imports and actual HTTP routes rather than merely cite historical PASS logs. Final clean-checkout execution binds the manifest sourceCommit: 261 unit/155 integration/97 unified browser/17 dedicated accessibility/6 performance tests PASS, with zero failed/flaky/skipped browser cases. Component preliminary results remain historical maker diagnostics, distinct from the final hashed proof.
 
 | Area | Canonical coverage | Execution boundary |
 | --- | --- | --- |

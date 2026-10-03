@@ -1,0 +1,3461 @@
+{
+  "sourceBuildHashes": {
+    "gitHead": "6d819bf699bbf67a56bd9db5ec7ea33dbf1db833",
+    "dirtyTrackedPaths": [
+      "app/src/features/room/quality-policy.ts",
+      "app/src/features/world/CameraDirector.ts",
+      "app/src/features/world/EntranceCoordinator.ts",
+      "app/src/features/world/WorldInteractionBinding.ts",
+      "app/src/features/world/WorldRoot.tsx",
+      "app/src/features/world/WorldRuntime.ts",
+      "app/tests/integration/runtime/frozen-world-binding.test.ts",
+      "app/tests/unit/camera-director.test.ts",
+      "app/tests/unit/quality-policy.test.ts"
+    ],
+    "untrackedPaths": [
+      "app/src/features/world/LowQualityBatch.ts",
+      "app/src/features/world/RuntimeMaterialQuality.ts",
+      "app/src/features/world/device-capabilities.ts",
+      "app/tests/integration/production-camera.test.ts",
+      "app/tests/unit/device-capabilities.test.ts",
+      "app/tests/unit/low-quality-batch.test.ts",
+      "app/tests/unit/runtime-material-quality.test.ts"
+    ],
+    "sourceTreeSha256": "18dd403cc528d77bfebb9be209c424a1e009e5e956310cf5b7fad7c5cddd60f9",
+    "sourceTreeHashPolicy": "Sorted tracked/untracked canonical app files, excluding Git-ignored artifacts; per-file text normalized LF, binary raw; SHA256(path NUL digest NUL bytes LF). Uncommitted worktree diagnostic only.",
+    "files": [
+      {
+        "path": "app/.env.example",
+        "bytes": 934,
+        "sha256": "8e85c86e969cf02a1b22f2626d07d1ca36d0673441ffe4aaf5fed87788ec6296",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/.gitignore",
+        "bytes": 108,
+        "sha256": "d03f7e65be7142ced83724b0915460a3f489ad7e7ce4adbee363dccfb072e5e0",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/.npmrc",
+        "bytes": 46,
+        "sha256": "b6d0f23f4c7f0336f6ae25a5258297c989d9d6cda6b8ee3edf1a5e953fdf0dd9",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/README.md",
+        "bytes": 1960,
+        "sha256": "f8a1fcdf9f4066685fcdd90cbb8869851723e11c24f38b709f36cd3aad09930c",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/eslint.config.mjs",
+        "bytes": 346,
+        "sha256": "c66fb24bf88c9e0bfba1e838de9656093cdfb4e435465529afc4c551c32d1cbc",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/next-env.d.ts",
+        "bytes": 288,
+        "sha256": "1862ac4bbbc5192d4bf562161df66ea547ed3e67173100656ab606ae9797db2b",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/next.config.ts",
+        "bytes": 557,
+        "sha256": "3e0dcb30af4ddd3ed8093d3c38273ab38c8fc713da6363c866b1ec3b69dc55dc",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/package.json",
+        "bytes": 1336,
+        "sha256": "859cd02db1eb1f41b978ff9f08d5b4424c2d2a27aff2bb085b770714a731c52c",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/playwright.config.ts",
+        "bytes": 1297,
+        "sha256": "0c73e012399d3c6a6e2ff20672b684725accb0ca67e0fa02428a9352a3f045fd",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/playwright.performance.config.ts",
+        "bytes": 1137,
+        "sha256": "e9e8e0cc68efd36fc8fafbd281b24c86281ed4fb67e4f499afb27380c1e99bd1",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/pnpm-lock.yaml",
+        "bytes": 153849,
+        "sha256": "733c559371e34237cfd95323b40f8f1ad6655a7f46f715309c979226007573d1",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/public/asset-manifest.json",
+        "bytes": 4880,
+        "sha256": "a630de647393795201516b5659adbed17115add330a8360d373433ea0de06176",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/public/models/fixture-production.glb",
+        "bytes": 320748,
+        "sha256": "8e413b1aa407841b5fd268a9c00bb66718688957c6507551f3b79104132d81d8",
+        "hashMode": "raw"
+      },
+      {
+        "path": "app/public/models/group-a-essential.glb",
+        "bytes": 579208,
+        "sha256": "069767334b0dd43f8fd8501330472d0398c951f12fca2589ee5ad3aa957a538b",
+        "hashMode": "raw"
+      },
+      {
+        "path": "app/public/models/group-b-props.glb",
+        "bytes": 194084,
+        "sha256": "17d294d1de3c3310ebda1a49dbd1d65c9395905dc308684b08e999487e9cda72",
+        "hashMode": "raw"
+      },
+      {
+        "path": "app/public/models/interaction-assets-mobile.glb",
+        "bytes": 263364,
+        "sha256": "9dd2933d64dbe947328ee600a1608de07016a5aa01cad027881d33e738cd190e",
+        "hashMode": "raw"
+      },
+      {
+        "path": "app/public/models/interaction-assets.glb",
+        "bytes": 262868,
+        "sha256": "1d965a9fe9b58a9f485b0145161bc38a75e4ccb9113ce83211db503a5b1e6b6d",
+        "hashMode": "raw"
+      },
+      {
+        "path": "app/public/models/mobile-room-lod.glb",
+        "bytes": 861364,
+        "sha256": "3a02647d24e474c8a2579b0d277cf02a7841212e961c1554f67b6e032e40a307",
+        "hashMode": "raw"
+      },
+      {
+        "path": "app/public/models/on-demand-projects.glb",
+        "bytes": 93708,
+        "sha256": "66363f4cbe2932c4aeeff711d552e7dacf827a2bc70a580cf3d54ace33fb4798",
+        "hashMode": "raw"
+      },
+      {
+        "path": "app/public/models/production-room-full.glb",
+        "bytes": 861364,
+        "sha256": "3a02647d24e474c8a2579b0d277cf02a7841212e961c1554f67b6e032e40a307",
+        "hashMode": "raw"
+      },
+      {
+        "path": "app/public/models/resident-production.glb",
+        "bytes": 575900,
+        "sha256": "b15000feb4738d14aa1d41a43f01ba377f7011dbe1c95b3478c1200d12f4411d",
+        "hashMode": "raw"
+      },
+      {
+        "path": "app/public/textures/deskmat-topography.png",
+        "bytes": 18211,
+        "sha256": "8e57eda8b12b18ef9f8cd3b08f015a707dd735a559f14bda2903dfcab5e65685",
+        "hashMode": "raw"
+      },
+      {
+        "path": "app/public/textures/monitor-wallpaper.png",
+        "bytes": 43358,
+        "sha256": "0c50d9b4499772e9ffeb07c94ae0ea0c6e49972398003cce269824d51cf4c5c1",
+        "hashMode": "raw"
+      },
+      {
+        "path": "app/src/app/(public)/about/page.tsx",
+        "bytes": 7133,
+        "sha256": "4cc2abfbcf819b53528335558748b14d07739f96765f60287a394707c42bfeef",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/(public)/contact/page.tsx",
+        "bytes": 3198,
+        "sha256": "fd414e4b92d5b1646ff50351aae8d01c503b7dcbb99253c1bd951c2b10aa2453",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/(public)/page.tsx",
+        "bytes": 3256,
+        "sha256": "9ea5964bc90ddd76b872a7132169f737d72f4e5649a958ed875882dfa48c7240",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/(public)/projects/[slug]/page.tsx",
+        "bytes": 1794,
+        "sha256": "c8fa04147716c716615b96c6661e8b683c06ba9ab43e1b576638908dca555281",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/(public)/projects/page.tsx",
+        "bytes": 3764,
+        "sha256": "fab00982a003878298472df2e56611a37714afab5340afe1fec7f92075c2e056",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/(public)/resume/page.tsx",
+        "bytes": 11315,
+        "sha256": "4c4fe43138fc2f0636946ae1f876ff7da1034f8adf490f85751c00f91b9c64e2",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/admin/admin.module.css",
+        "bytes": 5062,
+        "sha256": "1be77cbe1424b738805546e069594bf6c9022f89901a94b592cd755144cbd268",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/admin/editor/page.tsx",
+        "bytes": 1039,
+        "sha256": "8366920ff8c1b85d7c6d5968acdef7bebebb5ab94b65b2a7ea17f02772a4a025",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/admin/layout.tsx",
+        "bytes": 1890,
+        "sha256": "af43fdddf16ead2b7e7b7c71208e3421fde9a7780aee8fd83f1460e078e8b503",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/admin/login/page.tsx",
+        "bytes": 1068,
+        "sha256": "7043a1e5314910a8ad10785dd13bf67ae3fe6b4ac43ae8bafbb3725ff9b5f657",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/admin/page.tsx",
+        "bytes": 5318,
+        "sha256": "1f7bf825197c1a5642c547674d724c8c47f8372cc02a82b53b5fad1459194a41",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/admin/publish/page.tsx",
+        "bytes": 1196,
+        "sha256": "d42c272c9188a13ba65c2ce21907407d4db01162c67a6821508f49ad245000e2",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/api/admin/audit/route.ts",
+        "bytes": 1977,
+        "sha256": "c853ef97d6a29e828d819758c3768ab0739cc5293fc70bc906aacc27dd6c0844",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/api/admin/media/[id]/approve/route.ts",
+        "bytes": 1011,
+        "sha256": "81f0144b9df1a159f9fff56a055e7c60c82cab286fa3db883d2a2f63a1840a1b",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/api/admin/media/[id]/route.ts",
+        "bytes": 1159,
+        "sha256": "e4ca4865b8c34becadce6548110becc303a6104a3c4676e0f63f8ccb7fbb0815",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/api/admin/media/route.ts",
+        "bytes": 2589,
+        "sha256": "0d079e19f0b81ae5f9c01136e22205c3b2b034ce7750940f108015ac904bb6fe",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/api/admin/projects/route.ts",
+        "bytes": 2767,
+        "sha256": "f55c9d34aff58965c149d7e566e5f14f08ccd39ccc9e2e9602ba77c85752e970",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/api/admin/publish/route.ts",
+        "bytes": 2548,
+        "sha256": "eedf588dd60636b3f91df0d498684156ff3fdaba75de5dcc11d4e83b4904d5b7",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/api/admin/rollback/route.ts",
+        "bytes": 1359,
+        "sha256": "ab779f1e2a04edb93965da416aa36d6ee3baf25d94c7cbdd98358f3dc74ff97c",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/api/admin/verify/route.ts",
+        "bytes": 718,
+        "sha256": "44be76ab1138bb4c43e533a4268ff18ec032f3f261031d6968ce8ff3f31f18d3",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/api/contact/route.ts",
+        "bytes": 4483,
+        "sha256": "37fa934777f45289cf4aadf13fd53ba2f5027c0c505753fa6886bb21ddc3912b",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/api/events/route.ts",
+        "bytes": 1162,
+        "sha256": "1f85d3b4d56724f6d311a3f3e056b73539237a1bcbb8414f5b92a2c83600f318",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/api/github/route.ts",
+        "bytes": 1152,
+        "sha256": "b7cb242e2d7a9b8b7a26114897de882fff3e3194e86f4fa9c434a46a633e746c",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/api/internal/jobs/[job]/route.ts",
+        "bytes": 1250,
+        "sha256": "20b9d388224f69dd83dc2029a11d06821c156c4ad392e0e4588bbff18cd928b9",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/layout.tsx",
+        "bytes": 1285,
+        "sha256": "e013014785cb9f9b3865843a4732938ac908363bf1eaafbb4a8fc04cbe44e74e",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/not-found.tsx",
+        "bytes": 366,
+        "sha256": "f7855c7eb9d0a8f387cefb1d81ed29ae71f9dee14f34302fbe3dcebd2acffebc",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/robots.ts",
+        "bytes": 356,
+        "sha256": "f53ed52d76105d4e4ac5c8a5658ac582492799b1d94d95587683a0c17419aaec",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/app/sitemap.ts",
+        "bytes": 1341,
+        "sha256": "c7a62f7b09aa55a8d0aee2798ed72416ff2103d4546f6e740ced8925b57a16ae",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/config/public-base-url.ts",
+        "bytes": 174,
+        "sha256": "dac863f50d881c43c493b18f934599b82ea3ba735b2c475ebb88028ed6c6cefb",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/content/approved-publication.ts",
+        "bytes": 20488,
+        "sha256": "0a3b8f7e6682ae3baff933f5f7d38892e2d7265c634c9b20bbb6cf17a24bd7c8",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/content/publication-reader.ts",
+        "bytes": 4577,
+        "sha256": "c25b03edc19d5ffe089e1ebcceff4e669d2c2a5dce69a0a23f1795fd4d9c7d59",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/content/server-publication.ts",
+        "bytes": 1058,
+        "sha256": "d563f29370211c7ff4784f2405653b3c43918c422b6aab816595c847e4724ada",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/contracts/assets.ts",
+        "bytes": 659,
+        "sha256": "5c61117a8ed66f6acfef3ecfeb9742530320ba6d58713c94d6f6375044419f00",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/contracts/content.ts",
+        "bytes": 2217,
+        "sha256": "5e341e5a875743439b057df7ebc6c8a7d31b921af8dd7f2576af7765974ce34f",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/contracts/experience.ts",
+        "bytes": 4167,
+        "sha256": "88727c6fd98fa4562d28e1700658285e73e225281b02414a1ab6c82afe86771f",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/admin/login-form.tsx",
+        "bytes": 3206,
+        "sha256": "525e29e8970679ac9d07f7eb849a8e512639265497087d418f3633c8a766f5b8",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/admin/project-editor.tsx",
+        "bytes": 14755,
+        "sha256": "018987d838b347ae0ee94603c6e922c304f1ec1e93e2664359681343b95a8072",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/admin/publish-review.tsx",
+        "bytes": 10643,
+        "sha256": "afee9e44fce79a5360ff81b18a2e45ff2e63e4a0d44ff2e863e8e59ac7988664",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/admin/sign-out.tsx",
+        "bytes": 585,
+        "sha256": "af6be854a92888cd73dbaabb39d4456fca91b3aeb969ea0c7f3cce827e606677",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/character/greeting-controller.ts",
+        "bytes": 2954,
+        "sha256": "cebc0c1ab4979fb7c190ddc224ad26d0c869e3947afa6edc777f6c48e470f356",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/contact/contact-form.tsx",
+        "bytes": 6633,
+        "sha256": "7e6cc81027f0e96ff6e407e1e0f28493a40ed4bfce937e703e31ec5d80062432",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/contact/contact.module.css",
+        "bytes": 2206,
+        "sha256": "c4f417f5a7280ac22abac4cee08d13a69e872f218a9c780cd03e82dfc4078c31",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/experience/audio.ts",
+        "bytes": 4917,
+        "sha256": "f3ccd5abfbe8177fd89811044058b45f4d70550eb754f76233d9ecea63de402b",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/experience/cancellation-coordinator.ts",
+        "bytes": 3235,
+        "sha256": "6eb35ad2716ee7c097b04545272fa37c52e1b7d45b6668da369aa0d141715365",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/experience/controller.ts",
+        "bytes": 15089,
+        "sha256": "df0474a6dfa5d98585b3c1d0e3e010c989792234bd4ab0061c00e055f7cb5aaa",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/experience/intent-arbitration.ts",
+        "bytes": 6527,
+        "sha256": "2bc943c700172611be65757f73f6ba81493b79bcdfdb28dbae7833c50403da13",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/experience/interaction-registry.ts",
+        "bytes": 10312,
+        "sha256": "03cc10c739d0884a0154946494cf5497a0983e58ceca176cbfaae4ed0bee1e58",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/experience/navigation-adapter.ts",
+        "bytes": 4599,
+        "sha256": "0dbe295a0df359654095783fcd330782a51f03c836e5306419eaab9b7df0f1cb",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/experience/preferences-store.ts",
+        "bytes": 2571,
+        "sha256": "7055bff8c22a3a0d21027f6ef8177b2e890648cc47d7d5e8cd9ceb19c99c1f82",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/experience/project-transition.ts",
+        "bytes": 5126,
+        "sha256": "f410fc41f8fbcc0ede09ceabe28a8036423868ce231e890775a33530c03c86f9",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/experience/reduced-motion.ts",
+        "bytes": 3348,
+        "sha256": "b5e1b9308dbdba10c408379fe85532811595eb1181002d6d0394bd209166fcbe",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/experience/return-snapshot.ts",
+        "bytes": 2757,
+        "sha256": "5de2aab40a19c78a20df0b7713e77c9f68b5d3bd9e264046f01c3d1980a48aa1",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/monitor/ambient-display.tsx",
+        "bytes": 3839,
+        "sha256": "c016bfa99c42ae0879773fa1a6c9f87627c2d84bef7e97e51adc46a1dd647827",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/monitor/commands.ts",
+        "bytes": 6748,
+        "sha256": "bdd7f517e320a73887259cab9b6a5edb7d9d8b44ee73d34be7c92de2c13a98bf",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/monitor/launcher.tsx",
+        "bytes": 11511,
+        "sha256": "8b43f7887f50c9bb902ead9f0511b52b0d7a40f1131a09717977f340446b7535",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/monitor/monitor.module.css",
+        "bytes": 7441,
+        "sha256": "ea1f4e58a4b47aaa0b2661b9f588b16e2baa960eb165de39b578b3ced6880b2a",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/monitor/project-tiles.ts",
+        "bytes": 1163,
+        "sha256": "75e13d53e1548920b80e338dacd22302de28aba58d634f907977dfc6769553c9",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/portfolio/accessibility-controls.module.css",
+        "bytes": 1996,
+        "sha256": "8b39fa17af602fb000c5cbb52d93c13b17701e005b2c623f0b6f291ce6c50b0e",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/portfolio/accessibility-controls.tsx",
+        "bytes": 3997,
+        "sha256": "ec212d94925ee21204dc786a9cba1d326bfc7f1d6fe87ba8fe3fe0e5aa24c903",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/portfolio/case-study.tsx",
+        "bytes": 7476,
+        "sha256": "a29c653acb04a10b19e6ec8fafb48719813a29b09152319390701c0e9af49ca0",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/portfolio/navigation.tsx",
+        "bytes": 970,
+        "sha256": "d8614fe2fd694763727c76fa0e23febee1376f098f83b0fad457af4d57d2f739",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/portfolio/page-intro.tsx",
+        "bytes": 363,
+        "sha256": "e675f345d7c38b4ff4b4f1acd05253bc5366c8d589775fd2aa5ab4ab7296907a",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/portfolio/portfolio.module.css",
+        "bytes": 19765,
+        "sha256": "da8547cf4526f7e71b8b2c822deaaa22824315893c2e736f4ada8ee0d2c8fcda",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/portfolio/public-content.ts",
+        "bytes": 1442,
+        "sha256": "29d85d02da7e6a67ce4f12cec65927b0427fe3a02184a3d765eb4509dc932a78",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/portfolio/safe-link.tsx",
+        "bytes": 1434,
+        "sha256": "68f66ee21221534f47e6d4e65ddbd74e2890453ec0af035cbb8d94a64f0dbe04",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/room/environment-controller.ts",
+        "bytes": 3919,
+        "sha256": "3fdd9a7866e905f73cd73237a72860b9edf72daa2c307d21571de8c9ae3f0ac3",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/room/painting-controller.ts",
+        "bytes": 6531,
+        "sha256": "e4940816f2c511e78d4b8a1efb952fafdcacb67c9eb880cafab0abb039edb786",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/room/quality-policy.ts",
+        "bytes": 11121,
+        "sha256": "f2a152fde0e8b0d226de82af2100092451a00c7da45c13ae812e64b848d1b2fe",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/room/room-controls.module.css",
+        "bytes": 5605,
+        "sha256": "c0919542cfaa458afe1442e7aa5286825045bcf991ca6047feac3668006ceff3",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/room/room-controls.tsx",
+        "bytes": 7757,
+        "sha256": "20083d87c411769cf8fc8d4f0572cf55a4886bc9f4b9066986f31fa63397b399",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/room/static-fallback.tsx",
+        "bytes": 3627,
+        "sha256": "d206b0f8431160434073dfdccb8ead0c7f06c13672a0228567c01f1ab5fedf3c",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/world/AssetLoader.ts",
+        "bytes": 6575,
+        "sha256": "ebc9b425cdf166d93255ccace94c6df4f8ad61104bce196a18ba84bf7304dab3",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/world/CameraDirector.ts",
+        "bytes": 8408,
+        "sha256": "82692fed88ba839e95022e23040e5e5d36231cb26f1f129fb37873ca5d6edfa7",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/world/CharacterDirector.ts",
+        "bytes": 7538,
+        "sha256": "5a3cb8a341ec5cea721f55b8fc049cda41a500d80bca566afb3a5b53f81348d4",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/world/EntranceCoordinator.ts",
+        "bytes": 8298,
+        "sha256": "fc8533f60a8c8b7f1b7e48b39585dda3e791934f0bf94b72b9abc45423649b7c",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/world/LifecycleManager.ts",
+        "bytes": 8207,
+        "sha256": "f7300e53793ae112ce9bc4293836d5a14bc739b310d9b870de511ea74722c29c",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/world/LowQualityBatch.ts",
+        "bytes": 9133,
+        "sha256": "26366dcaf463e6d2065d2ab88ca9f106f30b707c5bf22e8f87458bbb30c2f1d9",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/world/RuntimeMaterialQuality.ts",
+        "bytes": 2665,
+        "sha256": "2ce2ef6f0d6c12fdb7100be002d5927eded49b1989cc0df0b490e7a8d921e629",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/world/RuntimeQualitySampler.ts",
+        "bytes": 1468,
+        "sha256": "dab7941094e8d1c9a317be37ff83e4ddfe359cee5f6a44330be1484ea4d7baed",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/world/SceneIntegrator.ts",
+        "bytes": 6198,
+        "sha256": "b5a5941769ca9ef183492843dd6e55702102445ca5db5b8f5cff0650a3b4c63b",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/world/StudioLauncher.tsx",
+        "bytes": 3409,
+        "sha256": "8839b201550af39dd7acbdb15b18a651f4521d59bc106f0b3094733fb434de21",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/world/TransitionCoordinator.ts",
+        "bytes": 2248,
+        "sha256": "7cda44dbbbb9fc24326b091ad8790eb1e451f05f4258fc4cb018ea4d26821edf",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/world/WorldFallback.tsx",
+        "bytes": 1798,
+        "sha256": "8df22ffe49c71569f663de8e230b0fb929d9ea637eb3ccb76322af6a81da15b0",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/world/WorldInteractionBinding.ts",
+        "bytes": 9669,
+        "sha256": "65c5c90423183489d5e816363a685e02cb0245cb03bce5568b5d7bb5535fea53",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/world/WorldRoot.tsx",
+        "bytes": 24582,
+        "sha256": "394ddefb5e26957224ec820208b2b538a97ef4dc7827ca403bf12efc6563d1b1",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/world/WorldRuntime.ts",
+        "bytes": 25517,
+        "sha256": "2effb1c174f3f7cd3e6e1364d2fe96c0c45be333f778aa591097700c1702e9c0",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/world/device-capabilities.ts",
+        "bytes": 1686,
+        "sha256": "21a7c355f4e384f3a8e509ed5b944cac8c07cb9a7183d94d2def2a181560302e",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/world/types.ts",
+        "bytes": 3066,
+        "sha256": "86246c4e273148cde29c0049dd542e0caaa874e0fb9a9eba793223ae7111f122",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/features/world/world.module.css",
+        "bytes": 4755,
+        "sha256": "f70e02d49d5fe385ac245b974136b6ac5d37c3fd9a6df44a28ad3c24dec5ffd9",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/server/auth/clients.ts",
+        "bytes": 2576,
+        "sha256": "61874c954cdeeb37d67d6ee3ba6acf847b7dcfd82066284dbdb452da81fabece",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/server/auth/page-owner.ts",
+        "bytes": 475,
+        "sha256": "fc37317f0f027fc2891c36f1f6075282e7d6985a2e8c63dedfd68e244d9d0f60",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/server/auth/require-owner.ts",
+        "bytes": 10199,
+        "sha256": "23ffddf20bc9bae2560e6de40809a700535030117745d20c992e547c961a9660",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/server/auth/types.ts",
+        "bytes": 1108,
+        "sha256": "3a0349b56ded787821498a29f4b4fbc28799f556e782d7cb98170e571406e44d",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/server/contact/db.ts",
+        "bytes": 11439,
+        "sha256": "43f0c2a35187502f431d91692837506179a0fb2a4f546a5e07f50f6750a85ea3",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/server/contact/email-adapter.ts",
+        "bytes": 5272,
+        "sha256": "fe73aee26cc1d2ecffb4e5cfd20b7dfe34bf95be4c1067d2ec81b852ff14b1fd",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/server/contact/outbox.ts",
+        "bytes": 6861,
+        "sha256": "408f1bf7b30ade59d8a838516d75e6e8e352be062d08d20b754425db1d3b0388",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/server/contact/quota.ts",
+        "bytes": 5176,
+        "sha256": "fb17e89dadcea485a2d8ddac27df5c99eae24204e041fe0133ed989e91027220",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/server/contact/receive.ts",
+        "bytes": 6466,
+        "sha256": "15cf09f775f5a1740b76b3d7599619c879466f6139ad421d8facfa23bc3ae227",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/server/contact/schema.ts",
+        "bytes": 3573,
+        "sha256": "192be44e6084219751d4d1df8d5824f8f36f7a18073332d0872e187fd1729377",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/server/content/publish.ts",
+        "bytes": 16922,
+        "sha256": "60d183ef48469dc4879d4609efeee5783a1ec3cada863b6e63ea4da84462b909",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/server/content/revisions.ts",
+        "bytes": 10717,
+        "sha256": "d81c186e86ad4787a608f1ec7d858cbd72ac1cbea0b80283250f3328964eff2e",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/server/database.ts",
+        "bytes": 2785,
+        "sha256": "d0700e1e4b27766761b2e761c6970088bcc9e24588254fd020a34e4818134686",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/server/integrations/github.ts",
+        "bytes": 6990,
+        "sha256": "24ece95953402efdf2f57d87987fdf484c43e193538e30418ed89993ecf15dbd",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/server/jobs/outbox-worker.ts",
+        "bytes": 5363,
+        "sha256": "62189b9c2c2955b270ccbf5a586485cdedf5a5997acdb8366a749dcdb5f91899",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/server/jobs/runner.ts",
+        "bytes": 5244,
+        "sha256": "3321b0d9245eb4b57a4902d775b3190ac8cd599f383921ed639842da826748d4",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/server/media/manifest.ts",
+        "bytes": 5579,
+        "sha256": "9e8158b22351fe5d45075d56147b10e37e2b25f7ca6a158c8fd5105cbe44f8eb",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/server/media/validate-upload.ts",
+        "bytes": 9312,
+        "sha256": "883684d893ee06d43edc4a1482a003b95cd1e8be47571c0bbe5f65da4bedc071",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/server/operations/backup-restore.ts",
+        "bytes": 4526,
+        "sha256": "1dd891322f6d0243338c3cde40228dfd638230e262756e56f8c88b51501fa364",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/server/telemetry/events.ts",
+        "bytes": 4535,
+        "sha256": "8734b35d4cbf102216a18d8d08e51a2f08973a4e3a1f6d9425ae8a550525d8e6",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/server/test-fixture.ts",
+        "bytes": 1787,
+        "sha256": "398c787ad888c989e2766592c1292ba685202e66d3fa86409e7875525019d408",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/src/styles/tokens.css",
+        "bytes": 1288,
+        "sha256": "3ad920d1021bc0c59f34c5ebb619108d016e30e4a91a8d82aa6c6cb3f171832d",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/supabase/config.toml",
+        "bytes": 619,
+        "sha256": "c66c6cab136e3581f08286fa3ba5cc0baa8611f8f7a9b80089d2b2d45f38e2bb",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/supabase/migrations/20261001000000_a3_owner_auth_rls.sql",
+        "bytes": 15404,
+        "sha256": "5a55e9baa1f19b8134d3985e54aecba9415a528c3f1d942be692148abee9c21a",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/supabase/migrations/20261001000001_a4_publication_media.sql",
+        "bytes": 2619,
+        "sha256": "1cc1bbb0d20eb741c2dc435e795575f7b36dbfb68f477a301ee97ebd616d0afa",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/supabase/operations/harden-publication-grants.sql",
+        "bytes": 973,
+        "sha256": "4d27383cceeb5f88074cc1f25d74c4ac903cb2c941234d8a7cac37a82d259029",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/supabase/tests/authorization.test.sql",
+        "bytes": 7035,
+        "sha256": "8a699e8c95c45a495c3382e5bf67cccb39b5f5c67b30e6f76fc28efd3027cf62",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/e2e/accessibility.spec.ts",
+        "bytes": 6181,
+        "sha256": "24d8c41e18e5bc8940f269d43775711e040b247ff32d09121684700d444b03d3",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/e2e/browser-behavior.spec.ts",
+        "bytes": 16462,
+        "sha256": "8313e7a03a4e7b38453985e4afd536d9145570fd89617d23f954391122cd4be3",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/e2e/full-stack-integration.spec.ts",
+        "bytes": 11534,
+        "sha256": "d97649694b7ccf44368365140350c3cd9e8b2259568087d2872aaf1082e15017",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/e2e/legacy-platform/project-routes.spec.ts",
+        "bytes": 10661,
+        "sha256": "7fb00563f9c1dff04c5eb7094bc4f40f5e036138e292bb83a649e552d8754c1d",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/e2e/payload.spec.ts",
+        "bytes": 10670,
+        "sha256": "f98719303611d859379278796e91e801bde481651cbcd4ad871aabb3b83247ea",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/e2e/physical-interactions.spec.ts",
+        "bytes": 6433,
+        "sha256": "9062cf508348d57f3ae7bcd979ac7dc93d67c424e3b3536159dbc2fdefb8960b",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/e2e/platform/admin-auth.spec.ts",
+        "bytes": 3755,
+        "sha256": "58c340c4a4133639d7afda4200c247c1b069c94b8f88ed81e6646648a2844e31",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/e2e/platform/admin-publish.spec.ts",
+        "bytes": 6161,
+        "sha256": "ad3579f2c10056dda1d4aeb547dd478640c83c1677b6a05ddae91efc70a22641",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/e2e/platform/contact-form.spec.ts",
+        "bytes": 2984,
+        "sha256": "5c7c41f14d33eb3e62930116daf8c8fed521238ad8fd0b79d2ce1e695c80404a",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/e2e/public-shell.spec.ts",
+        "bytes": 14438,
+        "sha256": "2c79727ac73aa185d7da2e4120b25d44c9495ff6baab3775f3918a635b763fa4",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/e2e/renderer-recovery.spec.ts",
+        "bytes": 5721,
+        "sha256": "9466d5c21aec9615c97465bdeab34ce63ee1cfb048fac00a1ee027fb43118d0a",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/e2e/room-project-navigation.spec.ts",
+        "bytes": 4771,
+        "sha256": "54305a4b6ac05dd5263e47efa830badd44ed0a7ffc64731e569c8f90a97993a2",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/e2e/world-lifecycle.spec.ts",
+        "bytes": 12938,
+        "sha256": "06b3eeea1e995702af9f63692d2a4a28a8511ce04ae16cf22464e94920469811",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/fixtures/engineering-section-4.ts",
+        "bytes": 3017,
+        "sha256": "c9f692a898e6af4e8c56fe4d599ba84bfafe615a6c2e390ccd127b0d9fc765c3",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/fixtures/server-only.ts",
+        "bytes": 90,
+        "sha256": "3d1512f63924301966db9a5209386a5b02120bdd4cd2530b8e3fd6b5f3088171",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/integration/candidate-integration.test.ts",
+        "bytes": 8814,
+        "sha256": "41f72cfb7d7595a86782236b984e81a80ae2d52d6f1d79d861f495c3fa9db37c",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/integration/platform/canonical-fixture.test.ts",
+        "bytes": 1568,
+        "sha256": "fbecd5df89ca995a2d5d6af42043e10846c7e86889198968b8d2be4f45abac3b",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/integration/platform/canonical-platform.test.ts",
+        "bytes": 12136,
+        "sha256": "0a1cc65719f611565242a499dccb8854775daeb39a8a74d80d7d79c1e652abd1",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/integration/platform/contact-idempotency-r2.test.ts",
+        "bytes": 21478,
+        "sha256": "311a1b101aaf1659456ea1856b744d87b670dd5333f205a00688f0ae1112b51c",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/integration/platform/contact.test.ts",
+        "bytes": 17780,
+        "sha256": "204f1040e124223c84536ebef0df803c2e85ae012692691bb972db1283da6caf",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/integration/platform/database-authorization.test.ts",
+        "bytes": 14608,
+        "sha256": "32cc63500e4515e10ac13ce4b9ebadb9d95902a7fbb5957e43a9f6f56ddc4d07",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/integration/platform/github-metadata.test.ts",
+        "bytes": 4671,
+        "sha256": "c2d588f80c652d461fd150f0de2f51b7f7f14e4345bc2170fa9327ca56c18f64",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/integration/platform/internal-jobs.test.ts",
+        "bytes": 1828,
+        "sha256": "56aa240c464544ac43def41ecd6fcd50280879f46118434087c6de304e0134d5",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/integration/platform/media-access.test.ts",
+        "bytes": 10771,
+        "sha256": "2d87374d6ffe07f2742b5ff7547d8e46344a5e54e62c09d6110bba314e786cad",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/integration/platform/operations-restore.test.ts",
+        "bytes": 6281,
+        "sha256": "b957c0151659783a30eb3465f75ac289f7bf5c0434c23941fd6d897d4dc71776",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/integration/platform/owner-auth.test.ts",
+        "bytes": 12754,
+        "sha256": "5207d39e793c5dd8e65634c66b680d82b4bb3eaccf0693bfcf15085f2b675f42",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/integration/platform/postgres-transactions.test.ts",
+        "bytes": 1741,
+        "sha256": "40e8bf6737f057b23490c8b94d8b07b797070780b4929e2b6d3e1e3e6372fa0e",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/integration/platform/publication.test.ts",
+        "bytes": 15330,
+        "sha256": "691fd2bf276207ed864561a8638a0aaaa5f8040fdfa737696573b2606bd2a8d2",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/integration/platform/published-media.test.ts",
+        "bytes": 3948,
+        "sha256": "95d02435d3c848e6083a7c80fdd21c7f5d4d41c16daf1716b7a925c26ffc7bf0",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/integration/platform/session-claims.test.ts",
+        "bytes": 2394,
+        "sha256": "2b4aa930b246abe16d539e6e3bbfbce2dd6959eec33bf2c03d58dbdf18606d6d",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/integration/platform/telemetry.test.ts",
+        "bytes": 2762,
+        "sha256": "7aa993bf224ecaa0cb34902955c3dd293fbdaeacbf71971e8cce50e61ab76279",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/integration/production-camera.test.ts",
+        "bytes": 8454,
+        "sha256": "675e24b955763bf86a8ab6c2efd78adc0c2bc0670a4b43673cb1008ed64e050a",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/integration/runtime/adaptive-runtime.test.ts",
+        "bytes": 2334,
+        "sha256": "5d702e4ea9129637300485f3c5dc2fba70dbf2f508880cc387ba66b265175243",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/integration/runtime/frozen-world-binding.test.ts",
+        "bytes": 7297,
+        "sha256": "4b8ba1369908ee5176699b8a0c2a20042034abd7252a1ce92700d7930f91fc0b",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/integration/runtime/public-snapshot.test.ts",
+        "bytes": 6165,
+        "sha256": "687083b0afee0afcdfd36e2b62b7048f3ffaf99848bf35b5d7b1e968d3f2f330",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/performance/world.spec.ts",
+        "bytes": 10661,
+        "sha256": "fb426e2b53ca6dfd997d6b6de9f7f5da0b0d7b84e020af4b4e3674f6a7189b03",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/unit/asset-loader.test.ts",
+        "bytes": 1502,
+        "sha256": "9e3cd29e642ef7c40a9f48660f0fdfc22e836d075cb836199522cec3b80b91ed",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/unit/boundaries.test.ts",
+        "bytes": 10083,
+        "sha256": "1c7e50904226485429ed885291cde2c349bc31f58d90e3892447484b483fb77c",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/unit/camera-director.test.ts",
+        "bytes": 2731,
+        "sha256": "42e3358e46b34c82e829013b6ccc207d388b511da1c3278c64a901c78d6911db",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/unit/character-director.test.ts",
+        "bytes": 3537,
+        "sha256": "f439d166f91376ecd401b618f1f5a1dc3f7839c4f638fc54beac98404027281f",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/unit/content-visibility.test.ts",
+        "bytes": 12069,
+        "sha256": "8f3f7c230c3009460fa7befe53aa688b2a4ac8fdcafcd7d567344d28edd6f97c",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/unit/contract-types.test.ts",
+        "bytes": 1519,
+        "sha256": "7fba8909c39eff07233b61e92b5aba4e84e28b95db3d0d45d9aabdb8b60e2b66",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/unit/contracts.test.ts",
+        "bytes": 7726,
+        "sha256": "01da88816f39271e0c3ed0bb3f13954c86db65a2ffa337030e47bf2148d1aacf",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/unit/device-capabilities.test.ts",
+        "bytes": 7818,
+        "sha256": "1f7572329e1a3ae858cd4527094a696abb585c4ac450d75f4fa643833e012ca9",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/unit/entrance-coordinator.test.ts",
+        "bytes": 4065,
+        "sha256": "d62edcbc0f79bad8b576234cf5d9018d6111b77753b2c1c6c0ec896653087aa2",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/unit/intent-arbitration.test.ts",
+        "bytes": 3783,
+        "sha256": "32888e5b7cc778bce21a34ad2a6042fa96f7c9734994800f85be1ad89e524492",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/unit/interaction-controller.test.ts",
+        "bytes": 12718,
+        "sha256": "b3f1353de2350a6b38a4f345c25c8abbefd42baf80f353d9cb9b084fbac90374",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/unit/interaction-registry.test.ts",
+        "bytes": 2411,
+        "sha256": "66dfa00ec2472328579646c279a8363a835dcb1d5a8c361b04d84c9cd6b8eef9",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/unit/lifecycle-manager.test.ts",
+        "bytes": 6607,
+        "sha256": "dcacf4cdb607affe50607c39d976269bda082f00fd725c9279313964f897234a",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/unit/low-quality-batch.test.ts",
+        "bytes": 16572,
+        "sha256": "4693ce0083f2aff12daf16c1530f1937cbe145d381295523f88a3001581e40f6",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/unit/painting-interaction.test.ts",
+        "bytes": 3638,
+        "sha256": "a9f204a3c6003c56c159f7c1000855c65c39115f6df6c3bb0d696ec946288794",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/unit/preferences-resilience.test.ts",
+        "bytes": 2629,
+        "sha256": "fe08cce22a573d5a5eb2db70187b7f98fca6fb13df3dd2f43f2ef0e1e1a58428",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/unit/project-transition.test.ts",
+        "bytes": 10298,
+        "sha256": "22488f232911ab2a0bbd00be080a11fb78926020b4ff3e46ee80a250eff77ac7",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/unit/quality-policy.test.ts",
+        "bytes": 15795,
+        "sha256": "54dcde07ec8a8738ac8c78f20a0a198d539afdd63507e56f23addc6aaa5443fb",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/unit/runtime-material-quality.test.ts",
+        "bytes": 10124,
+        "sha256": "489647319951b1e3703e27294a4214fc7488fdc1b0460c3c060d0f8c3aa886f2",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tests/unit/scene-integrator.test.ts",
+        "bytes": 6276,
+        "sha256": "da38a701b29f9fbc07d60d8759d261b17301f297290a82a3e87e41473f75e4bc",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/tsconfig.json",
+        "bytes": 673,
+        "sha256": "106e43bfb259e9de311f2c88f6a5a3908c4d699698ae07c8c2de8bc87789bf11",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/vitest.config.ts",
+        "bytes": 357,
+        "sha256": "89c179b9b6d48f754dd748cd9589a70e3892d1cdf7ee1860fe037dbece842e99",
+        "hashMode": "lf"
+      },
+      {
+        "path": "app/vitest.integration.config.ts",
+        "bytes": 452,
+        "sha256": "4e53d67bc88362e3163e1892e5f39f3f8170405e99d24737942cbe0493a79a51",
+        "hashMode": "lf"
+      }
+    ],
+    "build": [
+      {
+        "path": "app/.next/BUILD_ID",
+        "sha256": "19fbacc3e1550f08af786eb7ec2cf9d43b10d13ab7b43bfb5a617672da00664d"
+      },
+      {
+        "path": "app/.next/server/app/(public)/page.js",
+        "sha256": "9ba5cf77398a6bc5ab08a42d1aeaa5ba9d258c94c1e34ce5920bb6d2872b2b12"
+      },
+      {
+        "path": "app/.next/app-path-routes-manifest.json",
+        "sha256": "ceba08ba58c09e9e4c08d9287c16837ad1335afced99e455123a29c935da10ab"
+      },
+      {
+        "path": "app/.next/server/app-paths-manifest.json",
+        "sha256": "389c49f5ce372397ab6e18fb1eeaa3fc3a48f83d647c3ef7f811213721f56b79"
+      }
+    ]
+  },
+  "buildId": "aZwwFOFVUhTztwKiguC35",
+  "implementationBaseCommit": "a48ae908562302b2b5eb2809172f56c1bddb5786",
+  "implementationLabel": "a48 plus uncommitted capabilities, reversible LOW Lambert/DPR0.5/batching and corrected production camera geometry",
+  "gitHead": "6d819bf699bbf67a56bd9db5ec7ea33dbf1db833",
+  "dirtyCanonicalPaths": [
+    "app/src/features/room/quality-policy.ts",
+    "app/src/features/world/CameraDirector.ts",
+    "app/src/features/world/EntranceCoordinator.ts",
+    "app/src/features/world/WorldInteractionBinding.ts",
+    "app/src/features/world/WorldRoot.tsx",
+    "app/src/features/world/WorldRuntime.ts",
+    "app/tests/integration/runtime/frozen-world-binding.test.ts",
+    "app/tests/unit/camera-director.test.ts",
+    "app/tests/unit/quality-policy.test.ts"
+  ],
+  "scope": "Diagnostic forced SwiftShader with ONLY owned browser tree limited to4 logical CPUs; no final budget PASS or acceptance claim",
+  "app": "C:/Users/yoray/Projects/Yor World/app",
+  "port": 3199,
+  "launchArgs": [
+    "--use-gl=angle",
+    "--use-angle=swiftshader",
+    "--enable-unsafe-swiftshader"
+  ],
+  "cases": [
+    {
+      "summary": {
+        "mode": "auto",
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "capabilities": {
+          "hardwareConcurrency": 12,
+          "deviceMemoryGb": 32,
+          "saveData": false,
+          "devicePixelRatio": 1,
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36"
+        },
+        "antialias": false,
+        "samples": 0,
+        "multiDrawSupport": true,
+        "canvasSize": {
+          "width": 287,
+          "height": 320
+        },
+        "timeToFirstFrameMs": 1345,
+        "timeToHomeMs": 6393.900000002235,
+        "staticAtMs": 7471,
+        "tierProgression": [
+          {
+            "tier": "low",
+            "at": 1345
+          }
+        ],
+        "rawRafStats": {
+          "count": 130,
+          "median": 42.400000000000546,
+          "p95": 66.70000000000073
+        },
+        "completedRenderStats": {
+          "count": 131,
+          "median": 41.100000001490116,
+          "p95": 59.20000000298023
+        },
+        "finalStage": null,
+        "finalCanvasConnected": false,
+        "explicitPreference": null,
+        "browserErrors": []
+      },
+      "data": {
+        "timeOrigin": 1790995093809.6,
+        "capabilities": {
+          "hardwareConcurrency": 12,
+          "deviceMemoryGb": 32,
+          "saveData": false,
+          "devicePixelRatio": 1,
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36"
+        },
+        "frames": [
+          {
+            "frame": 1,
+            "timestamp": 1138.800000000745,
+            "durationMs": 0,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "LOADING",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 1345,
+            "completedRenderIntervalMs": null
+          },
+          {
+            "frame": 2,
+            "timestamp": 1086.8,
+            "durationMs": -52.0000000007451,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 74,
+            "renderedTriangles": 13120,
+            "deliveredAt": 1363.4000000022352,
+            "completedRenderIntervalMs": 18.400000002235174
+          },
+          {
+            "frame": 3,
+            "timestamp": 1359.6,
+            "durationMs": 272.79999999999995,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 74,
+            "renderedTriangles": 13120,
+            "deliveredAt": 1372.800000000745,
+            "completedRenderIntervalMs": 9.399999998509884
+          },
+          {
+            "frame": 4,
+            "timestamp": 1371.8,
+            "durationMs": 12.200000000000045,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 74,
+            "renderedTriangles": 13120,
+            "deliveredAt": 1379.1000000014901,
+            "completedRenderIntervalMs": 6.300000000745058
+          },
+          {
+            "frame": 5,
+            "timestamp": 1923.4,
+            "durationMs": 551.6000000000001,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 74,
+            "renderedTriangles": 13120,
+            "deliveredAt": 1929.4000000022352,
+            "completedRenderIntervalMs": 550.3000000007451
+          },
+          {
+            "frame": 6,
+            "timestamp": 2050.8,
+            "durationMs": 127.40000000000009,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 74,
+            "renderedTriangles": 13120,
+            "deliveredAt": 2097.2000000029802,
+            "completedRenderIntervalMs": 167.80000000074506
+          },
+          {
+            "frame": 7,
+            "timestamp": 2111.4,
+            "durationMs": 60.59999999999991,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 74,
+            "renderedTriangles": 13120,
+            "deliveredAt": 2209,
+            "completedRenderIntervalMs": 111.79999999701977
+          },
+          {
+            "frame": 8,
+            "timestamp": 2208.3,
+            "durationMs": 96.90000000000009,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 74,
+            "renderedTriangles": 13120,
+            "deliveredAt": 2248.400000002235,
+            "completedRenderIntervalMs": 39.400000002235174
+          },
+          {
+            "frame": 9,
+            "timestamp": 2244.7,
+            "durationMs": 36.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 74,
+            "renderedTriangles": 13120,
+            "deliveredAt": 2296.900000002235,
+            "completedRenderIntervalMs": 48.5
+          },
+          {
+            "frame": 10,
+            "timestamp": 2293.2,
+            "durationMs": 48.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 74,
+            "renderedTriangles": 13120,
+            "deliveredAt": 2344.7000000029802,
+            "completedRenderIntervalMs": 47.80000000074506
+          },
+          {
+            "frame": 11,
+            "timestamp": 2341.8,
+            "durationMs": 48.600000000000364,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 74,
+            "renderedTriangles": 13120,
+            "deliveredAt": 2392.7000000029802,
+            "completedRenderIntervalMs": 48
+          },
+          {
+            "frame": 12,
+            "timestamp": 2390.3,
+            "durationMs": 48.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 74,
+            "renderedTriangles": 13120,
+            "deliveredAt": 2441.300000000745,
+            "completedRenderIntervalMs": 48.599999997764826
+          },
+          {
+            "frame": 13,
+            "timestamp": 2438.7,
+            "durationMs": 48.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 74,
+            "renderedTriangles": 13108,
+            "deliveredAt": 2487.300000000745,
+            "completedRenderIntervalMs": 46
+          },
+          {
+            "frame": 14,
+            "timestamp": 2487.2,
+            "durationMs": 48.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 74,
+            "renderedTriangles": 13108,
+            "deliveredAt": 2533,
+            "completedRenderIntervalMs": 45.69999999925494
+          },
+          {
+            "frame": 15,
+            "timestamp": 2529.6,
+            "durationMs": 42.40000000000009,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 74,
+            "renderedTriangles": 13108,
+            "deliveredAt": 2578.400000002235,
+            "completedRenderIntervalMs": 45.400000002235174
+          },
+          {
+            "frame": 16,
+            "timestamp": 2572.1,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 74,
+            "renderedTriangles": 13108,
+            "deliveredAt": 2624.900000002235,
+            "completedRenderIntervalMs": 46.5
+          },
+          {
+            "frame": 17,
+            "timestamp": 2620.6,
+            "durationMs": 48.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 72,
+            "renderedTriangles": 13084,
+            "deliveredAt": 2671.400000002235,
+            "completedRenderIntervalMs": 46.5
+          },
+          {
+            "frame": 18,
+            "timestamp": 2669.1,
+            "durationMs": 48.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 71,
+            "renderedTriangles": 12980,
+            "deliveredAt": 2718.10000000149,
+            "completedRenderIntervalMs": 46.69999999925494
+          },
+          {
+            "frame": 19,
+            "timestamp": 2717.5,
+            "durationMs": 48.40000000000009,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 70,
+            "renderedTriangles": 12968,
+            "deliveredAt": 2762.900000002235,
+            "completedRenderIntervalMs": 44.80000000074506
+          },
+          {
+            "frame": 20,
+            "timestamp": 2760.1,
+            "durationMs": 42.59999999999991,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 68,
+            "renderedTriangles": 12944,
+            "deliveredAt": 2808.800000000745,
+            "completedRenderIntervalMs": 45.899999998509884
+          },
+          {
+            "frame": 21,
+            "timestamp": 2808.6,
+            "durationMs": 48.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 67,
+            "renderedTriangles": 12932,
+            "deliveredAt": 2854.5,
+            "completedRenderIntervalMs": 45.69999999925494
+          },
+          {
+            "frame": 22,
+            "timestamp": 2851,
+            "durationMs": 42.40000000000009,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 66,
+            "renderedTriangles": 12908,
+            "deliveredAt": 2899.400000002235,
+            "completedRenderIntervalMs": 44.900000002235174
+          },
+          {
+            "frame": 23,
+            "timestamp": 2893.4,
+            "durationMs": 42.40000000000009,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 65,
+            "renderedTriangles": 12896,
+            "deliveredAt": 2943.60000000149,
+            "completedRenderIntervalMs": 44.19999999925494
+          },
+          {
+            "frame": 24,
+            "timestamp": 2941.9,
+            "durationMs": 48.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 63,
+            "renderedTriangles": 12872,
+            "deliveredAt": 2987.7000000029802,
+            "completedRenderIntervalMs": 44.100000001490116
+          },
+          {
+            "frame": 25,
+            "timestamp": 2984.3,
+            "durationMs": 42.40000000000009,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 12860,
+            "deliveredAt": 3031.400000002235,
+            "completedRenderIntervalMs": 43.69999999925494
+          },
+          {
+            "frame": 26,
+            "timestamp": 3026.8,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 12860,
+            "deliveredAt": 3075.800000000745,
+            "completedRenderIntervalMs": 44.399999998509884
+          },
+          {
+            "frame": 27,
+            "timestamp": 3075.3,
+            "durationMs": 48.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 12860,
+            "deliveredAt": 3118.60000000149,
+            "completedRenderIntervalMs": 42.80000000074506
+          },
+          {
+            "frame": 28,
+            "timestamp": 3117.7,
+            "durationMs": 42.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 12860,
+            "deliveredAt": 3160.2000000029802,
+            "completedRenderIntervalMs": 41.600000001490116
+          },
+          {
+            "frame": 29,
+            "timestamp": 3154.1,
+            "durationMs": 36.40000000000009,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 12756,
+            "deliveredAt": 3200.7000000029802,
+            "completedRenderIntervalMs": 40.5
+          },
+          {
+            "frame": 30,
+            "timestamp": 3196.5,
+            "durationMs": 42.40000000000009,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 12756,
+            "deliveredAt": 3240.300000000745,
+            "completedRenderIntervalMs": 39.599999997764826
+          },
+          {
+            "frame": 31,
+            "timestamp": 3238.9,
+            "durationMs": 42.40000000000009,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 12392,
+            "deliveredAt": 3280.60000000149,
+            "completedRenderIntervalMs": 40.30000000074506
+          },
+          {
+            "frame": 32,
+            "timestamp": 3275.3,
+            "durationMs": 36.40000000000009,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 12392,
+            "deliveredAt": 3319.2000000029802,
+            "completedRenderIntervalMs": 38.600000001490116
+          },
+          {
+            "frame": 33,
+            "timestamp": 3317.8,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 12392,
+            "deliveredAt": 3357.10000000149,
+            "completedRenderIntervalMs": 37.899999998509884
+          },
+          {
+            "frame": 34,
+            "timestamp": 3354.1,
+            "durationMs": 36.29999999999973,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 12392,
+            "deliveredAt": 3397,
+            "completedRenderIntervalMs": 39.899999998509884
+          },
+          {
+            "frame": 35,
+            "timestamp": 3396.5,
+            "durationMs": 42.40000000000009,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 12392,
+            "deliveredAt": 3435.900000002235,
+            "completedRenderIntervalMs": 38.900000002235174
+          },
+          {
+            "frame": 36,
+            "timestamp": 3433,
+            "durationMs": 36.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 12380,
+            "deliveredAt": 3476.5,
+            "completedRenderIntervalMs": 40.599999997764826
+          },
+          {
+            "frame": 37,
+            "timestamp": 3475.4,
+            "durationMs": 42.40000000000009,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 12368,
+            "deliveredAt": 3515.7000000029802,
+            "completedRenderIntervalMs": 39.20000000298023
+          },
+          {
+            "frame": 38,
+            "timestamp": 3511.8,
+            "durationMs": 36.40000000000009,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 12356,
+            "deliveredAt": 3556,
+            "completedRenderIntervalMs": 40.29999999701977
+          },
+          {
+            "frame": 39,
+            "timestamp": 3554.3,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 12344,
+            "deliveredAt": 3596.2000000029802,
+            "completedRenderIntervalMs": 40.20000000298023
+          },
+          {
+            "frame": 40,
+            "timestamp": 3590.6,
+            "durationMs": 36.29999999999973,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 12344,
+            "deliveredAt": 3635.7000000029802,
+            "completedRenderIntervalMs": 39.5
+          },
+          {
+            "frame": 41,
+            "timestamp": 3633,
+            "durationMs": 42.40000000000009,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 12332,
+            "deliveredAt": 3675.900000002235,
+            "completedRenderIntervalMs": 40.19999999925494
+          },
+          {
+            "frame": 42,
+            "timestamp": 3675.5,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 12332,
+            "deliveredAt": 3703.60000000149,
+            "completedRenderIntervalMs": 27.699999999254942
+          },
+          {
+            "frame": 43,
+            "timestamp": 3711.8,
+            "durationMs": 36.30000000000018,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 12296,
+            "deliveredAt": 3756.5,
+            "completedRenderIntervalMs": 52.899999998509884
+          },
+          {
+            "frame": 44,
+            "timestamp": 3754.3,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 12192,
+            "deliveredAt": 3796.900000002235,
+            "completedRenderIntervalMs": 40.400000002235174
+          },
+          {
+            "frame": 45,
+            "timestamp": 3796.7,
+            "durationMs": 42.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 12008,
+            "deliveredAt": 3838,
+            "completedRenderIntervalMs": 41.099999997764826
+          },
+          {
+            "frame": 46,
+            "timestamp": 3833.1,
+            "durationMs": 36.40000000000009,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 3879.10000000149,
+            "completedRenderIntervalMs": 41.100000001490116
+          },
+          {
+            "frame": 47,
+            "timestamp": 3875.5,
+            "durationMs": 42.40000000000009,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 3919,
+            "completedRenderIntervalMs": 39.899999998509884
+          },
+          {
+            "frame": 48,
+            "timestamp": 3918,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 3961.800000000745,
+            "completedRenderIntervalMs": 42.80000000074506
+          },
+          {
+            "frame": 49,
+            "timestamp": 3960.4,
+            "durationMs": 42.40000000000009,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 4003.5,
+            "completedRenderIntervalMs": 41.69999999925494
+          },
+          {
+            "frame": 50,
+            "timestamp": 4002.9,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 4044.60000000149,
+            "completedRenderIntervalMs": 41.100000001490116
+          },
+          {
+            "frame": 51,
+            "timestamp": 4039.2,
+            "durationMs": 36.29999999999973,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 4086.300000000745,
+            "completedRenderIntervalMs": 41.69999999925494
+          },
+          {
+            "frame": 52,
+            "timestamp": 4081.7,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 4127.900000002235,
+            "completedRenderIntervalMs": 41.600000001490116
+          },
+          {
+            "frame": 53,
+            "timestamp": 4124.1,
+            "durationMs": 42.400000000000546,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 60,
+            "renderedTriangles": 11960,
+            "deliveredAt": 4169.400000002235,
+            "completedRenderIntervalMs": 41.5
+          },
+          {
+            "frame": 54,
+            "timestamp": 4166.5,
+            "durationMs": 42.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 60,
+            "renderedTriangles": 11960,
+            "deliveredAt": 4210.5,
+            "completedRenderIntervalMs": 41.099999997764826
+          },
+          {
+            "frame": 55,
+            "timestamp": 4208.9,
+            "durationMs": 42.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 60,
+            "renderedTriangles": 11960,
+            "deliveredAt": 4254.20000000298,
+            "completedRenderIntervalMs": 43.70000000298023
+          },
+          {
+            "frame": 56,
+            "timestamp": 4251.4,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 60,
+            "renderedTriangles": 11960,
+            "deliveredAt": 4300.20000000298,
+            "completedRenderIntervalMs": 46
+          },
+          {
+            "frame": 57,
+            "timestamp": 4299.9,
+            "durationMs": 48.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 60,
+            "renderedTriangles": 11960,
+            "deliveredAt": 4344.400000002235,
+            "completedRenderIntervalMs": 44.19999999925494
+          },
+          {
+            "frame": 58,
+            "timestamp": 4342.4,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 60,
+            "renderedTriangles": 11960,
+            "deliveredAt": 4389.5,
+            "completedRenderIntervalMs": 45.099999997764826
+          },
+          {
+            "frame": 59,
+            "timestamp": 4384.8,
+            "durationMs": 42.400000000000546,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 60,
+            "renderedTriangles": 11960,
+            "deliveredAt": 4433.70000000298,
+            "completedRenderIntervalMs": 44.20000000298023
+          },
+          {
+            "frame": 60,
+            "timestamp": 4427.2,
+            "durationMs": 42.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 60,
+            "renderedTriangles": 11960,
+            "deliveredAt": 4477.20000000298,
+            "completedRenderIntervalMs": 43.5
+          },
+          {
+            "frame": 61,
+            "timestamp": 4475.7,
+            "durationMs": 48.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 60,
+            "renderedTriangles": 11960,
+            "deliveredAt": 4520,
+            "completedRenderIntervalMs": 42.79999999701977
+          },
+          {
+            "frame": 62,
+            "timestamp": 4518.2,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 4562.900000002235,
+            "completedRenderIntervalMs": 42.900000002235174
+          },
+          {
+            "frame": 63,
+            "timestamp": 4560.6,
+            "durationMs": 42.400000000000546,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 4608.10000000149,
+            "completedRenderIntervalMs": 45.19999999925494
+          },
+          {
+            "frame": 64,
+            "timestamp": 4603.1,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 4638,
+            "completedRenderIntervalMs": 29.899999998509884
+          },
+          {
+            "frame": 65,
+            "timestamp": 4645.4,
+            "durationMs": 42.29999999999927,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 4697.20000000298,
+            "completedRenderIntervalMs": 59.20000000298023
+          },
+          {
+            "frame": 66,
+            "timestamp": 4694,
+            "durationMs": 48.600000000000364,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 4740.300000000745,
+            "completedRenderIntervalMs": 43.099999997764826
+          },
+          {
+            "frame": 67,
+            "timestamp": 4736.4,
+            "durationMs": 42.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 4784.400000002235,
+            "completedRenderIntervalMs": 44.100000001490116
+          },
+          {
+            "frame": 68,
+            "timestamp": 4778.8,
+            "durationMs": 42.400000000000546,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 4829,
+            "completedRenderIntervalMs": 44.599999997764826
+          },
+          {
+            "frame": 69,
+            "timestamp": 4827.3,
+            "durationMs": 48.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 4870.900000002235,
+            "completedRenderIntervalMs": 41.900000002235174
+          },
+          {
+            "frame": 70,
+            "timestamp": 4869.8,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 4914.20000000298,
+            "completedRenderIntervalMs": 43.30000000074506
+          },
+          {
+            "frame": 71,
+            "timestamp": 4912.2,
+            "durationMs": 42.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 4955.800000000745,
+            "completedRenderIntervalMs": 41.599999997764826
+          },
+          {
+            "frame": 72,
+            "timestamp": 4954.6,
+            "durationMs": 42.400000000000546,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 4999.300000000745,
+            "completedRenderIntervalMs": 43.5
+          },
+          {
+            "frame": 73,
+            "timestamp": 4997,
+            "durationMs": 42.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 5040.60000000149,
+            "completedRenderIntervalMs": 41.30000000074506
+          },
+          {
+            "frame": 74,
+            "timestamp": 5039.5,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 5084.20000000298,
+            "completedRenderIntervalMs": 43.600000001490116
+          },
+          {
+            "frame": 75,
+            "timestamp": 5082,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 5125.800000000745,
+            "completedRenderIntervalMs": 41.599999997764826
+          },
+          {
+            "frame": 76,
+            "timestamp": 5124.4,
+            "durationMs": 42.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 5166,
+            "completedRenderIntervalMs": 40.19999999925494
+          },
+          {
+            "frame": 77,
+            "timestamp": 5160.8,
+            "durationMs": 36.400000000000546,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 5209.300000000745,
+            "completedRenderIntervalMs": 43.30000000074506
+          },
+          {
+            "frame": 78,
+            "timestamp": 5203.2,
+            "durationMs": 42.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 5251.10000000149,
+            "completedRenderIntervalMs": 41.80000000074506
+          },
+          {
+            "frame": 79,
+            "timestamp": 5245.7,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11984,
+            "deliveredAt": 5292.800000000745,
+            "completedRenderIntervalMs": 41.69999999925494
+          },
+          {
+            "frame": 80,
+            "timestamp": 5288.1,
+            "durationMs": 42.400000000000546,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11972,
+            "deliveredAt": 5334.400000002235,
+            "completedRenderIntervalMs": 41.600000001490116
+          },
+          {
+            "frame": 81,
+            "timestamp": 5330.5,
+            "durationMs": 42.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11972,
+            "deliveredAt": 5375.300000000745,
+            "completedRenderIntervalMs": 40.899999998509884
+          },
+          {
+            "frame": 82,
+            "timestamp": 5372.9,
+            "durationMs": 42.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11972,
+            "deliveredAt": 5416.60000000149,
+            "completedRenderIntervalMs": 41.30000000074506
+          },
+          {
+            "frame": 83,
+            "timestamp": 5415.4,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11972,
+            "deliveredAt": 5457.5,
+            "completedRenderIntervalMs": 40.899999998509884
+          },
+          {
+            "frame": 84,
+            "timestamp": 5451.7,
+            "durationMs": 36.30000000000018,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11972,
+            "deliveredAt": 5498.10000000149,
+            "completedRenderIntervalMs": 40.600000001490116
+          },
+          {
+            "frame": 85,
+            "timestamp": 5494.2,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11972,
+            "deliveredAt": 5538.300000000745,
+            "completedRenderIntervalMs": 40.19999999925494
+          },
+          {
+            "frame": 86,
+            "timestamp": 5536.6,
+            "durationMs": 42.400000000000546,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11972,
+            "deliveredAt": 5578.10000000149,
+            "completedRenderIntervalMs": 39.80000000074506
+          },
+          {
+            "frame": 87,
+            "timestamp": 5573,
+            "durationMs": 36.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11972,
+            "deliveredAt": 5618.60000000149,
+            "completedRenderIntervalMs": 40.5
+          },
+          {
+            "frame": 88,
+            "timestamp": 5615.4,
+            "durationMs": 42.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11972,
+            "deliveredAt": 5659.60000000149,
+            "completedRenderIntervalMs": 41
+          },
+          {
+            "frame": 89,
+            "timestamp": 5657.9,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11972,
+            "deliveredAt": 5700.900000002235,
+            "completedRenderIntervalMs": 41.30000000074506
+          },
+          {
+            "frame": 90,
+            "timestamp": 5700.3,
+            "durationMs": 42.400000000000546,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11972,
+            "deliveredAt": 5702.60000000149,
+            "completedRenderIntervalMs": 1.699999999254942
+          },
+          {
+            "frame": 91,
+            "timestamp": 5706.4,
+            "durationMs": 6.099999999999454,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11972,
+            "deliveredAt": 5780.900000002235,
+            "completedRenderIntervalMs": 78.30000000074506
+          },
+          {
+            "frame": 92,
+            "timestamp": 5779.1,
+            "durationMs": 72.70000000000073,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11972,
+            "deliveredAt": 5821.20000000298,
+            "completedRenderIntervalMs": 40.30000000074506
+          },
+          {
+            "frame": 93,
+            "timestamp": 5815.5,
+            "durationMs": 36.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11972,
+            "deliveredAt": 5861.300000000745,
+            "completedRenderIntervalMs": 40.099999997764826
+          },
+          {
+            "frame": 94,
+            "timestamp": 5857.9,
+            "durationMs": 42.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 62,
+            "renderedTriangles": 11972,
+            "deliveredAt": 5901,
+            "completedRenderIntervalMs": 39.69999999925494
+          },
+          {
+            "frame": 95,
+            "timestamp": 5894.3,
+            "durationMs": 36.400000000000546,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 63,
+            "renderedTriangles": 11984,
+            "deliveredAt": 5940.800000000745,
+            "completedRenderIntervalMs": 39.80000000074506
+          },
+          {
+            "frame": 96,
+            "timestamp": 5936.7,
+            "durationMs": 42.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 63,
+            "renderedTriangles": 11984,
+            "deliveredAt": 5981,
+            "completedRenderIntervalMs": 40.19999999925494
+          },
+          {
+            "frame": 97,
+            "timestamp": 5979.2,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 64,
+            "renderedTriangles": 11996,
+            "deliveredAt": 6020.300000000745,
+            "completedRenderIntervalMs": 39.30000000074506
+          },
+          {
+            "frame": 98,
+            "timestamp": 6015.6,
+            "durationMs": 36.400000000000546,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 64,
+            "renderedTriangles": 11996,
+            "deliveredAt": 6059.5,
+            "completedRenderIntervalMs": 39.19999999925494
+          },
+          {
+            "frame": 99,
+            "timestamp": 6058,
+            "durationMs": 42.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 65,
+            "renderedTriangles": 12008,
+            "deliveredAt": 6099.70000000298,
+            "completedRenderIntervalMs": 40.20000000298023
+          },
+          {
+            "frame": 100,
+            "timestamp": 6094.4,
+            "durationMs": 36.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 65,
+            "renderedTriangles": 12008,
+            "deliveredAt": 6139.800000000745,
+            "completedRenderIntervalMs": 40.099999997764826
+          },
+          {
+            "frame": 101,
+            "timestamp": 6136.9,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 65,
+            "renderedTriangles": 12008,
+            "deliveredAt": 6179,
+            "completedRenderIntervalMs": 39.19999999925494
+          },
+          {
+            "frame": 102,
+            "timestamp": 6173.2,
+            "durationMs": 36.30000000000018,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 6219.5,
+            "completedRenderIntervalMs": 40.5
+          },
+          {
+            "frame": 103,
+            "timestamp": 6215.6,
+            "durationMs": 42.400000000000546,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 6261,
+            "completedRenderIntervalMs": 41.5
+          },
+          {
+            "frame": 104,
+            "timestamp": 6258.1,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 6300.20000000298,
+            "completedRenderIntervalMs": 39.20000000298023
+          },
+          {
+            "frame": 105,
+            "timestamp": 6294.5,
+            "durationMs": 36.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 6340.800000000745,
+            "completedRenderIntervalMs": 40.599999997764826
+          },
+          {
+            "frame": 106,
+            "timestamp": 6336.9,
+            "durationMs": 42.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 6384.900000002235,
+            "completedRenderIntervalMs": 44.100000001490116
+          },
+          {
+            "frame": 107,
+            "timestamp": 6379.3,
+            "durationMs": 42.400000000000546,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "ENTRANCE",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 6386.800000000745,
+            "completedRenderIntervalMs": 1.8999999985098839
+          },
+          {
+            "frame": 108,
+            "timestamp": 6391.5,
+            "durationMs": 12.199999999999818,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 6393.900000002235,
+            "completedRenderIntervalMs": 7.100000001490116
+          },
+          {
+            "frame": 109,
+            "timestamp": 6439.9,
+            "durationMs": 48.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 6443.800000000745,
+            "completedRenderIntervalMs": 49.899999998509884
+          },
+          {
+            "frame": 110,
+            "timestamp": 6476.3,
+            "durationMs": 36.400000000000546,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 6479.5,
+            "completedRenderIntervalMs": 35.69999999925494
+          },
+          {
+            "frame": 111,
+            "timestamp": 6518.7,
+            "durationMs": 42.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 6595.900000002235,
+            "completedRenderIntervalMs": 116.40000000223517
+          },
+          {
+            "frame": 112,
+            "timestamp": 6591.4,
+            "durationMs": 72.69999999999982,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 6660.5,
+            "completedRenderIntervalMs": 64.59999999776483
+          },
+          {
+            "frame": 113,
+            "timestamp": 6658.1,
+            "durationMs": 66.70000000000073,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 6675.800000000745,
+            "completedRenderIntervalMs": 15.300000000745058
+          },
+          {
+            "frame": 114,
+            "timestamp": 6670.3,
+            "durationMs": 12.199999999999818,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 6716.900000002235,
+            "completedRenderIntervalMs": 41.100000001490116
+          },
+          {
+            "frame": 115,
+            "timestamp": 6712.7,
+            "durationMs": 42.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 6756.20000000298,
+            "completedRenderIntervalMs": 39.30000000074506
+          },
+          {
+            "frame": 116,
+            "timestamp": 6755.1,
+            "durationMs": 42.400000000000546,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 6796.900000002235,
+            "completedRenderIntervalMs": 40.69999999925494
+          },
+          {
+            "frame": 117,
+            "timestamp": 6791.5,
+            "durationMs": 36.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 6837.20000000298,
+            "completedRenderIntervalMs": 40.30000000074506
+          },
+          {
+            "frame": 118,
+            "timestamp": 6834,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 6876,
+            "completedRenderIntervalMs": 38.79999999701977
+          },
+          {
+            "frame": 119,
+            "timestamp": 6870.4,
+            "durationMs": 36.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 6916.20000000298,
+            "completedRenderIntervalMs": 40.20000000298023
+          },
+          {
+            "frame": 120,
+            "timestamp": 6912.8,
+            "durationMs": 42.400000000000546,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 6953.10000000149,
+            "completedRenderIntervalMs": 36.899999998509884
+          },
+          {
+            "frame": 121,
+            "timestamp": 6949.2,
+            "durationMs": 36.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 6992.300000000745,
+            "completedRenderIntervalMs": 39.19999999925494
+          },
+          {
+            "frame": 122,
+            "timestamp": 6991.6,
+            "durationMs": 42.400000000000546,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 7030.900000002235,
+            "completedRenderIntervalMs": 38.600000001490116
+          },
+          {
+            "frame": 123,
+            "timestamp": 7027.9,
+            "durationMs": 36.29999999999927,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 7069.400000002235,
+            "completedRenderIntervalMs": 38.5
+          },
+          {
+            "frame": 124,
+            "timestamp": 7064.3,
+            "durationMs": 36.400000000000546,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 7108.10000000149,
+            "completedRenderIntervalMs": 38.69999999925494
+          },
+          {
+            "frame": 125,
+            "timestamp": 7106.8,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 7149.400000002235,
+            "completedRenderIntervalMs": 41.30000000074506
+          },
+          {
+            "frame": 126,
+            "timestamp": 7143.1,
+            "durationMs": 36.30000000000018,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 7188.800000000745,
+            "completedRenderIntervalMs": 39.399999998509884
+          },
+          {
+            "frame": 127,
+            "timestamp": 7185.6,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 7228.10000000149,
+            "completedRenderIntervalMs": 39.30000000074506
+          },
+          {
+            "frame": 128,
+            "timestamp": 7222,
+            "durationMs": 36.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 7270,
+            "completedRenderIntervalMs": 41.899999998509884
+          },
+          {
+            "frame": 129,
+            "timestamp": 7264.4,
+            "durationMs": 42.399999999999636,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 7309.60000000149,
+            "completedRenderIntervalMs": 39.600000001490116
+          },
+          {
+            "frame": 130,
+            "timestamp": 7306.9,
+            "durationMs": 42.5,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 7348,
+            "completedRenderIntervalMs": 38.399999998509884
+          },
+          {
+            "frame": 131,
+            "timestamp": 7343.3,
+            "durationMs": 36.400000000000546,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 7389.60000000149,
+            "completedRenderIntervalMs": 41.600000001490116
+          },
+          {
+            "frame": 132,
+            "timestamp": 7385.6,
+            "durationMs": 42.30000000000018,
+            "qualityTier": "low",
+            "activeClip": "coding_idle",
+            "characterMode": "coding",
+            "cameraPreset": "home-desktop",
+            "lifecycleState": "HOME",
+            "renderCalls": 66,
+            "renderedTriangles": 12020,
+            "deliveredAt": 7429.900000002235,
+            "completedRenderIntervalMs": 40.30000000074506
+          }
+        ],
+        "states": [
+          {
+            "state": "ABSENT",
+            "at": 47.80000000074506
+          },
+          {
+            "state": "ENTRY_REQUESTED",
+            "at": 546.9000000022352
+          },
+          {
+            "state": "LOADING",
+            "at": 809.9000000022352
+          },
+          {
+            "state": "ENTRANCE",
+            "at": 1367.7000000029802
+          },
+          {
+            "state": "HOME",
+            "at": 6387.900000002235
+          },
+          {
+            "state": "STATIC",
+            "at": 7471
+          }
+        ],
+        "firstFrameAt": 1345,
+        "firstHomeAt": 6393.900000002235,
+        "staticAt": 7471,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "antialias": false,
+        "samples": 0,
+        "multiDrawSupport": true,
+        "canvasSize": {
+          "width": 287,
+          "height": 320
+        },
+        "explicitPreference": null,
+        "capturedAt": 26370.800000000745,
+        "finalStage": null,
+        "finalCanvasConnected": false,
+        "fallbackText": "Accessible Static PresentationFull Portfolio ModeAccessible Static Presentation active. Interactive 3D graphics are bypassed.Retry 3D StudioContinue with PortfolioPublished ProjectsAI vs. Real Image Detector ? A probability-aware image classifier built from handcrafted texture features and a calibrated support vector machine.Yor Zenith ? A full-stack solar feasibility platform combining 3D roof planning, energy-output simulation, and financial analysis.Yor Helios ? An energy-monitoring platform streaming anomaly and threshold events into channel-specific operator dashboards.Yor Talks V2 ? A full-stack communication platform with realtime messaging, typed interface components, and a documented public-beta path.About Yor|R\u00e9sum\u00e9|Contact"
+      },
+      "screenshots": []
+    }
+  ],
+  "serverPid": 25260,
+  "ownedBrowserPid": 34756,
+  "browserVersion": "153.0.8010.12",
+  "affinityBefore": {
+    "ownedBrowserPid": 34756,
+    "requestedMask": "0xF",
+    "logicalCpuCount": 4,
+    "applyMask": true,
+    "records": [
+      {
+        "processId": 34756,
+        "parentProcessId": 32052,
+        "name": "chrome.exe",
+        "processType": "browser",
+        "creationDate": "2026-10-03T02:38:06.0100600Z",
+        "beforeMask": 4095,
+        "afterMask": 15
+      },
+      {
+        "processId": 5468,
+        "parentProcessId": 34756,
+        "name": "chrome.exe",
+        "processType": "gpu-process",
+        "creationDate": "2026-10-03T02:38:10.3705270Z",
+        "beforeMask": 4095,
+        "afterMask": 15
+      },
+      {
+        "processId": 8288,
+        "parentProcessId": 34756,
+        "name": "chrome.exe",
+        "processType": "renderer",
+        "creationDate": "2026-10-03T02:38:11.0129600Z",
+        "beforeMask": 4095,
+        "afterMask": 15
+      },
+      {
+        "processId": 24344,
+        "parentProcessId": 34756,
+        "name": "chrome.exe",
+        "processType": "utility",
+        "creationDate": "2026-10-03T02:38:10.3813860Z",
+        "beforeMask": 4095,
+        "afterMask": 15
+      },
+      {
+        "processId": 24736,
+        "parentProcessId": 30580,
+        "name": "chrome.exe",
+        "processType": "crashpad-handler",
+        "creationDate": "2026-10-03T02:38:08.5098090Z",
+        "beforeMask": 4095,
+        "afterMask": 15
+      },
+      {
+        "processId": 26396,
+        "parentProcessId": 34756,
+        "name": "chrome.exe",
+        "processType": "utility",
+        "creationDate": "2026-10-03T02:38:10.4803720Z",
+        "beforeMask": 4095,
+        "afterMask": 15
+      },
+      {
+        "processId": 30360,
+        "parentProcessId": 34756,
+        "name": "chrome.exe",
+        "processType": "renderer",
+        "creationDate": "2026-10-03T02:38:11.0006410Z",
+        "beforeMask": 4095,
+        "afterMask": 15
+      },
+      {
+        "processId": 30580,
+        "parentProcessId": 34756,
+        "name": "chrome.exe",
+        "processType": "crashpad-handler",
+        "creationDate": "2026-10-03T02:38:08.4387150Z",
+        "beforeMask": 4095,
+        "afterMask": 15
+      },
+      {
+        "processId": 31332,
+        "parentProcessId": 34756,
+        "name": "chrome.exe",
+        "processType": "renderer",
+        "creationDate": "2026-10-03T02:38:10.6403980Z",
+        "beforeMask": 4095,
+        "afterMask": 15
+      }
+    ],
+    "scope": "Only verified root BrowserServer PID and its descendants; no other process/system affinity changed"
+  },
+  "affinityAfter": {
+    "ownedBrowserPid": 34756,
+    "requestedMask": "0xF",
+    "logicalCpuCount": 4,
+    "applyMask": false,
+    "records": [
+      {
+        "processId": 34756,
+        "parentProcessId": 32052,
+        "name": "chrome.exe",
+        "processType": "browser",
+        "creationDate": "2026-10-03T02:38:06.0100600Z",
+        "beforeMask": 15,
+        "afterMask": 15
+      },
+      {
+        "processId": 5468,
+        "parentProcessId": 34756,
+        "name": "chrome.exe",
+        "processType": "gpu-process",
+        "creationDate": "2026-10-03T02:38:10.3705270Z",
+        "beforeMask": 15,
+        "afterMask": 15
+      },
+      {
+        "processId": 8288,
+        "parentProcessId": 34756,
+        "name": "chrome.exe",
+        "processType": "renderer",
+        "creationDate": "2026-10-03T02:38:11.0129600Z",
+        "beforeMask": 15,
+        "afterMask": 15
+      },
+      {
+        "processId": 24344,
+        "parentProcessId": 34756,
+        "name": "chrome.exe",
+        "processType": "utility",
+        "creationDate": "2026-10-03T02:38:10.3813860Z",
+        "beforeMask": 15,
+        "afterMask": 15
+      },
+      {
+        "processId": 24736,
+        "parentProcessId": 30580,
+        "name": "chrome.exe",
+        "processType": "crashpad-handler",
+        "creationDate": "2026-10-03T02:38:08.5098090Z",
+        "beforeMask": 15,
+        "afterMask": 15
+      },
+      {
+        "processId": 26396,
+        "parentProcessId": 34756,
+        "name": "chrome.exe",
+        "processType": "utility",
+        "creationDate": "2026-10-03T02:38:10.4803720Z",
+        "beforeMask": 15,
+        "afterMask": 15
+      },
+      {
+        "processId": 30360,
+        "parentProcessId": 34756,
+        "name": "chrome.exe",
+        "processType": "renderer",
+        "creationDate": "2026-10-03T02:38:11.0006410Z",
+        "beforeMask": 15,
+        "afterMask": 15
+      },
+      {
+        "processId": 30580,
+        "parentProcessId": 34756,
+        "name": "chrome.exe",
+        "processType": "crashpad-handler",
+        "creationDate": "2026-10-03T02:38:08.4387150Z",
+        "beforeMask": 15,
+        "afterMask": 15
+      },
+      {
+        "processId": 31332,
+        "parentProcessId": 34756,
+        "name": "chrome.exe",
+        "processType": "renderer",
+        "creationDate": "2026-10-03T02:38:10.6403980Z",
+        "beforeMask": 15,
+        "afterMask": 15
+      }
+    ],
+    "scope": "Only verified root BrowserServer PID and its descendants; no other process/system affinity changed"
+  },
+  "browserServerStopped": true,
+  "serverStopped": true,
+  "serverExitCode": null,
+  "serverSignalCode": "SIGTERM",
+  "cleanupVerification": {
+    "port3199Closed": true,
+    "browserServerStopped": true,
+    "serverStopped": true,
+    "serverSignal": "SIGTERM",
+    "ownedBrowserSurvivors": []
+  },
+  "drawSummary": {
+    "frameCount": 132,
+    "homeFrameCount": 25,
+    "homeDrawCalls": [
+      66
+    ],
+    "homeTriangles": [
+      12020
+    ],
+    "allDrawCalls": [
+      60,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      70,
+      71,
+      72,
+      74
+    ],
+    "allTriangles": [
+      11960,
+      11972,
+      11984,
+      11996,
+      12008,
+      12020,
+      12192,
+      12296,
+      12332,
+      12344,
+      12356,
+      12368,
+      12380,
+      12392,
+      12756,
+      12860,
+      12872,
+      12896,
+      12908,
+      12932,
+      12944,
+      12968,
+      12980,
+      13084,
+      13108,
+      13120
+    ]
+  },
+  "untrackedCanonicalPaths": [
+    "app/src/features/world/LowQualityBatch.ts",
+    "app/src/features/world/RuntimeMaterialQuality.ts",
+    "app/src/features/world/device-capabilities.ts",
+    "app/tests/integration/production-camera.test.ts",
+    "app/tests/unit/device-capabilities.test.ts",
+    "app/tests/unit/low-quality-batch.test.ts",
+    "app/tests/unit/runtime-material-quality.test.ts"
+  ]
+}

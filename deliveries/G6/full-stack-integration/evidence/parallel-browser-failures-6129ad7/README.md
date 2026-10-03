@@ -1,0 +1,1 @@
+Actual parallel browser execution at source 6129ad7a870f9f391455eb8a0582733a5ccccd11: unified E2E 96 PASS / 1 timeout; dedicated accessibility 16 PASS / 1 timeout. Assertions/timeouts were not weakened. Error snapshots include rendered content; sequential full reruns matching CI determine final evidence. These are failed diagnostics, not final proof.
