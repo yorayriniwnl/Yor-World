@@ -1,0 +1,272 @@
+{
+  "reviewKind": "Supplemental local Codex maker-side verification; not formal Gemini return, independent account audit or acceptance",
+  "reviewedCandidateCommit": "261c483646f68692a3fe8e184d48d25b8264a6d7",
+  "implementationSourceCommit": "6129ad7a870f9f391455eb8a0582733a5ccccd11",
+  "observedHead": "2bbf7f05b34e17094acaa0078e9c6743d73f8196",
+  "appTree": "174ccd19091622c3dbce5f6b0ce3fe7fb38e1985",
+  "execution": {
+    "files": 2,
+    "tests": 6,
+    "passed": 6,
+    "exitCode": 0,
+    "durationSeconds": 5.44,
+    "log": "evidence/shared-config-probes.log",
+    "meaning": "PASS establishes observed defective behavior. Seven defects across six cases because auth/CMS case reproduces SCP-01 and SCP-04."
+  },
+  "readiness": "Not ready for independent audit; corrections and formal platform return remain pending",
+  "defects": [
+    {
+      "id": "SCP-01",
+      "severity": "P1",
+      "title": "Owner direct publication/history DML bypasses server gates",
+      "source": [
+        {
+          "path": "app/supabase/migrations/20261001000000_a3_owner_auth_rls.sql",
+          "line": 256
+        },
+        {
+          "path": "app/supabase/migrations/20261001000000_a3_owner_auth_rls.sql",
+          "line": 272
+        },
+        {
+          "path": "app/supabase/migrations/20261001000000_a3_owner_auth_rls.sql",
+          "line": 415
+        },
+        {
+          "path": "app/supabase/operations/harden-publication-grants.sql",
+          "line": 5
+        }
+      ],
+      "trigger": "Current active owner AAL2 directly mutates publication and history tables after accepted migrations and canonical RPC hardening.",
+      "expected": "Publication validation and revision checks precede atomic public snapshot/history/audit writes; approved history remains immutable.",
+      "actual": "Authenticated role with true owner-AAL2 predicate inserted revision999, updated arbitrary public payload and rewrote history revision1; audit count0; hardened RPC permission false.",
+      "impact": "Owner can bypass validation/concurrency/audit and rewrite history. No non-owner escalation demonstrated.",
+      "evidence": "evidence/auth-cms-result.json",
+      "observation": "observations",
+      "reproductionStatus": "PASS: defect reproduced",
+      "productStatus": "FAIL: unfixed",
+      "makerLane": "Gemini #1 platform/backend",
+      "fixImplemented": false
+    },
+    {
+      "id": "SCP-02",
+      "severity": "P1",
+      "title": "Expired lease holder overwrites reclaimed worker result",
+      "source": [
+        {
+          "path": "app/src/server/jobs/outbox-worker.ts",
+          "line": 62
+        },
+        {
+          "path": "app/src/server/jobs/outbox-worker.ts",
+          "line": 116
+        },
+        {
+          "path": "app/src/server/jobs/outbox-worker.ts",
+          "line": 125
+        }
+      ],
+      "trigger": "Worker A pauses in synthetic send; its lease expires; worker B reclaims and succeeds; A subsequently returns retryable failure.",
+      "expected": "Only current lease holder may finalize its claim; stale updates leave B's sent result unchanged.",
+      "actual": "B set sent/provider_id synthetic-provider-b; A subsequently changed row to retrying/attempts1 with cleared lease.",
+      "impact": "A delivered message becomes eligible for resend; production provider idempotency behavior and actual duplicate delivery were not tested.",
+      "evidence": "evidence/contact-ops-result.json",
+      "observation": "stale-lease-overwrite",
+      "reproductionStatus": "PASS: defect reproduced",
+      "productStatus": "FAIL: unfixed",
+      "makerLane": "Gemini #1 platform/backend",
+      "fixImplemented": false
+    },
+    {
+      "id": "SCP-03",
+      "severity": "P2",
+      "title": "Fifth unexpected exception strands retrying outbox row",
+      "source": [
+        {
+          "path": "app/src/server/jobs/outbox-worker.ts",
+          "line": 62
+        },
+        {
+          "path": "app/src/server/jobs/outbox-worker.ts",
+          "line": 138
+        }
+      ],
+      "trigger": "Synthetic provider throws for claimed row already at attempts4.",
+      "expected": "Exhausted retries transition to failed for owner triage.",
+      "actual": "Catch branch stored retrying/attempts5; next run a day later claimed nothing and invoked provider0 times.",
+      "impact": "Notification remains indefinitely retrying despite no future eligibility.",
+      "evidence": "evidence/contact-ops-result.json",
+      "observation": "exception-retry-ceiling",
+      "reproductionStatus": "PASS: defect reproduced",
+      "productStatus": "FAIL: unfixed",
+      "makerLane": "Gemini #1 platform/backend",
+      "fixImplemented": false
+    },
+    {
+      "id": "SCP-04",
+      "severity": "P2",
+      "title": "Truncated images accepted with fabricated dimensions",
+      "source": [
+        {
+          "path": "app/src/server/media/validate-upload.ts",
+          "line": 82
+        },
+        {
+          "path": "app/src/server/media/validate-upload.ts",
+          "line": 114
+        },
+        {
+          "path": "app/src/server/media/validate-upload.ts",
+          "line": 157
+        }
+      ],
+      "trigger": "Canonical validateUpload receives synthetic signature-only PNG8/JPEG3/WebP12 bytes.",
+      "expected": "Validate actual image dimensions and decodeability before approval; reject corrupt image payloads.",
+      "actual": "All accepted; all dimensions1200x800 despite no decodable image.",
+      "impact": "Corrupt media can enter upload/approval workflow; dimensions cannot be trusted. Hosted storage upload was not invoked.",
+      "evidence": "evidence/auth-cms-result.json",
+      "observation": "images",
+      "reproductionStatus": "PASS: defect reproduced",
+      "productStatus": "FAIL: unfixed",
+      "makerLane": "Gemini #1 platform/backend",
+      "fixImplemented": false
+    },
+    {
+      "id": "SCP-05",
+      "severity": "P2",
+      "title": "Telemetry code dimension conflicts with accepted SQL uniqueness",
+      "source": [
+        {
+          "path": "app/src/server/telemetry/events.ts",
+          "line": 98
+        },
+        {
+          "path": "app/src/server/telemetry/events.ts",
+          "line": 105
+        },
+        {
+          "path": "app/supabase/migrations/20261001000000_a3_owner_auth_rls.sql",
+          "line": 217
+        }
+      ],
+      "trigger": "Two valid renderer_failed events share date/project helios/tier low but code error_a then error_b.",
+      "expected": "Accepted dimensions and SQL conflict target agree; valid events aggregate successfully.",
+      "actual": "First canonical API request202; second503 with SQL23505 on aggregate_events_date_event_project_id_tier_key; count remained1.",
+      "impact": "Valid telemetry is lost when code changes for otherwise equal non-null dimensions.",
+      "evidence": "evidence/contact-ops-result.json",
+      "observation": "telemetry-dimension-conflict",
+      "reproductionStatus": "PASS: defect reproduced",
+      "productStatus": "FAIL: unfixed",
+      "makerLane": "Gemini #1 platform/backend",
+      "fixImplemented": false
+    },
+    {
+      "id": "SCP-06",
+      "severity": "P3",
+      "title": "Telemetry body byte ceiling checks characters",
+      "source": [
+        {
+          "path": "app/src/app/api/events/route.ts",
+          "line": 7
+        },
+        {
+          "path": "app/src/app/api/events/route.ts",
+          "line": 18
+        },
+        {
+          "path": "app/src/server/telemetry/events.ts",
+          "line": 78
+        }
+      ],
+      "trigger": "Synthetic valid telemetry body without Content-Length contains Unicode in an ignored field.",
+      "expected": "Body over4096 actual UTF8 bytes returns413.",
+      "actual": "Body2037 characters/6037 UTF8 bytes returned202.",
+      "impact": "Documented byte ceiling bypassed. No large-body stress or resource-exhaustion demonstration.",
+      "evidence": "evidence/contact-ops-result.json",
+      "observation": "telemetry-byte-ceiling",
+      "reproductionStatus": "PASS: defect reproduced",
+      "productStatus": "FAIL: unfixed",
+      "makerLane": "Gemini #1 platform/backend",
+      "fixImplemented": false
+    },
+    {
+      "id": "SCP-07",
+      "severity": "P2",
+      "title": "Failed GitHub refreshes have no hourly attempt bound",
+      "source": [
+        {
+          "path": "app/src/server/integrations/github.ts",
+          "line": 91
+        },
+        {
+          "path": "app/src/server/integrations/github.ts",
+          "line": 120
+        },
+        {
+          "path": "app/src/server/integrations/github.ts",
+          "line": 170
+        }
+      ],
+      "trigger": "Expired cached repository snapshot, three requests at the same injected clock, synthetic503 upstream response.",
+      "expected": "Bound refresh attempts while preserving last-good data through outage/rate limit.",
+      "actual": "Three requests invoked synthetic fetch3 times; last-good response preserved each time.",
+      "impact": "Outages can cause repeated upstream requests despite hourly-refresh contract. No actual upstream calls or hosted multi-process claim.",
+      "evidence": "evidence/contact-ops-result.json",
+      "observation": "github-failure-refresh-frequency",
+      "reproductionStatus": "PASS: defect reproduced",
+      "productStatus": "FAIL: unfixed",
+      "makerLane": "Gemini #1 platform/backend",
+      "fixImplemented": false
+    }
+  ],
+  "sourceOnlyConcerns": [
+    {
+      "id": "SOURCE-ROLLBACK",
+      "severity": "P2",
+      "source": [
+        {
+          "path": "app/src/app/api/admin/rollback/route.ts",
+          "line": 17
+        },
+        {
+          "path": "app/src/server/content/publish.ts",
+          "line": 398
+        }
+      ],
+      "status": "NOT RUN",
+      "concern": "Rollback accepts only targetRevision. Publication lock serializes writes but no caller expectedRevision check protects stale-tab intent.",
+      "qualification": "Exact rollback API contract needs parent decision before treating concern as assigned defect."
+    },
+    {
+      "id": "SOURCE-TELEMETRY-MAP",
+      "severity": "P2",
+      "source": [
+        {
+          "path": "app/src/server/telemetry/events.ts",
+          "line": 68
+        },
+        {
+          "path": "app/src/server/telemetry/events.ts",
+          "line": 98
+        },
+        {
+          "path": "app/src/server/telemetry/events.ts",
+          "line": 115
+        }
+      ],
+      "status": "NOT RUN",
+      "concern": "Process-lifetime Map has no eviction/cardinality ceiling; accepted code strings create additional keys, including in production after successful SQL aggregation.",
+      "qualification": "No stress test or demonstrated resource exhaustion."
+    }
+  ],
+  "notRun": [
+    "Hosted Supabase Auth/REST/Storage/RLS",
+    "Independent production PostgreSQL sessions",
+    "Actual mail/provider delivery or duplicate behavior",
+    "Physical devices",
+    "Hosted backup/restore/rollback",
+    "Formal Gemini #1 platform verification",
+    "GPT Plus #2 independent account audit",
+    "G6 acceptance and G7 deployment"
+  ]
+}

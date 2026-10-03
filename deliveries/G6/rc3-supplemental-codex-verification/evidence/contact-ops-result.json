@@ -1,0 +1,86 @@
+{
+  "meaning": "PASS means defective outcome reproduced",
+  "boundary": "Actual accepted SQL in one local embedded PGlite instance; controlled worker clocks/provider responses; no hosted sessions, credentials or upstream calls",
+  "observations": [
+    {
+      "id": "stale-lease-overwrite",
+      "firstResult": {
+        "sent": 0,
+        "retried": 1,
+        "failed": 0
+      },
+      "second": {
+        "sent": 1,
+        "retried": 0,
+        "failed": 0
+      },
+      "before": [
+        {
+          "status": "sent",
+          "provider_id": "synthetic-provider-b",
+          "attempts": 0
+        }
+      ],
+      "after": [
+        {
+          "status": "retrying",
+          "provider_id": "synthetic-provider-b",
+          "attempts": 1,
+          "lease_until": null
+        }
+      ]
+    },
+    {
+      "id": "exception-retry-ceiling",
+      "first": {
+        "sent": 0,
+        "retried": 1,
+        "failed": 0
+      },
+      "row": [
+        {
+          "status": "retrying",
+          "attempts": 5
+        }
+      ],
+      "second": {
+        "sent": 0,
+        "retried": 0,
+        "failed": 0
+      },
+      "subsequentCalls": 0
+    },
+    {
+      "id": "telemetry-dimension-conflict",
+      "firstStatus": 202,
+      "secondStatus": 503,
+      "secondBody": {
+        "error": "Telemetry storage is temporarily unavailable."
+      },
+      "sqlError": {
+        "code": "23505",
+        "message": "duplicate key value violates unique constraint \"aggregate_events_date_event_project_id_tier_key\""
+      },
+      "rows": [
+        {
+          "event": "renderer_failed",
+          "project_id": "helios",
+          "tier": "low",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "telemetry-byte-ceiling",
+      "characters": 2037,
+      "utf8Bytes": 6037,
+      "status": 202
+    },
+    {
+      "id": "github-failure-refresh-frequency",
+      "sameClockRequests": 3,
+      "calls": 3,
+      "returnedLastGood": true
+    }
+  ]
+}

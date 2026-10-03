@@ -1,0 +1,97 @@
+{
+  "candidate": "261c483646f68692a3fe8e184d48d25b8264a6d7",
+  "implementationSource": "6129ad7a870f9f391455eb8a0582733a5ccccd11",
+  "trees": {
+    "head": "174ccd19091622c3dbce5f6b0ce3fe7fb38e1985",
+    "candidate": "174ccd19091622c3dbce5f6b0ce3fe7fb38e1985",
+    "source": "174ccd19091622c3dbce5f6b0ce3fe7fb38e1985"
+  },
+  "sqlInputs": [
+    {
+      "path": "supabase/migrations/20261001000000_a3_owner_auth_rls.sql",
+      "sha256": "5a55e9baa1f19b8134d3985e54aecba9415a528c3f1d942be692148abee9c21a"
+    },
+    {
+      "path": "supabase/migrations/20261001000001_a4_publication_media.sql",
+      "sha256": "1cc1bbb0d20eb741c2dc435e795575f7b36dbfb68f477a301ee97ebd616d0afa"
+    },
+    {
+      "path": "supabase/operations/harden-publication-grants.sql",
+      "sha256": "4d27383cceeb5f88074cc1f25d74c4ac903cb2c941234d8a7cac37a82d259029"
+    }
+  ],
+  "node": "v24.19.0",
+  "cwd": "C:\\Users\\yoray\\Projects\\Yor World\\app",
+  "boundary": "actual local embedded PGlite SQL and role claims; actual canonical validateUpload; no hosted Auth, Storage, REST or external services",
+  "status": "PASS: observed defects reproduced, not product acceptance",
+  "observations": {
+    "ownerPredicate": [
+      {
+        "current_user": "authenticated",
+        "authorized": true
+      }
+    ],
+    "rpc": [
+      {
+        "permitted": false
+      }
+    ],
+    "published": [
+      {
+        "revision": 999,
+        "payload": {
+          "synthetic": "modified directly without expected revision"
+        }
+      }
+    ],
+    "history": [
+      {
+        "revision": 1,
+        "snapshot": {
+          "synthetic": "rewritten history"
+        }
+      }
+    ],
+    "audit": [
+      {
+        "count": 0
+      }
+    ]
+  },
+  "images": [
+    {
+      "mime": "image/png",
+      "syntheticInputHex": "89504e470d0a1a0a",
+      "accepted": true,
+      "bytes": 8,
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "hash": "4c4b6a3be1314ab86138bef4314dde022e600960d8689a2c8f8631802d20dab6"
+    },
+    {
+      "mime": "image/jpeg",
+      "syntheticInputHex": "ffd8ff",
+      "accepted": true,
+      "bytes": 3,
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "hash": "6e568e1f67fba258184c78181539e5e8fdee447e49bb706fc0ea34fbf12336a5"
+    },
+    {
+      "mime": "image/webp",
+      "syntheticInputHex": "524946460000000057454250",
+      "accepted": true,
+      "bytes": 12,
+      "dimensions": {
+        "width": 1200,
+        "height": 800
+      },
+      "hash": "44e65465e5e82733c8e5499cdd2fb106b8b703ea3f28da3b7da7f3a661267d6e"
+    }
+  ],
+  "impact": "Current active owner AAL2 can bypass server validation/revision/audit gates and rewrite immutable history. No non-owner escalation demonstrated."
+}

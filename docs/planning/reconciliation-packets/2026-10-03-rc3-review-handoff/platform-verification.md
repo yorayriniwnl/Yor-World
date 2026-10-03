@@ -1,6 +1,6 @@
 # G6-RC3-PLATFORM-VERIFY-01
 
-Assigned account: **Gemini #1, platform/backend verification lane**. Model: Gemini Pro, highest available thinking, as requested in the original integration packet. Status: READY; execution NOT RUN. This packet consumes the completed candidate and returns bounded platform evidence. It does not authorize production corrections or acceptance.
+Assigned account: **Gemini #1, platform/backend verification lane**. Model: Gemini Pro, highest available thinking, as requested in the original integration packet. Status: HELD / NOT DISPATCHED; execution NOT RUN. The [new correction packet](../2026-10-03-rc3-platform-corrections.md) precedes review activation; unresolved supplemental defects and absent platform return block the original handoff. Corrected source requires new pinned inputs. This packet consumes the completed candidate and returns bounded platform evidence. It does not authorize production corrections or acceptance.
 
 ## Exact input and ownership
 

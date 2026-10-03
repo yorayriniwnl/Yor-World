@@ -1,6 +1,6 @@
 # G6-RC3-FULLSTACK-AUDIT-01
 
-Assigned account: **GPT Plus #2, independent auditor**. Model: **GPT-6.1 Sol** for ordinary auditing under AGENTS.md. Status: PREPARED / NOT DISPATCHED. Activation requires the actual revision-bound return from G6-RC3-PLATFORM-VERIFY-01. The integration maker, its helper agents and automated CI do not constitute this independent account's audit.
+Assigned account: **GPT Plus #2, independent auditor**. Model: **GPT-6.1 Sol** for ordinary auditing under AGENTS.md. Status: HELD / NOT DISPATCHED; execution NOT RUN. The [new correction packet](../2026-10-03-rc3-platform-corrections.md) precedes review activation; unresolved supplemental defects and absent platform return block the original handoff. Corrected source requires new pinned inputs. Activation requires the actual revision-bound return from G6-RC3-PLATFORM-VERIFY-01. The integration maker, its helper agents and automated CI do not constitute this independent account's audit.
 
 ## Inputs and review boundary
 
