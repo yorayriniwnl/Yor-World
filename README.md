@@ -1,6 +1,6 @@
 # YOR WORLD — planning package
 
-Prepared 30 September 2026; current integration status 3 October 2026. GitHub is the authoritative live repository. **W1-F1-r2, W2-F1-r2, and W3-A1-r2 are ACCEPTED; G1 ACCEPTED (`G1-R1`). Gates G1-G5 ACCEPTED. Gate G6 ACTIVE / REWORK (RC3 candidate; RC1/RC2 preserved as history). Gate G7 LOCKED pending owner authorization.** The current authority is [PARENT-RECON-03](docs/planning/reviews/2026-10-01-reconciliation-03.md), following the [accepted W1/W2/W3 ruling](docs/planning/reviews/2026-10-01-reconciliation-02.md). C1-C4 are implemented and assembled in the current RC3 full-stack candidate. Gate G6 is ACTIVE / REWORK pending independent delta audit and Parent decision. Gate G7 remains LOCKED pending owner authorization.
+Prepared 30 September 2026; current integration status 3 October 2026. GitHub is the authoritative live repository. **W1-F1-r2, W2-F1-r2, and W3-A1-r2 are ACCEPTED; G1 ACCEPTED (`G1-R1`). Gates G1-G5 ACCEPTED. Gate G6 ACTIVE / REWORK (RC3 candidate; RC1/RC2 preserved as history). Gate G7 LOCKED pending owner authorization.** The current authority is [PARENT-RECON-03](docs/planning/reviews/2026-10-01-reconciliation-03.md), following the [accepted W1/W2/W3 ruling](docs/planning/reviews/2026-10-01-reconciliation-02.md). C1-C4 are implemented and assembled in the current RC3 full-stack candidate. Gate G6 is ACTIVE / REWORK pending independent full-stack audit and Parent decision. Gate G7 remains LOCKED pending owner authorization.
 
 YOR WORLD is a personal portfolio experienced as an inhabited developer studio. A visitor can enter through a cinematic doorway, meet the creator, touch objects that respond physically, and explore real work. Projects, résumé, and contact remain directly accessible through ordinary web pages.
 
@@ -28,6 +28,8 @@ pnpm test:e2e
 ```
 
 The [RC3 maker handoff](deliveries/G6/full-stack-integration/report.md) binds the integrated source, production route inventory, frozen assets, contact R2 implementation, release bundle, and fresh verification. The [environment contract](deliveries/G6/full-stack-integration/environment-contract.md) lists safe configuration names. The [current dossier](docs/releases/v1.0.0-rc3.md) is a candidate record; G6 remains ACTIVE / REWORK pending independent audit, and G7 is LOCKED.
+
+Next: [Gemini #1 platform verification](docs/planning/reconciliation-packets/2026-10-03-rc3-review-handoff/platform-verification.md) of pinned RC3 candidate `261c483646f68692a3fe8e184d48d25b8264a6d7`, followed by the queued GPT Plus #2 independent full-stack audit and GPT Plus #1 adjudication. The [review handoff](docs/planning/reconciliation-packets/2026-10-03-rc3-review-handoff/README.md) records exact input hashes, final-candidate CI and honest dispatch/return status. These packets are prepared; platform verification and independent audit have not been executed here.
 
 ## Confirmed brief
 

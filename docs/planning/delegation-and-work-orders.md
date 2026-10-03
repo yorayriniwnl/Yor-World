@@ -8,6 +8,14 @@ The user authorized the full vision and delegated production. The parent Codex c
 
 The human supplied the RC3 full-stack integration packet on 2026-10-03. **CANONICAL APPLICATION ROOT: `app/`.** Integrate immutable A6, C3, accepted Track B freeze, and contact R2 into this root; preserve old proof roots and RC1/RC2 evidence. Maker outputs are under [deliveries/G6/full-stack-integration](../../deliveries/G6/full-stack-integration/report.md). CI and future authorized G7 deployments use `app/` exclusively. G1-G5 ACCEPTED; RC3 candidate; G6 ACTIVE / REWORK; G7 LOCKED. Next: Gemini #1 backend verification ? GPT Plus #2 independent full-stack audit ? GPT Plus #1 G6 adjudication. Maker does not accept this packet.
 
+## Current RC3 verification handoff
+
+The integration maker stopped at completed candidate `261c483646f68692a3fe8e184d48d25b8264a6d7`: fresh local checks and both exact-candidate workflows PASS; evidence committed. This candidate contains implementation source `6129ad7a870f9f391455eb8a0582733a5ccccd11`. Later coordination commits do not replace the review target or change its production trees.
+
+Execute [G6-RC3-PLATFORM-VERIFY-01](reconciliation-packets/2026-10-03-rc3-review-handoff/platform-verification.md) in **Gemini #1**, returning only `deliveries/G6/rc3-platform-verification/`. Its execution is NOT RUN and no revision-bound return is present. [G6-RC3-FULLSTACK-AUDIT-01](reconciliation-packets/2026-10-03-rc3-review-handoff/independent-full-stack-audit.md) is PREPARED / NOT DISPATCHED for **GPT Plus #2**, dependent on that actual platform return. Parent adjudication follows independent audit and any assigned-maker correction / delta audit. See the [handoff index and exact input ledger](reconciliation-packets/2026-10-03-rc3-review-handoff/README.md).
+
+No Gemini CLI or callable Gemini connector is available in the preparing Codex session. Packet preparation is not account dispatch or verification. Historical A6-only `deliveries/G6/gemini-1-platform/` evidence does not verify canonical RC3. Frozen door/lamp visual conditions remain review inputs, not waived defects. G1-G5 ACCEPTED; RC3 candidate; G6 ACTIVE / REWORK; G7 LOCKED. No production change or deployment is authorized by these review packets.
+
 ## One specification and a small shared baseline
 
 The [product spec](../superpowers/specs/2026-09-30-yor-world-design.md) is the single scope authority. Its [art](art-and-experience.md), [interaction](interaction-catalog.md), [engineering](engineering-and-content.md), and [validation](validation-and-production.md) documents supply contracts and acceptance criteria. Record the supplied spec revision and file hashes in each handoff. No worker independently redesigns the product or deletes a requirement. Unresolved assumptions stay identified; the already authorized vision needs no repeated approval.
