@@ -1,0 +1,30 @@
+{
+  "observationKind": "Source/contract inspection plus authenticated CI job logs; no fresh local performance execution",
+  "contract": {
+    "path": "docs/planning/validation-and-production.md",
+    "line": 56,
+    "static": "Poster plus full HTML, no canvas"
+  },
+  "qualityPolicy": {
+    "path": "app/src/features/room/quality-policy.ts",
+    "line": 154,
+    "behavior": "Three sustained slow windows downgrade high -> medium -> low -> static"
+  },
+  "runtime": {
+    "path": "app/src/features/world/WorldRoot.tsx",
+    "line": 319,
+    "behavior": "Static tier renders HTML fallback"
+  },
+  "test": {
+    "path": "app/tests/performance/world.spec.ts",
+    "lines": [
+      124,
+      155,
+      177
+    ],
+    "behavior": "Static frame or canvas detached/no render >1000ms becomes failure"
+  },
+  "ciEvidence": "github-ci-log-receipts.json",
+  "analysis": "Potential test-contract contradiction on sustained software-renderer slowdown. Correction changed no world/quality/performance/CI/release source. No demonstrated platform-change cause; timing/build/environment indirect effects not ruled out. Same app tree passed six performance cases on implementation run and failed canvas watchdog on evidence-only run.",
+  "owner": "RC4 runtime/integration maker; no fixes or candidate changes performed"
+}

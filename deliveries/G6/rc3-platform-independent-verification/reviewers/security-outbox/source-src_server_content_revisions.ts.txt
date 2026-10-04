@@ -1,0 +1,305 @@
+1: /**
+2:  * YOR WORLD Milestone A4: Server-side Project Revisions & Draft State
+3:  *
+4:  * Implements structured project draft editing, optimistic concurrency control,
+5:  * revision incrementing, and private draft storage.
+6:  */
+7: 
+8: import {
+9:   type ProjectId,
+10:   type PublishedProject,
+11:   PublishedProjectSchema,
+12: } from "@/contracts/content";
+13: import type { OwnerContext } from "../auth/types";
+14: import { approvedPublication } from "@/content/approved-publication";
+15: import { getPlatformDb, hasPlatformDatabase, isTestRuntime } from "../database";
+16: import type { QueryableDb } from "../contact/quota";
+17: 
+18: export class RevisionConflictError extends Error {
+19:   readonly status = 409;
+20:   readonly code = "STALE_REVISION_CONFLICT";
+21: 
+22:   constructor(message: string) {
+23:     super(message);
+24:     this.name = "RevisionConflictError";
+25:   }
+26: }
+27: 
+28: export class ContentValidationError extends Error {
+29:   readonly status = 422;
+30:   readonly code = "INVALID_CONTENT";
+31: 
+32:   constructor(message: string) {
+33:     super(message);
+34:     this.name = "ContentValidationError";
+35:   }
+36: }
+37: 
+38: export interface DraftRecord {
+39:   projectId: ProjectId;
+40:   draftRevision: number;
+41:   project: PublishedProject;
+42:   updatedAt: string;
+43:   updatedBy: string;
+44: }
+45: 
+46: // In-memory test draft registry initialized with approved publication projects
+47: let testDraftRegistry: Map<ProjectId, DraftRecord> | null = null;
+48: 
+49: function initializeDefaultDrafts(): Map<ProjectId, DraftRecord> {
+50:   const map = new Map<ProjectId, DraftRecord>();
+51:   const now = new Date().toISOString();
+52: 
+53:   for (const proj of approvedPublication.projects) {
+54:     map.set(proj.id, {
+55:       projectId: proj.id,
+56:       draftRevision: proj.revision,
+57:       project: { ...proj },
+58:       updatedAt: now,
+59:       updatedBy: "system-seed",
+60:     });
+61:   }
+62: 
+63:   // Also include candidatex as an unpublished draft (revision 1)
+64:   map.set("candidatex", {
+65:     projectId: "candidatex",
+66:     draftRevision: 1,
+67:     project: {
+68:       id: "candidatex",
+69:       slug: "candidatex",
+70:       title: "CandidateX (Draft)",
+71:       summary: "Draft recruitment analytics platform.",
+72:       contribution: "Sole architect and full-stack engineer.",
+73:       sections: [
+74:         {
+75:           id: "overview",
+76:           heading: "Overview",
+77:           blocks: [{ type: "paragraph", text: "Draft analytics platform documentation." }],
+78:         },
+79:       ],
+80:       links: [{ label: "Repository", url: "https://github.com/yorayriniwnl/candidatex", checkedAt: now }],
+81:       evidence: [
+82:         {
+83:           id: "ev-cx-repo",
+84:           kind: "repository",
+85:           url: "https://github.com/yorayriniwnl/candidatex",
+86:           checkedAt: now,
+87:           status: "verified",
+88:           note: "Private repository code review.",
+89:         },
+90:       ],
+91:       revision: 1,
+92:     },
+93:     updatedAt: now,
+94:     updatedBy: "system-seed",
+95:   });
+96: 
+97:   return map;
+98: }
+99: 
+100: export function setTestDraftRegistry(registry: Map<ProjectId, DraftRecord> | null) {
+101:   if (!isTestRuntime()) throw new Error("Draft registry injection is test-only.");
+102:   testDraftRegistry = registry;
+103: }
+104: 
+105: export function getTestDraftRegistry(): Map<ProjectId, DraftRecord> {
+106:   if (!testDraftRegistry) {
+107:     testDraftRegistry = initializeDefaultDrafts();
+108:   }
+109:   return testDraftRegistry;
+110: }
+111: 
+112: /**
+113:  * Validates project draft content integrity.
+114:  * Throws ContentValidationError (422) if invalid URLs or malformed blocks are encountered.
+115:  */
+116: export function validateDraftContent(data: unknown): PublishedProject {
+117:   const result = PublishedProjectSchema.safeParse(data);
+118:   if (!result.success) {
+119:     throw new ContentValidationError(
+120:       `Content validation failed: ${result.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join(", ")}`
+121:     );
+122:   }
+123: 
+124:   const project = result.data;
+125: 
+126:   // Enforce HTTPS URLs
+127:   for (const link of project.links) {
+128:     try {
+129:       const url = new URL(link.url);
+130:       if (url.protocol !== "https:") {
+131:         throw new ContentValidationError(
+132:           `Invalid link URL '${link.url}': protocol must be https://`
+133:         );
+134:       }
+135:     } catch (err) {
+136:       if (err instanceof ContentValidationError) throw err;
+137:       throw new ContentValidationError(`Malformed link URL '${link.url}'`);
+138:     }
+139:   }
+140: 
+141:   for (const ev of project.evidence) {
+142:     if (ev.url) {
+143:       try {
+144:         const url = new URL(ev.url);
+145:         if (url.protocol !== "https:") {
+146:           throw new ContentValidationError(
+147:             `Invalid evidence URL '${ev.url}': protocol must be https://`
+148:           );
+149:         }
+150:       } catch (err) {
+151:         if (err instanceof ContentValidationError) throw err;
+152:         throw new ContentValidationError(`Malformed evidence URL '${ev.url}'`);
+153:       }
+154:     }
+155:   }
+156: 
+157:   // Validate sections and blocks
+158:   for (const section of project.sections) {
+159:     if (!section.heading || section.heading.trim().length === 0) {
+160:       throw new ContentValidationError(`Section '${section.id}' has empty heading`);
+161:     }
+162:     if (section.blocks.length === 0) {
+163:       throw new ContentValidationError(`Section '${section.id}' must contain at least one content block`);
+164:     }
+165:   }
+166: 
+167:   return project;
+168: }
+169: 
+170: /**
+171:  * Retrieves project draft record. Private: requires owner authorization.
+172:  */
+173: export async function getProjectDraft(
+174:   projectId: ProjectId,
+175:   _actor: OwnerContext
+176: ): Promise<DraftRecord | null> {
+177:   void _actor;
+178:   if (!isDraftTestRegistryEnabled()) {
+179:     return (await listProjectDrafts(_actor)).find((draft) => draft.projectId === projectId) ?? null;
+180:   }
+181:   const registry = getTestDraftRegistry();
+182:   const record = registry.get(projectId);
+183:   if (record) {
+184:     return { ...record, project: JSON.parse(JSON.stringify(record.project)) };
+185:   }
+186:   return null;
+187: }
+188: 
+189: /**
+190:  * Lists all project drafts for owner review.
+191:  */
+192: export async function listProjectDrafts(
+193:   _actor: OwnerContext
+194: ): Promise<DraftRecord[]> {
+195:   void _actor;
+196:   if (!isDraftTestRegistryEnabled()) {
+197:     const db = await getPlatformDb();
+198:     return readDurableDrafts(db);
+199:   }
+200:   const registry = getTestDraftRegistry();
+201:   return Array.from(registry.values()).map((r) => ({
+202:     ...r,
+203:     project: JSON.parse(JSON.stringify(r.project)),
+204:   }));
+205: }
+206: 
+207: /**
+208:  * Saves a modified draft revision using optimistic concurrency control.
+209:  * Stale expectedRevision returns 409 Conflict.
+210:  * Invalid content returns 422 Unprocessable Entity.
+211:  */
+212: export async function saveProjectDraft(
+213:   input: {
+214:     projectId: ProjectId;
+215:     expectedRevision: number;
+216:     project: Omit<PublishedProject, "revision">;
+217:   },
+218:   actor: OwnerContext
+219: ): Promise<{ draftRevision: number; project: PublishedProject }> {
+220:   if (input.project.id !== input.projectId || input.project.slug !== input.projectId) {
+221:     throw new ContentValidationError("Draft identity does not match requested project.");
+222:   }
+223:   if (!isDraftTestRegistryEnabled()) return saveDurableDraft(input, actor);
+224:   const registry = getTestDraftRegistry();
+225:   const existing = registry.get(input.projectId);
+226: 
+227:   const currentRevision = existing ? existing.draftRevision : 0;
+228: 
+229:   // Optimistic concurrency check
+230:   if (currentRevision !== input.expectedRevision) {
+231:     throw new RevisionConflictError(
+232:       `Stale revision conflict on project '${input.projectId}': expected revision ${input.expectedRevision}, but current revision is ${currentRevision}. Refresh before saving.`
+233:     );
+234:   }
+235: 
+236:   const nextRevision = currentRevision + 1;
+237:   const projectWithRev: PublishedProject = {
+238:     ...input.project,
+239:     revision: nextRevision,
+240:   };
+241: 
+242:   // Content validation (throws 422 if invalid)
+243:   const validatedProject = validateDraftContent(projectWithRev);
+244: 
+245:   const updatedRecord: DraftRecord = {
+246:     projectId: input.projectId,
+247:     draftRevision: nextRevision,
+248:     project: validatedProject,
+249:     updatedAt: new Date().toISOString(),
+250:     updatedBy: actor.userId,
+251:   };
+252: 
+253:   registry.set(input.projectId, updatedRecord);
+254: 
+255:   return {
+256:     draftRevision: nextRevision,
+257:     project: validatedProject,
+258:   };
+259: }
+260: 
+261: export function isDraftTestRegistryEnabled(): boolean {
+262:   return isTestRuntime() && !hasPlatformDatabase();
+263: }
+264: 
+265: export async function readDurableDrafts(db: QueryableDb): Promise<DraftRecord[]> {
+266:   const result = await db.query(`SELECT p.slug, p.draft_revision, r.payload, r.created_at, r.created_by
+267:     FROM public.projects p JOIN public.project_revisions r
+268:       ON r.project_id=p.id AND r.revision=p.draft_revision WHERE p.archived_at IS NULL`);
+269:   const drafts = new Map<ProjectId, DraftRecord>();
+270:   for (const project of approvedPublication.projects) {
+271:     drafts.set(project.id, { projectId: project.id, draftRevision: project.revision, project,
+272:       updatedAt: approvedPublication.publishedAt, updatedBy: "accepted-static-baseline" });
+273:   }
+274:   for (const row of result.rows) {
+275:     const project = validateDraftContent(row["payload"]);
+276:     drafts.set(project.id, { projectId: project.id, draftRevision: Number(row["draft_revision"]), project,
+277:       updatedAt: new Date(String(row["created_at"])).toISOString(), updatedBy: String(row["created_by"]) });
+278:   }
+279:   return [...drafts.values()];
+280: }
+281: 
+282: async function saveDurableDraft(input: {
+283:   projectId: ProjectId; expectedRevision: number; project: Omit<PublishedProject, "revision">;
+284: }, actor: OwnerContext): Promise<{ draftRevision: number; project: PublishedProject }> {
+285:   const db = await getPlatformDb();
+286:   if (!db.transaction) throw new Error("Transactional database is required.");
+287:   return db.transaction(async (tx) => {
+288:     await tx.query("SELECT pg_advisory_xact_lock(hashtext($1))", [`yor-draft-${input.projectId}`]);
+289:     const rows = await tx.query("SELECT id,draft_revision FROM public.projects WHERE slug=$1 FOR UPDATE", [input.projectId]);
+290:     let row = rows.rows[0];
+291:     const baseline = approvedPublication.projects.find((project) => project.id === input.projectId);
+292:     const currentRevision = row ? Number(row["draft_revision"]) : (baseline?.revision ?? 0);
+293:     if (currentRevision !== input.expectedRevision) throw new RevisionConflictError("Draft changed. Refresh before saving.");
+294:     const nextRevision = currentRevision + 1;
+295:     const project = validateDraftContent({ ...input.project, revision: nextRevision });
+296:     if (!row) {
+297:       row = (await tx.query("INSERT INTO public.projects(slug,title,draft_revision) VALUES($1,$2,$3) RETURNING id", [input.projectId, project.title, nextRevision])).rows[0]!;
+298:     } else {
+299:       await tx.query("UPDATE public.projects SET title=$1,draft_revision=$2 WHERE id=$3", [project.title,nextRevision,row["id"]]);
+300:     }
+301:     await tx.query("INSERT INTO public.project_revisions(project_id,revision,payload,created_by) VALUES($1,$2,$3,$4)", [row["id"],nextRevision,JSON.stringify(project),actor.userId]);
+302:     await tx.query("INSERT INTO public.audit_events(actor,action,entity_type,entity_id,payload) VALUES($1,'draft_saved','project',$2,$3)", [actor.userId,input.projectId,JSON.stringify({ revision: nextRevision })]);
+303:     return { draftRevision: nextRevision, project };
+304:   });
+305: }

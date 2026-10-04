@@ -1,0 +1,455 @@
+1: -- YOR WORLD Milestone A3 Migration
+2: -- Authoritative Owner Administration, Least-Privilege Grants & Row Level Security (RLS)
+3: 
+4: -- 1. Setup Auth Schema, Roles, and Context Functions if not present (PostgreSQL / Supabase compatibility)
+5: CREATE SCHEMA IF NOT EXISTS auth;
+6: 
+7: DO $$
+8: BEGIN
+9:   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anon') THEN
+10:     CREATE ROLE anon NOLOGIN;
+11:   END IF;
+12:   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticated') THEN
+13:     CREATE ROLE authenticated NOLOGIN;
+14:   END IF;
+15:   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'service_role') THEN
+16:     CREATE ROLE service_role NOLOGIN;
+17:   END IF;
+18: END $$;
+19: 
+20: -- Simulated / fallback auth functions for test environments if running outside live Supabase
+21: CREATE TABLE IF NOT EXISTS auth.users (
+22:   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+23:   email text UNIQUE,
+24:   raw_app_meta_data jsonb DEFAULT '{}'::jsonb,
+25:   raw_user_meta_data jsonb DEFAULT '{}'::jsonb,
+26:   created_at timestamptz DEFAULT now()
+27: );
+28: 
+29: CREATE OR REPLACE FUNCTION auth.uid()
+30: RETURNS uuid
+31: LANGUAGE sql
+32: STABLE
+33: AS $$
+34:   SELECT NULLIF(current_setting('request.jwt.claim.sub', true), '')::uuid;
+35: $$;
+36: 
+37: CREATE OR REPLACE FUNCTION auth.jwt()
+38: RETURNS jsonb
+39: LANGUAGE sql
+40: STABLE
+41: AS $$
+42:   SELECT COALESCE(NULLIF(current_setting('request.jwt.claims', true), '')::jsonb, '{}'::jsonb);
+43: $$;
+44: 
+45: -- 2. Authoritative Owner Administration Table (Section 8 & 9)
+46: CREATE TABLE IF NOT EXISTS public.admin_users (
+47:   id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+48:   role text NOT NULL CHECK (role IN ('owner')),
+49:   active boolean NOT NULL DEFAULT true,
+50:   created_at timestamptz NOT NULL DEFAULT now(),
+51:   updated_at timestamptz NOT NULL DEFAULT now()
+52: );
+53: 
+54: -- 3. Security Definer Helper Functions (Section 9)
+55: CREATE OR REPLACE FUNCTION public.is_active_owner()
+56: RETURNS boolean
+57: LANGUAGE sql
+58: STABLE
+59: SECURITY DEFINER
+60: SET search_path = public
+61: AS $$
+62:   SELECT EXISTS (
+63:     SELECT 1 FROM public.admin_users
+64:     WHERE admin_users.id = auth.uid()
+65:       AND admin_users.role = 'owner'
+66:       AND admin_users.active = true
+67:   );
+68: $$;
+69: 
+70: CREATE OR REPLACE FUNCTION public.is_active_owner_with_aal2()
+71: RETURNS boolean
+72: LANGUAGE sql
+73: STABLE
+74: SECURITY DEFINER
+75: SET search_path = public
+76: AS $$
+77:   SELECT EXISTS (
+78:     SELECT 1 FROM public.admin_users
+79:     WHERE admin_users.id = auth.uid()
+80:       AND admin_users.role = 'owner'
+81:       AND admin_users.active = true
+82:   ) AND COALESCE((auth.jwt() ->> 'aal'), '') = 'aal2';
+83: $$;
+84: 
+85: -- 4. Protected Domain Tables (Section 8)
+86: 
+87: -- 4.1 Audit Events (append-only)
+88: CREATE TABLE IF NOT EXISTS public.audit_events (
+89:   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+90:   actor uuid REFERENCES auth.users(id),
+91:   action text NOT NULL,
+92:   entity_type text NOT NULL,
+93:   entity_id text,
+94:   payload jsonb DEFAULT '{}'::jsonb,
+95:   created_at timestamptz NOT NULL DEFAULT now()
+96: );
+97: 
+98: -- 4.2 Projects & Project Revisions
+99: CREATE TABLE IF NOT EXISTS public.projects (
+100:   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+101:   slug text UNIQUE NOT NULL,
+102:   title text NOT NULL,
+103:   draft_revision integer NOT NULL DEFAULT 1,
+104:   archived_at timestamptz
+105: );
+106: 
+107: CREATE TABLE IF NOT EXISTS public.project_revisions (
+108:   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+109:   project_id uuid REFERENCES public.projects(id) ON DELETE CASCADE NOT NULL,
+110:   revision integer NOT NULL,
+111:   payload jsonb NOT NULL,
+112:   created_by uuid REFERENCES auth.users(id) NOT NULL,
+113:   created_at timestamptz NOT NULL DEFAULT now(),
+114:   UNIQUE (project_id, revision)
+115: );
+116: 
+117: -- 4.3 Evidence Records
+118: CREATE TABLE IF NOT EXISTS public.evidence_records (
+119:   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+120:   project_id uuid REFERENCES public.projects(id) ON DELETE CASCADE NOT NULL,
+121:   kind text NOT NULL,
+122:   source_url text NOT NULL,
+123:   checked_at timestamptz NOT NULL DEFAULT now(),
+124:   status text NOT NULL,
+125:   notes text
+126: );
+127: 
+128: -- 4.4 Media Assets
+129: CREATE TABLE IF NOT EXISTS public.media_assets (
+130:   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+131:   object_key text UNIQUE NOT NULL,
+132:   hash text NOT NULL,
+133:   mime text NOT NULL,
+134:   bytes bigint NOT NULL,
+135:   dimensions jsonb,
+136:   provenance jsonb,
+137:   approval_status text NOT NULL DEFAULT 'pending',
+138:   created_at timestamptz NOT NULL DEFAULT now()
+139: );
+140: 
+141: -- 4.5 Site Revisions
+142: CREATE TABLE IF NOT EXISTS public.site_revisions (
+143:   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+144:   revision integer UNIQUE NOT NULL,
+145:   payload jsonb NOT NULL,
+146:   created_by uuid REFERENCES auth.users(id) NOT NULL,
+147:   created_at timestamptz NOT NULL DEFAULT now()
+148: );
+149: 
+150: -- 4.6 Publication History
+151: CREATE TABLE IF NOT EXISTS public.publication_history (
+152:   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+153:   revision integer NOT NULL,
+154:   snapshot jsonb NOT NULL,
+155:   actor uuid REFERENCES auth.users(id) NOT NULL,
+156:   created_at timestamptz NOT NULL DEFAULT now()
+157: );
+158: 
+159: -- 4.7 Published Content (Public Read)
+160: CREATE TABLE IF NOT EXISTS public.published_content (
+161:   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+162:   revision integer NOT NULL,
+163:   payload jsonb NOT NULL,
+164:   published_at timestamptz NOT NULL DEFAULT now()
+165: );
+166: 
+167: -- 4.8 Contact Messages (Private)
+168: CREATE TABLE IF NOT EXISTS public.contact_messages (
+169:   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+170:   receipt_id text UNIQUE NOT NULL,
+171:   name text NOT NULL,
+172:   email text NOT NULL,
+173:   body text NOT NULL,
+174:   received_at timestamptz NOT NULL DEFAULT now(),
+175:   status text NOT NULL DEFAULT 'received'
+176: );
+177: 
+178: -- 4.9 Auxiliary Outbox, Quota & Job Tables (Private / Service Role)
+179: CREATE TABLE IF NOT EXISTS public.contact_idempotency (
+180:   key_hash text PRIMARY KEY,
+181:   payload_hash text NOT NULL,
+182:   receipt_id text NOT NULL,
+183:   expires_at timestamptz NOT NULL
+184: );
+185: 
+186: CREATE TABLE IF NOT EXISTS public.email_outbox (
+187:   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+188:   message_id uuid REFERENCES public.contact_messages(id) ON DELETE CASCADE NOT NULL,
+189:   status text NOT NULL DEFAULT 'pending',
+190:   attempts integer NOT NULL DEFAULT 0,
+191:   next_attempt_at timestamptz NOT NULL DEFAULT now(),
+192:   lease_until timestamptz,
+193:   provider_id text
+194: );
+195: 
+196: CREATE TABLE IF NOT EXISTS public.request_quotas (
+197:   key_hash text PRIMARY KEY,
+198:   bucket_start timestamptz NOT NULL,
+199:   count integer NOT NULL DEFAULT 1,
+200:   expires_at timestamptz NOT NULL
+201: );
+202: 
+203: CREATE TABLE IF NOT EXISTS public.github_snapshots (
+204:   repository_id text PRIMARY KEY,
+205:   payload jsonb NOT NULL,
+206:   fetched_at timestamptz NOT NULL DEFAULT now(),
+207:   status text NOT NULL DEFAULT 'ok'
+208: );
+209: 
+210: CREATE TABLE IF NOT EXISTS public.aggregate_events (
+211:   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+212:   date date NOT NULL,
+213:   event text NOT NULL,
+214:   project_id text,
+215:   tier text,
+216:   count integer NOT NULL DEFAULT 1,
+217:   UNIQUE (date, event, project_id, tier)
+218: );
+219: 
+220: -- 5. Enable Row Level Security (RLS) on ALL Tables
+221: ALTER TABLE public.admin_users ENABLE ROW LEVEL SECURITY;
+222: ALTER TABLE public.audit_events ENABLE ROW LEVEL SECURITY;
+223: ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
+224: ALTER TABLE public.project_revisions ENABLE ROW LEVEL SECURITY;
+225: ALTER TABLE public.evidence_records ENABLE ROW LEVEL SECURITY;
+226: ALTER TABLE public.media_assets ENABLE ROW LEVEL SECURITY;
+227: ALTER TABLE public.site_revisions ENABLE ROW LEVEL SECURITY;
+228: ALTER TABLE public.publication_history ENABLE ROW LEVEL SECURITY;
+229: ALTER TABLE public.published_content ENABLE ROW LEVEL SECURITY;
+230: ALTER TABLE public.contact_messages ENABLE ROW LEVEL SECURITY;
+231: ALTER TABLE public.contact_idempotency ENABLE ROW LEVEL SECURITY;
+232: ALTER TABLE public.email_outbox ENABLE ROW LEVEL SECURITY;
+233: ALTER TABLE public.request_quotas ENABLE ROW LEVEL SECURITY;
+234: ALTER TABLE public.github_snapshots ENABLE ROW LEVEL SECURITY;
+235: ALTER TABLE public.aggregate_events ENABLE ROW LEVEL SECURITY;
+236: 
+237: -- 6. Least-Privilege Grants Model (Section 8)
+238: -- Revoke default public schema permissions
+239: REVOKE ALL ON SCHEMA public FROM PUBLIC;
+240: REVOKE ALL ON ALL TABLES IN SCHEMA public FROM PUBLIC;
+241: 
+242: GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
+243: GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO authenticated, service_role;
+244: 
+245: -- Public table: published_content
+246: GRANT SELECT ON public.published_content TO anon, authenticated;
+247: GRANT ALL ON public.published_content TO service_role;
+248: 
+249: -- Authenticated table grants (controlled strictly by RLS)
+250: GRANT SELECT ON public.admin_users TO authenticated;
+251: GRANT SELECT, INSERT, UPDATE, DELETE ON public.projects TO authenticated;
+252: GRANT SELECT, INSERT, UPDATE, DELETE ON public.project_revisions TO authenticated;
+253: GRANT SELECT, INSERT, UPDATE, DELETE ON public.evidence_records TO authenticated;
+254: GRANT SELECT, INSERT, UPDATE, DELETE ON public.media_assets TO authenticated;
+255: GRANT SELECT, INSERT, UPDATE, DELETE ON public.site_revisions TO authenticated;
+256: GRANT SELECT, INSERT, UPDATE, DELETE ON public.publication_history TO authenticated;
+257: GRANT SELECT, INSERT, UPDATE, DELETE ON public.published_content TO authenticated;
+258: GRANT SELECT, UPDATE, DELETE ON public.contact_messages TO authenticated;
+259: GRANT SELECT, INSERT ON public.audit_events TO authenticated;
+260: 
+261: -- Service role grants (internal jobs, provisioning, contact webhook)
+262: GRANT ALL ON ALL TABLES IN SCHEMA public TO service_role;
+263: 
+264: -- 7. Define Precise RLS Policies
+265: 
+266: -- 7.1 published_content: public SELECT, owner with AAL2 write
+267: CREATE POLICY "published_content_public_read"
+268:   ON public.published_content FOR SELECT
+269:   TO public
+270:   USING (true);
+271: 
+272: CREATE POLICY "published_content_owner_insert"
+273:   ON public.published_content FOR INSERT
+274:   TO authenticated
+275:   WITH CHECK (public.is_active_owner_with_aal2());
+276: 
+277: CREATE POLICY "published_content_owner_update"
+278:   ON public.published_content FOR UPDATE
+279:   TO authenticated
+280:   USING (public.is_active_owner_with_aal2())
+281:   WITH CHECK (public.is_active_owner_with_aal2());
+282: 
+283: CREATE POLICY "published_content_owner_delete"
+284:   ON public.published_content FOR DELETE
+285:   TO authenticated
+286:   USING (public.is_active_owner_with_aal2());
+287: 
+288: -- 7.2 admin_users: active owner with AAL2 can read their own row; NO authenticated write
+289: CREATE POLICY "admin_users_owner_select"
+290:   ON public.admin_users FOR SELECT
+291:   TO authenticated
+292:   USING (public.is_active_owner_with_aal2() AND id = auth.uid());
+293: 
+294: -- 7.3 projects
+295: CREATE POLICY "projects_owner_select"
+296:   ON public.projects FOR SELECT
+297:   TO authenticated
+298:   USING (public.is_active_owner_with_aal2());
+299: 
+300: CREATE POLICY "projects_owner_insert"
+301:   ON public.projects FOR INSERT
+302:   TO authenticated
+303:   WITH CHECK (public.is_active_owner_with_aal2());
+304: 
+305: CREATE POLICY "projects_owner_update"
+306:   ON public.projects FOR UPDATE
+307:   TO authenticated
+308:   USING (public.is_active_owner_with_aal2())
+309:   WITH CHECK (public.is_active_owner_with_aal2());
+310: 
+311: CREATE POLICY "projects_owner_delete"
+312:   ON public.projects FOR DELETE
+313:   TO authenticated
+314:   USING (public.is_active_owner_with_aal2());
+315: 
+316: -- 7.4 project_revisions
+317: CREATE POLICY "project_revisions_owner_select"
+318:   ON public.project_revisions FOR SELECT
+319:   TO authenticated
+320:   USING (public.is_active_owner_with_aal2());
+321: 
+322: CREATE POLICY "project_revisions_owner_insert"
+323:   ON public.project_revisions FOR INSERT
+324:   TO authenticated
+325:   WITH CHECK (public.is_active_owner_with_aal2() AND created_by = auth.uid());
+326: 
+327: CREATE POLICY "project_revisions_owner_update"
+328:   ON public.project_revisions FOR UPDATE
+329:   TO authenticated
+330:   USING (public.is_active_owner_with_aal2())
+331:   WITH CHECK (public.is_active_owner_with_aal2());
+332: 
+333: CREATE POLICY "project_revisions_owner_delete"
+334:   ON public.project_revisions FOR DELETE
+335:   TO authenticated
+336:   USING (public.is_active_owner_with_aal2());
+337: 
+338: -- 7.5 evidence_records
+339: CREATE POLICY "evidence_records_owner_select"
+340:   ON public.evidence_records FOR SELECT
+341:   TO authenticated
+342:   USING (public.is_active_owner_with_aal2());
+343: 
+344: CREATE POLICY "evidence_records_owner_insert"
+345:   ON public.evidence_records FOR INSERT
+346:   TO authenticated
+347:   WITH CHECK (public.is_active_owner_with_aal2());
+348: 
+349: CREATE POLICY "evidence_records_owner_update"
+350:   ON public.evidence_records FOR UPDATE
+351:   TO authenticated
+352:   USING (public.is_active_owner_with_aal2())
+353:   WITH CHECK (public.is_active_owner_with_aal2());
+354: 
+355: CREATE POLICY "evidence_records_owner_delete"
+356:   ON public.evidence_records FOR DELETE
+357:   TO authenticated
+358:   USING (public.is_active_owner_with_aal2());
+359: 
+360: -- 7.6 media_assets
+361: CREATE POLICY "media_assets_owner_select"
+362:   ON public.media_assets FOR SELECT
+363:   TO authenticated
+364:   USING (public.is_active_owner_with_aal2());
+365: 
+366: CREATE POLICY "media_assets_owner_insert"
+367:   ON public.media_assets FOR INSERT
+368:   TO authenticated
+369:   WITH CHECK (public.is_active_owner_with_aal2());
+370: 
+371: CREATE POLICY "media_assets_owner_update"
+372:   ON public.media_assets FOR UPDATE
+373:   TO authenticated
+374:   USING (public.is_active_owner_with_aal2())
+375:   WITH CHECK (public.is_active_owner_with_aal2());
+376: 
+377: CREATE POLICY "media_assets_owner_delete"
+378:   ON public.media_assets FOR DELETE
+379:   TO authenticated
+380:   USING (public.is_active_owner_with_aal2());
+381: 
+382: -- 7.7 site_revisions
+383: CREATE POLICY "site_revisions_owner_select"
+384:   ON public.site_revisions FOR SELECT
+385:   TO authenticated
+386:   USING (public.is_active_owner_with_aal2());
+387: 
+388: CREATE POLICY "site_revisions_owner_insert"
+389:   ON public.site_revisions FOR INSERT
+390:   TO authenticated
+391:   WITH CHECK (public.is_active_owner_with_aal2() AND created_by = auth.uid());
+392: 
+393: CREATE POLICY "site_revisions_owner_update"
+394:   ON public.site_revisions FOR UPDATE
+395:   TO authenticated
+396:   USING (public.is_active_owner_with_aal2())
+397:   WITH CHECK (public.is_active_owner_with_aal2());
+398: 
+399: CREATE POLICY "site_revisions_owner_delete"
+400:   ON public.site_revisions FOR DELETE
+401:   TO authenticated
+402:   USING (public.is_active_owner_with_aal2());
+403: 
+404: -- 7.8 publication_history
+405: CREATE POLICY "publication_history_owner_select"
+406:   ON public.publication_history FOR SELECT
+407:   TO authenticated
+408:   USING (public.is_active_owner_with_aal2());
+409: 
+410: CREATE POLICY "publication_history_owner_insert"
+411:   ON public.publication_history FOR INSERT
+412:   TO authenticated
+413:   WITH CHECK (public.is_active_owner_with_aal2() AND actor = auth.uid());
+414: 
+415: CREATE POLICY "publication_history_owner_update"
+416:   ON public.publication_history FOR UPDATE
+417:   TO authenticated
+418:   USING (public.is_active_owner_with_aal2())
+419:   WITH CHECK (public.is_active_owner_with_aal2());
+420: 
+421: CREATE POLICY "publication_history_owner_delete"
+422:   ON public.publication_history FOR DELETE
+423:   TO authenticated
+424:   USING (public.is_active_owner_with_aal2());
+425: 
+426: -- 7.9 contact_messages: owner can SELECT, UPDATE status, or DELETE; INSERT is service_role only
+427: CREATE POLICY "contact_messages_owner_select"
+428:   ON public.contact_messages FOR SELECT
+429:   TO authenticated
+430:   USING (public.is_active_owner_with_aal2());
+431: 
+432: CREATE POLICY "contact_messages_owner_update"
+433:   ON public.contact_messages FOR UPDATE
+434:   TO authenticated
+435:   USING (public.is_active_owner_with_aal2())
+436:   WITH CHECK (public.is_active_owner_with_aal2());
+437: 
+438: CREATE POLICY "contact_messages_owner_delete"
+439:   ON public.contact_messages FOR DELETE
+440:   TO authenticated
+441:   USING (public.is_active_owner_with_aal2());
+442: 
+443: -- 7.10 audit_events: append-only for owner with AAL2; UPDATE/DELETE strictly prohibited
+444: CREATE POLICY "audit_events_owner_select"
+445:   ON public.audit_events FOR SELECT
+446:   TO authenticated
+447:   USING (public.is_active_owner_with_aal2());
+448: 
+449: CREATE POLICY "audit_events_owner_insert"
+450:   ON public.audit_events FOR INSERT
+451:   TO authenticated
+452:   WITH CHECK (public.is_active_owner_with_aal2() AND (actor IS NULL OR actor = auth.uid()));
+453: 
+454: -- 7.11 Internal infrastructure tables: deny all authenticated/anon by default (RLS enabled, zero policies = deny all)
+455: -- Only service_role (which bypasses RLS in Postgres / Supabase) has access to contact_idempotency, email_outbox, request_quotas, github_snapshots, aggregate_events.

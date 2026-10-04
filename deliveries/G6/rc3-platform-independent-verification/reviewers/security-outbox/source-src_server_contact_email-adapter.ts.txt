@@ -1,0 +1,137 @@
+1: /**
+2:  * YOR WORLD Milestone A5: Email Adapter
+3:  *
+4:  * Implements isolated email notification transport behind a narrow adapter.
+5:  * Uses provider-level idempotency keys and escaped HTML output.
+6:  */
+7: 
+8: import { escapeHtml } from "./schema";
+9: 
+10: export interface EmailMessage {
+11:   to: string;
+12:   subject: string;
+13:   text: string;
+14:   html: string;
+15:   replyTo?: string;
+16: }
+17: 
+18: export type EmailSendResult =
+19:   | { success: true; providerId: string }
+20:   | { success: false; retryable: boolean; error: string; statusCode?: number };
+21: 
+22: export interface EmailAdapter {
+23:   send(message: EmailMessage, idempotencyKey: string): Promise<EmailSendResult>;
+24: }
+25: 
+26: /**
+27:  * Formats notification email for the portfolio owner with strict HTML escaping.
+28:  */
+29: export function formatContactNotification(
+30:   name: string,
+31:   email: string,
+32:   message: string,
+33:   receiptId: string,
+34:   receivedAt: Date
+35: ): { subject: string; text: string; html: string } {
+36:   const safeName = escapeHtml(name);
+37:   const safeEmail = escapeHtml(email);
+38:   const safeMessage = escapeHtml(message).replace(/\n/g, "<br/>");
+39:   const safeReceipt = escapeHtml(receiptId);
+40:   const dateStr = receivedAt.toISOString();
+41: 
+42:   const subject = `[Yor World] New contact message from ${name} (${receiptId})`;
+43: 
+44:   const text = [
+45:     `New contact message received on YOR WORLD.`,
+46:     `Receipt ID: ${receiptId}`,
+47:     `Received At: ${dateStr}`,
+48:     `From: ${name} <${email}>`,
+49:     ``,
+50:     `Message:`,
+51:     `${message}`,
+52:     ``,
+53:     `---`,
+54:     `This receipt was durably stored in PostgreSQL outbox before delivery.`,
+55:   ].join("\n");
+56: 
+57:   const html = `
+58: <!DOCTYPE html>
+59: <html>
+60: <head><meta charset="utf-8"/></head>
+61: <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5; color: #111;">
+62:   <h2 style="color: #6366f1;">New Contact Inquiry — YOR WORLD</h2>
+63:   <p><strong>Receipt ID:</strong> <code>${safeReceipt}</code></p>
+64:   <p><strong>Date (UTC):</strong> ${escapeHtml(dateStr)}</p>
+65:   <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 16px 0;" />
+66:   <p><strong>Sender:</strong> ${safeName} &lt;<a href="mailto:${safeEmail}">${safeEmail}</a>&gt;</p>
+67:   <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px; margin: 16px 0;">
+68:     <h3 style="margin-top: 0; font-size: 14px; text-transform: uppercase; color: #6b7280;">Message</h3>
+69:     <p style="white-space: pre-wrap; margin-bottom: 0;">${safeMessage}</p>
+70:   </div>
+71:   <p style="font-size: 12px; color: #6b7280;">
+72:     Durable status: Message persisted to PostgreSQL outbox. This email is dispatched asynchronously by the outbox worker.
+73:   </p>
+74: </body>
+75: </html>
+76:   `.trim();
+77: 
+78:   return { subject, text, html };
+79: }
+80: 
+81: /**
+82:  * Mock Email Adapter for unit & integration testing with failure injection.
+83:  */
+84: export class MockEmailAdapter implements EmailAdapter {
+85:   public sentMessages: Array<{ message: EmailMessage; idempotencyKey: string }> = [];
+86:   public failureConfig: { retryable: boolean; error: string; statusCode?: number } | undefined = undefined;
+87: 
+88:   public setFailure(config?: { retryable: boolean; error: string; statusCode?: number }): void {
+89:     this.failureConfig = config;
+90:   }
+91: 
+92:   async send(message: EmailMessage, idempotencyKey: string): Promise<EmailSendResult> {
+93:     if (this.failureConfig) {
+94:       const res: EmailSendResult = this.failureConfig.statusCode !== undefined
+95:         ? {
+96:             success: false,
+97:             retryable: this.failureConfig.retryable,
+98:             error: this.failureConfig.error,
+99:             statusCode: this.failureConfig.statusCode,
+100:           }
+101:         : {
+102:             success: false,
+103:             retryable: this.failureConfig.retryable,
+104:             error: this.failureConfig.error,
+105:           };
+106:       return res;
+107:     }
+108: 
+109:     this.sentMessages.push({ message, idempotencyKey });
+110:     return {
+111:       success: true,
+112:       providerId: `mock-email-${this.sentMessages.length}-${Date.now()}`,
+113:     };
+114:   }
+115: }
+116: 
+117: /** Provider errors never mark a message delivered or include visitor content in diagnostics. */
+118: export function createConfiguredEmailAdapter(): EmailAdapter {
+119:   return {
+120:     async send(message,idempotencyKey) {
+121:       const key=process.env.RESEND_API_KEY;
+122:       const from=process.env.MAIL_FROM;
+123:       if (!key || !from || !message.to) return { success: false,retryable: true,error: "Mail provider is not configured." };
+124:       try {
+125:         const response=await fetch("https://api.resend.com/emails", {
+126:           method: "POST",headers: { Authorization: `Bearer ${key}`,"Content-Type": "application/json","Idempotency-Key": idempotencyKey },
+127:           body: JSON.stringify({ from,to: [message.to],subject: message.subject,html: message.html,text: message.text,reply_to: message.replyTo }),
+128:           signal: AbortSignal.timeout(10000),
+129:         });
+130:         if (!response.ok) return { success: false,retryable: response.status === 429 || response.status >= 500,error: "Mail provider rejected delivery.",statusCode: response.status };
+131:         const value=await response.json();
+132:         if (typeof value.id !== "string") return { success: false,retryable: true,error: "Mail provider returned no delivery identifier." };
+133:         return { success: true,providerId: value.id };
+134:       } catch { return { success: false,retryable: true,error: "Mail provider is unavailable." }; }
+135:     },
+136:   };
+137: }

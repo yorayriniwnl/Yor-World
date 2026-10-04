@@ -1,0 +1,78 @@
+1: -- YOR WORLD Milestone A4 Migration
+2: -- Structured Publishing, Media Asset Approval & Publication Snapshot History
+3: 
+4: -- 1. Enforce constraints on media_assets
+5: DO $$
+6: BEGIN
+7:   IF NOT EXISTS (
+8:     SELECT 1 FROM pg_constraint WHERE conname = 'check_media_approval_status'
+9:   ) THEN
+10:     ALTER TABLE public.media_assets
+11:       ADD CONSTRAINT check_media_approval_status
+12:       CHECK (approval_status IN ('pending', 'approved', 'rejected'));
+13:   END IF;
+14: 
+15:   IF NOT EXISTS (
+16:     SELECT 1 FROM pg_constraint WHERE conname = 'check_media_mime'
+17:   ) THEN
+18:     ALTER TABLE public.media_assets
+19:       ADD CONSTRAINT check_media_mime
+20:       CHECK (mime IN ('image/png', 'image/jpeg', 'image/webp'));
+21:   END IF;
+22: END $$;
+23: 
+24: -- 2. Performance & integrity indexes
+25: CREATE INDEX IF NOT EXISTS idx_media_assets_approval
+26:   ON public.media_assets(approval_status);
+27: 
+28: CREATE INDEX IF NOT EXISTS idx_media_assets_object_key
+29:   ON public.media_assets(object_key);
+30: 
+31: CREATE INDEX IF NOT EXISTS idx_publication_history_revision
+32:   ON public.publication_history(revision DESC);
+33: 
+34: CREATE INDEX IF NOT EXISTS idx_published_content_revision
+35:   ON public.published_content(revision DESC);
+36: 
+37: CREATE INDEX IF NOT EXISTS idx_project_revisions_lookup
+38:   ON public.project_revisions(project_id, revision DESC);
+39: 
+40: -- 3. Media access RLS refinement:
+41: -- Public can ONLY view approved media if queried via DB; pending/rejected media is strictly owner-only.
+42: -- In A3, public had ZERO SELECT on media_assets. Only active owner with AAL2 can read or modify.
+43: -- To ensure private draft media is NEVER exposed publicly:
+44: -- anonymous and non-owners remain DENIED from SELECT on media_assets.
+45: -- Only authenticated owners with AAL2 can SELECT, INSERT, UPDATE, DELETE on media_assets.
+46: 
+47: -- 4. Transactional Publication Helper Function
+48: CREATE OR REPLACE FUNCTION public.publish_new_revision(
+49:   p_revision integer,
+50:   p_snapshot jsonb,
+51:   p_actor uuid
+52: )
+53: RETURNS void
+54: LANGUAGE plpgsql
+55: SECURITY DEFINER
+56: SET search_path = public
+57: AS $$
+58: BEGIN
+59:   -- Insert into publication history
+60:   INSERT INTO public.publication_history (revision, snapshot, actor, created_at)
+61:   VALUES (p_revision, p_snapshot, p_actor, now());
+62: 
+63:   -- Update or insert active published content
+64:   INSERT INTO public.published_content (id, revision, payload, published_at)
+65:   VALUES (gen_random_uuid(), p_revision, p_snapshot, now());
+66: 
+67:   -- Log audit event
+68:   INSERT INTO public.audit_events (actor, action, entity_type, entity_id, payload, created_at)
+69:   VALUES (
+70:     p_actor,
+71:     'publication_published',
+72:     'publication',
+73:     p_revision::text,
+74:     jsonb_build_object('revision', p_revision, 'published_at', now()),
+75:     now()
+76:   );
+77: END;
+78: $$;

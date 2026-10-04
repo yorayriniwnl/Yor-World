@@ -1,0 +1,117 @@
+1: ﻿/** Lease-fenced outbox delivery with the accepted bounded retry schedule. */
+2: import type { QueryableDb } from "../contact/quota";
+3: import {
+4:   type EmailAdapter,
+5:   createConfiguredEmailAdapter,
+6:   formatContactNotification,
+7: } from "../contact/email-adapter";
+8: 
+9: export interface OutboxProcessOptions {
+10:   db: QueryableDb;
+11:   emailAdapter?: EmailAdapter;
+12:   leaseDurationSeconds?: number;
+13: }
+14: 
+15: export interface OutboxProcessResult {
+16:   sent: number;
+17:   retried: number;
+18:   failed: number;
+19: }
+20: 
+21: export const RETRY_DELAYS_SECONDS = [60, 300, 1800, 7200];
+22: 
+23: export function calculateNextRetry(now: Date, attempts: number): Date {
+24:   const index = Math.min(attempts - 1, RETRY_DELAYS_SECONDS.length - 1);
+25:   const delaySec = RETRY_DELAYS_SECONDS[Math.max(0, index)] ?? 60;
+26:   return new Date(now.getTime() + delaySec * 1000);
+27: }
+28: 
+29: /** Each claim/completion must run in its own committed database statement. */
+30: export async function processOutbox(
+31:   now: Date,
+32:   limit: number,
+33:   options: OutboxProcessOptions
+34: ): Promise<OutboxProcessResult> {
+35:   const { db, emailAdapter = createConfiguredEmailAdapter() } = options;
+36:   const leaseSec = options.leaseDurationSeconds ?? 300;
+37:   const leaseUntil = new Date(now.getTime() + leaseSec * 1000);
+38:   // Advance the supplied scheduling clock while provider/database awaits consume time.
+39:   const startedAt = Date.now();
+40:   const currentTime = () => new Date(now.getTime() + Math.max(0, Date.now() - startedAt));
+41:   const result: OutboxProcessResult = { sent: 0, retried: 0, failed: 0 };
+42: 
+43:   const claimResult = await db.query(`WITH due AS (
+44:     SELECT id FROM public.email_outbox
+45:     WHERE ((status IN ('pending','retrying') AND next_attempt_at <= $2)
+46:       OR (status='processing' AND lease_until <= $2))
+47:       AND (lease_until IS NULL OR lease_until <= $2) AND attempts < 5
+48:     ORDER BY next_attempt_at ASC LIMIT $3 FOR UPDATE SKIP LOCKED
+49:   ) UPDATE public.email_outbox AS queue SET lease_until=$1,status='processing'
+50:     FROM due WHERE queue.id=due.id
+51:     RETURNING queue.id,queue.message_id,queue.attempts,queue.xmin::text AS claim_version`,
+52:   [leaseUntil.toISOString(), now.toISOString(), Math.min(100, Math.max(1, limit))]);
+53:   const claimedRows = claimResult.rows as Array<{
+54:     id: string; message_id: string; attempts: number; claim_version: string;
+55:   }>;
+56: 
+57:   for (const row of claimedRows) {
+58:     // xmin changes on reclaim, even if two claims happen to have the same expiry.
+59:     // Time validity is also required: expiry alone forfeits ownership without reclaim.
+60:     const fence = "id = $1 AND xmin::text = $2 AND status = 'processing' AND lease_until > $3";
+61:     const fenceParams = () => [row.id, row.claim_version, currentTime().toISOString()];
+62:     const ownsClaim = async () => (await db.query(
+63:       `SELECT id FROM public.email_outbox WHERE ${fence}`, fenceParams()
+64:     )).rows.length === 1;
+65:     const completeFailure = async (retryable: boolean) => {
+66:       const attempts = row.attempts + 1;
+67:       const retry = retryable && attempts < 5;
+68:       const updated = await db.query(
+69:         `UPDATE public.email_outbox SET status = $4, attempts = $5,
+70:           next_attempt_at = $6, lease_until = NULL WHERE ${fence} RETURNING id`,
+71:         [...fenceParams(), retry ? "retrying" : "failed", attempts,
+72:           calculateNextRetry(now, attempts).toISOString()]
+73:       );
+74:       if (updated.rows.length === 1) result[retry ? "retried" : "failed"]++;
+75:     };
+76: 
+77:     try {
+78:       // Queued batch entries may expire while an earlier provider call is pending.
+79:       if (!await ownsClaim()) continue;
+80:       const msgResult = await db.query(
+81:         "SELECT id, receipt_id, name, email, body, received_at FROM public.contact_messages WHERE id = $1 LIMIT 1;",
+82:         [row.message_id]
+83:       );
+84:       const msg = msgResult.rows[0];
+85:       if (!msg) {
+86:         await completeFailure(false);
+87:         continue;
+88:       }
+89:       const notification = formatContactNotification(
+90:         String(msg.name), String(msg.email), String(msg.body), String(msg.receipt_id),
+91:         new Date(String(msg.received_at))
+92:       );
+93:       // Message lookup can itself outlive the lease; check immediately before send.
+94:       if (!await ownsClaim()) continue;
+95:       const sendResult = await emailAdapter.send({
+96:         to: process.env.OWNER_NOTIFICATION_EMAIL || "",
+97:         replyTo: String(msg.email), subject: notification.subject,
+98:         text: notification.text, html: notification.html,
+99:       }, `outbox_${row.id}`);
+100:       if (sendResult.success) {
+101:         const updated = await db.query(
+102:           `UPDATE public.email_outbox SET status = 'sent', provider_id = $4,
+103:             lease_until = NULL WHERE ${fence} RETURNING id`,
+104:           [...fenceParams(), sendResult.providerId]
+105:         );
+106:         if (updated.rows.length === 1) result.sent++;
+107:       } else {
+108:         await completeFailure(sendResult.retryable);
+109:       }
+110:     } catch {
+111:       // Read/adapter/completion errors share the same ceiling, and remain fenced.
+112:       // If the DB remains unavailable, propagate rather than inventing an outcome.
+113:       await completeFailure(true);
+114:     }
+115:   }
+116:   return result;
+117: }

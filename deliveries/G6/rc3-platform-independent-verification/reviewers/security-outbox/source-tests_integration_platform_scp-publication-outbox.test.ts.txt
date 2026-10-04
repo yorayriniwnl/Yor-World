@@ -1,0 +1,223 @@
+1: import { readFile } from "node:fs/promises";
+2: import { randomUUID } from "node:crypto";
+3: import { PGlite } from "@electric-sql/pglite";
+4: import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+5: import { processOutbox } from "../../../src/server/jobs/outbox-worker";
+6: import type { QueryableDb } from "../../../src/server/contact/quota";
+7: import type { EmailAdapter, EmailSendResult } from "../../../src/server/contact/email-adapter";
+8: 
+9: const now = new Date("2026-10-04T12:00:00Z");
+10: const active = "11111111-1111-1111-1111-111111111111";
+11: const identities = [
+12:   { name: "anonymous", role: "anon", sub: "", aal: "aal1" },
+13:   { name: "non-owner", role: "authenticated", sub: "44444444-4444-4444-4444-444444444444", aal: "aal2" },
+14:   { name: "owner AAL1", role: "authenticated", sub: "33333333-3333-3333-3333-333333333333", aal: "aal1" },
+15:   { name: "revoked owner", role: "authenticated", sub: "22222222-2222-2222-2222-222222222222", aal: "aal2" },
+16:   { name: "active owner AAL2", role: "authenticated", sub: active, aal: "aal2" },
+17: ];
+18: function deferred() {
+19:   let resolve!: () => void;
+20:   const promise = new Promise<void>((done) => { resolve = done; });
+21:   return { promise, resolve };
+22: }
+23: const success: EmailSendResult = { success: true, providerId: "synthetic-current" };
+24: const retryable: EmailSendResult = { success: false, retryable: true, error: "synthetic retry" };
+25: const terminal: EmailSendResult = { success: false, retryable: false, error: "synthetic permanent failure" };
+26: 
+27: // Controlled interleavings in ONE embedded PostgreSQL instance, not independent hosted sessions.
+28: describe("SCP publication grants and lease-fenced outbox on accepted SQL", () => {
+29:   let db: PGlite;
+30:   let elapsed: number;
+31:   beforeAll(async () => {
+32:     db = new PGlite();
+33:     for (const name of ["20261001000000_a3_owner_auth_rls.sql", "20261001000001_a4_publication_media.sql"])
+34:       await db.exec(await readFile(`supabase/migrations/${name}`, "utf8"));
+35:     // Exercise inherited PUBLIC rights as well as the grants in the accepted migrations.
+36:     await db.exec("GRANT INSERT, UPDATE, DELETE ON public.published_content,public.publication_history TO PUBLIC");
+37:     await db.exec(await readFile("supabase/operations/harden-publication-grants.sql", "utf8"));
+38:     for (const identity of identities.filter((identity) => identity.sub)) {
+39:       await db.query<Record<string, unknown>>("INSERT INTO auth.users(id,email) VALUES($1,$2)", [identity.sub, `${identity.name}@fixture.test`]);
+40:       if (identity.name !== "non-owner") await db.query<Record<string, unknown>>("INSERT INTO public.admin_users(id,role,active) VALUES($1,'owner',$2)", [identity.sub, identity.name !== "revoked owner"]);
+41:     }
+42:   }, 90_000);
+43:   beforeEach(async () => {
+44:     elapsed = 0;
+45:     vi.spyOn(Date, "now").mockImplementation(() => now.getTime() + elapsed);
+46:     await db.exec("TRUNCATE public.email_outbox,public.contact_messages,public.published_content,public.publication_history,public.projects,public.audit_events CASCADE");
+47:   });
+48:   afterEach(async () => { vi.restoreAllMocks(); await db.exec("RESET ROLE; RESET request.jwt.claim.sub; RESET request.jwt.claims"); });
+49:   afterAll(async () => { await db.close(); });
+50: 
+51:   it.each(identities)("SCP-01: $name cannot write snapshots/history or execute publication helper", async (identity) => {
+52:     await db.query<Record<string, unknown>>("INSERT INTO public.published_content(revision,payload) VALUES(1,'{}')");
+53:     await db.query<Record<string, unknown>>("INSERT INTO public.publication_history(revision,snapshot,actor) VALUES(1,'{}',$1)", [active]);
+54:     await db.query<Record<string, unknown>>("INSERT INTO public.projects(slug,title) VALUES('private-seed','Private draft')");
+55:     await db.exec(`SET ROLE ${identity.role}`);
+56:     await db.query<Record<string, unknown>>("SELECT set_config('request.jwt.claim.sub',$1,false),set_config('request.jwt.claims',$2,false)", [identity.sub, JSON.stringify({ sub: identity.sub, aal: identity.aal })]);
+57:     expect((await db.query<Record<string, unknown>>("SELECT revision FROM public.published_content")).rows).toEqual([{ revision: 1 }]);
+58:     if (identity.role === "authenticated") {
+59:       expect((await db.query<Record<string, unknown>>("SELECT revision FROM public.publication_history")).rows).toHaveLength(identity.name === "active owner AAL2" ? 1 : 0);
+60:       expect((await db.query<Record<string, unknown>>("SELECT title FROM public.projects")).rows).toHaveLength(identity.name === "active owner AAL2" ? 1 : 0);
+61:     }
+62:     for (const table of ["published_content", "publication_history"]) {
+63:       const payloadColumn = table === "published_content" ? "payload" : "snapshot";
+64:       await expect(db.query<Record<string, unknown>>(`INSERT INTO public.${table}(revision,${payloadColumn}) VALUES(999,'{}')`)).rejects.toThrow(/permission denied/i);
+65:       await expect(db.query<Record<string, unknown>>(`UPDATE public.${table} SET ${payloadColumn}='{"forged":true}'`)).rejects.toThrow(/permission denied/i);
+66:       await expect(db.query<Record<string, unknown>>(`DELETE FROM public.${table}`)).rejects.toThrow(/permission denied/i);
+67:     }
+68:     await expect(db.query<Record<string, unknown>>("SELECT public.publish_new_revision(999,'{}',$1)", [active])).rejects.toThrow(/permission denied/i);
+69:     await db.exec("RESET ROLE");
+70:     expect((await db.query<Record<string, unknown>>("SELECT revision,payload FROM public.published_content")).rows).toEqual([{ revision: 1, payload: {} }]);
+71:     expect((await db.query<Record<string, unknown>>("SELECT revision,snapshot FROM public.publication_history")).rows).toEqual([{ revision: 1, snapshot: {} }]);
+72:     expect((await db.query<Record<string, unknown>>("SELECT * FROM public.audit_events")).rows).toHaveLength(0);
+73:   });
+74: 
+75:   async function seed(attempts = 0) {
+76:     const messageId = randomUUID();
+77:     const id = randomUUID();
+78:     await db.query<Record<string, unknown>>("INSERT INTO public.contact_messages(id,receipt_id,name,email,body,received_at) VALUES($1,$2,'Visitor','visitor@fixture.test','Synthetic contact inquiry',$3)", [messageId, `receipt_${id}`, now.toISOString()]);
+79:     await db.query<Record<string, unknown>>("INSERT INTO public.email_outbox(id,message_id,attempts,next_attempt_at) VALUES($1,$2,$3,$4)", [id, messageId, attempts, now.toISOString()]);
+80:     return id;
+81:   }
+82:   const snapshot = async () => (await db.query<{ status: string; attempts: number; provider_id: string | null; lease_until: string | null }>("SELECT status,attempts,provider_id,lease_until FROM public.email_outbox ORDER BY id")).rows;
+83: 
+84:   it.each(["success", "retry", "terminal", "exception", "missing message", "message read exception"])("SCP-02: stale %s leaves reclaimed success untouched and counts zero", async (mode) => {
+85:     const id = await seed();
+86:     const entered = deferred();
+87:     const resume = deferred();
+88:     const keys: string[] = [];
+89:     const adapter: EmailAdapter = { send: async (_message, key) => {
+90:       keys.push(key); entered.resolve(); await resume.promise;
+91:       if (mode === "exception") throw new Error("Synthetic stale exception");
+92:       return mode === "retry" ? retryable : mode === "terminal" ? terminal : { ...success, providerId: "synthetic-stale" };
+93:     } };
+94:     const readPaused = mode === "missing message" || mode === "message read exception";
+95:     const oldDb: QueryableDb = { query: async (sql, params) => {
+96:       if (readPaused && sql.includes("FROM public.contact_messages")) {
+97:         entered.resolve(); await resume.promise;
+98:         if (mode === "message read exception") throw new Error("Synthetic stale read error");
+99:         return { rows: [] };
+100:       }
+101:       return db.query<Record<string, unknown>>(sql, params);
+102:     } };
+103:     const oldWorker = processOutbox(now, 1, { db: oldDb, emailAdapter: adapter, leaseDurationSeconds: 60 });
+104:     await entered.promise;
+105:     elapsed = 61_000;
+106:     const freshKeys: string[] = [];
+107:     const fresh = await processOutbox(new Date(now.getTime() + elapsed), 1, { db, emailAdapter: { send: async (_message, key) => { freshKeys.push(key); return success; } } });
+108:     expect(fresh).toEqual({ sent: 1, retried: 0, failed: 0 });
+109:     const completed = await snapshot();
+110:     resume.resolve();
+111:     expect(await oldWorker).toEqual({ sent: 0, retried: 0, failed: 0 });
+112:     expect(await snapshot()).toEqual(completed);
+113:     expect(completed).toEqual([{ status: "sent", attempts: 0, provider_id: "synthetic-current", lease_until: null }]);
+114:     expect(freshKeys).toEqual([`outbox_${id}`]);
+115:     if (!readPaused) expect(keys).toEqual(freshKeys);
+116:     expect((await db.query<Record<string, unknown>>("SELECT receipt_id FROM public.contact_messages")).rows).toEqual([{ receipt_id: `receipt_${id}` }]);
+117:   });
+118: 
+119:   it("SCP-02: stale completion cannot change a newer processing claim", async () => {
+120:     await seed();
+121:     const oldEntered = deferred(); const oldResume = deferred();
+122:     const newEntered = deferred(); const newResume = deferred();
+123:     const oldWorker = processOutbox(now, 1, { db, leaseDurationSeconds: 60, emailAdapter: { send: async () => { oldEntered.resolve(); await oldResume.promise; return retryable; } } });
+124:     await oldEntered.promise;
+125:     // Keep A's clock behind B to isolate the claim-version guard from lease validity.
+126:     const newWorker = processOutbox(new Date(now.getTime() + 61_000), 1, { db, emailAdapter: { send: async () => { newEntered.resolve(); await newResume.promise; return success; } } });
+127:     await newEntered.promise;
+128:     const claimed = await snapshot();
+129:     expect(claimed[0]?.status).toBe("processing");
+130:     oldResume.resolve();
+131:     expect(await oldWorker).toEqual({ sent: 0, retried: 0, failed: 0 });
+132:     expect(await snapshot()).toEqual(claimed);
+133:     newResume.resolve();
+134:     expect(await newWorker).toEqual({ sent: 1, retried: 0, failed: 0 });
+135:   });
+136: 
+137:   it("SCP-02: stale completion-write exception cannot retry a reclaimed row", async () => {
+138:     await seed();
+139:     const entered = deferred(); const resume = deferred();
+140:     const oldDb: QueryableDb = { query: async (sql, params) => {
+141:       if (sql.includes("SET status = 'sent'")) throw new Error("Synthetic stale completion-write error");
+142:       return db.query<Record<string, unknown>>(sql, params);
+143:     } };
+144:     const oldWorker = processOutbox(now, 1, { db: oldDb, leaseDurationSeconds: 60, emailAdapter: { send: async () => { entered.resolve(); await resume.promise; return success; } } });
+145:     await entered.promise;
+146:     elapsed = 61_000;
+147:     expect(await processOutbox(new Date(now.getTime() + elapsed), 1, { db, emailAdapter: { send: async () => success } })).toEqual({ sent: 1, retried: 0, failed: 0 });
+148:     const completed = await snapshot();
+149:     resume.resolve();
+150:     expect(await oldWorker).toEqual({ sent: 0, retried: 0, failed: 0 });
+151:     expect(await snapshot()).toEqual(completed);
+152:   });
+153: 
+154:   it("SCP-03: an owned missing-message result terminally fails without provider work", async () => {
+155:     await seed(4); let calls = 0;
+156:     const missing: QueryableDb = { query: async (sql, params) => sql.includes("FROM public.contact_messages") ? { rows: [] } : db.query<Record<string, unknown>>(sql, params) };
+157:     expect(await processOutbox(now, 1, { db: missing, emailAdapter: { send: async () => { calls++; return success; } } })).toEqual({ sent: 0, retried: 0, failed: 1 });
+158:     expect(await snapshot()).toEqual([{ status: "failed", attempts: 5, provider_id: null, lease_until: null }]);
+159:     expect(calls).toBe(0);
+160:   });
+161:   it("SCP-02: queued batch items lose ownership before any provider work", async () => {
+162:     await seed(); await seed();
+163:     const entered = deferred(); const resume = deferred();
+164:     let oldCalls = 0; let freshCalls = 0;
+165:     const oldWorker = processOutbox(now, 2, { db, leaseDurationSeconds: 60, emailAdapter: { send: async () => { oldCalls++; entered.resolve(); await resume.promise; return success; } } });
+166:     await entered.promise;
+167:     elapsed = 61_000;
+168:     expect(await processOutbox(new Date(now.getTime() + elapsed), 2, { db, emailAdapter: { send: async () => { freshCalls++; return success; } } })).toEqual({ sent: 2, retried: 0, failed: 0 });
+169:     resume.resolve();
+170:     expect(await oldWorker).toEqual({ sent: 0, retried: 0, failed: 0 });
+171:     expect(oldCalls).toBe(1); expect(freshCalls).toBe(2);
+172:   });
+173: 
+174:   it("SCP-02: expiry without reclaim also rejects completion and queued provider work", async () => {
+175:     await seed(); await seed();
+176:     let calls = 0;
+177:     expect(await processOutbox(now, 2, { db, leaseDurationSeconds: 60, emailAdapter: { send: async () => { calls++; elapsed = 60_000; return success; } } })).toEqual({ sent: 0, retried: 0, failed: 0 });
+178:     expect(calls).toBe(1);
+179:     expect((await snapshot()).every((row) => row.status === "processing" && row.provider_id === null && row.attempts === 0)).toBe(true);
+180:   });
+181: 
+182:   it("SCP-02: an expired message lookup cannot start provider work", async () => {
+183:     await seed(); let calls = 0;
+184:     const slowRead: QueryableDb = { query: async (sql, params) => {
+185:       const rows = await db.query<Record<string, unknown>>(sql, params);
+186:       if (sql.includes("FROM public.contact_messages")) elapsed = 60_000;
+187:       return rows;
+188:     } };
+189:     expect(await processOutbox(now, 1, { db: slowRead, leaseDurationSeconds: 60, emailAdapter: { send: async () => { calls++; return success; } } })).toEqual({ sent: 0, retried: 0, failed: 0 });
+190:     expect(calls).toBe(0);
+191:   });
+192: 
+193:   it.each(["adapter exception", "message read exception", "retryable failure", "terminal failure", "completion write exception"])("SCP-03: fifth %s is terminal failed", async (mode) => {
+194:     await seed(4);
+195:     let injected = false;
+196:     const provider: QueryableDb = { query: async (sql, params) => {
+197:       if (!injected && ((mode === "message read exception" && sql.includes("FROM public.contact_messages")) || (mode === "completion write exception" && sql.includes("SET status = 'sent'")))) {
+198:         injected = true; throw new Error("Synthetic transient DB error");
+199:       }
+200:       return db.query<Record<string, unknown>>(sql, params);
+201:     } };
+202:     expect(await processOutbox(now, 1, { db: provider, emailAdapter: { send: async () => {
+203:       if (mode === "adapter exception") throw new Error("Synthetic provider exception");
+204:       return mode === "retryable failure" ? retryable : mode === "terminal failure" ? terminal : success;
+205:     } } })).toEqual({ sent: 0, retried: 0, failed: 1 });
+206:     expect(await snapshot()).toEqual([{ status: "failed", attempts: 5, provider_id: null, lease_until: null }]);
+207:     let calls = 0;
+208:     expect(await processOutbox(new Date(now.getTime() + 86_400_000), 1, { db, emailAdapter: { send: async () => { calls++; return success; } } })).toEqual({ sent: 0, retried: 0, failed: 0 });
+209:     expect(calls).toBe(0);
+210:   });
+211: 
+212:   it("SCP-03: exception retries preserve all four accepted delays", async () => {
+213:     await seed();
+214:     let attemptTime = now;
+215:     for (const [index, delay] of [60, 300, 1800, 7200].entries()) {
+216:       expect(await processOutbox(attemptTime, 1, { db, emailAdapter: { send: async () => { throw new Error("Synthetic provider error"); } } })).toEqual({ sent: 0, retried: 1, failed: 0 });
+217:       const row = (await db.query<{ attempts: number; status: string; next_attempt_at: string }>("SELECT attempts,status,next_attempt_at FROM public.email_outbox")).rows[0]!;
+218:       expect(row.attempts).toBe(index + 1); expect(row.status).toBe("retrying");
+219:       expect(new Date(String(row.next_attempt_at)).getTime()).toBe(attemptTime.getTime() + delay * 1000);
+220:       attemptTime = new Date(attemptTime.getTime() + delay * 1000);
+221:     }
+222:   });
+223: });

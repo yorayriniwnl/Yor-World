@@ -1,0 +1,105 @@
+{
+  "assignedLaneDecision": "READY FOR RC4 with disclosed G7 limitations",
+  "allPlatformDecision": "Parent combines other lanes; no G6/G7 approval",
+  "newP0P1": [],
+  "findings": [
+    {
+      "id": "SCP-01",
+      "severity": "P1",
+      "status": "FIXED",
+      "blocksRC4": false,
+      "reason": "Actual SQL denies PUBLIC inheritance and all unprivileged role DML/helper calls; canonical privileged transactions work.",
+      "source": [
+        "app/supabase/operations/harden-publication-grants.sql:5",
+        "app/supabase/operations/harden-publication-grants.sql:16",
+        "app/src/server/content/publish.ts:368"
+      ],
+      "evidence": [
+        "fresh.test.ts",
+        "vitest-results.json",
+        "observations.json"
+      ],
+      "residualRisk": "Hosted role/grant authority and application of operational DCL NOT RUN; mandatory G7 post-migration step."
+    },
+    {
+      "id": "SCP-02",
+      "severity": "P1",
+      "status": "FIXED",
+      "blocksRC4": false,
+      "reason": "Fourteen stale SQL interleavings against SENT/PROCESSING preserve authoritative claim; every stale completion zero/count zero.",
+      "source": [
+        "app/src/server/jobs/outbox-worker.ts:60",
+        "app/src/server/jobs/outbox-worker.ts:94",
+        "app/src/server/database.ts:53"
+      ],
+      "evidence": [
+        "fresh.test.ts",
+        "vitest-results.json",
+        "observations.json"
+      ],
+      "residualRisk": "Separate external-send gap below; autocommit required; independent sessions and distributed clocks NOT RUN."
+    },
+    {
+      "id": "SCP-03",
+      "severity": "P2",
+      "status": "FIXED",
+      "blocksRC4": false,
+      "reason": "Thirty failure/attempt cases prove schedule and fifth terminalization; persistent storage outage propagates.",
+      "source": [
+        "app/src/server/jobs/outbox-worker.ts:64",
+        "app/src/server/jobs/outbox-worker.ts:66",
+        "app/src/server/jobs/outbox-worker.ts:114"
+      ],
+      "evidence": [
+        "fresh.test.ts",
+        "vitest-results.json"
+      ],
+      "residualRisk": "Cannot persist terminal outcome during continuing database outage; later recovery/reclaim required."
+    },
+    {
+      "id": "ROLLBACK-CONTRACT",
+      "severity": "contract",
+      "status": "PRESERVED",
+      "blocksRC4": false,
+      "reason": "Route authorization, invalid targets/content, new revision/history/audit and durable validation executed. Caller expectedRevision is not required.",
+      "source": [
+        "app/src/server/content/publish.ts:291",
+        "app/src/server/content/publish.ts:398",
+        "app/src/app/api/admin/rollback/route.ts:9"
+      ],
+      "evidence": [
+        "fresh.test.ts",
+        "vitest-results.json"
+      ],
+      "residualRisk": "Independent-session serialization NOT RUN; stale-tab intent protection explicitly deferred."
+    },
+    {
+      "id": "RESIDUAL-OUTBOX-SEND-RACE",
+      "severity": "P2",
+      "status": "PARTIAL",
+      "blocksRC4": false,
+      "reason": "Final ownership SELECT and external send are not atomic: fresh injection lets B send then A call provider once, while A cannot corrupt DB state.",
+      "source": [
+        "app/src/server/jobs/outbox-worker.ts:94",
+        "app/src/server/jobs/outbox-worker.ts:95",
+        "app/src/server/contact/email-adapter.ts:126"
+      ],
+      "evidence": [
+        "fresh.test.ts",
+        "observations.json",
+        "vitest-results.json"
+      ],
+      "residualRisk": "Real provider idempotency retention/late-send suppression UNVERIFIED; must be resolved or proven before G7 live delivery."
+    }
+  ],
+  "notRun": [
+    "Hosted Supabase Auth REST Storage RLS",
+    "Independent PostgreSQL sessions",
+    "Actual provider delivery deduplication",
+    "Production grants/role membership/DCL application",
+    "Distributed clocks",
+    "Hosted rollback restore",
+    "Physical devices"
+  ],
+  "harnessFailureRetention": "harness-failures.md"
+}

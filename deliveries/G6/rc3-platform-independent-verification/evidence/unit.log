@@ -1,0 +1,69 @@
+
+> yor-world@1.0.0-rc3 test:unit C:\Users\yoray\AppData\Local\Temp\yw-iv-2a186\app
+> vitest run --config vitest.config.ts "--reporter=default" "--reporter=json" "--outputFile.json=C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\G6\\rc3-platform-independent-verification\\evidence\\unit-results.json"
+
+
+ RUN  v5.0.2 C:/Users/yoray/AppData/Local/Temp/yw-iv-2a186/app
+
+ ✓ tests/unit/device-capabilities.test.ts (16 tests) 18ms
+stderr | tests/unit/quality-policy.test.ts > C3 AudioController Opt-in, Denial & Disposal > reports actual disabled state (false) when browser denies audio activation
+[AudioController] Browser denied audio activation: Error: Autoplay not allowed without user interaction
+    at C:/Users/yoray/AppData/Local/Temp/yw-iv-2a186/app/tests/unit/quality-policy.test.ts:296:50
+    at file:///C:/Users/yoray/AppData/Local/Temp/yw-iv-2a186/app/node_modules/.pnpm/vitest@5.0.2_@types+node@24.19.0_vite@8.3.1_@types+node@24.19.0_/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:1628:35
+    at file:///C:/Users/yoray/AppData/Local/Temp/yw-iv-2a186/app/node_modules/.pnpm/vitest@5.0.2_@types+node@24.19.0_vite@8.3.1_@types+node@24.19.0_/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:2783:26
+    at file:///C:/Users/yoray/AppData/Local/Temp/yw-iv-2a186/app/node_modules/.pnpm/vitest@5.0.2_@types+node@24.19.0_vite@8.3.1_@types+node@24.19.0_/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3319:20
+    at new Promise (<anonymous>)
+    at runWithCancel (file:///C:/Users/yoray/AppData/Local/Temp/yw-iv-2a186/app/node_modules/.pnpm/vitest@5.0.2_@types+node@24.19.0_vite@8.3.1_@types+node@24.19.0_/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3314:10)
+    at file:///C:/Users/yoray/AppData/Local/Temp/yw-iv-2a186/app/node_modules/.pnpm/vitest@5.0.2_@types+node@24.19.0_vite@8.3.1_@types+node@24.19.0_/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3299:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///C:/Users/yoray/AppData/Local/Temp/yw-iv-2a186/app/node_modules/.pnpm/vitest@5.0.2_@types+node@24.19.0_vite@8.3.1_@types+node@24.19.0_/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3257:10)
+    at file:///C:/Users/yoray/AppData/Local/Temp/yw-iv-2a186/app/node_modules/.pnpm/vitest@5.0.2_@types+node@24.19.0_vite@8.3.1_@types+node@24.19.0_/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3876:64
+
+ ✓ tests/unit/quality-policy.test.ts (30 tests) 23ms
+ ✓ tests/unit/contracts.test.ts (51 tests) 38ms
+stderr | tests/unit/interaction-controller.test.ts > ExperienceController & Interaction Arbitration (Task C1) > Attack 8: renderer failure > transitions cleanly to static fallback and aborts in-flight work on RENDERER_FAILED
+[ExperienceController] Renderer failed (CONTEXT_LOST), falling back to static presentation.
+
+ ✓ tests/unit/interaction-controller.test.ts (14 tests) 20ms
+stderr | tests/unit/lifecycle-manager.test.ts > LifecycleManager - 8 Explicit States and Adversarial Guarantees > enforces bounded retries (maxRetries = 3)
+[LifecycleManager] Bounded retry limit reached.
+
+stderr | tests/unit/lifecycle-manager.test.ts > LifecycleManager - 8 Explicit States and Adversarial Guarantees > DISPOSING cleans up all listeners and returns to STATIC
+[LifecycleManager] Cannot request entry: manager is disposed.
+
+ ✓ tests/unit/lifecycle-manager.test.ts (10 tests) 11ms
+ ✓ tests/unit/runtime-material-quality.test.ts (9 tests) 27ms
+ ✓ tests/unit/low-quality-batch.test.ts (44 tests) 62ms
+ ✓ tests/unit/scene-integrator.test.ts (2 tests) 14ms
+ ✓ tests/unit/intent-arbitration.test.ts (5 tests) 6ms
+ ✓ tests/unit/character-director.test.ts (4 tests) 13ms
+ ✓ tests/unit/contract-types.test.ts (1 test) 4ms
+ ✓ tests/unit/preferences-resilience.test.ts (4 tests) 17ms
+ ✓ tests/unit/camera-director.test.ts (5 tests) 10ms
+ ✓ tests/unit/painting-interaction.test.ts (6 tests) 7ms
+ ✓ tests/unit/interaction-registry.test.ts (3 tests) 10ms
+stderr | tests/unit/entrance-coordinator.test.ts > EntranceCoordinator - Single Active Entrance and Bounded Duration > PROVE: only one active entrance exists at any time
+[EntranceCoordinator] Entrance already running; returning active entrance promise.
+
+ ✓ tests/unit/entrance-coordinator.test.ts (5 tests) 12ms
+ ✓ tests/unit/project-transition.test.ts (22 tests) 1188ms
+   ✓ Milestone C2 Unit Tests: Project Transitions, Motifs, and Navigation (22)
+     ✓ 1. Bounded Project Transitions & Motifs (5)
+       ✓ completes verified project transition within the 1.4-second budget 965ms
+ ✓ tests/unit/asset-loader.test.ts (3 tests) 7ms
+ ✓ tests/unit/boundaries.test.ts (15 tests) 1878ms
+   ✓ enforces integrated dependency boundaries: HTML shell stays free of 3D and browser features stay free of server imports 802ms
+   ✓ keeps privileged server modules and secrets out of every transitive client import 1000ms
+ ✓ tests/unit/content-visibility.test.ts (17 tests) 520ms
+
+ Test Files  20 passed (20)
+      Tests  266 passed (266)
+   Start at  21:54:53
+   Duration  7.09s (import 42%, transform 37%, tests 20%, worker 1%)
+
+  Transform  transforming modules took 7.09s · 37% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             on CI this only helps when the cache directory is persisted between runs
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+
+JSON report written to C:/Users/yoray/Projects/Yor World/deliveries/G6/rc3-platform-independent-verification/evidence/unit-results.json

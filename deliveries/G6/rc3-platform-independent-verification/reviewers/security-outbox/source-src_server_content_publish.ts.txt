@@ -1,0 +1,414 @@
+1: /**
+2:  * YOR WORLD Milestone A4: Transactional Publishing, Rollback & Cache Refresh
+3:  *
+4:  * Implements authoritative publication transactions, optimistic concurrency,
+5:  * media/evidence validation, immutable history, rollback with asset verification,
+6:  * and resilient cache refresh handling.
+7:  */
+8: 
+9: import {
+10:   type ProjectId,
+11:   type Publication,
+12:   type PublishedProject,
+13:   PublicationSchema,
+14: } from "@/contracts/content";
+15: import type { OwnerContext } from "../auth/types";
+16: import { approvedPublication } from "@/content/approved-publication";
+17: import { setActivePublicationSnapshot } from "@/content/publication-reader";
+18: import {
+19:   getTestDraftRegistry,
+20:   isDraftTestRegistryEnabled,
+21:   readDurableDrafts,
+22:   RevisionConflictError,
+23:   ContentValidationError,
+24: } from "./revisions";
+25: import { verifyPublicationAssets } from "../media/manifest";
+26: import { getPlatformDb, hasPlatformDatabase } from "../database";
+27: import type { QueryableDb } from "../contact/quota";
+28: 
+29: export interface PublicationHistoryEntry {
+30:   revision: number;
+31:   snapshot: Publication;
+32:   actor: string;
+33:   publishedAt: string;
+34:   action: "publish" | "rollback";
+35:   targetRevision?: number;
+36: }
+37: 
+38: // In-memory publication history registry
+39: let publicationHistory: PublicationHistoryEntry[] = [
+40:   {
+41:     revision: 1,
+42:     snapshot: approvedPublication,
+43:     actor: "system-seed",
+44:     publishedAt: "2026-10-01T12:00:00Z",
+45:     action: "publish",
+46:   },
+47: ];
+48: 
+49: let activePublication: Publication = approvedPublication;
+50: 
+51: // Simulation hook for cache refresh failure testing
+52: let simulateCacheRefreshFailure = false;
+53: 
+54: export function setSimulateCacheRefreshFailure(fail: boolean) {
+55:   simulateCacheRefreshFailure = fail;
+56: }
+57: 
+58: export function getActivePublication(): Publication {
+59:   return activePublication;
+60: }
+61: 
+62: export function setActivePublication(pub: Publication) {
+63:   activePublication = pub;
+64:   setActivePublicationSnapshot(pub);
+65: }
+66: 
+67: export function getPublicationHistoryList(): PublicationHistoryEntry[] {
+68:   return [...publicationHistory];
+69: }
+70: 
+71: export function resetPublicationState() {
+72:   publicationHistory = [
+73:     {
+74:       revision: 1,
+75:       snapshot: approvedPublication,
+76:       actor: "system-seed",
+77:       publishedAt: "2026-10-01T12:00:00Z",
+78:       action: "publish",
+79:     },
+80:   ];
+81:   activePublication = approvedPublication;
+82:   setActivePublicationSnapshot(approvedPublication);
+83:   simulateCacheRefreshFailure = false;
+84: }
+85: 
+86: /**
+87:  * Validates complete publication content integrity:
+88:  * - Structural schema checks
+89:  * - Safe HTTPS links
+90:  * - Verified evidence (no unknown claims)
+91:  * - Approved media assets
+92:  */
+93: export async function validatePublicationContent(publication: Publication, transaction?: QueryableDb): Promise<void> {
+94:   const parsed = PublicationSchema.safeParse(publication);
+95:   if (!parsed.success) {
+96:     throw new ContentValidationError(
+97:       `Publication schema invalid: ${parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join(", ")}`
+98:     );
+99:   }
+100: 
+101:   const seenSlugs = new Set<string>();
+102:   const seenIds = new Set<string>();
+103: 
+104:   for (const project of publication.projects) {
+105:     if (seenSlugs.has(project.slug)) {
+106:       throw new ContentValidationError(`Duplicate project slug '${project.slug}' in publication snapshot`);
+107:     }
+108:     seenSlugs.add(project.slug);
+109: 
+110:     if (seenIds.has(project.id)) {
+111:       throw new ContentValidationError(`Duplicate project ID '${project.id}' in publication snapshot`);
+112:     }
+113:     seenIds.add(project.id);
+114: 
+115:     // Rule: Every published project must have verified evidence
+116:     const verifiedEvidence = project.evidence.filter((e) => e.status === "verified");
+117:     if (verifiedEvidence.length === 0) {
+118:       throw new ContentValidationError(
+119:         `Project '${project.slug}' has no verified evidence. Projects cannot be published without verifiable evidence.`
+120:       );
+121:     }
+122: 
+123:     // Rule: Rejection of unsupported claims
+124:     for (const ev of project.evidence) {
+125:       if (ev.status === "unknown") {
+126:         throw new ContentValidationError(
+127:           `Project '${project.slug}' contains unverified claim '${ev.id}' with status 'unknown'. Unsupported claims cannot enter public publication.`
+128:         );
+129:       }
+130:       if (!ev.note || ev.note.trim().length === 0) {
+131:         throw new ContentValidationError(
+132:           `Project '${project.slug}' evidence '${ev.id}' is missing descriptive verification note.`
+133:         );
+134:       }
+135:       if (ev.url) {
+136:         try {
+137:           const url = new URL(ev.url);
+138:           if (url.protocol !== "https:") {
+139:             throw new ContentValidationError(
+140:               `Project '${project.slug}' evidence '${ev.id}' has insecure URL '${ev.url}'. Only https:// is permitted.`
+141:             );
+142:           }
+143:         } catch (err) {
+144:           if (err instanceof ContentValidationError) throw err;
+145:           throw new ContentValidationError(`Project '${project.slug}' evidence '${ev.id}' has malformed URL '${ev.url}'.`);
+146:         }
+147:       }
+148:     }
+149: 
+150:     // Rule: Safe external links
+151:     for (const link of project.links) {
+152:       try {
+153:         const url = new URL(link.url);
+154:         if (url.protocol !== "https:") {
+155:           throw new ContentValidationError(
+156:             `Project '${project.slug}' link '${link.label}' has insecure URL '${link.url}'. Only https:// is permitted.`
+157:           );
+158:         }
+159:       } catch (err) {
+160:         if (err instanceof ContentValidationError) throw err;
+161:         throw new ContentValidationError(`Project '${project.slug}' link has malformed URL '${link.url}'.`);
+162:       }
+163:     }
+164: 
+165:     // Rule: Content sections & blocks
+166:     for (const section of project.sections) {
+167:       if (!section.heading || section.heading.trim().length === 0) {
+168:         throw new ContentValidationError(`Project '${project.slug}' section '${section.id}' has empty heading.`);
+169:       }
+170:       if (section.blocks.length === 0) {
+171:         throw new ContentValidationError(`Project '${project.slug}' section '${section.id}' has no content blocks.`);
+172:       }
+173:     }
+174:   }
+175: 
+176:   // Rule: Check that all media assets referenced in sections are approved!
+177:   await verifyPublicationAssets(publication, transaction);
+178: }
+179: 
+180: /**
+181:  * Simulates or handles cache refresh across public edge / ISR / in-memory layer.
+182:  */
+183: async function handleCacheRefresh(publication: Publication): Promise<{ refreshed: boolean; error?: string }> {
+184:   if (simulateCacheRefreshFailure) {
+185:     return {
+186:       refreshed: false,
+187:       error: "Simulated cache-refresh service timeout",
+188:     };
+189:   }
+190: 
+191:   try {
+192:     setActivePublicationSnapshot(publication);
+193:     return { refreshed: true };
+194:   } catch (err) {
+195:     return {
+196:       refreshed: false,
+197:       error: err instanceof Error ? err.message : "Cache refresh failed",
+198:     };
+199:   }
+200: }
+201: 
+202: /**
+203:  * Publishes a new revision of the portfolio publication snapshot.
+204:  *
+205:  * Enforces:
+206:  * - Optimistic concurrency: stale expectedRevision -> 409
+207:  * - Content and media validation -> 422
+208:  * - Transactional history and snapshot recording
+209:  * - Resilient cache refresh
+210:  */
+211: export async function publishRevision(
+212:   input: {
+213:     projectId?: ProjectId;
+214:     expectedRevision: number;
+215:     customProjects?: PublishedProject[];
+216:   },
+217:   actor: OwnerContext
+218: ): Promise<Publication & { cacheRefreshed?: boolean; cacheRefreshWarning?: string }> {
+219:   if (!isDraftTestRegistryEnabled()) return publishDurable(input, actor);
+220:   const currentRevision = activePublication.revision;
+221: 
+222:   // 1. Optimistic concurrency check
+223:   if (currentRevision !== input.expectedRevision) {
+224:     throw new RevisionConflictError(
+225:       `Stale revision conflict: expected publication revision ${input.expectedRevision}, but current publication is revision ${currentRevision}. Refresh before publishing.`
+226:     );
+227:   }
+228: 
+229:   // 2. Prepare projects to publish
+230:   let projectsToPublish: PublishedProject[];
+231: 
+232:   if (input.customProjects) {
+233:     projectsToPublish = input.customProjects;
+234:   } else {
+235:     // Collect active drafts from draft registry
+236:     const draftRegistry = getTestDraftRegistry();
+237:     projectsToPublish = [];
+238: 
+239:     // Include all approved projects from drafts, excluding unpublished candidatex
+240:     for (const [id, draft] of draftRegistry.entries()) {
+241:       if (id === "candidatex") {
+242:         continue;
+243:       }
+244:       projectsToPublish.push(draft.project);
+245:     }
+246:   }
+247: 
+248:   const nextRevision = currentRevision + 1;
+249:   const now = new Date().toISOString();
+250: 
+251:   const nextPublication: Publication = {
+252:     revision: nextRevision,
+253:     publishedAt: now,
+254:     projects: projectsToPublish,
+255:     assetManifestRevision: `manifest-${now.slice(0, 10).replace(/-/g, "")}-r${nextRevision}`,
+256:   };
+257: 
+258:   // 3. Validation gate: structural, links, evidence, and media approval (throws 422 if invalid)
+259:   await validatePublicationContent(nextPublication);
+260: 
+261:   // 4. Record history & active snapshot (durable transaction)
+262:   const historyEntry: PublicationHistoryEntry = {
+263:     revision: nextRevision,
+264:     snapshot: nextPublication,
+265:     actor: actor.userId,
+266:     publishedAt: now,
+267:     action: "publish",
+268:   };
+269:   publicationHistory.push(historyEntry);
+270:   activePublication = nextPublication;
+271: 
+272:   // 5. Cache-refresh handling (failure preserves durable DB revision)
+273:   const cacheResult = await handleCacheRefresh(nextPublication);
+274: 
+275:   return {
+276:     ...nextPublication,
+277:     cacheRefreshed: cacheResult.refreshed,
+278:     ...(cacheResult.error ? { cacheRefreshWarning: cacheResult.error } : {}),
+279:   };
+280: }
+281: 
+282: /**
+283:  * Rolls back publication to a previously approved publication snapshot.
+284:  *
+285:  * Enforces:
+286:  * - Target revision exists in publication history -> 422 / 404
+287:  * - Referenced assets are verified to still exist and be approved -> 422
+288:  * - Restores snapshot as a NEW incremented revision
+289:  * - Records rollback in publication history and audit log
+290:  */
+291: export async function rollbackPublication(
+292:   targetRevision: number,
+293:   actor: OwnerContext
+294: ): Promise<Publication & { cacheRefreshed?: boolean; cacheRefreshWarning?: string }> {
+295:   if (!isDraftTestRegistryEnabled()) return rollbackDurable(targetRevision, actor);
+296:   // 1. Locate target revision in history
+297:   const targetEntry = publicationHistory.find((entry) => entry.revision === targetRevision);
+298:   if (!targetEntry) {
+299:     throw new ContentValidationError(
+300:       `Rollback rejected: target publication revision ${targetRevision} does not exist in publication history`
+301:     );
+302:   }
+303: 
+304:   const targetSnapshot = targetEntry.snapshot;
+305: 
+306:   // 2. Verify that all referenced assets in target snapshot are STILL available and approved
+307:   await verifyPublicationAssets(targetSnapshot);
+308: 
+309:   // 3. Publish rollback as a NEW revision
+310:   const newRevision = activePublication.revision + 1;
+311:   const now = new Date().toISOString();
+312: 
+313:   const restoredPublication: Publication = {
+314:     ...targetSnapshot,
+315:     revision: newRevision,
+316:     publishedAt: now,
+317:   };
+318: 
+319:   const rollbackEntry: PublicationHistoryEntry = {
+320:     revision: newRevision,
+321:     snapshot: restoredPublication,
+322:     actor: actor.userId,
+323:     publishedAt: now,
+324:     action: "rollback",
+325:     targetRevision,
+326:   };
+327:   publicationHistory.push(rollbackEntry);
+328:   activePublication = restoredPublication;
+329: 
+330:   // 4. Cache refresh
+331:   const cacheResult = await handleCacheRefresh(restoredPublication);
+332: 
+333:   return {
+334:     ...restoredPublication,
+335:     cacheRefreshed: cacheResult.refreshed,
+336:     ...(cacheResult.error ? { cacheRefreshWarning: cacheResult.error } : {}),
+337:   };
+338: }
+339: 
+340: /** Public reader accesses only approved published_content, never drafts or private media. */
+341: export async function readPublicPublication(): Promise<Publication | null> {
+342:   if (isDraftTestRegistryEnabled()) return activePublication;
+343:   if (!hasPlatformDatabase()) return null;
+344:   const db = await getPlatformDb();
+345:   return readDurablePublication(db);
+346: }
+347: 
+348: async function readDurablePublication(db: QueryableDb): Promise<Publication> {
+349:   const rows = await db.query("SELECT payload FROM public.published_content ORDER BY revision DESC,published_at DESC LIMIT 1");
+350:   return rows.rows[0] ? PublicationSchema.parse(rows.rows[0]["payload"]) : approvedPublication;
+351: }
+352: 
+353: export async function readPublicationHistory(): Promise<PublicationHistoryEntry[]> {
+354:   if (isDraftTestRegistryEnabled()) return getPublicationHistoryList();
+355:   const db = await getPlatformDb();
+356:   const result = await db.query(`SELECT h.revision,h.snapshot,h.actor,h.created_at,
+357:     a.action,a.payload AS audit_payload FROM public.publication_history h
+358:     LEFT JOIN public.audit_events a ON a.entity_type='publication' AND a.entity_id=h.revision::text
+359:     AND a.action IN ('publication_published','publication_rollback') ORDER BY h.revision`);
+360:   if (!result.rows.length) return [{ revision: approvedPublication.revision,snapshot: approvedPublication,
+361:     actor: "accepted-static-baseline",publishedAt: approvedPublication.publishedAt,action: "publish" }];
+362:   return result.rows.map((row) => ({ revision: Number(row["revision"]), snapshot: PublicationSchema.parse(row["snapshot"]),
+363:     actor: String(row["actor"]), publishedAt: new Date(String(row["created_at"])).toISOString(),
+364:     action: row["action"] === "publication_rollback" ? "rollback" : "publish",
+365:     ...(row["action"] === "publication_rollback" ? { targetRevision: Number((row["audit_payload"] as Record<string,unknown>)["targetRevision"]) } : {}) }));
+366: }
+367: 
+368: async function writeSnapshot(tx: QueryableDb, publication: Publication, actor: OwnerContext, targetRevision?: number) {
+369:   // Record the accepted baseline once so the first deployment has a rollback target.
+370:   const baseline = await tx.query("SELECT revision FROM public.publication_history WHERE revision=$1 LIMIT 1", [approvedPublication.revision]);
+371:   if (!baseline.rows.length) await tx.query("INSERT INTO public.publication_history(revision,snapshot,actor) VALUES($1,$2,$3)", [approvedPublication.revision,JSON.stringify(approvedPublication),actor.userId]);
+372:   await tx.query("INSERT INTO public.publication_history(revision,snapshot,actor) VALUES($1,$2,$3)", [publication.revision,JSON.stringify(publication),actor.userId]);
+373:   await tx.query("INSERT INTO public.published_content(revision,payload) VALUES($1,$2)", [publication.revision,JSON.stringify(publication)]);
+374:   await tx.query("INSERT INTO public.audit_events(actor,action,entity_type,entity_id,payload) VALUES($1,$2,'publication',$3,$4)",
+375:     [actor.userId,targetRevision === undefined ? "publication_published" : "publication_rollback",String(publication.revision),JSON.stringify({ revision: publication.revision,...(targetRevision === undefined ? {} : { targetRevision }) })]);
+376: }
+377: 
+378: async function publishDurable(input: { projectId?: ProjectId; expectedRevision: number; customProjects?: PublishedProject[] }, actor: OwnerContext) {
+379:   const db = await getPlatformDb();
+380:   if (!db.transaction) throw new Error("Transactional database is required.");
+381:   const publication = await db.transaction(async (tx) => {
+382:     await tx.query("SELECT pg_advisory_xact_lock(hashtext('yor-publication'))");
+383:     const current = await readDurablePublication(tx);
+384:     if (current.revision !== input.expectedRevision) throw new RevisionConflictError("Publication changed. Refresh before publishing.");
+385:     const projects = input.customProjects ?? (await readDurableDrafts(tx)).filter((draft) => draft.projectId !== "candidatex").map((draft) => draft.project);
+386:     // CandidateX cannot be added without a separately accepted content decision.
+387:     if (projects.some((project) => project.id === "candidatex")) throw new ContentValidationError("CandidateX has no accepted public content decision.");
+388:     const next: Publication = { revision: current.revision + 1,publishedAt: new Date().toISOString(),projects,
+389:       assetManifestRevision: current.assetManifestRevision };
+390:     await validatePublicationContent(next,tx);
+391:     await writeSnapshot(tx,next,actor);
+392:     return next;
+393:   });
+394:   const refreshed = await handleCacheRefresh(publication);
+395:   return { ...publication,cacheRefreshed: refreshed.refreshed,...(refreshed.error ? { cacheRefreshWarning: refreshed.error } : {}) };
+396: }
+397: 
+398: async function rollbackDurable(targetRevision: number, actor: OwnerContext) {
+399:   const db = await getPlatformDb();
+400:   if (!db.transaction) throw new Error("Transactional database is required.");
+401:   const publication = await db.transaction(async (tx) => {
+402:     await tx.query("SELECT pg_advisory_xact_lock(hashtext('yor-publication'))");
+403:     const rows = await tx.query("SELECT snapshot FROM public.publication_history WHERE revision=$1 ORDER BY created_at DESC LIMIT 1", [targetRevision]);
+404:     const target = rows.rows[0] ? PublicationSchema.parse(rows.rows[0]["snapshot"]) : targetRevision === approvedPublication.revision ? approvedPublication : null;
+405:     if (!target) throw new ContentValidationError("Rollback target does not exist.");
+406:     await validatePublicationContent(target,tx);
+407:     const current = await readDurablePublication(tx);
+408:     const next = { ...target,revision: current.revision + 1,publishedAt: new Date().toISOString() };
+409:     await writeSnapshot(tx,next,actor,targetRevision);
+410:     return next;
+411:   });
+412:   const refreshed = await handleCacheRefresh(publication);
+413:   return { ...publication,cacheRefreshed: refreshed.refreshed,...(refreshed.error ? { cacheRefreshWarning: refreshed.error } : {}) };
+414: }

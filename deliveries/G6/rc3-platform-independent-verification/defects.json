@@ -1,0 +1,184 @@
+{
+  "auditedHead": "2a1864a0648146462b45ba25e0bbc797cf37f3cd",
+  "auditedAppTree": "3586e0c8674faac3f73bcab4d17f646e3b2e9191",
+  "implementationCommit": "02380c323154fdf0815e10543de0a936619f2b79",
+  "decision": "PLATFORM REWORK REQUIRED",
+  "reviewKind": "Fresh-agent maker-independent local verification; requested Gemini NOT RUN",
+  "closureMatrix": [
+    {
+      "id": "SCP-01",
+      "severity": "P1",
+      "status": "FIXED",
+      "blocksRC4": false,
+      "reason": "Actual SQL denies PUBLIC inheritance and all unprivileged role DML/helper calls; canonical privileged transactions work.",
+      "source": [
+        "app/supabase/operations/harden-publication-grants.sql:5",
+        "app/supabase/operations/harden-publication-grants.sql:16",
+        "app/src/server/content/publish.ts:368"
+      ],
+      "evidence": [
+        "fresh.test.ts",
+        "vitest-results.json",
+        "observations.json"
+      ],
+      "residualRisk": "Hosted role/grant authority and application of operational DCL NOT RUN; mandatory G7 post-migration step.",
+      "reviewer": "Fresh GPT-6.1 Sol/Codex security-outbox",
+      "evidenceBase": "reviewers/security-outbox/"
+    },
+    {
+      "id": "SCP-02",
+      "severity": "P1",
+      "status": "FIXED",
+      "blocksRC4": false,
+      "reason": "Fourteen stale SQL interleavings against SENT/PROCESSING preserve authoritative claim; every stale completion zero/count zero.",
+      "source": [
+        "app/src/server/jobs/outbox-worker.ts:60",
+        "app/src/server/jobs/outbox-worker.ts:94",
+        "app/src/server/database.ts:53"
+      ],
+      "evidence": [
+        "fresh.test.ts",
+        "vitest-results.json",
+        "observations.json"
+      ],
+      "residualRisk": "Separate external-send gap below; autocommit required; independent sessions and distributed clocks NOT RUN.",
+      "reviewer": "Fresh GPT-6.1 Sol/Codex security-outbox",
+      "evidenceBase": "reviewers/security-outbox/"
+    },
+    {
+      "id": "SCP-03",
+      "severity": "P2",
+      "status": "FIXED",
+      "blocksRC4": false,
+      "reason": "Thirty failure/attempt cases prove schedule and fifth terminalization; persistent storage outage propagates.",
+      "source": [
+        "app/src/server/jobs/outbox-worker.ts:64",
+        "app/src/server/jobs/outbox-worker.ts:66",
+        "app/src/server/jobs/outbox-worker.ts:114"
+      ],
+      "evidence": [
+        "fresh.test.ts",
+        "vitest-results.json"
+      ],
+      "residualRisk": "Cannot persist terminal outcome during continuing database outage; later recovery/reclaim required.",
+      "reviewer": "Fresh GPT-6.1 Sol/Codex security-outbox",
+      "evidenceBase": "reviewers/security-outbox/"
+    },
+    {
+      "id": "SCP-04",
+      "severity": "P2",
+      "status": "PARTIAL",
+      "blocksRC4": true,
+      "reason": "Corrupt APNG second-frame pixel payload passes canonical validator because Sharp only exposes PNG first frame; CRC passes but second frame is not decoded. Animation prohibition is not explicit accepted contract; corrupt PNG decodeability is explicit.",
+      "source": "app/src/server/media/validate-upload.ts:153-179",
+      "evidence": [
+        "results-final.json",
+        "apng-details.json",
+        "apng-actual.json",
+        "fixtures/corrupt-second-frame.png"
+      ],
+      "reviewer": "Fresh GPT-6.1 Sol/Codex media",
+      "evidenceBase": "reviewers/media/"
+    },
+    {
+      "id": "SCP-05",
+      "severity": "P2",
+      "status": "FIXED",
+      "blocksRC4": false,
+      "evidence": "observations.json/sql",
+      "source": "app/src/server/telemetry/events.ts:119",
+      "risk": "Historical nullable IDs retained separately; sum count11 correct, old nullable row7 plus new4; accepted NULL uniqueness unchanged.",
+      "reviewer": "Fresh GPT-6.1 Sol/Codex telemetry-github",
+      "evidenceBase": "reviewers/telemetry-github/"
+    },
+    {
+      "id": "SCP-06",
+      "severity": "P3",
+      "status": "FIXED",
+      "blocksRC4": false,
+      "evidence": "observations.json/utf8",
+      "source": "app/src/app/api/events/route.ts:20",
+      "risk": "Whole request.text buffering remains; no stress or hosted transport proof.",
+      "reviewer": "Fresh GPT-6.1 Sol/Codex telemetry-github",
+      "evidenceBase": "reviewers/telemetry-github/"
+    },
+    {
+      "id": "SCP-07",
+      "severity": "P2",
+      "status": "PARTIAL",
+      "blocksRC4": true,
+      "evidence": "observations.json/restart; github_*; durableGithub; nativeBodyTimeout",
+      "source": "app/src/server/integrations/github.ts:53",
+      "risk": "Module isolation made2 failed calls at identical hour; process-local attempt state lost across restart/instances. Unconditional accepted hourly contract requires explicit scope ruling or shared coordination proposal before RC4 readiness.",
+      "reviewer": "Fresh GPT-6.1 Sol/Codex telemetry-github",
+      "evidenceBase": "reviewers/telemetry-github/"
+    },
+    {
+      "id": "SOURCE-TELEMETRY-MAP",
+      "severity": "P2",
+      "status": "FIXED",
+      "blocksRC4": false,
+      "evidence": "observations.json/memory",
+      "source": "app/src/server/telemetry/events.ts:68",
+      "risk": "Memory FIFO counts can reset after eviction; SQL durable authority unaffected.",
+      "reviewer": "Fresh GPT-6.1 Sol/Codex telemetry-github",
+      "evidenceBase": "reviewers/telemetry-github/"
+    }
+  ],
+  "newP0P1Findings": [],
+  "otherFindings": [
+    {
+      "id": "ROLLBACK-CONTRACT",
+      "severity": "contract",
+      "status": "PRESERVED",
+      "blocksRC4": false,
+      "reason": "Route authorization, invalid targets/content, new revision/history/audit and durable validation executed. Caller expectedRevision is not required.",
+      "source": [
+        "app/src/server/content/publish.ts:291",
+        "app/src/server/content/publish.ts:398",
+        "app/src/app/api/admin/rollback/route.ts:9"
+      ],
+      "evidence": [
+        "fresh.test.ts",
+        "vitest-results.json"
+      ],
+      "residualRisk": "Independent-session serialization NOT RUN; stale-tab intent protection explicitly deferred.",
+      "reviewer": "Fresh GPT-6.1 Sol/Codex security-outbox",
+      "evidenceBase": "reviewers/security-outbox/"
+    },
+    {
+      "id": "RESIDUAL-OUTBOX-SEND-RACE",
+      "severity": "P2",
+      "status": "PARTIAL",
+      "blocksRC4": false,
+      "reason": "Final ownership SELECT and external send are not atomic: fresh injection lets B send then A call provider once, while A cannot corrupt DB state.",
+      "source": [
+        "app/src/server/jobs/outbox-worker.ts:94",
+        "app/src/server/jobs/outbox-worker.ts:95",
+        "app/src/server/contact/email-adapter.ts:126"
+      ],
+      "evidence": [
+        "fresh.test.ts",
+        "observations.json",
+        "vitest-results.json"
+      ],
+      "residualRisk": "Real provider idempotency retention/late-send suppression UNVERIFIED; must be resolved or proven before G7 live delivery.",
+      "reviewer": "Fresh GPT-6.1 Sol/Codex security-outbox",
+      "evidenceBase": "reviewers/security-outbox/"
+    }
+  ],
+  "contractCrosscheck": "reviewers/contract-crosscheck/findings.json",
+  "mediaFailureInterpretation": {
+    "actualFailedExpectations": 3,
+    "unambiguousCorruptFrameFailures": 1,
+    "animationPolicyAssumptionFailures": 2,
+    "corruptValidatorAccepted": true,
+    "executed201PostWasValidApng": true,
+    "corruptApngPost": "NOT RUN"
+  },
+  "gates": {
+    "G1-G5": "ACCEPTED",
+    "G6": "ACTIVE / REWORK",
+    "G7": "LOCKED"
+  }
+}

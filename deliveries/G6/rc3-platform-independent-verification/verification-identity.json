@@ -1,0 +1,238 @@
+{
+  "auditedHead": "2a1864a0648146462b45ba25e0bbc797cf37f3cd",
+  "auditedAppTree": "3586e0c8674faac3f73bcab4d17f646e3b2e9191",
+  "implementationCommit": "02380c323154fdf0815e10543de0a936619f2b79",
+  "returnDate": "2026-10-04",
+  "capturedAtUtc": "2026-10-04T16:38:13.378336+00:00",
+  "requestedVerifier": "Gemini Pro; Extended Thinking/highest available",
+  "requestedVerifierExecution": "NOT RUN",
+  "reason": "No callable Gemini tool available in this Codex session; provider-independent execution not claimed",
+  "actualVerifiers": [
+    {
+      "task": "iv_security_outbox",
+      "model": "gpt-6.1-sol",
+      "fork": "none",
+      "role": "Fresh verifier, no correction maker participation",
+      "artifacts": "reviewers/security-outbox/"
+    },
+    {
+      "task": "iv_media",
+      "model": "gpt-6.1-sol",
+      "fork": "none",
+      "role": "Fresh verifier, no correction maker participation",
+      "artifacts": "reviewers/media/"
+    },
+    {
+      "task": "iv_telemetry_github",
+      "model": "gpt-6.1-sol",
+      "fork": "none",
+      "role": "Fresh verifier, no correction maker participation",
+      "artifacts": "reviewers/telemetry-github/"
+    },
+    {
+      "task": "iv_contract_crosscheck",
+      "model": "gpt-6.1-sol",
+      "fork": "none",
+      "role": "Fresh verifier, no correction maker participation",
+      "artifacts": "reviewers/contract-crosscheck/"
+    }
+  ],
+  "parent": {
+    "role": "Prior implementation coordinator; fresh execution capture and aggregation only",
+    "acceptanceAuthorityUsed": false
+  },
+  "executionEnvironment": {
+    "observedAtUtc": "2026-10-04T16:31:59.597855+00:00",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "versions": {
+      "node": {
+        "command": [
+          "node",
+          "--version"
+        ],
+        "exitCode": 0,
+        "output": "v24.19.0"
+      },
+      "pnpm": {
+        "command": [
+          "pnpm.cmd",
+          "--version"
+        ],
+        "exitCode": 0,
+        "output": "9.15.9"
+      },
+      "python": {
+        "command": [
+          "python",
+          "--version"
+        ],
+        "exitCode": 0,
+        "output": "Python 3.12.10"
+      },
+      "git": {
+        "command": [
+          "git",
+          "--version"
+        ],
+        "exitCode": 0,
+        "output": "git version 2.55.0.windows.5"
+      }
+    },
+    "scratchCheckout": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yw-iv-2a186",
+    "scratchHead": "2a1864a0648146462b45ba25e0bbc797cf37f3cd",
+    "primaryHead": "2a1864a0648146462b45ba25e0bbc797cf37f3cd",
+    "remoteMain": "2a1864a0648146462b45ba25e0bbc797cf37f3cd\trefs/heads/main",
+    "requestedModel": "Gemini Pro Extended Thinking/highest available",
+    "requestedProviderExecution": "NOT RUN",
+    "availableGeminiTools": [],
+    "actualReviewers": "Fresh GPT-6.1 Sol/Codex agents, distinct from makers",
+    "parentRole": "Prior maker coordinator; execution capture/aggregation only; no independent acceptance claimed"
+  },
+  "sourceBindings": [
+    {
+      "path": "app/src/server/jobs/outbox-worker.ts",
+      "bytes": 5043,
+      "canonicalGitBlobSha256": "1d29700137ca478b238213508e8c7e047cab1cd3617fa9dc34e14b03fa9e53e7",
+      "gitBlob": "1bbc88c54181f86747dbbce5d5b2cdeff73fa169"
+    },
+    {
+      "path": "app/src/server/media/validate-upload.ts",
+      "bytes": 11397,
+      "canonicalGitBlobSha256": "a8cfbd172c7b0a51224e486df9916987089658aa88ee08c5809d2db6e86cd015",
+      "gitBlob": "258281f2d49482a91e2f92a980a947fe8d1ef3c4"
+    },
+    {
+      "path": "app/src/app/api/admin/media/route.ts",
+      "bytes": 2595,
+      "canonicalGitBlobSha256": "6b4795b4630fdc3f11ae90e72f999cc33c193f695a4f894d0e66d87f932327ad",
+      "gitBlob": "ccbbff59272e869ac2ea76e7554b48f89150930c"
+    },
+    {
+      "path": "app/src/server/telemetry/events.ts",
+      "bytes": 5687,
+      "canonicalGitBlobSha256": "c306eb13765dfe6aef00b6f40f06bba47c883e1107da2c12465798b372adee08",
+      "gitBlob": "a65c2334dfd6c68acfc320127cd30237a916b0d7"
+    },
+    {
+      "path": "app/src/app/api/events/route.ts",
+      "bytes": 1234,
+      "canonicalGitBlobSha256": "48ca36a8fb73204d9ac892818f16a8d1b3fa4be7c8e520454466a3f35c66b0d7",
+      "gitBlob": "61aacd3d57f7d75d82a453c026d87092647dbcdc"
+    },
+    {
+      "path": "app/src/server/integrations/github.ts",
+      "bytes": 8633,
+      "canonicalGitBlobSha256": "b4db3851100e00dd538f06076227954bd9aa0dc43f4d7426d783923d63f8239a",
+      "gitBlob": "f4512d34fc173dc9cf34c67cdc2d50d756fa9a44"
+    },
+    {
+      "path": "app/supabase/operations/harden-publication-grants.sql",
+      "bytes": 1580,
+      "canonicalGitBlobSha256": "7d45358e8c8afb4ab6b23c7e1326b8df7c733ee6c7b23ff7a0236d991947e62f",
+      "gitBlob": "0238b206c41a6a90c1215600297e7dbeecb51c54"
+    },
+    {
+      "path": "app/supabase/migrations/20261001000000_a3_owner_auth_rls.sql",
+      "bytes": 15404,
+      "canonicalGitBlobSha256": "5a55e9baa1f19b8134d3985e54aecba9415a528c3f1d942be692148abee9c21a",
+      "gitBlob": "5e6d2c112e2e9ab312b3b736f6cbada00e489e74"
+    },
+    {
+      "path": "app/supabase/migrations/20261001000001_a4_publication_media.sql",
+      "bytes": 2619,
+      "canonicalGitBlobSha256": "1cc1bbb0d20eb741c2dc435e795575f7b36dbfb68f477a301ee97ebd616d0afa",
+      "gitBlob": "33b49b997f5a6fa15930dbae2b954bcf6b2b5dbc"
+    },
+    {
+      "path": "app/src/server/content/publish.ts",
+      "bytes": 16922,
+      "canonicalGitBlobSha256": "60d183ef48469dc4879d4609efeee5783a1ec3cada863b6e63ea4da84462b909",
+      "gitBlob": "aefb1b46a7ce8f166e1676e2581f90f032470c4f"
+    },
+    {
+      "path": "app/src/server/database.ts",
+      "bytes": 2785,
+      "canonicalGitBlobSha256": "d0700e1e4b27766761b2e761c6970088bcc9e24588254fd020a34e4818134686",
+      "gitBlob": "71b874f1c235a913f8a3a7b84d33b5b15d6f4e32"
+    },
+    {
+      "path": "app/src/server/contact/email-adapter.ts",
+      "bytes": 5272,
+      "canonicalGitBlobSha256": "fe73aee26cc1d2ecffb4e5cfd20b7dfe34bf95be4c1067d2ec81b852ff14b1fd",
+      "gitBlob": "f2ef45ce3d53836dbc2264a2cfd17d01023f5456"
+    },
+    {
+      "path": "app/package.json",
+      "bytes": 1359,
+      "canonicalGitBlobSha256": "f42c8a98d310cb39143f9231f488c0214fe3ee399b91e6cde5fed36d700a6e5f",
+      "gitBlob": "3c322d62e0d8a206fd68230058a3ec2f3a98b2cb"
+    },
+    {
+      "path": "app/pnpm-lock.yaml",
+      "bytes": 153898,
+      "canonicalGitBlobSha256": "8034f04afa8cbdb28fa028ed574117177dfa8a4903c95775ea41405bcabea791",
+      "gitBlob": "ad03f89e09b6346a68ccde3708b0318cae9d75b8"
+    }
+  ],
+  "freshTests": {
+    "unit": {
+      "result": "evidence/unit-results.json",
+      "files": 20,
+      "total": 266,
+      "passed": 266,
+      "failed": 0,
+      "skipped": 0,
+      "success": true
+    },
+    "integration": {
+      "result": "evidence/integration-results.json",
+      "files": 24,
+      "total": 224,
+      "passed": 224,
+      "failed": 0,
+      "skipped": 0,
+      "success": true
+    },
+    "security-outbox": {
+      "result": "reviewers/security-outbox/vitest-results.json",
+      "files": 1,
+      "total": 63,
+      "passed": 63,
+      "failed": 0,
+      "skipped": 0,
+      "success": true
+    },
+    "media": {
+      "result": "reviewers/media/results-final.json",
+      "files": 1,
+      "total": 34,
+      "passed": 31,
+      "failed": 3,
+      "skipped": 0,
+      "success": false
+    },
+    "telemetry-github": {
+      "result": "reviewers/telemetry-github/results.json",
+      "files": 1,
+      "total": 12,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0,
+      "success": true
+    }
+  },
+  "decision": "PLATFORM REWORK REQUIRED",
+  "productionModified": false,
+  "candidateRegenerated": false,
+  "rc4Created": false,
+  "g6Accepted": false,
+  "g7Started": false,
+  "formalGeminiOrIndependentAccountAudit": "NOT RUN",
+  "sourceLineEndings": "Git canonical LF; Windows primary checkout may use CRLF; reviewer normalized comparisons retained",
+  "inputProvenance": "evidence/input-hashes.json",
+  "immutability": "evidence/immutability.json",
+  "ciEvidence": [
+    "evidence/github-ci-observation.json",
+    "evidence/github-ci-log-receipts.json"
+  ]
+}

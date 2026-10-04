@@ -1,0 +1,891 @@
+MODEL:
+Gemini Pro
+
+THINKING:
+Extended Thinking / highest available
+
+Repository:
+https://github.com/yorayriniwnl/Yor-World
+
+ROLE:
+Independent Platform / Backend Verifier
+
+YOU ARE NOT A FIXER.
+
+Do not modify production source.
+Do not push corrections.
+Do not regenerate RC3.
+Do not create RC4.
+Do not accept G6.
+Do not deploy.
+Do not start G7.
+
+============================================================
+LIVE IDENTITY TO VERIFY
+============================================================
+
+Observed live GitHub HEAD at dispatch:
+
+2a1864a0648146462b45ba25e0bbc797cf37f3cd
+
+Platform correction implementation commit:
+
+02380c323154fdf0815e10543de0a936619f2b79
+
+Corrected canonical app tree:
+
+3586e0c8674faac3f73bcab4d17f646e3b2e9191
+
+Canonical application root:
+
+app/
+
+Correction evidence root:
+
+deliveries/G6/rc3-platform-corrections/
+
+Historical defective verification:
+
+deliveries/G6/rc3-supplemental-codex-verification/
+
+Current gate state:
+
+G1-G5 = ACCEPTED
+G6 = ACTIVE / REWORK
+G7 = LOCKED
+
+IMPORTANT:
+
+The implementation correction was produced by Codex/GPT workers, not Gemini.
+
+Your job is to provide genuinely independent verification.
+
+Do not trust the maker's FIXED labels.
+
+============================================================
+PRIMARY INPUTS
+============================================================
+
+Read:
+
+AGENTS.md
+
+START_HERE.md
+
+docs/planning/reconciliation-packets/2026-10-03-rc3-platform-corrections.md
+
+deliveries/G6/rc3-supplemental-codex-verification/report.md
+
+deliveries/G6/rc3-supplemental-codex-verification/defects.json
+
+deliveries/G6/rc3-platform-corrections/report.md
+
+deliveries/G6/rc3-platform-corrections/defects.json
+
+deliveries/G6/rc3-platform-corrections/implementation-identity.json
+
+deliveries/G6/rc3-platform-corrections/evidence/new-regressions.json
+
+Then inspect the actual corrected source directly.
+
+============================================================
+OBJECTIVE
+============================================================
+
+Independently determine whether the seven reproduced platform defects are actually closed in:
+
+app/
+
+The seven defects are:
+
+SCP-01 P1
+publication/history direct-DML bypass
+
+SCP-02 P1
+stale outbox lease holder overwrites reclaimed result
+
+SCP-03 P2
+fifth outbox failure remains retrying forever
+
+SCP-04 P2
+corrupt/truncated media accepted
+
+SCP-05 P2
+telemetry code dimension conflicts with SQL uniqueness
+
+SCP-06 P3
+4096-byte telemetry ceiling counts JS characters rather than UTF-8 bytes
+
+SCP-07 P2
+failed GitHub refresh attempts are not appropriately bounded
+
+Also verify:
+
+SOURCE-TELEMETRY-MAP
+process-memory telemetry cache is bounded
+
+============================================================
+RULE
+============================================================
+
+A maker test is evidence, not independent proof.
+
+For each finding:
+
+inspect source
+
+inspect accepted contract
+
+inspect regression test
+
+execute your own focused reproduction where technically possible
+
+challenge edge cases not already covered
+
+then classify:
+
+FIXED
+
+PARTIALLY FIXED
+
+NOT FIXED
+
+REGRESSED
+
+UNVERIFIED
+
+============================================================
+SCP-01 — PUBLICATION DML SECURITY
+============================================================
+
+Inspect:
+
+app/supabase/migrations/20261001000000_a3_owner_auth_rls.sql
+
+app/supabase/migrations/20261001000001_a4_publication_media.sql
+
+app/supabase/operations/harden-publication-grants.sql
+
+publication server transaction code
+
+publication/rollback APIs
+
+Verify the operational DCL actually closes the previously reproduced bypass.
+
+Test or reason using actual SQL authority for:
+
+PUBLIC
+
+anon
+
+authenticated non-owner
+
+owner AAL1
+
+revoked owner
+
+active owner AAL2
+
+All of these must be unable to directly:
+
+INSERT published_content
+
+UPDATE published_content
+
+DELETE published_content
+
+INSERT publication_history
+
+UPDATE publication_history
+
+DELETE publication_history
+
+execute publish_new_revision directly
+
+while the privileged canonical server path must still be able to:
+
+publish
+
+rollback
+
+append history
+
+append audit
+
+public portfolio SELECT must still work.
+
+Owner private/draft functionality must remain available through approved routes.
+
+Pay special attention to PostgreSQL/Supabase grant inheritance.
+
+Do not merely inspect RLS policies.
+
+The previous defect specifically existed because grants/RLS allowed bypass despite intended API boundaries.
+
+Also classify deployment risk:
+
+harden-publication-grants.sql is an operational SQL hardening file rather than a numbered migration.
+
+Determine exactly what G7 must do to guarantee it is applied to production.
+
+============================================================
+SCP-02 — OUTBOX LEASE FENCING
+============================================================
+
+Inspect:
+
+app/src/server/jobs/outbox-worker.ts
+
+accepted outbox schema
+
+email adapter idempotency behavior
+
+Reproduce adversarial interleavings:
+
+Worker A claims row.
+
+A lease expires.
+
+Worker B reclaims row.
+
+B marks sent.
+
+Then A returns with:
+
+success
+
+retryable failure
+
+terminal failure
+
+provider exception
+
+message-read error
+
+completion-write error
+
+missing message
+
+Expected:
+
+A updates zero rows.
+
+B's authoritative result remains unchanged.
+
+Also test:
+
+lease expires without reclaim
+
+new processing claim exists
+
+queued batch item loses ownership before provider call
+
+long message lookup crosses lease expiry
+
+provider call crosses lease expiry
+
+Confirm completion fencing depends on current authoritative DB claim, not process memory.
+
+Evaluate use of:
+
+xmin
+processing state
+lease_until
+
+for correctness.
+
+Determine whether any dangerous race remains between the final ownership check and external provider send.
+
+Remember that provider idempotency key may mitigate duplicate provider effects, but do not confuse provider idempotency with database lease ownership.
+
+============================================================
+SCP-03 — RETRY CEILING
+============================================================
+
+Verify attempts 1-4 retain accepted delays:
+
+1 minute
+5 minutes
+30 minutes
+120 minutes
+
+At attempt 5, all relevant retryable failure paths must become:
+
+failed
+
+not retrying.
+
+Test:
+
+provider retryable error
+
+provider thrown exception
+
+message lookup/read failure
+
+completion failure
+
+missing message
+
+terminal provider rejection
+
+Ensure the retry ceiling does not undermine SCP-02 ownership fencing.
+
+============================================================
+SCP-04 — MEDIA DECODING
+============================================================
+
+Inspect:
+
+app/src/server/media/validate-upload.ts
+
+app/src/app/api/admin/media/route.ts
+
+sharp dependency/pinning
+
+tests/fixtures/scp-media/
+
+Do not trust magic-byte checks alone.
+
+Verify actual decoder behavior for genuine:
+
+PNG
+
+JPEG
+
+progressive JPEG
+
+lossy WebP
+
+lossless WebP
+
+alpha WebP
+
+Verify rejection of:
+
+signature-only PNG
+
+signature-only JPEG
+
+signature-only WebP
+
+truncated pixel payload
+
+missing PNG tail/IEND
+
+bad PNG CRC
+
+bad JPEG scan
+
+bad WebP body
+
+incorrect WebP RIFF length
+
+MIME mismatch
+
+oversized bytes
+
+oversized axis
+
+excessive decoded pixel count
+
+zero/invalid dimensions
+
+animated/multiframe inputs if prohibited
+
+Verify:
+
+maximum upload = 5 MiB
+
+max dimension = 8192
+
+max decoded pixels = 16,777,216
+
+and that these bounds prevent obvious decompression/resource abuse.
+
+Verify accepted media remains private/pending before approval.
+
+Check that importing `sharp` cannot accidentally leak native/server-only code into browser bundles.
+
+============================================================
+SCP-05 — TELEMETRY SQL DIMENSIONS
+============================================================
+
+Inspect:
+
+app/src/server/telemetry/events.ts
+
+accepted aggregate_events SQL schema
+
+Verify database authority remains:
+
+UNIQUE(date, event, project_id, tier)
+
+and does NOT silently introduce `code` as a new database key dimension.
+
+Test durable SQL cases:
+
+same dimensions, same code
+
+same dimensions, different code
+
+same dimensions, omitted code
+
+null project_id
+
+null tier
+
+both null
+
+pre-correction existing rows
+
+Expected:
+
+valid telemetry increments safely
+
+no legitimate second event returns SQL 23505 / application 503
+
+no schema migration was smuggled into the correction.
+
+Verify no private visitor fields become part of telemetry.
+
+============================================================
+SCP-06 — REAL UTF-8 BODY LIMIT
+============================================================
+
+Inspect:
+
+app/src/app/api/events/route.ts
+
+Verify the actual body ceiling is:
+
+4096 UTF-8 BYTES
+
+not:
+
+4096 JavaScript characters
+
+Test:
+
+ASCII 4096 bytes
+
+ASCII 4097 bytes
+
+multibyte 4096 bytes
+
+multibyte 4097+ bytes
+
+previous reproduced ~6037-byte Unicode body
+
+missing Content-Length
+
+Content-Length smaller than real payload
+
+Content-Length larger than real payload
+
+Malformed JSON must still return the correct validation response.
+
+Oversized actual body must return 413 before telemetry ingestion.
+
+============================================================
+SCP-07 — GITHUB REFRESH CONTROL
+============================================================
+
+Inspect:
+
+app/src/server/integrations/github.ts
+
+Test:
+
+cold cache + upstream failure
+
+last-good cache + upstream failure
+
+403
+
+429
+
+5xx
+
+network exception
+
+timeout
+
+three simultaneous requests
+
+many requests inside one hour
+
+request at next allowed refresh window
+
+successful recovery
+
+Verify:
+
+single-flight inside one process
+
+failed attempt also creates an hourly throttle
+
+last-good value is preserved
+
+last-success timestamp is not rewritten on failure
+
+stale status remains truthful
+
+next-window recovery works
+
+tokens/auth headers are never returned or logged
+
+Explicitly distinguish:
+
+PROCESS-LOCAL correctness
+
+from:
+
+MULTI-INSTANCE / SERVERLESS correctness
+
+The current implementation admits the failed-attempt throttle is process-local.
+
+Do not call distributed refresh throttling proven.
+
+Classify whether this remaining limitation:
+
+blocks G6
+
+or belongs to G7/production hardening.
+
+============================================================
+TELEMETRY MEMORY BOUND
+============================================================
+
+Verify any memory aggregation/cache is deterministically bounded.
+
+Current maker claim:
+
+128 keys
+
+24-hour TTL
+
+Test:
+
+more than 128 distinct valid dimensions
+
+old-record expiry
+
+repeated updates
+
+many varying code values
+
+Confirm arbitrary valid traffic cannot produce unbounded process-memory growth.
+
+============================================================
+ROLLBACK CONTRACT
+============================================================
+
+Do NOT treat the absence of caller expectedRevision on rollback as a defect unless the accepted contract itself requires it.
+
+Current Parent ruling:
+
+rollbackPublication(targetRevision, actor)
+
+remains the accepted interface.
+
+Stale-tab expectedRevision protection is deferred P2 hardening.
+
+Confirm no correction accidentally weakened current rollback authorization, validation, serialization, audit or history behavior.
+
+============================================================
+FULL PLATFORM REGRESSION
+============================================================
+
+From canonical:
+
+app/
+
+run where available:
+
+pnpm install --frozen-lockfile
+
+pnpm lint
+
+pnpm typecheck
+
+focused independent SCP tests
+
+pnpm test:unit
+
+pnpm test:integration
+
+pnpm build
+
+Record actual:
+
+Node version
+
+pnpm version
+
+commands
+
+exit codes
+
+test counts
+
+failures
+
+Do not reuse maker result counts as your own execution result.
+
+============================================================
+CI CONTEXT
+============================================================
+
+Do not classify current red CI blindly as a platform failure.
+
+Two relevant runs exist:
+
+Correction implementation commit:
+
+02380c323154fdf0815e10543de0a936619f2b79
+
+GitHub release-quality run:
+37182688631
+
+Observed behavior:
+
+install PASS
+lint PASS
+typecheck PASS
+unit PASS
+integration PASS
+asset validation PASS
+build PASS
+97 E2E PASS
+17 accessibility PASS
+6 performance PASS
+release composition PASS
+performance budgets PASS
+
+Final manifest validation FAILS because RC3 correctly detects that app source changed after the old RC3 sourceCommit.
+
+That failure is expected and should be resolved by RC4 rebinding, not by weakening the validator.
+
+Current evidence-only HEAD:
+
+2a1864a0648146462b45ba25e0bbc797cf37f3cd
+
+Run:
+37183110590
+
+uses the same production app tree but observed an intermittent performance-test failure.
+
+This performance issue is outside the platform verification lane.
+
+Do not modify runtime or performance tests.
+
+Record it as a separate RC4-maker concern.
+
+============================================================
+PERFORMANCE-GATE OBSERVATION
+============================================================
+
+For your report only:
+
+The validation contract explicitly supports:
+
+LOW tier
+and
+STATIC fallback
+
+under sustained poor rendering conditions.
+
+STATIC means HTML/poster and no canvas.
+
+Current performance test treats any switch to STATIC or no canvas frame for >1 second as hard failure.
+
+Because automatic policy can legitimately downgrade:
+
+HIGH → MEDIUM → LOW → STATIC
+
+after sustained slow windows, this may create a test-contract contradiction on software-rendered CI.
+
+Do NOT fix it.
+
+Simply record whether the platform source changes had any plausible causal relationship.
+
+The RC4 maker owns performance-gate reconciliation.
+
+============================================================
+LIVING STATUS
+============================================================
+
+Identify current documentation that still claims:
+
+platform corrections have not been performed
+
+or:
+
+Gemini #1 correction is still next
+
+Examples may include:
+
+START_HERE.md
+
+docs/planning/delegation-and-work-orders.md
+
+docs/planning/local-tool-access.md
+
+Do not edit them.
+
+List them for the RC4 maker.
+
+============================================================
+SECURITY ESCALATION
+============================================================
+
+Search the corrected platform surfaces for NEW P0/P1 problems.
+
+Do not limit yourself mechanically to SCP-01 through SCP-07 if you can demonstrate a new serious defect.
+
+Examples:
+
+auth bypass
+
+privileged client bundle leakage
+
+service-role leakage
+
+private media exposure
+
+publication bypass
+
+contact durability corruption
+
+outbox double-send state corruption
+
+SQL injection
+
+unsafe dynamic SQL
+
+unbounded upload/decompression behavior
+
+PII telemetry leak
+
+Return evidence, not speculation.
+
+============================================================
+RETURN ROOT
+============================================================
+
+Return findings under:
+
+deliveries/G6/rc3-platform-independent-verification/
+
+or provide the exact complete report to Parent if your environment cannot write the repository.
+
+Required artifacts:
+
+report.md
+
+defects.json
+
+commands-and-exit-codes.md
+
+verification-identity.json
+
+evidence/
+
+SHA256SUMS.txt
+
+============================================================
+REQUIRED REPORT FORMAT
+============================================================
+
+Start with:
+
+AUDITED HEAD
+
+AUDITED APP TREE
+
+IMPLEMENTATION COMMIT
+
+VERIFIER / MODEL
+
+EXECUTION ENVIRONMENT
+
+Then a closure matrix:
+
+SCP-01
+SCP-02
+SCP-03
+SCP-04
+SCP-05
+SCP-06
+SCP-07
+SOURCE-TELEMETRY-MAP
+
+For each:
+
+severity
+
+status:
+FIXED
+PARTIAL
+NOT FIXED
+REGRESSED
+UNVERIFIED
+
+actual independent reproduction
+
+source inspected
+
+evidence
+
+residual risk
+
+blocks RC4? yes/no
+
+Then:
+
+NEW P0/P1 FINDINGS
+
+P2/P3 FINDINGS
+
+G7-ONLY VERIFICATION REQUIREMENTS
+
+HOSTED / PHYSICAL ITEMS NOT RUN
+
+DOCUMENTATION DRIFT
+
+PERFORMANCE-GATE OBSERVATION
+
+============================================================
+FINAL DECISION
+============================================================
+
+Choose exactly one:
+
+PLATFORM READY FOR RC4
+
+PLATFORM REWORK REQUIRED
+
+INSUFFICIENT EVIDENCE
+
+If READY:
+
+give Parent exact immutable values:
+
+verified implementation commit:
+02380c323154fdf0815e10543de0a936619f2b79
+
+verified app tree:
+3586e0c8674faac3f73bcab4d17f646e3b2e9191
+
+and list all accepted limitations.
+
+Do NOT say G6 accepted.
+
+Do NOT approve G7.
+
+Do NOT create RC4.
+
+Do NOT fix defects.
+
+STOP after independent platform verification.

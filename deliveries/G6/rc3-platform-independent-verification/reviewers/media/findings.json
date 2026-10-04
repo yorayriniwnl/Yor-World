@@ -1,0 +1,13 @@
+{
+  "verifier": "Fresh independent Codex GPT-6.1 Sol; Gemini provider NOT RUN",
+  "head": "2a1864a0648146462b45ba25e0bbc797cf37f3cd",
+  "implementationCommit": "02380c323154fdf0815e10543de0a936619f2b79",
+  "appTree": "3586e0c8674faac3f73bcab4d17f646e3b2e9191",
+  "findings": [{"id":"SCP-04","severity":"P2","status":"PARTIAL","blocksRC4":true,"reason":"Corrupt APNG second-frame pixel payload passes canonical validator because Sharp only exposes PNG first frame; CRC passes but second frame is not decoded. Animation prohibition is not explicit accepted contract; corrupt PNG decodeability is explicit.","source":"app/src/server/media/validate-upload.ts:153-179","evidence":["results-final.json","apng-details.json","apng-actual.json","fixtures/corrupt-second-frame.png"]}],
+  "tests":{"total":34,"passed":31,"failed":3,"skipped":0,"exitCode":1},
+  "newP0P1": [],
+  "boundary":{"clientRoots":13,"reachableModules":54,"browserChunks":20,"violations":0},
+  "hosted":"NOT RUN: Storage/Auth/REST/approval durability and bucket privacy",
+  "residualRisk":"Multipart/JSON fully buffered before file ceiling; aggregate concurrency/native overhead not globally bounded. Auth checked first. No demonstrated P1.",
+  "decision":"Media rework recommended for APNG corruption; Parent owns final platform/RC4 determination"
+}

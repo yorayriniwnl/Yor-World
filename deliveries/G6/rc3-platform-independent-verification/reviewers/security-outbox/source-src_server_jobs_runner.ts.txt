@@ -1,0 +1,177 @@
+1: import { timingSafeEqual } from "node:crypto";
+2: import { isTestRuntime } from "../database";
+3: /**
+4:  * YOR WORLD Milestone A6: Internal Jobs & Cron Execution
+5:  * 
+6:  * Strict specifications per engineering-and-content.md §11, §12:
+7:  * - Secret-authenticated internal endpoints.
+8:  * - Leased workers prevent duplicate delivery.
+9:  * - Bounded retries: ~1m, ~5m, ~30m, ~120m backoff.
+10:  * - Automated catch-up for scheduled triggers.
+11:  */
+12: 
+13: import { processOutbox, type OutboxProcessResult } from "./outbox-worker";
+14: import { ALLOWLISTED_REPOSITORIES, getRepositoryMetadata } from "../integrations/github";
+15: import type { QueryableDb } from "../contact/quota";
+16: 
+17: export interface JobContext {
+18:   db?: QueryableDb;
+19:   now?: Date;
+20:   limit?: number;
+21:   customFetch?: typeof fetch;
+22: }
+23: 
+24: export interface JobExecutionResult {
+25:   job: string;
+26:   success: boolean;
+27:   durationMs: number;
+28:   details: Record<string, unknown>;
+29:   error?: string;
+30: }
+31: 
+32: /**
+33:  * Validates internal job authentication key.
+34:  */
+35: export function verifyJobAuth(authHeader: string | null, keyHeader: string | null): boolean {
+36:   const secret = process.env.CRON_SECRET || process.env.INTERNAL_JOB_KEY;
+37:   
+38:   if (!secret) return false;
+39:   const matches = (candidate: string) => {
+40:     const value=Buffer.from(candidate); const expected=Buffer.from(secret);
+41:     return value.length === expected.length && timingSafeEqual(value,expected);
+42:   };
+43:   if (authHeader && authHeader.startsWith("Bearer ")) {
+44:     const token = authHeader.slice(7).trim();
+45:     if (matches(token)) return true;
+46:   }
+47: 
+48:   if (keyHeader && matches(keyHeader.trim())) {
+49:     return true;
+50:   }
+51: 
+52:   return false;
+53: }
+54: 
+55: /**
+56:  * Executes a specified internal job.
+57:  */
+58: export async function executeJob(
+59:   jobName: string,
+60:   context: JobContext = {}
+61: ): Promise<JobExecutionResult> {
+62:   const startTime = Date.now();
+63:   const now = context.now ?? new Date();
+64: 
+65:   switch (jobName) {
+66:     case "process-outbox": {
+67:       if (!context.db) {
+68:         return {
+69:           job: jobName,
+70:           success: false,
+71:           durationMs: Date.now() - startTime,
+72:           details: {},
+73:           error: "Durable database is required for outbox execution.",
+74:         };
+75:       }
+76: 
+77:       try {
+78:         const outboxResult: OutboxProcessResult = await processOutbox(
+79:           now,
+80:           context.limit ?? 25,
+81:           { db: context.db }
+82:         );
+83:         return {
+84:           job: jobName,
+85:           success: true,
+86:           durationMs: Date.now() - startTime,
+87:           details: { ...outboxResult },
+88:         };
+89:       } catch (err: unknown) {
+90:         return {
+91:           job: jobName,
+92:           success: false,
+93:           durationMs: Date.now() - startTime,
+94:           details: {},
+95:           error: err instanceof Error ? err.message : "Outbox processing failed",
+96:         };
+97:       }
+98:     }
+99: 
+100:     case "refresh-github": {
+101:       let updatedCount = 0;
+102:       const errors: string[] = [];
+103: 
+104:       for (const repo of ALLOWLISTED_REPOSITORIES) {
+105:         try {
+106:           const fetchOpts: { now: Date; customFetch?: typeof fetch } = { now };
+107:           if (context.customFetch) {
+108:             fetchOpts.customFetch = context.customFetch;
+109:           }
+110:           const res = await getRepositoryMetadata(repo, fetchOpts);
+111:           if (res.success) {
+112:             updatedCount++;
+113:           } else {
+114:             errors.push(`${repo}: ${res.error}`);
+115:           }
+116:         } catch (err: unknown) {
+117:           errors.push(`${repo}: ${err instanceof Error ? err.message : "Fetch failed"}`);
+118:         }
+119:       }
+120: 
+121:       return {
+122:         job: jobName,
+123:         success: errors.length === 0,
+124:         durationMs: Date.now() - startTime,
+125:         details: {
+126:           updatedCount,
+127:           totalAllowlisted: ALLOWLISTED_REPOSITORIES.length,
+128:           errors,
+129:         },
+130:       };
+131:     }
+132: 
+133:     case "cleanup-stale": {
+134:       if (!context.db && !isTestRuntime()) return { job: jobName,success: false,durationMs: Date.now()-startTime,details: {},error: "Durable database is required." };
+135:       let cleanedIdempotency = 0;
+136:       let cleanedQuotas = 0;
+137: 
+138:       if (context.db) {
+139:         try {
+140:           const idempRes = await context.db.query(
+141:             "DELETE FROM public.contact_idempotency WHERE expires_at < $1 RETURNING key_hash;",
+142:             [now.toISOString()]
+143:           );
+144:           cleanedIdempotency = idempRes.rows ? idempRes.rows.length : 0;
+145: 
+146:           const quotaRes = await context.db.query(
+147:             "DELETE FROM public.request_quotas WHERE expires_at < $1 RETURNING key_hash;",
+148:             [now.toISOString()]
+149:           );
+150:           cleanedQuotas = quotaRes.rows ? quotaRes.rows.length : 0;
+151:           await context.db.query("DELETE FROM public.contact_messages WHERE received_at < $1", [new Date(now.getTime()-90*86400*1000).toISOString()]);
+152:         } catch {
+153:           return { job: jobName,success: false,durationMs: Date.now()-startTime,details: {},error: "Database cleanup failed." };
+154:         }
+155:       }
+156: 
+157:       return {
+158:         job: jobName,
+159:         success: true,
+160:         durationMs: Date.now() - startTime,
+161:         details: {
+162:           cleanedIdempotency,
+163:           cleanedQuotas,
+164:         },
+165:       };
+166:     }
+167: 
+168:     default:
+169:       return {
+170:         job: jobName,
+171:         success: false,
+172:         durationMs: Date.now() - startTime,
+173:         details: {},
+174:         error: `Unknown job '${jobName}'`,
+175:       };
+176:   }
+177: }

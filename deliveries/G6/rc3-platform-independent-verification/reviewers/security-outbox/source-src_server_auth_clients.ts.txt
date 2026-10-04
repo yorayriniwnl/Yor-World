@@ -1,0 +1,74 @@
+1: /**
+2:  * YOR WORLD Milestone A3: Server Supabase Client Factories
+3:  *
+4:  * Enforces strict credential boundaries:
+5:  * - Public/SSR Client uses anon key and cookie/header session passing.
+6:  * - Service Role Client uses service_role key, is strictly server-only, and will throw if imported client-side.
+7:  */
+8: 
+9: import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+10: import { createServerClient, type CookieMethodsServer } from "@supabase/ssr";
+11: 
+12: // Guard: Ensure server credentials can NEVER execute in a client/browser environment
+13: if (typeof window !== "undefined") {
+14:   throw new Error("Fatal security violation: Server auth client module imported in client context.");
+15: }
+16: 
+17: export interface SupabaseEnvConfig {
+18:   supabaseUrl: string;
+19:   supabaseAnonKey: string;
+20:   supabaseServiceRoleKey?: string | undefined;
+21: }
+22: 
+23: export function getSupabaseEnv(): SupabaseEnvConfig {
+24:   const supabaseUrl =
+25:     process.env.NEXT_PUBLIC_SUPABASE_URL ||
+26:     process.env.SUPABASE_URL;
+27: 
+28:   const supabaseAnonKey =
+29:     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+30:     process.env.SUPABASE_ANON_KEY;
+31: 
+32:   const supabaseServiceRoleKey =
+33:     process.env.SUPABASE_SERVICE_ROLE_KEY ||
+34:     process.env.SUPABASE_SERVICE_KEY;
+35: 
+36:   if (!supabaseUrl || !supabaseAnonKey) throw new Error("Supabase authentication is not configured.");
+37:   return {
+38:     supabaseUrl,
+39:     supabaseAnonKey,
+40:     supabaseServiceRoleKey,
+41:   };
+42: }
+43: 
+44: /**
+45:  * Creates an SSR client bound to request cookies or bearer auth.
+46:  * Uses ONLY the public anon key.
+47:  */
+48: export function createPublicServerClient(cookieStore?: { getAll: () => Array<{ name: string; value: string }> }): SupabaseClient {
+49:   const env = getSupabaseEnv();
+50:   if (cookieStore) {
+51:     const cookies: CookieMethodsServer = { getAll: () => cookieStore.getAll(), setAll() {} };
+52:     return createServerClient(env.supabaseUrl, env.supabaseAnonKey, { cookies });
+53:   }
+54:   return createClient(env.supabaseUrl, env.supabaseAnonKey, { auth: { persistSession: false, autoRefreshToken: false } });
+55: }
+56: 
+57: /**
+58:  * Creates a privileged service-role client strictly for server-side verification and background jobs.
+59:  * This client bypasses RLS and MUST NEVER be exposed or passed outside server domain boundaries.
+60:  */
+61: export function createAdminServiceRoleClient(): SupabaseClient {
+62:   const env = getSupabaseEnv();
+63: 
+64:   if (!env.supabaseServiceRoleKey) {
+65:     throw new Error("SUPABASE_SERVICE_ROLE_KEY is required for admin service client.");
+66:   }
+67: 
+68:   return createClient(env.supabaseUrl, env.supabaseServiceRoleKey, {
+69:     auth: {
+70:       persistSession: false,
+71:       autoRefreshToken: false,
+72:     },
+73:   });
+74: }

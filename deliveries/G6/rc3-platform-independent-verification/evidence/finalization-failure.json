@@ -1,0 +1,13 @@
+{
+  "command": ["python", "deliveries/G6/rc3-platform-independent-verification/tools/finalize.py"],
+  "cwd": "C:/Users/yoray/Projects/Yor World",
+  "exitCode": 1,
+  "failedAttempts": 2,
+  "phase": "Review artifact checksum verification before commit",
+  "diagnostic": "AssertionError: reviewers/telemetry-github/SHA256SUMS.txt, commands-and-exit-codes.md comparison failed",
+  "cause": "Parent verifier compared lowercase hashlib digest with uppercase PowerShell inventory digest as case-sensitive text; inspection showed identical raw-byte SHA256 values",
+  "resolution": "Owned verifier helper normalizes hexadecimal case; independently rechecks every retained inventory entry",
+  "retentionLimit": "Prior inventory was refreshed during diagnosis before a separate root snapshot was retained; first attempt cannot independently establish stale content",
+  "productionChanges": false,
+  "productResultChanges": false
+}
