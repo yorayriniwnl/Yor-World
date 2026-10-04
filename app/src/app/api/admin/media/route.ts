@@ -68,7 +68,7 @@ export async function POST(request: Request) {
       filename = body.filename || "upload";
     }
 
-    const validated = validateUpload({ buffer, mime, filename });
+    const validated = await validateUpload({ buffer, mime, filename });
     const asset = await registerMediaAsset(validated, result.context);
 
     return Response.json(

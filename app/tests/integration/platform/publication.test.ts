@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 /**
  * YOR WORLD Milestone A4: Publication, Drafts, and Rollback Integration Suite
  *
@@ -299,8 +301,8 @@ describe("Milestone A4: Structured Editing, Publishing & Rollback", () => {
 
     it("approved media passes validation and enters publication", async () => {
       // 1. Upload valid PNG
-      const pngHeader = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0]);
-      const validated = validateUpload({ buffer: pngHeader, mime: "image/png", filename: "approved-chart.png" });
+      const pngHeader = readFileSync(resolve("tests/fixtures/scp-media/valid-rgba-16x12.png"));
+      const validated = await validateUpload({ buffer: pngHeader, mime: "image/png", filename: "approved-chart.png" });
       const asset = await registerMediaAsset(validated, ACTIVE_OWNER);
       expect(asset.approvalStatus).toBe("pending");
 
@@ -374,8 +376,8 @@ describe("Milestone A4: Structured Editing, Publishing & Rollback", () => {
   describe("Rollback & Historical Asset Verification", () => {
     it("missing rollback asset throws 422 MediaValidationError", async () => {
       // Create revision 2 containing a temporary media asset
-      const pngHeader = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0]);
-      const validated = validateUpload({ buffer: pngHeader, mime: "image/png", filename: "temp.png" });
+      const pngHeader = readFileSync(resolve("tests/fixtures/scp-media/valid-rgba-16x12.png"));
+      const validated = await validateUpload({ buffer: pngHeader, mime: "image/png", filename: "temp.png" });
       const asset = await registerMediaAsset(validated, ACTIVE_OWNER);
       await approveMediaAsset(asset.id, ACTIVE_OWNER);
 

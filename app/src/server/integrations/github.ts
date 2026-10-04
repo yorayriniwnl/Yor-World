@@ -49,6 +49,11 @@ export interface GitHubSnapshotRecord {
 
 // In-memory snapshot cache for fast retrieval and fallback resilience
 const snapshotCache = new Map<string, GitHubSnapshotRecord>();
+type MetadataResult = { success: boolean; data?: GitHubMetadata; error?: string; status: number };
+// Process-local attempt throttling/single flight. SQL persists successful snapshots
+// only; restarts and separate instances do not share failed-attempt coordination.
+const refreshes = new Map<string, Promise<MetadataResult>>();
+const attempts = new Map<string, { at: number; result?: MetadataResult }>();
 
 // Cache TTL: 1 hour (3600s)
 export const CACHE_TTL_MS = 60 * 60 * 1000;
@@ -77,6 +82,32 @@ export async function getRepositoryMetadata(
     };
   }
 
+  const now = options.now ?? new Date();
+  const pending = refreshes.get(repo);
+  if (pending) return pending;
+  const priorAttempt = attempts.get(repo);
+  if (priorAttempt && now.getTime() - priorAttempt.at < CACHE_TTL_MS) {
+    const cached = snapshotCache.get(repo);
+    if (cached) return {
+      success: true, status: 200,
+      data: { ...cached.payload, stale: now.getTime() - cached.fetchedAt.getTime() > STALE_THRESHOLD_MS,
+        ...(priorAttempt.result?.data?.rateLimited === undefined ? {} : { rateLimited: priorAttempt.result.data.rateLimited }) },
+    };
+    return priorAttempt.result ?? { success: false, status: 503, error: "GitHub refresh temporarily unavailable" };
+  }
+  // Reserve before any asynchronous database read so overlapping cold starts join.
+  const attempt: { at: number; result?: MetadataResult } = { at: now.getTime() };
+  attempts.set(repo, attempt);
+  const work = refreshRepositoryMetadata(repo, options).then((result) => {
+    attempt.result = result;
+    return result;
+  });
+  refreshes.set(repo, work);
+  try { return await work; }
+  finally { if (refreshes.get(repo) === work) refreshes.delete(repo); }
+}
+
+async function refreshRepositoryMetadata(repo: AllowlistedRepo, options: FetchGitHubOptions): Promise<MetadataResult> {
   const now = options.now ?? new Date();
   let cached = snapshotCache.get(repo);
   if (!cached && !isTestRuntime() && hasPlatformDatabase()) {
@@ -112,16 +143,16 @@ export async function getRepositoryMetadata(
     headers["Authorization"] = `Bearer ${githubToken}`;
   }
 
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4000); // 4-second bounded timeout
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 4000);
+  try { // 4-second bounded timeout
 
     const upstreamUrl = `https://api.github.com/repos/${repo}`;
     const response = await fetchFn(upstreamUrl, {
       headers,
       signal: controller.signal,
     });
-    clearTimeout(timeoutId);
+
 
     if (response.ok) {
       const json = await response.json();
@@ -185,7 +216,7 @@ export async function getRepositoryMetadata(
       error: `Upstream GitHub API returned status ${response.status}`,
       status: response.status >= 500 ? 502 : response.status,
     };
-  } catch (err: unknown) {
+  } catch {
     // Upstream network failure / timeout: check for fallback
     if (cached) {
       const isStale = now.getTime() - cached.fetchedAt.getTime() > STALE_THRESHOLD_MS;
@@ -199,12 +230,13 @@ export async function getRepositoryMetadata(
       };
     }
 
-    const message = err instanceof Error ? err.message : "Network failure";
     return {
       success: false,
-      error: `GitHub integration error: ${message}`,
+      error: "GitHub integration temporarily unavailable",
       status: 504,
     };
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
@@ -220,4 +252,6 @@ export function setCachedSnapshot(repo: AllowlistedRepo, snapshot: GitHubSnapsho
  */
 export function clearSnapshotCache(): void {
   snapshotCache.clear();
+  refreshes.clear();
+  attempts.clear();
 }

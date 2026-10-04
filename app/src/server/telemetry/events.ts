@@ -65,7 +65,18 @@ export interface AggregateEventRecord {
 }
 
 // Memory aggregate store for resilience & test verification
+export const TELEMETRY_MEMORY_MAX_KEYS = 128;
+export const TELEMETRY_MEMORY_TTL_MS = 24 * 60 * 60 * 1000;
 const inMemoryAggregates = new Map<string, AggregateEventRecord>();
+const aggregateUpdatedAt = new Map<string, number>();
+function expireAggregates(now = Date.now()): void {
+  for (const [key, updatedAt] of aggregateUpdatedAt) {
+    if (now - updatedAt >= TELEMETRY_MEMORY_TTL_MS) {
+      aggregateUpdatedAt.delete(key);
+      inMemoryAggregates.delete(key);
+    }
+  }
+}
 
 /**
  * Ingests a telemetry event, enforcing allowlist validation, field redaction, and bounded aggregation.
@@ -94,34 +105,48 @@ export async function recordTelemetryEvent(
   }
 
   const validEvent = parsed.data;
-  const today = new Date().toISOString().slice(0, 10);
-  const aggKey = `${today}_${validEvent.event}_${validEvent.projectId || "none"}_${validEvent.tier || "none"}_${validEvent.code || "none"}`;
+  const now = Date.now();
+  const today = new Date(now).toISOString().slice(0, 10);
+  const aggKey = `${today}_${validEvent.event}_${validEvent.projectId || "none"}_${validEvent.tier || "none"}`;
 
   // Production counters contain only allowlisted aggregate fields, never visitor identifiers.
   if (!isTestRuntime() && hasPlatformDatabase()) {
     try {
       const db=await getPlatformDb();
+      // SQL treats null unique dimensions as distinct. Deterministic IDs aggregate
+      // absent dimensions without changing that accepted schema. Non-null rows
+      // conflict on the dimensional constraint, including pre-correction IDs.
+      const conflict = validEvent.projectId && validEvent.tier
+        ? "date,event,project_id,tier" : "id";
       await db.query(`INSERT INTO public.aggregate_events(id,date,event,project_id,tier,count)
-        VALUES(md5($1)::uuid,$2,$3,$4,$5,1) ON CONFLICT(id) DO UPDATE SET count=public.aggregate_events.count+1`,
+        VALUES(md5($1)::uuid,$2,$3,$4,$5,1) ON CONFLICT(${conflict}) DO UPDATE SET count=public.aggregate_events.count+1`,
         [aggKey,today,validEvent.event,validEvent.projectId ?? null,validEvent.tier ?? null]);
     } catch { return { success: false,status: 503,error: "Telemetry storage is temporarily unavailable." }; }
   }
 
   // 3. Aggregate safely (counters only, zero visitor profiling)
+  expireAggregates(now);
   const existing = inMemoryAggregates.get(aggKey);
   if (existing) {
     existing.count += 1;
   } else {
+    if (inMemoryAggregates.size >= TELEMETRY_MEMORY_MAX_KEYS) {
+      const oldestKey = inMemoryAggregates.keys().next().value!;
+      inMemoryAggregates.delete(oldestKey);
+      aggregateUpdatedAt.delete(oldestKey);
+    }
     inMemoryAggregates.set(aggKey, {
       id: aggKey,
       date: today,
       event: validEvent.event,
       projectId: validEvent.projectId || null,
       tier: validEvent.tier || null,
-      code: validEvent.code || null,
+      code: null, // Accepted durable schema has no code dimension or column.
       count: 1,
     });
   }
+
+  aggregateUpdatedAt.set(aggKey, now);
 
   return {
     success: true,
@@ -133,6 +158,7 @@ export async function recordTelemetryEvent(
  * Returns current aggregate counts for testing / ops inspection.
  */
 export function getAggregateEvents(): AggregateEventRecord[] {
+  expireAggregates();
   return Array.from(inMemoryAggregates.values());
 }
 
@@ -141,4 +167,5 @@ export function getAggregateEvents(): AggregateEventRecord[] {
  */
 export function clearAggregateEvents(): void {
   inMemoryAggregates.clear();
+  aggregateUpdatedAt.clear();
 }

@@ -59,3 +59,9 @@ Stop after the maker return. The parent then assigns a bounded integrated candid
 In the actual Gemini #1 tool with workspace access, use:
 
 > Read AGENTS.md and START_HERE.md, then execute only G6-RC3-PLATFORM-CORRECT-01 at docs/planning/reconciliation-packets/2026-10-03-rc3-platform-corrections.md. Verify the pinned production tree, fix only the owned platform paths, return actual regression evidence under deliveries/G6/rc3-platform-corrections/, and stop for parent candidate refresh and independent audit.
+
+## Parent ownership addendum — 2026-10-04
+
+The human explicitly assigned execution of this correction packet, preservation of existing local work, a tested telemetry memory bound, the unchanged `rollbackPublication(targetRevision, actor)` contract, and a later RC4 release refresh. Actual local execution uses new Codex maker workers; no Gemini provider execution is claimed.
+
+The authorized exact decoder addition (`sharp 0.35.5`, already locked transitively) exposed an obsolete direct-dependency list in `app/tests/unit/boundaries.test.ts`: the full unit run passed260/261 and failed only that list. The parent assigns this **one additional test file** to the media maker, solely to include the authorized pinned decoder and verify that browser modules cannot import it. Retain the full dependency/boundary assertions and strict compiler settings. No runtime, world, performance, CI or release paths are added to ownership. This explicit reassignment follows the existing worker ownership rule; it does not accept the correction or any gate.

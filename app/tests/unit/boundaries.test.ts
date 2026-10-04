@@ -83,7 +83,7 @@ export function validateProductionModule(filePath: string, text: string) {
     filePath.startsWith("src/app/api/") || filePath.startsWith("src/app/admin/") ||
     filePath === "src/content/server-publication.ts" || filePath.startsWith("src/app/(public)/");
   if (!isServerModule) {
-    forbiddenPatterns.push(/(?:^|\/)server(?:\/|$)/);
+    forbiddenPatterns.push(/(?:^|\/)server(?:\/|$)/, /^sharp(?:\/|$)/);
     if (!filePath.startsWith("src/features/admin/")) forbiddenPatterns.push(/\bsupabase\b|@supabase/);
   }
   // Three.js stays isolated from the public HTML shell.
@@ -132,7 +132,7 @@ it("validates published projects are structurally sound and identity is verified
 it("enforces integrated dependency boundaries: HTML shell stays free of 3D and browser features stay free of server imports", () => {
   const packageJson = JSON.parse(readFileSync("package.json", "utf8")) as { dependencies: Record<string, string> };
   expect(Object.keys(packageJson.dependencies).sort()).toEqual([
-    "@supabase/ssr", "@supabase/supabase-js", "next", "pg", "react", "react-dom", "server-only", "three", "zod"
+    "@supabase/ssr", "@supabase/supabase-js", "next", "pg", "react", "react-dom", "server-only", "sharp", "three", "zod"
   ]);
   for (const version of Object.values(packageJson.dependencies)) expect(version).toMatch(/^\d+\.\d+\.\d+$/);
   for (const path of files("src")) {
@@ -191,6 +191,23 @@ describe("regression: syntax-level import boundary detection", () => {
       .toThrowError(/Contract module .* has invalid non-contract import/);
   });
 
+  it.each([
+    ['import sharp from "sharp";', "import"],
+    ['import "sharp";', "side-effect-import"],
+    ['export async function decode() { return import("sharp"); }', "dynamic-import"],
+    ['import decoder from "sharp/lib/index";', "import"],
+  ])("rejects browser decoder import %s", (snippet, kind) => {
+    expect(() => validateProductionModule("src/features/portfolio/image.ts", snippet))
+      .toThrowError(new RegExp(`Forbidden import [(]${kind}[)].*sharp`));
+  });
+
+  it("permits the actual decoder import in its server media module", () => {
+    const modulePath = "src/server/media/validate-upload.ts";
+    const source = readFileSync(modulePath, "utf8");
+    expect(extractModuleSpecifiers(modulePath, source).some((entry) => entry.specifier === "sharp")).toBe(true);
+    expect(() => validateProductionModule(modulePath, source)).not.toThrow();
+  });
+
   it("rejects three.js import in public shell features outside world", () => {
     const snippet = `import * as THREE from "three";\nexport const v = new THREE.Vector3();`;
     expect(() => validateProductionModule("src/features/portfolio/navigation.tsx", snippet))
@@ -215,6 +232,7 @@ it("keeps privileged server modules and secrets out of every transitive client i
       const content = readFileSync(current, "utf8");
       expect(content, `privileged secret reachable from ${client}`).not.toMatch(/SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SERVICE_KEY|DATABASE_URL|CONTACT_HASH_SECRET|RESEND_API_KEY|INTERNAL_JOB_KEY|CRON_SECRET/);
       for (const imported of extractModuleSpecifiers(normalized, content)) {
+        expect(imported.specifier, `native decoder reachable from client ${client} through ${current}`).not.toMatch(/^sharp(?:\/|$)/);
         if (!imported.specifier.startsWith(".") && !imported.specifier.startsWith("@/")) continue;
         const target = imported.resolvedPath;
         const resolved = [target, `${target}.ts`, `${target}.tsx`, join(target, "index.ts"), join(target, "index.tsx")]

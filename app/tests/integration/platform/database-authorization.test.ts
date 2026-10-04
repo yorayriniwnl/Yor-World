@@ -59,6 +59,7 @@ describe("Milestone A3: PostgreSQL Database Grants & Row Level Security (RLS)", 
     const migrationPathA4 = join(process.cwd(), "supabase/migrations/20261001000001_a4_publication_media.sql");
     const migrationSqlA4 = readFileSync(migrationPathA4, "utf8");
     await db.exec(migrationSqlA4);
+    await db.exec(readFileSync(join(process.cwd(), "supabase/operations/harden-publication-grants.sql"), "utf8"));
 
     // 2. Seed test users in auth.users
     await db.exec(`
@@ -191,13 +192,12 @@ describe("Milestone A3: PostgreSQL Database Grants & Row Level Security (RLS)", 
       await resetContext();
     });
 
-    it("active owner with AAL2: ALLOWED SELECT, INSERT, UPDATE, DELETE", async () => {
+    it("active owner with AAL2: public read allowed, direct publication DML denied", async () => {
       await setContext("active_owner_aal2");
-      await db.query("INSERT INTO public.published_content (id, revision, payload) VALUES ('20000000-0000-0000-0000-000000000002', 2, '{\"ver\": 2}'::jsonb)");
-      const upd = await db.query("UPDATE public.published_content SET payload = '{\"ver\": 2.1}'::jsonb WHERE revision = 2");
-      expect(upd.affectedRows).toBe(1);
-      const del = await db.query("DELETE FROM public.published_content WHERE revision = 2");
-      expect(del.affectedRows).toBe(1);
+      expect((await db.query("SELECT * FROM public.published_content")).rows.length).toBeGreaterThanOrEqual(1);
+      await expect(db.query("INSERT INTO public.published_content (revision, payload) VALUES (2, '{}'::jsonb)")).rejects.toThrow(/permission denied/i);
+      await expect(db.query("UPDATE public.published_content SET payload = '{}'::jsonb")).rejects.toThrow(/permission denied/i);
+      await expect(db.query("DELETE FROM public.published_content")).rejects.toThrow(/permission denied/i);
       await resetContext();
     });
   });

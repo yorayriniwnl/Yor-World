@@ -14,9 +14,11 @@ export async function POST(request: NextRequest) {
   }
 
   let body: unknown;
+  let actualBytes = 0;
   try {
     const rawText = await request.text();
-    if (rawText.length > 4096) {
+    actualBytes = Buffer.byteLength(rawText, "utf8");
+    if (actualBytes > 4096) {
       return NextResponse.json(
         { error: "Payload exceeds 4096 bytes ceiling" },
         { status: 413 }
@@ -30,7 +32,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const result = await recordTelemetryEvent(body, contentLength);
+  const result = await recordTelemetryEvent(body, actualBytes);
 
   if (!result.success) {
     return NextResponse.json(

@@ -5,6 +5,8 @@
  * and cryptographic hashing before private draft registration.
  */
 
+import sharp from "sharp";
+import { crc32 } from "node:zlib";
 import { createHash } from "node:crypto";
 import type { OwnerContext } from "../auth/types";
 import { createAdminServiceRoleClient } from "../auth/clients";
@@ -108,32 +110,71 @@ function verifyMagicBytes(bytes: Uint8Array, mime: string): boolean {
   return false;
 }
 
-/**
- * Extracts dimensions from image binary header.
- */
-function extractDimensions(bytes: Uint8Array, mime: AllowedMimeType): { width: number; height: number } {
-  try {
-    if (mime === "image/png" && bytes.length >= 24) {
-      const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-      const width = view.getUint32(16, false);
-      const height = view.getUint32(20, false);
-      return { width: width || 800, height: height || 600 };
+// libpng can decode pixels even when the final IEND is missing. Check the
+// entire PNG container and checksums as well as forcing a complete pixel decode.
+function verifyPngContainer(bytes: Uint8Array): void {
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  let offset = 8;
+  let first = true;
+  while (offset + 12 <= bytes.length) {
+    const length = view.getUint32(offset, false);
+    const end = offset + 12 + length;
+    if (end > bytes.length) break;
+    const type = String.fromCharCode(...bytes.subarray(offset + 4, offset + 8));
+    if ((first && (type !== "IHDR" || length !== 13)) ||
+        crc32(bytes.subarray(offset + 4, end - 4)) !== view.getUint32(end - 4, false)) break;
+    if (type === "IEND") {
+      if (length === 0 && end === bytes.length) return;
+      break;
     }
-  } catch {
-    // Fallback to default dimensions
+    first = false;
+    offset = end;
   }
-  return { width: 1200, height: 800 };
+  throw new MediaValidationError("Upload rejected: corrupt or truncated PNG container.");
+}
+
+// Bound decoded RGBA output to 64 MiB and reject pathological image axes.
+export const MAX_IMAGE_DIMENSION = 8192;
+export const MAX_IMAGE_PIXELS = 16 * 1024 * 1024;
+
+async function decodeDimensions(bytes: Uint8Array, mime: AllowedMimeType) {
+  try {
+    if (mime === "image/png") verifyPngContainer(bytes);
+    if (mime === "image/webp" && new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength).getUint32(4, true) + 8 !== bytes.length) {
+      throw new Error("Invalid WebP RIFF length");
+    }
+    const decoder = sharp(Buffer.from(bytes), {
+      failOn: "warning",
+      limitInputPixels: MAX_IMAGE_PIXELS,
+      animated: true,
+    });
+    const metadata = await decoder.metadata();
+    const expectedFormat = mime === "image/jpeg" ? "jpeg" : mime.slice(6);
+    const { width, height } = metadata;
+    if (metadata.format !== expectedFormat || !width || !height ||
+        width > MAX_IMAGE_DIMENSION || height > MAX_IMAGE_DIMENSION ||
+        width * height > MAX_IMAGE_PIXELS || (metadata.pages ?? 1) !== 1) {
+      throw new Error("Invalid image dimensions, format or frame count");
+    }
+    // metadata() alone never proves that compressed pixel data is intact.
+    // Force complete decoding without resize or other shortcuts.
+    const { info } = await decoder.ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+    if (info.width !== width || info.height !== height) throw new Error("Dimension mismatch");
+    return { width, height };
+  } catch {
+    throw new MediaValidationError("Upload rejected: image is corrupt, truncated or exceeds image dimension/pixel limits.");
+  }
 }
 
 /**
  * Inspects and validates uploaded media buffer.
  * Throws MediaValidationError (422) if invalid, corrupted, or unsupported.
  */
-export function validateUpload(file: {
+export async function validateUpload(file: {
   buffer: Uint8Array | Buffer;
   mime: string;
   filename: string;
-}): ValidatedMedia {
+}): Promise<ValidatedMedia> {
   const bytes = file.buffer instanceof Uint8Array ? file.buffer : new Uint8Array(file.buffer);
 
   if (!file.mime || !ALLOWED_MIME_TYPES.includes(file.mime as AllowedMimeType)) {
@@ -161,7 +202,7 @@ export function validateUpload(file: {
   }
 
   const hash = createHash("sha256").update(bytes).digest("hex");
-  const dimensions = extractDimensions(bytes, mime);
+  const dimensions = await decodeDimensions(bytes, mime);
 
   return {
     buffer: bytes,

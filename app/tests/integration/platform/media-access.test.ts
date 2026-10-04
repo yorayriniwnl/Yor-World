@@ -14,6 +14,8 @@
  * - Media approval workflow and zero public leakage guarantee
  */
 
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, expect, it, beforeEach } from "vitest";
 import {
   validateUpload,
@@ -26,6 +28,8 @@ import { checkMediaApproved } from "@/server/media/manifest";
 import { setTestAuthRegistry } from "@/server/auth/require-owner";
 import { GET as getMediaAssetRoute } from "@/app/api/admin/media/[id]/route";
 import type { OwnerContext } from "@/server/auth/types";
+
+const fixture = (name: string) => readFileSync(resolve("tests/fixtures/scp-media", name));
 
 const OWNER_AAL2: OwnerContext = {
   userId: "11111111-1111-1111-1111-111111111111",
@@ -73,16 +77,10 @@ describe("Milestone A4: Media Validation & Private Draft Storage Access", () => 
   });
 
   describe("Binary Media Validation Gate", () => {
-    it("valid PNG buffer with authentic magic bytes passes validation", () => {
-      // Valid PNG header: 89 50 4E 47 0D 0A 1A 0A
-      const validPng = new Uint8Array([
-        0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
-        0x00, 0x00, 0x00, 0x0d, 0x49, 0x48, 0x44, 0x52,
-        0x00, 0x00, 0x03, 0x20, 0x00, 0x00, 0x02, 0x58, // 800x600
-        0x08, 0x06, 0x00, 0x00, 0x00,
-      ]);
+    it("valid PNG buffer with authentic magic bytes passes validation", async () => {
+      const validPng = fixture("valid-rgba-16x12.png");
 
-      const result = validateUpload({
+      const result = await validateUpload({
         buffer: validPng,
         mime: "image/png",
         filename: "figure-1.png",
@@ -91,14 +89,13 @@ describe("Milestone A4: Media Validation & Private Draft Storage Access", () => 
       expect(result.mime).toBe("image/png");
       expect(result.bytes).toBe(validPng.length);
       expect(result.hash).toHaveLength(64);
-      expect(result.dimensions.width).toBe(800);
-      expect(result.dimensions.height).toBe(600);
+      expect(result.dimensions.width).toBe(16);
+      expect(result.dimensions.height).toBe(12);
     });
 
-    it("valid JPEG buffer with authentic magic bytes passes validation", () => {
-      // JPEG header: FF D8 FF
-      const validJpeg = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46]);
-      const result = validateUpload({
+    it("valid JPEG buffer with authentic magic bytes passes validation", async () => {
+      const validJpeg = fixture("valid-rgb-16x12.jpg");
+      const result = await validateUpload({
         buffer: validJpeg,
         mime: "image/jpeg",
         filename: "photo.jpg",
@@ -108,14 +105,9 @@ describe("Milestone A4: Media Validation & Private Draft Storage Access", () => 
       expect(result.hash).toHaveLength(64);
     });
 
-    it("valid WebP buffer with authentic RIFF/WEBP magic bytes passes validation", () => {
-      // WebP header: RIFF .... WEBP
-      const validWebp = new Uint8Array([
-        0x52, 0x49, 0x46, 0x46, // RIFF
-        0x20, 0x00, 0x00, 0x00,
-        0x57, 0x45, 0x42, 0x50, // WEBP
-      ]);
-      const result = validateUpload({
+    it("valid WebP buffer with authentic RIFF/WEBP magic bytes passes validation", async () => {
+      const validWebp = fixture("valid-lossy-16x12.webp");
+      const result = await validateUpload({
         buffer: validWebp,
         mime: "image/webp",
         filename: "capture.webp",
@@ -125,59 +117,59 @@ describe("Milestone A4: Media Validation & Private Draft Storage Access", () => 
       expect(result.hash).toHaveLength(64);
     });
 
-    it("disallowed MIME type (e.g. SVG / script payload) throws 422 MediaValidationError", () => {
+    it("disallowed MIME type (e.g. SVG / script payload) throws 422 MediaValidationError", async () => {
       const svg = new TextEncoder().encode("<svg><script>alert(1)</script></svg>");
-      expect(() =>
+      await expect(
         validateUpload({
           buffer: svg,
           mime: "image/svg+xml",
           filename: "exploit.svg",
         })
-      ).toThrowError(MediaValidationError);
+      ).rejects.toThrowError(MediaValidationError);
     });
 
-    it("spoofed header (text file claiming image/png MIME) throws 422 MediaValidationError", () => {
+    it("spoofed header (text file claiming image/png MIME) throws 422 MediaValidationError", async () => {
       const fakePng = new TextEncoder().encode("Not really a png image file");
-      expect(() =>
+      await expect(
         validateUpload({
           buffer: fakePng,
           mime: "image/png",
           filename: "fake.png",
         })
-      ).toThrowError(/Header spoofing rejected/i);
+      ).rejects.toThrowError(/Header spoofing rejected/i);
     });
 
-    it("empty buffer throws 422 MediaValidationError", () => {
-      expect(() =>
+    it("empty buffer throws 422 MediaValidationError", async () => {
+      await expect(
         validateUpload({
           buffer: new Uint8Array([]),
           mime: "image/png",
           filename: "empty.png",
         })
-      ).toThrowError(/empty file payload/i);
+      ).rejects.toThrowError(/empty file payload/i);
     });
 
-    it("oversized buffer (> 5 MiB) throws 422 MediaValidationError", () => {
+    it("oversized buffer (> 5 MiB) throws 422 MediaValidationError", async () => {
       // 5 MiB + 1 byte
       const oversized = new Uint8Array(5 * 1024 * 1024 + 1);
       // set valid PNG header
       oversized.set([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
-      expect(() =>
+      await expect(
         validateUpload({
           buffer: oversized,
           mime: "image/png",
           filename: "huge.png",
         })
-      ).toThrowError(/exceeds maximum 5242880 bytes/i);
+      ).rejects.toThrowError(/exceeds maximum 5242880 bytes/i);
     });
   });
 
   describe("Private Draft Media Access Control (Zero Public Leakage)", () => {
     it("anonymous public visitor cannot read private draft media (401)", async () => {
       // Register a draft media item
-      const validPng = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0]);
-      const validated = validateUpload({ buffer: validPng, mime: "image/png", filename: "private-draft.png" });
+      const validPng = fixture("valid-rgba-16x12.png");
+      const validated = await validateUpload({ buffer: validPng, mime: "image/png", filename: "private-draft.png" });
       const asset = await registerMediaAsset(validated, OWNER_AAL2);
 
       // Anonymous request
@@ -190,8 +182,8 @@ describe("Milestone A4: Media Validation & Private Draft Storage Access", () => 
     });
 
     it("authenticated non-owner cannot read private draft media (403)", async () => {
-      const validPng = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0]);
-      const validated = validateUpload({ buffer: validPng, mime: "image/png", filename: "private-draft.png" });
+      const validPng = fixture("valid-rgba-16x12.png");
+      const validated = await validateUpload({ buffer: validPng, mime: "image/png", filename: "private-draft.png" });
       const asset = await registerMediaAsset(validated, OWNER_AAL2);
 
       const req = new Request(`http://localhost:3000/api/admin/media/${asset.id}`, {
@@ -205,8 +197,8 @@ describe("Milestone A4: Media Validation & Private Draft Storage Access", () => 
     });
 
     it("owner without MFA cannot read private draft media (403)", async () => {
-      const validPng = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0]);
-      const validated = validateUpload({ buffer: validPng, mime: "image/png", filename: "private-draft.png" });
+      const validPng = fixture("valid-rgba-16x12.png");
+      const validated = await validateUpload({ buffer: validPng, mime: "image/png", filename: "private-draft.png" });
       const asset = await registerMediaAsset(validated, OWNER_AAL2);
 
       const req = new Request(`http://localhost:3000/api/admin/media/${asset.id}`, {
@@ -220,8 +212,8 @@ describe("Milestone A4: Media Validation & Private Draft Storage Access", () => 
     });
 
     it("revoked owner cannot read private draft media (403)", async () => {
-      const validPng = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0]);
-      const validated = validateUpload({ buffer: validPng, mime: "image/png", filename: "private-draft.png" });
+      const validPng = fixture("valid-rgba-16x12.png");
+      const validated = await validateUpload({ buffer: validPng, mime: "image/png", filename: "private-draft.png" });
       const asset = await registerMediaAsset(validated, OWNER_AAL2);
 
       const req = new Request(`http://localhost:3000/api/admin/media/${asset.id}`, {
@@ -235,8 +227,8 @@ describe("Milestone A4: Media Validation & Private Draft Storage Access", () => 
     });
 
     it("active owner with AAL2 can access private draft media (200)", async () => {
-      const validPng = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0]);
-      const validated = validateUpload({ buffer: validPng, mime: "image/png", filename: "private-draft.png" });
+      const validPng = fixture("valid-rgba-16x12.png");
+      const validated = await validateUpload({ buffer: validPng, mime: "image/png", filename: "private-draft.png" });
       const asset = await registerMediaAsset(validated, OWNER_AAL2);
 
       const req = new Request(`http://localhost:3000/api/admin/media/${asset.id}`, {
@@ -254,8 +246,8 @@ describe("Milestone A4: Media Validation & Private Draft Storage Access", () => 
 
   describe("Media Approval Workflow", () => {
     it("approval changes status from pending to approved", async () => {
-      const validPng = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0]);
-      const validated = validateUpload({ buffer: validPng, mime: "image/png", filename: "chart.png" });
+      const validPng = fixture("valid-rgba-16x12.png");
+      const validated = await validateUpload({ buffer: validPng, mime: "image/png", filename: "chart.png" });
       const asset = await registerMediaAsset(validated, OWNER_AAL2);
 
       expect(asset.approvalStatus).toBe("pending");
