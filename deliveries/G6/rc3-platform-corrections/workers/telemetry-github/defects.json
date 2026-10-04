@@ -1,0 +1,38 @@
+{
+  "kind": "Maker regression return, not independent audit or acceptance",
+  "items": [
+    {
+      "id": "SCP-05",
+      "status": "PASS local corrected expected-behavior regression",
+      "evidence": "focused-05.json"
+    },
+    {
+      "id": "SCP-06",
+      "status": "PASS local corrected expected-behavior regression",
+      "evidence": "focused-05.json"
+    },
+    {
+      "id": "SCP-07",
+      "status": "PASS local corrected expected-behavior regression",
+      "evidence": "focused-05.json"
+    },
+    {
+      "id": "SOURCE-TELEMETRY-MAP",
+      "status": "PASS local corrected expected-behavior regression",
+      "evidence": "focused-05.json"
+    }
+  ],
+  "boundaries": [
+    "Accepted SQL in one embedded PGlite instance, no hosted services or independent PostgreSQL sessions",
+    "GitHub successful snapshots durable; failed attempts and single flight process-local only; restarts or separate instances can refresh independently",
+    "Legacy nullable rows remain unchanged, not silently merged; new deterministic IDs increment consistently while preserving accepted SQL NULL uniqueness",
+    "Memory is bounded inspection cache: 128 FIFO keys, 24-hour idle TTL, lazy eviction; durable counts unaffected by memory eviction",
+    "Absent database baseline behavior retained; no schema or migration change"
+  ],
+  "notRun": [
+    "Hosted services",
+    "Independent audit",
+    "Acceptance",
+    "Deployment"
+  ]
+}

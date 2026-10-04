@@ -1,0 +1,98 @@
+{
+  "shell": "PowerShell",
+  "outputCapture": "PowerShell *> log; $testExitCode=$LASTEXITCODE; exit $testExitCode (eslint uses $lintExitCode)",
+  "commands": [
+    {
+      "command": "pnpm exec vitest run --config vitest.integration.config.ts tests/integration/platform/telemetry.test.ts tests/integration/platform/github-metadata.test.ts tests/integration/platform/scp-telemetry-github.test.ts --reporter=verbose --reporter=json --outputFile.json=C:\\Users\\yoray\\AppData\\Local\\Temp\\yw-scp-64a4e0ad\\deliveries\\G6\\rc3-platform-corrections\\workers\\telemetry-github\\focused-01.json",
+      "cwd": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yw-scp-64a4e0ad\\app",
+      "exitCode": 1,
+      "log": "focused-01.log",
+      "result": "focused-01.json",
+      "counts": {
+        "files": 3,
+        "tests": 22,
+        "passed": 21,
+        "failed": 1
+      }
+    },
+    {
+      "command": "pnpm exec vitest run --config vitest.integration.config.ts tests/integration/platform/telemetry.test.ts tests/integration/platform/github-metadata.test.ts tests/integration/platform/scp-telemetry-github.test.ts --reporter=verbose --reporter=json --outputFile.json=C:\\Users\\yoray\\AppData\\Local\\Temp\\yw-scp-64a4e0ad\\deliveries\\G6\\rc3-platform-corrections\\workers\\telemetry-github\\focused-02.json",
+      "cwd": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yw-scp-64a4e0ad\\app",
+      "exitCode": 1,
+      "log": "focused-02.log",
+      "result": "focused-02.json",
+      "counts": {
+        "files": 3,
+        "tests": 22,
+        "passed": 21,
+        "failed": 1
+      }
+    },
+    {
+      "command": "pnpm exec vitest run --config vitest.integration.config.ts tests/integration/platform/telemetry.test.ts tests/integration/platform/github-metadata.test.ts tests/integration/platform/scp-telemetry-github.test.ts --reporter=verbose --reporter=json --outputFile.json=C:\\Users\\yoray\\AppData\\Local\\Temp\\yw-scp-64a4e0ad\\deliveries\\G6\\rc3-platform-corrections\\workers\\telemetry-github\\focused-03.json",
+      "cwd": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yw-scp-64a4e0ad\\app",
+      "exitCode": 0,
+      "log": "focused-03.log",
+      "result": "focused-03.json",
+      "counts": {
+        "files": 3,
+        "tests": 22,
+        "passed": 22,
+        "failed": 0
+      }
+    },
+    {
+      "command": "pnpm exec vitest run --config vitest.integration.config.ts tests/integration/platform/telemetry.test.ts tests/integration/platform/github-metadata.test.ts tests/integration/platform/scp-telemetry-github.test.ts --reporter=verbose --reporter=json --outputFile.json=C:\\Users\\yoray\\AppData\\Local\\Temp\\yw-scp-64a4e0ad\\deliveries\\G6\\rc3-platform-corrections\\workers\\telemetry-github\\focused-04.json",
+      "cwd": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yw-scp-64a4e0ad\\app",
+      "exitCode": 0,
+      "log": "focused-04.log",
+      "result": "focused-04.json",
+      "counts": {
+        "files": 3,
+        "tests": 22,
+        "passed": 22,
+        "failed": 0
+      }
+    },
+    {
+      "command": "pnpm exec eslint src/server/telemetry/events.ts src/app/api/events/route.ts src/server/integrations/github.ts tests/integration/platform/scp-telemetry-github.test.ts",
+      "cwd": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yw-scp-64a4e0ad\\app",
+      "exitCode": 0,
+      "log": "eslint-01.log"
+    },
+    {
+      "command": "pnpm exec vitest run --config vitest.integration.config.ts tests/integration/platform/telemetry.test.ts tests/integration/platform/github-metadata.test.ts tests/integration/platform/scp-telemetry-github.test.ts --reporter=verbose --reporter=json --outputFile.json=C:\\Users\\yoray\\AppData\\Local\\Temp\\yw-scp-64a4e0ad\\deliveries\\G6\\rc3-platform-corrections\\workers\\telemetry-github\\focused-05.json",
+      "cwd": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yw-scp-64a4e0ad\\app",
+      "exitCode": 0,
+      "log": "focused-05.log",
+      "result": "focused-05.json",
+      "counts": {
+        "files": 3,
+        "tests": 22,
+        "passed": 22,
+        "failed": 0
+      }
+    },
+    {
+      "command": "pnpm exec eslint src/server/telemetry/events.ts src/app/api/events/route.ts src/server/integrations/github.ts tests/integration/platform/scp-telemetry-github.test.ts",
+      "cwd": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yw-scp-64a4e0ad\\app",
+      "exitCode": 0,
+      "log": "eslint-02.log"
+    }
+  ],
+  "setupFailure": {
+    "cwd": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yw-scp-64a4e0ad\\app",
+    "operation": "Python attempted Path(\"app/tests/integration/platform/scp-telemetry-github.test.ts\").read_text() from app/; FileNotFoundError; repair then rerun executed unchanged test in focused-02. Corrected relative path next invocation.",
+    "exitCode": 1
+  },
+  "parentTypecheckFailure": {
+    "status": "FAIL preserved by parent",
+    "log": "../../evidence/final-typecheck.log",
+    "issues": [
+      "TS2379 explicit undefined optional result",
+      "untyped PGlite query rows",
+      "possibly undefined indexed aggregate"
+    ],
+    "disposition": "Corrected owned source/test types; full strict rerun parent-owned"
+  }
+}

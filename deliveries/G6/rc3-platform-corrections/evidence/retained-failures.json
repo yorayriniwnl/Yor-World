@@ -1,0 +1,53 @@
+{
+  "failures": [
+    {
+      "kind": "Isolated checkout",
+      "result": "exit128 Windows filename too long; new shorter checkout with command-scoped core.longpaths=true succeeded",
+      "sourceChanged": false
+    },
+    {
+      "kind": "Anonymous CI metadata helper",
+      "result": "HTTP403 rate limit; authenticated read via existing Git credential succeeded, no credentials printed"
+    },
+    {
+      "kind": "Initial/final-typecheck",
+      "evidence": [
+        "initial-typecheck.log",
+        "final-typecheck.log"
+      ],
+      "result": "Strict source/test typing errors; makers corrected types, no compiler relaxation"
+    },
+    {
+      "kind": "First full-suite launcher",
+      "evidence": [
+        "final-unit.log",
+        "final-integration.log"
+      ],
+      "result": "Unquoted output path split argv; no suite success claimed; corrected quoted invocation produced actual JSON"
+    },
+    {
+      "kind": "First actual full unit",
+      "evidence": [
+        "final-unit-02-results.json"
+      ],
+      "result": "260PASS/1FAIL obsolete dependency list; explicit parent one-test ownership addendum and stronger sharp client boundary tests resolved"
+    },
+    {
+      "kind": "Concurrent tree receipt startup",
+      "result": "One final-unit-03 launcher failed before test execution because concurrent git write-tree contended for index.lock; switched to parent single snapshot plus read-only index digest; final-unit-04 passed"
+    },
+    {
+      "kind": "Concurrent build/typecheck generated types",
+      "evidence": [
+        "final-typecheck-03.log"
+      ],
+      "result": "Build regenerated .next/types/routes while typecheck read it; retained failure, final-typecheck-04 ran after completed build and passed"
+    },
+    {
+      "kind": "Worker helper/assertion attempts",
+      "result": "All returned worker earlier logs/results retained; latest authoritative attempts identified in their reports"
+    }
+  ],
+  "noFailedTestEvidenceDiscarded": true,
+  "sourceFixedBeforeSuccessClaim": true
+}

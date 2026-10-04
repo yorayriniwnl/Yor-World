@@ -1,0 +1,26 @@
+
+> yor-world@1.0.0-rc3 typecheck C:\Users\yoray\AppData\Local\Temp\yw-scp-64a4e0ad\app
+> tsc --noEmit
+
+src/server/integrations/github.ts(100,22): error TS2379: Argument of type '{ at: number; result: MetadataResult | undefined; }' is not assignable to parameter of type '{ at: number; result?: MetadataResult; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'result' are incompatible.
+    Type 'MetadataResult | undefined' is not assignable to type 'MetadataResult'.
+      Type 'undefined' is not assignable to type 'MetadataResult'.
+tests/integration/platform/scp-publication-outbox.test.ts(129,24): error TS2339: Property 'status' does not exist on type '{}'.
+tests/integration/platform/scp-publication-outbox.test.ts(179,46): error TS18046: 'row' is of type 'unknown'.
+tests/integration/platform/scp-publication-outbox.test.ts(179,77): error TS18046: 'row' is of type 'unknown'.
+tests/integration/platform/scp-publication-outbox.test.ts(179,105): error TS18046: 'row' is of type 'unknown'.
+tests/integration/platform/scp-publication-outbox.test.ts(184,37): error TS2322: Type '(sql: string, params: unknown[] | undefined) => Promise<Results<unknown>>' is not assignable to type '(sql: string, params?: unknown[] | undefined) => Promise<{ rows: Record<string, unknown>[]; }>'.
+  Type 'Promise<Results<unknown>>' is not assignable to type 'Promise<{ rows: Record<string, unknown>[]; }>'.
+    Type 'Results<unknown>' is not assignable to type '{ rows: Record<string, unknown>[]; }'.
+      Types of property 'rows' are incompatible.
+        Type 'unknown[]' is not assignable to type 'Record<string, unknown>[]'.
+          Type 'unknown' is not assignable to type 'Record<string, unknown>'.
+tests/integration/platform/scp-publication-outbox.test.ts(218,18): error TS2339: Property 'attempts' does not exist on type '{}'.
+tests/integration/platform/scp-publication-outbox.test.ts(218,56): error TS2339: Property 'status' does not exist on type '{}'.
+tests/integration/platform/scp-publication-outbox.test.ts(219,34): error TS2339: Property 'next_attempt_at' does not exist on type '{}'.
+tests/integration/platform/scp-telemetry-github.test.ts(43,32): error TS18046: 'row' is of type 'unknown'.
+tests/integration/platform/scp-telemetry-github.test.ts(47,12): error TS2571: Object is of type 'unknown'.
+tests/integration/platform/scp-telemetry-github.test.ts(70,16): error TS2571: Object is of type 'unknown'.
+tests/integration/platform/scp-telemetry-github.test.ts(94,12): error TS2532: Object is possibly 'undefined'.
+ ELIFECYCLE  Command failed with exit code 2.

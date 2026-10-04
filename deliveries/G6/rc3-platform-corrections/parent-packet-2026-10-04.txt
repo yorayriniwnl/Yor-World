@@ -1,0 +1,497 @@
+MODEL:
+Gemini Pro
+
+THINKING:
+Highest available / Extended Thinking
+
+Repository:
+https://github.com/yorayriniwnl/Yor-World
+
+ROLE:
+Platform/backend correction maker.
+
+LIVE GITHUB HEAD OBSERVED BY PARENT:
+
+d13dc181fd765081446093c2e39785123bb7b90c
+
+LIVE CANONICAL APP TREE:
+
+174ccd19091622c3dbce5f6b0ce3fe7fb38e1985
+
+G1-G5:
+ACCEPTED
+
+G6:
+ACTIVE / REWORK
+
+G7:
+LOCKED
+
+IMPORTANT:
+
+The user reports that several corrections have already been made locally.
+
+DO NOT discard or blindly overwrite those changes.
+
+First inspect the actual working tree and compare it with live GitHub HEAD.
+
+If local changes already implement some or all of the assigned corrections:
+
+review them critically,
+test them,
+fix anything incomplete,
+then commit and push them.
+
+If the working tree is clean and identical to GitHub:
+
+implement the correction packet now.
+
+============================================================
+AUTHORITATIVE CORRECTION PACKET
+============================================================
+
+Read and execute:
+
+docs/planning/reconciliation-packets/2026-10-03-rc3-platform-corrections.md
+
+Also read:
+
+deliveries/G6/rc3-supplemental-codex-verification/report.md
+
+deliveries/G6/rc3-supplemental-codex-verification/defects.json
+
+deliveries/G6/rc3-supplemental-codex-verification/verification-identity.json
+
+AGENTS.md
+
+START_HERE.md
+
+The seven reproduced defects are:
+
+SCP-01 P1
+owner direct publication/history DML bypass
+
+SCP-02 P1
+expired outbox lease holder can overwrite reclaimed result
+
+SCP-03 P2
+fifth exception leaves outbox permanently retrying
+
+SCP-04 P2
+truncated/corrupt images accepted with fabricated dimensions
+
+SCP-05 P2
+telemetry code dimension conflicts with accepted SQL uniqueness
+
+SCP-06 P3
+4096-byte telemetry limit incorrectly uses character length
+
+SCP-07 P2
+failed GitHub refresh attempts are not hourly bounded
+
+All seven must have real expected-behavior regression tests.
+
+============================================================
+STEP 1 — AUDIT EXISTING LOCAL CHANGES FIRST
+============================================================
+
+Before editing:
+
+git status
+
+git diff
+
+git diff --cached
+
+git log --oneline -10
+
+Record:
+
+current branch
+current HEAD
+modified files
+untracked files
+staged files
+
+Compare each local change against SCP-01 through SCP-07.
+
+Produce a local-change disposition:
+
+KEEP
+ADJUST
+REVERT
+UNRELATED
+
+Do not destroy valid user work.
+
+Do not include unrelated changes in this correction commit.
+
+============================================================
+SCP-01 — PUBLICATION SECURITY
+============================================================
+
+After accepted migrations + operational hardening:
+
+PUBLIC
+anon
+authenticated non-owner
+owner AAL1
+revoked owner
+active owner AAL2
+
+must NOT be able to bypass canonical publication logic through direct writes to protected public publication/history tables.
+
+Active owner publication must still work through the privileged canonical server transaction.
+
+Prove that direct owner DML cannot:
+
+inject publication revision
+rewrite active publication payload
+rewrite immutable history
+skip validation
+skip expectedRevision
+skip audit
+
+Preserve legitimate:
+
+public reads
+owner private/draft access
+server-side publish
+server-side rollback
+audit/history append
+
+Do not edit frozen numbered migrations.
+
+Use:
+
+app/supabase/operations/harden-publication-grants.sql
+
+for post-migration hardening.
+
+============================================================
+SCP-02 — OUTBOX LEASE FENCING
+============================================================
+
+Every completion/update made by an outbox worker must verify current claim ownership.
+
+Reproduce:
+
+worker A claims
+A lease expires
+worker B reclaims
+B completes
+A later returns
+
+A must be unable to change B's authoritative result.
+
+Protect:
+
+success
+retryable failure
+terminal failure
+exception
+missing-message
+all completion mutations
+
+A stale worker must affect zero rows.
+
+============================================================
+SCP-03 — RETRY CEILING
+============================================================
+
+Attempts 5 must terminate as:
+
+failed
+
+not:
+
+retrying forever.
+
+Apply consistently to:
+
+normal provider error
+thrown exception
+message-read exception
+other bounded failure paths
+
+while preserving SCP-02 ownership fencing.
+
+============================================================
+SCP-04 — IMAGE VALIDATION
+============================================================
+
+Reject:
+
+signature-only PNG
+truncated PNG
+3-byte/truncated JPEG
+12-byte/truncated WebP
+corrupt body
+MIME mismatch
+oversized image
+invalid dimensions
+
+Require actual decodeability and real dimensions.
+
+Test genuine valid:
+
+PNG
+JPEG
+WebP
+
+Do not fabricate 1200x800 when dimensions cannot be decoded.
+
+If a decoder dependency is required, pin it exactly and explain why.
+
+============================================================
+SCP-05 — TELEMETRY SQL CONTRACT
+============================================================
+
+Accepted SQL uniqueness is:
+
+(date, event, project_id, tier)
+
+Canonical persistence must honor that.
+
+Different allowed `code` values for the same accepted key dimensions must not cause SQL 23505 / HTTP 503.
+
+Do not introduce a migration or silently change the database uniqueness contract.
+
+Use actual durable SQL in regression tests.
+
+============================================================
+SCP-06 — BYTE CEILING
+============================================================
+
+Enforce:
+
+4096 UTF-8 bytes
+
+not 4096 JS characters.
+
+Do not trust Content-Length alone.
+
+A 6037-byte body represented by fewer than 4096 JS characters must return:
+
+413
+
+Test ASCII and multibyte boundaries.
+
+============================================================
+SCP-07 — GITHUB REFRESH THROTTLE
+============================================================
+
+Failed refreshes must also respect bounded cadence.
+
+Implement:
+
+single-flight/coalescing
+attempt throttling
+truthful last-success timestamp
+truthful stale state
+last-good preservation
+next-window recovery
+
+Three simultaneous/frequent requests during an outage must not trigger three independent upstream refreshes.
+
+Use only synthetic fetches in tests.
+
+============================================================
+TELEMETRY MEMORY BOUND
+============================================================
+
+While modifying telemetry, ensure any process-memory Map/cache cannot grow indefinitely.
+
+Use deterministic:
+
+TTL eviction
+and/or
+maximum key cardinality.
+
+Test the bound.
+
+No schema change.
+
+============================================================
+ROLLBACK CONTRACT
+============================================================
+
+DO NOT add expectedRevision to rollback in this packet.
+
+Accepted interface is:
+
+rollbackPublication(targetRevision, actor)
+
+Treat stale-tab rollback expectedRevision as future P2 hardening.
+
+Do not destabilize the accepted API.
+
+============================================================
+OWNERSHIP BOUNDARY
+============================================================
+
+Only modify the paths authorized by:
+
+G6-RC3-PLATFORM-CORRECT-01.
+
+Do NOT modify:
+
+world runtime
+camera logic
+3D assets
+performance thresholds
+release scripts
+CI merely to obtain green output
+historical accepted delivery roots
+contact R2 idempotency algorithm unrelated to these defects
+
+============================================================
+CURRENT CI FAILURE
+============================================================
+
+Current live GitHub run:
+
+37140235935
+
+fails only during the existing 60-second performance test with:
+
+World canvas detached, hidden, or renderer stopped for more than one second.
+
+Do not modify world/runtime code from this platform lane.
+
+Record this as external current gate evidence.
+
+The subsequent RC4 integration/release lane will rerun the full performance suite after platform source is corrected.
+
+============================================================
+REQUIRED TESTING
+============================================================
+
+From canonical:
+
+app/
+
+run:
+
+pnpm install --frozen-lockfile
+
+pnpm lint
+
+pnpm typecheck
+
+all focused SCP regression tests
+
+pnpm test:unit
+
+pnpm test:integration
+
+pnpm build
+
+Every SCP must have an executed regression proving the FIXED behavior.
+
+Do not use "looks correct" as closure.
+
+============================================================
+RETURN ROOT
+============================================================
+
+Create:
+
+deliveries/G6/rc3-platform-corrections/
+
+Include:
+
+report.md
+defects.json
+implementation-identity.json
+commands-and-exit-codes.md
+test results
+relevant evidence
+SHA256SUMS.txt
+
+For each defect:
+
+SCP ID
+
+original behavior
+
+source changed
+
+regression test
+
+expected result
+
+actual result
+
+FIXED / PARTIAL / NOT FIXED / NOT RUN
+
+============================================================
+GIT REQUIREMENT
+============================================================
+
+When all assigned source corrections and platform tests pass:
+
+commit the bounded correction
+
+push it to the connected repository
+
+Return exact:
+
+base SHA
+
+new correction commit SHA
+
+branch
+
+app tree before
+
+app tree after
+
+changed-file list
+
+Git push result
+
+Do not leave completed correction work only on the local machine.
+
+============================================================
+DO NOT REFRESH RELEASE YET
+============================================================
+
+Do NOT regenerate RC3.
+
+Do NOT modify the RC3 bundle/manifest to pretend it contains corrected source.
+
+RC3 is historical candidate evidence for the old source.
+
+After this correction changes production source, Parent will open:
+
+v1.0.0-rc4
+
+through Gemini #3.
+
+============================================================
+STOP
+============================================================
+
+Stop after:
+
+all assigned corrections implemented
+
+regression tests executed
+
+platform suite passing
+
+delivery evidence created
+
+commit pushed
+
+Then return the exact handoff.
+
+Do NOT:
+
+run independent audit
+accept G6
+start G7
+deploy
+modify world/runtime to chase the current CI performance failure
+self-approve the correction.

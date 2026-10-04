@@ -1,0 +1,111 @@
+{
+  "packetId": "G6-RC3-PLATFORM-CORRECT-01",
+  "classification": "Maker implementation and executed local expected-behavior regression evidence, not independent audit or acceptance",
+  "implementationCommit": "02380c323154fdf0815e10543de0a936619f2b79",
+  "baseCommit": "d13dc181fd765081446093c2e39785123bb7b90c",
+  "appTreeBefore": "174ccd19091622c3dbce5f6b0ce3fe7fb38e1985",
+  "appTreeAfter": "3586e0c8674faac3f73bcab4d17f646e3b2e9191",
+  "defects": [
+    {
+      "id": "SCP-01",
+      "severity": "P1",
+      "status": "FIXED",
+      "originalBehavior": "Owner direct publication/history writes bypassed canonical gates",
+      "sourceChanged": "app/supabase/operations/harden-publication-grants.sql",
+      "regressionTest": "app/tests/integration/platform/scp-publication-outbox.test.ts",
+      "expectedResult": "Direct public/anon/authenticated publication/history mutations and helper calls denied; privileged canonical publish/rollback and owner private/public read behavior preserved",
+      "actualResult": "PASS: expected behavior executed in focused and full integration suites",
+      "evidence": "evidence/final-integration-03-results.json",
+      "boundary": "Actual accepted SQL/DCL and synthetic identity claims in local PGlite"
+    },
+    {
+      "id": "SCP-02",
+      "severity": "P1",
+      "status": "FIXED",
+      "originalBehavior": "Expired worker overwrote reclaimed outbox result",
+      "sourceChanged": "app/src/server/jobs/outbox-worker.ts",
+      "regressionTest": "app/tests/integration/platform/scp-publication-outbox.test.ts",
+      "expectedResult": "Every completion requires claim xmin/version, processing state and live lease; stale paths update0rows/count0; queued/slow reads do not start send after claim loss",
+      "actualResult": "PASS: expected behavior executed in focused and full integration suites",
+      "evidence": "evidence/final-integration-03-results.json",
+      "boundary": "Single embedded SQL instance with controlled clocks/interleavings and synthetic adapters"
+    },
+    {
+      "id": "SCP-03",
+      "severity": "P2",
+      "status": "FIXED",
+      "originalBehavior": "Fifth exception left unclaimable retrying row",
+      "sourceChanged": "app/src/server/jobs/outbox-worker.ts",
+      "regressionTest": "app/tests/integration/platform/scp-publication-outbox.test.ts",
+      "expectedResult": "Exhausted exception/provider/read/completion failures reach failed/attempts5 with ownership fencing; accepted1/5/30/120-minute retry delays retained",
+      "actualResult": "PASS: expected behavior executed in focused and full integration suites",
+      "evidence": "evidence/final-integration-03-results.json",
+      "boundary": "Actual local embedded SQL with synthetic exception paths"
+    },
+    {
+      "id": "SCP-04",
+      "severity": "P2",
+      "status": "FIXED",
+      "originalBehavior": "Corrupt header-only media accepted with invented dimensions",
+      "sourceChanged": "app/src/server/media/validate-upload.ts",
+      "regressionTest": "app/tests/integration/platform/scp-media-validation.test.ts",
+      "expectedResult": "Real full decoder dimensions, container/CRC/RIFF completeness, bounded pixels/axes/bytes; corrupt/truncated inputs rejected422 and genuine PNG/JPEG/WebP accepted",
+      "actualResult": "PASS: expected behavior executed in focused and full integration suites",
+      "evidence": "evidence/final-integration-03-results.json",
+      "boundary": "Actual sharp0.35.5 decoder and Pillow-generated fully decoded genuine local fixtures"
+    },
+    {
+      "id": "SCP-05",
+      "severity": "P2",
+      "status": "FIXED",
+      "originalBehavior": "Different codes collided with dimensional SQL unique constraint",
+      "sourceChanged": "app/src/server/telemetry/events.ts",
+      "regressionTest": "app/tests/integration/platform/scp-telemetry-github.test.ts",
+      "expectedResult": "Same/different/omitted code aggregates without23505; legacy non-null ID/count retained; missing dimensions use stable ID without schema uniqueness change",
+      "actualResult": "PASS: expected behavior executed in focused and full integration suites",
+      "evidence": "evidence/final-integration-03-results.json",
+      "boundary": "Actual accepted SQL via test-injected PGlite durable code branch"
+    },
+    {
+      "id": "SCP-06",
+      "severity": "P3",
+      "status": "FIXED",
+      "originalBehavior": "Body ceiling counted JS characters",
+      "sourceChanged": "app/src/app/api/events/route.ts",
+      "regressionTest": "app/tests/integration/platform/scp-telemetry-github.test.ts",
+      "expectedResult": "Actual UTF8 bytes enforce4096 limit;6037-byte body rejected413 despite absent/misleading headers; ASCII/multibyte boundaries verified",
+      "actualResult": "PASS: expected behavior executed in focused and full integration suites",
+      "evidence": "evidence/final-integration-03-results.json",
+      "boundary": "Direct canonical HTTP handler with synthetic Request bodies, not real chunked ingress"
+    },
+    {
+      "id": "SCP-07",
+      "severity": "P2",
+      "status": "FIXED",
+      "originalBehavior": "Failed/frequent/concurrent metadata refresh was unbounded",
+      "sourceChanged": "app/src/server/integrations/github.ts",
+      "regressionTest": "app/tests/integration/platform/scp-telemetry-github.test.ts",
+      "expectedResult": "Single-flight and hourly attempts include failures; last-good success time/stale stay truthful; next-window concurrent recovery coalesces",
+      "actualResult": "PASS: expected behavior executed in focused and full integration suites",
+      "evidence": "evidence/final-integration-03-results.json",
+      "boundary": "Process-local coordination and synthetic fetch; successful snapshots durable, attempt throttle not shared across instances/restarts"
+    }
+  ],
+  "additionalAssignedCorrection": {
+    "id": "SOURCE-TELEMETRY-MAP",
+    "status": "FIXED",
+    "expected": "Deterministic memory bound",
+    "actual": "128-key FIFO cap plus24-hour idleTTL;160 distinct valid dimensions and1000 codes with collapse/eviction/expiry tested",
+    "source": "app/src/server/telemetry/events.ts",
+    "test": "app/tests/integration/platform/scp-telemetry-github.test.ts"
+  },
+  "rollbackDisposition": {
+    "status": "DEFERRED by explicit human instruction",
+    "contract": "rollbackPublication(targetRevision, actor)",
+    "futureHardening": "P2 stale-tab expectedRevision protection; no API/source changes assigned here"
+  },
+  "independentAudit": "NOT RUN",
+  "acceptance": "NOT RUN",
+  "G6": "ACTIVE / REWORK",
+  "G7": "LOCKED"
+}
