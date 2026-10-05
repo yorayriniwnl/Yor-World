@@ -1,0 +1,101 @@
+{
+  "releaseId": "v1.0.0-rc4",
+  "sourceCommit": "74954fbd963537a852c1899820da14bff6bd2615",
+  "coordinationBaseCommit": "195ea1371331ad50d553d2dc62b563eaa218ed38",
+  "appTreeAtSource": "bdc75f27d7462bae708cf3ba2aaec3e42937157c",
+  "supersedes": {
+    "releaseId": "v1.0.0-rc3",
+    "candidateCommit": "261c483646f68692a3fe8e184d48d25b8264a6d7",
+    "implementationSource": "6129ad7a870f9f391455eb8a0582733a5ccccd11",
+    "appTree": "174ccd19091622c3dbce5f6b0ce3fe7fb38e1985",
+    "disposition": "Historical. Preserved by immutable Git identity and delivery root deliveries/G6/full-stack-integration; not overwritten."
+  },
+  "correctionCommits": [
+    {
+      "sha": "02380c323154fdf0815e10543de0a936619f2b79",
+      "scope": "SCP-01..SCP-06 platform corrections"
+    },
+    {
+      "sha": "83000ceb4f6046ba92f4764cb99ee64bde68dd22",
+      "scope": "SCP-04 APNG rejection, SCP-07 durable GitHub attempt coordination, migration 20261005000000_github_refresh_state.sql"
+    },
+    {
+      "sha": "74954fbd963537a852c1899820da14bff6bd2615",
+      "scope": "RC4 release tooling, CI, version and status-token rebind only"
+    }
+  ],
+  "schemaRevision": "20261005000000_schema_v2",
+  "diffFromRc3Source": {
+    "changedFileCount": 53,
+    "byStatus": {
+      "M": 20,
+      "A": 31,
+      "R090": 1,
+      "R097": 1
+    },
+    "paths": {
+      "M": [
+        ".github/workflows/ci.yml",
+        ".github/workflows/integrity.yml",
+        "app/README.md",
+        "app/package.json",
+        "app/pnpm-lock.yaml",
+        "app/src/app/api/admin/media/route.ts",
+        "app/src/app/api/events/route.ts",
+        "app/src/server/integrations/github.ts",
+        "app/src/server/jobs/outbox-worker.ts",
+        "app/src/server/media/validate-upload.ts",
+        "app/src/server/telemetry/events.ts",
+        "app/src/server/test-fixture.ts",
+        "app/supabase/operations/harden-publication-grants.sql",
+        "app/tests/integration/platform/database-authorization.test.ts",
+        "app/tests/integration/platform/media-access.test.ts",
+        "app/tests/integration/platform/publication.test.ts",
+        "app/tests/unit/boundaries.test.ts",
+        "scripts/release/README.md",
+        "scripts/release/release-lib.mjs",
+        "scripts/release/validate-release.mjs"
+      ],
+      "A": [
+        "app/supabase/migrations/20261005000000_github_refresh_state.sql",
+        "app/tests/fixtures/residual-media/actl-only.png",
+        "app/tests/fixtures/residual-media/animated.png",
+        "app/tests/fixtures/residual-media/animated.webp",
+        "app/tests/fixtures/residual-media/corrupt-second-frame.png",
+        "app/tests/fixtures/residual-media/manifest.json",
+        "app/tests/fixtures/residual-media/normal-rgb.png",
+        "app/tests/fixtures/residual-media/orphan-fctl.png",
+        "app/tests/fixtures/residual-media/orphan-fdat.png",
+        "app/tests/fixtures/residual-media/pixels-ok.png",
+        "app/tests/fixtures/residual-media/truncated-fdat.png",
+        "app/tests/fixtures/scp-media/corrupt-idat.png",
+        "app/tests/fixtures/scp-media/corrupt-scan.jpg",
+        "app/tests/fixtures/scp-media/corrupt-vp8.webp",
+        "app/tests/fixtures/scp-media/corruption-manifest.json",
+        "app/tests/fixtures/scp-media/invalid-pixels-4097x4097.png",
+        "app/tests/fixtures/scp-media/invalid-width-8193x1.png",
+        "app/tests/fixtures/scp-media/invalid-zero-width.png",
+        "app/tests/fixtures/scp-media/manifest.json",
+        "app/tests/fixtures/scp-media/valid-alpha-lossy-16x12.webp",
+        "app/tests/fixtures/scp-media/valid-boundary-8192x2.png",
+        "app/tests/fixtures/scp-media/valid-lossless-16x12.webp",
+        "app/tests/fixtures/scp-media/valid-lossy-16x12.webp",
+        "app/tests/fixtures/scp-media/valid-progressive-24x18.jpg",
+        "app/tests/fixtures/scp-media/valid-rgb-16x12.jpg",
+        "app/tests/fixtures/scp-media/valid-rgba-16x12.png",
+        "app/tests/integration/platform/residual-media-still-images.test.ts",
+        "app/tests/integration/platform/scp-github-durable.test.ts",
+        "app/tests/integration/platform/scp-media-validation.test.ts",
+        "app/tests/integration/platform/scp-publication-outbox.test.ts",
+        "app/tests/integration/platform/scp-telemetry-github.test.ts"
+      ],
+      "R090": [
+        "scripts/release/build-rc4-bundle.mjs"
+      ],
+      "R097": [
+        "scripts/release/rc4-policy.json"
+      ]
+    }
+  },
+  "limits": "Source binding record only. Not an audit or acceptance."
+}

@@ -133,7 +133,7 @@ W1/W2/W3 are independent: W1 owns room geometry; W2 uses its own F1 furniture fi
 | **G3 World Core** | Evaluator / Parent | B3-P1 + W1 + W2 + B5 | **ACCEPTED:** 13/13 exit requirements met ([Gate Review](reviews/2026-10-02-g3-gate-evaluation.md)) |
 | **G4 Integrated Experience** | Evaluator / Parent | C1 + IA-R1 + B2-R1 | **ACCEPTED:** 10/10 exit requirements met ([Gate Review](reviews/2026-10-02-g4-gate-evaluation.md)) |
 | **G5 Managed Content & Ops** | Evaluator / Parent | A3 + A4 + A5 + A6 | **ACCEPTED:** 10/10 exit requirements met ([Gate Review](reviews/2026-10-02-g5-gate-evaluation.md)) |
-| **G6 Release Candidate** | Evaluator / Parent | G4 + G5 | **G6 ACTIVE / REWORK:** Candidate v1.0.0-rc3 full-stack verification (RC4 candidate; RC1/RC2/RC3 preserved as history) |
+| **G6 Release Candidate** | Evaluator / Parent | G4 + G5 | **G6 ACTIVE / REWORK:** Candidate v1.0.0-rc4 (corrected platform; RC3 historical) awaiting independent audit - see [RC4 report](../../deliveries/G6/rc4-candidate/report.md); prior: v1.0.0-rc3 full-stack verification (RC4 candidate; RC1/RC2/RC3 preserved as history) |
 | **G7 Production Release** | **Gemini #3, #1, #2; GPT #2, #1** | Owner Authorization + G1–G6 | **G7 LOCKED:** Only after owner authorizes deployment. Requires 10 live criteria ([Protocol](releases/2026-10-02-g7-production-release-protocol.md)). |
 
 **FROZEN CONTRACTS FOR NEW PACKETS:**
