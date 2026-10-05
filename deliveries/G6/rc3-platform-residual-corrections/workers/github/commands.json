@@ -1,0 +1,70 @@
+﻿{
+    "cwd":  "C:/Users/yoray/AppData/Local/Temp/yw-res-2af509/app",
+    "note":  "Commands contain exact executable argument values; PowerShell redirection/stopwatch wrappers record the same executable exit codes in tool receipts.",
+    "commands":  [
+                     {
+                         "command":  "node --version",
+                         "exitCode":  0,
+                         "result":  "v24.19.0"
+                     },
+                     {
+                         "command":  "pnpm --version",
+                         "exitCode":  0,
+                         "result":  "9.15.9"
+                     },
+                     {
+                         "command":  "pnpm exec vitest run --config vitest.integration.config.ts tests/integration/platform/scp-github-durable.test.ts tests/integration/platform/github-metadata.test.ts tests/integration/platform/scp-telemetry-github.test.ts --reporter=json --outputFile=\u0027C:/Users/yoray/Projects/Yor World/deliveries/G6/rc3-platform-residual-corrections/workers/github/focused-initial.json\u0027",
+                         "exitCode":  1,
+                         "tests":  37,
+                         "passed":  31,
+                         "failed":  6,
+                         "skipped":  0
+                     },
+                     {
+                         "command":  "pnpm exec vitest run --config vitest.integration.config.ts tests/integration/platform/scp-github-durable.test.ts tests/integration/platform/github-metadata.test.ts tests/integration/platform/scp-telemetry-github.test.ts --reporter=json --outputFile=\u0027C:/Users/yoray/Projects/Yor World/deliveries/G6/rc3-platform-residual-corrections/workers/github/focused-corrected.json\u0027",
+                         "exitCode":  0,
+                         "tests":  37,
+                         "passed":  37,
+                         "failed":  0,
+                         "skipped":  0,
+                         "processWallMs":  7645
+                     },
+                     {
+                         "command":  "pnpm exec tsc --noEmit",
+                         "exitCode":  1,
+                         "result":  "TS7053 at src/server/test-fixture.ts:18 before explicit typed query correction"
+                     },
+                     {
+                         "command":  "pnpm exec vitest run --config vitest.integration.config.ts tests/integration/platform/scp-github-durable.test.ts tests/integration/platform/github-metadata.test.ts tests/integration/platform/scp-telemetry-github.test.ts --reporter=json --outputFile=\u0027C:/Users/yoray/Projects/Yor World/deliveries/G6/rc3-platform-residual-corrections/workers/github/focused-final.json\u0027",
+                         "exitCode":  0,
+                         "tests":  41,
+                         "passed":  41,
+                         "failed":  0,
+                         "skipped":  0,
+                         "processWallMs":  12267,
+                         "retainedResults":  "focused-before-lint-rename.json"
+                     },
+                     {
+                         "command":  "pnpm exec eslint src/server/integrations/github.ts src/server/test-fixture.ts tests/integration/platform/scp-github-durable.test.ts tests/integration/platform/scp-telemetry-github.test.ts --max-warnings=0",
+                         "exitCode":  1,
+                         "result":  "Two no-assign-module-variable errors in new test, corrected by renaming local declarations"
+                     },
+                     {
+                         "command":  "pnpm exec eslint src/server/integrations/github.ts src/server/test-fixture.ts tests/integration/platform/scp-github-durable.test.ts tests/integration/platform/scp-telemetry-github.test.ts --max-warnings=0",
+                         "exitCode":  0,
+                         "processWallMs":  3036,
+                         "log":  "lint-final.log"
+                     },
+                     {
+                         "command":  "pnpm exec vitest run --config vitest.integration.config.ts tests/integration/platform/scp-github-durable.test.ts tests/integration/platform/github-metadata.test.ts tests/integration/platform/scp-telemetry-github.test.ts --reporter=default --reporter=json --outputFile=\u0027C:/Users/yoray/Projects/Yor World/deliveries/G6/rc3-platform-residual-corrections/workers/github/focused-final.json\u0027",
+                         "exitCode":  0,
+                         "tests":  41,
+                         "passed":  41,
+                         "failed":  0,
+                         "skipped":  0,
+                         "processWallMs":  23126,
+                         "vitestDurationMs":  19380,
+                         "log":  "focused-final.log"
+                     }
+                 ]
+}

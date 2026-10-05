@@ -1,0 +1,59 @@
+
+> yor-world@1.0.0-rc3 test:integration C:\Users\yoray\AppData\Local\Temp\yw-res-2af509\app
+> vitest run --config vitest.integration.config.ts "--reporter=default" "--reporter=json" "--outputFile.json=C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\G6\\rc3-platform-residual-corrections\\evidence\\integration-results.json"
+
+
+ RUN  v5.0.2 C:/Users/yoray/AppData/Local/Temp/yw-res-2af509/app
+
+ ✓ tests/integration/platform/owner-auth.test.ts (18 tests) 170ms
+ ✓ tests/integration/platform/publication.test.ts (17 tests) 324ms
+ ✓ tests/integration/platform/media-access.test.ts (13 tests) 227ms
+ ✓ tests/integration/production-camera.test.ts (5 tests) 267ms
+ ✓ tests/integration/candidate-integration.test.ts (9 tests) 17ms
+ ✓ tests/integration/production-lighting.test.ts (4 tests) 777ms
+   ✓ Frozen production lighting and runtime controls (4)
+     ✓ calibrates the four actual glTF lights while preserving their authored attributes, meshes and asset bytes 467ms
+ ✓ tests/integration/platform/operations-restore.test.ts (4 tests) 15ms
+ ✓ tests/integration/runtime/frozen-world-binding.test.ts (4 tests) 376ms
+ ✓ tests/integration/platform/database-authorization.test.ts (13 tests) 7135ms
+ ✓ tests/integration/platform/github-metadata.test.ts (5 tests) 50ms
+ ✓ tests/integration/platform/scp-media-validation.test.ts (34 tests) 297ms
+ ✓ tests/integration/platform/session-claims.test.ts (4 tests) 39ms
+ ✓ tests/integration/platform/telemetry.test.ts (5 tests) 11ms
+ ✓ tests/integration/runtime/adaptive-runtime.test.ts (3 tests) 13ms
+ ✓ tests/integration/platform/internal-jobs.test.ts (4 tests) 56ms
+ ✓ tests/integration/platform/postgres-transactions.test.ts (2 tests) 9ms
+ ✓ tests/integration/runtime/public-snapshot.test.ts (7 tests) 543ms
+   ✓ Canonical public snapshot and runtime composition (7)
+     ✓ renders the durable approved revision in project pages, monitor tiles, and static DOM 355ms
+ ✓ tests/integration/platform/contact.test.ts (13 tests) 10732ms
+ ✓ tests/integration/platform/canonical-platform.test.ts (9 tests) 10323ms
+   ✓ Canonical production provider and actual platform route integration (9)
+     ✓ executes canonical R2 API for twenty duplicates and a conflicting payload 338ms
+     ✓ backs up and restores all fifteen accepted public tables including outbox/idempotency 324ms
+ ✓ tests/integration/platform/scp-publication-outbox.test.ts (23 tests) 11573ms
+ ✓ tests/integration/platform/published-media.test.ts (4 tests) 5275ms
+ ✓ tests/integration/platform/scp-telemetry-github.test.ts (12 tests) 10822ms
+ ✓ tests/integration/platform/contact-idempotency-r2.test.ts (11 tests) 13215ms
+   ✓ A5/A6-CONTACT-IDEMPOTENCY-R2: Database-Safe Idempotency Suite (11)
+     ✓ 1. Baseline Ingestion & Idempotency (4)
+       ✓ 1.4 [100 concurrent requests]: high concurrency stress test verifies database race arbiter 464ms
+ ✓ tests/integration/platform/residual-media-still-images.test.ts (32 tests) 12950ms
+ ✓ tests/integration/platform/canonical-fixture.test.ts (1 test) 7110ms
+   ✓ Explicit browser fixture connection ownership across Next route bundles (1)
+     ✓ initializes the same file database once across independently loaded route modules 7105ms
+ ✓ tests/integration/platform/scp-github-durable.test.ts (24 tests) 20314ms
+   ✓ SCP-07 durable GitHub attempt coordination (24)
+     ✓ cold SQL plus ten independent module Maps and two handles permits exactly one upstream attempt 311ms
+     ✓ failure 403 survives all Maps clearing and independently initialized modules until exact hour 517ms
+     ✓ failure 429 survives all Maps clearing and independently initialized modules until exact hour 384ms
+     ✓ failure 503 survives all Maps clearing and independently initialized modules until exact hour 335ms
+     ✓ native fetch timeout retains durable cadence and last-good snapshot (warm=false) 4086ms
+     ✓ native fetch timeout retains durable cadence and last-good snapshot (warm=true) 4021ms
+
+ Test Files  26 passed (26)
+      Tests  280 passed (280)
+   Start at  23:04:10
+   Duration  21.18s (tests 76%, transform 13%, import 11%)
+
+JSON report written to C:/Users/yoray/Projects/Yor World/deliveries/G6/rc3-platform-residual-corrections/evidence/integration-results.json

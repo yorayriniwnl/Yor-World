@@ -1,0 +1,26 @@
+{
+  "scope": "SCP-04 only; fresh Codex production maker return",
+  "acceptance": "NOT PERFORMED; independent delta review and parent disposition required",
+  "defects": [
+    {
+      "id": "SCP-04",
+      "severity": "P2",
+      "makerCorrectionStatus": "FIXED",
+      "statusBoundary": "Bounded local implementation and execution, not governance acceptance or hosted proof",
+      "originalCounterexample": "deliveries/G6/rc3-platform-independent-verification/reviewers/media/fixtures/corrupt-second-frame.png",
+      "originalSHA256": "536989dab6f4b7892a26009cccca13781462f4c02d7fb543d58dc1cce23512fe",
+      "productionChange": "app/src/server/media/validate-upload.ts: reject acTL/fcTL/fdAT during PNG parsing; preserve CRC/raw decode/resource checks",
+      "regressionTest": "app/tests/integration/platform/residual-media-still-images.test.ts",
+      "finalExecution": { "total": 66, "passed": 66, "failed": 0, "skipped": 0, "exitCode": 0 },
+      "postProof": { "rejections": 20, "status": 422, "code": "INVALID_MEDIA", "mediaRows": 0, "auditEvents": 0, "storageObjects": 0, "storageCalls": 0, "storageClientCalls": 0, "pendingSuccesses": 2 },
+      "evidence": ["evidence/focused-results.json", "evidence/post-observations.json", "evidence/fixture-oracle.json"],
+      "hosted": "NOT RUN"
+    }
+  ],
+  "openOwnedDefects": [],
+  "nonOwnedSCP07": "Assigned separate maker; no media worker disposition",
+  "gemini": "NOT RUN; no callable Gemini tool",
+  "rc4": "NOT CREATED",
+  "g6": "ACTIVE / REWORK",
+  "g7": "LOCKED"
+}

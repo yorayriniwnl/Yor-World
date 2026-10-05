@@ -1,0 +1,61 @@
+{
+  "scope": "Only SCP-04 and SCP-07 residual correction",
+  "implementationCommit": "83000ceb4f6046ba92f4764cb99ee64bde68dd22",
+  "appTree": "40d13c07ec076de1210c04e1ade0c3e69170bda6",
+  "closureMatrix": [
+    {
+      "id": "SCP-04",
+      "severity": "P2",
+      "status": "FIXED",
+      "verification": "PASS, bounded local evidence",
+      "originalCounterexample": "Valid-CRC APNG with corrupt second frame passed first-frame Sharp validation; original corrupt fixture SHA256 536989dab6f4b7892a26009cccca13781462f4c02d7fb543d58dc1cce23512fe.",
+      "source": [
+        "app/src/server/media/validate-upload.ts"
+      ],
+      "regression": [
+        "app/tests/integration/platform/residual-media-still-images.test.ts",
+        "app/tests/fixtures/residual-media/"
+      ],
+      "result": "Reject acTL/fcTL/fdAT as 422 INVALID_MEDIA before registration; 20 actual JSON/multipart POST rejections caused zero media rows, storage objects/calls and approval events; 2 genuine still successes retained exact bytes and pending status.",
+      "evidence": [
+        "workers/media/report.md",
+        "workers/media/evidence/focused-results.json",
+        "workers/media/evidence/post-observations.json",
+        "review/delta/results.json"
+      ],
+      "acceptance": "Not claimed; historical defect ledger unchanged"
+    },
+    {
+      "id": "SCP-07",
+      "severity": "P2",
+      "status": "FIXED",
+      "verification": "PASS, bounded local SQL/source evidence; native sessions NOT RUN",
+      "originalCounterexample": "Reset/isolated process Maps allowed multiple failed GitHub attempts inside one hour; only successful snapshots persisted.",
+      "source": [
+        "app/src/server/integrations/github.ts",
+        "app/supabase/migrations/20261005000000_github_refresh_state.sql"
+      ],
+      "regression": [
+        "app/tests/integration/platform/scp-github-durable.test.ts"
+      ],
+      "result": "Conditional atomic UPSERT reserves every attempt for one hour with database clock and full-precision fencing; 10 simulated concurrent cold callers yield one upstream attempt, same-hour reset/restart yields zero additional attempts, 59:59 blocks and exact hour permits one winner. Failure preserves successful snapshots.",
+      "evidence": [
+        "workers/github/report.md",
+        "workers/github/focused-final.json",
+        "review/delta/results.json",
+        "schema-amendment.md"
+      ],
+      "nativeIndependentSessions": "NOT RUN: Windows Application Control WinError4551",
+      "acceptance": "Not claimed; historical defect ledger unchanged"
+    }
+  ],
+  "limitations": [
+    "Gemini requested but unavailable: NOT RUN; fresh Codex makers inherited parent model, exact service ID not exposed.",
+    "Native independent PostgreSQL sessions: NOT RUN; Windows Application Control WinError4551 blocked postgres.exe --version before initialization. No bypass attempted.",
+    "Executed durable SQL uses one PGlite backend with separately initialized modules and distinct simulated wrapper handles; this is not native backend concurrency proof.",
+    "Hosted database/grant/Auth/Storage, real GitHub and deployed restart/scaling/restore: NOT RUN.",
+    "Unconfigured no-database mode is explicitly process-local; configured coordination failure grants no upstream permission.",
+    "RC4, G6 acceptance, performance changes and G7/deployment are outside this packet and were not performed."
+  ],
+  "g6Acceptance": "NOT RUN"
+}

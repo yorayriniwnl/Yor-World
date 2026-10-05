@@ -1,0 +1,38 @@
+{
+  "baseHead": "2af509296a1eebd5f8dee37936fbff8ba7bbd658",
+  "baseAppTree": "3586e0c8674faac3f73bcab4d17f646e3b2e9191",
+  "role": "new Codex production maker",
+  "geminiExecution": "NOT RUN",
+  "acceptance": "NOT CLAIMED",
+  "findings": [
+    {
+      "id": "SCP-07",
+      "severity": "P2",
+      "implementationStatus": "FIXED",
+      "localRegressionStatus": "PASS",
+      "originalCounterexample": "Independent verifier reset/isolation of module Maps allowed two failing upstream fetches at the same hour; only successful snapshot timestamps persisted.",
+      "changedSource": "app/src/server/integrations/github.ts",
+      "addedMigration": "app/supabase/migrations/20261005000000_github_refresh_state.sql",
+      "newRegression": "app/tests/integration/platform/scp-github-durable.test.ts",
+      "directBootstrapChanges": [
+        "app/src/server/test-fixture.ts",
+        "app/tests/integration/platform/scp-telemetry-github.test.ts"
+      ],
+      "executed": { "focusedTests": 41, "passed": 41, "failed": 0, "skipped": 0, "newDurableTests": 24 },
+      "evidence": ["focused-final.json", "focused-final.log", "implementation-identity.json"],
+      "limits": [
+        "One embedded PGlite backend, ten independent module Maps and two distinct wrapper handles; wrappers are not independent backend sessions.",
+        "Native PostgreSQL two-session optional path NOT RUN; parent fixture blocked by Windows Application Control WinError4551.",
+        "Hosted Supabase/PostgreSQL, actual GitHub requests, deployed process topology/restarts and G7 are NOT RUN.",
+        "Unconfigured/offline database mode remains intentionally process-local; configured claim errors fail closed.",
+        "Independent audit and parent acceptance are separate from this maker return."
+      ]
+    }
+  ],
+  "workerIntroducedIssuesCorrected": [
+    { "issue": "Date string conversion discarded milliseconds at stale threshold", "initialResult": "6 focused failures", "correction": "Preserve Date.getTime() directly", "finalResult": "41 focused PASS" },
+    { "issue": "PGlite fixture query result type inferred empty object", "initialResult": "TS7053", "correction": "Explicit typed query result", "finalResult": "Await parent full typecheck receipt" },
+    { "issue": "New test local name module prohibited by existing Next lint rule", "initialResult": "2 lint errors", "correction": "Rename to integration", "finalResult": "Focused lint PASS" }
+  ],
+  "gateState": { "G1-G5": "ACCEPTED", "G6": "ACTIVE / REWORK", "G7": "LOCKED", "RC4": "NOT CREATED" }
+}

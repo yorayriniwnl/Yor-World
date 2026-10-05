@@ -1,0 +1,569 @@
+MODEL:
+Gemini Pro
+
+THINKING:
+Extended Thinking / highest available
+
+Repository:
+https://github.com/yorayriniwnl/Yor-World
+
+ROLE:
+Platform Residual Correction Maker
+
+CURRENT LIVE HEAD OBSERVED BY PARENT:
+
+2af509296a1eebd5f8dee37936fbff8ba7bbd658
+
+CANONICAL APPLICATION:
+
+app/
+
+CURRENT APP TREE:
+
+3586e0c8674faac3f73bcab4d17f646e3b2e9191
+
+IMPLEMENTATION BASE:
+
+02380c323154fdf0815e10543de0a936619f2b79
+
+CURRENT STATE:
+
+G1-G5 = ACCEPTED
+G6 = ACTIVE / REWORK
+G7 = LOCKED
+RC3 = historical candidate for superseded source
+RC4 = NOT CREATED
+
+DO NOT create RC4.
+DO NOT modify release manifests.
+DO NOT deploy.
+DO NOT accept G6.
+
+============================================================
+AUTHORITATIVE VERIFICATION
+============================================================
+
+Read:
+
+deliveries/G6/rc3-platform-independent-verification/report.md
+
+deliveries/G6/rc3-platform-independent-verification/defects.json
+
+deliveries/G6/rc3-platform-independent-verification/reviewers/media/report.md
+
+deliveries/G6/rc3-platform-independent-verification/reviewers/telemetry-github/report.md
+
+deliveries/G6/rc3-platform-independent-verification/reviewers/contract-crosscheck/report.md
+
+Then inspect the actual production source.
+
+Independent verification leaves exactly two platform blockers:
+
+SCP-04 — corrupt APNG second-frame acceptance
+
+SCP-07 — failed GitHub refresh cadence is process-local and does not survive restart/multiple instances
+
+Fix ONLY these two blockers and directly necessary tests/schema.
+
+============================================================
+SCP-04
+REJECT APNG / MULTIFRAME PNG
+============================================================
+
+Current problem:
+
+app/src/server/media/validate-upload.ts
+
+correctly validates ordinary PNG container CRCs and first-frame decoding, but a PNG containing APNG animation chunks can contain a corrupt second compressed frame while Sharp validates only the fallback/first frame.
+
+The independent verifier generated:
+
+corrupt-second-frame.png
+
+Pillow fails decoding frame 2.
+
+Canonical validateUpload currently accepts it.
+
+V1 does NOT require animated PNG support.
+
+Parent decision:
+
+YOR WORLD V1 media uploads support STILL images only.
+
+Allowed MIME remains:
+
+image/png
+image/jpeg
+image/webp
+
+but animated/multiframe files are rejected.
+
+Implement deterministic APNG rejection.
+
+During full PNG container parsing identify animation chunks such as:
+
+acTL
+
+and other APNG-only structure where appropriate.
+
+Any PNG declaring animation/multiple frames must return:
+
+422 INVALID_MEDIA
+
+before private storage registration.
+
+Do not merely rely on Sharp metadata.pages.
+
+Do not normalize an animated file to its first frame while retaining the original bytes.
+
+The stored file must be the exact validated still image.
+
+============================================================
+SCP-04 REQUIRED TESTS
+============================================================
+
+Actual genuine still files must PASS:
+
+normal PNG
+RGBA PNG
+baseline JPEG
+progressive JPEG
+lossy WebP
+lossless WebP
+alpha WebP
+
+Must FAIL:
+
+valid APNG
+corrupt APNG second frame
+APNG with acTL
+APNG/fdAT truncated data
+signature-only PNG
+missing IEND
+bad CRC
+truncated PNG
+corrupt JPEG scan
+truncated JPEG
+corrupt WebP
+bad RIFF length
+animated WebP
+MIME mismatch
+oversized bytes
+axis >8192
+pixels >16,777,216
+zero/invalid dimensions
+
+Verify HTTP upload path returns:
+
+422
+
+for APNG/corrupt media and creates:
+
+no media DB record
+no storage object
+no approval event
+
+Keep:
+
+5 MiB ceiling
+8192 axis ceiling
+16,777,216 decoded-pixel ceiling
+
+Do not weaken decoder safeguards.
+
+============================================================
+SCP-07
+DURABLE MULTI-INSTANCE REFRESH THROTTLE
+============================================================
+
+Current problem:
+
+app/src/server/integrations/github.ts
+
+uses:
+
+attempts Map
+refreshes Map
+
+for failed-attempt throttling and single-flight.
+
+This works only inside one process.
+
+Restart/module isolation or multiple serverless instances can each call upstream during the same hour.
+
+Accepted contract:
+
+GitHub metadata refresh occurs AT MOST HOURLY.
+
+Failed attempts count toward that cadence.
+
+Parent decision:
+
+the guarantee must be durable across process restart and multiple application instances when the platform database is available.
+
+Process memory can remain as a fast path, but it cannot be the correctness boundary.
+
+============================================================
+DATABASE DESIGN
+============================================================
+
+Implement a small explicit schema amendment.
+
+Preferred conceptual table:
+
+public.github_refresh_state
+
+with an authoritative row per repository.
+
+Store only bounded operational metadata such as:
+
+repository_id
+last_attempt_at
+last_status
+updated_at
+
+Do NOT store tokens, request headers or sensitive error bodies.
+
+Use a new explicit migration rather than silently mutating accepted historical migrations.
+
+Choose the next valid project migration identifier and document it.
+
+The schema revision will later be bound by RC4.
+
+============================================================
+ATOMIC CLAIM
+============================================================
+
+Before upstream GitHub fetch:
+
+atomically claim refresh permission in PostgreSQL only when:
+
+no previous attempt exists
+
+OR
+
+last_attempt_at <= now - 1 hour
+
+The operation must be concurrency-safe.
+
+Suitable design class:
+
+INSERT ... ON CONFLICT ... DO UPDATE
+WHERE last_attempt_at <= threshold
+RETURNING ...
+
+or an equally strong transactional approach.
+
+If no row is returned:
+
+this request did NOT win refresh ownership.
+
+Do not call upstream.
+
+Instead:
+
+return a fresh/last-good snapshot if available
+
+or a bounded generic unavailable result when no last-good payload exists.
+
+============================================================
+SUCCESS / FAILURE SEMANTICS
+============================================================
+
+Successful metadata remains stored in:
+
+github_snapshots
+
+with fetched_at representing actual last successful fetch.
+
+Do not redefine fetched_at as failed-attempt time.
+
+github_refresh_state tracks ATTEMPT cadence separately.
+
+On:
+
+200
+403
+429
+5xx
+network failure
+timeout
+JSON failure
+
+the durable attempt claim must remain authoritative for one hour.
+
+Failure must NOT erase last-good snapshot.
+
+A later request inside the hour must not hit GitHub again from another process.
+
+At the next allowed hour, exactly one contender may refresh.
+
+============================================================
+MULTI-INSTANCE TESTS
+============================================================
+
+Do not prove this only with one JS module Map.
+
+Create tests that simulate:
+
+two independently initialized module instances
+
+two independent DB connections
+
+process-state reset
+
+simultaneous callers
+
+restart between calls
+
+Required:
+
+cold DB:
+10 concurrent callers → exactly 1 upstream attempt
+
+failure:
+process/module reset
+second caller same hour → 0 additional upstream attempts
+
+two simulated instances:
+same hour → one total upstream request
+
+59 minutes 59 seconds:
+no refresh
+
+exact 1 hour:
+one new winner
+
+winner 403:
+all others use cached/fallback behavior without upstream
+
+winner network failure:
+same
+
+winner timeout:
+same
+
+winner success:
+snapshot persisted and next hour appropriately bounded
+
+database unavailable:
+degrade honestly according to existing platform policy; do not falsely claim distributed throttle
+
+============================================================
+PROCESS-LOCAL FAST PATH
+============================================================
+
+You may preserve:
+
+snapshotCache
+refreshes
+attempts
+
+as optional performance optimizations.
+
+But tests must demonstrate that deleting/resetting all process Maps does NOT violate the durable hourly cadence when PostgreSQL is available.
+
+============================================================
+SECURITY
+============================================================
+
+Never persist:
+
+GITHUB_TOKEN
+Authorization header
+raw upstream response bodies
+full exception strings containing secrets
+
+Continue allowlist enforcement.
+
+Continue bounded request timeout.
+
+Continue truthful stale marker.
+
+Continue last-good snapshot preservation.
+
+============================================================
+SCHEMA / OPERATIONS
+============================================================
+
+Because a new migration is introduced:
+
+document:
+
+old schema revision
+new migration
+new expected RC4 schema revision
+rollback implications
+
+Do NOT update RC3 manifest.
+
+RC3 remains historical.
+
+RC4 maker will bind the new schema revision later.
+
+Ensure backup/restore inventory either:
+
+includes the new coordination table where required
+
+or explicitly documents why ephemeral coordination state is intentionally excluded.
+
+Parent preference:
+
+treat refresh-attempt coordination as operational state.
+
+It does not need to be restored as historical user data if reset-on-restore is safe, but this decision must be explicit.
+
+============================================================
+DO NOT TOUCH
+============================================================
+
+Do NOT modify:
+
+world runtime
+
+camera system
+
+quality policy
+
+performance thresholds
+
+performance test yet
+
+C1/C2 interaction logic
+
+frozen assets
+
+contact R2
+
+publication/outbox fixes already verified
+
+RC3 bundle
+
+RC3 release manifest
+
+G6 acceptance files
+
+G7 deployment configuration
+
+============================================================
+REGRESSION SUITE
+============================================================
+
+Run:
+
+pnpm install --frozen-lockfile
+
+pnpm lint
+
+pnpm typecheck
+
+focused SCP-04 tests
+
+focused SCP-07 tests
+
+pnpm test:unit
+
+pnpm test:integration
+
+pnpm build
+
+Record exact:
+
+Node version
+pnpm version
+commands
+exit codes
+test counts
+failures
+schema migration identity
+
+============================================================
+RETURN ROOT
+============================================================
+
+Create:
+
+deliveries/G6/rc3-platform-residual-corrections/
+
+Include:
+
+report.md
+
+defects.json
+
+implementation-identity.json
+
+schema-amendment.md
+
+commands-and-exit-codes.md
+
+tests/evidence
+
+SHA256SUMS.txt
+
+For:
+
+SCP-04
+SCP-07
+
+record:
+
+original independent counterexample
+
+changed source
+
+new regression test
+
+actual result
+
+FIXED / PARTIAL / NOT FIXED
+
+============================================================
+GIT
+============================================================
+
+Commit only this bounded residual correction.
+
+Push to main or the repository's assigned correction branch according to current workflow.
+
+Return:
+
+base HEAD
+new commit SHA
+app tree before
+app tree after
+migration added
+changed files
+push result
+
+============================================================
+STOP
+============================================================
+
+Stop after the two residual blockers are corrected and pushed.
+
+DO NOT create RC4.
+
+DO NOT modify performance benchmarking.
+
+DO NOT run G6 adjudication.
+
+DO NOT begin G7.
+
+The next assigned maker will be Gemini Pro #3.
+
+Its packet will:
+
+create v1.0.0-rc4
+
+bind the new corrected app + schema
+
+reconcile the active-performance benchmark versus adaptive STATIC fallback
+
+regenerate deterministic bundle/manifests
+
+update living documentation
+
+run exact-candidate CI
+
+and hand the result to GPT Plus #2 for the final independent full-stack audit.
