@@ -13,6 +13,11 @@ export async function createFixtureDb(): Promise<QueryableDb> {
   for (const name of ["20261001000000_a3_owner_auth_rls.sql", "20261001000001_a4_publication_media.sql"]) {
     await db.exec(await readFile(path.join(process.cwd(), "supabase", "migrations", name), "utf8"));
   }
+  // The fixture may reopen the same database; numbered migrations run once.
+  const refreshTable = await db.query<{ name: string | null }>("SELECT to_regclass('public.github_refresh_state') AS name");
+  if (!refreshTable.rows[0]?.["name"]) {
+    await db.exec(await readFile(path.join(process.cwd(),"supabase","migrations","20261005000000_github_refresh_state.sql"),"utf8"));
+  }
   await db.exec(await readFile(path.join(process.cwd(),"supabase","operations","harden-publication-grants.sql"),"utf8"));
   await db.query("INSERT INTO auth.users(id,email) VALUES($1,$2) ON CONFLICT(id) DO NOTHING", ["11111111-1111-1111-1111-111111111111", "owner@yorworld.test"]);
   await db.query("INSERT INTO public.admin_users(id,role,active) VALUES($1,'owner',true) ON CONFLICT(id) DO NOTHING", ["11111111-1111-1111-1111-111111111111"]);

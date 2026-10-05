@@ -123,6 +123,11 @@ function verifyPngContainer(bytes: Uint8Array): void {
     const type = String.fromCharCode(...bytes.subarray(offset + 4, offset + 8));
     if ((first && (type !== "IHDR" || length !== 13)) ||
         crc32(bytes.subarray(offset + 4, end - 4)) !== view.getUint32(end - 4, false)) break;
+    // V1 accepts still images only. Sharp's PNG loader can expose just an
+    // APNG fallback frame, so reject animation structure in the container.
+    if (type === "acTL" || type === "fcTL" || type === "fdAT") {
+      throw new MediaValidationError("Upload rejected: animated PNG is not supported.");
+    }
     if (type === "IEND") {
       if (length === 0 && end === bytes.length) return;
       break;

@@ -18,7 +18,7 @@ describe("SCP-05 durable accepted SQL telemetry dimensions", () => {
   let db: PGlite;
   beforeAll(async () => {
     db = new PGlite();
-    for (const file of ["20261001000000_a3_owner_auth_rls.sql", "20261001000001_a4_publication_media.sql"])
+    for (const file of ["20261001000000_a3_owner_auth_rls.sql", "20261001000001_a4_publication_media.sql", "20261005000000_github_refresh_state.sql"])
       await db.exec(await readFile(`supabase/migrations/${file}`, "utf8"));
   });
   beforeEach(async () => {
