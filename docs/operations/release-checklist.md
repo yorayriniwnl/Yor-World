@@ -4,6 +4,8 @@ Current release: **v1.0.0-rc5 candidate**. Canonical deployment/CI root: **`app/
 
 The [RC5 maker packet](../../deliveries/G6/rc5-candidate/parent-packet.txt) authorizes the active-world benchmark contract correction and directly required release rebinding. The production quality policy, thresholds, watchdog, frozen assets, platform corrections and contact R2 remain unchanged. Schema remains `20261005000000_schema_v2`.
 
+**RC5 maker return: FAIL (hosted CI unavailable).** Both exact-candidate workflows failed during GitHub-hosted runner acquisition with zero steps executed. Fresh local checks and artifact validation PASS; green hosted CI remains required before the independent audit can proceed. See the RC5 report and terminal provider evidence. G6 ACTIVE / REWORK; G7 LOCKED.
+
 RC5 execution requirements — checked only from completed RC5 records:
 
 - [x] Bind exact sourceCommit, app tree, asset/publication/schema/contact revisions, deterministic archive and all required evidence hashes.
