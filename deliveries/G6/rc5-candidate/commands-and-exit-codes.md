@@ -1,0 +1,33 @@
+# Fresh RC5 commands and exit codes
+
+Implementation sourceCommit: `c34e01bb5bff210d924f42d5266e2fa1ed13288e`. Canonical root: `app/`. Runs use a fresh detached checkout with CI=true and the pinned full Chromium channel. Dependencies and build output started absent; the host pnpm download store may be reused.
+
+| Check | Exact command | Exit | Duration (s) | Evidence |
+| --- | --- | ---: | ---: | --- |
+| frozen-install (attempt 1) | `pnpm.cmd install --frozen-lockfile` | 0 | 131.704 | [evidence/01-frozen-install.log](evidence/01-frozen-install.log) |
+| lint (attempt 1) | `pnpm.cmd lint` | 0 | 23.875 | [evidence/02-lint.log](evidence/02-lint.log) |
+| typecheck (attempt 1) | `pnpm.cmd typecheck` | 0 | 9.234 | [evidence/03-typecheck.log](evidence/03-typecheck.log) |
+| unit-tests (attempt 1) | `pnpm.cmd test:unit` | 0 | 3.391 | [evidence/04-unit-tests.log](evidence/04-unit-tests.log) |
+| integration-tests (attempt 1) | `pnpm.cmd test:integration` | 0 | 24.797 | [evidence/05-integration-tests.log](evidence/05-integration-tests.log) |
+| asset-validation (attempt 1) | `node scripts/release/validate-gltf-assets.mjs --output deliveries/G6/rc5-candidate/asset-validation.json` | 0 | 0.5 | [evidence/06-asset-validation.log](evidence/06-asset-validation.log) |
+| production-build (attempt 1) | `pnpm.cmd build` | 0 | 24.813 | [evidence/07-production-build.log](evidence/07-production-build.log) |
+| browser-install (attempt 1) | `pnpm.cmd exec playwright install chromium` | 0 | 2.875 | [evidence/18-browser-install.log](evidence/18-browser-install.log) |
+| browser-version (attempt 1) | `node -e "const {chromium}=require(\"@playwright/test\");(async()=>{const browser=await chromium.launch({channel:\"chromium\",headless:true});console.log(JSON.stringify({version:browser.version(),executable:chromium.executablePath(),channel:\"chromium\",headless:true}));await browser.close();})().catch(e=>{console.error(e);process.exit(1)})"` | 0 | 12.953 | [evidence/19-browser-version.log](evidence/19-browser-version.log) |
+| e2e-discovery (attempt 1) | `pnpm.cmd exec playwright test --list --reporter=json` | 0 | 2.172 | [evidence/20-e2e-discovery.log](evidence/20-e2e-discovery.log) |
+| accessibility-discovery (attempt 1) | `pnpm.cmd exec playwright test tests/e2e/accessibility.spec.ts --list --reporter=json` | 0 | 1.75 | [evidence/21-accessibility-discovery.log](evidence/21-accessibility-discovery.log) |
+| performance-discovery (attempt 1) | `pnpm.cmd exec playwright test --config playwright.performance.config.ts --list --reporter=json` | 0 | 1.844 | [evidence/22-performance-discovery.log](evidence/22-performance-discovery.log) |
+| e2e-tests (attempt 1) | `pnpm.cmd test:e2e --output C:\Users\yoray\Projects\Yor-World-RC5-c34e01b\deliveries\G6\rc5-candidate\evidence\e2e\test-results` | 0 | 199.547 | [evidence/08-e2e-tests.log](evidence/08-e2e-tests.log) |
+| browser-report-verification (attempt 1) | `node scripts/release/verify-playwright-results.mjs deliveries/G6/rc5-candidate/evidence/e2e/browser-results.json --expected 97` | 0 | 0.125 | [evidence/15-browser-report-verification.log](evidence/15-browser-report-verification.log) |
+| accessibility (attempt 1) | `pnpm.cmd exec playwright test tests/e2e/accessibility.spec.ts --output C:\Users\yoray\Projects\Yor-World-RC5-c34e01b\deliveries\G6\rc5-candidate\evidence\accessibility\test-results` | 0 | 27.609 | [evidence/09-accessibility.log](evidence/09-accessibility.log) |
+| accessibility-report-verification (attempt 1) | `node scripts/release/verify-playwright-results.mjs deliveries/G6/rc5-candidate/evidence/accessibility/browser-results.json --expected 17` | 0 | 0.141 | [evidence/16-accessibility-report-verification.log](evidence/16-accessibility-report-verification.log) |
+| performance-tests (attempt 1) | `pnpm.cmd test:performance --output C:\Users\yoray\Projects\Yor-World-RC5-c34e01b\deliveries\G6\rc5-candidate\evidence\performance\test-results` | 0 | 82.922 | [evidence/10-performance-tests.log](evidence/10-performance-tests.log) |
+| performance-report-verification (attempt 1) | `node scripts/release/verify-playwright-results.mjs deliveries/G6/rc5-candidate/evidence/performance/performance-results.json --expected 6` | 0 | 0.125 | [evidence/17-performance-report-verification.log](evidence/17-performance-report-verification.log) |
+| release-composition (attempt 1) | `node scripts/release/check-release-composition.mjs --output deliveries/G6/rc5-candidate/release-composition.json` | 0 | 0.843 | [evidence/11-release-composition.log](evidence/11-release-composition.log) |
+| budget-regression (attempt 1) | `node scripts/release/check-performance-budgets.mjs --benchmark-dir deliveries/G6/rc5-candidate/evidence/performance --output deliveries/G6/rc5-candidate/budget-validation-receipt.json` | 0 | 0.985 | [evidence/12-budget-regression.log](evidence/12-budget-regression.log) |
+| bundle-assembly (attempt 1) | `node scripts/release/build-rc5-bundle.mjs --source-commit c34e01bb5bff210d924f42d5266e2fa1ed13288e` | 0 | 24.438 | [evidence/14-bundle-assembly.log](evidence/14-bundle-assembly.log) |
+| evidence-assembly (attempt 1) | `C:\Users\yoray\AppData\Local\Programs\Python\Python312\python.exe "C:\Users\yoray\Projects\Yor World\deliveries\G6\rc5-candidate\tools\assemble-evidence.py" --repository C:\Users\yoray\Projects\Yor-World-RC5-c34e01b --source c34e01bb5bff210d924f42d5266e2fa1ed13288e` | 0 | 1.109 | [evidence/23-evidence-assembly.log](evidence/23-evidence-assembly.log) |
+| release-manifest-validation (attempt 1) | `node scripts/release/validate-release.mjs --strict --receipt deliveries/G6/rc5-candidate/release-manifest-validation.receipt.json` | 0 | 26.235 | [evidence/13-release-manifest-validation.log](evidence/13-release-manifest-validation.log) |
+
+Discovery and actual execution counts are bound in `evidence/browser-counts.json`; unit/integration counts are recorded in execution records and logs. Build ID, actual browser version/path and tool versions are in `evidence/versions.json`. Raw frame samples, renderer identity, explicit LOW preference, observed tiers and failure diagnostics are in `evidence/performance/active-route-frame-pacing.json`.
+
+Fixture configuration is used only for E2E/accessibility. Build and performance commands have no synthetic fixture configuration. File-backed embedded PostgreSQL evidence does not prove hosted PostgreSQL sessions, real Supabase MFA/Storage or mail delivery. Physical devices, screen readers, hosted restore/rollback and production operations remain NOT RUN. Maker evidence is not an independent audit or G6 acceptance; G7 remains LOCKED.

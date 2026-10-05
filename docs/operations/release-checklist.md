@@ -6,13 +6,13 @@ The [RC5 maker packet](../../deliveries/G6/rc5-candidate/parent-packet.txt) auth
 
 RC5 execution requirements — checked only from completed RC5 records:
 
-- [ ] Bind exact sourceCommit, app tree, asset/publication/schema/contact revisions, deterministic archive and all required evidence hashes.
-- [ ] Fresh detached checkout with dependencies and production build initially absent; frozen install, lint and typecheck.
-- [ ] Full unit and integration suites, including AUTO descent to STATIC and explicit LOW remaining authoritative.
-- [ ] Khronos validation of the nine frozen production GLBs and production build.
-- [ ] All 97 Chromium E2E, 17 automated accessibility and six performance tests, with zero failed/flaky/skipped cases.
-- [ ] Continuous rendered-world LOW route for at least 60 seconds, 60 acknowledged actions, positive calls/triangles, median <=33.3 ms and p95 <=45 ms; raw samples and precise failure snapshots.
-- [ ] Actual route/module composition, performance budgets, deterministic source-bound bundle reproducibility and strict RC5 manifest validation.
+- [x] Bind exact sourceCommit, app tree, asset/publication/schema/contact revisions, deterministic archive and all required evidence hashes.
+- [x] Fresh detached checkout with dependencies and production build initially absent; frozen install, lint and typecheck.
+- [x] Full unit and integration suites, including AUTO descent to STATIC and explicit LOW remaining authoritative.
+- [x] Khronos validation of the nine frozen production GLBs and production build.
+- [x] All 97 Chromium E2E, 17 automated accessibility and six performance tests, with zero failed/flaky/skipped cases.
+- [x] Continuous rendered-world LOW route for at least 60 seconds, 60 acknowledged actions, positive calls/triangles, median <=33.3 ms and p95 <=45 ms; raw samples and precise failure snapshots.
+- [x] Actual route/module composition, performance budgets, deterministic source-bound bundle reproducibility and strict RC5 manifest validation.
 - [ ] Push bound candidate evidence and observe Repository integrity and CI / Release Quality Gate SUCCESS on the exact candidate with all 13 required release steps successful.
 - [ ] Archive observed candidate SHA/run/job/step evidence and inventory; push the evidence-only handoff and verify both workflows on that final HEAD. A committed record identifies the earlier observed candidate and does not predict its own future CI result.
 
