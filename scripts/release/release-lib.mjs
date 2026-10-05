@@ -6,7 +6,7 @@ import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-export const POLICY_PATH = "scripts/release/rc3-policy.json";
+export const POLICY_PATH = "scripts/release/rc4-policy.json";
 export const policy = JSON.parse(fs.readFileSync(path.join(ROOT, POLICY_PATH), "utf8"));
 export const sha256 = (bytes) => crypto.createHash("sha256").update(bytes).digest("hex");
 export const normalized = (bytes) => Buffer.from(bytes.toString("utf8").replace(/\r\n/g, "\n"));

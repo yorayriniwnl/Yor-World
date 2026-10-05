@@ -1,6 +1,6 @@
 # YOR WORLD delegation and work orders
 
-Date: 2026-09-30; living status reconciled 2026-10-02 (POST-G3-WAVE-CLOSURE). W1-F1-r2, W2-F1-r2, and W3-A1-r2 were ACCEPTED in PARENT-RECON-02. **G1 ACCEPTED (`G1-R1`)** in [PARENT-RECON-03](reviews/2026-10-01-reconciliation-03.md). Workstation sample B3-P1 was ACCEPTED (`B3-P1-R1`) in [PARENT-RECON-04](reviews/2026-10-01-reconciliation-04.md). Post-G3 interaction wave **CLOSED**: A4-R1, IA-R1 (B3-P3), and C1-R1 all ACCEPTED with zero blocking defects; gates G3, G4, G5 all ACCEPTED. B3-P3 canonical root: `deliveries/interaction-assets/` (provenance-preserving; see [Wave Closure](reviews/2026-10-02-post-g3-wave-closure.md)). Gates **G1-G5 ACCEPTED**. Gate **G6 ACTIVE / REWORK** (RC3 candidate; RC1/RC2 preserved as history). Gate **G7 LOCKED** pending owner authorization.
+Date: 2026-09-30; living status reconciled 2026-10-02 (POST-G3-WAVE-CLOSURE). W1-F1-r2, W2-F1-r2, and W3-A1-r2 were ACCEPTED in PARENT-RECON-02. **G1 ACCEPTED (`G1-R1`)** in [PARENT-RECON-03](reviews/2026-10-01-reconciliation-03.md). Workstation sample B3-P1 was ACCEPTED (`B3-P1-R1`) in [PARENT-RECON-04](reviews/2026-10-01-reconciliation-04.md). Post-G3 interaction wave **CLOSED**: A4-R1, IA-R1 (B3-P3), and C1-R1 all ACCEPTED with zero blocking defects; gates G3, G4, G5 all ACCEPTED. B3-P3 canonical root: `deliveries/interaction-assets/` (provenance-preserving; see [Wave Closure](reviews/2026-10-02-post-g3-wave-closure.md)). Gates **G1-G5 ACCEPTED**. Gate **G6 ACTIVE / REWORK** (RC4 candidate; RC1/RC2/RC3 preserved as history). Gate **G7 LOCKED** pending owner authorization.
 
 The user authorized the full vision and delegated production. The parent Codex chat owns architecture, task assignment, audits, and acceptance. Workers make and integrate the product. This hub operates the existing plans; it does not replace them with another design exercise.
 
@@ -133,7 +133,7 @@ W1/W2/W3 are independent: W1 owns room geometry; W2 uses its own F1 furniture fi
 | **G3 World Core** | Evaluator / Parent | B3-P1 + W1 + W2 + B5 | **ACCEPTED:** 13/13 exit requirements met ([Gate Review](reviews/2026-10-02-g3-gate-evaluation.md)) |
 | **G4 Integrated Experience** | Evaluator / Parent | C1 + IA-R1 + B2-R1 | **ACCEPTED:** 10/10 exit requirements met ([Gate Review](reviews/2026-10-02-g4-gate-evaluation.md)) |
 | **G5 Managed Content & Ops** | Evaluator / Parent | A3 + A4 + A5 + A6 | **ACCEPTED:** 10/10 exit requirements met ([Gate Review](reviews/2026-10-02-g5-gate-evaluation.md)) |
-| **G6 Release Candidate** | Evaluator / Parent | G4 + G5 | **G6 ACTIVE / REWORK:** Candidate v1.0.0-rc3 full-stack verification (RC3 candidate; RC1/RC2 preserved as history) |
+| **G6 Release Candidate** | Evaluator / Parent | G4 + G5 | **G6 ACTIVE / REWORK:** Candidate v1.0.0-rc3 full-stack verification (RC4 candidate; RC1/RC2/RC3 preserved as history) |
 | **G7 Production Release** | **Gemini #3, #1, #2; GPT #2, #1** | Owner Authorization + G1–G6 | **G7 LOCKED:** Only after owner authorizes deployment. Requires 10 live criteria ([Protocol](releases/2026-10-02-g7-production-release-protocol.md)). |
 
 **FROZEN CONTRACTS FOR NEW PACKETS:**

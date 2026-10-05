@@ -1,6 +1,6 @@
-# RC3 canonical release tooling
+# RC4 canonical release tooling
 
-Canonical deployment root is `app/`. RC1/RC2 files under `deliveries/C4/` are historical inputs and are never written by these scripts. Policy is `rc3-policy.json`; it freezes accepted asset hashes, routes, identities, and the bundle exclusion list.
+Canonical deployment root is `app/`. RC1/RC2 files under `deliveries/C4/` are historical inputs and are never written by these scripts. Policy is `rc4-policy.json`; it freezes accepted asset hashes, routes, identities, and the bundle exclusion list.
 
 Run all commands from the repository root after frozen installation and a production build in `app/`:
 
@@ -17,7 +17,7 @@ Composition reads the actual Next production route and server artifact manifests
 After implementation and checks are complete, commit application/tooling first. This becomes `sourceCommit`. Build the deterministic archive from that commit's Git blobs:
 
 ```text
-node scripts/release/build-rc3-bundle.mjs --source-commit <40-character-commit>
+node scripts/release/build-rc4-bundle.mjs --source-commit <40-character-commit>
 ```
 
 Bundle contains canonical app tracked reproduction/deployment files and the release policy. Git blob bytes avoid checkout line-ending differences; USTAR order, modes, timestamps, UID/GID, and gzip settings are deterministic. Untracked source and dirty tracked implementation are rejected. Dependencies, builds, caches, live env files, secrets directories, and browser scratch are excluded. SourceCommit must be an ancestor of HEAD; later commits may add evidence/documentation, but cannot change app, release tooling, or CI without a new sourceCommit and fresh bundle.
@@ -36,7 +36,7 @@ The detached manifest at `deliveries/G6/full-stack-integration/release-manifest.
 }
 ```
 
-Each of the thirteen policy `requiredChecks` must have `status: "pass"`, `verificationCategory: "AUTOMATED PASS"`, `blocking: true`, exact `sourceCommit`, and fresh `evidencePath` inside the RC3 delivery root. All ordinary checks require `evidenceSha256`; `evidenceHashMode: "lf"` means hash UTF-8 bytes after CRLF to LF conversion, otherwise hash raw bytes. Composition check names and hashes the composition report itself. Additional `evidenceHashes` require explicit `sha256` and optional `hashMode`.
+Each of the thirteen policy `requiredChecks` must have `status: "pass"`, `verificationCategory: "AUTOMATED PASS"`, `blocking: true`, exact `sourceCommit`, and fresh `evidencePath` inside the RC4 delivery root. All ordinary checks require `evidenceSha256`; `evidenceHashMode: "lf"` means hash UTF-8 bytes after CRLF to LF conversion, otherwise hash raw bytes. Composition check names and hashes the composition report itself. Additional `evidenceHashes` require explicit `sha256` and optional `hashMode`.
 
 `release-manifest-validation` names `deliveries/G6/full-stack-integration/release-manifest-validation.receipt.json` without `evidenceSha256`. The receipt hashes the final manifest and records bundle/source verification. This explicit one-way dependency avoids the impossible manifest -> receipt -> manifest hash cycle. Receipt is generated only after executing validation; it is automated maker evidence, not independent audit or acceptance.
 

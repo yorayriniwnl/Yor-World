@@ -11,8 +11,8 @@ try {
   fs.mkdirSync(path.dirname(target), { recursive: true });
   fs.writeFileSync(target, bundle.archive);
   writeJson(values.receipt, { releaseId: policy.releaseId, sourceCommit: values["source-commit"], canonicalApplicationRoot: policy.canonicalApplicationRoot, archivePath: values.output, fileCount: bundle.fileCount, bytes: bundle.bytes, sha256: bundle.sha256, inclusionPolicy: policy.bundle.inclusionPolicy, exclusionPolicy: policy.bundle, files: bundle.files });
-  console.log(`PASS deterministic RC3 bundle: ${bundle.fileCount} files, ${bundle.bytes} bytes, SHA-256 ${bundle.sha256}`);
+  console.log(`PASS deterministic RC4 bundle: ${bundle.fileCount} files, ${bundle.bytes} bytes, SHA-256 ${bundle.sha256}`);
 } catch (error) {
-  console.error(`FAIL RC3 bundle: ${error.message}`);
+  console.error(`FAIL RC4 bundle: ${error.message}`);
   process.exitCode = 1;
 }
