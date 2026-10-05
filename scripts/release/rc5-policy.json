@@ -1,0 +1,230 @@
+{
+    "releaseId":  "v1.0.0-rc5",
+    "canonicalApplicationRoot":  "app",
+    "deliveryRoot":  "deliveries/G6/rc5-candidate",
+    "assetRevision":  "g6-world-art-freeze-20261002",
+    "publicationRevision":  "A4-R1-20260928",
+    "schemaRevision":  "20261005000000_schema_v2",
+    "contactAmendment":  "A5/A6-CONTACT-IDEMPOTENCY-R2",
+    "requiredPublicRoutes":  [
+                                 "/",
+                                 "/about",
+                                 "/resume",
+                                 "/contact",
+                                 "/projects",
+                                 "/projects/[slug]"
+                             ],
+    "requiredAdminRoutes":  [
+                                "/admin",
+                                "/admin/login",
+                                "/admin/editor",
+                                "/admin/publish"
+                            ],
+    "requiredApiRoutes":  [
+                              "/api/contact",
+                              "/api/admin/audit",
+                              "/api/admin/media",
+                              "/api/admin/media/[id]",
+                              "/api/admin/media/[id]/approve",
+                              "/api/admin/projects",
+                              "/api/admin/publish",
+                              "/api/admin/rollback",
+                              "/api/admin/verify",
+                              "/api/events",
+                              "/api/github",
+                              "/api/internal/jobs/[job]"
+                          ],
+    "requiredModules":  [
+                            "src/features/world/WorldRoot.tsx",
+                            "src/features/world/WorldRuntime.ts",
+                            "src/features/world/AssetLoader.ts",
+                            "src/features/world/SceneIntegrator.ts",
+                            "src/features/experience/controller.ts",
+                            "src/features/room/quality-policy.ts",
+                            "src/server/contact/receive.ts",
+                            "src/server/contact/outbox.ts",
+                            "src/server/auth/require-owner.ts"
+                        ],
+    "requiredProductionModels":  [
+                                     "group-a-essential.glb",
+                                     "group-b-props.glb",
+                                     "on-demand-projects.glb",
+                                     "production-room-full.glb",
+                                     "mobile-room-lod.glb",
+                                     "resident-production.glb",
+                                     "fixture-production.glb",
+                                     "interaction-assets.glb",
+                                     "interaction-assets-mobile.glb"
+                                 ],
+    "acceptedAssets":  [
+                           {
+                               "filename":  "group-a-essential.glb",
+                               "sha256":  "069767334b0dd43f8fd8501330472d0398c951f12fca2589ee5ad3aa957a538b",
+                               "bytes":  579208,
+                               "triangles":  3320,
+                               "estimatedGpuBytes":  8871074,
+                               "logicalAssetId":  "env-group-a-essential"
+                           },
+                           {
+                               "filename":  "group-b-props.glb",
+                               "sha256":  "17d294d1de3c3310ebda1a49dbd1d65c9395905dc308684b08e999487e9cda72",
+                               "bytes":  194084,
+                               "triangles":  2036,
+                               "estimatedGpuBytes":  3642244,
+                               "logicalAssetId":  "env-group-b-props"
+                           },
+                           {
+                               "filename":  "on-demand-projects.glb",
+                               "sha256":  "66363f4cbe2932c4aeeff711d552e7dacf827a2bc70a580cf3d54ace33fb4798",
+                               "bytes":  93708,
+                               "triangles":  1296,
+                               "estimatedGpuBytes":  68208,
+                               "logicalAssetId":  "env-on-demand-projects"
+                           },
+                           {
+                               "filename":  "production-room-full.glb",
+                               "sha256":  "3a02647d24e474c8a2579b0d277cf02a7841212e961c1554f67b6e032e40a307",
+                               "bytes":  861364,
+                               "triangles":  6652,
+                               "estimatedGpuBytes":  12580278,
+                               "logicalAssetId":  "env-production-room-full"
+                           },
+                           {
+                               "filename":  "mobile-room-lod.glb",
+                               "sha256":  "3a02647d24e474c8a2579b0d277cf02a7841212e961c1554f67b6e032e40a307",
+                               "bytes":  861364,
+                               "triangles":  6652,
+                               "estimatedGpuBytes":  12580278,
+                               "logicalAssetId":  "env-mobile-room-lod"
+                           },
+                           {
+                               "filename":  "resident-production.glb",
+                               "sha256":  "b15000feb4738d14aa1d41a43f01ba377f7011dbe1c95b3478c1200d12f4411d",
+                               "bytes":  575900,
+                               "triangles":  6336,
+                               "estimatedGpuBytes":  438136,
+                               "logicalAssetId":  "resident-avatar-production"
+                           },
+                           {
+                               "filename":  "fixture-production.glb",
+                               "sha256":  "8e413b1aa407841b5fd268a9c00bb66718688957c6507551f3b79104132d81d8",
+                               "bytes":  320748,
+                               "triangles":  6792,
+                               "estimatedGpuBytes":  276532,
+                               "logicalAssetId":  "fixture-chair-production"
+                           },
+                           {
+                               "filename":  "interaction-assets.glb",
+                               "sha256":  "1d965a9fe9b58a9f485b0145161bc38a75e4ccb9113ce83211db503a5b1e6b6d",
+                               "bytes":  262868,
+                               "triangles":  2124,
+                               "estimatedGpuBytes":  8550385,
+                               "logicalAssetId":  "interaction-assets-desktop"
+                           },
+                           {
+                               "filename":  "interaction-assets-mobile.glb",
+                               "sha256":  "9dd2933d64dbe947328ee600a1608de07016a5aa01cad027881d33e738cd190e",
+                               "bytes":  263364,
+                               "triangles":  2124,
+                               "estimatedGpuBytes":  8550385,
+                               "logicalAssetId":  "interaction-assets-mobile"
+                           },
+                           {
+                               "filename":  "room-blockout.glb",
+                               "sha256":  "cb9dbe01a8325933cac3e83003358dad096c0c5be9b9da76bc60bd2f47079d0f",
+                               "bytes":  925024,
+                               "triangles":  11020,
+                               "estimatedGpuBytes":  6343328,
+                               "logicalAssetId":  "proof-room-blockout-w1"
+                           },
+                           {
+                               "filename":  "avatar-proof.glb",
+                               "sha256":  "eba336b923e7fd8caf20fc006221934bd820f1f61812a0965833c109d7525511",
+                               "bytes":  230360,
+                               "triangles":  4060,
+                               "estimatedGpuBytes":  170388,
+                               "logicalAssetId":  "proof-avatar-w2"
+                           },
+                           {
+                               "filename":  "fixture-proof.glb",
+                               "sha256":  "7c9b2358b898a26b40baae799506cf3be26a54019f7e14826b7d3b2c9a94a4d7",
+                               "bytes":  307852,
+                               "triangles":  6472,
+                               "estimatedGpuBytes":  265380,
+                               "logicalAssetId":  "proof-fixture-w2"
+                           },
+                           {
+                               "filename":  "workstation-sample.glb",
+                               "sha256":  "aa1618d690f0e65db4c072adb5bf83db259d03b55ab65db9bcd6f4e55df8d4c0",
+                               "bytes":  743232,
+                               "triangles":  14180,
+                               "estimatedGpuBytes":  9637620,
+                               "logicalAssetId":  "sample-workstation-b3p1"
+                           }
+                       ],
+    "requiredChecks":  [
+                           "frozen-install",
+                           "lint",
+                           "typecheck",
+                           "unit-tests",
+                           "integration-tests",
+                           "asset-validation",
+                           "production-build",
+                           "e2e-tests",
+                           "accessibility",
+                           "performance-tests",
+                           "budget-regression",
+                           "release-composition",
+                           "release-manifest-validation"
+                       ],
+    "expectedBrowserChecks": {
+        "e2e": 97,
+        "accessibility": 17,
+        "performance": 6
+    },
+    "requiredEvidencePaths": [
+        "source-binding.json",
+        "bundle-receipt.json",
+        "asset-validation.json",
+        "evidence/versions.json",
+        "evidence/e2e/browser-results.json",
+        "evidence/accessibility/browser-results.json",
+        "evidence/performance/performance-results.json",
+        "evidence/performance/active-route-frame-pacing.json",
+        "evidence/performance/cold-loads-desktop-1440x900.json",
+        "evidence/performance/cold-loads-mobile-390x844.json",
+        "evidence/performance/cold-loads-narrow-320x600.json",
+        "evidence/performance/enter-exit-stability.json",
+        "evidence/performance/public-payloads.json"
+    ],
+    "bundle":  {
+                   "path":  "deliveries/G6/rc5-candidate/yor-world-v1.0.0-rc5.bundle.tar.gz",
+                   "inclusionPolicy":  "Canonical app tracked source, public frozen assets, Supabase migrations, exact dependency lockfile, test and build configs, safe .env.example; scripts/release/rc5-policy.json. Git blob bytes from sourceCommit, sorted USTAR files, UID/GID/mtime=0, gzip level=9.",
+                   "excludedDirectories":  [
+                                               "node_modules",
+                                               ".next",
+                                               ".vercel",
+                                               ".turbo",
+                                               ".cache",
+                                               "coverage",
+                                               "test-results",
+                                               "playwright-report",
+                                               "blob-report",
+                                               "evidence",
+                                               "artifacts",
+                                               ".git",
+                                               "secrets",
+                                               "tmp",
+                                               "temp"
+                                           ],
+                   "excludedFilePatterns":  [
+                                                "\\.tsbuildinfo$",
+                                                "\\.log$",
+                                                "\\.trace$",
+                                                "\\.webm$",
+                                                "\\.zip$",
+                                                "\\.DS_Store$",
+                                                "(?:^|/)(?:Thumbs\\.db|npm-debug\\.log)$"
+                                            ]
+               }
+}

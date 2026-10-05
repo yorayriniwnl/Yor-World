@@ -1,48 +1,28 @@
-# Current RC3 release candidate checklist
+# Current RC5 release candidate checklist
 
-Current release: **v1.0.0-rc3 candidate**. Canonical deployment/CI root: **`app/`**. G1-G5 ACCEPTED; G6 ACTIVE / REWORK; G7 LOCKED. Historic RC1/RC2 dossiers and C4 evidence remain preserved; they do not establish final RC3 success.
+Current release: **v1.0.0-rc5 candidate**. Canonical deployment/CI root: **`app/`**. G1-G5 ACCEPTED; G6 ACTIVE / REWORK — awaiting GPT Plus #2 independent audit; G7 LOCKED. **RC4 HISTORICAL / SUPERSEDED BY RC5**; RC1-RC4 dossiers and evidence remain immutable.
 
-Architecture/source checks inspected during integration:
+The [RC5 maker packet](../../deliveries/G6/rc5-candidate/parent-packet.txt) authorizes the active-world benchmark contract correction and directly required release rebinding. The production quality policy, thresholds, watchdog, frozen assets, platform corrections and contact R2 remain unchanged. Schema remains `20261005000000_schema_v2`.
 
-- [x] A new single deployable app combines public/runtime, platform/server and frozen world assets; historical accepted roots remain inputs.
-- [x] Every28 overlapping conflict and every58 A6-only input has a recorded semantic merge/destination.
-- [x] Final source-bound build contains all22 required public/admin/API routes, including `/api/contact`, `/admin/login`, `/api/admin/publish`, `/api/internal/jobs/[job]`.
-- [x] Working Contact invokes actual R2 imports; production storage is configured PostgreSQL, with honest503 and no automatic ephemeral fallback.
-- [x] Verified owner/AAL2/current-active-owner checks protect admin pages/APIs; public snapshot/terminal/static fallback exclude private drafts and CandidateX.
-- [x] Nine production GLBs and actual loader URLs resolve from canonical public root; no frozen art regenerated; obsolete proof binaries excluded from canonical app.
-- [x] Exact accepted dependency pins merged; stable server-only contact/quota hash secrets and names-only env contract documented.
-- [x] Original numbered migrations retained. Operational publication RPC grant hardening is included and explicitly identified for audit/G7 application.
-- [x] CI/release scripts target app only and reject missing routes/modules, unbound assets, skipped browser tests and mismatched source/archive/evidence.
+RC5 execution requirements — checked only from completed RC5 records:
 
-Final execution and artifact checklist — fill only from definitive parent-captured evidence:
+- [ ] Bind exact sourceCommit, app tree, asset/publication/schema/contact revisions, deterministic archive and all required evidence hashes.
+- [ ] Fresh detached checkout with dependencies and production build initially absent; frozen install, lint and typecheck.
+- [ ] Full unit and integration suites, including AUTO descent to STATIC and explicit LOW remaining authoritative.
+- [ ] Khronos validation of the nine frozen production GLBs and production build.
+- [ ] All 97 Chromium E2E, 17 automated accessibility and six performance tests, with zero failed/flaky/skipped cases.
+- [ ] Continuous rendered-world LOW route for at least 60 seconds, 60 acknowledged actions, positive calls/triangles, median <=33.3 ms and p95 <=45 ms; raw samples and precise failure snapshots.
+- [ ] Actual route/module composition, performance budgets, deterministic source-bound bundle reproducibility and strict RC5 manifest validation.
+- [ ] Push bound candidate evidence and observe Repository integrity and CI / Release Quality Gate SUCCESS on the exact candidate with all 13 required release steps successful.
+- [ ] Archive observed candidate SHA/run/job/step evidence and inventory; push the evidence-only handoff and verify both workflows on that final HEAD. A committed record identifies the earlier observed candidate and does not predict its own future CI result.
 
-- [x] Record exact implementation `sourceCommit`, tool versions and unchanged app/tools/CI trees on later evidence-only HEAD.
-- [x] Fresh `pnpm install --frozen-lockfile` from a clean canonical environment.
-- [x] Fresh lint and strict typecheck.
-- [x] Full unified unit and platform/runtime integration tests, including actual R2, role denial and fifteen-table restore.
-- [x] Khronos validation of all final canonical GLBs, exact freeze hash/size checks.
-- [x] Final production build and actual compiled-route/module composition.
-- [x] Full relevant Playwright E2E with isolated new temporary fixture and zero skipped/flaky/failed tests.
-- [x] Automated accessibility/keyboard/reflow checks; clearly separate unrun manual screen-reader/physical checks.
-- [x] Fresh build-bound production HTTP payloads, five cold contexts/profile, complete raw60s frame pacing and cleanup cycles.
-- [x] Measured canonical payload/asset/geometry/GPU estimate/performance budget receipt; no old timings/fallback PASS values.
-- [x] Generate deterministic RC3 app archive; record exact file count, archive bytes, per-file/archive hashes, inclusion/exclusion policy.
-- [x] Detached RC3 manifest binds source, asset/publication/schema/contact identities, composition and all 13 required checks: 12 input evidence hashes plus the detached manifest-validation receipt.
-- [x] Automated final manifest/archive validation receipt binds the final manifest without a circular receipt hash.
-- [x] Push the source-bound candidate bundle/manifest/local proof; observe **Repository integrity SUCCESS** and **CI / Release Quality Gate SUCCESS** on that exact pushed candidate, with no required skipped step.
-- [x] Commit `ci-results.json` with the observed candidate SHA/run/job IDs, conclusions and required-step execution; update report/dossier from definitive local and observed CI records.
-- [ ] Push the evidence-only commit containing that record; observe both workflows green on its exact final HEAD. Report the final SHA/run IDs in the handoff and retain provider artifacts/validation `verifiedHead`; do not rewrite the committed record to claim its own future CI result.
-
-Authoritative records live in `deliveries/G6/full-stack-integration/`: `release-manifest.json`, `release-composition.json`, `bundle-receipt.json`, `commands-and-exit-codes.md`, `evidence/execution.jsonl`, `release-manifest-validation.receipt.json`, `ci-results.json`, `SHA256SUMS.txt`. These are final only when actually created and verified by the parent. Interim maps and historical logs are not substitutes.
+Authoritative maker records: [RC5 report](../../deliveries/G6/rc5-candidate/report.md), `release-manifest.json`, `source-binding.json`, `release-composition.json`, `bundle-receipt.json`, `commands-and-exit-codes.md`, `evidence/execution.jsonl`, `release-manifest-validation.receipt.json`, `ci-results.json` and `SHA256SUMS.txt` under `deliveries/G6/rc5-candidate/`. Results remain PASS/FAIL/NOT RUN according to actual execution; no historical PASS is fresh RC5 proof.
 
 Review and release boundary:
 
-- [ ] Gemini #1 backend/platform verification.
-- [ ] GPT Plus #2 independent RC3 full-stack audit, followed by assigned-maker correction/delta audit if needed.
-- [ ] GPT Plus #1 final G6 adjudication; maker cannot self-accept.
-- [ ] Separate explicit owner authorization before any G7 deployment/live work.
-- [ ] All ten [G7 requirements](../planning/releases/2026-10-02-g7-production-release-protocol.md) freshly verified on production, including real services, physical/manual limits, actual monitoring and rehearsed rollback RTO<=5m/RPO=0.
+- [ ] GPT Plus #2 independent full-stack RC5 audit; assigned-maker correction and delta audit if required.
+- [ ] GPT Plus #1 final G6 adjudication. Maker cannot self-accept.
+- [ ] Separate explicit owner authorization before G7 deployment/live work.
+- [ ] All ten [G7 requirements](../planning/releases/2026-10-02-g7-production-release-protocol.md) freshly verified on production, including real services, physical/manual tests, monitoring and rollback RTO<=5m/RPO=0.
 
-Before authorized hosted setup: apply the exact A3/A4 migrations in order, then `app/supabase/operations/harden-publication-grants.sql`; configure production secrets/auth/TOTP/private bucket/mail/jobs; prohibit `YOR_E2E_FIXTURE`/`YOR_TEST_DATABASE_PATH` on hosts. Current four baseline response headers do not claim a complete production CSP/HSTS policy. `/api/health`, live monitoring, external service behavior and zero-downtime rollback are G7 prerequisites, not inferred from a deployment command or partial HTTP probe.
-
-Physical devices, real screen readers, sustained mobile thermal testing, hosted independent PostgreSQL sessions, Supabase services/Storage/Resend, managed DB/blob restore, CDN cache/compression and live rollback are **NOT RUN / G7 REQUIRED**. Local SQL/browser success remains explicitly local. Stop at G6 handoff; do not deploy or unlock G7.
+Before owner-authorized hosted setup, apply the three exact migrations in filename order and `app/supabase/operations/harden-publication-grants.sql`; configure production secrets/auth/TOTP/private bucket/mail/jobs; prohibit fixture variables on hosts. Real Supabase Auth/REST/Storage, independent native PostgreSQL sessions, mail/GitHub services, physical devices, screen readers, hosted restore, CDN behavior and live rollback remain NOT RUN/G7-required. Stop at the maker handoff.

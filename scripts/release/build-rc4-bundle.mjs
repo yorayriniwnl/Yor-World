@@ -5,6 +5,7 @@ import { parseArgs } from "node:util";
 import { buildBundle, policy, safePath, writeJson } from "./release-lib.mjs";
 
 try {
+  if (policy.releaseId !== "v1.0.0-rc4") throw new Error("Historical RC4 builder requires its original RC4 source checkout. Use build-rc5-bundle.mjs for the current candidate.");
   const { values } = parseArgs({ options: { "source-commit": { type: "string" }, output: { type: "string", default: policy.bundle.path }, receipt: { type: "string", default: policy.deliveryRoot + "/bundle-receipt.json" } } });
   const bundle = buildBundle(values["source-commit"]);
   const target = safePath(values.output);

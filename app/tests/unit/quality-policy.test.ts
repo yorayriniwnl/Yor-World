@@ -244,6 +244,37 @@ describe("C3 Frame Timing & updateTier Invariants", () => {
     expect(ctrl.getTier()).toBe("low");
     expect(onTierChange).toHaveBeenCalledWith("low");
   });
+
+  it("AUTO controller reaches STATIC only after three sustained slow windows at each active tier", () => {
+    const onTierChange = vi.fn();
+    const controller = new AdaptiveQualityController({ hasWebGL: true, userPreference: "auto" }, { onTierChange });
+    expect(controller.getTier()).toBe("high");
+
+    for (const [currentTier, nextTier] of [["high", "medium"], ["medium", "low"], ["low", "static"]] as const) {
+      for (let window = 1; window <= 3; window++) {
+        for (let frame = 0; frame < 30; frame++) controller.recordFrame(40);
+        expect(controller.evaluateWindow()).toBe(window < 3 ? currentTier : nextTier);
+      }
+    }
+    expect(controller.getUserPreference()).toBe("auto");
+    expect(onTierChange.mock.calls).toEqual([["medium"], ["low"], ["static"]]);
+  });
+
+  it("explicit LOW remains authoritative through sustained slow and safe-HOME headroom windows", () => {
+    const onTierChange = vi.fn();
+    const controller = new AdaptiveQualityController({ hasWebGL: true }, { onTierChange });
+    controller.setUserPreference("low");
+    controller.setPhase("home", true);
+
+    for (const durationMs of [40, 10]) {
+      for (let window = 0; window < 12; window++) {
+        for (let frame = 0; frame < 30; frame++) controller.recordFrame(durationMs);
+        expect(controller.evaluateWindow()).toBe("low");
+        expect(controller.getUserPreference()).toBe("low");
+      }
+    }
+    expect(onTierChange.mock.calls).toEqual([["low"]]);
+  });
 });
 
 describe("C3 AudioController Opt-in, Denial & Disposal", () => {

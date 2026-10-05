@@ -1,47 +1,57 @@
-# RC4 canonical release tooling
+# RC5 canonical release tooling
 
-Canonical deployment root is `app/`. RC1/RC2 files under `deliveries/C4/` are historical inputs and are never written by these scripts. Policy is `rc4-policy.json`; it freezes accepted asset hashes, routes, identities, and the bundle exclusion list.
+Canonical deployment root is `app/`. Current policy is `rc5-policy.json`; it freezes accepted asset hashes, routes, identities, mandatory evidence, browser test counts, and bundle exclusions. RC1-RC4 dossiers and `rc4-policy.json` remain historical. Current tooling refuses to write historical delivery roots. Reproducing an older candidate requires a separate checkout of its original source and tooling.
 
-Run all commands from the repository root after frozen installation and a production build in `app/`:
+Run from the repository root after frozen installation and a production build in `app/`:
 
 ```text
-node scripts/release/validate-gltf-assets.mjs
+node scripts/release/validate-gltf-assets.mjs --output deliveries/G6/rc5-candidate/asset-validation.json
 node scripts/release/check-release-composition.mjs
-node scripts/release/check-performance-budgets.mjs --benchmark-dir deliveries/G6/full-stack-integration/evidence/performance
+node scripts/release/check-performance-budgets.mjs --benchmark-dir deliveries/G6/rc5-candidate/evidence/performance
 ```
 
-Performance reports must be fresh `app/tests/performance` outputs for the current `.next/BUILD_ID`, with `canonicalApplicationRoot: "app"`, `buildId`, five raw positive cold samples for each desktop/mobile/narrow profile, and at least 60 seconds of active route pacing with every raw frame included. `public-payloads.json` must contain `routes: [{route, status, html}]` for `/`, `/about`, `/contact`, `/resume`, `/projects`, captured from actual production HTTP responses before browser hydration. The checker measures each response and its referenced build/public resources; dynamic public pages do not need static prerendered HTML files. No historical timing fallback exists. Asset estimates are tied to exact frozen binary hashes. Localhost/software-browser timing is explicitly lab evidence; physical devices, production networks, and field metrics remain unverified.
+Performance reports must be fresh `app/tests/performance` outputs for the current `.next/BUILD_ID`, with `canonicalApplicationRoot: "app"`, `buildId`, five positive raw cold-load samples for each desktop/mobile/narrow profile, and at least 60 seconds of active production WebGL rendering. The active route selects LOW using the real production quality control before measurement. Both budget and manifest validation require `requestedUserPreference: "low"`, only LOW tier counts, complete rendered-frame samples, 60 acknowledged actions, `failureReason: null`, and final canvas/visibility/lifecycle/renderer diagnostics. Median remains <=33.3 ms and p95 <=45 ms. AUTO's supported STATIC fallback remains covered separately by deterministic quality-policy tests.
 
-Composition reads the actual Next production route and server artifact manifests. It checks all 22 public/admin/API routes from the accepted A6 inventory, follows runtime TypeScript imports from production route roots, rejects private environment variables/server modules in browser import graphs, requires C3 runtime modules and the R2 receive/outbox chain, checks claim/quota/message/outbox ordering, and resolves actual GLB URLs into the canonical public root. The report hashes reachable source modules and frozen assets; it does not replace behavioral contact/auth tests.
+`public-payloads.json` contains `routes: [{route, status, html}]` for `/`, `/about`, `/contact`, `/resume`, `/projects`, captured from actual production HTTP responses before hydration. The checker measures each response and its referenced build/public resources. No historical timing fallback exists. Localhost/software-browser timing is lab evidence; physical devices, production networks, and field metrics remain unverified.
 
-After implementation and checks are complete, commit application/tooling first. This becomes `sourceCommit`. Build the deterministic archive from that commit's Git blobs:
+Composition reads actual Next production route/server manifests, checks all 22 public/admin/API routes, follows runtime TypeScript imports, rejects private environment variables/server modules in browser graphs, requires the integrated runtime and R2 receive/outbox chain, checks claim/quota/message/outbox ordering, and resolves actual GLB URLs. Its hashed module/asset inventory supplements behavioral contact/auth tests.
+
+Commit application, release tooling, and workflows first; this becomes `sourceCommit`. Run fresh checks against that exact source. Build the archive from Git blobs:
 
 ```text
-node scripts/release/build-rc4-bundle.mjs --source-commit <40-character-commit>
+node scripts/release/build-rc5-bundle.mjs --source-commit <40-character-commit>
 ```
 
-Bundle contains canonical app tracked reproduction/deployment files and the release policy. Git blob bytes avoid checkout line-ending differences; USTAR order, modes, timestamps, UID/GID, and gzip settings are deterministic. Untracked source and dirty tracked implementation are rejected. Dependencies, builds, caches, live env files, secrets directories, and browser scratch are excluded. SourceCommit must be an ancestor of HEAD; later commits may add evidence/documentation, but cannot change app, release tooling, or CI without a new sourceCommit and fresh bundle.
+The bundle contains canonical tracked app reproduction/deployment files and current policy. Git blob bytes avoid checkout line-ending differences; USTAR order, modes, timestamps, UID/GID, and gzip settings are deterministic. Dependencies, generated builds, caches, secrets, live env files, and browser scratch are excluded. Dirty or untracked application/tooling/workflow source is rejected. `sourceCommit` must be an ancestor of HEAD. Later commits may add evidence/documentation, but changes to app, release tooling, or either workflow require a new source commit and fresh bundle.
 
-The detached manifest at `deliveries/G6/full-stack-integration/release-manifest.json` uses existing ReleaseManifest fields plus:
+Create `deliveries/G6/rc5-candidate/source-binding.json` and `release-manifest.json` after checks and bundle generation. Both must bind the exact release ID, source commit, `sourceAppTree` from `git rev-parse <sourceCommit>:app`, application root, asset/publication/schema/contact revisions, bundle path, and bundle SHA-256. The manifest also binds:
 
 ```json
 {
   "canonicalApplicationRoot": "app",
+  "sourceAppTree": "<exact application Git tree>",
   "bundleMetadata": { "fileCount": 123, "bytes": 456 },
+  "sourceBinding": {
+    "path": "deliveries/G6/rc5-candidate/source-binding.json",
+    "sha256": "<actual SHA-256>",
+    "hashMode": "lf"
+  },
   "composition": {
-    "path": "deliveries/G6/full-stack-integration/release-composition.json",
+    "path": "deliveries/G6/rc5-candidate/release-composition.json",
     "sha256": "<actual SHA-256>",
     "hashMode": "lf"
   }
 }
 ```
 
-Each of the thirteen policy `requiredChecks` must have `status: "pass"`, `verificationCategory: "AUTOMATED PASS"`, `blocking: true`, exact `sourceCommit`, and fresh `evidencePath` inside the RC4 delivery root. All ordinary checks require `evidenceSha256`; `evidenceHashMode: "lf"` means hash UTF-8 bytes after CRLF to LF conversion, otherwise hash raw bytes. Composition check names and hashes the composition report itself. Additional `evidenceHashes` require explicit `sha256` and optional `hashMode`.
+Each of the thirteen policy `requiredChecks` has `status: "pass"`, `verificationCategory: "AUTOMATED PASS"`, `blocking: true`, exact `sourceCommit`, and an evidence path inside the RC5 root. Every ordinary check requires `evidenceSha256`; `evidenceHashMode: "lf"` hashes bytes after CRLF-to-LF conversion, otherwise raw bytes. Composition check binds the same report/hash as `composition`. Every policy `requiredEvidencePaths` item must also appear in `evidenceHashes`: source/bundle receipts, asset validation, versions, complete browser reports, and raw performance reports. Supplemental evidence stays within the RC5 root. Browser JSON must show 97 E2E, 17 accessibility, and six performance checks per project, each passing once, with zero skips, retries, flakes, runner errors, or unexpected outcomes.
 
-`release-manifest-validation` names `deliveries/G6/full-stack-integration/release-manifest-validation.receipt.json` without `evidenceSha256`. The receipt hashes the final manifest and records bundle/source verification. This explicit one-way dependency avoids the impossible manifest -> receipt -> manifest hash cycle. Receipt is generated only after executing validation; it is automated maker evidence, not independent audit or acceptance.
+`release-manifest-validation` names `deliveries/G6/rc5-candidate/release-manifest-validation.receipt.json` without an input hash. The detached receipt hashes the final manifest. Generate it after manifest assembly:
 
 ```text
 node scripts/release/validate-release.mjs --strict
 ```
 
-Validation regenerates the archive in memory and compares its exact bytes, validates sourceCommit/HEAD/worktree, evidence hashes, current production composition, bundle membership, candidate governance and G7 LOCKED. A different Next build ID between local and CI is allowed; route/source/asset composition must still match. CI reruns all required checks against `app/`, then verifies the detached candidate. It never treats historical C4 logs as fresh proof.
+Validation regenerates the archive in memory and compares exact bytes, verifies source/tree/worktree and all mandatory evidence hashes, checks build-bound performance/composition, and requires candidate status, self-approval false, G6 ACTIVE / REWORK, and G7 LOCKED. Local and CI build IDs may differ; committed performance reports must match the committed composition build ID, and route/source/asset composition must match CI's fresh build. The receipt is automated maker evidence, not independent audit or acceptance.
+
+CI runs all thirteen required steps against `app/`, with fresh isolated `.rc5-ci/` outputs and exact browser counts, then validates the committed RC5 candidate. A source-only push lacks the final manifest and cannot pass the release gate; the subsequent evidence commit must preserve the bound app/tooling/workflow source. The final exact-candidate run must show both workflows successful with every required step executed.

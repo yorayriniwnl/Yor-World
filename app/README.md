@@ -1,6 +1,6 @@
 # YOR WORLD canonical application
 
-This is the single deployable RC4 application. Historical delivery applications are proof inputs.
+This is the single deployable RC5 application. Historical delivery applications are proof inputs.
 
 Use Node `>=24.19.0 <25` and pnpm `9.15.9`:
 
@@ -22,4 +22,4 @@ Public portfolio and project pages serve the validated accepted snapshot when th
 
 For isolated browser tests only, set `YOR_E2E_FIXTURE=1` and `YOR_TEST_DATABASE_PATH` to a fresh temporary directory before `pnpm test:e2e`. This selects a synthetic file-backed PGlite fixture; it does not verify a hosted Supabase service. Never set these variables on a hosted application. Browser tests must never share a production database.
 
-RC4 is a candidate. G6 is ACTIVE / REWORK pending independent audit. G7 is LOCKED; this packet does not authorize deployment.
+RC5 is a candidate. G6 is ACTIVE / REWORK pending independent audit. G7 is LOCKED; this packet does not authorize deployment.

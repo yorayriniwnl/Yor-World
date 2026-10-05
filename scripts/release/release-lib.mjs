@@ -6,7 +6,7 @@ import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-export const POLICY_PATH = "scripts/release/rc4-policy.json";
+export const POLICY_PATH = "scripts/release/rc5-policy.json";
 export const policy = JSON.parse(fs.readFileSync(path.join(ROOT, POLICY_PATH), "utf8"));
 export const sha256 = (bytes) => crypto.createHash("sha256").update(bytes).digest("hex");
 export const normalized = (bytes) => Buffer.from(bytes.toString("utf8").replace(/\r\n/g, "\n"));
@@ -23,9 +23,16 @@ export function safePath(name) {
   return resolved;
 }
 export const readJson = (name) => JSON.parse(fs.readFileSync(safePath(name), "utf8"));
-export function writeJson(name, value) {
+export function assertMutableOutput(name) {
   const target = safePath(name);
-  if (name.startsWith("deliveries/C4/")) throw new Error("Historical C4 evidence is immutable");
+  if (name.startsWith("deliveries/C4/") || name.startsWith("deliveries/G6/full-stack-integration/")
+    || name.startsWith("deliveries/G6/rc4-candidate/") || /^docs\/releases\/v1\.0\.0-rc[1-4]\.md$/.test(name)) {
+    throw new Error("Historical RC1-RC4 evidence is immutable");
+  }
+  return target;
+}
+export function writeJson(name, value) {
+  const target = assertMutableOutput(name);
   fs.mkdirSync(path.dirname(target), { recursive: true });
   fs.writeFileSync(target, JSON.stringify(value, null, 2) + "\n");
 }
@@ -62,7 +69,7 @@ export function sourceEntries(commit) {
 }
 export function verifySourceTree(commit) {
   const entries = sourceEntries(commit);
-  const protectedPaths = [policy.canonicalApplicationRoot, "scripts/release", ".github/workflows/ci.yml"];
+  const protectedPaths = [policy.canonicalApplicationRoot, "scripts/release", ".github/workflows"];
   const changes = git("diff", "--name-only", commit, "HEAD", "--", ...protectedPaths);
   if (changes) throw new Error(`Candidate implementation changed after sourceCommit:\n${changes}`);
   for (const { name, object } of entries) {
@@ -70,7 +77,7 @@ export function verifySourceTree(commit) {
     const blob = execFileSync("git", ["cat-file", "blob", object], { cwd: ROOT });
     if (!bytes.equals(blob) && !(isText(name) && normalized(bytes).equals(blob))) throw new Error(`Working tree differs from sourceCommit: ${name}`);
   }
-  const protectedOutput = execFileSync("git", ["ls-tree", "-rz", commit, "--", "scripts/release", ".github/workflows/ci.yml"], { cwd: ROOT, encoding: "utf8" });
+  const protectedOutput = execFileSync("git", ["ls-tree", "-rz", commit, "--", "scripts/release", ".github/workflows"], { cwd: ROOT, encoding: "utf8" });
   for (const record of protectedOutput.split("\0").filter(Boolean)) {
     const [metadata, name] = record.split("\t");
     const [mode, type, object] = metadata.split(" ");
@@ -81,8 +88,11 @@ export function verifySourceTree(commit) {
   }
   const dirty = git("diff", "--name-only", "HEAD", "--", ...protectedPaths);
   if (dirty) throw new Error(`Candidate implementation has uncommitted changes:\n${dirty}`);
-  const untracked = git("ls-files", "--others", "--exclude-standard", "--", policy.canonicalApplicationRoot, "scripts/release");
-  if (untracked.split("\n").filter(Boolean).some(bundleIncluded)) throw new Error(`Uncommitted candidate files:\n${untracked}`);
+  const untracked = git("ls-files", "--others", "--exclude-standard", "--", ...protectedPaths);
+  if (untracked.split("\n").filter(Boolean).some((name) => bundleIncluded(name)
+    || name.startsWith("scripts/release/") || name.startsWith(".github/workflows/"))) {
+    throw new Error(`Uncommitted candidate files:\n${untracked}`);
+  }
   return entries;
 }
 function tarHeader(name, size, mode) {

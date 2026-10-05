@@ -4,6 +4,7 @@ import path from "node:path";
 import zlib from "node:zlib";
 import { parseArgs } from "node:util";
 import { inspectComposition } from "./check-release-composition.mjs";
+import { verifyActiveBenchmark } from "./verify-active-benchmark.mjs";
 import { assetFiles, policy, ROOT, safePath, writeJson } from "./release-lib.mjs";
 
 try {
@@ -75,6 +76,7 @@ try {
     metric(`${profile} cold DOMContentLoaded median`, stats(data.samples).median, 3000, "ms localhost lab");
   }
   const pacing = report("active-route-frame-pacing.json");
+  verifyActiveBenchmark(pacing);
   const frameSamples = pacing.rawSamples || pacing.frameTimes;
   if (!(pacing.routeDurationMs >= 60000) || !(pacing.totalFramesSampled >= 100) || frameSamples?.length !== pacing.totalFramesSampled
     || pacing.worldContinuouslyActive !== true || pacing.failureReason !== null || pacing.interactionsCompleted !== 60

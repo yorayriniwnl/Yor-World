@@ -1,0 +1,629 @@
+MODEL:
+Gemini Pro
+
+THINKING:
+Extended Thinking / highest available
+
+Repository:
+https://github.com/yorayriniwnl/Yor-World
+
+ROLE:
+Final Release-Candidate Integration Maker
+
+CURRENT LIVE HEAD OBSERVED BY PARENT:
+
+8d9a8ac11eb748261f9c2ae6b59a5d9f66f3d4c4
+
+CURRENT CANDIDATE:
+
+v1.0.0-rc4
+
+RC4 SOURCE COMMIT:
+
+74954fbd963537a852c1899820da14bff6bd2615
+
+RC4 SOURCE APP TREE:
+
+bdc75f27d7462bae708cf3ba2aaec3e42937157c
+
+RC4 BUNDLE SHA-256:
+
+8d841ce6ec4ecdc9ee3af16ac265b3aca93f25979d7952fac3d47b608f4e721a
+
+CURRENT STATE:
+
+G1-G5 = ACCEPTED
+
+G6 = ACTIVE / REWORK
+
+G7 = LOCKED
+
+============================================================
+OBJECTIVE
+============================================================
+
+Create the final candidate:
+
+v1.0.0-rc5
+
+Do NOT rewrite RC4.
+
+RC4 remains immutable historical candidate evidence.
+
+RC5 should contain NO feature expansion.
+
+The only production/release engineering change currently authorized is correction of the active-world performance benchmark contract, plus direct release rebinding/evidence/status work required by that source change.
+
+============================================================
+WHY RC5 IS REQUIRED
+============================================================
+
+RC4 local execution reports:
+
+performance tests = 6/6 PASS
+
+but GitHub exact-candidate runs repeatedly fail:
+
+app/tests/performance/world.spec.ts
+
+60-second active interaction route and frame pacing
+
+with:
+
+"World canvas detached, hidden, or renderer stopped for more than one second."
+
+The test currently starts the world using AUTO adaptive quality.
+
+Accepted product behavior allows sustained slow windows to cause:
+
+HIGH → MEDIUM → LOW → STATIC
+
+STATIC is an intentional supported HTML/poster fallback and therefore removes the WebGL canvas.
+
+The active-scene benchmark simultaneously treats STATIC / missing canvas as a hard failure.
+
+This conflates:
+
+ACTIVE 3D PERFORMANCE
+
+with:
+
+ADAPTIVE FALLBACK CORRECTNESS.
+
+Fix the test design.
+
+Do NOT weaken runtime quality policy merely to satisfy CI.
+
+============================================================
+TASK 1
+ACTIVE 3D BENCHMARK
+============================================================
+
+Modify only the performance testing surface necessary to make the benchmark measure a deterministic supported 3D quality tier.
+
+In:
+
+app/tests/performance/world.spec.ts
+
+for:
+
+"60-second active interaction route and frame pacing"
+
+after the world reaches stable HOME:
+
+use the REAL production accessibility/quality control:
+
+data-testid="quality-tier-select"
+
+select:
+
+low
+
+Do not modify application state through hidden internal hooks if the real control is available.
+
+Verify the selected user preference is actually applied before starting measurement.
+
+The explicit LOW preference must remain authoritative throughout the benchmark according to the accepted quality policy.
+
+Do NOT disable the AdaptiveQualityController globally.
+
+Do NOT modify production policy to prevent Auto from falling back.
+
+============================================================
+ACTIVE BENCHMARK MUST STILL REQUIRE
+============================================================
+
+Continuous production WebGL rendering for >=60 seconds.
+
+60 acknowledged interaction actions.
+
+Actual rendered world frame events.
+
+renderCalls > 0.
+
+renderedTriangles > 0.
+
+No detached canvas.
+
+No hidden document.
+
+No unexpected renderer stop.
+
+Median frame duration:
+
+<= 33.3 ms
+
+p95:
+
+<= 45 ms
+
+Do not loosen any current performance threshold.
+
+Do not increase watchdog timing merely to make the test pass.
+
+============================================================
+TASK 2
+PRECISE FAILURE DIAGNOSTICS
+============================================================
+
+Replace ambiguous combined failure reporting with explicit reason identity.
+
+At minimum distinguish:
+
+STATIC_FALLBACK
+
+CANVAS_DETACHED
+
+DOCUMENT_HIDDEN
+
+NO_RENDER_FRAME
+
+ZERO_RENDER_CALLS
+
+ZERO_RENDERED_TRIANGLES
+
+ACTION_TIMEOUT
+
+MISSING_ACTION
+
+OTHER_RENDER_STATE_FAILURE
+
+Evidence must capture:
+
+quality tier at failure
+
+lifecycle state
+
+last rendered-frame timestamp
+
+canvas connected state
+
+visibility state
+
+render calls
+
+rendered triangles
+
+current action
+
+renderer identity
+
+elapsed route time
+
+This diagnostic change must not weaken an assertion.
+
+============================================================
+TASK 3
+AUTO / STATIC FALLBACK PROOF
+============================================================
+
+The active LOW benchmark must not erase proof of adaptive fallback behavior.
+
+Verify the existing unit/integration suite already demonstrates:
+
+AUTO + sustained slow windows
+→ LOW/STATIC according to accepted thresholds
+
+and:
+
+explicit LOW preference
+→ adaptive controller does NOT override it.
+
+If those exact behaviors are already robustly tested:
+
+cite the tests.
+
+If one is missing:
+
+add the smallest deterministic unit/integration test to the quality-policy test suite.
+
+Do not simulate poor performance by destabilizing the browser benchmark.
+
+STATIC remains a supported fallback.
+
+============================================================
+TASK 4
+RC4 HISTORICAL PRESERVATION
+============================================================
+
+Do NOT change:
+
+deliveries/G6/rc4-candidate/
+
+in place.
+
+Do NOT rewrite:
+
+docs/releases/v1.0.0-rc4.md
+
+except only if an explicit non-historical pointer is required by the project's current living-index convention.
+
+RC4 remains:
+
+historical candidate
+
+local PASS
+
+GitHub release gate FAIL due performance benchmark nondeterminism/contract mismatch
+
+Preserve its bundle/hash/manifest exactly.
+
+============================================================
+TASK 5
+CREATE RC5
+============================================================
+
+Create:
+
+v1.0.0-rc5
+
+Use a new candidate root:
+
+deliveries/G6/rc5-candidate/
+
+Bind exact:
+
+releaseId
+
+sourceCommit
+
+app tree
+
+assetRevision
+
+publicationRevision
+
+schemaRevision
+
+contact amendment
+
+bundle path
+
+bundle SHA-256
+
+required evidence hashes
+
+Schema remains:
+
+20261005000000_schema_v2
+
+unless this packet discovers an actual schema defect.
+
+No new schema change is authorized by default.
+
+============================================================
+TASK 6
+PACKAGE VERSION / RELEASE TOOLING
+============================================================
+
+Update current release-facing version identifiers from RC4 to RC5 where they are LIVE configuration rather than historical evidence.
+
+Examples may include:
+
+app/package.json
+
+CI naming / evidence output folder
+
+release policy
+
+bundle builder
+
+release validator current policy
+
+living status docs
+
+Do not rewrite historical RC1-RC4 dossiers.
+
+Preserve generic reusable release tooling where version-neutral behavior is preferable.
+
+============================================================
+TASK 7
+FRESH LOCAL RC5 EXECUTION
+============================================================
+
+From exact RC5 source run:
+
+pnpm install --frozen-lockfile
+
+pnpm lint
+
+pnpm typecheck
+
+pnpm test:unit
+
+pnpm test:integration
+
+Khronos GLB validation
+
+pnpm build
+
+full Playwright E2E
+
+automated accessibility
+
+pnpm test:performance
+
+release composition
+
+performance budget validation
+
+strict RC5 manifest validation
+
+bundle reproducibility / hash validation
+
+Record:
+
+commands
+
+versions
+
+exit codes
+
+test counts
+
+build ID
+
+performance raw samples
+
+failure diagnostic fields
+
+bundle hash
+
+============================================================
+TASK 8
+PERFORMANCE PROOF
+============================================================
+
+For the active 60-second LOW benchmark record:
+
+renderer identity
+
+requested quality preference
+
+observed tier counts
+
+route duration
+
+frame sample count
+
+median frame time
+
+p95 frame time
+
+interactions completed
+
+max draw calls
+
+max triangles
+
+failureReason
+
+The expected successful evidence should show:
+
+requestedUserPreference = low
+
+observed active tier = low
+
+failureReason = null
+
+routeDuration >= 60000
+
+interactionsCompleted = 60
+
+Do not manufacture these values.
+
+============================================================
+TASK 9
+GITHUB ACTIONS
+============================================================
+
+Push source/evidence according to the established candidate workflow.
+
+Require an exact RC5 GitHub run.
+
+The release-quality gate must execute all required steps:
+
+frozen install
+
+lint
+
+typecheck
+
+unit
+
+integration
+
+asset validation
+
+production build
+
+97 Chromium E2E or current authoritative expected count
+
+accessibility
+
+performance
+
+release composition
+
+performance budgets
+
+strict RC5 manifest validation
+
+No required step may be skipped.
+
+The exact candidate must have:
+
+Repository Integrity = SUCCESS
+
+CI / Release Quality Gate = SUCCESS
+
+Do NOT accept a rerun lottery where unchanged flaky logic eventually happens to pass.
+
+The performance-gate source correction itself must explain why the previous contradiction is resolved.
+
+============================================================
+TASK 10
+CURRENT STATUS
+============================================================
+
+Update only living status surfaces.
+
+Current final maker state should become:
+
+G1-G5 ACCEPTED
+
+RC4 HISTORICAL / SUPERSEDED BY RC5
+
+RC5 CANDIDATE
+
+G6 ACTIVE / REWORK — awaiting GPT Plus #2 independent audit
+
+G7 LOCKED
+
+Do NOT mark G6 accepted.
+
+============================================================
+DO NOT TOUCH
+============================================================
+
+Do NOT modify without a newly demonstrated defect:
+
+publication security fix
+
+outbox fencing
+
+retry logic
+
+media/APNG validation
+
+telemetry
+
+GitHub durable refresh coordination
+
+Supabase migrations
+
+contact R2
+
+world art/assets
+
+camera choreography
+
+interaction contracts
+
+auth architecture
+
+CMS behavior
+
+performance thresholds
+
+quality-policy production semantics
+
+============================================================
+RETURN ROOT
+============================================================
+
+Create:
+
+deliveries/G6/rc5-candidate/
+
+Return:
+
+report.md
+
+release-manifest.json
+
+source-binding.json
+
+release-composition.json
+
+performance evidence
+
+budget validation receipt
+
+strict manifest validation receipt
+
+bundle receipt
+
+deterministic RC5 bundle
+
+commands-and-exit-codes.md
+
+SHA256SUMS.txt
+
+GitHub Actions run IDs/results
+
+known limitations
+
+============================================================
+HARD FAIL
+============================================================
+
+FAIL the packet if:
+
+the benchmark remains in Auto mode
+
+frame thresholds are loosened
+
+watchdog is simply increased
+
+STATIC production fallback is removed
+
+adaptive runtime is disabled
+
+CI remains red
+
+performance required step is skipped
+
+RC4 history is rewritten
+
+RC5 bundle does not match bound source
+
+maker declares G6 accepted
+
+============================================================
+STOP
+============================================================
+
+When RC5 is created and exact-candidate GitHub CI is green:
+
+STOP.
+
+Do NOT perform independent audit.
+
+Do NOT accept G6.
+
+Do NOT deploy.
+
+Do NOT start G7.
+
+Next:
+
+GPT Plus #2
+→ independent full-stack RC5 audit
+
+then:
+
+GPT Plus #1
+→ final G6 adjudication
+
+Only after G6 ACCEPTED may G7 be unlocked by explicit owner authorization.
