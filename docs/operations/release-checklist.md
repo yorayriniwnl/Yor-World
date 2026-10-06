@@ -1,10 +1,12 @@
-# Current RC5 release candidate checklist
+# Current RC6 completion and production checklist
 
-Current release: **v1.0.0-rc5 accepted release candidate** under [G6-R1](../planning/reviews/2026-10-06-g6-r1.md). **G1-G6 ACCEPTED; G7 LOCKED — awaiting explicit owner production authorization.** Accepted source, maker proof, independent audit and RC1–RC4 history remain immutable.
+**Current candidate: v1.0.0-rc6 — source amendment and validation pending.** Accepted baseline: **G6-R1 / RC5** remains immutable. **G7 AUTHORIZED / PREPARATION** under owner instruction “Complete it.”, recorded as **G7-OWNER-AUTH-20261006**. RC6 needs independent delta review/Parent acceptance and real production-service/device evidence before completion. See [current status](../planning/current-status.json) and [RC6 dossier](../releases/v1.0.0-rc6.md).
 
-The [independent RC5 audit](../planning/reviews/2026-10-06-rc5-independent-full-stack-audit.md) and Parent ruling identify the actual scope: no confirmed P0/P1, explicit P2/P3 deferrals, all 13 exact-candidate hosted steps PASS at audited HEAD 2a0b1ad. No production/manual NOT RUN result is converted to PASS. Current setup/remaining obligations are in [pre-G7 prerequisites](pre-g7-prerequisites.md); the legacy environment contract is preserved historical evidence.
+Current work must produce fresh RC6 source-bound local/hosted evidence, independent delta review, accepted successor, real production setup and all ten G7 criteria. Existing RC5 checks below are historical completed baseline evidence and do not substitute for new RC6 or live proof. Physical/manual/service requirements remain NOT RUN until executed.
 
-RC5 execution requirements — checked only from completed RC5 records:
+## Historical completed RC5 baseline checks
+
+These checked items belong to accepted RC5/G6-R1 and the separate returned audit:
 
 - [x] Bind exact sourceCommit, app tree, asset/publication/schema/contact revisions, deterministic archive and all required evidence hashes.
 - [x] Fresh detached checkout with dependencies and production build initially absent; frozen install, lint and typecheck.
@@ -22,7 +24,9 @@ Review and release boundary:
 
 - [x] GPT Plus #2 independent full-stack RC5 audit completed; six P2/P3 findings explicitly retained in G6-R1. No correction packet is dispatched here.
 - [x] Parent final G6 adjudication: G6 ACCEPTED (G6-R1). Maker proof and independent audit remain separate.
-- [ ] Separate explicit owner authorization before G7 deployment/live work.
+- [x] Owner authorization received: G7-OWNER-AUTH-20261006.
+- [ ] Fresh RC6 source/bundle/hosted execution and independent delta adjudication.
+- [ ] Real provider configuration, source/deployment binding, monitoring and recovery/thermal/manual evidence.
 - [ ] All ten [G7 requirements](../planning/releases/2026-10-02-g7-production-release-protocol.md) freshly verified on production, including real services, physical/manual tests, monitoring and rollback RTO<=5m/RPO=0.
 
-Before owner-authorized hosted setup, apply the three exact migrations in filename order and `app/supabase/operations/harden-publication-grants.sql`; configure production secrets/auth/TOTP/private bucket/mail/jobs; prohibit fixture variables on hosts. Real Supabase Auth/REST/Storage, independent native PostgreSQL sessions, mail/GitHub services, physical devices, screen readers, hosted restore, CDN behavior and live rollback remain NOT RUN/G7-required. Stop after the Parent ruling; G7 remains locked.
+Before owner-authorized hosted setup, apply the three exact migrations in filename order and `app/supabase/operations/harden-publication-grants.sql`; configure production secrets/auth/TOTP/private bucket/mail/jobs; prohibit fixture variables on hosts. Real Supabase Auth/REST/Storage, independent native PostgreSQL sessions, mail/GitHub services, physical devices, screen readers, hosted restore, CDN behavior and live rollback remain NOT RUN/G7-required. Continue the owner-authorized completion scope; do not accept G7 before all mandatory live evidence exists.

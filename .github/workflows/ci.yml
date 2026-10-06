@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   verify:
-    name: Verify & Validate Full-Stack RC5
+    name: Verify & Validate Full-Stack RC6
     runs-on: ubuntu-latest
     timeout-minutes: 40
     env:
@@ -41,65 +41,66 @@ jobs:
       - name: Prepare isolated fresh CI evidence
         shell: bash
         run: |
-          mkdir -p .rc5-ci/e2e .rc5-ci/accessibility .rc5-ci/performance
+          mkdir -p .rc6-ci/e2e .rc6-ci/accessibility .rc6-ci/performance
+          node -e 'const p=require("./scripts/release/rc6-policy.json"); for (const [key,count] of Object.entries(p.expectedBrowserChecks)) { if (!Number.isInteger(count)||count<=0) throw new Error("Invalid expected count"); console.log("RC_EXPECTED_"+key.toUpperCase()+"="+count); }' >> "$GITHUB_ENV"
           echo "STORE_PATH=$(pnpm store path --silent)" >> "$GITHUB_ENV"
-          echo "B5_EVIDENCE_DIR=$GITHUB_WORKSPACE/.rc5-ci/e2e" >> "$GITHUB_ENV"
-          echo "C3_EVIDENCE_DIR=$GITHUB_WORKSPACE/.rc5-ci/e2e" >> "$GITHUB_ENV"
+          echo "B5_EVIDENCE_DIR=$GITHUB_WORKSPACE/.rc6-ci/e2e" >> "$GITHUB_ENV"
+          echo "C3_EVIDENCE_DIR=$GITHUB_WORKSPACE/.rc6-ci/e2e" >> "$GITHUB_ENV"
 
       - name: Cache pinned dependency downloads
         uses: actions/cache@v4
         with:
           path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-rc5-${{ hashFiles('app/pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-pnpm-rc6-${{ hashFiles('app/pnpm-lock.yaml') }}
 
       - name: 1. Frozen canonical dependency install
         working-directory: app
         shell: bash
         run: |
           set -o pipefail
-          pnpm install --frozen-lockfile | tee ../.rc5-ci/01-frozen-install.log
+          pnpm install --frozen-lockfile | tee ../.rc6-ci/01-frozen-install.log
 
       - name: 2. Lint canonical application
         working-directory: app
         shell: bash
         run: |
           set -o pipefail
-          pnpm lint | tee ../.rc5-ci/02-lint.log
+          pnpm lint | tee ../.rc6-ci/02-lint.log
 
       - name: 3. Typecheck canonical application
         working-directory: app
         shell: bash
         run: |
           set -o pipefail
-          pnpm typecheck | tee ../.rc5-ci/03-typecheck.log
+          pnpm typecheck | tee ../.rc6-ci/03-typecheck.log
 
       - name: 4. Unified unit tests
         working-directory: app
         shell: bash
         run: |
           set -o pipefail
-          pnpm test:unit | tee ../.rc5-ci/04-unit-tests.log
+          pnpm test:unit | tee ../.rc6-ci/04-unit-tests.log
 
       - name: 5. Unified backend/runtime integration tests
         working-directory: app
         shell: bash
         run: |
           set -o pipefail
-          pnpm test:integration | tee ../.rc5-ci/05-integration-tests.log
+          pnpm test:integration | tee ../.rc6-ci/05-integration-tests.log
 
       - name: 6. Khronos frozen canonical asset validation
         shell: bash
         run: |
           set -o pipefail
-          node scripts/release/validate-gltf-assets.mjs --output .rc5-ci/gltf-validation-receipt.json | tee .rc5-ci/06-asset-validation.log
+          node scripts/release/validate-gltf-assets.mjs --output .rc6-ci/gltf-validation-receipt.json | tee .rc6-ci/06-asset-validation.log
 
       - name: 7. Full-stack production build
         working-directory: app
         shell: bash
         run: |
           set -o pipefail
-          pnpm build | tee ../.rc5-ci/07-production-build.log
-          echo "RC5_BUILD_ID=$(cat .next/BUILD_ID)" >> "$GITHUB_ENV"
+          pnpm build | tee ../.rc6-ci/07-production-build.log
+          echo "RC6_BUILD_ID=$(cat .next/BUILD_ID)" >> "$GITHUB_ENV"
 
       - name: Install Chromium browser dependencies
         working-directory: app
@@ -110,59 +111,59 @@ jobs:
         shell: bash
         env:
           YOR_E2E_FIXTURE: "1"
-          YOR_TEST_DATABASE_PATH: ${{ runner.temp }}/yor-world-rc5-e2e-db
-          CRON_SECRET: rc5-ci-synthetic-job-secret
+          YOR_TEST_DATABASE_PATH: ${{ runner.temp }}/yor-world-rc6-e2e-db
+          CRON_SECRET: rc6-ci-synthetic-job-secret
         run: |
           set -o pipefail
-          pnpm test:e2e | tee ../.rc5-ci/08-e2e-tests.log
-          node ../scripts/release/verify-playwright-results.mjs ../.rc5-ci/e2e/browser-results.json --expected 97
+          pnpm test:e2e | tee ../.rc6-ci/08-e2e-tests.log
+          node ../scripts/release/verify-playwright-results.mjs ../.rc6-ci/e2e/browser-results.json --expected "$RC_EXPECTED_E2E"
 
       - name: 9. Automated accessibility
         working-directory: app
         shell: bash
         env:
-          B5_EVIDENCE_DIR: ${{ github.workspace }}/.rc5-ci/accessibility
-          C3_EVIDENCE_DIR: ${{ github.workspace }}/.rc5-ci/accessibility
+          B5_EVIDENCE_DIR: ${{ github.workspace }}/.rc6-ci/accessibility
+          C3_EVIDENCE_DIR: ${{ github.workspace }}/.rc6-ci/accessibility
           YOR_E2E_FIXTURE: "1"
-          YOR_TEST_DATABASE_PATH: ${{ runner.temp }}/yor-world-rc5-a11y-db
+          YOR_TEST_DATABASE_PATH: ${{ runner.temp }}/yor-world-rc6-a11y-db
         run: |
           set -o pipefail
-          pnpm exec playwright test tests/e2e/accessibility.spec.ts | tee ../.rc5-ci/09-accessibility.log
-          node ../scripts/release/verify-playwright-results.mjs ../.rc5-ci/accessibility/browser-results.json --expected 17
+          pnpm exec playwright test tests/e2e/accessibility.spec.ts | tee ../.rc6-ci/09-accessibility.log
+          node ../scripts/release/verify-playwright-results.mjs ../.rc6-ci/accessibility/browser-results.json --expected "$RC_EXPECTED_ACCESSIBILITY"
 
       - name: 10. Fresh canonical performance browser measurements
         working-directory: app
         shell: bash
         env:
-          C3_EVIDENCE_DIR: ${{ github.workspace }}/.rc5-ci/performance
+          C3_EVIDENCE_DIR: ${{ github.workspace }}/.rc6-ci/performance
         run: |
           set -o pipefail
-          pnpm test:performance | tee ../.rc5-ci/10-performance-tests.log
-          node ../scripts/release/verify-playwright-results.mjs ../.rc5-ci/performance/performance-results.json --expected 6
+          pnpm test:performance | tee ../.rc6-ci/10-performance-tests.log
+          node ../scripts/release/verify-playwright-results.mjs ../.rc6-ci/performance/performance-results.json --expected "$RC_EXPECTED_PERFORMANCE"
 
       - name: 11. Actual production route/module composition
         shell: bash
         run: |
           set -o pipefail
-          node scripts/release/check-release-composition.mjs --output .rc5-ci/release-composition.json | tee .rc5-ci/11-release-composition.log
+          node scripts/release/check-release-composition.mjs --output .rc6-ci/release-composition.json | tee .rc6-ci/11-release-composition.log
 
       - name: 12. Fresh canonical performance budgets
         shell: bash
         run: |
           set -o pipefail
-          node scripts/release/check-performance-budgets.mjs --benchmark-dir .rc5-ci/performance --output .rc5-ci/budget-validation-receipt.json | tee .rc5-ci/12-budget-regression.log
+          node scripts/release/check-performance-budgets.mjs --benchmark-dir .rc6-ci/performance --output .rc6-ci/budget-validation-receipt.json | tee .rc6-ci/12-budget-regression.log
 
-      - name: 13. Exact committed RC5 manifest/archive validation
+      - name: 13. Exact committed RC6 manifest/archive validation
         shell: bash
         run: |
           set -o pipefail
-          node scripts/release/validate-release.mjs --strict --receipt .rc5-ci/release-manifest-validation.receipt.json | tee .rc5-ci/13-release-manifest-validation.log
+          node scripts/release/validate-release.mjs --strict --receipt .rc6-ci/release-manifest-validation.receipt.json | tee .rc6-ci/13-release-manifest-validation.log
 
       - name: Upload fresh CI execution evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: rc5-quality-${{ github.sha }}
-          path: .rc5-ci/
+          name: rc6-quality-${{ github.sha }}
+          path: .rc6-ci/
           include-hidden-files: true
           retention-days: 14

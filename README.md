@@ -1,6 +1,6 @@
 # YOR WORLD — planning package
 
-Current gate status 2026-10-06: **G1-G6 ACCEPTED. v1.0.0-rc5 = accepted release candidate under [G6-R1](docs/planning/reviews/2026-10-06-g6-r1.md). G7 LOCKED — awaiting explicit owner production authorization.** GitHub is the authoritative repository. Prior G1 and wave-closure acceptance records remain immutable.
+**Current candidate: v1.0.0-rc6 — source amendment and validation pending.** Accepted baseline: **G6-R1 / RC5** remains immutable. **G7 AUTHORIZED / PREPARATION** under owner instruction “Complete it.”, recorded as **G7-OWNER-AUTH-20261006**. RC6 needs independent delta review/Parent acceptance and real production-service/device evidence before completion. See [current status](docs/planning/current-status.json) and [PRE-G7-01](docs/planning/reconciliation-packets/2026-10-06-pre-g7-01.md).
 
 YOR WORLD is a personal portfolio experienced as an inhabited developer studio. A visitor can enter through a cinematic doorway, meet the creator, touch objects that respond physically, and explore real work. Projects, résumé, and contact remain directly accessible through ordinary web pages.
 
@@ -27,15 +27,11 @@ pnpm build
 pnpm test:e2e
 ```
 
-The accepted RC5 source, app tree, bundle, schema/assets/publication/contact bindings and exact-candidate hosted runs are frozen in [G6-R1](docs/planning/reviews/2026-10-06-g6-r1.md). The separately archived [GPT Plus #2 independent audit](docs/planning/reviews/2026-10-06-rc5-independent-full-stack-audit.md) recommends acceptance with no confirmed P0/P1. Maker evidence remains in [deliveries/G6/rc5-candidate](deliveries/G6/rc5-candidate/report.md); the [RC5 dossier](docs/releases/v1.0.0-rc5.md) is the living release index.
+The accepted [RC5 baseline and G6-R1](docs/planning/reviews/2026-10-06-g6-r1.md), independent audit, manifests, bundle and historical receipts are unchanged. The explicit [PRE-G7-01 completion packet](docs/planning/reconciliation-packets/2026-10-06-pre-g7-01.md), [security/pointer amendment](docs/planning/reconciliation-packets/2026-10-06-pre-g7-02.md) and [server-entrypoint guard amendment](docs/planning/reconciliation-packets/2026-10-06-pre-g7-03.md) authorize the new RC6 source. Its [current dossier](docs/releases/v1.0.0-rc6.md) will record actual committed-source evidence and review.
 
-G6-R1 explicitly retains open Retry/STATIC-resource defects, unknown heap/GPU leak absence, the clean-checkout inventory exception and other P2/P3 debt. Current schema-v2 setup, production/physical/manual obligations and owner authorization are recorded in [pre-G7 prerequisites](docs/operations/pre-g7-prerequisites.md). They are not PASS or dispatched work. The historical schema-v1 environment contract is preserved, superseded for current preparation by that guide.
+Current fixes implement real failure/STATIC recovery, stopped detached renderers, truthful resource-cycle reporting, health readiness/liveness, strict request-nonce CSP/HSTS and usable accessibility pointer controls. Existing quality/performance contracts and frozen artwork remain bound. Production access is not confirmed: Vercel/Supabase/Resend integration setup and real physical/manual evidence remain necessary. Current [pre-G7 prerequisites](docs/operations/pre-g7-prerequisites.md) and [owner authorization](deliveries/G7/preparation/owner-authorization.json) govern the completion work.
 
-**RC4 HISTORICAL / SUPERSEDED BY RC5.** RC1–RC4 dossiers, delivery bytes, manifests and bundles remain immutable. Earlier GitHub runner-acquisition failures are history; actual hosted runs 37439297648/37439297754 at audited HEAD 2a0b1ad executed all 13 required release steps successfully.
-
-Historical maker-phase status (2026-10-06, before G6-R1): G1 ACCEPTED; G1-G5 ACCEPTED; G6 ACTIVE / REWORK; RC5 candidate; RC1/RC2/RC3/RC4 preserved as history; G7 LOCKED. This visible dated record is retained for maker-era provenance and the frozen integrity workflow. The legacy token check does not adjudicate current acceptance; the leading G6-R1 status is authoritative.
-
-Next: await explicit owner production authorization. G7 remains locked; no production resources, deployment, DNS changes or G7 execution follow automatically.
+Earlier RC1–RC5 and runner-acquisition failures remain history. Actual new tests, source/app-tree/archive hashes and exact hosted results are recorded only when executed. No deployment, real backend/email success, physical/screen-reader success or G7 acceptance is claimed from local fixtures/preview/emulation.
 
 ## Confirmed brief
 

@@ -79,7 +79,14 @@ export function validateProductionModule(filePath: string, text: string) {
 
   ];
 
-  const isServerModule = filePath.startsWith("src/server/") ||
+  const parsed = ts.createSourceFile(filePath, text, ts.ScriptTarget.Latest, true);
+  let clientComponent = false;
+  for (const statement of parsed.statements) {
+    if (!ts.isExpressionStatement(statement) || !ts.isStringLiteral(statement.expression)) break;
+    if (statement.expression.text === "use client") clientComponent = true;
+  }
+  const serverEntrypoint = ["src/app/layout.tsx", "src/proxy.ts"].includes(filePath) && !clientComponent;
+  const isServerModule = serverEntrypoint || filePath.startsWith("src/server/") ||
     filePath.startsWith("src/app/api/") || filePath.startsWith("src/app/admin/") ||
     filePath === "src/content/server-publication.ts" || filePath.startsWith("src/app/(public)/");
   if (!isServerModule) {
@@ -149,6 +156,21 @@ it("keeps shared contracts independent of framework and server imports", () => {
 });
 
 describe("regression: syntax-level import boundary detection", () => {
+  it.each(["src/app/layout.tsx", "src/proxy.ts"])("permits Next server APIs only in the exact server entrypoint %s", (filePath) => {
+    const source = 'import { connection } from "next/server";';
+    expect(() => validateProductionModule(filePath, source)).not.toThrow();
+    for (const directive of ['"use client";', '/* license */\n"use client";', '"use strict";\n"use client";']) {
+      expect(() => validateProductionModule(filePath, directive + "\n" + source)).toThrow(/Forbidden import/);
+      expect(() => validateProductionModule(filePath, directive + '\nimport { getPlatformDb } from "@/server/database";')).toThrow(/Forbidden import/);
+    }
+  });
+
+  it("does not grant server imports to ordinary browser modules or similarly named paths", () => {
+    for (const filePath of ["src/features/portfolio/navigation.tsx", "src/features/proxy.ts", "src/features/layout.tsx", "src/app/public-layout.tsx"]) {
+      expect(() => validateProductionModule(filePath, 'import { connection } from "next/server";')).toThrow(/Forbidden import/);
+    }
+  });
+
   it("rejects dynamic import of test fixture in production module", () => {
     const snippet = `
       export async function loadData() {

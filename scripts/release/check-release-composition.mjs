@@ -74,6 +74,25 @@ export function inspectComposition() {
   }
   const roots = required.map((route) => byRoute.get(route)).filter(Boolean);
   roots.push(path.join(app, "src/app/layout.tsx"));
+  const runtimeEntrypoints = [];
+  for (const entry of policy.requiredRuntimeEntrypoints || []) {
+    const sourcePath = safePath(policy.canonicalApplicationRoot + "/" + entry.source);
+    const compiledPath = safePath(policy.canonicalApplicationRoot + "/" + entry.compiled);
+    const manifestPath = policy.canonicalApplicationRoot + "/" + entry.manifest;
+    const manifest = readJson(manifestPath);
+    const actual = manifest.functions?.[entry.manifestKey];
+    const compiledPresent = fs.existsSync(compiledPath);
+    if (!fs.existsSync(sourcePath) || !compiledPresent || actual?.runtime !== entry.runtime
+      || !Array.isArray(actual.matchers) || actual.matchers.length === 0) {
+      failures.push(`Required runtime entrypoint lacks compiled evidence: ${entry.source}`);
+    } else {
+      roots.push(sourcePath);
+    }
+    runtimeEntrypoints.push({ source: policy.canonicalApplicationRoot + "/" + entry.source,
+      compiled: policy.canonicalApplicationRoot + "/" + entry.compiled, manifest: manifestPath,
+      manifestKey: entry.manifestKey, runtime: actual?.runtime ?? null,
+      compiledPresent, matchers: actual?.matchers ?? [] });
+  }
   const productionGraph = new Set(roots.flatMap((entry) => [...reachable(entry)]));
   for (const name of policy.requiredModules) if (!productionGraph.has(path.join(app, name))) failures.push(`Required module is absent from production route import graph: ${name}`);
   for (const entry of productionGraph) {
@@ -111,7 +130,7 @@ export function inspectComposition() {
   const assets = assetFiles();
   for (const url of assetUrls) if (!assets.some((asset) => asset.url === url)) failures.push(`Actual production asset import is missing: ${url}`);
   const modules = [...productionGraph].filter((name) => fs.existsSync(name)).map((name) => ({ path: path.relative(ROOT, name).split(path.sep).join("/"), sha256: sha256(normalized(fs.readFileSync(name))), hashMode: "lf" })).sort((a, b) => a.path.localeCompare(b.path, "en"));
-  return { checkId: "release-composition", releaseId: policy.releaseId, canonicalApplicationRoot: policy.canonicalApplicationRoot, buildId, overallStatus: failures.length ? "FAIL" : "PASS", routes, contactAmendment: policy.contactAmendment, contactModules: r2, actualAssetUrls: [...assetUrls].sort(), assets: assets.map(({ accepted, ...item }) => item), modules, failures };
+  return { checkId: "release-composition", releaseId: policy.releaseId, canonicalApplicationRoot: policy.canonicalApplicationRoot, buildId, overallStatus: failures.length ? "FAIL" : "PASS", routes, runtimeEntrypoints, contactAmendment: policy.contactAmendment, contactModules: r2, actualAssetUrls: [...assetUrls].sort(), assets: assets.map(({ accepted, ...item }) => item), modules, failures };
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

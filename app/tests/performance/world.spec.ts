@@ -261,29 +261,60 @@ test.describe("C3 Performance Benchmarks & Budget Verification", () => {
   test("Enter/exit resource stability over multiple studio cycles", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
 
-    const cycles: Array<{ cycle: number; durationMs: number; canvasCount: number }> = [];
+    const cycles = [];
 
     for (let c = 1; c <= 4; c++) {
       const t0 = Date.now();
       await page.goto("/?studio=1", { waitUntil: "domcontentloaded" });
-      await expect(page.locator('[data-testid="world-stage-container"]')).toBeVisible({ timeout: 10000 });
+      await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME", { timeout: 15000 });
+      await page.getByTestId("quality-tier-select").selectOption("low");
+      const canvas = page.getByTestId("world-canvas");
+      await expect.poll(async () => Number(await canvas.getAttribute("data-rendered-frames"))).toBeGreaterThan(1);
+      await page.getByTestId("diagnostics-toggle-btn").click();
+      const activeDiagnostics = JSON.parse((await page.getByTestId("world-diagnostics").textContent())!) as Diagnostics;
+      expect(activeDiagnostics.renderCalls).toBeGreaterThan(0);
+      expect(activeDiagnostics.renderedTriangles).toBeGreaterThan(0);
+      const oldCanvas = await canvas.elementHandle();
+      if (!oldCanvas) throw new Error("Missing active production canvas.");
 
-      // Exit back to public route
-      await page.goto("/projects", { waitUntil: "domcontentloaded" });
+      // SPA navigation retains the old canvas's execution context for teardown proof.
+      await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("link", { name: "Projects", exact: true }).click();
+      await expect(page).toHaveURL(/\/projects$/);
       await expect(page.locator("h1")).toBeVisible();
+
+      await expect.poll(async () => oldCanvas.evaluate((element) => (element as HTMLCanvasElement).getContext("webgl2")?.isContextLost())).toBe(true);
+      const stoppedFrames = await oldCanvas.evaluate((element) => Number(element.dataset.renderedFrames));
+      await page.evaluate(() => {
+        for (const state of ["hidden", "visible"]) {
+          Object.defineProperty(document, "visibilityState", { configurable: true, value: state });
+          document.dispatchEvent(new Event("visibilitychange"));
+        }
+        Reflect.deleteProperty(document, "visibilityState");
+      });
+      await page.waitForTimeout(1200);
+      const afterExit = await oldCanvas.evaluate((element) => ({
+        canvasConnected: element.isConnected,
+        renderedFrames: Number(element.dataset.renderedFrames),
+        contextLost: (element as HTMLCanvasElement).getContext("webgl2")?.isContextLost() ?? null,
+      }));
 
       const canvasCount = await page.locator("canvas").count();
       const durationMs = Date.now() - t0;
-      cycles.push({ cycle: c, durationMs, canvasCount });
+      cycles.push({ cycle: c, durationMs, canvasCount, activeDiagnostics, stoppedFrames, afterExit });
 
       // Assert canvas is cleanly torn down on route exit
       expect(canvasCount).toBe(0);
+      expect(afterExit.canvasConnected).toBe(false);
+      expect(afterExit.renderedFrames).toBe(stoppedFrames);
+      expect(afterExit.contextLost).toBe(true);
     }
 
     await savePerformanceReport("enter-exit-stability.json", {
       cycles,
-      memoryLeakDetected: false,
-      canvasDisposedPerCycle: true,
+      domAndRenderCleanupObserved: cycles.every((cycle) => cycle.canvasCount === 0 && !cycle.afterExit.canvasConnected && cycle.afterExit.renderedFrames === cycle.stoppedFrames && cycle.afterExit.contextLost),
+      heapLeakAbsence: "UNKNOWN",
+      gpuMemoryLeakAbsence: "UNKNOWN",
+      visibilityProof: "simulated document visibility events after SPA exit",
     });
   });
 });

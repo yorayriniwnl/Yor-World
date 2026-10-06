@@ -1,18 +1,16 @@
 # YOR WORLD delegation and work orders
 
-Living gate status 2026-10-06: **G1-G6 ACCEPTED** under the immutable [G6-R1](reviews/2026-10-06-g6-r1.md). **v1.0.0-rc5 = accepted release candidate. G7 LOCKED — awaiting explicit owner production authorization.** Earlier G1/wave acceptance and RC1–RC4 evidence remain immutable.
+**Current candidate: v1.0.0-rc6 — source amendment and validation pending.** Accepted baseline: **G6-R1 / RC5** remains immutable. **G7 AUTHORIZED / PREPARATION** under owner instruction “Complete it.”, recorded as **G7-OWNER-AUTH-20261006**. RC6 needs independent delta review/Parent acceptance and real production-service/device evidence before completion. See [current status](current-status.json).
 
 The user authorized the full vision and delegated production. The parent Codex chat owns architecture, task assignment, audits, and acceptance. Workers make and integrate the product. This hub operates the existing plans; it does not replace them with another design exercise.
 
-## Current Parent ruling and stop boundary
+## Current completion packet and successor review
 
-The human's final-G6 Parent packet is archived with [G6-R1](reviews/2026-10-06-g6-r1.md). Parent reconciled [GPT Plus #2's independent RC5 audit](reviews/2026-10-06-rc5-independent-full-stack-audit.md), immutable maker evidence, source/bundle identity and successful exact-candidate hosted runs. G6 is ACCEPTED for the frozen pre-production candidate, with explicit P2/P3 deferrals and truthful NOT RUN production/manual limitations.
+Owner instruction “Complete it.” authorizes remaining corrections, production setup/publishing and complete G7 verification. [PRE-G7-01](reconciliation-packets/2026-10-06-pre-g7-01.md), [PRE-G7-02](reconciliation-packets/2026-10-06-pre-g7-02.md) and [PRE-G7-03](reconciliation-packets/2026-10-06-pre-g7-03.md) define exact ownership and regression evidence. Authorization is recorded as **G7-OWNER-AUTH-20261006**; deployment consent persists.
 
-Canonical root is `app/`; accepted source is c34e01b, app tree 88a65e8 and bundle 4380cab7…b5faa0f, fully recorded in G6-R1. Historical RC1–RC4 and all maker/auditor source-era receipts remain immutable. Any source amendment needs a new explicit Parent packet, fresh candidate binding and independent delta review; no retrospective mutation is authorized.
+Accepted RC5 / [G6-R1](reviews/2026-10-06-g6-r1.md) remains immutable, including the independent audit and all prior historical receipts. The new RC6 source is a separately bound successor requiring independent maker-delta review and Parent adjudication. G7 AUTHORIZED / PREPARATION is not G7 acceptance. Real Vercel/Supabase/email access is not confirmed; physical mobile/screen-reader/thermal and actual live restore/rollback checks remain NOT RUN.
 
-The [pre-G7 prerequisites](../operations/pre-g7-prerequisites.md) record missing health implementation, main protection, open recovery/resource defects, current schema-v2 setup and the mandatory live/physical/manual proof. This is a held prerequisite record, not an issued maker/deployment work order. Next: explicit owner production authorization. G7 remains LOCKED; no production resources, DNS, deployment or G7 work starts automatically.
-
-Historical maker-phase status (2026-10-06, before G6-R1): G1 ACCEPTED; G1-G5 ACCEPTED; G6 ACTIVE / REWORK; RC5 candidate; RC1/RC2/RC3/RC4 preserved as history; G7 LOCKED. This visible dated record is retained for maker-era provenance and the frozen integrity workflow. The legacy token check does not adjudicate current acceptance; the leading G6-R1 status is authoritative.
+Read [current pre-G7 requirements](../operations/pre-g7-prerequisites.md) and the [RC6 dossier](../releases/v1.0.0-rc6.md). Parent continues authorized independent work and obtains missing service/device inputs. No mock, local fixture, emulation, liveness-only response or private preview substitutes for a mandatory production criterion.
 
 ## One specification and a small shared baseline
 

@@ -5,7 +5,6 @@ import { parseArgs } from "node:util";
 import { assertMutableOutput, buildBundle, git, policy, writeJson } from "./release-lib.mjs";
 
 try {
-  if (policy.releaseId !== "v1.0.0-rc5") throw new Error("Historical RC5 builder requires its original source checkout. Use build-release-bundle.mjs for the current candidate.");
   const { values } = parseArgs({ options: { "source-commit": { type: "string" }, output: { type: "string", default: policy.bundle.path }, receipt: { type: "string", default: policy.deliveryRoot + "/bundle-receipt.json" } } });
   const target = assertMutableOutput(values.output);
   assertMutableOutput(values.receipt);

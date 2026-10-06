@@ -6,7 +6,7 @@ import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-export const POLICY_PATH = "scripts/release/rc5-policy.json";
+export const POLICY_PATH = "scripts/release/rc6-policy.json";
 export const policy = JSON.parse(fs.readFileSync(path.join(ROOT, POLICY_PATH), "utf8"));
 export const sha256 = (bytes) => crypto.createHash("sha256").update(bytes).digest("hex");
 export const normalized = (bytes) => Buffer.from(bytes.toString("utf8").replace(/\r\n/g, "\n"));
@@ -26,8 +26,11 @@ export const readJson = (name) => JSON.parse(fs.readFileSync(safePath(name), "ut
 export function assertMutableOutput(name) {
   const target = safePath(name);
   if (name.startsWith("deliveries/C4/") || name.startsWith("deliveries/G6/full-stack-integration/")
-    || name.startsWith("deliveries/G6/rc4-candidate/") || /^docs\/releases\/v1\.0\.0-rc[1-4]\.md$/.test(name)) {
-    throw new Error("Historical RC1-RC4 evidence is immutable");
+    || name.startsWith("deliveries/G6/rc4-candidate/") || name.startsWith("deliveries/G6/rc5-candidate/")
+    || name === "docs/planning/reviews/2026-10-06-g6-r1.md" || name.startsWith("docs/planning/reviews/2026-10-06-g6-r1/")
+    || name === "docs/planning/reviews/2026-10-06-rc5-independent-full-stack-audit.md"
+    || /^docs\/releases\/v1\.0\.0-rc[1-5]\.md$/.test(name)) {
+    throw new Error("Accepted RC1-RC5 evidence, audit and G6-R1 are immutable");
   }
   return target;
 }

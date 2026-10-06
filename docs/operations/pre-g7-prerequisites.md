@@ -1,12 +1,12 @@
 # Pre-G7 prerequisites for accepted RC5
 
-**G1-G6 ACCEPTED under [G6-R1](../planning/reviews/2026-10-06-g6-r1.md). v1.0.0-rc5 is the accepted release candidate. G7 LOCKED — awaiting explicit owner production authorization.** This is a preparation/verification record, not a work order or permission to configure production.
+**Accepted baseline: G6-R1 / RC5. Current candidate: v1.0.0-rc6. G7 AUTHORIZED / PREPARATION** under **G7-OWNER-AUTH-20261006** (owner: “Complete it.”). PRE-G7-01/02/03 now assign the bounded preparation/amendments. These prerequisites are not completed evidence.
 
 Accepted source `c34e01bb5bff210d924f42d5266e2fa1ed13288e`, app tree `88a65e85d1f120a9aa4397efa8cc779bdfe5cf08`, bundle `4380cab7f5211c836fe5bb97c68d67137c1b0fd7a2e4789bb29d0157ab5faa0f`. The [independent audit](../planning/reviews/2026-10-06-rc5-independent-full-stack-audit.md) and G6-R1 record all remaining debt and limitations. Any source amendment must use a separate Parent packet, a new binding and independent delta adjudication; accepted RC5 is not silently edited.
 
 ## Governance and implementation prerequisites
 
-- Record owner authorization before any production resources, setup, DNS or deployment.
+- Owner production authorization is recorded; do not repeat consent requests for that scope. Actual provider access/configuration and accepted successor binding remain required.
 - Protect main using the owner-approved branch protection/ruleset and required reviews/CI. The independent audit observed main unprotected with no rulesets; no policy was changed here.
 - Implement missing `/api/health` under a separate authorized maker packet before relying on G7 health/monitoring proof.
 - Correct open studio Retry and STATIC visibility/resource behavior through a separate maker/delta-review packet. Replace unsupported memory-leak claims with real measurements or UNKNOWN. Do not waive these requirements by accepting G6.

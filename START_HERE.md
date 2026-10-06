@@ -35,15 +35,11 @@ Never run all five accounts on the same problem:
 **Model Policy:** Use **GPT-6.1 Sol** for ordinary coordination/auditing; use **Astra** only for dangerous cross-lane decisions and major gates.  
 **Invariants:** Auditor does not become fixer; maker does not approve itself; later work cannot silently alter an accepted revision.
 
-**Current ruling (2026-10-06): G1-G6 ACCEPTED. v1.0.0-rc5 = accepted release candidate under [G6-R1](docs/planning/reviews/2026-10-06-g6-r1.md). G7 LOCKED — awaiting explicit owner production authorization.** Prior proof/gate records remain immutable.
+**Current candidate: v1.0.0-rc6 — source amendment and validation pending.** Accepted baseline: **G6-R1 / RC5** remains immutable. **G7 AUTHORIZED / PREPARATION** under owner instruction “Complete it.”, recorded as **G7-OWNER-AUTH-20261006**. RC6 needs independent delta review/Parent acceptance and real production-service/device evidence before completion. See [current status](docs/planning/current-status.json).
 
-**CANONICAL APPLICATION ROOT: `app/`.** Accepted source/bundle and the maker-era app README remain frozen. The [independent RC5 audit](docs/planning/reviews/2026-10-06-rc5-independent-full-stack-audit.md), [RC5 dossier](docs/releases/v1.0.0-rc5.md) and [Parent ruling](docs/planning/reviews/2026-10-06-g6-r1.md) separate maker, auditor and acceptance authority. All required hosted checks passed on audited HEAD 2a0b1ad.
+**CANONICAL APPLICATION ROOT: `app/`.** The accepted [G6-R1](docs/planning/reviews/2026-10-06-g6-r1.md), RC5 source/bundle, maker evidence and [independent audit](docs/planning/reviews/2026-10-06-rc5-independent-full-stack-audit.md) remain immutable. New work is assigned by [PRE-G7-01](docs/planning/reconciliation-packets/2026-10-06-pre-g7-01.md), [PRE-G7-02](docs/planning/reconciliation-packets/2026-10-06-pre-g7-02.md) and [PRE-G7-03](docs/planning/reconciliation-packets/2026-10-06-pre-g7-03.md).
 
-Use [current pre-G7 prerequisites](docs/operations/pre-g7-prerequisites.md) for schema-v2/three-migration and full publication hardening preparation. The old environment contract is historical, not current setup guidance. G6's explicit P2/P3 deferrals and physical/manual/hosted NOT RUN limits remain open requirements; neither acceptance nor this entry point starts their execution.
-
-RC4 is historical/superseded; all RC1–RC4 evidence remains unchanged. Any accepted-source change requires a new bounded Parent packet, revision-bound proof and independent delta adjudication. No deployment, resources or DNS changes are authorized.
-
-Historical maker-phase status (2026-10-06, before G6-R1): G1 ACCEPTED; G1-G5 ACCEPTED; G6 ACTIVE / REWORK; RC5 candidate; RC1/RC2/RC3/RC4 preserved as history; G7 LOCKED. This visible dated record is retained for maker-era provenance and the frozen integrity workflow. The legacy token check does not adjudicate current acceptance; the leading G6-R1 status is authoritative.
+Use [pre-G7 prerequisites](docs/operations/pre-g7-prerequisites.md) for current schema-v2/three-migration hardening and actual production/manual evidence. [RC6 dossier](docs/releases/v1.0.0-rc6.md) describes the successor. Deployment is authorized by the owner, but source acceptance, actual service access/configuration and all ten G7 checks remain required; G7 is not accepted by a publication command.
 
 Local access must be real: a GPT/Gemini worker that can open this folder can reuse its files without repeated attachments; if it cannot, it reports **NO FILE ACCESS**. Claude browser reviewers instead read supplied project knowledge and review packets, flag absent items as **MISSING INPUT**, and review available material. No external account connection or automatic local-file synchronization has been configured.
 

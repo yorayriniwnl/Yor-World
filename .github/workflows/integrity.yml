@@ -51,36 +51,7 @@ jobs:
           PY
 
       - name: Verify live status surfaces agree
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-
-          readme = Path("README.md").read_text(encoding="utf-8")
-          start = Path("START_HERE.md").read_text(encoding="utf-8")
-          board = Path("docs/planning/delegation-and-work-orders.md").read_text(encoding="utf-8")
-
-          required = [
-              "G1 ACCEPTED",
-              "G1-G5 ACCEPTED",
-              "G6 ACTIVE / REWORK",
-              "RC5 candidate; RC1/RC2/RC3/RC4 preserved as history",
-              "G7 LOCKED",
-          ]
-          for token in required:
-              assert token in readme, f"README missing {token}"
-              assert token in start, f"START_HERE missing {token}"
-              assert token in board, f"work-order board missing {token}"
-
-          stale = [
-              "W1 REWORK; W2 INSUFFICIENT EVIDENCE; W3 REWORK; G1 LOCKED",
-              "W1/W2/W3 remain unaccepted",
-              "No proof is formally accepted",
-          ]
-          for phrase in stale:
-              assert phrase not in readme, f"README contains stale status: {phrase}"
-
-          print("Status surfaces agree with G6 REWORK baseline")
-          PY
+        run: node scripts/release/check-current-status.mjs
 
       - name: Reject oversized new scratch archives
         if: github.event_name == 'pull_request'

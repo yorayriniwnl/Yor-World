@@ -42,6 +42,10 @@ export default function WorldRoot({
   const lifecycleManagerRef = useRef<LifecycleManager | null>(null);
   const audioControllerRef = useRef<AudioController | null>(null);
   const qualityControllerRef = useRef<AdaptiveQualityController | null>(null);
+  const failureRetryCountRef = useRef(0);
+  const failureRetryLimitRef = useRef(3);
+  const [failureRetryExhausted, setFailureRetryExhausted] = useState(false);
+  const [runtimeGeneration, setRuntimeGeneration] = useState(0);
 
   const [lifecycleState, setLifecycleState] = useState<WorldLifecycleState>("ENTRY_REQUESTED");
   const [diagnostics, setDiagnostics] = useState<Diagnostics | null>(null);
@@ -65,12 +69,26 @@ export default function WorldRoot({
   const [showDiagnostics, setShowDiagnostics] = useState<boolean>(false);
 
   const initialReducedMotionRef = useRef(reducedMotion);
+  const runtimeUnavailable = effectiveTier === "static" || lifecycleState === "FAILURE" || error !== null;
 
   // Initialize runtime and lifecycle manager
   useEffect(() => {
-    if (!canvasRef.current) return;
+    if (runtimeUnavailable || !canvasRef.current) return;
+
+    const capabilities = {
+      ...readDeviceCapabilities(),
+      prefersReducedMotion: initialReducedMotionRef.current,
+      userPreference: qualityPreferenceRef.current,
+    };
+    const initialTier = chooseInitialTier(capabilities);
+    setEffectiveTier(initialTier);
+    if (initialTier === "static") {
+      setLifecycleState("STATIC");
+      return;
+    }
 
     const lm = new LifecycleManager();
+    failureRetryLimitRef.current = lm.maxRetries;
     lifecycleManagerRef.current = lm;
 
     // Subscribe to lifecycle state changes
@@ -82,13 +100,6 @@ export default function WorldRoot({
     });
 
     audioControllerRef.current = new AudioController();
-    const capabilities = {
-      ...readDeviceCapabilities(),
-      prefersReducedMotion: initialReducedMotionRef.current,
-      userPreference: qualityPreferenceRef.current,
-    };
-    const initialTier = chooseInitialTier(capabilities);
-    setEffectiveTier(initialTier);
 
     const qc = new AdaptiveQualityController(
       capabilities,
@@ -202,7 +213,7 @@ export default function WorldRoot({
       lifecycleManagerRef.current = null;
       setExperienceController(null);
     };
-  }, [simulateAssetError, simulateRendererError, onClose, projects, router]);
+  }, [simulateAssetError, simulateRendererError, onClose, projects, router, runtimeGeneration, runtimeUnavailable]);
 
   // Synchronize dynamic reducedMotion changes with runtime
   useEffect(() => {
@@ -308,13 +319,30 @@ export default function WorldRoot({
   }, [onClose]);
 
   const handleRetry = useCallback(() => {
-    if (lifecycleManagerRef.current) {
-      const canRetry = lifecycleManagerRef.current.retry();
-      if (!canRetry) {
-        console.warn("[WorldRoot] Max retries reached.");
-      }
+    const retryingFailure = lifecycleState === "FAILURE" || error !== null;
+    if (retryingFailure) {
+      if (failureRetryCountRef.current >= failureRetryLimitRef.current) return;
+      failureRetryCountRef.current++;
+      setFailureRetryExhausted(failureRetryCountRef.current >= failureRetryLimitRef.current);
     }
-  }, []);
+    // STATIC Retry is explicit user intent to reenter AUTO, not an adaptive upgrade.
+    const preference = effectiveTier === "static" ? "auto" : qualityPreferenceRef.current;
+    qualityPreferenceRef.current = preference;
+    setQualityPreference(preference);
+    setEffectiveTier(chooseInitialTier({ ...readDeviceCapabilities(), userPreference: preference }));
+    initialReducedMotionRef.current = reducedMotion;
+    setError(null);
+    setDiagnostics(null);
+    setLifecycleState("ENTRY_REQUESTED");
+    setSoundEnabled(false);
+    setDecorativePaused(false);
+    setShowRoomControls(false);
+    setShowLauncher(false);
+    setShowReplay(false);
+    setShowDiagnostics(false);
+    setActiveCamera("home-desktop");
+    setRuntimeGeneration((generation) => generation + 1);
+  }, [effectiveTier, error, lifecycleState, reducedMotion]);
 
   if (effectiveTier === "static") {
     return (
@@ -322,7 +350,7 @@ export default function WorldRoot({
         <StaticFallback
           projects={projects}
           reason="Accessible Static Presentation active. Interactive 3D graphics are bypassed."
-          onRetry={() => handleQualityChange("auto")}
+          onRetry={handleRetry}
           onContinue={handleContinueWithPortfolio}
         />
         {showLauncher && (
@@ -360,7 +388,7 @@ export default function WorldRoot({
       <div className={styles.stageContainer} data-testid="world-failure-container">
         <WorldFallback
           reason={error || "Interactive 3D Studio encountered an unrecoverable failure."}
-          onRetry={handleRetry}
+          onRetry={failureRetryExhausted ? undefined : handleRetry}
           onDismiss={handleContinueWithPortfolio}
         />
         {showLauncher && (
@@ -468,16 +496,18 @@ export default function WorldRoot({
 
       {/* Standard World HUD Overlay */}
       <div className={styles.hudOverlay}>
-        <AccessibilityControls
-          currentTier={qualityPreference}
-          onTierChange={handleQualityChange}
-          reducedMotion={reducedMotion}
-          onReducedMotionToggle={handleReducedMotionToggle}
-          soundEnabled={soundEnabled}
-          onSoundToggle={handleSoundToggle}
-          decorativePaused={decorativePaused}
-          onDecorativePauseToggle={handleDecorativePauseToggle}
-        />
+        <div className={styles.accessibilityControls}>
+          <AccessibilityControls
+            currentTier={qualityPreference}
+            onTierChange={handleQualityChange}
+            reducedMotion={reducedMotion}
+            onReducedMotionToggle={handleReducedMotionToggle}
+            soundEnabled={soundEnabled}
+            onSoundToggle={handleSoundToggle}
+            decorativePaused={decorativePaused}
+            onDecorativePauseToggle={handleDecorativePauseToggle}
+          />
+        </div>
 
         <div className={styles.hudTopBar}>
           <div className={styles.hudControls}>

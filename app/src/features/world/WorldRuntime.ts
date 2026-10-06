@@ -74,6 +74,7 @@ export class WorldRuntime {
   private sessionToken: number = 0;
   private renderedFrames = 0;
   private lastRenderedAt = 0;
+  private readonly loadingAbort = new AbortController();
 
   constructor(options: WorldRuntimeOptions) {
     this.onFrameDuration = options.onFrameDuration;
@@ -121,6 +122,7 @@ export class WorldRuntime {
     }
 
     this.init(options).catch((err) => {
+      if (this.isDisposed || this.lifecycleManager.isStale(this.sessionToken)) return;
       console.error("[WorldRuntime] Initialization error:", err);
       this.lifecycleManager.fail(err.message, this.sessionToken);
       if (options.onError) {
@@ -130,7 +132,7 @@ export class WorldRuntime {
   }
 
   private handleContextLost = (e: Event) => {
-    this.onSamplingPause?.();
+    this.pause();
     e.preventDefault();
     console.warn("[WorldRuntime] WebGL context lost.");
     this.lifecycleManager.fail("WebGL graphics context was lost.", this.sessionToken);
@@ -163,10 +165,17 @@ export class WorldRuntime {
   }
 
   public resume() {
-    if (!this.isPaused || this.isDisposed) return;
+    if (!this.isPaused || !this.canRender()) return;
     this.isPaused = false;
     this.lastTime = performance.now();
     this.animationFrameId = requestAnimationFrame(this.animate);
+  }
+
+  private canRender(): boolean {
+    return !this.isDisposed && this.qualityTier !== "static" && this.canvas.isConnected
+      && !this.lifecycleManager.isStale(this.sessionToken)
+      && ["LOADING", "ENTRANCE", "HOME", "TRANSITION"].includes(this.lifecycleManager.getState())
+      && (typeof document === "undefined" || document.visibilityState !== "hidden");
   }
 
   private async init(options: WorldRuntimeOptions) {
@@ -218,6 +227,7 @@ export class WorldRuntime {
     try {
       loadedAssets = await this.assetLoader.loadSession({
         sessionToken: token,
+        signal: this.loadingAbort.signal,
         simulateAssetError: options.simulateAssetError,
         mobile: typeof window !== "undefined" && window.innerWidth < 640,
         onProgress: (prog) => {
@@ -347,12 +357,12 @@ export class WorldRuntime {
   }
 
   private animate = (currentTime: number) => {
-    if (this.isDisposed || this.isPaused) return;
+    if (this.isPaused || !this.canRender()) { this.pause(); return; }
     this.animationFrameId = requestAnimationFrame(this.animate);
 
     const durationMs = this.lastTime ? currentTime - this.lastTime : 0;
     if (durationMs > 0) this.onFrameDuration?.(durationMs, currentTime);
-    if (this.isPaused || this.isDisposed) return;
+    if (this.isPaused || !this.canRender()) { this.pause(); return; }
     const dt = Math.min(durationMs / 1000, 0.1);
     this.lastTime = currentTime;
 
@@ -583,8 +593,10 @@ export class WorldRuntime {
    * Complete teardown and GPU disposal (ASTRA-G1-01).
    */
   public dispose() {
+    if (this.isDisposed) return;
     this.onSamplingPause?.();
     this.isDisposed = true;
+    this.loadingAbort.abort();
     this.interactionBinding?.dispose();
     this.interactionBinding = null;
     this.lowQualityBatch?.dispose();

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { publicBaseUrl } from "@/config/public-base-url";
 import { Navigation } from "@/features/portfolio/navigation";
 import "@/styles/tokens.css";
@@ -11,7 +12,9 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  // Nonces are per request; every HTML route must render after an actual request.
+  await connection();
   return (
     <html lang="en">
       <body>
