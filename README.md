@@ -1,6 +1,6 @@
 # YOR WORLD — planning package
 
-Prepared 30 September 2026; current integration status 6 October 2026. GitHub is the authoritative live repository. **W1-F1-r2, W2-F1-r2, and W3-A1-r2 are ACCEPTED; G1 ACCEPTED (`G1-R1`). Gates G1-G5 ACCEPTED. Gate G6 ACTIVE / REWORK (RC5 candidate; RC1/RC2/RC3/RC4 preserved as history). Gate G7 LOCKED pending owner authorization.** The current authority is [PARENT-RECON-03](docs/planning/reviews/2026-10-01-reconciliation-03.md), following the [accepted W1/W2/W3 ruling](docs/planning/reviews/2026-10-01-reconciliation-02.md). C1-C4 are implemented and assembled in the canonical application. Gate G6 is ACTIVE / REWORK pending independent full-stack audit and Parent decision. Gate G7 remains LOCKED pending owner authorization.
+Current gate status 2026-10-06: **G1-G6 ACCEPTED. v1.0.0-rc5 = accepted release candidate under [G6-R1](docs/planning/reviews/2026-10-06-g6-r1.md). G7 LOCKED — awaiting explicit owner production authorization.** GitHub is the authoritative repository. Prior G1 and wave-closure acceptance records remain immutable.
 
 YOR WORLD is a personal portfolio experienced as an inhabited developer studio. A visitor can enter through a cinematic doorway, meet the creator, touch objects that respond physically, and explore real work. Projects, résumé, and contact remain directly accessible through ordinary web pages.
 
@@ -27,13 +27,15 @@ pnpm build
 pnpm test:e2e
 ```
 
-The current maker packet creates **v1.0.0-rc5** in [deliveries/G6/rc5-candidate](deliveries/G6/rc5-candidate/report.md), with its [release dossier](docs/releases/v1.0.0-rc5.md). It corrects only the active-world performance benchmark contract and directly required release bindings. The benchmark selects explicit LOW through the real production control; Auto continues to support STATIC fallback. The [environment contract](deliveries/G6/full-stack-integration/environment-contract.md) remains the names-only configuration reference.
+The accepted RC5 source, app tree, bundle, schema/assets/publication/contact bindings and exact-candidate hosted runs are frozen in [G6-R1](docs/planning/reviews/2026-10-06-g6-r1.md). The separately archived [GPT Plus #2 independent audit](docs/planning/reviews/2026-10-06-rc5-independent-full-stack-audit.md) recommends acceptance with no confirmed P0/P1. Maker evidence remains in [deliveries/G6/rc5-candidate](deliveries/G6/rc5-candidate/report.md); the [RC5 dossier](docs/releases/v1.0.0-rc5.md) is the living release index.
 
-**RC4 HISTORICAL / SUPERSEDED BY RC5.** RC4's delivery, dossier, bundle and manifest remain immutable: local PASS, GitHub release gate FAIL from the Auto/active-render benchmark mismatch. RC1-RC3 and the original correction/review packets remain historical inputs. Fresh RC5 executions and exact-candidate GitHub results are recorded only in the new delivery.
+G6-R1 explicitly retains open Retry/STATIC-resource defects, unknown heap/GPU leak absence, the clean-checkout inventory exception and other P2/P3 debt. Current schema-v2 setup, production/physical/manual obligations and owner authorization are recorded in [pre-G7 prerequisites](docs/operations/pre-g7-prerequisites.md). They are not PASS or dispatched work. The historical schema-v1 environment contract is preserved, superseded for current preparation by that guide.
 
-**RC5 maker execution complete:** fresh local checks and both exact-candidate GitHub workflows PASS at `05a3bd44ee3718eeacefe1575ec50f6b70eeb2b9`; all 13 required release steps succeeded with none skipped. Earlier runner-acquisition failures remain preserved as history. G6 ACTIVE / REWORK — awaiting GPT Plus #2 independent audit; G7 LOCKED.
+**RC4 HISTORICAL / SUPERSEDED BY RC5.** RC1–RC4 dossiers, delivery bytes, manifests and bundles remain immutable. Earlier GitHub runner-acquisition failures are history; actual hosted runs 37439297648/37439297754 at audited HEAD 2a0b1ad executed all 13 required release steps successfully.
 
-Next: **GPT Plus #2 independent full-stack RC5 audit**, then **GPT Plus #1 G6 adjudication**. Independent audit is NOT RUN. G1-G5 ACCEPTED; G6 ACTIVE / REWORK — awaiting GPT Plus #2 independent audit; G7 LOCKED. No Gemini provider connection is callable in this Codex session; this maker execution does not claim an external-account return.
+Historical maker-phase status (2026-10-06, before G6-R1): G1 ACCEPTED; G1-G5 ACCEPTED; G6 ACTIVE / REWORK; RC5 candidate; RC1/RC2/RC3/RC4 preserved as history; G7 LOCKED. This visible dated record is retained for maker-era provenance and the frozen integrity workflow. The legacy token check does not adjudicate current acceptance; the leading G6-R1 status is authoritative.
+
+Next: await explicit owner production authorization. G7 remains locked; no production resources, deployment, DNS changes or G7 execution follow automatically.
 
 ## Confirmed brief
 

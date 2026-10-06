@@ -1,20 +1,18 @@
 # YOR WORLD delegation and work orders
 
-Date: 2026-09-30; living candidate status updated 2026-10-06 (RC5 maker packet; accepted wave closure preserved). W1-F1-r2, W2-F1-r2, and W3-A1-r2 were ACCEPTED in PARENT-RECON-02. **G1 ACCEPTED (`G1-R1`)** in [PARENT-RECON-03](reviews/2026-10-01-reconciliation-03.md). Workstation sample B3-P1 was ACCEPTED (`B3-P1-R1`) in [PARENT-RECON-04](reviews/2026-10-01-reconciliation-04.md). Post-G3 interaction wave **CLOSED**: A4-R1, IA-R1 (B3-P3), and C1-R1 all ACCEPTED with zero blocking defects; gates G3, G4, G5 all ACCEPTED. B3-P3 canonical root: `deliveries/interaction-assets/` (provenance-preserving; see [Wave Closure](reviews/2026-10-02-post-g3-wave-closure.md)). Gates **G1-G5 ACCEPTED**. Gate **G6 ACTIVE / REWORK** (RC5 candidate; RC1/RC2/RC3/RC4 preserved as history). Gate **G7 LOCKED** pending owner authorization.
+Living gate status 2026-10-06: **G1-G6 ACCEPTED** under the immutable [G6-R1](reviews/2026-10-06-g6-r1.md). **v1.0.0-rc5 = accepted release candidate. G7 LOCKED — awaiting explicit owner production authorization.** Earlier G1/wave acceptance and RC1–RC4 evidence remain immutable.
 
 The user authorized the full vision and delegated production. The parent Codex chat owns architecture, task assignment, audits, and acceptance. Workers make and integrate the product. This hub operates the existing plans; it does not replace them with another design exercise.
 
-## Current bounded integration packet
+## Current Parent ruling and stop boundary
 
-The human supplied the final release-candidate integration maker packet on 2026-10-06, archived verbatim as [RC5 parent packet](../../deliveries/G6/rc5-candidate/parent-packet.txt). **CANONICAL APPLICATION ROOT: `app/`.** Create **v1.0.0-rc5** under [deliveries/G6/rc5-candidate](../../deliveries/G6/rc5-candidate/report.md). Authorized scope: explicit LOW active-world benchmark, precise diagnostics, deterministic quality-policy coverage, and directly required release bindings/configuration/evidence/status. No feature expansion or production quality-policy change is authorized.
+The human's final-G6 Parent packet is archived with [G6-R1](reviews/2026-10-06-g6-r1.md). Parent reconciled [GPT Plus #2's independent RC5 audit](reviews/2026-10-06-rc5-independent-full-stack-audit.md), immutable maker evidence, source/bundle identity and successful exact-candidate hosted runs. G6 is ACCEPTED for the frozen pre-production candidate, with explicit P2/P3 deferrals and truthful NOT RUN production/manual limitations.
 
-**RC4 HISTORICAL / SUPERSEDED BY RC5.** Preserve `deliveries/G6/rc4-candidate/` and `docs/releases/v1.0.0-rc4.md` byte-for-byte: local PASS; GitHub release gate FAIL due the Auto/STATIC benchmark contract mismatch. Preserve RC1-RC3 dossiers and accepted baselines. Schema remains `20261005000000_schema_v2`; frozen world assets, platform corrections, contact R2, interactions and choreography remain unchanged.
+Canonical root is `app/`; accepted source is c34e01b, app tree 88a65e8 and bundle 4380cab7…b5faa0f, fully recorded in G6-R1. Historical RC1–RC4 and all maker/auditor source-era receipts remain immutable. Any source amendment needs a new explicit Parent packet, fresh candidate binding and independent delta review; no retrospective mutation is authorized.
 
-Fresh RC5 source-bound local evidence and exact-candidate GitHub results belong only to the new delivery. Stop when RC5 is created and both required exact-candidate workflows are green. Maker does not perform the independent audit or accept G6. G1-G5 ACCEPTED; RC5 CANDIDATE; G6 ACTIVE / REWORK — awaiting GPT Plus #2 independent audit; G7 LOCKED.
+The [pre-G7 prerequisites](../operations/pre-g7-prerequisites.md) record missing health implementation, main protection, open recovery/resource defects, current schema-v2 setup and the mandatory live/physical/manual proof. This is a held prerequisite record, not an issued maker/deployment work order. Next: explicit owner production authorization. G7 remains LOCKED; no production resources, DNS, deployment or G7 work starts automatically.
 
-**RC5 maker execution complete:** fresh local checks and both exact-candidate GitHub workflows PASS at `05a3bd44ee3718eeacefe1575ec50f6b70eeb2b9`; all 13 required release steps succeeded with none skipped. Earlier runner-acquisition failures remain preserved as history. G6 ACTIVE / REWORK — awaiting GPT Plus #2 independent audit; G7 LOCKED.
-
-Next: **GPT Plus #2 independent full-stack RC5 audit**, then assigned-maker corrections/delta audit if required, then **GPT Plus #1 final G6 adjudication**. The original [RC3 review handoff](reconciliation-packets/2026-10-03-rc3-review-handoff/README.md) remains a historical, held packet and must not silently change targets. No callable Gemini provider connection exists in this Codex session; no external account dispatch or formal return is claimed. G7 requires explicit owner authorization after G6 acceptance.
+Historical maker-phase status (2026-10-06, before G6-R1): G1 ACCEPTED; G1-G5 ACCEPTED; G6 ACTIVE / REWORK; RC5 candidate; RC1/RC2/RC3/RC4 preserved as history; G7 LOCKED. This visible dated record is retained for maker-era provenance and the frozen integrity workflow. The legacy token check does not adjudicate current acceptance; the leading G6-R1 status is authoritative.
 
 ## One specification and a small shared baseline
 
@@ -131,7 +129,7 @@ W1/W2/W3 are independent: W1 owns room geometry; W2 uses its own F1 furniture fi
 | **G3 World Core** | Evaluator / Parent | B3-P1 + W1 + W2 + B5 | **ACCEPTED:** 13/13 exit requirements met ([Gate Review](reviews/2026-10-02-g3-gate-evaluation.md)) |
 | **G4 Integrated Experience** | Evaluator / Parent | C1 + IA-R1 + B2-R1 | **ACCEPTED:** 10/10 exit requirements met ([Gate Review](reviews/2026-10-02-g4-gate-evaluation.md)) |
 | **G5 Managed Content & Ops** | Evaluator / Parent | A3 + A4 + A5 + A6 | **ACCEPTED:** 10/10 exit requirements met ([Gate Review](reviews/2026-10-02-g5-gate-evaluation.md)) |
-| **G6 Release Candidate** | Integration maker / GPT Plus #2 / Parent | G4 + G5 | **G6 ACTIVE / REWORK:** v1.0.0-rc5 CANDIDATE, awaiting GPT Plus #2 independent audit; see [RC5 report](../../deliveries/G6/rc5-candidate/report.md). RC4 HISTORICAL / SUPERSEDED BY RC5; RC1-RC4 preserved as history. |
+| **G6 Release Candidate** | Parent sole acceptance authority | G4 + G5 + independent RC5 audit | **G6 ACCEPTED (`G6-R1`):** v1.0.0-rc5 accepted release candidate with recorded nonblocking debt/limits; [immutable ruling](reviews/2026-10-06-g6-r1.md). |
 | **G7 Production Release** | **Gemini #3, #1, #2; GPT #2, #1** | Owner Authorization + G1–G6 | **G7 LOCKED:** Only after owner authorizes deployment. Requires 10 live criteria ([Protocol](releases/2026-10-02-g7-production-release-protocol.md)). |
 
 **FROZEN CONTRACTS FOR NEW PACKETS:**

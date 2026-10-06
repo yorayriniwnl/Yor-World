@@ -1,6 +1,8 @@
 # RC5 physical hardware and assistive technology protocol
 
-Candidate: **v1.0.0-rc5**, canonical app root `app/`. G6 ACTIVE / REWORK; G7 LOCKED. This is a blank execution protocol. Actual model/OS/browser/tester/date/sourceCommit/asset revision/publication revision/network/DPR/cache state must accompany each returned receipt. Do not infer physical or screen-reader success from Chromium viewport emulation or axe.
+Candidate: **v1.0.0-rc5**, canonical app root `app/`. G6 ACCEPTED under G6-R1; G7 LOCKED — awaiting explicit owner production authorization. This is a blank execution protocol. Actual model/OS/browser/tester/date/sourceCommit/asset revision/publication revision/network/DPR/cache state must accompany each returned receipt. Do not infer physical or screen-reader success from Chromium viewport emulation or axe.
+
+Current authority: [G6-R1](../planning/reviews/2026-10-06-g6-r1.md); [pre-G7 prerequisites](pre-g7-prerequisites.md). Manual/hosted validation remains NOT RUN. Historical records below are unchanged.
 
 | ID | Actual device/session required | Local automated evidence | Current manual status |
 | --- | --- | --- | --- |

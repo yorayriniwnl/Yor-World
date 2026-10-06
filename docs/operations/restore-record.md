@@ -1,6 +1,8 @@
 # Current RC5 restore and recovery record
 
-Current candidate: **v1.0.0-rc5**. Canonical app: `app/`. G1-G5 ACCEPTED; G6 ACTIVE / REWORK; G7 LOCKED. The [RC5 maker evidence](../../deliveries/G6/rc5-candidate/report.md) records fresh execution against schema `20261005000000_schema_v2`. The additive private GitHub refresh-state table is outside the fifteen public-table backup inventory. RC5 makes no operations/schema changes. Prior RC3 local proof below and historical RC1 rehearsal remain identified by their original source; they do not replace fresh RC5 proof.
+Current candidate: **v1.0.0-rc5**. Canonical app: `app/`. G1-G6 ACCEPTED under G6-R1; G7 LOCKED — awaiting explicit owner production authorization. The [RC5 maker evidence](../../deliveries/G6/rc5-candidate/report.md) records fresh execution against schema `20261005000000_schema_v2`. The additive private GitHub refresh-state table is outside the fifteen public-table backup inventory. RC5 makes no operations/schema changes. Prior RC3 local proof below and historical RC1 rehearsal remain identified by their original source; they do not replace fresh RC5 proof.
+
+Current authority: [G6-R1](../planning/reviews/2026-10-06-g6-r1.md); [pre-G7 prerequisites](pre-g7-prerequisites.md). Manual/hosted validation remains NOT RUN. Historical records below are unchanged.
 
 Canonical implementation is `app/src/server/operations/backup-restore.ts`. Backup reads all fifteen accepted public tables in one repeatable-read transaction and fails if a table cannot be read. Restore uses fixed table/column allowlists, parameterized values, reverse dependency deletion and one transaction for writes. Version1 snapshots remain compatible with their recorded tables, including earlier nine-table snapshots. Auth-service identity/session state and private storage blobs are outside this public-table snapshot.
 
