@@ -4,7 +4,7 @@ Current release: **v1.0.0-rc5 candidate**. Canonical deployment/CI root: **`app/
 
 The [RC5 maker packet](../../deliveries/G6/rc5-candidate/parent-packet.txt) authorizes the active-world benchmark contract correction and directly required release rebinding. The production quality policy, thresholds, watchdog, frozen assets, platform corrections and contact R2 remain unchanged. Schema remains `20261005000000_schema_v2`.
 
-**RC5 maker return: FAIL (hosted CI unavailable).** Both exact-candidate workflows failed during GitHub-hosted runner acquisition with zero steps executed. Fresh local checks and artifact validation PASS; green hosted CI remains required before the independent audit can proceed. See the RC5 report and terminal provider evidence. G6 ACTIVE / REWORK; G7 LOCKED.
+**RC5 maker execution complete:** fresh local checks and both exact-candidate GitHub workflows PASS at `05a3bd44ee3718eeacefe1575ec50f6b70eeb2b9`; all 13 required release steps succeeded with none skipped. Earlier runner-acquisition failures remain preserved as history. G6 ACTIVE / REWORK — awaiting GPT Plus #2 independent audit; G7 LOCKED.
 
 RC5 execution requirements — checked only from completed RC5 records:
 
@@ -15,7 +15,7 @@ RC5 execution requirements — checked only from completed RC5 records:
 - [x] All 97 Chromium E2E, 17 automated accessibility and six performance tests, with zero failed/flaky/skipped cases.
 - [x] Continuous rendered-world LOW route for at least 60 seconds, 60 acknowledged actions, positive calls/triangles, median <=33.3 ms and p95 <=45 ms; raw samples and precise failure snapshots.
 - [x] Actual route/module composition, performance budgets, deterministic source-bound bundle reproducibility and strict RC5 manifest validation.
-- [ ] Push bound candidate evidence and observe Repository integrity and CI / Release Quality Gate SUCCESS on the exact candidate with all 13 required release steps successful.
+- [x] Push bound candidate evidence and observe Repository integrity and CI / Release Quality Gate SUCCESS on the exact candidate with all 13 required release steps successful.
 - [ ] Archive observed candidate SHA/run/job/step evidence and inventory; push the evidence-only handoff and verify both workflows on that final HEAD. A committed record identifies the earlier observed candidate and does not predict its own future CI result.
 
 Authoritative maker records: [RC5 report](../../deliveries/G6/rc5-candidate/report.md), `release-manifest.json`, `source-binding.json`, `release-composition.json`, `bundle-receipt.json`, `commands-and-exit-codes.md`, `evidence/execution.jsonl`, `release-manifest-validation.receipt.json`, `ci-results.json` and `SHA256SUMS.txt` under `deliveries/G6/rc5-candidate/`. Results remain PASS/FAIL/NOT RUN according to actual execution; no historical PASS is fresh RC5 proof.

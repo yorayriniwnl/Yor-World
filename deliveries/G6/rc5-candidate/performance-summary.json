@@ -109,8 +109,155 @@
   "rawSampleHashRule": "Raw samples are contained in the hashed performance evidence; values above are derived from its actual samples.",
   "bundleSha256": "4380cab7f5211c836fe5bb97c68d67137c1b0fd7a2e4789bb29d0157ab5faa0f",
   "strictManifestStatus": "PASS",
-  "githubStatus": "FAIL",
-  "candidateHead": "f3cb4d1a4fcb797dd4520e796a3422b7b12a890f",
+  "githubStatus": "PASS",
+  "candidateHead": "05a3bd44ee3718eeacefe1575ec50f6b70eeb2b9",
+  "currentLocalStatus": "PASS",
+  "currentMakerStatus": "PASS",
+  "priorCiRecheck": {
+    "releaseId": "v1.0.0-rc5",
+    "sourceCommit": "c34e01bb5bff210d924f42d5266e2fa1ed13288e",
+    "recordedCandidateHead": "3fa99fd54e14539809fe39c8275b77b2807d0074",
+    "observedAt": "2026-10-06T08:33:59.953220+00:00",
+    "workflows": [
+      {
+        "workflow": "Repository integrity",
+        "runId": 37367427767,
+        "runAttempt": 1,
+        "headSha": "3fa99fd54e14539809fe39c8275b77b2807d0074",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/yorayriniwnl/Yor-World/actions/runs/37367427767",
+        "createdAt": "2026-10-05T20:04:08Z",
+        "updatedAt": "2026-10-05T20:19:13Z",
+        "jobs": [
+          {
+            "jobId": 111955857023,
+            "name": "integrity",
+            "headSha": "3fa99fd54e14539809fe39c8275b77b2807d0074",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "url": "https://github.com/yorayriniwnl/Yor-World/actions/runs/37367427767/job/111955857023",
+            "steps": []
+          }
+        ],
+        "requiredSkippedSteps": [],
+        "missingSuccessfulRequiredSteps": [
+          "Verify reference manifest hashes",
+          "Verify live status surfaces agree"
+        ]
+      },
+      {
+        "workflow": "CI / Release Quality Gate",
+        "runId": 37367427822,
+        "runAttempt": 1,
+        "headSha": "3fa99fd54e14539809fe39c8275b77b2807d0074",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/yorayriniwnl/Yor-World/actions/runs/37367427822",
+        "createdAt": "2026-10-05T20:04:08Z",
+        "updatedAt": "2026-10-05T20:19:13Z",
+        "jobs": [
+          {
+            "jobId": 111955858246,
+            "name": "Verify & Validate Full-Stack RC5",
+            "headSha": "3fa99fd54e14539809fe39c8275b77b2807d0074",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "url": "https://github.com/yorayriniwnl/Yor-World/actions/runs/37367427822/job/111955858246",
+            "steps": []
+          }
+        ],
+        "requiredSkippedSteps": [],
+        "missingSuccessfulRequiredSteps": [
+          "1. Frozen canonical dependency install",
+          "2. Lint canonical application",
+          "3. Typecheck canonical application",
+          "4. Unified unit tests",
+          "5. Unified backend/runtime integration tests",
+          "6. Khronos frozen canonical asset validation",
+          "7. Full-stack production build",
+          "8. Full unified Playwright E2E",
+          "9. Automated accessibility",
+          "10. Fresh canonical performance browser measurements",
+          "11. Actual production route/module composition",
+          "12. Fresh canonical performance budgets",
+          "13. Exact committed RC5 manifest/archive validation"
+        ]
+      }
+    ],
+    "overallStatus": "FAIL"
+  },
+  "historicalProviderFailure": {
+    "receiptPath": "evidence\\github-candidate-runner-failure\\terminal-results.json",
+    "exactCandidate": "f3cb4d1a4fcb797dd4520e796a3422b7b12a890f",
+    "overallStatus": "FAIL",
+    "failureReason": "GITHUB_HOSTED_RUNNER_NOT_ACQUIRED",
+    "hostedSourceChecks": "NOT RUN",
+    "runs": [
+      {
+        "runId": 37365134471,
+        "jobId": 111948347223,
+        "workflow": "Repository integrity",
+        "expectedHead": "f3cb4d1a4fcb797dd4520e796a3422b7b12a890f",
+        "actualHead": "f3cb4d1a4fcb797dd4520e796a3422b7b12a890f",
+        "headMatches": true,
+        "runStatus": "completed",
+        "runConclusion": "failure",
+        "runAttempt": 1,
+        "runCreatedAt": "2026-10-05T19:42:29Z",
+        "runUpdatedAt": "2026-10-05T19:57:33Z",
+        "jobStatus": "completed",
+        "jobConclusion": "cancelled",
+        "jobCreatedAt": "2026-10-05T19:42:30Z",
+        "jobStartedAt": "2026-10-05T19:42:30Z",
+        "jobCompletedAt": "2026-10-05T19:57:32Z",
+        "runnerId": 0,
+        "runnerName": "",
+        "runnerLabels": [
+          "ubuntu-latest"
+        ],
+        "stepCount": 0,
+        "failureAnnotations": [
+          "The job was not acquired by Runner of type hosted even after multiple attempts"
+        ],
+        "hostedRunnerAcquisitionFailure": true
+      },
+      {
+        "recordedAt": "2026-10-05T20:00:46.585007+00:00",
+        "runId": 37365134461,
+        "jobId": 111949250528,
+        "workflow": "CI / Release Quality Gate",
+        "expectedHead": "f3cb4d1a4fcb797dd4520e796a3422b7b12a890f",
+        "actualHead": "f3cb4d1a4fcb797dd4520e796a3422b7b12a890f",
+        "headMatches": true,
+        "runStatus": "completed",
+        "runConclusion": "failure",
+        "runAttempt": 1,
+        "runCreatedAt": "2026-10-05T19:42:29Z",
+        "runUpdatedAt": "2026-10-05T20:00:15Z",
+        "jobStatus": "completed",
+        "jobConclusion": "cancelled",
+        "jobCreatedAt": "2026-10-05T19:45:11Z",
+        "jobStartedAt": "2026-10-05T19:45:11Z",
+        "jobCompletedAt": "2026-10-05T20:00:14Z",
+        "runnerId": 0,
+        "runnerName": "",
+        "runnerLabels": [
+          "ubuntu-latest"
+        ],
+        "stepCount": 0,
+        "failureAnnotations": [
+          "The job was not acquired by Runner of type hosted even after multiple attempts"
+        ],
+        "hostedRunnerAcquisitionFailure": true,
+        "acceptanceClaim": false,
+        "mutationsPerformed": []
+      }
+    ]
+  },
+  "emptyRetryTriggerHead": "05a3bd44ee3718eeacefe1575ec50f6b70eeb2b9",
   "failedLocalCommandsRetained": [],
   "governance": {
     "role": "Codex maker evidence",

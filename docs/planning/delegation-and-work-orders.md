@@ -12,7 +12,7 @@ The human supplied the final release-candidate integration maker packet on 2026-
 
 Fresh RC5 source-bound local evidence and exact-candidate GitHub results belong only to the new delivery. Stop when RC5 is created and both required exact-candidate workflows are green. Maker does not perform the independent audit or accept G6. G1-G5 ACCEPTED; RC5 CANDIDATE; G6 ACTIVE / REWORK — awaiting GPT Plus #2 independent audit; G7 LOCKED.
 
-**RC5 maker return: FAIL (hosted CI unavailable).** Both exact-candidate workflows failed during GitHub-hosted runner acquisition with zero steps executed. Fresh local checks and artifact validation PASS; green hosted CI remains required before the independent audit can proceed. See the RC5 report and terminal provider evidence. G6 ACTIVE / REWORK; G7 LOCKED.
+**RC5 maker execution complete:** fresh local checks and both exact-candidate GitHub workflows PASS at `05a3bd44ee3718eeacefe1575ec50f6b70eeb2b9`; all 13 required release steps succeeded with none skipped. Earlier runner-acquisition failures remain preserved as history. G6 ACTIVE / REWORK — awaiting GPT Plus #2 independent audit; G7 LOCKED.
 
 Next: **GPT Plus #2 independent full-stack RC5 audit**, then assigned-maker corrections/delta audit if required, then **GPT Plus #1 final G6 adjudication**. The original [RC3 review handoff](reconciliation-packets/2026-10-03-rc3-review-handoff/README.md) remains a historical, held packet and must not silently change targets. No callable Gemini provider connection exists in this Codex session; no external account dispatch or formal return is claimed. G7 requires explicit owner authorization after G6 acceptance.
 

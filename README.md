@@ -31,7 +31,7 @@ The current maker packet creates **v1.0.0-rc5** in [deliveries/G6/rc5-candidate]
 
 **RC4 HISTORICAL / SUPERSEDED BY RC5.** RC4's delivery, dossier, bundle and manifest remain immutable: local PASS, GitHub release gate FAIL from the Auto/active-render benchmark mismatch. RC1-RC3 and the original correction/review packets remain historical inputs. Fresh RC5 executions and exact-candidate GitHub results are recorded only in the new delivery.
 
-**RC5 maker return: FAIL (hosted CI unavailable).** Both exact-candidate workflows failed during GitHub-hosted runner acquisition with zero steps executed. Fresh local checks and artifact validation PASS; green hosted CI remains required before the independent audit can proceed. See the RC5 report and terminal provider evidence. G6 ACTIVE / REWORK; G7 LOCKED.
+**RC5 maker execution complete:** fresh local checks and both exact-candidate GitHub workflows PASS at `05a3bd44ee3718eeacefe1575ec50f6b70eeb2b9`; all 13 required release steps succeeded with none skipped. Earlier runner-acquisition failures remain preserved as history. G6 ACTIVE / REWORK — awaiting GPT Plus #2 independent audit; G7 LOCKED.
 
 Next: **GPT Plus #2 independent full-stack RC5 audit**, then **GPT Plus #1 G6 adjudication**. Independent audit is NOT RUN. G1-G5 ACCEPTED; G6 ACTIVE / REWORK — awaiting GPT Plus #2 independent audit; G7 LOCKED. No Gemini provider connection is callable in this Codex session; this maker execution does not claim an external-account return.
 
