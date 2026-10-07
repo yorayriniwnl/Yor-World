@@ -168,7 +168,21 @@ export class WorldRuntime {
     if (!this.isPaused || !this.canRender()) return;
     this.isPaused = false;
     this.lastTime = performance.now();
-    this.animationFrameId = requestAnimationFrame(this.animate);
+    this.scheduleAnimationFrame();
+  }
+
+  private scheduleAnimationFrame() {
+    // Visibility can resume while assets are pending. Initialization and resume
+    // share this owner, and only an integrated scene may start a render loop.
+    if (this.animationFrameId !== null || !this.integratedResult || this.isPaused) return;
+    if (!this.canRender()) { this.pause(); return; }
+    const frameId = requestAnimationFrame((currentTime) => {
+      // A canceled callback must not take ownership from a later resume.
+      if (this.animationFrameId !== frameId) return;
+      this.animationFrameId = null;
+      this.animate(currentTime);
+    });
+    this.animationFrameId = frameId;
   }
 
   private canRender(): boolean {
@@ -298,7 +312,7 @@ export class WorldRuntime {
 
     // 7. Start Animation Loop
     this.lastTime = performance.now();
-    this.animate(this.lastTime);
+    this.scheduleAnimationFrame();
 
     // 8. Start Entrance Choreography
     const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
@@ -358,7 +372,7 @@ export class WorldRuntime {
 
   private animate = (currentTime: number) => {
     if (this.isPaused || !this.canRender()) { this.pause(); return; }
-    this.animationFrameId = requestAnimationFrame(this.animate);
+    this.scheduleAnimationFrame();
 
     const durationMs = this.lastTime ? currentTime - this.lastTime : 0;
     if (durationMs > 0) this.onFrameDuration?.(durationMs, currentTime);
