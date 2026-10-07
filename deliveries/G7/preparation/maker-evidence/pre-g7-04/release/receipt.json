@@ -1,0 +1,32 @@
+{
+  "role": "release tooling maker; no acceptance or independent audit claimed",
+  "packet": "docs/planning/reconciliation-packets/2026-10-07-pre-g7-04.md",
+  "assignedBase": "6e0934e4f7bf390c918132e12fe88e67767933d9",
+  "executedAt": "2026-10-07T07:42:53.849Z",
+  "node": "v24.19.0",
+  "platform": "win32",
+  "command": "node --test --test-reporter=tap scripts/release/tests/immutable-output.test.mjs",
+  "exitCode": 0,
+  "result": "PASS",
+  "changedFiles": [
+    {
+      "path": "scripts/release/release-lib.mjs",
+      "sha256": "32bd3fb8d236c8db533c4c1eff58d6c5314a871758e443036257384c82bfccb3"
+    },
+    {
+      "path": "scripts/release/tests/immutable-output.test.mjs",
+      "sha256": "431cf62c5d3b41adb82bcac03ddb53715862ad60375995594613335eaf4c2873"
+    }
+  ],
+  "fixtureLocation": "os.tmpdir()/yor-release-immutable-*/repo; dynamically allocated and removed after verified containment",
+  "actualAcceptedWrites": false,
+  "actualWindowsDirectoryAliases": "NTFS directory junctions; POSIX hosts use directory symlinks",
+  "notRun": [
+    "Independent reviewer audit and Parent acceptance",
+    "Full release build/validation and production/manual G7 checks"
+  ],
+  "limits": [
+    "Checks resolve paths at guard time; simultaneous external filesystem mutation is outside this local tooling threat model.",
+    "Legacy build-rc4-bundle.mjs calls safePath directly; unchanged outside the assigned ownership."
+  ]
+}

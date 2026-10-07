@@ -53,6 +53,9 @@ jobs:
       - name: Verify live status surfaces agree
         run: node scripts/release/check-current-status.mjs
 
+      - name: Verify accepted output protection
+        run: node --test scripts/release/tests/immutable-output.test.mjs
+
       - name: Reject oversized new scratch archives
         if: github.event_name == 'pull_request'
         run: |

@@ -24,12 +24,14 @@ python deliveries/G7/preparation/tools/assemble-evidence.py --policy scripts/rel
 
 Optional `.last-run.json` and Git-ignored generated artifacts are explicitly excluded in `inventory-omissions.json`. Mandatory manifest evidence cannot be omitted. This fixes the new inventory without rewriting RC5 checksums.
 
+`observe-github.py --head <candidate-head> --source <source-sha> --output <new-receipt-path>` reads actual exact-head Actions jobs and all thirteen required successful quality steps, plus integrity checks. `fetch-github.py --run-id <quality-run-id> --head <candidate-head> --source <source-sha>` downloads the exact RC6 artifact into a separate run/attempt/timestamp snapshot and checks source/head, browser inventories, raw LOW frames and strict validation. Credentials stay in memory and are dropped across signed download redirects. Neither tool reruns jobs or accepts a candidate. Existing snapshots are never replaced.
+
 ## Actual G7 evidence
 
 Initialize a blank ledger after a candidate manifest exists:
 
 ```powershell
-python deliveries/G7/preparation/tools/g7-evidence.py --manifest deliveries/G7/rc6-candidate/release-manifest.json --output deliveries/G7/evidence/g7-ledger.json
+python deliveries/G7/preparation/tools/g7-evidence.py --manifest deliveries/G7/rc6-candidate-r2/release-manifest.json --output deliveries/G7/evidence/g7-ledger.json
 ```
 
 The ledger initializes all ten production requirements and MD-01…MD-06 as `NOT RUN`; heap/GPU leak absence is `UNKNOWN`. Later `--receipts <actual-receipts...>` imports supplied source/deployment-bound proof and verifies referenced raw artifact hashes. Physical/assistive `PASS` requires actual device/operator/tool/session timestamps and evidence category `ACTUAL PHYSICAL OR ASSISTIVE SESSION`. Automated HTTP, PGlite, viewport, axe and liveness responses do not promote complete live/manual criteria to PASS.
@@ -37,8 +39,8 @@ The ledger initializes all ten production requirements and MD-01…MD-06 as `NOT
 Root supplies a separate operational binding JSON containing `status: "AUTHORIZED"`, `ownerAuthorizationReference`, `acceptedSuccessorReference`, `releaseId`, `sourceCommit`, `sourceAppTree`, `manifestSha256` (LF), `targetOrigin`, `deploymentId` and `deployedAt`. It records actual authority/deployment identity without editing the accepted maker manifest or exposing secrets.
 
 ```powershell
-node deliveries/G7/preparation/tools/g7-live-probes.mjs --authorization deliveries/G7/evidence/operational-binding.json --manifest deliveries/G7/rc6-candidate/release-manifest.json --output deliveries/G7/evidence/http-cdn.json --assets app/public/asset-manifest.json --composition deliveries/G7/rc6-candidate/release-composition.json
-node deliveries/G7/preparation/tools/g7-browser-smoke.mjs --authorization deliveries/G7/evidence/operational-binding.json --manifest deliveries/G7/rc6-candidate/release-manifest.json --output deliveries/G7/evidence/live-browser.json
+node deliveries/G7/preparation/tools/g7-live-probes.mjs --authorization deliveries/G7/evidence/operational-binding.json --manifest deliveries/G7/rc6-candidate-r2/release-manifest.json --output deliveries/G7/evidence/http-cdn.json --assets app/public/asset-manifest.json --composition deliveries/G7/rc6-candidate-r2/release-composition.json
+node deliveries/G7/preparation/tools/g7-browser-smoke.mjs --authorization deliveries/G7/evidence/operational-binding.json --manifest deliveries/G7/rc6-candidate-r2/release-manifest.json --output deliveries/G7/evidence/live-browser.json
 ```
 
 These commands are for Root after actual deployment. The first records DNS/TLS/HTTPS redirect, public HTTP/health headers, asset bytes/hashes/cache/range and available encoded Content-Length observations. The second records available Chromium/Edge/Firefox/WebKit versions, public direct/refresh/history routes, real entry/skip controls and no-JS/WebGL-disabled HTML fallback, plus raw screenshots/traces. Missing browsers remain NOT RUN. Neither tool submits contacts, configures services, changes DNS/resources, executes rollback, or claims a complete G7 requirement. Context-loss/complete avatar/interaction behavior, native DB/MFA/RLS/Storage/mail/jobs, physical/screen-reader/thermal sessions, monitoring/restore and rehearsed RTO/RPO require separate actual receipts.
