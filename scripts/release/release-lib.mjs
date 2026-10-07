@@ -38,7 +38,7 @@ function containsPath(directory, target) {
   return relative === "" || (relative !== ".." && !relative.startsWith(".." + path.sep) && !path.isAbsolute(relative));
 }
 export function safePath(name) {
-  if (typeof name !== "string" || !name || name.includes("\\") || name.includes("\0") || /^[A-Za-z]:/.test(name) || path.isAbsolute(name) || name.split("/").some((p) => p === ".." || p === "." || !p)) throw new Error(`Unsafe repository path: ${name}`);
+  if (typeof name !== "string" || !name || /[\\\x00-\x1f:<>"|?*]/.test(name) || path.isAbsolute(name) || name.split("/").some((p) => p === ".." || p === "." || !p || /[. ]$/.test(p) || /^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(p))) throw new Error(`Unsafe repository path: ${name}`);
   const resolved = path.resolve(ROOT, name);
   if (!resolved.startsWith(ROOT + path.sep)) throw new Error(`Path escapes repository: ${name}`);
   if (!containsPath(fs.realpathSync.native(ROOT), filesystemTarget(resolved))) throw new Error(`Symlink escapes repository: ${name}`);
@@ -48,6 +48,7 @@ export const readJson = (name) => JSON.parse(fs.readFileSync(safePath(name), "ut
 const immutableDirectories = [
   "deliveries/C4", "deliveries/G6/full-stack-integration",
   "deliveries/G6/rc4-candidate", "deliveries/G6/rc5-candidate",
+  "deliveries/G7/rc6-candidate", "deliveries/G7/rc6-candidate-r2",
   "docs/planning/reviews/2026-10-06-g6-r1",
 ];
 const immutableFiles = [
@@ -69,7 +70,31 @@ export function assertMutableOutput(name) {
       || pathIdentity(filesystemTarget(reserved)) === pathIdentity(realTarget);
   });
   if (immutable) {
-    throw new Error("Accepted RC1-RC5 evidence, audit and G6-R1 are immutable");
+    throw new Error("Accepted RC1-RC5 evidence, audit and G6-R1 are immutable; original RC6 and rejected R2 proof are preserved");
+  }
+  return target;
+}
+export function assertPolicyOutputs(candidate = policy) {
+  const root = assertMutableOutput(candidate.deliveryRoot);
+  const archive = assertMutableOutput(candidate.bundle?.path);
+  if (!candidate.deliveryRoot.startsWith("deliveries/G7/")
+    || candidate.bundle.path !== `${candidate.deliveryRoot}/yor-world-${candidate.releaseId}.bundle.tar.gz`) {
+    throw new Error("Archive output policy must bind the canonical bundle inside the current deliveryRoot");
+  }
+  if (pathIdentity(filesystemTarget(root)) !== pathIdentity(root)
+    || pathIdentity(filesystemTarget(archive)) !== pathIdentity(archive)) {
+    throw new Error("Archive output policy must use portable paths without filesystem aliases");
+  }
+  return { root, archive };
+}
+export function assertPolicyOutput(name, candidate = policy) {
+  const { root } = assertPolicyOutputs(candidate);
+  const target = assertMutableOutput(name);
+  if (!name.startsWith(candidate.deliveryRoot + "/") || !containsPath(root, filesystemTarget(target))) {
+    throw new Error("Release output must stay inside the policy deliveryRoot");
+  }
+  if (pathIdentity(filesystemTarget(target)) !== pathIdentity(target)) {
+    throw new Error("Release output must use a portable path without filesystem aliases");
   }
   return target;
 }

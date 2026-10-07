@@ -6,7 +6,7 @@ import datetime as dt
 import hashlib
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import platform
 import re
 import shutil
@@ -39,6 +39,46 @@ PRIVATE_ENV = ["DATABASE_URL", "CONTACT_HASH_SECRET", "QUOTA_HASH_SECRET", "SUPA
                "CRON_SECRET", "INTERNAL_JOB_KEY", "GITHUB_TOKEN", "SUPABASE_URL", "SUPABASE_ANON_KEY",
                "SUPABASE_SERVICE_KEY", "NEXT_PUBLIC_BASE_URL", "NEXT_PUBLIC_SUPABASE_URL",
                "NEXT_PUBLIC_SUPABASE_ANON_KEY"]
+PRESERVED_OUTPUTS = [
+    "deliveries/C4", "deliveries/G6/full-stack-integration",
+    "deliveries/G6/rc4-candidate", "deliveries/G6/rc5-candidate",
+    "deliveries/G7/rc6-candidate", "deliveries/G7/rc6-candidate-r2",
+    "docs/planning/reviews/2026-10-06-g6-r1",
+    "docs/planning/reviews/2026-10-06-g6-r1.md",
+    "docs/planning/reviews/2026-10-06-rc5-independent-full-stack-audit.md",
+    *[f"docs/releases/v1.0.0-rc{number}.md" for number in range(1, 6)],
+]
+
+
+def safe_output(root, name):
+    if (not isinstance(name, str) or not name or re.search(r'[\\\x00-\x1f:<>"|?*]', name)
+            or name.startswith("/") or any(part in ["", ".", ".."] or part.endswith((".", " "))
+            or re.match(r"^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)", part, re.I)
+            for part in name.split("/"))):
+        raise ValueError(f"Unsafe repository output path: {name}")
+    root = root.resolve()
+    target = root.joinpath(*PurePosixPath(name).parts)
+    resolved = target.resolve()
+    if not resolved.is_relative_to(root):
+        raise ValueError(f"Output alias escapes repository: {name}")
+    for reserved in PRESERVED_OUTPUTS:
+        protected = root / reserved
+        if target.is_relative_to(protected) or resolved.is_relative_to(protected.resolve()):
+            raise ValueError(f"Preserved release proof cannot be overwritten: {name}")
+    # Filesystem aliases cannot form portable release evidence, even within the repository.
+    if resolved != target:
+        raise ValueError(f"Output must use a portable path without filesystem aliases: {name}")
+    return target
+
+
+def assert_policy_outputs(root, policy):
+    delivery = policy.get("deliveryRoot")
+    archive = policy.get("bundle", {}).get("path")
+    safe_output(root, delivery)
+    safe_output(root, archive)
+    if (not delivery.startswith("deliveries/G7/")
+            or archive != f"{delivery}/yor-world-{policy.get('releaseId')}.bundle.tar.gz"):
+        raise ValueError("Archive output policy must bind the canonical bundle inside deliveryRoot")
 
 
 def utc():
@@ -69,6 +109,8 @@ class Driver:
         self.checkout = args.checkout.resolve()
         self.policy_path = args.policy
         self.policy = json.loads((self.repo / self.policy_path).read_text(encoding="utf-8"))
+        assert_policy_outputs(self.repo, self.policy)
+        assert_policy_outputs(self.checkout, self.policy)
         self.delivery_relative = Path(self.policy["deliveryRoot"])
         if self.delivery_relative.is_absolute() or ".." in self.delivery_relative.parts or self.policy["deliveryRoot"].startswith("deliveries/G6/"):
             raise ValueError("Successor output must use a new safe delivery root")
@@ -84,15 +126,101 @@ class Driver:
             self.env.pop(name, None)
         self.env.update(CI="true", NEXT_TELEMETRY_DISABLED="1", FORCE_COLOR="0")
 
+    def guard_outputs(self):
+        for root in [self.repo, self.checkout]:
+            policy_path = root / self.policy_path
+            if policy_path.exists() and json.loads(policy_path.read_text(encoding="utf-8")) != self.policy:
+                raise RuntimeError("Output policy drifted after driver initialization; no writes allowed")
+            assert_policy_outputs(root, self.policy)
+            delivery = root / self.delivery_relative
+            if delivery.exists():
+                for path in delivery.rglob("*"):
+                    safe_output(root, path.relative_to(root).as_posix())
+
     def export(self):
+        self.guard_outputs()
         # The parent owns report/docs/observer; do not copy committed tools over its current work.
+        copies = []
         for path in self.delivery.rglob("*"):
             relative = path.relative_to(self.delivery)
             if not path.is_file() or relative.parts[0] == "tools" or "__pycache__" in relative.parts:
                 continue
-            target = self.destination / relative
+            name = (self.delivery_relative / relative).as_posix()
+            safe_output(self.checkout, name)
+            target = safe_output(self.repo, name)
+            copies.append((path, target))
+        # Preflight every source/destination before copying any files.
+        for path, target in copies:
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(path, target)
+
+    def verify_exported_inputs(self):
+        """Reject incomplete, divergent or nonportable final inputs before primary validation."""
+        assert_policy_outputs(self.repo, self.policy)
+        assert_policy_outputs(self.checkout, self.policy)
+        delivery = self.delivery_relative.as_posix()
+        def input_path(root, name):
+            if not isinstance(name, str) or not name.startswith(delivery + "/"):
+                raise ValueError(f"Mandatory exported input is outside deliveryRoot: {name}")
+            path = safe_output(root, name)
+            if not path.is_file() or not path.stat().st_size:
+                raise RuntimeError(f"Mandatory exported input is missing or empty: {path}")
+            return path
+        def compare(name, expected=None, mode="raw"):
+            source = input_path(self.checkout, name).read_bytes()
+            exported = input_path(self.repo, name).read_bytes()
+            if exported != source:
+                raise RuntimeError(f"Exported input differs from detached proof: {name}")
+            if mode not in ["raw", "lf"]:
+                raise ValueError(f"Unknown exported input hash mode: {mode}")
+            content = exported.replace(b"\r\n", b"\n") if mode == "lf" else exported
+            if expected is not None and (not re.fullmatch(r"[a-f0-9]{64}", expected)
+                                         or hashlib.sha256(content).hexdigest() != expected):
+                raise RuntimeError(f"Mandatory exported input hash mismatch: {name}")
+            return exported
+        manifest = json.loads(compare(f"{delivery}/release-manifest.json"))
+        if manifest.get("sourceCommit") != self.source or manifest.get("releaseBundlePath") != self.policy["bundle"]["path"]:
+            raise RuntimeError("Exported manifest does not bind the exact source and policy archive")
+        archive = compare(self.policy["bundle"]["path"], manifest.get("releaseBundleSha256", ""))
+        bundle = json.loads(compare(f"{delivery}/bundle-receipt.json"))
+        if (bundle.get("sourceCommit") != self.source or bundle.get("archivePath") != self.policy["bundle"]["path"]
+                or bundle.get("sha256") != manifest.get("releaseBundleSha256") or bundle.get("bytes") != len(archive)):
+            raise RuntimeError("Exported bundle receipt differs from the actual policy archive")
+        supplemental = manifest.get("evidenceHashes", [])
+        for suffix in self.policy["requiredEvidencePaths"]:
+            name = f"{delivery}/{suffix}"
+            if not any(item.get("path") == name for item in supplemental):
+                raise RuntimeError(f"Missing mandatory exported evidence binding: {name}")
+        for item in supplemental:
+            compare(item["path"], item.get("sha256", ""), item.get("hashMode", "raw"))
+        for binding in [manifest.get("sourceBinding", {}), manifest.get("composition", {})]:
+            compare(binding.get("path"), binding.get("sha256", ""), binding.get("hashMode", "raw"))
+        checks = manifest.get("requiredChecks", [])
+        if sorted(check.get("id", "") for check in checks) != sorted(self.policy["requiredChecks"]):
+            raise RuntimeError("Exported required check inventory differs from policy")
+        for check in checks:
+            if check.get("sourceCommit") != self.source or check.get("status") != "pass":
+                raise RuntimeError("Exported required check is not exact-source PASS")
+            compare(check.get("evidencePath"), None if check["id"] == "release-manifest-validation"
+                    else check.get("evidenceSha256", ""), check.get("evidenceHashMode", "raw"))
+        receipt = json.loads(compare(f"{delivery}/release-manifest-validation.receipt.json"))
+        manifest_bytes = input_path(self.repo, f"{delivery}/release-manifest.json").read_bytes().replace(b"\r\n", b"\n")
+        if (receipt.get("overallStatus") != "PASS" or receipt.get("sourceCommit") != self.source
+                or receipt.get("manifestSha256") != hashlib.sha256(manifest_bytes).hexdigest()
+                or receipt.get("releaseBundleSha256") != manifest["releaseBundleSha256"]):
+            raise RuntimeError("Exported detached validation receipt does not bind final inputs")
+
+    def verify_primary_validation(self):
+        name = (self.delivery_relative / "primary-release-manifest-validation.receipt.json").as_posix()
+        receipt = json.loads(safe_output(self.repo, name).read_text(encoding="utf-8"))
+        manifest_path = self.destination / "release-manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest_hash = hashlib.sha256(manifest_path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+        if (receipt.get("overallStatus") != "PASS" or receipt.get("sourceCommit") != self.source
+                or receipt.get("manifestPath") != (self.delivery_relative / "release-manifest.json").as_posix()
+                or receipt.get("manifestSha256") != manifest_hash
+                or receipt.get("releaseBundleSha256") != manifest.get("releaseBundleSha256")):
+            raise RuntimeError("Strict primary validation receipt is absent or differs from final exported proof")
 
     def assert_source(self):
         if git(self.checkout, "rev-parse", "HEAD") != self.source:
@@ -106,6 +234,7 @@ class Driver:
             raise RuntimeError(f"Committed implementation changed during proof:\n{changes}")
 
     def record(self, check_id, command, cwd, number, env=None, output=False):
+        self.guard_outputs()
         self.assert_source()
         log = self.evidence / f"{number:02d}-{check_id}.log"
         attempt = 1
@@ -164,6 +293,7 @@ class Driver:
         return plain
 
     def prepare(self):
+        self.guard_outputs()
         if not re.fullmatch(r"[a-f0-9]{40}", self.source):
             raise ValueError("--source must be a full commit SHA")
         if self.checkout.exists():
@@ -233,6 +363,7 @@ class Driver:
         print(f"Prepared fresh detached checkout at {self.checkout}", flush=True)
 
     def require_session(self):
+        self.guard_outputs()
         session = json.loads(self.session_path.read_text(encoding="utf-8"))
         if session["sourceCommit"] != self.source or session["checkoutPath"] != str(self.checkout):
             raise RuntimeError("Session identity differs from requested exact checkout")
@@ -347,8 +478,16 @@ class Driver:
         self.record("release-manifest-validation", ["node", "scripts/release/validate-release.mjs", "--strict", "--receipt",
                     (self.delivery_relative / "release-manifest-validation.receipt.json").as_posix()], self.checkout, 13)
         self.export()
+        self.verify_exported_inputs()
+        self.record("primary-release-manifest-validation", ["node", "scripts/release/validate-release.mjs", "--strict", "--receipt",
+                    (self.delivery_relative / "primary-release-manifest-validation.receipt.json").as_posix()], self.repo, 24)
+        self.verify_exported_inputs()
+        self.verify_primary_validation()
 
     def inventory(self):
+        self.require_session()
+        self.verify_exported_inputs()
+        self.verify_primary_validation()
         # Parent report and actual GitHub observations may now exist only in the primary delivery.
         assembly = Path(__file__).with_name("assemble-evidence.py")
         result = subprocess.run([sys.executable, str(assembly), "--repository", str(self.repo), "--policy", self.policy_path, "--source", self.source,

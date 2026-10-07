@@ -5,16 +5,24 @@ import { parseArgs } from "node:util";
 import { inspectComposition } from "./check-release-composition.mjs";
 import { verifyBrowserReport } from "./verify-playwright-results.mjs";
 import { verifyActiveBenchmark } from "./verify-active-benchmark.mjs";
-import { buildBundle, git, normalized, policy, readJson, safePath, sha256, writeJson } from "./release-lib.mjs";
+import { assertPolicyOutput, assertPolicyOutputs, buildBundle, git, normalized, policy, readJson, safePath, sha256, writeJson } from "./release-lib.mjs";
 
 const failures = [];
 function requireThat(condition, reason) { if (!condition) failures.push(reason); }
 try {
   const { values } = parseArgs({ options: { manifest: { type: "string", short: "m", default: policy.deliveryRoot + "/release-manifest.json" }, strict: { type: "boolean", short: "s", default: true }, receipt: { type: "string", short: "r", default: policy.deliveryRoot + "/release-manifest-validation.receipt.json" } } });
+  assertPolicyOutputs();
+  assertPolicyOutput(values.manifest);
+  assertPolicyOutput(values.receipt);
+  if (values.receipt === values.manifest || values.receipt === policy.bundle.path) throw new Error("Validation receipt must not overwrite its inputs");
   const manifestBytes = fs.readFileSync(safePath(values.manifest));
   const manifest = JSON.parse(manifestBytes.toString("utf8"));
+  const inputPaths = [values.manifest, policy.bundle.path, manifest.sourceBinding?.path, manifest.composition?.path,
+    ...(manifest.evidenceHashes || []).map((item) => item.path),
+    ...(manifest.requiredChecks || []).filter((item) => item.id !== "release-manifest-validation").map((item) => item.evidencePath)];
+  if (inputPaths.includes(values.receipt)) throw new Error("Validation receipt must not overwrite its inputs");
   for (const key of ["releaseId", "assetRevision", "publicationRevision", "schemaRevision", "contactAmendment", "canonicalApplicationRoot"]) requireThat(manifest[key] === policy[key], `${key} must equal ${policy[key]}`);
-  requireThat(manifest.releaseBundlePath === policy.bundle.path, "releaseBundlePath must identify the current canonical archive");
+  if (manifest.releaseBundlePath !== policy.bundle.path) throw new Error("releaseBundlePath must identify the current canonical archive");
   requireThat(manifest.gitCommit === undefined || manifest.gitCommit === manifest.sourceCommit, "gitCommit conflicts with sourceCommit");
   const bundle = buildBundle(manifest.sourceCommit); // Requires ancestor, unchanged committed implementation, and matching worktree.
   const sourceAppTree = git("rev-parse", manifest.sourceCommit + ":" + policy.canonicalApplicationRoot);
