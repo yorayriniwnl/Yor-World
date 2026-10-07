@@ -1,0 +1,77 @@
+name: Generate RC6 R5 Candidate
+
+on:
+  push:
+    branches: ["automation/rc6-r5-proof"]
+    paths:
+      - ".github/workflows/generate-rc6-r5.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: rc6-r5-candidate-generation
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    name: Build fresh exact-source R5 evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      CI: "true"
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - name: Checkout exact main source
+        uses: actions/checkout@v5
+        with:
+          ref: e461e029a1b38c461743d60dcd4aadb599613218
+          fetch-depth: 0
+
+      - name: Setup Node 24.19.0
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.19.0
+
+      - name: Setup pnpm 9.15.9
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+          run_install: false
+
+      - name: Prepare exact-source primary validation workspace
+        working-directory: app
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+          pnpm exec playwright install --with-deps chromium
+
+      - name: Generate and validate fresh R5 candidate
+        shell: bash
+        run: |
+          python deliveries/G7/preparation/tools/candidate-driver.py \
+            --policy scripts/release/rc6-policy.json \
+            --source e461e029a1b38c461743d60dcd4aadb599613218 \
+            --checkout "$RUNNER_TEMP/yor-world-rc6-r5-$GITHUB_RUN_ID" \
+            --client-date 2026-10-07 \
+            --phase all
+
+      - name: Upload generated R5 backup
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc6-r5-candidate-${{ github.run_id }}
+          path: deliveries/G7/rc6-candidate-r5/
+          include-hidden-files: true
+          retention-days: 14
+
+      - name: Commit generated R5 evidence to main
+        shell: bash
+        run: |
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "e461e029a1b38c461743d60dcd4aadb599613218" || { echo "main moved during R5 generation"; exit 1; }
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add deliveries/G7/rc6-candidate-r5/
+          git diff --cached --quiet && { echo "No R5 candidate files generated"; exit 1; }
+          git commit -m "chore(rc6): add fresh R5 candidate evidence"
+          git push origin HEAD:main
