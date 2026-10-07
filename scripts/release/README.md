@@ -5,9 +5,9 @@ Canonical application root is `app/`. Current policy is `rc6-policy.json`; it bi
 Run after frozen installation and a production build:
 
 ```text
-node scripts/release/validate-gltf-assets.mjs --output deliveries/G7/rc6-candidate-r3/asset-validation.json
+node scripts/release/validate-gltf-assets.mjs --output deliveries/G7/rc6-candidate-r4/asset-validation.json
 node scripts/release/check-release-composition.mjs
-node scripts/release/check-performance-budgets.mjs --benchmark-dir deliveries/G7/rc6-candidate-r3/evidence/performance
+node scripts/release/check-performance-budgets.mjs --benchmark-dir deliveries/G7/rc6-candidate-r4/evidence/performance
 ```
 
 Composition checks all 23 public/admin/API routes, reachable source imports, contact R2 and nine frozen GLBs. The Node Proxy is verified through `.next/server/functions-config-manifest.json` and its compiled `.next/server/middleware.js`; the empty Edge middleware map is not substituted for Node runtime evidence. Browser graphs retain private-import/environment restrictions.
@@ -25,7 +25,7 @@ node scripts/release/validate-release.mjs --strict
 
 `deliveries/G7/preparation/tools/candidate-driver.py` and `assemble-evidence.py` implement fresh detached-checkout checks and binding. Final policy browser counts are derived from actual complete discovery and each executed case must pass once with zero skips/retries/flakes/errors. Current authoritative inventory is 109 Chromium E2E, 17 accessibility and six performance cases. Unit/integration totals are recorded from actual execution, not invented from an exit code.
 
-The new `deliveries/G7/rc6-candidate-r3/` manifest binds sourceCommit/sourceAppTree, asset/publication/schema/contact revisions, exact deterministic archive path/hash/bytes/count, hashed source binding and composition, and all required evidence. Twelve input checks carry mandatory hashes; strict manifest validation is the detached thirteenth receipt, hashing its final input without a circular self-hash. Text uses explicit LF normalization; binary archive hashes are raw. New portable inventories omit ignored ephemeral `.last-run.json` files with an explicit omission receipt, preserving old RC5 inventory history.
+The new `deliveries/G7/rc6-candidate-r4/` manifest binds sourceCommit/sourceAppTree, asset/publication/schema/contact revisions, exact deterministic archive path/hash/bytes/count, hashed source binding and composition, and all required evidence. Twelve input checks carry mandatory hashes; strict manifest validation is the detached thirteenth receipt, hashing its final input without a circular self-hash. Text uses explicit LF normalization; binary archive hashes are raw. New portable inventories omit ignored ephemeral `.last-run.json` files with an explicit omission receipt, preserving old RC5 inventory history.
 
 RC6 maker governance is copied exactly from policy: candidate, selfApproved=false, accepted RC5/G6-R1 baseline with RC6 awaiting independent delta review, and G7 AUTHORIZED / PREPARATION under recorded owner authorization. That authorization does not accept amended source or G7. `check-current-status.mjs` checks current metadata against the immutable Parent ruling, owner receipt, policy/package version and living pages; it replaces stale maker-phase token checks.
 

@@ -31,7 +31,7 @@ Optional `.last-run.json` and Git-ignored generated artifacts are explicitly exc
 Initialize a blank ledger after a candidate manifest exists:
 
 ```powershell
-python deliveries/G7/preparation/tools/g7-evidence.py --manifest deliveries/G7/rc6-candidate-r3/release-manifest.json --output deliveries/G7/evidence/g7-ledger.json
+python deliveries/G7/preparation/tools/g7-evidence.py --manifest deliveries/G7/rc6-candidate-r4/release-manifest.json --output deliveries/G7/evidence/g7-ledger.json
 ```
 
 The ledger initializes all ten production requirements and MD-01…MD-06 as `NOT RUN`; heap/GPU leak absence is `UNKNOWN`. Initialization also works without `--manifest` or a live binding. A supplied manifest must contain valid exact source/tree/bundle identities, a hash-verified `releaseBundlePath` and `sourceBinding` matching those identities. The manifest hash uses LF normalization. This checks candidate binding integrity; it does not replace the release validator or candidate acceptance.
@@ -74,8 +74,8 @@ python deliveries/G7/preparation/tools/test_g7_evidence.py
 All suite files use temporary directories labelled as isolated fixtures and are removed afterwards. Successful structural ingestion of intentionally fictitious records tests validation only; it is not live, manual, authority or production evidence. The original independent probe and archived fixtures remain unchanged. Live-probe/browser-smoke raw schemas are observations, not complete ledger requirement receipts; an operator must map actual raw evidence to exact criteria before importing.
 
 ```powershell
-node deliveries/G7/preparation/tools/g7-live-probes.mjs --authorization deliveries/G7/evidence/operational-binding.json --manifest deliveries/G7/rc6-candidate-r3/release-manifest.json --output deliveries/G7/evidence/http-cdn.json --assets app/public/asset-manifest.json --composition deliveries/G7/rc6-candidate-r3/release-composition.json
-node deliveries/G7/preparation/tools/g7-browser-smoke.mjs --authorization deliveries/G7/evidence/operational-binding.json --manifest deliveries/G7/rc6-candidate-r3/release-manifest.json --output deliveries/G7/evidence/live-browser.json
+node deliveries/G7/preparation/tools/g7-live-probes.mjs --authorization deliveries/G7/evidence/operational-binding.json --manifest deliveries/G7/rc6-candidate-r4/release-manifest.json --output deliveries/G7/evidence/http-cdn.json --assets app/public/asset-manifest.json --composition deliveries/G7/rc6-candidate-r4/release-composition.json
+node deliveries/G7/preparation/tools/g7-browser-smoke.mjs --authorization deliveries/G7/evidence/operational-binding.json --manifest deliveries/G7/rc6-candidate-r4/release-manifest.json --output deliveries/G7/evidence/live-browser.json
 ```
 
 These commands are for Root after actual deployment. The first records DNS/TLS/HTTPS redirect, public HTTP/health headers, asset bytes/hashes/cache/range and available encoded Content-Length observations. The second records available Chromium/Edge/Firefox/WebKit versions, public direct/refresh/history routes, real entry/skip controls and no-JS/WebGL-disabled HTML fallback, plus raw screenshots/traces. Missing browsers remain NOT RUN. Neither tool submits contacts, configures services, changes DNS/resources, executes rollback, or claims a complete G7 requirement. Context-loss/complete avatar/interaction behavior, native DB/MFA/RLS/Storage/mail/jobs, physical/screen-reader/thermal sessions, monitoring/restore and rehearsed RTO/RPO require separate actual receipts.
