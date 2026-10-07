@@ -37,6 +37,20 @@ function containsPath(directory, target) {
   const relative = path.relative(pathIdentity(directory), pathIdentity(target));
   return relative === "" || (relative !== ".." && !relative.startsWith(".." + path.sep) && !path.isAbsolute(relative));
 }
+function existingRegularFileIdentity(target) {
+  try {
+    const stat = fs.statSync(target, { bigint: true });
+    return stat.isFile() ? { dev: stat.dev, ino: stat.ino, nlink: stat.nlink } : null;
+  } catch (error) {
+    if (error.code === "ENOENT") return null;
+    throw error;
+  }
+}
+function sameExistingFile(left, right) {
+  const a = existingRegularFileIdentity(left);
+  const b = existingRegularFileIdentity(right);
+  return Boolean(a && b && a.dev === b.dev && a.ino === b.ino);
+}
 export function safePath(name) {
   if (typeof name !== "string" || !name || /[\\\x00-\x1f:<>"|?*]/.test(name) || path.isAbsolute(name) || name.split("/").some((p) => p === ".." || p === "." || !p || /[. ]$/.test(p) || /^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(p))) throw new Error(`Unsafe repository path: ${name}`);
   const resolved = path.resolve(ROOT, name);
@@ -49,7 +63,7 @@ const immutableDirectories = [
   "deliveries/C4", "deliveries/G6/full-stack-integration",
   "deliveries/G6/rc4-candidate", "deliveries/G6/rc5-candidate",
   "deliveries/G7/rc6-candidate", "deliveries/G7/rc6-candidate-r2",
-  "deliveries/G7/rc6-candidate-r3",
+  "deliveries/G7/rc6-candidate-r3", "deliveries/G7/rc6-candidate-r4",
   "docs/planning/reviews/2026-10-06-g6-r1",
 ];
 const immutableFiles = [
@@ -71,9 +85,25 @@ export function assertMutableOutput(name) {
       || pathIdentity(filesystemTarget(reserved)) === pathIdentity(realTarget);
   });
   if (immutable) {
-    throw new Error("Accepted RC1-RC5 evidence, audit and G6-R1 are immutable; original RC6, rejected R2 and reconciled R3 proof are preserved");
+    throw new Error("Accepted RC1-RC5 evidence, audit and G6-R1 are immutable; original RC6, rejected R2, reconciled R3 and canonical R4 proof are preserved");
+  }
+  const existing = existingRegularFileIdentity(target);
+  if (existing && existing.nlink > 1n) {
+    throw new Error(`Hard-linked release output is forbidden: ${name}`);
   }
   return target;
+}
+export function assertNoFileCollision(outputName, inputNames, message) {
+  const output = safePath(outputName);
+  const outputTarget = filesystemTarget(output);
+  for (const inputName of inputNames.filter(Boolean)) {
+    const input = safePath(inputName);
+    const inputTarget = filesystemTarget(input);
+    if (pathIdentity(outputTarget) === pathIdentity(inputTarget) || sameExistingFile(output, input)) {
+      throw new Error(message);
+    }
+  }
+  return output;
 }
 export function assertPolicyOutputs(candidate = policy) {
   const root = assertMutableOutput(candidate.deliveryRoot);

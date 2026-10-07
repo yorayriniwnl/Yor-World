@@ -7,8 +7,8 @@ import test from "node:test";
 import { pathToFileURL } from "node:url";
 import { ROOT, policy } from "../release-lib.mjs";
 
-const rootName = "deliveries/G7/rc6-candidate-r4";
-const oldRoots = ["deliveries/G7/rc6-candidate", "deliveries/G7/rc6-candidate-r2", "deliveries/G7/rc6-candidate-r3"];
+const rootName = "deliveries/G7/rc6-candidate-r5";
+const oldRoots = ["deliveries/G7/rc6-candidate", "deliveries/G7/rc6-candidate-r2", "deliveries/G7/rc6-candidate-r3", "deliveries/G7/rc6-candidate-r4"];
 const source = "a".repeat(40);
 
 async function fixture(t) {
@@ -49,7 +49,7 @@ async function fixture(t) {
   return { root, checkout, driver, setPolicy, lib, unchanged, run };
 }
 
-test("committed policy binds the R4 delivery and canonical archive", () => {
+test("committed policy binds the R5 delivery and canonical archive", () => {
   assert.equal(policy.deliveryRoot, rootName);
   assert.equal(policy.bundle.path, `${rootName}/yor-world-${policy.releaseId}.bundle.tar.gz`);
 });
@@ -113,9 +113,27 @@ test("CLI override outputs cannot escape the bound delivery or overwrite inputs"
   const manifest = path.join(f.root, rootName, "release-manifest.json");
   fs.mkdirSync(path.dirname(manifest), { recursive: true });
   fs.writeFileSync(manifest, JSON.stringify({ sourceBinding: { path: `${rootName}/source-binding.json` } }));
+  const archive = path.join(f.root, policy.bundle.path);
+  fs.writeFileSync(archive, "archive fixture");
+  const linkedReceipt = path.join(f.root, rootName, "hard-linked-receipt.json");
+  fs.linkSync(archive, linkedReceipt);
+  const hardLinkResult = f.run("node", ["scripts/release/build-release-bundle.mjs", "--source-commit", source, "--receipt", `${rootName}/hard-linked-receipt.json`]);
+  assert.equal(hardLinkResult.status, 1);
+  assert.match(hardLinkResult.stderr, /Hard-linked release output|outputs must differ/);
+  assert.equal(fs.readFileSync(archive, "utf8"), "archive fixture");
+  fs.unlinkSync(linkedReceipt);
+  fs.unlinkSync(archive);
   const result = f.run("node", ["scripts/release/validate-release.mjs", "--strict", "--receipt", `${rootName}/source-binding.json`]);
   assert.equal(result.status, 1);
   assert.match(result.stderr, /must not overwrite its inputs/);
+  if (process.platform === "win32") {
+    const upperArchive = f.run("node", ["scripts/release/build-release-bundle.mjs", "--source-commit", source, "--receipt", policy.bundle.path.toUpperCase()]);
+    assert.equal(upperArchive.status, 1);
+    assert.match(upperArchive.stderr, /outputs must differ|portable|Hard-linked/);
+    const upperManifest = f.run("node", ["scripts/release/validate-release.mjs", "--strict", "--receipt", `${rootName}/release-manifest.json`.toUpperCase()]);
+    assert.equal(upperManifest.status, 1);
+    assert.match(upperManifest.stderr, /must not overwrite its inputs|portable|Hard-linked/);
+  }
   assert.equal(fs.existsSync(path.join(f.root, rootName, "source-binding.json")), false);
   f.unchanged();
 });

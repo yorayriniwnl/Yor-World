@@ -5,7 +5,7 @@ import { parseArgs } from "node:util";
 import { inspectComposition } from "./check-release-composition.mjs";
 import { verifyBrowserReport } from "./verify-playwright-results.mjs";
 import { verifyActiveBenchmark } from "./verify-active-benchmark.mjs";
-import { assertPolicyOutput, assertPolicyOutputs, buildBundle, git, normalized, policy, readJson, safePath, sha256, writeJson } from "./release-lib.mjs";
+import { assertNoFileCollision, assertPolicyOutput, assertPolicyOutputs, buildBundle, git, normalized, policy, readJson, safePath, sha256, writeJson } from "./release-lib.mjs";
 
 const failures = [];
 function requireThat(condition, reason) { if (!condition) failures.push(reason); }
@@ -14,13 +14,14 @@ try {
   assertPolicyOutputs();
   assertPolicyOutput(values.manifest);
   assertPolicyOutput(values.receipt);
-  if (values.receipt === values.manifest || values.receipt === policy.bundle.path) throw new Error("Validation receipt must not overwrite its inputs");
+  assertNoFileCollision(values.receipt, [values.manifest, policy.bundle.path], "Validation receipt must not overwrite its inputs");
   const manifestBytes = fs.readFileSync(safePath(values.manifest));
   const manifest = JSON.parse(manifestBytes.toString("utf8"));
-  const inputPaths = [values.manifest, policy.bundle.path, manifest.sourceBinding?.path, manifest.composition?.path,
+  const inputPaths = [values.manifest, policy.bundle.path, policy.deliveryRoot + "/bundle-receipt.json",
+    manifest.sourceBinding?.path, manifest.composition?.path,
     ...(manifest.evidenceHashes || []).map((item) => item.path),
     ...(manifest.requiredChecks || []).filter((item) => item.id !== "release-manifest-validation").map((item) => item.evidencePath)];
-  if (inputPaths.includes(values.receipt)) throw new Error("Validation receipt must not overwrite its inputs");
+  assertNoFileCollision(values.receipt, inputPaths, "Validation receipt must not overwrite its inputs");
   for (const key of ["releaseId", "assetRevision", "publicationRevision", "schemaRevision", "contactAmendment", "canonicalApplicationRoot"]) requireThat(manifest[key] === policy[key], `${key} must equal ${policy[key]}`);
   if (manifest.releaseBundlePath !== policy.bundle.path) throw new Error("releaseBundlePath must identify the current canonical archive");
   requireThat(manifest.gitCommit === undefined || manifest.gitCommit === manifest.sourceCommit, "gitCommit conflicts with sourceCommit");
