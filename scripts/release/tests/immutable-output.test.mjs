@@ -10,6 +10,7 @@ const immutableDirectories = [
   "deliveries/C4", "deliveries/G6/full-stack-integration",
   "deliveries/G6/rc4-candidate", "deliveries/G6/rc5-candidate",
   "deliveries/G7/rc6-candidate", "deliveries/G7/rc6-candidate-r2",
+  "deliveries/G7/rc6-candidate-r3",
   "docs/planning/reviews/2026-10-06-g6-r1",
 ];
 const immutableFiles = [
@@ -61,7 +62,7 @@ async function temporaryRepository(t) {
   }
   const accepted = path.join(root, "deliveries", "G6", "rc5-candidate");
   fs.writeFileSync(path.join(accepted, "release-manifest.json"), "isolated accepted fixture\n");
-  const mutable = path.join(root, "deliveries", "G7", "rc6-candidate-r3");
+  const mutable = path.join(root, "deliveries", "G7", "rc6-candidate-r4");
   const outside = path.join(fixture, "outside");
   fs.mkdirSync(mutable, { recursive: true });
   fs.mkdirSync(outside);
@@ -123,7 +124,7 @@ test("resolved output guards with isolated filesystem aliases", async (t) => {
     }
   });
   await t.test("mutable successors and similar prefixes remain writable", () => {
-    for (const name of ["deliveries/G7/rc6-candidate-r3/new/output.json", "deliveries/G6/rc5-candidate-extra/output.json", "docs/releases/v1.0.0-rc6.md", "docs/planning/reviews/2026-10-06-g6-r1-extra.md"]) {
+    for (const name of ["deliveries/G7/rc6-candidate-r4/new/output.json", "deliveries/G7/rc6-candidate-r3-extra/output.json", "deliveries/G6/rc5-candidate-extra/output.json", "docs/releases/v1.0.0-rc6.md", "docs/planning/reviews/2026-10-06-g6-r1-extra.md"]) {
       assert.equal(lib.assertMutableOutput(name), path.join(root, name));
     }
     lib.writeJson("mutable-alias/new/deep/output.json", { mutable: true });

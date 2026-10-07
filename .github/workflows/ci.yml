@@ -42,7 +42,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p .rc6-ci/e2e .rc6-ci/accessibility .rc6-ci/performance
-          node -e 'const p=require("./scripts/release/rc6-policy.json"); for (const [key,count] of Object.entries(p.expectedBrowserChecks)) { if (!Number.isInteger(count)||count<=0) throw new Error("Invalid expected count"); console.log("RC_EXPECTED_"+key.toUpperCase()+"="+count); }' >> "$GITHUB_ENV"
+          node --input-type=module -e 'import {policy,assertPolicyOutputs} from "./scripts/release/release-lib.mjs"; assertPolicyOutputs(); console.log("RC6_DELIVERY_ROOT="+policy.deliveryRoot); for (const [key,count] of Object.entries(policy.expectedBrowserChecks)) { if (!Number.isInteger(count)||count<=0) throw new Error("Invalid expected count"); console.log("RC_EXPECTED_"+key.toUpperCase()+"="+count); }' >> "$GITHUB_ENV"
           echo "STORE_PATH=$(pnpm store path --silent)" >> "$GITHUB_ENV"
           echo "B5_EVIDENCE_DIR=$GITHUB_WORKSPACE/.rc6-ci/e2e" >> "$GITHUB_ENV"
           echo "C3_EVIDENCE_DIR=$GITHUB_WORKSPACE/.rc6-ci/e2e" >> "$GITHUB_ENV"
@@ -157,7 +157,8 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          node scripts/release/validate-release.mjs --strict --receipt deliveries/G7/rc6-candidate-r3/ci-release-manifest-validation.receipt.json | tee .rc6-ci/13-release-manifest-validation.log
+          node scripts/release/validate-release.mjs --strict --receipt "$RC6_DELIVERY_ROOT/ci-release-manifest-validation.receipt.json" | tee .rc6-ci/13-release-manifest-validation.log
+          cp "$RC6_DELIVERY_ROOT/ci-release-manifest-validation.receipt.json" .rc6-ci/release-manifest-validation.receipt.json
 
       - name: Upload fresh CI execution evidence
         if: always()

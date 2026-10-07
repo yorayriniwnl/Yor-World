@@ -7,8 +7,8 @@ import test from "node:test";
 import { pathToFileURL } from "node:url";
 import { ROOT, policy } from "../release-lib.mjs";
 
-const rootName = "deliveries/G7/rc6-candidate-r3";
-const oldRoots = ["deliveries/G7/rc6-candidate", "deliveries/G7/rc6-candidate-r2"];
+const rootName = "deliveries/G7/rc6-candidate-r4";
+const oldRoots = ["deliveries/G7/rc6-candidate", "deliveries/G7/rc6-candidate-r2", "deliveries/G7/rc6-candidate-r3"];
 const source = "a".repeat(40);
 
 async function fixture(t) {
@@ -49,7 +49,7 @@ async function fixture(t) {
   return { root, checkout, driver, setPolicy, lib, unchanged, run };
 }
 
-test("committed policy binds the R3 delivery and canonical archive", () => {
+test("committed policy binds the R4 delivery and canonical archive", () => {
   assert.equal(policy.deliveryRoot, rootName);
   assert.equal(policy.bundle.path, `${rootName}/yor-world-${policy.releaseId}.bundle.tar.gz`);
 });
@@ -59,6 +59,8 @@ test("policy drift fails all writing entry points before creating output", async
   const variants = [
     ["old archive under R1", { ...policy, bundle: { ...policy.bundle, path: `${oldRoots[0]}/yor-world-${policy.releaseId}.bundle.tar.gz` } }],
     ["old archive under R2", { ...policy, bundle: { ...policy.bundle, path: `${oldRoots[1]}/yor-world-${policy.releaseId}.bundle.tar.gz` } }],
+    ["preserved R3 archive", { ...policy, bundle: { ...policy.bundle, path: `${oldRoots[2]}/yor-world-${policy.releaseId}.bundle.tar.gz` } }],
+    ...oldRoots.map((deliveryRoot) => ["preserved root " + deliveryRoot, { ...policy, deliveryRoot, bundle: { ...policy.bundle, path: `${deliveryRoot}/yor-world-${policy.releaseId}.bundle.tar.gz` } }]),
     ["mismatched mutable root", { ...policy, bundle: { ...policy.bundle, path: `deliveries/G7/other/yor-world-${policy.releaseId}.bundle.tar.gz` } }],
     ["outside delivery tree", { ...policy, deliveryRoot: "scratch/export", bundle: { ...policy.bundle, path: `scratch/export/yor-world-${policy.releaseId}.bundle.tar.gz` } }],
     ["nonportable drive archive", { ...policy, bundle: { ...policy.bundle, path: "C:/outside/archive.tar.gz" } }],
@@ -89,6 +91,11 @@ test("policy drift fails all writing entry points before creating output", async
 test("CLI override outputs cannot escape the bound delivery or overwrite inputs", async (t) => {
   const f = await fixture(t);
   for (const [script, args, expected] of [
+    ...oldRoots.flatMap((root) => [
+      ["build-release-bundle.mjs", ["--receipt", `${root}/new/receipt.json`], /immutable/],
+      ["validate-release.mjs", ["--receipt", `${root}/new/receipt.json`], /immutable/],
+      ["validate-release.mjs", ["--manifest", `${root}/release-manifest.json`], /immutable/],
+    ]),
     ["build-release-bundle.mjs", ["--output", "scratch/archive.tar.gz"], /must equal policy.bundle.path/],
     ["build-release-bundle.mjs", ["--receipt", "scratch/receipt.json"], /inside the policy deliveryRoot/],
     ["build-release-bundle.mjs", ["--receipt", policy.bundle.path], /outputs must differ/],
@@ -110,6 +117,40 @@ test("CLI override outputs cannot escape the bound delivery or overwrite inputs"
   assert.equal(result.status, 1);
   assert.match(result.stderr, /must not overwrite its inputs/);
   assert.equal(fs.existsSync(path.join(f.root, rootName, "source-binding.json")), false);
+  f.unchanged();
+});
+
+test("Python output preflight protects every preserved root and filesystem alias", async (t) => {
+  const f = await fixture(t);
+  for (const [index, old] of oldRoots.entries()) {
+    fs.symlinkSync(path.join(f.root, old), path.join(f.root, `alias-${index}`), process.platform === "win32" ? "junction" : "dir");
+  }
+  const script = String.raw`
+import importlib.util, json, os
+from pathlib import Path
+spec = importlib.util.spec_from_file_location("driver", ${JSON.stringify(f.driver)})
+module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+repo = Path(${JSON.stringify(f.root)})
+policy = json.loads((repo / "scripts/release/rc6-policy.json").read_text())
+def rejects(name):
+    try: module.safe_output(repo, name)
+    except ValueError as error: assert "Preserved release proof" in str(error), error
+    else: raise AssertionError("preserved output accepted: " + name)
+for index, root in enumerate(${JSON.stringify(oldRoots)}):
+    for name in [root, root + "/new/deep/receipt.json", f"alias-{index}/new/receipt.json"]:
+        rejects(name)
+        if os.name == "nt": rejects(name.upper())
+    candidate = dict(policy, deliveryRoot=f"alias-{index}", bundle=dict(policy["bundle"], path=f"alias-{index}/yor-world-{policy['releaseId']}.bundle.tar.gz"))
+    try: module.assert_policy_outputs(repo, candidate)
+    except ValueError as error: assert "Preserved release proof" in str(error), error
+    else: raise AssertionError("preserved policy alias accepted")
+module.assert_policy_outputs(repo, policy)
+assert not (repo / policy["deliveryRoot"]).exists()
+print("PASS Python preserved roots, aliases, casing and no-write preflight")
+`;
+  const result = f.run("python", ["-B", "-c", script]);
+  assert.equal(result.status, 0, `${result.stdout}${result.stderr}`);
+  assert.match(result.stdout, /PASS Python preserved roots/);
   f.unchanged();
 });
 
