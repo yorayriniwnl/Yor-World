@@ -1,0 +1,26 @@
+{
+  "findingId": "RC6-GATE-01",
+  "severity": "P2",
+  "status": "OPEN",
+  "reviewer": "/root/rc6_gate_advisor",
+  "observedAtDate": "2026-10-07",
+  "sourceCommit": "48ee09a98c9f7e59ca3a652c7f5dbeb31d0c7e2f",
+  "sourceAppTree": "b281deaa902f56d93c4acb40ae8eb7cbb6edcbd4",
+  "summary": "Current policy deliveryRoot names rc6-candidate-r2, but bundle.path and new source/bundle/manifest receipts name the immutable original rc6-candidate archive. The r2 proof is not portable without replacing original evidence.",
+  "observations": {
+    "policyDeliveryRoot": "deliveries/G7/rc6-candidate-r2",
+    "policyBundlePath": "deliveries/G7/rc6-candidate/yor-world-v1.0.0-rc6.bundle.tar.gz",
+    "r2ReceiptArchiveSha256": "d83a17f137dfbbb0070f81000c4270c263622ee43c876cd7d009abd54ba654cd",
+    "mainWorkspaceOriginalArchiveSha256": "c12e265b54f16a200a8a9b782a3a050f9730236cc543f2d8e56fb066cc8e4355",
+    "mainWorkspaceOriginalArchiveBytes": 1653666,
+    "detachedWorktreeOriginalPathArchiveSha256": "d83a17f137dfbbb0070f81000c4270c263622ee43c876cd7d009abd54ba654cd",
+    "detachedWorktreeOriginalPathArchiveBytes": 1655707,
+    "r2ArchiveExistsInMainWorkspace": false,
+    "r2ArchiveExistsInDetachedWorktree": false,
+    "detachedWorktree": "C:/Users/yoray/Projects/Yor-World-RC6-48ee09a"
+  },
+  "evidenceMethod": "Read committed policy and generated receipts; read-only Get-FileHash and Test-Path in main workspace and fresh detached worktree. No application suite rerun and no archive/history mutation.",
+  "consequence": "Final source acceptance must wait for a separate authorized correction and exact source/archive/evidence reconciliation. Original proof must remain immutable; no simple overwrite/copy of the new archive into the old root is acceptable.",
+  "acceptanceClaim": false,
+  "externalAccountDispatch": false
+}
