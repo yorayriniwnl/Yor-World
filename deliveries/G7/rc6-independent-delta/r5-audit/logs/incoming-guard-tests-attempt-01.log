@@ -1,0 +1,65 @@
+STDOUT
+✔ canonical accepted output paths reject without performing writes (58.1524ms)
+✔ Windows case aliases of accepted outputs reject without performing writes (39.5144ms)
+▶ resolved output guards with isolated filesystem aliases
+  ✔ contained directory alias rejects existing accepted output (15.8846ms)
+  ✔ contained directory alias rejects nonexistent descendants (4.7073ms)
+  ✔ all preserved proof aliases reject writes to new descendants (19.0476ms)
+  ✔ contained docs alias rejects exact immutable files and review directory (31.019ms)
+  ✔ Windows aliases reject with alternate casing (8.4239ms)
+  ✔ escaping aliases reject both existing and nonexistent descendants (1.7468ms)
+  ✔ dangling directory aliases fail closed (0.7607ms)
+  ✔ unsafe repository path inputs reject (0.4145ms)
+  ✔ hard-linked mutable outputs reject before protected bytes can be truncated (11.5038ms)
+  ✔ mutable successors and similar prefixes remain writable (28.4911ms)
+  ✔ rejected guards leave isolated accepted fixtures unchanged (0.5343ms)
+✔ resolved output guards with isolated filesystem aliases (193.7453ms)
+✔ committed policy binds the R5 delivery and canonical archive (0.7516ms)
+▶ policy drift fails all writing entry points before creating output
+  ✔ old archive under R1 (1805.413ms)
+  ✔ old archive under R2 (307.331ms)
+  ✔ preserved R3 archive (301.6222ms)
+  ✔ preserved root deliveries/G7/rc6-candidate (279.9066ms)
+  ✔ preserved root deliveries/G7/rc6-candidate-r2 (282.1901ms)
+  ✔ preserved root deliveries/G7/rc6-candidate-r3 (277.0466ms)
+  ✔ preserved root deliveries/G7/rc6-candidate-r4 (282.621ms)
+  ✔ mismatched mutable root (278.6997ms)
+  ✔ outside delivery tree (379.9843ms)
+  ✔ nonportable drive archive (296.0539ms)
+  ✔ backslash archive (295.3919ms)
+  ✔ archive alternate stream (290.1048ms)
+  ✔ traversal root (278.3957ms)
+✔ policy drift fails all writing entry points before creating output (5469.9373ms)
+✖ CLI override outputs cannot escape the bound delivery or overwrite inputs (5160.6941ms)
+✔ Python output preflight protects every preserved root and filesystem alias (251.0024ms)
+✔ policy roots and nested outputs reject preserved and escaping filesystem aliases (72.7577ms)
+✔ driver verifies actual exported bundle and every final manifest input (5203.9518ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 32
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16286.4813
+
+✖ failing tests:
+
+test at scripts\release\tests\policy-output.test.mjs:91:1
+✖ CLI override outputs cannot escape the bound delivery or overwrite inputs (5160.6941ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /outputs must differ|portable|Hard-linked/. Input:
+  
+  'FAIL v1.0.0-rc6 bundle: Release output must stay inside the policy deliveryRoot\n'
+  
+      at TestContext.<anonymous> (file:///C:/Users/yoray/Projects/Yor%20World/scripts/release/tests/policy-output.test.mjs:132:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'FAIL v1.0.0-rc6 bundle: Release output must stay inside the policy deliveryRoot\n',
+    expected: /outputs must differ|portable|Hard-linked/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+STDERR

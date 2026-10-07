@@ -45,6 +45,8 @@ Use [pre-G7 prerequisites](docs/operations/pre-g7-prerequisites.md) for current 
 
 [PRE-G7-07](docs/planning/reconciliation-packets/2026-10-07-pre-g7-07.md) reconciles concurrent remote amendments into fresh R4, preserves all R3 identities, retires the temporary generator and captures the actual strict CI receipt. R4 requires new source-bound local/hosted proof and independent review.
 
+[PRE-G7-08](docs/planning/reconciliation-packets/2026-10-07-pre-g7-08.md) addresses output case/hard-link identity. Incoming R5 is preserved; [PRE-G7-09](docs/planning/reconciliation-packets/2026-10-08-pre-g7-09.md) completes residual preflight/Python writer coverage and binds fresh R6. Acceptance remains pending independent and hosted verification.
+
 Local access must be real: a GPT/Gemini worker that can open this folder can reuse its files without repeated attachments; if it cannot, it reports **NO FILE ACCESS**. Claude browser reviewers instead read supplied project knowledge and review packets, flag absent items as **MISSING INPUT**, and review available material. No external account connection or automatic local-file synchronization has been configured.
 
 For GPT/Gemini local tools, open this project as the working folder. AGENTS.md is the shared instruction source; GEMINI.md imports it and this entry point. CLAUDE.md is an unused optional Code adapter; current Claude reviewers use browser project knowledge and review packets. Read only your assigned packet and its named input files. Do not preload the entire archive. Installation, account authentication, and per-tool loading have not been validated by creating these files.

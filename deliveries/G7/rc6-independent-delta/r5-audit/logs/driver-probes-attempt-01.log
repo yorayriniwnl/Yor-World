@@ -1,0 +1,56 @@
+STDOUT
+{
+  "sourceCommit": "e461e029a1b38c461743d60dcd4aadb599613218",
+  "cases": [
+    {
+      "label": "Python safe_output hardlink preflight",
+      "rejected": true,
+      "message": "Hard-linked release output is forbidden: deliveries/G7/rc6-candidate-r5/hardlinked-output.json",
+      "status": "PASS"
+    },
+    {
+      "label": "Python write_json direct hardlinked output",
+      "rejected": false,
+      "message": "",
+      "status": "FAIL",
+      "fileId": {
+        "dev": "7520623354770808286",
+        "ino": "1970324838394540",
+        "nlink": 2
+      }
+    },
+    {
+      "label": "Python reader digest permits hardlinked input",
+      "status": "PASS"
+    },
+    {
+      "label": "Python ordinary single-link JSON writer remains usable",
+      "status": "PASS"
+    },
+    {
+      "label": "Python case-alias preserved R4 output",
+      "rejected": true,
+      "message": "Preserved release proof cannot be overwritten: DELIVERIES/G7/RC6-CANDIDATE-R4/new/output.json",
+      "status": "PASS"
+    },
+    {
+      "label": "Python nested directory alias into protected R4",
+      "rejected": true,
+      "message": "Preserved release proof cannot be overwritten: deliveries/G7/rc6-candidate-r5/history-alias/new/output.json",
+      "status": "PASS"
+    },
+    {
+      "label": "Driver export preflights all destinations before any copy",
+      "rejected": true,
+      "message": "Hard-linked release output is forbidden: deliveries/G7/rc6-candidate-r5/z-hard.json",
+      "status": "PASS"
+    },
+    {
+      "label": "Driver distinct canonical export remains usable",
+      "status": "PASS"
+    }
+  ],
+  "overallStatus": "FAIL"
+}
+
+STDERR

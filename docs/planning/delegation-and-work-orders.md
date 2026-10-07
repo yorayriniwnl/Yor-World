@@ -14,6 +14,8 @@ Accepted RC5 / [G6-R1](reviews/2026-10-06-g6-r1.md) remains immutable, including
 
 [PRE-G7-07](reconciliation-packets/2026-10-07-pre-g7-07.md) preserves concurrent R3 histories and assigns one reconciled R4 source, strict receipt upload and retirement of the temporary generator. Current proof must use the new R4 binding; earlier local/remote success does not accept changed source.
 
+[PRE-G7-08](reconciliation-packets/2026-10-07-pre-g7-08.md) corrects output identity guards. Compatible incoming R5 is retained; [PRE-G7-09](reconciliation-packets/2026-10-08-pre-g7-09.md) completes independently confirmed residuals in a new R6 binding. No preserved proof is relabeled as validation of later source.
+
 Read [current pre-G7 requirements](../operations/pre-g7-prerequisites.md) and the [RC6 dossier](../releases/v1.0.0-rc6.md). Parent continues authorized independent work and obtains missing service/device inputs. No mock, local fixture, emulation, liveness-only response or private preview substitutes for a mandatory production criterion.
 
 ## One specification and a small shared baseline
