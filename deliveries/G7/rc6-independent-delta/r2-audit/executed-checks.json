@@ -1,0 +1,72 @@
+{
+  "recordedAt": "2026-10-07T07:49:48.481097+00:00",
+  "sourceCommit": "48ee09a98c9f7e59ca3a652c7f5dbeb31d0c7e2f",
+  "sourceAppTree": "b281deaa902f56d93c4acb40ae8eb7cbb6edcbd4",
+  "observedHead": "48ee09a98c9f7e59ca3a652c7f5dbeb31d0c7e2f",
+  "checks": [
+    {
+      "id": "loading-visibility-probe",
+      "command": "node deliveries/G7/rc6-independent-delta/r2-audit/loading-visibility-probe.cjs 48ee09a98c9f7e59ca3a652c7f5dbeb31d0c7e2f",
+      "cwd": "./",
+      "exitCode": 0,
+      "evidencePath": "deliveries/G7/rc6-independent-delta/r2-audit/loading-visibility-probe.log",
+      "evidenceSha256Raw": "63f6d5fea781d9d40444fa3fd23d44ebcb9b8aae920b4cafa61e016a3b87e000",
+      "result": "PASS: final source has one render chain in both paths; original RC5/RC6 double-chain findings reproduced"
+    },
+    {
+      "id": "immutable-path-probe",
+      "command": "node deliveries/G7/rc6-independent-delta/r2-audit/immutable-path-probe.mjs 48ee09a98c9f7e59ca3a652c7f5dbeb31d0c7e2f",
+      "cwd": "./",
+      "exitCode": 0,
+      "evidencePath": "deliveries/G7/rc6-independent-delta/r2-audit/immutable-path-probe.log",
+      "evidenceSha256Raw": "896d29dad0c15d523e3e28f36bfd448cb8bbc6151d249f00050d534618f4fb89",
+      "result": "PASS: nine rejected paths, accepted hashes unchanged"
+    },
+    {
+      "id": "immutable-output-tests",
+      "command": "node --test scripts/release/tests/immutable-output.test.mjs",
+      "cwd": "./",
+      "exitCode": 0,
+      "evidencePath": "deliveries/G7/rc6-independent-delta/r2-audit/immutable-output-tests.log",
+      "evidenceSha256Raw": "914555282969a6b4c6b04a180de210bf2b1194860c08e20663a825bb1e7cbd2b",
+      "result": "PASS: 12/12 Windows; zero skipped"
+    },
+    {
+      "id": "targeted-unit",
+      "command": "pnpm.cmd exec vitest run --config vitest.config.ts tests/unit/world-runtime-recovery.test.ts tests/unit/health.test.ts tests/unit/security-policy.test.ts tests/unit/boundaries.test.ts",
+      "cwd": "app/",
+      "exitCode": 0,
+      "evidencePath": "deliveries/G7/rc6-independent-delta/r2-audit/targeted-unit.log",
+      "evidenceSha256Raw": "ec8ec60536a9370baff0f6b507d08c901baa0648148c0a073c58e6d2966e5c2c",
+      "result": "PASS: 59/59 across four files"
+    },
+    {
+      "id": "targeted-health-integration",
+      "command": "pnpm.cmd exec vitest run --config vitest.integration.config.ts tests/integration/platform/health.test.ts",
+      "cwd": "app/",
+      "exitCode": 0,
+      "evidencePath": "deliveries/G7/rc6-independent-delta/r2-audit/targeted-health-integration.log",
+      "evidenceSha256Raw": "e903456ce052cadfbece087b7a167392c365b25bb151877e14d66e9679cc79a6",
+      "result": "PASS: 6/6; SQL/Auth adapters and native local unresponsive TCP cleanup"
+    },
+    {
+      "id": "current-status",
+      "command": "node scripts/release/check-current-status.mjs",
+      "cwd": "./",
+      "exitCode": 0,
+      "evidencePath": "deliveries/G7/rc6-independent-delta/r2-audit/current-status.log",
+      "evidenceSha256Raw": "23ce28e8923f224bb83d74865af7c8ba3e651a32f4a5f9ad761d04eed7254935",
+      "result": "PASS"
+    },
+    {
+      "id": "historical-rc4-builder",
+      "command": "node scripts/release/build-rc4-bundle.mjs",
+      "cwd": "./",
+      "exitCode": 1,
+      "evidencePath": "deliveries/G7/rc6-independent-delta/r2-audit/historical-rc4-builder.log",
+      "evidenceSha256Raw": "4bbc7fad432ac8139478ed767b495ca70704b554dee607c4219fca7153f584a3",
+      "result": "PASS of expected rejection: current RC6 policy fails before building or writing"
+    }
+  ],
+  "scope": "Executed independently by read-only auditor; writes only new audit reports/logs and isolated disposable test fixtures. No provider operations, production fixes or acceptance."
+}

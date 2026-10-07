@@ -1,0 +1,105 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 91a9106..a0eea98 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -157,7 +157,7 @@ jobs:
+         shell: bash
+         run: |
+           set -o pipefail
+-          node scripts/release/validate-release.mjs --strict --receipt .rc6-ci/release-manifest-validation.receipt.json | tee .rc6-ci/13-release-manifest-validation.log
++          node scripts/release/validate-release.mjs --strict --receipt deliveries/G7/rc6-candidate-r3/ci-release-manifest-validation.receipt.json | tee .rc6-ci/13-release-manifest-validation.log
+ 
+       - name: Upload fresh CI execution evidence
+         if: always()
+diff --git a/.github/workflows/generate-rc6-r3.yml b/.github/workflows/generate-rc6-r3.yml
+new file mode 100644
+index 0000000..d7dfe58
+--- /dev/null
++++ b/.github/workflows/generate-rc6-r3.yml
+@@ -0,0 +1,73 @@
++name: Generate RC6 R3 Candidate
++
++on:
++  push:
++    branches: [main]
++
++permissions:
++  contents: write
++
++concurrency:
++  group: rc6-r3-candidate-generation
++  cancel-in-progress: false
++
++jobs:
++  generate:
++    if: contains(github.event.head_commit.message, '[generate-r3]')
++    name: Build fresh exact-source R3 evidence
++    runs-on: ubuntu-latest
++    timeout-minutes: 50
++    env:
++      CI: "true"
++      NEXT_TELEMETRY_DISABLED: "1"
++    steps:
++      - name: Checkout exact source
++        uses: actions/checkout@v5
++        with:
++          fetch-depth: 0
++
++      - name: Setup Node 24.19.0
++        uses: actions/setup-node@v4
++        with:
++          node-version: 24.19.0
++
++      - name: Setup pnpm 9.15.9
++        uses: pnpm/action-setup@v4
++        with:
++          version: 9.15.9
++          run_install: false
++
++      - name: Prepare primary validation workspace
++        working-directory: app
++        run: |
++          pnpm install --frozen-lockfile
++          pnpm build
++          pnpm exec playwright install --with-deps chromium
++
++      - name: Generate and validate fresh R3 candidate
++        shell: bash
++        run: |
++          python deliveries/G7/preparation/tools/candidate-driver.py \
++            --policy scripts/release/rc6-policy.json \
++            --source "$GITHUB_SHA" \
++            --checkout "$RUNNER_TEMP/yor-world-rc6-r3-$GITHUB_RUN_ID" \
++            --client-date 2026-10-07 \
++            --phase all
++
++      - name: Upload generated R3 backup
++        uses: actions/upload-artifact@v4
++        with:
++          name: rc6-r3-candidate-${{ github.sha }}
++          path: deliveries/G7/rc6-candidate-r3/
++          include-hidden-files: true
++          retention-days: 14
++
++      - name: Commit generated candidate evidence
++        shell: bash
++        run: |
++          git config user.name "github-actions[bot]"
++          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
++          git add deliveries/G7/rc6-candidate-r3/
++          git diff --cached --quiet && { echo "No R3 candidate files generated"; exit 1; }
++          git commit -m "chore(rc6): add fresh R3 candidate evidence"
++          git push origin HEAD:main
+diff --git a/app/tests/e2e/renderer-recovery.spec.ts b/app/tests/e2e/renderer-recovery.spec.ts
+index a9c8b58..41ad05a 100644
+--- a/app/tests/e2e/renderer-recovery.spec.ts
++++ b/app/tests/e2e/renderer-recovery.spec.ts
+@@ -139,6 +139,8 @@ test.describe("C3 Failure Recovery, Context Loss & Mobile Resilience", () => {
+   });
+ 
+   test("Accessibility toolbar accepts real pointer controls and Projects navigation", async ({ page }, info) => {
++    // GitHub-hosted SwiftShader can make this real-renderer pointer path exceed the suite default while still completing correctly.
++    test.setTimeout(45_000);
+     await enterRenderedHome(page);
+     const qualitySelect = page.getByTestId("quality-tier-select");
+     // A real mouse click must reach the select before native keyboard selection.

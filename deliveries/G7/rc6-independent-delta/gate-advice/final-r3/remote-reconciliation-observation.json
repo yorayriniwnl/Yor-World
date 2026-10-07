@@ -1,0 +1,40 @@
+{
+  "observedAt": "2026-10-07T14:35:11.343232+00:00",
+  "reviewer": "/root/rc6_r3_gate_advice",
+  "method": "Read-only git show/rev-parse and hashes of committed bytes. GitHub hosted API/job/artifact authenticity not inspected by this observation.",
+  "snapshots": [
+    {
+      "evidenceCommit": "d9277083a00a9d1ed08abff50971310c1fcdf3ec",
+      "sourceCommit": "71737a61c52d1bb887e5cdfc65201666daee5a1d",
+      "sourceAppTree": "b281deaa902f56d93c4acb40ae8eb7cbb6edcbd4",
+      "releaseBundlePath": "deliveries/G7/rc6-candidate-r3/yor-world-v1.0.0-rc6.bundle.tar.gz",
+      "releaseBundleSha256": "661b858e36a639e5bec8c7dc6f48dff79a002348c69025acaa34ed1097adab78",
+      "actualBundleSha256": "661b858e36a639e5bec8c7dc6f48dff79a002348c69025acaa34ed1097adab78",
+      "archiveBytes": 1655708,
+      "manifestSha256": "e7d7bf2c5f33bd75e68193ff44034dfa03163976cd2e7de725d15e951a077565"
+    },
+    {
+      "evidenceCommit": "49080809bde98fee2f6158b935ec6bc32c81d1bc",
+      "sourceCommit": "0b2e09054742b997eab5b9f0a7ac782dde36b13d",
+      "sourceAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+      "releaseBundlePath": "deliveries/G7/rc6-candidate-r3/yor-world-v1.0.0-rc6.bundle.tar.gz",
+      "releaseBundleSha256": "07948e837d005dfcc00d512f176d92e85c2de55abfdba3871091723327c75050",
+      "actualBundleSha256": "07948e837d005dfcc00d512f176d92e85c2de55abfdba3871091723327c75050",
+      "archiveBytes": 1655793,
+      "manifestSha256": "ca7726fdc50856be1656ac4839699149f6a46e8f1342626d21f9aa68a457a1ad"
+    },
+    {
+      "evidenceCommit": "6c379b0a7587b53fa3ec70f14b67eaea6760ae25",
+      "sourceCommit": "db1a36a9955d35f0837c8aa017e9217440a87c3f",
+      "sourceAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+      "releaseBundlePath": "deliveries/G7/rc6-candidate-r3/yor-world-v1.0.0-rc6.bundle.tar.gz",
+      "releaseBundleSha256": "07948e837d005dfcc00d512f176d92e85c2de55abfdba3871091723327c75050",
+      "actualBundleSha256": "07948e837d005dfcc00d512f176d92e85c2de55abfdba3871091723327c75050",
+      "archiveBytes": 1655793,
+      "manifestSha256": "21a0d58ecba897924598c14b90cf2de19a48600ea2378403032ff4297d2508a0"
+    }
+  ],
+  "nonEvidenceDelta": "diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml\nindex 91a9106..a0eea98 100644\n--- a/.github/workflows/ci.yml\n+++ b/.github/workflows/ci.yml\n@@ -157,7 +157,7 @@ jobs:\n         shell: bash\n         run: |\n           set -o pipefail\n-          node scripts/release/validate-release.mjs --strict --receipt .rc6-ci/release-manifest-validation.receipt.json | tee .rc6-ci/13-release-manifest-validation.log\n+          node scripts/release/validate-release.mjs --strict --receipt deliveries/G7/rc6-candidate-r3/ci-release-manifest-validation.receipt.json | tee .rc6-ci/13-release-manifest-validation.log\n \n       - name: Upload fresh CI execution evidence\n         if: always()\ndiff --git a/.github/workflows/generate-rc6-r3.yml b/.github/workflows/generate-rc6-r3.yml\nnew file mode 100644\nindex 0000000..d7dfe58\n--- /dev/null\n+++ b/.github/workflows/generate-rc6-r3.yml\n@@ -0,0 +1,73 @@\n+name: Generate RC6 R3 Candidate\n+\n+on:\n+  push:\n+    branches: [main]\n+\n+permissions:\n+  contents: write\n+\n+concurrency:\n+  group: rc6-r3-candidate-generation\n+  cancel-in-progress: false\n+\n+jobs:\n+  generate:\n+    if: contains(github.event.head_commit.message, '[generate-r3]')\n+    name: Build fresh exact-source R3 evidence\n+    runs-on: ubuntu-latest\n+    timeout-minutes: 50\n+    env:\n+      CI: \"true\"\n+      NEXT_TELEMETRY_DISABLED: \"1\"\n+    steps:\n+      - name: Checkout exact source\n+        uses: actions/checkout@v5\n+        with:\n+          fetch-depth: 0\n+\n+      - name: Setup Node 24.19.0\n+        uses: actions/setup-node@v4\n+        with:\n+          node-version: 24.19.0\n+\n+      - name: Setup pnpm 9.15.9\n+        uses: pnpm/action-setup@v4\n+        with:\n+          version: 9.15.9\n+          run_install: false\n+\n+      - name: Prepare primary validation workspace\n+        working-directory: app\n+        run: |\n+          pnpm install --frozen-lockfile\n+          pnpm build\n+          pnpm exec playwright install --with-deps chromium\n+\n+      - name: Generate and validate fresh R3 candidate\n+        shell: bash\n+        run: |\n+          python deliveries/G7/preparation/tools/candidate-driver.py \\\n+            --policy scripts/release/rc6-policy.json \\\n+            --source \"$GITHUB_SHA\" \\\n+            --checkout \"$RUNNER_TEMP/yor-world-rc6-r3-$GITHUB_RUN_ID\" \\\n+            --client-date 2026-10-07 \\\n+            --phase all\n+\n+      - name: Upload generated R3 backup\n+        uses: actions/upload-artifact@v4\n+        with:\n+          name: rc6-r3-candidate-${{ github.sha }}\n+          path: deliveries/G7/rc6-candidate-r3/\n+          include-hidden-files: true\n+          retention-days: 14\n+\n+      - name: Commit generated candidate evidence\n+        shell: bash\n+        run: |\n+          git config user.name \"github-actions[bot]\"\n+          git config user.email \"41898282+github-actions[bot]@users.noreply.github.com\"\n+          git add deliveries/G7/rc6-candidate-r3/\n+          git diff --cached --quiet && { echo \"No R3 candidate files generated\"; exit 1; }\n+          git commit -m \"chore(rc6): add fresh R3 candidate evidence\"\n+          git push origin HEAD:main\ndiff --git a/app/tests/e2e/renderer-recovery.spec.ts b/app/tests/e2e/renderer-recovery.spec.ts\nindex a9c8b58..41ad05a 100644\n--- a/app/tests/e2e/renderer-recovery.spec.ts\n+++ b/app/tests/e2e/renderer-recovery.spec.ts\n@@ -139,6 +139,8 @@ test.describe(\"C3 Failure Recovery, Context Loss & Mobile Resilience\", () => {\n   });\n \n   test(\"Accessibility toolbar accepts real pointer controls and Projects navigation\", async ({ page }, info) => {\n+    // GitHub-hosted SwiftShader can make this real-renderer pointer path exceed the suite default while still completing correctly.\n+    test.setTimeout(45_000);\n     await enterRenderedHome(page);\n     const qualitySelect = page.getByTestId(\"quality-tier-select\");\n     // A real mouse click must reach the select before native keyboard selection.\n",
+  "recommendation": "HOLD final successor acceptance; reconcile source and preserve all distinct R3 executions under an explicit next packet, then obtain fresh proof and hosted evidence.",
+  "acceptanceClaim": false
+}
