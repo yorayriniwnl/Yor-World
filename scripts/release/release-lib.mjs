@@ -11,25 +11,64 @@ export const policy = JSON.parse(fs.readFileSync(path.join(ROOT, POLICY_PATH), "
 export const sha256 = (bytes) => crypto.createHash("sha256").update(bytes).digest("hex");
 export const normalized = (bytes) => Buffer.from(bytes.toString("utf8").replace(/\r\n/g, "\n"));
 export const isText = (name) => /\.(?:[cm]?[jt]sx?|json|ya?ml|md|txt|log|css|html|sql|svg|patch|toml|example)$/.test(name) || /(?:^|\/)(?:\.gitignore|\.npmrc)$/.test(name);
+function filesystemTarget(target) {
+  let existing = target;
+  const missing = [];
+  for (;;) {
+    try {
+      // lstat also detects dangling links, which must fail realpath rather than
+      // being mistaken for an ordinary missing output directory.
+      fs.lstatSync(existing);
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+      const parent = path.dirname(existing);
+      if (parent === existing) throw error;
+      missing.unshift(path.basename(existing));
+      existing = parent;
+      continue;
+    }
+    return path.resolve(fs.realpathSync.native(existing), ...missing);
+  }
+}
+function pathIdentity(target) {
+  return process.platform === "win32" ? target.toLowerCase() : target;
+}
+function containsPath(directory, target) {
+  const relative = path.relative(pathIdentity(directory), pathIdentity(target));
+  return relative === "" || (relative !== ".." && !relative.startsWith(".." + path.sep) && !path.isAbsolute(relative));
+}
 export function safePath(name) {
   if (typeof name !== "string" || !name || name.includes("\\") || name.includes("\0") || /^[A-Za-z]:/.test(name) || path.isAbsolute(name) || name.split("/").some((p) => p === ".." || p === "." || !p)) throw new Error(`Unsafe repository path: ${name}`);
   const resolved = path.resolve(ROOT, name);
   if (!resolved.startsWith(ROOT + path.sep)) throw new Error(`Path escapes repository: ${name}`);
-  let existing = resolved;
-  while (!fs.existsSync(existing)) existing = path.dirname(existing);
-  const real = fs.realpathSync(existing);
-  const relative = path.relative(fs.realpathSync(ROOT), real);
-  if (relative.startsWith(".." + path.sep) || relative === ".." || path.isAbsolute(relative)) throw new Error(`Symlink escapes repository: ${name}`);
+  if (!containsPath(fs.realpathSync.native(ROOT), filesystemTarget(resolved))) throw new Error(`Symlink escapes repository: ${name}`);
   return resolved;
 }
 export const readJson = (name) => JSON.parse(fs.readFileSync(safePath(name), "utf8"));
+const immutableDirectories = [
+  "deliveries/C4", "deliveries/G6/full-stack-integration",
+  "deliveries/G6/rc4-candidate", "deliveries/G6/rc5-candidate",
+  "docs/planning/reviews/2026-10-06-g6-r1",
+];
+const immutableFiles = [
+  "docs/planning/reviews/2026-10-06-g6-r1.md",
+  "docs/planning/reviews/2026-10-06-rc5-independent-full-stack-audit.md",
+  ...[1, 2, 3, 4, 5].map((revision) => `docs/releases/v1.0.0-rc${revision}.md`),
+];
 export function assertMutableOutput(name) {
   const target = safePath(name);
-  if (name.startsWith("deliveries/C4/") || name.startsWith("deliveries/G6/full-stack-integration/")
-    || name.startsWith("deliveries/G6/rc4-candidate/") || name.startsWith("deliveries/G6/rc5-candidate/")
-    || name === "docs/planning/reviews/2026-10-06-g6-r1.md" || name.startsWith("docs/planning/reviews/2026-10-06-g6-r1/")
-    || name === "docs/planning/reviews/2026-10-06-rc5-independent-full-stack-audit.md"
-    || /^docs\/releases\/v1\.0\.0-rc[1-5]\.md$/.test(name)) {
+  const realTarget = filesystemTarget(target);
+  // Protect both the reserved names and their filesystem identities. The latter
+  // catches contained junctions/symlinks, including not-yet-created descendants.
+  const immutable = immutableDirectories.some((name) => {
+    const reserved = path.resolve(ROOT, name);
+    return containsPath(reserved, target) || containsPath(filesystemTarget(reserved), realTarget);
+  }) || immutableFiles.some((name) => {
+    const reserved = path.resolve(ROOT, name);
+    return pathIdentity(reserved) === pathIdentity(target)
+      || pathIdentity(filesystemTarget(reserved)) === pathIdentity(realTarget);
+  });
+  if (immutable) {
     throw new Error("Accepted RC1-RC5 evidence, audit and G6-R1 are immutable");
   }
   return target;
