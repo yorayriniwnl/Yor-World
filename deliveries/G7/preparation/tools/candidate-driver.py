@@ -43,7 +43,7 @@ PRESERVED_OUTPUTS = [
     "deliveries/C4", "deliveries/G6/full-stack-integration",
     "deliveries/G6/rc4-candidate", "deliveries/G6/rc5-candidate",
     "deliveries/G7/rc6-candidate", "deliveries/G7/rc6-candidate-r2",
-    "deliveries/G7/rc6-candidate-r3", "deliveries/G7/rc6-candidate-r4",
+    "deliveries/G7/rc6-candidate-r3", "deliveries/G7/rc6-candidate-r4", "deliveries/G7/rc6-candidate-r5",
     "docs/planning/reviews/2026-10-06-g6-r1",
     "docs/planning/reviews/2026-10-06-g6-r1.md",
     "docs/planning/reviews/2026-10-06-rc5-independent-full-stack-audit.md",
@@ -69,13 +69,17 @@ def safe_output(root, name):
     # Filesystem aliases cannot form portable release evidence, even within the repository.
     if resolved != target:
         raise ValueError(f"Output must use a portable path without filesystem aliases: {name}")
+    assert_single_link_output(target)
+    return target
+
+
+def assert_single_link_output(path):
     try:
-        stat = target.stat()
-        if target.is_file() and stat.st_nlink > 1:
-            raise ValueError(f"Hard-linked release output is forbidden: {name}")
+        stat = path.stat()
+        if path.is_file() and stat.st_nlink > 1:
+            raise ValueError(f"Hard-linked release output is forbidden: {path}")
     except FileNotFoundError:
         pass
-    return target
 
 
 def assert_policy_outputs(root, policy):
@@ -93,6 +97,7 @@ def utc():
 
 
 def write_json(path, value):
+    assert_single_link_output(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8", newline="\n")
 

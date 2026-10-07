@@ -7,8 +7,8 @@ import test from "node:test";
 import { pathToFileURL } from "node:url";
 import { ROOT, policy } from "../release-lib.mjs";
 
-const rootName = "deliveries/G7/rc6-candidate-r5";
-const oldRoots = ["deliveries/G7/rc6-candidate", "deliveries/G7/rc6-candidate-r2", "deliveries/G7/rc6-candidate-r3", "deliveries/G7/rc6-candidate-r4"];
+const rootName = "deliveries/G7/rc6-candidate-r6";
+const oldRoots = ["deliveries/G7/rc6-candidate", "deliveries/G7/rc6-candidate-r2", "deliveries/G7/rc6-candidate-r3", "deliveries/G7/rc6-candidate-r4", "deliveries/G7/rc6-candidate-r5"];
 const source = "a".repeat(40);
 
 async function fixture(t) {
@@ -49,7 +49,7 @@ async function fixture(t) {
   return { root, checkout, driver, setPolicy, lib, unchanged, run };
 }
 
-test("committed policy binds the R5 delivery and canonical archive", () => {
+test("committed policy binds the R6 delivery and canonical archive", () => {
   assert.equal(policy.deliveryRoot, rootName);
   assert.equal(policy.bundle.path, `${rootName}/yor-world-${policy.releaseId}.bundle.tar.gz`);
 });
@@ -127,14 +127,152 @@ test("CLI override outputs cannot escape the bound delivery or overwrite inputs"
   assert.equal(result.status, 1);
   assert.match(result.stderr, /must not overwrite its inputs/);
   if (process.platform === "win32") {
-    const upperArchive = f.run("node", ["scripts/release/build-release-bundle.mjs", "--source-commit", source, "--receipt", policy.bundle.path.toUpperCase()]);
+    const basenameAlias = (name) => path.posix.dirname(name) + "/" + path.posix.basename(name).toUpperCase();
+    const archiveBefore = Buffer.from("isolated archive must remain unchanged");
+    fs.writeFileSync(archive, archiveBefore);
+    const upperArchive = f.run("node", ["scripts/release/build-release-bundle.mjs", "--source-commit", source, "--receipt", basenameAlias(policy.bundle.path)]);
     assert.equal(upperArchive.status, 1);
-    assert.match(upperArchive.stderr, /outputs must differ|portable|Hard-linked/);
-    const upperManifest = f.run("node", ["scripts/release/validate-release.mjs", "--strict", "--receipt", `${rootName}/release-manifest.json`.toUpperCase()]);
+    assert.match(upperArchive.stderr, /outputs must differ/);
+    const manifestBefore = fs.readFileSync(manifest);
+    const upperManifest = f.run("node", ["scripts/release/validate-release.mjs", "--strict", "--receipt", basenameAlias(`${rootName}/release-manifest.json`)]);
     assert.equal(upperManifest.status, 1);
-    assert.match(upperManifest.stderr, /must not overwrite its inputs|portable|Hard-linked/);
+    assert.match(upperManifest.stderr, /must not overwrite its inputs/);
+    assert.deepEqual(fs.readFileSync(manifest), manifestBefore);
+    assert.deepEqual(fs.readFileSync(archive), archiveBefore);
+    fs.unlinkSync(archive);
   }
   assert.equal(fs.existsSync(path.join(f.root, rootName, "source-binding.json")), false);
+  f.unchanged();
+});
+
+test("validator protects every fixed input even when manifest bindings are absent", async (t) => {
+  const f = await fixture(t);
+  const manifestName = `${rootName}/release-manifest.json`;
+  const manifest = path.join(f.root, manifestName);
+  fs.mkdirSync(path.dirname(manifest), { recursive: true });
+  const malformed = Buffer.from(JSON.stringify({ releaseBundlePath: policy.bundle.path, evidenceHashes: [], requiredChecks: [] }));
+  fs.writeFileSync(manifest, malformed);
+  const suffixes = new Set([
+    "source-binding.json", "release-composition.json", "bundle-receipt.json",
+    ...policy.requiredEvidencePaths,
+    "evidence/e2e/browser-results.json", "evidence/accessibility/browser-results.json",
+    "evidence/performance/performance-results.json",
+    ...["active-route-frame-pacing.json", "cold-loads-desktop-1440x900.json",
+      "cold-loads-mobile-390x844.json", "cold-loads-narrow-320x600.json",
+      "enter-exit-stability.json", "public-payloads.json"].map((name) => "evidence/performance/" + name),
+  ]);
+  for (const suffix of suffixes) await t.test(suffix, () => {
+    const inputName = `${rootName}/${suffix}`;
+    const input = path.join(f.root, inputName);
+    fs.mkdirSync(path.dirname(input), { recursive: true });
+    const sentinel = Buffer.from(`isolated mandatory input: ${suffix}\n`);
+    fs.writeFileSync(input, sentinel);
+    const names = [inputName];
+    if (process.platform === "win32") names.push(path.posix.dirname(inputName) + "/" + path.posix.basename(inputName).toUpperCase());
+    const before = fs.readdirSync(path.dirname(input)).sort();
+    for (const receipt of names) {
+      const result = f.run("node", ["scripts/release/validate-release.mjs", "--receipt", receipt]);
+      assert.equal(result.status, 1, result.stderr);
+      assert.match(result.stderr, /Validation receipt must not overwrite its inputs/);
+      assert.doesNotMatch(result.stderr, /sourceCommit|Unsafe repository path|ENOENT|not a git repository/);
+      assert.deepEqual(fs.readFileSync(input), sentinel);
+      assert.deepEqual(fs.readFileSync(manifest), malformed);
+      assert.deepEqual(fs.readdirSync(path.dirname(input)).sort(), before);
+    }
+  });
+  await t.test("fixed inventory preflight precedes malformed JSON and wrong-shaped declarations", () => {
+    const inputName = `${rootName}/evidence/versions.json`;
+    const input = path.join(f.root, inputName);
+    const originalInput = fs.readFileSync(input);
+    for (const invalid of ["{invalid JSON", JSON.stringify({ evidenceHashes: {}, requiredChecks: {} })]) {
+      fs.writeFileSync(manifest, invalid);
+      const result = f.run("node", ["scripts/release/validate-release.mjs", "--receipt", inputName]);
+      assert.equal(result.status, 1);
+      assert.match(result.stderr, /Validation receipt must not overwrite its inputs/);
+      assert.deepEqual(fs.readFileSync(input), originalInput);
+      assert.equal(fs.readFileSync(manifest, "utf8"), invalid);
+    }
+  });
+  f.unchanged();
+});
+
+test("validator protects declared inputs and preserves detached receipt semantics", async (t) => {
+  const f = await fixture(t);
+  const manifest = path.join(f.root, rootName, "release-manifest.json");
+  fs.mkdirSync(path.dirname(manifest), { recursive: true });
+  for (const binding of [
+    (name) => ({ sourceBinding: { path: name } }),
+    (name) => ({ composition: { path: name } }),
+    (name) => ({ evidenceHashes: [{ path: name }] }),
+    (name) => ({ requiredChecks: [{ id: "unit-tests", evidencePath: name }] }),
+  ]) {
+    const name = `${rootName}/evidence/custom-input.json`;
+    const target = path.join(f.root, name);
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    const sentinel = Buffer.from('{"isolated":"dynamic input"}\n');
+    fs.writeFileSync(target, sentinel);
+    const manifestBefore = Buffer.from(JSON.stringify({ releaseBundlePath: policy.bundle.path, ...binding(name) }));
+    fs.writeFileSync(manifest, manifestBefore);
+    const alias = process.platform === "win32" ? path.posix.dirname(name) + "/" + path.posix.basename(name).toUpperCase() : name;
+    const result = f.run("node", ["scripts/release/validate-release.mjs", "--receipt", alias]);
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /Validation receipt must not overwrite its inputs/);
+    assert.deepEqual(fs.readFileSync(target), sentinel);
+    assert.deepEqual(fs.readFileSync(manifest), manifestBefore);
+  }
+  const detached = `${rootName}/release-manifest-validation.receipt.json`;
+  fs.writeFileSync(manifest, JSON.stringify({ releaseBundlePath: policy.bundle.path, sourceCommit: "invalid-isolated-source",
+    requiredChecks: [{ id: "release-manifest-validation", evidencePath: detached }] }));
+  // An invalid fixture source stops later verification; both distinct outputs must
+  // pass collision preflight without incorrectly reading the self-named receipt.
+  for (const receipt of [detached, `${rootName}/primary-release-manifest-validation.receipt.json`]) {
+    const result = f.run("node", ["scripts/release/validate-release.mjs", "--receipt", receipt]);
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /sourceCommit must be a full non-placeholder Git SHA/);
+    assert.doesNotMatch(result.stderr, /must not overwrite its inputs/);
+    assert.equal(fs.existsSync(path.join(f.root, receipt)), false);
+  }
+  const reader = `${rootName}/evidence/custom-input.json`;
+  const readerAlias = path.join(f.root, rootName, "evidence/read-alias.json");
+  fs.linkSync(path.join(f.root, reader), readerAlias);
+  assert.deepEqual(f.lib.readJson(reader), { isolated: "dynamic input" });
+  assert.deepEqual(f.lib.readJson(`${rootName}/evidence/read-alias.json`), { isolated: "dynamic input" });
+  f.unchanged();
+});
+
+test("direct Python JSON writer rejects hardlinked protected bytes and permits distinct outputs", async (t) => {
+  const f = await fixture(t);
+  const script = String.raw`
+import importlib.util, json
+from pathlib import Path
+spec = importlib.util.spec_from_file_location("driver", ${JSON.stringify(f.driver)})
+module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+repo = Path(${JSON.stringify(f.root)})
+delivery = repo / ${JSON.stringify(rootName)}
+delivery.mkdir(parents=True)
+output = delivery / "writer-output.json"
+for root in ${JSON.stringify(oldRoots)}:
+    sentinel = repo / root / "archive-and-receipt.txt"
+    before = sentinel.read_bytes()
+    output.hardlink_to(sentinel)
+    assert output.stat().st_nlink > 1
+    try: module.write_json(output, {"forbidden": True})
+    except ValueError as error: assert "Hard-linked release output is forbidden" in str(error), error
+    else: raise AssertionError("direct writer truncated a hardlinked output")
+    assert sentinel.read_bytes() == before and output.read_bytes() == before
+    assert sorted(path.name for path in delivery.iterdir()) == ["writer-output.json"]
+    output.unlink()
+module.write_json(output, {"allowed": 1})
+module.write_json(output, {"allowed": 2})
+assert json.loads(output.read_text()) == {"allowed": 2}
+fresh = delivery / "new/deep/output.json"
+module.write_json(fresh, {"fresh": True})
+assert json.loads(fresh.read_text()) == {"fresh": True}
+print("PASS direct Python writer hardlink rejection, unchanged sentinels and distinct writes")
+`;
+  const result = f.run("python", ["-B", "-c", script]);
+  assert.equal(result.status, 0, `${result.stdout}${result.stderr}`);
+  assert.match(result.stdout, /PASS direct Python writer/);
   f.unchanged();
 });
 

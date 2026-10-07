@@ -1,0 +1,109 @@
+{
+  "executionClass": "Maker residual regressions in isolated temporary fixtures; not independent audit or acceptance",
+  "baseCommit": "7f257dbc8de9866228d6064fc749f354e099bd6a",
+  "versions": {
+    "node": "v24.19.0",
+    "python": "Python 3.12.10",
+    "git": "git version 2.55.0.windows.5"
+  },
+  "ownedFileSha256": {
+    "scripts/release/rc6-policy.json": "cce0b1e19fae2d92d268c3432f5bce06a3b015f4e2f6c32afde3ae6b8e180623",
+    "scripts/release/release-lib.mjs": "1b87ae9751769cecaa702718b5e133ff3bfa6e4823627b5fe8518d51c3f546fb",
+    "scripts/release/build-release-bundle.mjs": "d065930d6b22ede5cdd9593ea13e74d3bab45c85754687a31f7c01e4599cc561",
+    "scripts/release/validate-release.mjs": "d4186591b853fe604075f1afd39042becdb4ca4d807b1fc7c2b4b5c32030fd70",
+    "scripts/release/tests/immutable-output.test.mjs": "169df1fe48ca22dc781f8674cf42fd505813b0be4d587369108379e4f0a24025",
+    "scripts/release/tests/policy-output.test.mjs": "fd2e3f78dce6da56518ff761bddc8ebb9a6ab3a9eb857b6d24a53ed9350500da",
+    "deliveries/G7/preparation/tools/candidate-driver.py": "4e5405634ff8a1bf64055f2d353e1f8513a5547623f88d77d435feffd8be0eb6"
+  },
+  "checks": [
+    {
+      "command": [
+        "node",
+        "--test",
+        "scripts/release/tests/immutable-output.test.mjs",
+        "scripts/release/tests/policy-output.test.mjs"
+      ],
+      "cwd": "C:\\Users\\yoray\\Projects\\Yor World",
+      "exitCode": 0,
+      "durationSeconds": 16.781,
+      "log": "scratch\\pre-g7-09-residual\\guard-tests-final.log",
+      "status": "PASS"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "scripts/release/release-lib.mjs"
+      ],
+      "cwd": "C:\\Users\\yoray\\Projects\\Yor World",
+      "exitCode": 0,
+      "durationSeconds": 0.047,
+      "log": "scratch\\pre-g7-09-residual\\syntax-release-lib.log",
+      "status": "PASS"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "scripts/release/build-release-bundle.mjs"
+      ],
+      "cwd": "C:\\Users\\yoray\\Projects\\Yor World",
+      "exitCode": 0,
+      "durationSeconds": 0.062,
+      "log": "scratch\\pre-g7-09-residual\\syntax-build-release-bundle.log",
+      "status": "PASS"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "scripts/release/validate-release.mjs"
+      ],
+      "cwd": "C:\\Users\\yoray\\Projects\\Yor World",
+      "exitCode": 0,
+      "durationSeconds": 0.047,
+      "log": "scratch\\pre-g7-09-residual\\syntax-validate-release.log",
+      "status": "PASS"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "scripts/release/tests/immutable-output.test.mjs"
+      ],
+      "cwd": "C:\\Users\\yoray\\Projects\\Yor World",
+      "exitCode": 0,
+      "durationSeconds": 0.047,
+      "log": "scratch\\pre-g7-09-residual\\syntax-immutable-output.test.log",
+      "status": "PASS"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "scripts/release/tests/policy-output.test.mjs"
+      ],
+      "cwd": "C:\\Users\\yoray\\Projects\\Yor World",
+      "exitCode": 0,
+      "durationSeconds": 0.047,
+      "log": "scratch\\pre-g7-09-residual\\syntax-policy-output.test.log",
+      "status": "PASS"
+    },
+    {
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "-c",
+        "import ast; from pathlib import Path; ast.parse(Path('deliveries/G7/preparation/tools/candidate-driver.py').read_text()); print('PASS Python syntax')"
+      ],
+      "cwd": "C:\\Users\\yoray\\Projects\\Yor World",
+      "exitCode": 0,
+      "durationSeconds": 0.047,
+      "log": "scratch\\pre-g7-09-residual\\python-syntax.log",
+      "status": "PASS"
+    }
+  ],
+  "overallStatus": "PASS",
+  "fullFreshR6Proof": "NOT RUN; Parent owns fresh source freeze/all-thirteen/primary/hosted proof",
+  "g7ServicesAndDevices": "NOT RUN"
+}

@@ -14,13 +14,26 @@ try {
   assertPolicyOutputs();
   assertPolicyOutput(values.manifest);
   assertPolicyOutput(values.receipt);
-  assertNoFileCollision(values.receipt, [values.manifest, policy.bundle.path], "Validation receipt must not overwrite its inputs");
+  // These inputs are read independently of manifest bindings. Protect them even
+  // when a malformed manifest omits its mandatory evidence declarations.
+  const fixedInputSuffixes = new Set([
+    "source-binding.json", "release-composition.json", "bundle-receipt.json",
+    ...policy.requiredEvidencePaths,
+    "evidence/e2e/browser-results.json", "evidence/accessibility/browser-results.json",
+    "evidence/performance/performance-results.json",
+    ...["active-route-frame-pacing.json", "cold-loads-desktop-1440x900.json",
+      "cold-loads-mobile-390x844.json", "cold-loads-narrow-320x600.json",
+      "enter-exit-stability.json", "public-payloads.json"].map((name) => "evidence/performance/" + name),
+  ]);
+  const inputPaths = [values.manifest, policy.bundle.path,
+    ...[...fixedInputSuffixes].map((suffix) => policy.deliveryRoot + "/" + suffix)];
+  assertNoFileCollision(values.receipt, inputPaths, "Validation receipt must not overwrite its inputs");
   const manifestBytes = fs.readFileSync(safePath(values.manifest));
   const manifest = JSON.parse(manifestBytes.toString("utf8"));
-  const inputPaths = [values.manifest, policy.bundle.path, policy.deliveryRoot + "/bundle-receipt.json",
+  inputPaths.push(
     manifest.sourceBinding?.path, manifest.composition?.path,
     ...(manifest.evidenceHashes || []).map((item) => item.path),
-    ...(manifest.requiredChecks || []).filter((item) => item.id !== "release-manifest-validation").map((item) => item.evidencePath)];
+    ...(manifest.requiredChecks || []).filter((item) => item.id !== "release-manifest-validation").map((item) => item.evidencePath));
   assertNoFileCollision(values.receipt, inputPaths, "Validation receipt must not overwrite its inputs");
   for (const key of ["releaseId", "assetRevision", "publicationRevision", "schemaRevision", "contactAmendment", "canonicalApplicationRoot"]) requireThat(manifest[key] === policy[key], `${key} must equal ${policy[key]}`);
   if (manifest.releaseBundlePath !== policy.bundle.path) throw new Error("releaseBundlePath must identify the current canonical archive");

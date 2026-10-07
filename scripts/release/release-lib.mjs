@@ -63,7 +63,7 @@ const immutableDirectories = [
   "deliveries/C4", "deliveries/G6/full-stack-integration",
   "deliveries/G6/rc4-candidate", "deliveries/G6/rc5-candidate",
   "deliveries/G7/rc6-candidate", "deliveries/G7/rc6-candidate-r2",
-  "deliveries/G7/rc6-candidate-r3", "deliveries/G7/rc6-candidate-r4",
+  "deliveries/G7/rc6-candidate-r3", "deliveries/G7/rc6-candidate-r4", "deliveries/G7/rc6-candidate-r5",
   "docs/planning/reviews/2026-10-06-g6-r1",
 ];
 const immutableFiles = [
@@ -85,7 +85,7 @@ export function assertMutableOutput(name) {
       || pathIdentity(filesystemTarget(reserved)) === pathIdentity(realTarget);
   });
   if (immutable) {
-    throw new Error("Accepted RC1-RC5 evidence, audit and G6-R1 are immutable; original RC6, rejected R2, reconciled R3 and canonical R4 proof are preserved");
+    throw new Error("Accepted RC1-RC5 evidence, audit and G6-R1 are immutable; original RC6, rejected R2, reconciled R3, canonical R4 and incoming R5 proof are preserved");
   }
   const existing = existingRegularFileIdentity(target);
   if (existing && existing.nlink > 1n) {
