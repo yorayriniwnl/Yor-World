@@ -41,6 +41,8 @@ Never run all five accounts on the same problem:
 
 Use [pre-G7 prerequisites](docs/operations/pre-g7-prerequisites.md) for current schema-v2/three-migration hardening and actual production/manual evidence. [RC6 dossier](docs/releases/v1.0.0-rc6.md) describes the successor. Deployment is authorized by the owner, but source acceptance, actual service access/configuration and all ten G7 checks remain required; G7 is not accepted by a publication command.
 
+[PRE-G7-05](docs/planning/reconciliation-packets/2026-10-07-pre-g7-05.md) corrects operational ledger provenance/completeness. [PRE-G7-06](docs/planning/reconciliation-packets/2026-10-07-pre-g7-06.md) binds fresh R3 archive/export proof after rejected R2. Original and rejected proof remain preserved.
+
 Local access must be real: a GPT/Gemini worker that can open this folder can reuse its files without repeated attachments; if it cannot, it reports **NO FILE ACCESS**. Claude browser reviewers instead read supplied project knowledge and review packets, flag absent items as **MISSING INPUT**, and review available material. No external account connection or automatic local-file synchronization has been configured.
 
 For GPT/Gemini local tools, open this project as the working folder. AGENTS.md is the shared instruction source; GEMINI.md imports it and this entry point. CLAUDE.md is an unused optional Code adapter; current Claude reviewers use browser project knowledge and review packets. Read only your assigned packet and its named input files. Do not preload the entire archive. Installation, account authentication, and per-tool loading have not been validated by creating these files.

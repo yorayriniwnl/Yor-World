@@ -1,6 +1,6 @@
 # Pre-G7 prerequisites for accepted RC5
 
-**Accepted baseline: G6-R1 / RC5. Current candidate: v1.0.0-rc6. G7 AUTHORIZED / PREPARATION** under **G7-OWNER-AUTH-20261006** (owner: “Complete it.”). PRE-G7-01/02/03 now assign the bounded preparation/amendments. These prerequisites are not completed evidence.
+**Accepted baseline: G6-R1 / RC5. Current candidate: v1.0.0-rc6. G7 AUTHORIZED / PREPARATION** under **G7-OWNER-AUTH-20261006** (owner: “Complete it.”). PRE-G7-01 through PRE-G7-06 assign bounded source, release and operational preparation. Fresh R3 source/bundle/export/hosted verification and independent adjudication remain required; rejected R2 remains preserved. These prerequisites are not completed evidence.
 
 Accepted source `c34e01bb5bff210d924f42d5266e2fa1ed13288e`, app tree `88a65e85d1f120a9aa4397efa8cc779bdfe5cf08`, bundle `4380cab7f5211c836fe5bb97c68d67137c1b0fd7a2e4789bb29d0157ab5faa0f`. The [independent audit](../planning/reviews/2026-10-06-rc5-independent-full-stack-audit.md) and G6-R1 record all remaining debt and limitations. Any source amendment must use a separate Parent packet, a new binding and independent delta adjudication; accepted RC5 is not silently edited.
 

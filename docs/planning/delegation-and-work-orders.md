@@ -10,6 +10,8 @@ Owner instruction “Complete it.” authorizes remaining corrections, productio
 
 Accepted RC5 / [G6-R1](reviews/2026-10-06-g6-r1.md) remains immutable, including the independent audit and all prior historical receipts. The new RC6 source is a separately bound successor requiring independent maker-delta review and Parent adjudication. G7 AUTHORIZED / PREPARATION is not G7 acceptance. Real Vercel/Supabase/email access is not confirmed; physical mobile/screen-reader/thermal and actual live restore/rollback checks remain NOT RUN.
 
+[PRE-G7-05](reconciliation-packets/2026-10-07-pre-g7-05.md) corrects operational ledger provenance/completeness. [PRE-G7-06](reconciliation-packets/2026-10-07-pre-g7-06.md) assigns consistent R3 archive/export binding after independent rejection of R2. Fresh R3 and actual hosted proof are required; earlier execution history remains preserved.
+
 Read [current pre-G7 requirements](../operations/pre-g7-prerequisites.md) and the [RC6 dossier](../releases/v1.0.0-rc6.md). Parent continues authorized independent work and obtains missing service/device inputs. No mock, local fixture, emulation, liveness-only response or private preview substitutes for a mandatory production criterion.
 
 ## One specification and a small shared baseline
@@ -128,7 +130,7 @@ W1/W2/W3 are independent: W1 owns room geometry; W2 uses its own F1 furniture fi
 | **G4 Integrated Experience** | Evaluator / Parent | C1 + IA-R1 + B2-R1 | **ACCEPTED:** 10/10 exit requirements met ([Gate Review](reviews/2026-10-02-g4-gate-evaluation.md)) |
 | **G5 Managed Content & Ops** | Evaluator / Parent | A3 + A4 + A5 + A6 | **ACCEPTED:** 10/10 exit requirements met ([Gate Review](reviews/2026-10-02-g5-gate-evaluation.md)) |
 | **G6 Release Candidate** | Parent sole acceptance authority | G4 + G5 + independent RC5 audit | **G6 ACCEPTED (`G6-R1`):** v1.0.0-rc5 accepted release candidate with recorded nonblocking debt/limits; [immutable ruling](reviews/2026-10-06-g6-r1.md). |
-| **G7 Production Release** | **Gemini #3, #1, #2; GPT #2, #1** | Owner Authorization + G1–G6 | **G7 LOCKED:** Only after owner authorizes deployment. Requires 10 live criteria ([Protocol](releases/2026-10-02-g7-production-release-protocol.md)). |
+| **G7 Production Release** | **Gemini #3, #1, #2; GPT #2, #1** | Owner Authorization + G1–G6 | **G7 AUTHORIZED / PREPARATION:** G7-OWNER-AUTH-20261006. Successor source, actual provider access and all 10 live criteria remain required ([Protocol](releases/2026-10-02-g7-production-release-protocol.md)). |
 
 **FROZEN CONTRACTS FOR NEW PACKETS:**
 - **Freeze G3 revision:** World core milestone, $\le 300\text{k}$ tris / $\le 120$ draw calls / $\le 160\text{MB}$ VRAM, main reference + B3-P1 visual baseline.

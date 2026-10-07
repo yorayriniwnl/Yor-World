@@ -1,6 +1,6 @@
-# RC5 physical hardware and assistive technology protocol
+# Current physical hardware and assistive technology protocol
 
-Candidate: **v1.0.0-rc5**, canonical app root `app/`. G6 ACCEPTED under G6-R1; G7 LOCKED — awaiting explicit owner production authorization. This is a blank execution protocol. Actual model/OS/browser/tester/date/sourceCommit/asset revision/publication revision/network/DPR/cache state must accompany each returned receipt. Do not infer physical or screen-reader success from Chromium viewport emulation or axe.
+Candidate: **v1.0.0-rc6**, canonical app root `app/`. Accepted baseline G6-R1 / RC5 remains immutable. G7 AUTHORIZED / PREPARATION under G7-OWNER-AUTH-20261006. This is a blank execution protocol; physical/assistive sessions remain NOT RUN. Actual model/OS/browser/tester/date/sourceCommit/asset revision/publication revision/network/DPR/cache state must accompany each returned receipt. Do not infer physical or screen-reader success from Chromium viewport emulation or axe.
 
 Current authority: [G6-R1](../planning/reviews/2026-10-06-g6-r1.md); [pre-G7 prerequisites](pre-g7-prerequisites.md). Manual/hosted validation remains NOT RUN. Historical records below are unchanged.
 
@@ -45,4 +45,4 @@ MD-06 execution:
 
 No ten-minute thermal PASS follows from a 60-second desktop Chromium report identifying its actual renderer. The [validation specification](../planning/validation-and-production.md) defines physical/network/frame budgets. The [G7 protocol](../planning/releases/2026-10-02-g7-production-release-protocol.md) governs production evidence and acceptance.
 
-Receipt fields: candidate manifest/sourceCommit; artifact hashes; device/model/OS/browser; tester/date/time; viewport/DPR/tier/network/cache; exact steps and measurements; PASS/FAIL/NOT RUN per item; real artifact paths; unresolved defects; independent reviewer. Maker signature supplies evidence only. GPT Plus #1 adjudicates gates after independent review; G7 stays LOCKED until owner authorization.
+Receipt fields: candidate manifest/sourceCommit and actual deployment identity; artifact hashes; device/model/OS/browser; tester/date/time; viewport/DPR/tier/network/cache; exact steps and measurements; PASS/FAIL/NOT RUN per item; real artifact paths; unresolved defects; independent reviewer. Maker signature supplies evidence only. Parent adjudicates gates after independent review; owner authorization is recorded, while G7 acceptance remains pending actual complete proof.

@@ -1,6 +1,6 @@
-# Current RC5 restore and recovery record
+# Current restore and recovery record
 
-Current candidate: **v1.0.0-rc5**. Canonical app: `app/`. G1-G6 ACCEPTED under G6-R1; G7 LOCKED — awaiting explicit owner production authorization. The [RC5 maker evidence](../../deliveries/G6/rc5-candidate/report.md) records fresh execution against schema `20261005000000_schema_v2`. The additive private GitHub refresh-state table is outside the fifteen public-table backup inventory. RC5 makes no operations/schema changes. Prior RC3 local proof below and historical RC1 rehearsal remain identified by their original source; they do not replace fresh RC5 proof.
+Current candidate: **v1.0.0-rc6**; canonical app `app/`. Accepted baseline **G6-R1 / RC5** remains immutable. **G7 AUTHORIZED / PREPARATION** under **G7-OWNER-AUTH-20261006**. Actual hosted restore and rollback remain NOT RUN; successor source acceptance and all live criteria are pending. Schema remains `20261005000000_schema_v2`. The additive private GitHub refresh-state table is outside the fifteen public-table backup inventory. [RC5 maker evidence](../../deliveries/G6/rc5-candidate/report.md), prior RC3 local proof below and historical RC1 rehearsal retain their original source identities; they do not establish production restore/rollback success.
 
 Current authority: [G6-R1](../planning/reviews/2026-10-06-g6-r1.md); [pre-G7 prerequisites](pre-g7-prerequisites.md). Manual/hosted validation remains NOT RUN. Historical records below are unchanged.
 
