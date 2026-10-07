@@ -43,7 +43,7 @@ PRESERVED_OUTPUTS = [
     "deliveries/C4", "deliveries/G6/full-stack-integration",
     "deliveries/G6/rc4-candidate", "deliveries/G6/rc5-candidate",
     "deliveries/G7/rc6-candidate", "deliveries/G7/rc6-candidate-r2",
-    "deliveries/G7/rc6-candidate-r3",
+    "deliveries/G7/rc6-candidate-r3", "deliveries/G7/rc6-candidate-r4",
     "docs/planning/reviews/2026-10-06-g6-r1",
     "docs/planning/reviews/2026-10-06-g6-r1.md",
     "docs/planning/reviews/2026-10-06-rc5-independent-full-stack-audit.md",
@@ -69,6 +69,12 @@ def safe_output(root, name):
     # Filesystem aliases cannot form portable release evidence, even within the repository.
     if resolved != target:
         raise ValueError(f"Output must use a portable path without filesystem aliases: {name}")
+    try:
+        stat = target.stat()
+        if target.is_file() and stat.st_nlink > 1:
+            raise ValueError(f"Hard-linked release output is forbidden: {name}")
+    except FileNotFoundError:
+        pass
     return target
 
 

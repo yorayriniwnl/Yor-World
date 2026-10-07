@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { parseArgs } from "node:util";
-import { assertPolicyOutput, assertPolicyOutputs, buildBundle, git, policy, writeJson } from "./release-lib.mjs";
+import { assertNoFileCollision, assertPolicyOutput, assertPolicyOutputs, buildBundle, git, policy, writeJson } from "./release-lib.mjs";
 
 try {
   const { values } = parseArgs({ options: { "source-commit": { type: "string" }, output: { type: "string", default: policy.bundle.path }, receipt: { type: "string", default: policy.deliveryRoot + "/bundle-receipt.json" } } });
@@ -10,7 +10,7 @@ try {
   if (values.output !== policy.bundle.path) throw new Error("Bundle output must equal policy.bundle.path");
   const target = assertPolicyOutput(values.output);
   assertPolicyOutput(values.receipt);
-  if (values.receipt === values.output) throw new Error("Bundle and receipt outputs must differ");
+  assertNoFileCollision(values.receipt, [values.output], "Bundle and receipt outputs must differ");
   const bundle = buildBundle(values["source-commit"]);
   fs.mkdirSync(path.dirname(target), { recursive: true });
   fs.writeFileSync(target, bundle.archive);
