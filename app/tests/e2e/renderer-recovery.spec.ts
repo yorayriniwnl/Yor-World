@@ -139,6 +139,8 @@ test.describe("C3 Failure Recovery, Context Loss & Mobile Resilience", () => {
   });
 
   test("Accessibility toolbar accepts real pointer controls and Projects navigation", async ({ page }, info) => {
+    // GitHub-hosted SwiftShader can make this real-renderer pointer path exceed the suite default while still completing correctly.
+    test.setTimeout(45_000);
     await enterRenderedHome(page);
     const qualitySelect = page.getByTestId("quality-tier-select");
     // A real mouse click must reach the select before native keyboard selection.

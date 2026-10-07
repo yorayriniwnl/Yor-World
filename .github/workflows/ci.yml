@@ -157,7 +157,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          node scripts/release/validate-release.mjs --strict --receipt .rc6-ci/release-manifest-validation.receipt.json | tee .rc6-ci/13-release-manifest-validation.log
+          node scripts/release/validate-release.mjs --strict --receipt deliveries/G7/rc6-candidate-r3/ci-release-manifest-validation.receipt.json | tee .rc6-ci/13-release-manifest-validation.log
 
       - name: Upload fresh CI execution evidence
         if: always()
