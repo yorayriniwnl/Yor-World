@@ -190,7 +190,9 @@ test.describe("B5 Production Runtime Lifecycle Foundation - Adversarial & Invari
 
     // Semantic site is intact
     await expect(page.locator("main")).toBeVisible();
-    await expect(page.locator("nav")).toBeVisible();
+    // While the native studio dialog is open, the background nav is inert.
+    // The in-dialog navigation must remain operable after renderer failure.
+    await expect(page.getByRole("navigation", { name: "Studio navigation" })).toBeVisible();
 
     // Zero canvas instances on renderer error
     expect(await page.locator("canvas").count()).toBe(0);
