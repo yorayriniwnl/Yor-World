@@ -79,7 +79,19 @@ export function StudioLauncher({
   return (
     <div className={portfolioStyles.studioEntry}>
       {!isEntered ? (
-        <details className={portfolioStyles.studioDisclosure} data-testid="studio-disclosure">
+        <>
+          <button
+            type="button"
+            className={portfolioStyles.studioDirectEntry}
+            data-testid="studio-direct-entry"
+            onClick={() => {
+              setManuallyOpened(true);
+              setManuallyClosed(false);
+            }}
+          >
+            <span>ENTER THE 3D STUDIO</span><span aria-hidden="true">↗</span>
+          </button>
+          <details className={portfolioStyles.studioDisclosure} data-testid="studio-disclosure">
           <summary>
             Enter YOR WORLD <span aria-hidden="true">↗</span>
           </summary>
