@@ -71,13 +71,11 @@ test.describe("Physical & Room Interactions: Task C1 Arbitration & Robustness", 
 
     // Native dialog stays open: Escape is reserved for the room's skip/cancel.
     await expect(page.getByTestId("studio-fullscreen")).toHaveJSProperty("open", true);
-    // Diagnostics should report home-desktop and coding pose
-    await page.click('[data-testid="diagnostics-toggle-btn"]');
-    const diagPre = page.locator('[data-testid="world-diagnostics"]');
-    const diag = JSON.parse(await diagPre.innerText());
-
-    expect(diag.cameraPreset).toBe("home-desktop");
-    expect(diag.activeClip).toBe("coding_idle");
+    // Test the actual visible state after Escape, independent of whether a
+    // previously-open diagnostic drawer is being toggled closed.
+    await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME");
+    await expect(page.getByTestId("camera-home-btn")).toHaveClass(/hudButtonActive/);
+    await expect(page.getByTestId("status-badge")).toContainText("coding_idle");
   });
 
   test("4. Non-geometry equivalent: accessible Room Controls toggles environment settings", async ({ page }) => {
