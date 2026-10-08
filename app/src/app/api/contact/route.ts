@@ -20,6 +20,7 @@ import {
 import { QuotaExceededError } from "@/server/contact/quota";
 import { PersistenceError } from "@/server/contact/outbox";
 import { getContactDb } from "@/server/contact/db";
+import { contactNetworkKey } from "@/server/contact/client-network";
 
 export const dynamic = "force-dynamic";
 
@@ -74,10 +75,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     );
   }
 
-  // 4. Resolve network identifier (IP/proxy)
-  const forwarded = request.headers.get("x-forwarded-for");
-  const realIp = request.headers.get("x-real-ip");
-  const networkKey = forwarded?.split(",")[0]?.trim() || realIp?.trim() || "127.0.0.1";
+  // 4. Resolve a quota key only from a trusted deployment edge.
+  const networkKey = contactNetworkKey(request.headers);
 
   // 5. Process contact inquiry
   try {
