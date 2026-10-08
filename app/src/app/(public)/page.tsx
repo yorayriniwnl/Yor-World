@@ -12,9 +12,9 @@ export default async function HomePage() {
     <>
       <section className={styles.hero} aria-labelledby="welcome-heading">
         <div className={styles.heroCopy}>
-          <p className={styles.eyebrow}>The door is taking shape</p>
+          <p className={styles.eyebrow}>Welcome to YOR WORLD</p>
           <h1 id="welcome-heading">A little world.<br /><em>A closer look.</em></h1>
-          <p className={styles.heroDescription}>A personal studio for exploring the work, the thinking, and the person behind it.</p>
+          <p className={styles.heroDescription}>Step through the door, meet the creator at the desk, and explore software through objects you can interact with.</p>
           <div className={styles.identity}>
             <p className={styles.identityName}>{ownerIdentity.name} <span className={styles.badge}>Verified identity</span></p>
             <p>{ownerIdentity.role}</p>
@@ -24,16 +24,16 @@ export default async function HomePage() {
             <Link className={styles.primaryAction} href="/projects" prefetch={false}>View projects <span aria-hidden="true">↗</span></Link>
             <StudioLauncher projects={publication.projects} publicationRevision={publication.revision} />
           </div>
-          <p className={styles.small}>Four verified project case studies. Explore the studio whenever you like.</p>
+          <p className={styles.small}>Step inside the room or go straight to the four verified project case studies.</p>
         </div>
         <aside className={styles.poster} aria-label="Studio status">
-          <div className={styles.posterTop}><span>YOR / 01</span><span>In the making</span></div>
+          <div className={styles.posterTop}><span>YOR / 01</span><span>Your world awaits</span></div>
           <div className={styles.posterArt} aria-hidden="true">
             <div className={styles.posterHalo} />
             <div className={styles.portal}><div className={styles.portalInset}><span>Y</span></div></div>
             <div className={styles.posterLine} />
           </div>
-          <div className={styles.posterBottom}><p>A space for<br /><strong>curiosity.</strong></p><span>Interactive studio<br />Portfolio pages below</span></div>
+          <div className={styles.posterBottom}><p>A space for<br /><strong>curiosity.</strong></p><span>Interactive studio<br />Accessible pages below</span></div>
         </aside>
       </section>
       <section className={styles.directory} aria-labelledby="directory-heading">
