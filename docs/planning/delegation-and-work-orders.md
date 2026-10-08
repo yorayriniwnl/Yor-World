@@ -1,6 +1,6 @@
 # YOR WORLD delegation and work orders
 
-**Current candidate: v1.0.0-rc6 — R6 SOURCE ACCEPTED under RC6-R1 for production preparation.** Accepted baseline **G6-R1 / RC5** remains immutable. **G7 AUTHORIZED / PREPARATION** under **G7-OWNER-AUTH-20261006**; actual production/manual evidence and separate G7 acceptance remain required.
+**Current candidate: v1.0.0-rc6 — R7 REMEDIATION IN PROGRESS; NOT SOURCE ACCEPTED.** Historical R6 remains source accepted under RC6-R1; its source and evidence are immutable. Accepted baseline **G6-R1 / RC5** remains immutable. **G7 AUTHORIZED / PREPARATION** under **G7-OWNER-AUTH-20261006**; actual production/manual evidence and separate G7 acceptance remain required.
 
 [RC6-R1 source ruling](reviews/2026-10-08-rc6-r1.md) records the independently verified exact source/CI/artifact binding. The project is not yet production-complete.
 
