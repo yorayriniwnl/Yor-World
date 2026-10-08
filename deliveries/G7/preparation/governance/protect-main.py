@@ -23,6 +23,7 @@ ROOT = HERE.parents[3]
 REPO = "yorayriniwnl/Yor-World"
 PREFIX = "/repos/" + REPO
 CONTEXTS = ["integrity", "Verify & Validate Full-Stack RC6"]
+EXPECTED_ACTIONS_APP_ID = 15368
 REQUIRED_STEPS = [
     "1. Frozen canonical dependency install", "2. Lint canonical application", "3. Typecheck canonical application",
     "4. Unified unit tests", "5. Unified backend/runtime integration tests", "6. Khronos frozen canonical asset validation",
@@ -37,6 +38,125 @@ spec.loader.exec_module(fetch)
 
 class Failure(RuntimeError):
     pass
+
+
+SAFE_VALIDATION_FIELDS = {"required_status_checks", "strict", "contexts", "checks", "context", "app_id", "enforce_admins",
+                          "required_pull_request_reviews", "dismiss_stale_reviews", "require_code_owner_reviews",
+                          "required_approving_review_count", "require_last_push_approval", "restrictions", "allow_force_pushes", "allow_deletions"}
+
+
+def schema_message_clues(value):
+    """Only fixed categories and known mentioned names; no field/value echo."""
+    if not isinstance(value, str) or len(value) > 16 * 1024:
+        return ""
+    lowered = value.casefold()
+    patterns = [
+        ("Schema alternatives did not match", r"\b(anyof|oneof|subschema)\b"),
+        ("Duplicate values rejected", r"\bduplicate\b|must (be|have) unique|more than once"),
+        ("Required field missing", r"\bmissing\b|required property|not supplied|not provided|wasn't supplied|wasn't provided"),
+        ("Field not permitted", r"not (a )?permitted|not allowed|additional propert|unexpected propert|unrecognized propert"),
+        ("Invalid field type", r"not (of )?(the )?type|is not (an? )?[\"']?(object|array|boolean|integer|string|null)|must be an? (object|array|boolean|integer|string)"),
+    ]
+    categories = [label for label, pattern in patterns if re.search(pattern, lowered)]
+    fields = sorted(field for field in SAFE_VALIDATION_FIELDS if re.search(r"\b" + re.escape(field) + r"\b", lowered))[:8]
+    clues = []
+    if categories:
+        clues.append("schema categories: " + ", ".join(categories))
+    if fields:
+        clues.append("mentioned fields: " + ", ".join(fields))
+    return "; ".join(clues)
+
+
+def schema_clause_diagnostics(value):
+    """Preserve individual schema-clause relations using fixed safe vocabulary."""
+    if not isinstance(value, str) or len(value) > 16 * 1024:
+        return []
+    projected = []
+    # Split only structural sentence/newline boundaries; never persist a clause.
+    for clause in re.split(r"\n|(?<=\.)\s+(?=For |No subschema)", value)[:32]:
+        clues = schema_message_clues(clause)
+        if not clues or "schema categories:" not in clues:
+            continue
+        expected_types = sorted(set(re.findall(
+            r"(?:is not (?:an? )?|not (?:of )?(?:the )?type\s*|must be an? )['\"]?(object|array|boolean|integer|string|null)\b",
+            clause.casefold())))
+        message = "Schema clause: " + clues
+        if expected_types:
+            message += "; expected types: " + ", ".join(expected_types)
+        projected.append({"message": message, "code": "invalid"})
+        if len(projected) == 8:
+            break
+    return projected
+
+
+def validation_message(value):
+    """Project untrusted prose to fixed diagnostics; never echo supplied values."""
+    if not isinstance(value, str) or len(value) > 16 * 1024:
+        return "Validation message suppressed"
+    lowered = value.casefold()
+    if lowered.startswith("invalid request"):
+        return "Invalid request"
+    if re.search(r"\b(contexts?|checks?)\b", lowered) and any(phrase in lowered for phrase in ["must be unique", "must have unique", "duplicate", "more than once"]):
+        return "Required status check contexts must be unique"
+    for original, safe in [
+        ("validation failed", "Validation Failed"), ("invalid request", "Invalid request"),
+        ("resource not accessible by", "Resource not accessible with current credential permissions"),
+        ("requires administration", "Administration permission required"),
+        ("not an object", "Invalid object type"), ("not of type", "Invalid field type"),
+        ("must be an integer", "Integer required"), ("must be a boolean", "Boolean required"),
+        ("must be an array", "Array required"), ("must be a string", "String required"),
+        ("only available for organization", "Setting restricted to organization repositories"),
+        ("not found", "Referenced resource not found"),
+    ]:
+        if original in lowered:
+            return safe
+    return "Validation message suppressed"
+
+
+def validation_diagnostic(raw):
+    """16 KiB input cap; bounded message/field/code output from allowlists only."""
+    if len(raw) > 16 * 1024:
+        return {"message": "Validation body exceeded diagnostic size cap"}
+    try:
+        body = json.loads(raw)
+    except (ValueError, UnicodeError):
+        return {"message": "Validation body was not valid JSON"}
+    if not isinstance(body, dict):
+        return {"message": "Validation body had unexpected shape"}
+    result = {"message": validation_message(body.get("message"))}
+    clues = schema_message_clues(body.get("message"))
+    if clues:
+        result["message"] += "; " + clues
+    errors = body.get("errors")
+    if not isinstance(errors, list):
+        clauses = schema_clause_diagnostics(body.get("message"))
+        if clauses:
+            result["errors"] = clauses
+        return result
+    safe_codes = {"missing", "missing_field", "invalid", "already_exists", "unprocessable", "custom"}
+    projected = []
+    for item in errors[:8]:
+        if isinstance(item, str):
+            projected.append({"message": validation_message(item)})
+            continue
+        if not isinstance(item, dict):
+            continue
+        entry = {}
+        if "message" in item:
+            entry["message"] = validation_message(item["message"])
+        field = item.get("field")
+        if isinstance(field, str) and len(field) <= 128:
+            parts = field.split(".")
+            if parts and all(part in SAFE_VALIDATION_FIELDS for part in parts):
+                entry["field"] = ".".join(parts)
+        code = item.get("code")
+        if isinstance(code, str) and code in safe_codes:
+            entry["code"] = code
+        if entry:
+            projected.append(entry)
+    if projected:
+        result["errors"] = projected
+    return result
 
 
 class API:
@@ -60,12 +180,23 @@ class API:
                 status = response.status
                 raw = response.read(4 * 1024 * 1024 + 1)
         except HTTPError as error:
-            self.calls.append({"method": method, "endpoint": endpoint, "status": error.code})
             status = error.code
-            error.close()
+            call = {"method": method, "endpoint": endpoint, "status": status}
+            detail = None
+            try:
+                if status == 422:
+                    detail = validation_diagnostic(error.read(16 * 1024 + 1))
+                    call["validation"] = detail
+            except Exception:
+                detail = {"message": "Validation diagnostic unavailable"}
+                call["validation"] = detail
+            finally:
+                error.close()
+            self.calls.append(call)
             if status == 404 and absent:
                 return None
-            raise Failure(f"GitHub API {method} {endpoint} returned HTTP {status}; no redirects or error bodies logged") from None
+            suffix = "; safe validation: " + json.dumps(detail) if detail is not None else "; no redirects or error bodies logged"
+            raise Failure(f"GitHub API {method} {endpoint} returned HTTP {status}" + suffix) from None
         except (URLError, TimeoutError, OSError):
             raise Failure(f"GitHub API {method} {endpoint} network/timeout failure") from None
         self.calls.append({"method": method, "endpoint": endpoint, "status": status})
@@ -147,31 +278,36 @@ def inventory(api):
     }
 
 
-def draft(observed):
+def expected_checks(observed):
     checks = []
     for name in CONTEXTS:
         matches = [item for item in observed["checks"] if item["name"] == name]
         if not matches:
             matches = [item for item in observed["historicalChecksForDraftOnly"] if item["name"] == name]
-        if len(matches) != 1 or matches[0]["app"].get("slug") != "github-actions" or not isinstance(matches[0]["app"].get("id"), int):
+        if len(matches) != 1 or matches[0]["app"].get("slug") != "github-actions" or matches[0]["app"].get("id") != EXPECTED_ACTIONS_APP_ID:
             raise Failure(f"Expected one actual GitHub Actions check context: {name}")
         checks.append({"context": name, "app_id": matches[0]["app"]["id"]})
-    return {"required_status_checks": {"strict": True, "contexts": CONTEXTS, "checks": checks},
+    return checks
+
+
+def draft(observed):
+    expected_checks(observed)  # Validate actual provider observations before drafting.
+    # Legacy wire representation only. Recent app bindings MUST survive GET readback.
+    return {"required_status_checks": {"strict": True, "contexts": CONTEXTS},
             "enforce_admins": False,
             "required_pull_request_reviews": {"dismiss_stale_reviews": True, "require_code_owner_reviews": False,
                                               "required_approving_review_count": 1, "require_last_push_approval": False},
             "restrictions": None, "allow_force_pushes": False, "allow_deletions": False}
 
 
-def readback_failures(protection, payload):
+def readback_failures(protection, payload, expected_checks):
     if not protection:
         return ["Protection missing"]
     failures = []
     checks = protection.get("required_status_checks") or {}
-    expected = payload["required_status_checks"]
     if checks.get("strict") is not True or set(checks.get("contexts", [])) != set(CONTEXTS):
         failures.append("Required exact check contexts/strict readback mismatch")
-    if {(item.get("context"), item.get("app_id")) for item in checks.get("checks", [])} != {(item["context"], item["app_id"]) for item in expected["checks"]}:
+    if {(item.get("context"), item.get("app_id")) for item in checks.get("checks", [])} != {(item["context"], item["app_id"]) for item in expected_checks}:
         failures.append("Required check provider bindings readback mismatch")
     reviews = protection.get("required_pull_request_reviews") or {}
     for key, value in payload["required_pull_request_reviews"].items():
@@ -230,6 +366,8 @@ def main():
         write(destination, "before.json", before)
         payload = draft(before)
         write(destination, "protection-payload.json", payload)
+        expected_provider_checks = expected_checks(before)
+        write(destination, "expected-checks.json", {"expectedChecks": expected_provider_checks, "wireRepresentation": "legacy-contexts-only"})
         receipt["observedHead"] = before["main"]["sha"]
         receipt["independentWriteReviewers"] = [item["login"] for item in before["collaborators"]
             if item["login"] != before["owner"]["login"] and (item.get("permissions") or {}).get("push")]
@@ -268,7 +406,7 @@ def main():
             write(destination, "apply-response.json", response)
             after = inventory(api)
             write(destination, "after.json", after)
-            receipt["failures"].extend(readback_failures(after["protection"], payload))
+            receipt["failures"].extend(readback_failures(after["protection"], payload, expected_provider_checks))
             if after["main"]["sha"] != args.expected_head or after["main"]["protected"] is not True or after["rulesets"]:
                 receipt["failures"].append("Post-apply main head/protected/rulesets mismatch")
             receipt["debtResolved"] = not receipt["failures"]
