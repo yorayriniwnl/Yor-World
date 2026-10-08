@@ -159,7 +159,8 @@ test.describe("C3 Failure Recovery, Context Loss & Mobile Resilience", () => {
     await expect(reducedMotion).toHaveAttribute("aria-checked", "true");
     await reducedMotion.click();
     await expect(reducedMotion).toHaveAttribute("aria-checked", "false");
-    await page.getByTestId("a11y-link-projects").click();
+    // Verify the in-world accessible route while the native fullscreen modal is active.
+    await page.getByTestId("studio-projects-link").click();
     await expect(page).toHaveURL(/\/projects$/);
     await expect(page.locator("canvas")).toHaveCount(0);
     await saveEvidence(info, "toolbar-pointer-controls.json", { pointerQualityControlReached: true, appliedTier: "medium", pointerReducedMotionToggleApplied: true, pointerProjectsNavigationApplied: true });
@@ -196,9 +197,9 @@ test.describe("C3 Failure Recovery, Context Loss & Mobile Resilience", () => {
     await expect(failureContainer).toBeVisible({ timeout: 10000 });
 
     // Public links (Projects, About) must remain reachable
-    const projectsLink = page.locator('[data-testid="fallback-projects-link"], a[href="/projects"]');
-    await expect(projectsLink.first()).toBeVisible();
-    await projectsLink.first().click();
+    const projectsLink = page.getByTestId("studio-projects-link");
+    await expect(projectsLink).toBeVisible();
+    await projectsLink.click();
 
     await expect(page).toHaveURL(/\/projects/);
     await saveEvidence(info, "renderer-failure-dialog-safe.json", {
