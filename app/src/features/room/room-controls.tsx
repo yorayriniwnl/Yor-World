@@ -10,9 +10,21 @@ export interface RoomControlsProps {
   controller: ExperienceController;
   snapshot?: ExperienceSnapshot;
   onClose?: () => void;
+  onSoundChange?: ((enabled: boolean) => void | Promise<void>) | undefined;
 }
 
-export function RoomControls({ controller, snapshot: initialSnapshot, onClose }: RoomControlsProps) {
+export function RoomControls({ controller, snapshot: initialSnapshot, onClose, onSoundChange }: RoomControlsProps) {
+  const dialogRef = React.useRef<HTMLDialogElement>(null);
+  React.useLayoutEffect(() => {
+    const dialog = dialogRef.current;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    dialog?.showModal();
+    return () => {
+      dialog?.close();
+      if (previousFocus?.isConnected) previousFocus.focus({ preventScroll: true });
+    };
+  }, []);
+
   const [snapshot, setSnapshot] = React.useState<ExperienceSnapshot>(
     () => initialSnapshot ?? controller.getSnapshot()
   );
@@ -26,17 +38,21 @@ export function RoomControls({ controller, snapshot: initialSnapshot, onClose }:
   const { world, preferences, characterAction, paintingAngleDeg } = snapshot;
 
   return (
-    <section
+    <dialog
+      ref={dialogRef}
+      onCancel={(event) => { event.preventDefault(); onClose?.(); }}
+      aria-modal="true"
       aria-label="Studio Room Controls"
       className={styles.container}
       data-testid="room-controls-panel"
-      role="region"
+      role="dialog"
     >
       <header className={styles.header}>
-        <h2 className={styles.title}>Studio Accessibility & Room Controls</h2>
+        <h2 className={styles.title}>Room controls</h2>
         {onClose && (
           <button
             type="button"
+            autoFocus
             className={styles.closeBtn}
             onClick={onClose}
             aria-label="Close room controls panel"
@@ -130,7 +146,10 @@ export function RoomControls({ controller, snapshot: initialSnapshot, onClose }:
             type="checkbox"
             checked={preferences.soundEnabled}
             data-testid="control-toggle-sound"
-            onChange={(e) => controller.send({ type: "SET_SOUND", enabled: e.target.checked })}
+            onChange={(e) => {
+              if (onSoundChange) void onSoundChange(e.target.checked);
+              else void controller.send({ type: "SET_SOUND", enabled: e.target.checked });
+            }}
           />
           Studio Sound Effects ({preferences.soundEnabled ? "ENABLED" : "MUTED"})
         </label>
@@ -228,6 +247,6 @@ export function RoomControls({ controller, snapshot: initialSnapshot, onClose }:
           Reset View / Escape to Explore (Escape Key)
         </button>
       </div>
-    </section>
+    </dialog>
   );
 }

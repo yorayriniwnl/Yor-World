@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useSyncExternalStore } from "react";
+import React, { useState, useSyncExternalStore, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
+import { createPortal } from "react-dom";
 import styles from "./world.module.css";
 import portfolioStyles from "@/features/portfolio/portfolio.module.css";
 import type { PublishedProject } from "@/contracts/content";
@@ -48,16 +49,23 @@ export function StudioLauncher({ projects = publishedProjects, publicationRevisi
   const [manuallyOpened, setManuallyOpened] = useState<boolean>(false);
 
   const isEntered = (autoEnter && !manuallyClosed) || manuallyOpened;
+  const disclosureRef = useRef<HTMLDetailsElement>(null);
+  const wasEntered = useRef(false);
+  useEffect(() => {
+    if (wasEntered.current && !isEntered) disclosureRef.current?.querySelector("summary")?.focus();
+    wasEntered.current = isEntered;
+  }, [isEntered]);
+  const stageHost = typeof document === "undefined" ? null : document.getElementById("studio-stage-host");
 
   return (
     <div>
       {!isEntered ? (
-        <details className={portfolioStyles.studioDisclosure} data-testid="studio-disclosure">
+        <details ref={disclosureRef} className={portfolioStyles.studioDisclosure} data-testid="studio-disclosure">
           <summary>Enter studio <span aria-hidden="true">+</span></summary>
           <div className={portfolioStyles.studioMessage}>
-            <p>The studio is not yet available.</p>
+            <p>Explore the interactive studio. Sound starts muted, and you can skip the entrance or return to the portfolio at any time.</p>
             <p>
-              Launch the <strong>G1 Interactive 3D Studio Feasibility Proof</strong> to experience the integrated bright white workstation, blue moving chair, resident, and ambient lighting:
+              Step inside the bright white workstation, meet the resident, and discover the projects through the objects in the room.
             </p>
             <div style={{ marginTop: "0.75rem" }}>
               <button
@@ -76,7 +84,7 @@ export function StudioLauncher({ projects = publishedProjects, publicationRevisi
             </div>
           </div>
         </details>
-      ) : (
+      ) : stageHost ? createPortal(
         <DynamicWorldRoot
           projects={projects}
           publicationRevision={publicationRevision}
@@ -86,8 +94,8 @@ export function StudioLauncher({ projects = publishedProjects, publicationRevisi
           }}
           simulateAssetError={simulateAssetError}
           simulateRendererError={simulateRendererError}
-        />
-      )}
+        />, stageHost
+      ) : null}
     </div>
   );
 }

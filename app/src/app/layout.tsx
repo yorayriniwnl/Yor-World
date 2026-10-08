@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: { default: "YOR WORLD — Ayush Roy Portfolio", template: "%s — YOR WORLD" },
   description: "Personal developer portfolio and verified engineering case studies of Ayush Roy (yorayriniwnl).",
   robots: { index: false, follow: false },
+  icons: { icon: [{ url: "/favicon.ico", sizes: "32x32" }, { url: "/icon.svg", type: "image/svg+xml" }] },
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

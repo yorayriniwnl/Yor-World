@@ -20,7 +20,9 @@ async function enterRenderedHome(page: Page) {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/?studio=1", { waitUntil: "domcontentloaded" });
   await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME", { timeout: 15000 });
+  await page.getByTestId("studio-options-toggle").click();
   await page.getByTestId("quality-tier-select").selectOption("low");
+  await page.getByTestId("studio-options-toggle").click();
   const canvas = page.getByTestId("world-canvas");
   await expect.poll(async () => Number(await canvas.getAttribute("data-rendered-frames"))).toBeGreaterThan(1);
   return canvas;
@@ -81,6 +83,7 @@ test.describe("C3 Failure Recovery, Context Loss & Mobile Resilience", () => {
     const canvas = await enterRenderedHome(page);
     const oldCanvas = await canvas.elementHandle();
     if (!oldCanvas) throw new Error("Missing rendered canvas.");
+    await page.getByTestId("studio-options-toggle").click();
     await page.getByTestId("quality-tier-select").selectOption("static");
     await expect(page.getByTestId("world-static-container")).toBeVisible();
     await expect(page.locator("canvas")).toHaveCount(0);
@@ -142,6 +145,7 @@ test.describe("C3 Failure Recovery, Context Loss & Mobile Resilience", () => {
     // GitHub-hosted SwiftShader can make this real-renderer pointer path exceed the suite default while still completing correctly.
     test.setTimeout(45_000);
     await enterRenderedHome(page);
+    await page.getByTestId("studio-options-toggle").click();
     const qualitySelect = page.getByTestId("quality-tier-select");
     // A real mouse click must reach the select before native keyboard selection.
     await qualitySelect.click();
@@ -216,6 +220,7 @@ test.describe("C3 Failure Recovery, Context Loss & Mobile Resilience", () => {
     await expect(stage).toBeVisible({ timeout: 10000 });
 
     // Perform tap/click on camera HUD controls
+    await page.getByTestId("studio-options-toggle").click();
     const homeBtn = page.locator('[data-testid="camera-home-btn"]');
     if (await homeBtn.isVisible()) {
       await homeBtn.click();

@@ -62,7 +62,9 @@ test.describe("Actual production CSP and immutable asset behavior", () => {
     page.on("console", (message) => { if (/violat.*Content Security Policy|Refused to/i.test(message.text())) blocked.push(message.text()); });
     await page.goto("/?studio=1");
     await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME", { timeout: 15000 });
+    await page.getByTestId("studio-options-toggle").click();
     await page.getByTestId("quality-tier-select").selectOption("low");
+    await page.getByTestId("studio-options-toggle").click();
     const canvas = page.getByTestId("world-canvas");
     await expect(canvas).toBeVisible();
     const before = Number(await canvas.getAttribute("data-rendered-frames"));

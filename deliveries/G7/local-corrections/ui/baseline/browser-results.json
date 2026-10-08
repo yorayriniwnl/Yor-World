@@ -1,0 +1,227 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config",
+      "../deliveries/G7/local-corrections/ui/ui-preview.config.ts",
+      "--grep",
+      "1440x1000|Room sound opt-in"
+    ],
+    "configFile": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\ui\\ui-preview.config.ts",
+    "rootDir": "C:/Users/yoray/Projects/Yor-World-Local-Corrections/app/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/yoray/Projects/Yor-World-Local-Corrections/deliveries/G7/local-corrections/ui/baseline/playwright",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chrome",
+        "name": "chrome",
+        "testDir": "C:/Users/yoray/Projects/Yor-World-Local-Corrections/app/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "local-studio-usability.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\ui\\baseline\\browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "local-studio-usability.spec.ts",
+      "file": "local-studio-usability.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "studio space, bounded controls and real Close at 1440x1000",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chrome",
+              "projectName": "chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 3580,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m1007.9999999999999\u001b[39m\nReceived:   \u001b[31m574.78125\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m1007.9999999999999\u001b[39m\nReceived:   \u001b[31m574.78125\u001b[39m\n    at C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:37:35",
+                    "location": {
+                      "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                      "column": 35,
+                      "line": 37
+                    },
+                    "snippet": "  35 |       return { stageWidth: stage.width, canvasFraction: canvas.height / stage.height, canvasPointerFraction: hits / 100, documentWidth: document.documentElement.scrollWidth };\n  36 |     });\n> 37 |     expect(dimensions.stageWidth).toBeGreaterThan(viewport.width * 0.7);\n     |                                   ^\n  38 |     expect(dimensions.canvasFraction).toBeGreaterThan(0.65);\n  39 |     expect(dimensions.canvasPointerFraction).toBeGreaterThanOrEqual(0.9);\n  40 |     expect(dimensions.documentWidth).toBeLessThanOrEqual(viewport.width);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                        "column": 35,
+                        "line": 37
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m1007.9999999999999\u001b[39m\nReceived:   \u001b[31m574.78125\u001b[39m\n\n  35 |       return { stageWidth: stage.width, canvasFraction: canvas.height / stage.height, canvasPointerFraction: hits / 100, documentWidth: document.documentElement.scrollWidth };\n  36 |     });\n> 37 |     expect(dimensions.stageWidth).toBeGreaterThan(viewport.width * 0.7);\n     |                                   ^\n  38 |     expect(dimensions.canvasFraction).toBeGreaterThan(0.65);\n  39 |     expect(dimensions.canvasPointerFraction).toBeGreaterThanOrEqual(0.9);\n  40 |     expect(dimensions.documentWidth).toBeLessThanOrEqual(viewport.width);\n    at C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:37:35"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-08T18:17:14.824Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\ui\\baseline\\playwright\\local-studio-usability-stu-20037-and-real-Close-at-1440x1000-chrome\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\ui\\baseline\\playwright\\local-studio-usability-stu-20037-and-real-Close-at-1440x1000-chrome\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                    "column": 35,
+                    "line": 37
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "1010eb3f2ae36aacd9d5-89dc481c1d3c61ad6949",
+          "file": "local-studio-usability.spec.ts",
+          "line": 25,
+          "column": 3
+        },
+        {
+          "title": "Room sound opt-in, HUD and actual runtime stay synchronized in both directions",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chrome",
+              "projectName": "chrome",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 7908,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('sound-toggle-btn')\nExpected: \u001b[32m\"false\"\u001b[39m\nReceived: \u001b[31m\"\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" getByTestId('sound-toggle-btn') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('sound-toggle-btn')\u001b[22m\n\u001b[2m    14 × locator resolved to <button type=\"button\" aria-label=\"Sound Off\" data-testid=\"sound-toggle-btn\" class=\"world-module__FC9lxW__hudButton \">Sound: Off</button>\u001b[22m\n\u001b[2m       - unexpected value \"null\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('sound-toggle-btn')\nExpected: \u001b[32m\"false\"\u001b[39m\nReceived: \u001b[31m\"\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" getByTestId('sound-toggle-btn') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('sound-toggle-btn')\u001b[22m\n\u001b[2m    14 × locator resolved to <button type=\"button\" aria-label=\"Sound Off\" data-testid=\"sound-toggle-btn\" class=\"world-module__FC9lxW__hudButton \">Sound: Off</button>\u001b[22m\n\u001b[2m       - unexpected value \"null\"\u001b[22m\n\n    at C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:94:23",
+                    "location": {
+                      "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                      "column": 23,
+                      "line": 94
+                    },
+                    "snippet": "  92 |   const diagnostic = page.getByTestId(\"world-diagnostics\");\n  93 |   const sound = page.getByTestId(\"sound-toggle-btn\");\n> 94 |   await expect(sound).toHaveAttribute(\"aria-pressed\", \"false\");\n     |                       ^\n  95 |   await expect.poll(async () => JSON.parse((await diagnostic.textContent())!).soundEnabled).toBe(false);\n  96 |   await page.getByTestId(\"toggle-room-controls-btn\").click();\n  97 |   const roomSound = page.getByTestId(\"control-toggle-sound\");"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                        "column": 23,
+                        "line": 94
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByTestId('sound-toggle-btn')\nExpected: \u001b[32m\"false\"\u001b[39m\nReceived: \u001b[31m\"\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" getByTestId('sound-toggle-btn') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('sound-toggle-btn')\u001b[22m\n\u001b[2m    14 × locator resolved to <button type=\"button\" aria-label=\"Sound Off\" data-testid=\"sound-toggle-btn\" class=\"world-module__FC9lxW__hudButton \">Sound: Off</button>\u001b[22m\n\u001b[2m       - unexpected value \"null\"\u001b[22m\n\n\n  92 |   const diagnostic = page.getByTestId(\"world-diagnostics\");\n  93 |   const sound = page.getByTestId(\"sound-toggle-btn\");\n> 94 |   await expect(sound).toHaveAttribute(\"aria-pressed\", \"false\");\n     |                       ^\n  95 |   await expect.poll(async () => JSON.parse((await diagnostic.textContent())!).soundEnabled).toBe(false);\n  96 |   await page.getByTestId(\"toggle-room-controls-btn\").click();\n  97 |   const roomSound = page.getByTestId(\"control-toggle-sound\");\n    at C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:94:23"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-08T18:17:19.362Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\ui\\baseline\\playwright\\local-studio-usability-Roo-dfb0d-hronized-in-both-directions-chrome\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\ui\\baseline\\playwright\\local-studio-usability-Roo-dfb0d-hronized-in-both-directions-chrome\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                    "column": 23,
+                    "line": 94
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "1010eb3f2ae36aacd9d5-09b28645938d75127914",
+          "file": "local-studio-usability.spec.ts",
+          "line": 89,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-08T18:17:14.350Z",
+    "duration": 13395.343,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

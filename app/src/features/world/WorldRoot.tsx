@@ -36,6 +36,14 @@ export default function WorldRoot({
   simulateRendererError = false,
 }: WorldRootProps) {
   const router = useRouter();
+  const stageRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    stageRef.current?.scrollIntoView({ block: "start" });
+    stageRef.current?.focus({ preventScroll: true });
+  }, []);
+  const optionsRef = useRef<HTMLDetailsElement | null>(null);
+  const soundDesiredRef = useRef(false);
+  const soundRequestRef = useRef(0);
   const soundToggleRef = useRef<() => void>(() => {});
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const runtimeRef = useRef<WorldRuntime | null>(null);
@@ -74,144 +82,170 @@ export default function WorldRoot({
   // Initialize runtime and lifecycle manager
   useEffect(() => {
     if (runtimeUnavailable || !canvasRef.current) return;
+    const canvas = canvasRef.current;
+    let disposed = false;
+    let initialized = false;
 
-    const capabilities = {
-      ...readDeviceCapabilities(),
-      prefersReducedMotion: initialReducedMotionRef.current,
-      userPreference: qualityPreferenceRef.current,
-    };
-    const initialTier = chooseInitialTier(capabilities);
-    setEffectiveTier(initialTier);
-    if (initialTier === "static") {
-      setLifecycleState("STATIC");
-      return;
-    }
-
-    const lm = new LifecycleManager();
-    failureRetryLimitRef.current = lm.maxRetries;
-    lifecycleManagerRef.current = lm;
-
-    // Subscribe to lifecycle state changes
-    const unsubscribe = lm.subscribe((newState) => {
-      setLifecycleState(newState);
-      if (newState === "FAILURE") {
-        setError(lm.getFailureReason() || "Unknown studio failure");
+    // Cancel a development Strict Mode probe before allocating a GPU context.
+    // A disposed context cannot be reconstructed on that same canvas.
+    let cleanup: (() => void) | undefined;
+    const initialize = () => {
+      const capabilities = {
+        ...readDeviceCapabilities(),
+        prefersReducedMotion: initialReducedMotionRef.current,
+        userPreference: qualityPreferenceRef.current,
+      };
+      const initialTier = chooseInitialTier(capabilities);
+      setEffectiveTier(initialTier);
+      if (initialTier === "static") {
+        setLifecycleState("STATIC");
+        return;
       }
-    });
 
-    audioControllerRef.current = new AudioController();
+      const lm = new LifecycleManager();
+      failureRetryLimitRef.current = lm.maxRetries;
+      lifecycleManagerRef.current = lm;
 
-    const qc = new AdaptiveQualityController(
-      capabilities,
-      {
-        onTierChange: (newTier) => {
-          setEffectiveTier(newTier);
-          if (runtimeRef.current) {
-            runtimeRef.current.setQualityTier(newTier);
-          }
-        },
-      }
-    );
-    qualityControllerRef.current = qc;
-    const sampler = new RuntimeQualitySampler(qc);
-
-    const runtime = new WorldRuntime({
-      onFrameDuration: (durationMs, timestamp) => {
-        const currentRuntime = runtimeRef.current;
-        if (!currentRuntime) return;
-        const snapshot = currentRuntime.experienceController.getSnapshot();
-        sampler.recordFrame(durationMs, timestamp, {
-          visible: document.visibilityState !== "hidden", lifecycle: lm.getState(), phase: snapshot.phase,
-          camera: currentRuntime.cameraDirector?.getCurrentPreset() ?? snapshot.activeCamera, panel: snapshot.activePanel,
-        });
-      },
-      onSamplingPause: () => sampler.pause(),
-      projects,
-      onNavigatePublic: (href) => router.push(href),
-      onToggleSound: () => soundToggleRef.current(),
-      canvas: canvasRef.current,
-      lifecycleManager: lm,
-      soundEnabled: false,
-      reducedMotion: initialReducedMotionRef.current,
-      initialTier,
-      simulateAssetError,
-      simulateRendererError,
-      onReady: (diag) => {
-        setDiagnostics(diag);
-      },
-      onError: (err) => {
-        setError(err.message);
-      },
-      onStateChange: (state) => {
-        setLifecycleState(state);
-      },
-    });
-
-    runtimeRef.current = runtime;
-    setExperienceController(runtime.experienceController);
-
-    const unsubExp = runtime.experienceController.subscribe((snap) => {
-      if (snap.activePanel === "launcher") {
-        setShowLauncher(true);
-      } else if (snap.activePanel === "room-controls") {
-        setShowRoomControls(true);
-      } else if (snap.activePanel === "replay") {
-        setShowReplay(true);
-      } else if (snap.activePanel === null) {
-        setShowLauncher(false);
-        setShowReplay(false);
-      }
-    });
-
-    const handleResize = () => runtime.resize();
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        const state = lm.getState();
-        if (state === "ENTRANCE" || state === "TRANSITION") {
-          runtime.skip();
-          setDiagnostics(runtime.getDiagnostics());
-        } else if (state === "HOME") {
-          runtime.escape();
-          setActiveCamera("home-desktop");
-          setDiagnostics(runtime.getDiagnostics());
-          setShowRoomControls(false);
-          setShowLauncher(false);
-        } else if (state === "LOADING") {
-          lm.continueWithPortfolio();
-          if (onClose) onClose();
-        } else if (state === "FAILURE") {
-          lm.continueWithPortfolio();
-          if (onClose) onClose();
+      // Subscribe to lifecycle state changes
+      const unsubscribe = lm.subscribe((newState) => {
+        setLifecycleState(newState);
+        if (newState === "FAILURE") {
+          setError(lm.getFailureReason() || "Unknown studio failure");
         }
-      }
+      });
+
+      audioControllerRef.current = new AudioController();
+
+      const qc = new AdaptiveQualityController(
+        capabilities,
+        {
+          onTierChange: (newTier) => {
+            setEffectiveTier(newTier);
+            if (runtimeRef.current) {
+              runtimeRef.current.setQualityTier(newTier);
+            }
+          },
+        }
+      );
+      qualityControllerRef.current = qc;
+      const sampler = new RuntimeQualitySampler(qc);
+
+      const runtime = new WorldRuntime({
+        onFrameDuration: (durationMs, timestamp) => {
+          const currentRuntime = runtimeRef.current;
+          if (disposed || !currentRuntime) return;
+          const snapshot = currentRuntime.experienceController.getSnapshot();
+          sampler.recordFrame(durationMs, timestamp, {
+            visible: document.visibilityState !== "hidden", lifecycle: lm.getState(), phase: snapshot.phase,
+            camera: currentRuntime.cameraDirector?.getCurrentPreset() ?? snapshot.activeCamera, panel: snapshot.activePanel,
+          });
+        },
+        onSamplingPause: () => sampler.pause(),
+        projects,
+        onNavigatePublic: (href) => router.push(href),
+        onToggleSound: () => soundToggleRef.current(),
+        canvas,
+        lifecycleManager: lm,
+        soundEnabled: false,
+        reducedMotion: initialReducedMotionRef.current,
+        initialTier,
+        simulateAssetError,
+        simulateRendererError,
+        onReady: (diag) => {
+          if (disposed) return;
+          setDiagnostics(diag);
+        },
+        onError: (err) => {
+          if (disposed) return;
+          setError(err.message);
+        },
+        onStateChange: (state) => {
+          if (disposed) return;
+          setLifecycleState(state);
+        },
+      });
+
+      runtimeRef.current = runtime;
+      // A stored preference is not a running AudioContext or fresh consent.
+      runtime.setSound(false);
+      soundDesiredRef.current = false;
+      setSoundEnabled(false);
+      setExperienceController(runtime.experienceController);
+
+      const unsubExp = runtime.experienceController.subscribe((snap) => {
+        setShowLauncher(snap.activePanel === "launcher");
+        setShowRoomControls(snap.activePanel === "room-controls");
+        setShowReplay(snap.activePanel === "replay");
+      });
+
+      const handleResize = () => runtime.resize();
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          if ((e.target as HTMLElement)?.closest("dialog") || (e.target as HTMLElement)?.tagName === "SELECT") return;
+          if (optionsRef.current?.open) {
+            optionsRef.current.open = false;
+            optionsRef.current.querySelector("summary")?.focus();
+          }
+          const state = lm.getState();
+          if (state === "ENTRANCE" || state === "TRANSITION") {
+            runtime.skip();
+            setDiagnostics(runtime.getDiagnostics());
+          } else if (state === "HOME") {
+            runtime.escape();
+            setActiveCamera("home-desktop");
+            setDiagnostics(runtime.getDiagnostics());
+            setShowRoomControls(false);
+            setShowLauncher(false);
+          } else if (state === "LOADING") {
+            lm.continueWithPortfolio();
+            if (onClose) onClose();
+          } else if (state === "FAILURE") {
+            lm.continueWithPortfolio();
+            if (onClose) onClose();
+          }
+        }
+      };
+
+      window.addEventListener("resize", handleResize);
+      window.addEventListener("keydown", handleKeyDown);
+
+      // Diagnostics polling interval for live state
+      const interval = setInterval(() => {
+        if (runtimeRef.current) {
+          const diag = runtimeRef.current.getDiagnostics();
+          setDiagnostics(diag);
+          setLifecycleState(diag.lifecycleState);
+        }
+      }, 100);
+
+      return () => {
+        sampler.stop();
+        clearInterval(interval);
+        unsubscribe();
+        unsubExp();
+        window.removeEventListener("resize", handleResize);
+        window.removeEventListener("keydown", handleKeyDown);
+        runtime.dispose();
+        audioControllerRef.current?.dispose();
+        audioControllerRef.current = null;
+        qualityControllerRef.current = null;
+        runtimeRef.current = null;
+        lifecycleManagerRef.current = null;
+        setExperienceController(null);
+      };
     };
-
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("keydown", handleKeyDown);
-
-    // Diagnostics polling interval for live state
-    const interval = setInterval(() => {
-      if (runtimeRef.current) {
-        const diag = runtimeRef.current.getDiagnostics();
-        setDiagnostics(diag);
-        setLifecycleState(diag.lifecycleState);
-      }
-    }, 100);
-
+    const initializeWhenVisible = () => {
+      if (disposed || initialized || document.visibilityState === "hidden" || !canvas.isConnected) return;
+      initialized = true;
+      cleanup = initialize();
+    };
+    const initializeTimer = window.setTimeout(initializeWhenVisible, 0);
+    document.addEventListener("visibilitychange", initializeWhenVisible);
     return () => {
-      sampler.stop();
-      clearInterval(interval);
-      unsubscribe();
-      unsubExp();
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("keydown", handleKeyDown);
-      runtime.dispose();
-      audioControllerRef.current?.dispose();
-      audioControllerRef.current = null;
-      qualityControllerRef.current = null;
-      runtimeRef.current = null;
-      lifecycleManagerRef.current = null;
-      setExperienceController(null);
+      disposed = true;
+      window.clearTimeout(initializeTimer);
+      document.removeEventListener("visibilitychange", initializeWhenVisible);
+      cleanup?.();
     };
   }, [simulateAssetError, simulateRendererError, onClose, projects, router, runtimeGeneration, runtimeUnavailable]);
 
@@ -264,15 +298,28 @@ export default function WorldRoot({
     }
   }, []);
 
-  const handleSoundToggle = useCallback(async () => {
-    if (!audioControllerRef.current) return;
-    const nextDesired = !soundEnabled;
-    const actualEnabled = await audioControllerRef.current.setEnabled(nextDesired);
-    setSoundEnabled(actualEnabled);
-    if (runtimeRef.current) {
-      runtimeRef.current.setSound(actualEnabled);
+  const handleSoundChange = useCallback(async (enabled: boolean) => {
+    const audio = audioControllerRef.current;
+    const runtime = runtimeRef.current;
+    if (!audio || !runtime) return;
+    const request = ++soundRequestRef.current;
+    soundDesiredRef.current = enabled;
+    const actualEnabled = await audio.setEnabled(enabled);
+    // Ignore an old activation completing after mute, disposal or reconstruction.
+    if (audio !== audioControllerRef.current) return;
+    if (request !== soundRequestRef.current) {
+      if (!soundDesiredRef.current) await audio.setEnabled(false);
+      return;
     }
-  }, [soundEnabled]);
+    soundDesiredRef.current = actualEnabled;
+    setSoundEnabled(actualEnabled);
+    runtime.setSound(actualEnabled);
+    setDiagnostics(runtime.getDiagnostics());
+  }, []);
+
+  const handleSoundToggle = useCallback(() => {
+    void handleSoundChange(!soundDesiredRef.current);
+  }, [handleSoundChange]);
 
   useEffect(() => {
     soundToggleRef.current = () => { void handleSoundToggle(); };
@@ -375,6 +422,7 @@ export default function WorldRoot({
           <div className={styles.modalOverlay} data-testid="room-controls-modal">
             <RoomControls
               controller={experienceController}
+              onSoundChange={handleSoundChange}
               onClose={() => { setShowRoomControls(false); void experienceController.send({ type: "ESCAPE" }); }}
             />
           </div>
@@ -413,6 +461,7 @@ export default function WorldRoot({
           <div className={styles.modalOverlay} data-testid="room-controls-modal">
             <RoomControls
               controller={experienceController}
+              onSoundChange={handleSoundChange}
               onClose={() => { setShowRoomControls(false); void experienceController.send({ type: "ESCAPE" }); }}
             />
           </div>
@@ -430,6 +479,8 @@ export default function WorldRoot({
   return (
     <div
       className={styles.stageContainer}
+      ref={stageRef}
+      tabIndex={-1}
       data-testid="world-stage-container"
       data-lifecycle-state={lifecycleState}
       role="region"
@@ -494,168 +545,52 @@ export default function WorldRoot({
         </div>
       )}
 
-      {/* Standard World HUD Overlay */}
-      <div className={styles.hudOverlay}>
-        <div className={styles.accessibilityControls}>
-          <AccessibilityControls
-            currentTier={qualityPreference}
-            onTierChange={handleQualityChange}
-            reducedMotion={reducedMotion}
-            onReducedMotionToggle={handleReducedMotionToggle}
-            soundEnabled={soundEnabled}
-            onSoundToggle={handleSoundToggle}
-            decorativePaused={decorativePaused}
-            onDecorativePauseToggle={handleDecorativePauseToggle}
-          />
+      <div className={styles.hudOverlay} data-testid="world-primary-controls">
+        <div className={styles.primaryControls}>
+          <button type="button" onClick={handleGreet} className={styles.hudButton} data-testid="greet-resident-btn" aria-label="Acknowledge and greet resident">Greet</button>
+          <button type="button" onClick={handleSkip} className={styles.hudButton} data-testid="skip-motion-btn" aria-label="Instant skip to coding pose (Escape)">Skip (Esc)</button>
+          <button type="button" onClick={() => { void experienceController?.send({ type: "OPEN_PANEL", panel: "room-controls" }); }} className={styles.hudButton} data-testid="toggle-room-controls-btn" aria-label="Open accessible studio room controls">Room</button>
+          <button type="button" onClick={handleSoundToggle} className={styles.hudButton} data-testid="sound-toggle-btn" aria-pressed={soundEnabled} aria-label={`Sound ${soundEnabled ? "On" : "Off"}`}>Sound: {soundEnabled ? "On" : "Off"}</button>
+          {onClose && <button type="button" onClick={onClose} className={styles.hudButton} data-testid="exit-studio-btn" aria-label="Exit 3D Studio and return to portfolio">Exit</button>}
+          <details ref={optionsRef} className={styles.optionsDisclosure} data-testid="studio-options">
+            <summary className={styles.hudButton} data-testid="studio-options-toggle">Options</summary>
+            <section className={styles.optionsPanel} aria-label="Studio presentation options" data-testid="studio-options-panel">
+              <div className={styles.optionsHeader}>
+                <h2>Studio options</h2>
+                <button type="button" className={styles.hudButton} aria-label="Close studio options" onClick={() => {
+                  if (!optionsRef.current) return;
+                  optionsRef.current.open = false;
+                  optionsRef.current.querySelector("summary")?.focus();
+                }}>Close</button>
+              </div>
+              <AccessibilityControls currentTier={qualityPreference} onTierChange={handleQualityChange} reducedMotion={reducedMotion} onReducedMotionToggle={handleReducedMotionToggle} soundEnabled={soundEnabled} onSoundToggle={handleSoundToggle} decorativePaused={decorativePaused} onDecorativePauseToggle={handleDecorativePauseToggle} />
+              <div className={styles.hudControls}>
+                <button type="button" onClick={handleCancel} className={styles.hudButton} data-testid="cancel-motion-btn" aria-label="Safely cancel motion and return to work">Cancel motion</button>
+                <button type="button" onClick={handleReducedMotionToggle} className={styles.hudButton} data-testid="reduced-motion-toggle-btn" aria-label={`Reduced Motion ${reducedMotion ? "On" : "Off"}`}>Reduced Motion: {reducedMotion ? "On" : "Off"}</button>
+              </div>
+              <div className={styles.hudControls} aria-label="Studio cameras">
+                {([
+                  ["home-desktop", "camera-home-btn", "Home Camera"],
+                  ["monitor", "camera-monitor-btn", "Monitor"],
+                  ["reverse-doorway", "camera-reverse-btn", "Reverse Doorway"],
+                  ["home-mobile", "camera-mobile-btn", "Mobile View"],
+                ] as const).map(([preset, testId, label]) => <button key={preset} type="button" onClick={() => handleCameraChange(preset)} className={`${styles.hudButton} ${activeCamera === preset ? styles.hudButtonActive : ""}`} data-testid={testId} aria-pressed={activeCamera === preset}>{label}</button>)}
+              </div>
+            </section>
+          </details>
+          <button type="button" onClick={() => setShowDiagnostics((prev) => !prev)} className={styles.hudButton} data-testid="diagnostics-toggle-btn" aria-expanded={showDiagnostics}>Diagnostics</button>
         </div>
-
-        <div className={styles.hudTopBar}>
-          <div className={styles.hudControls}>
-            <button
-              type="button"
-              onClick={handleGreet}
-              className={styles.hudButton}
-              data-testid="greet-resident-btn"
-              aria-label="Acknowledge and greet resident"
-            >
-              Greet Resident
-            </button>
-            <button
-              type="button"
-              onClick={handleCancel}
-              className={styles.hudButton}
-              data-testid="cancel-motion-btn"
-              aria-label="Safely cancel motion and return to work"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={handleSkip}
-              className={styles.hudButton}
-              data-testid="skip-motion-btn"
-              aria-label="Instant skip to coding pose (Escape)"
-            >
-              Skip (Esc)
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowRoomControls((prev) => !prev)}
-              className={`${styles.hudButton} ${showRoomControls ? styles.hudButtonActive : ""}`}
-              data-testid="toggle-room-controls-btn"
-              aria-label="Toggle accessible studio room controls"
-            >
-              Room Controls
-            </button>
-          </div>
-
-          <div className={styles.hudControls}>
-            <button
-              type="button"
-              onClick={handleSoundToggle}
-              className={`${styles.hudButton} ${soundEnabled ? styles.hudButtonActive : ""}`}
-              data-testid="sound-toggle-btn"
-              aria-label={`Sound ${soundEnabled ? "On" : "Off"}`}
-            >
-              Sound: {soundEnabled ? "On" : "Off"}
-            </button>
-            <button
-              type="button"
-              onClick={handleReducedMotionToggle}
-              className={`${styles.hudButton} ${reducedMotion ? styles.hudButtonActive : ""}`}
-              data-testid="reduced-motion-toggle-btn"
-              aria-label={`Reduced Motion ${reducedMotion ? "On" : "Off"}`}
-            >
-              Reduced Motion: {reducedMotion ? "On" : "Off"}
-            </button>
-            {onClose && (
-              <button
-                type="button"
-                onClick={onClose}
-                className={styles.hudButton}
-                data-testid="exit-studio-btn"
-                aria-label="Exit 3D Studio and return to portfolio"
-              >
-                Exit Studio
-              </button>
-            )}
-          </div>
-        </div>
-
-        <div className={styles.hudTopBar}>
-          <div className={styles.hudControls}>
-            <button
-              type="button"
-              onClick={() => handleCameraChange("home-desktop")}
-              className={`${styles.hudButton} ${activeCamera === "home-desktop" ? styles.hudButtonActive : ""}`}
-              data-testid="camera-home-btn"
-            >
-              Home Camera
-            </button>
-            <button
-              type="button"
-              onClick={() => handleCameraChange("monitor")}
-              className={`${styles.hudButton} ${activeCamera === "monitor" ? styles.hudButtonActive : ""}`}
-              data-testid="camera-monitor-btn"
-            >
-              Monitor
-            </button>
-            <button
-              type="button"
-              onClick={() => handleCameraChange("reverse-doorway")}
-              className={`${styles.hudButton} ${activeCamera === "reverse-doorway" ? styles.hudButtonActive : ""}`}
-              data-testid="camera-reverse-btn"
-            >
-              Reverse Doorway
-            </button>
-            <button
-              type="button"
-              onClick={() => handleCameraChange("home-mobile")}
-              className={`${styles.hudButton} ${activeCamera === "home-mobile" ? styles.hudButtonActive : ""}`}
-              data-testid="camera-mobile-btn"
-            >
-              Mobile View
-            </button>
-          </div>
-
-          <div className={styles.hudControls}>
-            {isTransition && (
-              <span className={styles.transitionIndicator} data-testid="transition-indicator">
-                Transition in progress...
-              </span>
-            )}
-            <button
-              type="button"
-              onClick={() => setShowDiagnostics((prev) => !prev)}
-              className={styles.hudButton}
-              data-testid="diagnostics-toggle-btn"
-            >
-              Diagnostics
-            </button>
-            {diagnostics && (
-              <>
-                <span className={styles.statusBadge} data-testid="status-badge" data-lifecycle-state={lifecycleState}>
-                  {diagnostics.activeClip} · {diagnostics.mode}
-                </span>
-                <span data-testid="lifecycle-badge" style={{ display: "none" }}>
-                  {lifecycleState}
-                </span>
-              </>
-            )}
-          </div>
-        </div>
-
-        {showDiagnostics && diagnostics && (
-          <pre className={styles.diagnosticsDrawer} data-testid="world-diagnostics">
-            {JSON.stringify(diagnostics, null, 2)}
-          </pre>
-        )}
+        {isTransition && <span className={styles.transitionIndicator} data-testid="transition-indicator">Transition in progress...</span>}
+        {diagnostics && <span className={styles.statusBadge} data-testid="status-badge" data-lifecycle-state={lifecycleState}>{diagnostics.activeClip} / {diagnostics.mode}</span>}
+        <span data-testid="lifecycle-badge" hidden>{lifecycleState}</span>
+        {showDiagnostics && diagnostics && <pre className={styles.diagnosticsDrawer} data-testid="world-diagnostics">{JSON.stringify(diagnostics, null, 2)}</pre>}
       </div>
 
       {showRoomControls && experienceController && (
         <div className={styles.modalOverlay} data-testid="room-controls-modal">
           <RoomControls
             controller={experienceController}
+            onSoundChange={handleSoundChange}
             onClose={() => { setShowRoomControls(false); void experienceController.send({ type: "ESCAPE" }); }}
           />
         </div>

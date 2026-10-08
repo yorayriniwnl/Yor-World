@@ -62,6 +62,7 @@ test.describe("Physical & Room Interactions: Task C1 Arbitration & Robustness", 
 
   test("3. Attack: Escape key cancels interaction and restores safe explore base state", async ({ page }) => {
     // Open monitor camera preset
+    if (!await page.getByTestId("studio-options").evaluate((node) => (node as HTMLDetailsElement).open)) await page.getByTestId("studio-options-toggle").click();
     await page.click('[data-testid="camera-monitor-btn"]');
     await page.waitForTimeout(300);
 

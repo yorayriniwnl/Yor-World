@@ -36,6 +36,7 @@ export default async function HomePage() {
           <div className={styles.posterBottom}><p>A space for<br /><strong>curiosity.</strong></p><span>Interactive studio<br />Portfolio pages below</span></div>
         </aside>
       </section>
+      <section id="studio-stage-host" className={styles.studioSection} aria-label="Explore the interactive studio" />
       <section className={styles.directory} aria-labelledby="directory-heading">
         <div className={styles.directoryIntro}><p className={styles.eyebrow}>Take a look around</p><h2 id="directory-heading">Start anywhere.</h2></div>
         <ul className={styles.directoryList}>

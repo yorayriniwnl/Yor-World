@@ -1,9 +1,10 @@
 .stageContainer {
   position: relative;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
   width: 100%;
-  height: 640px;
-  min-height: 480px;
-  max-height: 80vh;
+  height: min(820px, 85dvh);
+  min-height: 360px;
   margin: 1.5rem 0 2rem;
   background-color: #0c1017;
   border-radius: var(--radius-md, 8px);
@@ -18,29 +19,36 @@
 }
 
 .hudOverlay {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  right: 1rem;
+  position: relative;
+  padding: 0.5rem;
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  pointer-events: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  background: #0c1017;
   z-index: 10;
 }
 
-.hudTopBar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  pointer-events: auto;
+.primaryControls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.375rem; }
+.optionsDisclosure summary { list-style: none; display: flex; align-items: center; }
+.optionsDisclosure summary::-webkit-details-marker { display: none; }
+.optionsPanel {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  right: 0.5rem;
+  width: min(480px, calc(100% - 1rem));
+  max-height: min(480px, 55dvh);
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: #0f172a;
+  color: #f8fafc;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  padding: 0 0.75rem 0.75rem;
+  box-shadow: 0 8px 32px #0008;
 }
-
-.accessibilityControls {
-  pointer-events: auto;
-}
+.optionsHeader { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; background: #0f172a; padding: 0.5rem 0; }
+.optionsHeader h2 { font-size: 1rem; margin: 0; color: #f8fafc; }
 
 .hudControls {
   display: flex;
@@ -96,7 +104,13 @@
 }
 
 .diagnosticsDrawer {
-  max-width: 420px;
+  position: absolute;
+  right: 0.5rem;
+  bottom: calc(100% + 0.5rem);
+  width: min(420px, calc(100% - 1rem));
+  max-height: min(360px, 45dvh);
+  overflow: auto;
+  margin: 0;
   padding: 0.75rem;
   font-family: var(--font-mono, monospace);
   font-size: 0.75rem;
@@ -140,7 +154,7 @@
 
 @media (max-width: 640px) {
   .stageContainer {
-    height: 520px;
+    height: 85dvh;
   }
   .hudControls {
     padding: 0.5rem;
@@ -208,6 +222,7 @@
 .entranceBanner {
   position: absolute;
   top: 1rem;
+  max-width: calc(100% - 1rem);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -247,6 +262,8 @@
 .modalOverlay {
   position: absolute;
   inset: 0;
+  min-height: 0;
+  overflow: auto;
   display: flex;
   align-items: center;
   justify-content: center;

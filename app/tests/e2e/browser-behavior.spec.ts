@@ -207,6 +207,7 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
     await page.waitForTimeout(800); // Wait until turn_to_visitor
 
     // Click cancel
+    if (!await page.getByTestId("studio-options").evaluate((node) => (node as HTMLDetailsElement).open)) await page.getByTestId("studio-options-toggle").click();
     await page.click('[data-testid="cancel-motion-btn"]');
 
     // Should indicate safe-return
@@ -265,6 +266,7 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
     await page.click('[data-testid="diagnostics-toggle-btn"]');
 
     // Switch to Monitor
+    if (!await page.getByTestId("studio-options").evaluate((node) => (node as HTMLDetailsElement).open)) await page.getByTestId("studio-options-toggle").click();
     await page.click('[data-testid="camera-monitor-btn"]');
     let text = await page.locator('[data-testid="world-diagnostics"]').textContent();
     let diag = JSON.parse(text!);
@@ -275,6 +277,7 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
     await captureScreenshot(page, "08-camera-monitor");
 
     // Switch to Reverse Doorway
+    if (!await page.getByTestId("studio-options").evaluate((node) => (node as HTMLDetailsElement).open)) await page.getByTestId("studio-options-toggle").click();
     await page.click('[data-testid="camera-reverse-btn"]');
     text = await page.locator('[data-testid="world-diagnostics"]').textContent();
     diag = JSON.parse(text!);
@@ -285,6 +288,7 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
     await captureScreenshot(page, "09-camera-reverse-doorway");
 
     // Switch back to Home
+    if (!await page.getByTestId("studio-options").evaluate((node) => (node as HTMLDetailsElement).open)) await page.getByTestId("studio-options-toggle").click();
     await page.click('[data-testid="camera-home-btn"]');
     text = await page.locator('[data-testid="world-diagnostics"]').textContent();
     diag = JSON.parse(text!);
@@ -328,6 +332,7 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
     await expect(page.locator('[data-testid="sound-toggle-btn"]')).toContainText("Sound: On");
 
     // Toggle Reduced Motion ON
+    if (!await page.getByTestId("studio-options").evaluate((node) => (node as HTMLDetailsElement).open)) await page.getByTestId("studio-options-toggle").click();
     await page.click('[data-testid="reduced-motion-toggle-btn"]');
     await expect(page.locator('[data-testid="reduced-motion-toggle-btn"]')).toContainText("Reduced Motion: On");
     await expect(page.locator('[data-testid="world-diagnostics"]')).toContainText('"reducedMotion": true');
