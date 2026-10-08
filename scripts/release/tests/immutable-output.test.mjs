@@ -11,10 +11,15 @@ const immutableDirectories = [
   "deliveries/G6/rc4-candidate", "deliveries/G6/rc5-candidate",
   "deliveries/G7/rc6-candidate", "deliveries/G7/rc6-candidate-r2",
   "deliveries/G7/rc6-candidate-r3", "deliveries/G7/rc6-candidate-r4", "deliveries/G7/rc6-candidate-r5",
+  "deliveries/G7/rc6-candidate-r6",
+  "deliveries/G7/rc6-independent-delta/r6-audit",
+  "deliveries/G7/rc6-independent-delta/gate-advice/final-r6",
+  "docs/planning/reviews/2026-10-08-rc6-r1",
   "docs/planning/reviews/2026-10-06-g6-r1",
 ];
 const immutableFiles = [
   "docs/planning/reviews/2026-10-06-g6-r1.md",
+  "docs/planning/reviews/2026-10-08-rc6-r1.md",
   "docs/planning/reviews/2026-10-06-rc5-independent-full-stack-audit.md",
   ...[1, 2, 3, 4, 5].map((revision) => `docs/releases/v1.0.0-rc${revision}.md`),
 ];
@@ -62,7 +67,7 @@ async function temporaryRepository(t) {
   }
   const accepted = path.join(root, "deliveries", "G6", "rc5-candidate");
   fs.writeFileSync(path.join(accepted, "release-manifest.json"), "isolated accepted fixture\n");
-  const mutable = path.join(root, "deliveries", "G7", "rc6-candidate-r6");
+  const mutable = path.join(root, "deliveries", "G7", "rc6-candidate-r7");
   const outside = path.join(fixture, "outside");
   fs.mkdirSync(mutable, { recursive: true });
   fs.mkdirSync(outside);
@@ -83,6 +88,18 @@ test("resolved output guards with isolated filesystem aliases", async (t) => {
   const manifest = path.join(accepted, "release-manifest.json");
   const originalManifest = fs.readFileSync(manifest);
   const originalDossier = fs.readFileSync(path.join(root, "docs/releases/v1.0.0-rc5.md"));
+  const sentinels = new Map(immutableFiles.map((name) => [name, fs.readFileSync(path.join(root, name))]));
+
+  await t.test("direct writers reject every preserved directory and immutable file", () => {
+    for (const directory of immutableDirectories) {
+      assert.throws(() => lib.writeJson(`${directory}/new/deep/output.json`, { forbidden: true }), immutableError);
+      assert.equal(fs.existsSync(path.join(root, directory, "new")), false);
+    }
+    for (const file of immutableFiles) {
+      assert.throws(() => lib.writeJson(file, { forbidden: true }), immutableError);
+      assert.throws(() => lib.writeJson(file.replace(/^docs\//, "docs-alias/"), { forbidden: true }), immutableError);
+    }
+  });
 
   await t.test("contained directory alias rejects existing accepted output", () => {
     assert.throws(() => lib.assertMutableOutput("accepted-alias/release-manifest.json"), immutableError);
@@ -126,21 +143,24 @@ test("resolved output guards with isolated filesystem aliases", async (t) => {
   await t.test("hard-linked mutable outputs reject before protected bytes can be truncated", () => {
     const linked = path.join(mutable, "hard-linked-output.json");
     fs.linkSync(manifest, linked);
-    assert.throws(() => lib.assertMutableOutput("deliveries/G7/rc6-candidate-r6/hard-linked-output.json"), /Hard-linked release output is forbidden/);
-    assert.throws(() => lib.writeJson("deliveries/G7/rc6-candidate-r6/hard-linked-output.json", { forbidden: true }), /Hard-linked release output is forbidden/);
+    assert.throws(() => lib.assertMutableOutput("deliveries/G7/rc6-candidate-r7/hard-linked-output.json"), /Hard-linked release output is forbidden/);
+    assert.throws(() => lib.writeJson("deliveries/G7/rc6-candidate-r7/hard-linked-output.json", { forbidden: true }), /Hard-linked release output is forbidden/);
     fs.unlinkSync(linked);
     assert.deepEqual(fs.readFileSync(manifest), originalManifest);
   });
   await t.test("mutable successors and similar prefixes remain writable", () => {
-    for (const name of ["deliveries/G7/rc6-candidate-r6/new/output.json", "deliveries/G7/rc6-candidate-r3-extra/output.json", "deliveries/G6/rc5-candidate-extra/output.json", "docs/releases/v1.0.0-rc6.md", "docs/planning/reviews/2026-10-06-g6-r1-extra.md"]) {
+    for (const name of ["deliveries/G7/rc6-candidate-r7/new/output.json", "deliveries/G7/rc6-candidate-r6-extra/output.json", "deliveries/G7/rc6-independent-delta/r7-audit/report.md", "deliveries/G7/rc6-independent-delta/gate-advice/final-r7/recommendation.md", "docs/planning/reviews/2026-10-08-rc6-r2/decision.json", "docs/planning/reviews/2026-10-08-rc6-r2.md", "deliveries/G7/rc6-candidate-r3-extra/output.json", "deliveries/G6/rc5-candidate-extra/output.json", "docs/releases/v1.0.0-rc6.md", "docs/planning/reviews/2026-10-06-g6-r1-extra.md"]) {
       assert.equal(lib.assertMutableOutput(name), path.join(root, name));
     }
+    lib.writeJson("deliveries/G7/rc6-candidate-r7/distinct-output.json", { isolatedR7: true });
+    assert.deepEqual(JSON.parse(fs.readFileSync(path.join(mutable, "distinct-output.json"), "utf8")), { isolatedR7: true });
     lib.writeJson("mutable-alias/new/deep/output.json", { mutable: true });
     assert.deepEqual(JSON.parse(fs.readFileSync(path.join(mutable, "new/deep/output.json"), "utf8")), { mutable: true });
   });
   await t.test("rejected guards leave isolated accepted fixtures unchanged", () => {
     assert.deepEqual(fs.readFileSync(manifest), originalManifest);
     assert.deepEqual(fs.readFileSync(path.join(root, "docs/releases/v1.0.0-rc5.md")), originalDossier);
+    for (const [name, bytes] of sentinels) assert.deepEqual(fs.readFileSync(path.join(root, name)), bytes);
     assert.deepEqual(fs.readdirSync(accepted), ["release-manifest.json"]);
   });
 });

@@ -164,7 +164,7 @@ def validate_binding(root, path, identity, now):
     require(dt.date.fromisoformat(owner["date"]) <= deployed.date(), "Deployment precedes owner authorization")
     successor = load_json(verify_artifact(root, binding.get("acceptedSuccessorReference")))
     require(successor.get("acceptance") == "ACCEPTED" and successor.get("ruling") == "RC6 SOURCE ACCEPTED"
-            and successor.get("authority") == "Parent Codex" and successor.get("rulingId") == "RC6-R1",
+            and successor.get("authority") == "Parent Codex" and successor.get("rulingId") in ("RC6-R1", "RC6-R2"),
             "Reference must be a Parent accepted-successor decision")
     require(timestamp(successor.get("acceptedAt"), now) <= deployed, "Deployment precedes successor acceptance")
     for key in CANDIDATE_IDENTITY:

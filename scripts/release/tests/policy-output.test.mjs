@@ -7,8 +7,16 @@ import test from "node:test";
 import { pathToFileURL } from "node:url";
 import { ROOT, policy } from "../release-lib.mjs";
 
-const rootName = "deliveries/G7/rc6-candidate-r6";
-const oldRoots = ["deliveries/G7/rc6-candidate", "deliveries/G7/rc6-candidate-r2", "deliveries/G7/rc6-candidate-r3", "deliveries/G7/rc6-candidate-r4", "deliveries/G7/rc6-candidate-r5"];
+const rootName = "deliveries/G7/rc6-candidate-r7";
+const oldRoots = [
+  "deliveries/G7/rc6-candidate", "deliveries/G7/rc6-candidate-r2",
+  "deliveries/G7/rc6-candidate-r3", "deliveries/G7/rc6-candidate-r4", "deliveries/G7/rc6-candidate-r5",
+  "deliveries/G7/rc6-candidate-r6",
+  "deliveries/G7/rc6-independent-delta/r6-audit",
+  "deliveries/G7/rc6-independent-delta/gate-advice/final-r6",
+  "docs/planning/reviews/2026-10-08-rc6-r1",
+];
+const oldFiles = ["docs/planning/reviews/2026-10-08-rc6-r1.md"];
 const source = "a".repeat(40);
 
 async function fixture(t) {
@@ -38,6 +46,12 @@ async function fixture(t) {
     fs.writeFileSync(sentinel, `preserved fixture ${old}\n`);
     frozen.set(sentinel, fs.readFileSync(sentinel));
   }
+  for (const old of oldFiles) {
+    const sentinel = path.join(root, old);
+    fs.mkdirSync(path.dirname(sentinel), { recursive: true });
+    fs.writeFileSync(sentinel, `isolated preserved file ${old}\n`);
+    frozen.set(sentinel, fs.readFileSync(sentinel));
+  }
   const setPolicy = (candidate) => fs.writeFileSync(path.join(release, "rc6-policy.json"), JSON.stringify(candidate));
   setPolicy(policy);
   const lib = await import(pathToFileURL(path.join(release, "release-lib.mjs")).href);
@@ -49,7 +63,7 @@ async function fixture(t) {
   return { root, checkout, driver, setPolicy, lib, unchanged, run };
 }
 
-test("committed policy binds the R6 delivery and canonical archive", () => {
+test("committed policy binds the R7 delivery and canonical archive", () => {
   assert.equal(policy.deliveryRoot, rootName);
   assert.equal(policy.bundle.path, `${rootName}/yor-world-${policy.releaseId}.bundle.tar.gz`);
 });
@@ -95,6 +109,10 @@ test("CLI override outputs cannot escape the bound delivery or overwrite inputs"
       ["build-release-bundle.mjs", ["--receipt", `${root}/new/receipt.json`], /immutable/],
       ["validate-release.mjs", ["--receipt", `${root}/new/receipt.json`], /immutable/],
       ["validate-release.mjs", ["--manifest", `${root}/release-manifest.json`], /immutable/],
+    ]),
+    ...oldFiles.flatMap((file) => [
+      ["build-release-bundle.mjs", ["--receipt", file], /immutable/],
+      ["validate-release.mjs", ["--receipt", file], /immutable/],
     ]),
     ["build-release-bundle.mjs", ["--output", "scratch/archive.tar.gz"], /must equal policy.bundle.path/],
     ["build-release-bundle.mjs", ["--receipt", "scratch/receipt.json"], /inside the policy deliveryRoot/],
@@ -251,8 +269,9 @@ repo = Path(${JSON.stringify(f.root)})
 delivery = repo / ${JSON.stringify(rootName)}
 delivery.mkdir(parents=True)
 output = delivery / "writer-output.json"
-for root in ${JSON.stringify(oldRoots)}:
-    sentinel = repo / root / "archive-and-receipt.txt"
+sentinel_names = [root + "/archive-and-receipt.txt" for root in ${JSON.stringify(oldRoots)}] + ${JSON.stringify(oldFiles)}
+for name in sentinel_names:
+    sentinel = repo / name
     before = sentinel.read_bytes()
     output.hardlink_to(sentinel)
     assert output.stat().st_nlink > 1
@@ -281,6 +300,7 @@ test("Python output preflight protects every preserved root and filesystem alias
   for (const [index, old] of oldRoots.entries()) {
     fs.symlinkSync(path.join(f.root, old), path.join(f.root, `alias-${index}`), process.platform === "win32" ? "junction" : "dir");
   }
+  fs.symlinkSync(path.join(f.root, "docs"), path.join(f.root, "docs-alias"), process.platform === "win32" ? "junction" : "dir");
   const script = String.raw`
 import importlib.util, json, os
 from pathlib import Path
@@ -300,6 +320,10 @@ for index, root in enumerate(${JSON.stringify(oldRoots)}):
     try: module.assert_policy_outputs(repo, candidate)
     except ValueError as error: assert "Preserved release proof" in str(error), error
     else: raise AssertionError("preserved policy alias accepted")
+for name in ${JSON.stringify(oldFiles)}:
+    for variant in [name, name.replace("docs/", "docs-alias/", 1)]:
+        rejects(variant)
+        if os.name == "nt": rejects(variant.upper())
 module.assert_policy_outputs(repo, policy)
 assert not (repo / policy["deliveryRoot"]).exists()
 print("PASS Python preserved roots, aliases, casing and no-write preflight")

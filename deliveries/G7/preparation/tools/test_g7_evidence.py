@@ -168,10 +168,25 @@ class LedgerTests(unittest.TestCase):
 
     def test_successor_requires_actual_parent_decision_and_exact_candidate(self):
         original = G7.load_json(self.successor)
-        for changes in ({"acceptance": "PENDING"}, {"ruling": "RC6 NOT ACCEPTED"}, {"authority": "Maker"}, {"rulingId": "G6-R1"}, {"acceptedAt": "2026-10-07T08:01:00Z"}, *({key: "incorrect"} for key in G7.CANDIDATE_IDENTITY)):
-            G7.write(self.successor, original)
-            self.change_reference("acceptedSuccessorReference", changes)
-            with self.subTest(changes=changes), self.assertRaises(ValueError):
+        for ruling_id in ("RC6-R1", "RC6-R2"):
+            for changes in ({"acceptance": "PENDING"}, {"ruling": "RC6 NOT ACCEPTED"},
+                            {"authority": "Maker"}, {"authority": "Parent Codex "},
+                            {"rulingId": "G6-R1"}, {"rulingId": "RC6-R3"}, {"rulingId": "rc6-r2"},
+                            {"rulingId": None}, {"acceptedAt": "2026-10-07T08:01:00Z"},
+                            {"acceptedAt": "2027-01-01T00:00:00Z"}, {"acceptedAt": "invalid"},
+                            *({key: "incorrect"} for key in G7.CANDIDATE_IDENTITY)):
+                G7.write(self.successor, {**original, "rulingId": ruling_id})
+                self.change_reference("acceptedSuccessorReference", changes)
+                with self.subTest(ruling_id=ruling_id, changes=changes), self.assertRaises(ValueError):
+                    self.run_receipt()
+
+    def test_both_successor_rulings_reject_stale_reference_hashes(self):
+        original = G7.load_json(self.successor)
+        for ruling_id in ("RC6-R1", "RC6-R2"):
+            G7.write(self.successor, {**original, "rulingId": ruling_id})
+            self.change_binding("acceptedSuccessorReference", self.ref(self.successor))
+            self.successor.write_bytes(self.successor.read_bytes() + b" ")
+            with self.subTest(ruling_id=ruling_id), self.assertRaisesRegex(ValueError, "SHA-256 mismatch"):
                 self.run_receipt()
 
     def test_invalid_or_stale_execution_timestamps_rejected(self):
@@ -313,12 +328,15 @@ class LedgerTests(unittest.TestCase):
     def test_full_structural_fixture_still_has_no_review_or_acceptance(self):
         live = {**self.receipt, "requirements": [self.requirement(number) for number, _, _ in G7.CRITERIA]}
         paths = [self.save("NOT-LIVE-all-live.json", live), self.save("NOT-LIVE-all-manual.json", self.manual_receipt([self.session(key) for key, _, _ in G7.MANUAL]))]
-        ledger = G7.build_ledger(self.root, self.manifest, self.binding, paths, now=NOW)
-        self.assertEqual(ledger["overallStatus"], "PASS")
-        self.assertEqual(ledger["validationScope"], "STRUCTURE, IDENTITY AND ARTIFACT HASHES ONLY")
-        self.assertEqual(ledger["independentReview"], "NOT RUN")
-        self.assertEqual(ledger["heapGpuLeakAbsence"], "UNKNOWN")
-        self.assertFalse(ledger["acceptanceClaim"])
+        for ruling_id in ("RC6-R1", "RC6-R2"):
+            self.change_reference("acceptedSuccessorReference", {"rulingId": ruling_id})
+            with self.subTest(ruling_id=ruling_id):
+                ledger = G7.build_ledger(self.root, self.manifest, self.binding, paths, now=NOW)
+                self.assertEqual(ledger["overallStatus"], "PASS")
+                self.assertEqual(ledger["validationScope"], "STRUCTURE, IDENTITY AND ARTIFACT HASHES ONLY")
+                self.assertEqual(ledger["independentReview"], "NOT RUN")
+                self.assertEqual(ledger["heapGpuLeakAbsence"], "UNKNOWN")
+                self.assertFalse(ledger["acceptanceClaim"])
 
     def test_repeated_executed_subcriteria_across_receipts_rejected(self):
         paths = [self.save("a.json", self.receipt), self.save("b.json", self.receipt)]
