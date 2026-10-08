@@ -108,6 +108,12 @@ export function StudioLauncher({
           aria-label="YOR WORLD interactive 3D studio"
           onCancel={(event) => event.preventDefault()}
         >
+          <nav className={portfolioStyles.studioQuickNav} aria-label="Studio navigation">
+            <Link href="/projects" onClick={closeStudio} data-testid="studio-projects-link">Projects <span aria-hidden="true">↗</span></Link>
+            <Link href="/about" onClick={closeStudio} data-testid="studio-about-link">About <span aria-hidden="true">↗</span></Link>
+            <Link href="/contact" onClick={closeStudio} data-testid="studio-contact-link">Contact <span aria-hidden="true">↗</span></Link>
+            <Link href="/resume" onClick={closeStudio} data-testid="studio-resume-link">Résumé <span aria-hidden="true">↗</span></Link>
+          </nav>
           <button
             type="button"
             onClick={closeStudio}
@@ -115,16 +121,8 @@ export function StudioLauncher({
             data-testid="studio-fullscreen-close"
             aria-label="Return to the portfolio"
           >
-            <span aria-hidden="true">←</span> Return to portfolio
+            <span aria-hidden="true">←</span> Exit studio
           </button>
-          <Link
-            href="/projects"
-            onClick={closeStudio}
-            className={portfolioStyles.studioProjectsLink}
-            data-testid="studio-projects-link"
-          >
-            Browse projects <span aria-hidden="true">↗</span>
-          </Link>
           {dialogOpened && <DynamicWorldRoot
             projects={projects}
             publicationRevision={publicationRevision}
