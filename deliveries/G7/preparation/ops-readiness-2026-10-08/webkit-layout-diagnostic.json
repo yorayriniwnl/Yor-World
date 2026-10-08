@@ -1,0 +1,47 @@
+{
+  "category": "LOCAL PREPARATION ONLY",
+  "authorization": "Parent bounded exact-pinned WebKit layout investigation",
+  "executedAt": "2026-10-08T12:22:13.503Z",
+  "playwrightVersion": "1.63.0",
+  "executablePath": "C:\\Users\\yoray\\AppData\\Local\\ms-playwright\\webkit-2359\\Playwright.exe",
+  "cacheRoot": "C:\\Users\\yoray\\AppData\\Local\\ms-playwright\\webkit-2359",
+  "files": [
+    {
+      "filename": "C:\\Users\\yoray\\AppData\\Local\\ms-playwright\\webkit-2359\\Playwright.exe",
+      "exists": true,
+      "bytes": 202752,
+      "sha256": "6dafcf2b72f53cfebeb0fcb44f85203b3f5dd1e09be47e0e02eeaaacf623bef3"
+    },
+    {
+      "filename": "C:\\Users\\yoray\\AppData\\Local\\ms-playwright\\webkit-2359\\ngtcp2.dll",
+      "exists": true,
+      "bytes": 256512,
+      "sha256": "baa5185ab7c20d588b1b3556b687eaa8a7eb855f8b7a042500d884ea183b0c0c"
+    },
+    {
+      "filename": "C:\\Users\\yoray\\AppData\\Local\\ms-playwright\\webkit-2359\\ngtcp2_crypto_quictls.dll",
+      "exists": true,
+      "bytes": 35328,
+      "sha256": "54b00293ba0846422a3fe44f7ba5785cdb398ee4222553f0df43d86908fb38db"
+    },
+    {
+      "filename": "C:\\Users\\yoray\\AppData\\Local\\ms-playwright\\webkit-2359\\libcurl.dll",
+      "exists": true,
+      "bytes": 562176,
+      "sha256": "a79612816373fcb33e7fd7b976aa5b9743bf13b5b032eaec8e811de0d70e5208"
+    }
+  ],
+  "sourceInspection": {
+    "bundlePath": "C:\\Users\\yoray\\Projects\\Yor World\\app\\node_modules\\.pnpm\\playwright-core@1.63.0\\node_modules\\playwright-core\\lib\\coreBundle.js",
+    "sha256": "549070af3acabb3efcc4f55bfe6210f9f7c2fcf633cf7eaa59bfe60719969171",
+    "windowsValidationLine": 32128,
+    "validationExcerpt": "async function validateDependenciesWindows(sdkLanguage, windowsExeAndDllDirectories) {\n  const directoryPaths = windowsExeAndDllDirectories;\n  const lddPaths = [];\n  for (const directoryPath of directoryPaths)\n    lddPaths.push(...await executablesOrSharedLibraries(directoryPath));\n  const allMissingDeps = await Promise.all(lddPaths.map((lddPath) => missingFileDependenciesWindows(sdkLanguage, lddPath)));\n  const missingDeps = /* @__PURE__ */ new Set();\n  for (const deps2 of allMissingDeps) {\n    for (const dep of deps2)\n      missingDeps.add(dep);\n  }\n  if (!missingDeps.size)\n    return;\n  let isCrtMissing = false;\n  let isMediaFoundationMissing = false;",
+    "missingDependencyLine": 32287,
+    "dependencyExcerpt": "async function missingFileDependenciesWindows(sdkLanguage, filePath) {\n  const executable = registry.findExecutable(\"winldd\").executablePathOrDie(sdkLanguage);\n  const dirname = import_path17.default.dirname(filePath);\n  const { stdout, code } = await spawnAsync(executable, [filePath], {\n    cwd: dirname,\n    env: {\n      ...process.env,\n      LD_LIBRARY_PATH: process.env.LD_LIBRARY_PATH ? `${process.env.LD_LIBRARY_PATH}:${dirname}` : dirname\n    }\n  });\n  if (code !== 0)\n    return [];\n  const missingDeps = stdout.split(\"\\n\").map((line) => line.trim()).filter((line) => line.endsWith(\"not found\") && line.includes(\"=>\")).map((line) => line.split(\"=>\")[0].trim().toLowerCase());\n  return missingDeps;\n}\nasync function missingFileDependencies(filePath, extraLDPaths) {\n  const dirname = import_path17.default.dirname(filePath);\n  let LD_LIBRARY_PATH = extraLDPaths.join(\":\");\n  if (process.env.LD_LIBRARY_PATH)\n    LD_LIBRARY_PATH = `${process.env.LD_LIBRARY_PATH}:${LD_LIBRARY_PATH}`;\n  const { stdout, code } = await spawnAsync(\"ldd\", [filePath], {\n    cwd: dirname,\n    env: {\n      ...process.env,\n      LD_LIBRARY_PATH"
+  },
+  "adjustment": "Prefix exact existing pinned WebKit cache directory to PATH in this process only; no validation bypass, DLL download, system env change or cache rewrite",
+  "launch": "FAIL",
+  "acceptanceClaim": false,
+  "error": "browserType.launch: Host system is missing dependencies!\n\nFull list of missing libraries:\n    ngtcp2_crypto_quictls.dll\n",
+  "completedAt": "2026-10-08T12:22:14.416Z"
+}

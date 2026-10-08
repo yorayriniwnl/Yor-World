@@ -1,8 +1,8 @@
 # Current RC6 completion and production checklist
 
-**Current candidate: v1.0.0-rc6 — source amendment and validation pending.** Accepted baseline: **G6-R1 / RC5** remains immutable. **G7 AUTHORIZED / PREPARATION** under owner instruction “Complete it.”, recorded as **G7-OWNER-AUTH-20261006**. RC6 needs independent delta review/Parent acceptance and real production-service/device evidence before completion. See [current status](../planning/current-status.json) and [RC6 dossier](../releases/v1.0.0-rc6.md).
+**Current candidate: v1.0.0-rc6 — R6 SOURCE ACCEPTED for G7 preparation under [RC6-R1](../planning/reviews/2026-10-08-rc6-r1.md).** Accepted baseline: **G6-R1 / RC5** remains immutable. **G7 AUTHORIZED / PREPARATION** under owner instruction “Complete it.”, recorded as **G7-OWNER-AUTH-20261006**. Source acceptance is complete; real production-service/device evidence and separate G7 acceptance remain required. See [current status](../planning/current-status.json), [RC6 dossier](../releases/v1.0.0-rc6.md) and [production execution runbook](production-execution-runbook.md).
 
-Current work must produce fresh RC6 source-bound local/hosted evidence, independent delta review, accepted successor, real production setup and all ten G7 criteria. Existing RC5 checks below are historical completed baseline evidence and do not substitute for new RC6 or live proof. Physical/manual/service requirements remain NOT RUN until executed.
+RC6-R1 binds source `8e5b954e147a87e36a6869d9940c40f3d4c123f0`, app tree `42ea29ec235225046a75959eb19eb386ac2f821d`, bundle `d4648de41f631fca5ce71a45397d6bbc34ced8fc8408aeba90e65701a9653e59` and LF manifest `671d19d32fcbe19493b15c177e55828259866b01ddeab6b87e54aa68863e0d21`. Fresh source-bound local/hosted proof, independent delta review and Parent source acceptance are recorded in that ruling. Current work requires actual production setup and all ten G7 criteria. Existing RC5 checks below are historical completed baseline evidence and do not substitute for live proof. Physical/manual/service requirements remain NOT RUN until executed.
 
 ## Historical completed RC5 baseline checks
 
