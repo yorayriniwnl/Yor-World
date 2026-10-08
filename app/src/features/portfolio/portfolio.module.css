@@ -875,3 +875,33 @@
 @media (prefers-reduced-motion: reduce) {
   .studioExit { scroll-behavior: auto; }
 }
+
+.studioProjectsLink {
+  position: absolute;
+  top: max(10px, env(safe-area-inset-top));
+  left: max(10px, env(safe-area-inset-left));
+  z-index: 120;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 45px;
+  padding: 10px 16px;
+  border: 1px solid rgba(255, 255, 255, .52);
+  border-radius: 5px;
+  background: rgba(9, 16, 25, .91);
+  color: #f6f6f2;
+  font: 600 12px/1.4 var(--font-body, sans-serif);
+  text-decoration: none;
+}
+
+.studioProjectsLink:hover { background: #23354a; }
+.studioProjectsLink:focus-visible { outline: 3px solid #78e4ff; outline-offset: 2px; }
+
+@media (max-width: 700px) {
+  .studioProjectsLink {
+    top: max(8px, env(safe-area-inset-top));
+    left: max(8px, env(safe-area-inset-left));
+    padding: 8px 11px;
+    font-size: 11px;
+  }
+}
