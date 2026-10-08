@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import styles from "./world.module.css";
 import portfolioStyles from "@/features/portfolio/portfolio.module.css";
 import type { PublishedProject } from "@/contracts/content";
@@ -111,6 +112,14 @@ export function StudioLauncher({
           >
             <span aria-hidden="true">←</span> Return to portfolio
           </button>
+          <Link
+            href="/projects"
+            onClick={closeStudio}
+            className={portfolioStyles.studioProjectsLink}
+            data-testid="studio-projects-link"
+          >
+            Browse projects <span aria-hidden="true">↗</span>
+          </Link>
           <DynamicWorldRoot
             projects={projects}
             publicationRevision={publicationRevision}
