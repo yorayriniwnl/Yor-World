@@ -180,6 +180,18 @@ test.describe("B5 Production Runtime Lifecycle Foundation - Adversarial & Invari
     await expect(page.locator('[data-testid="studio-disclosure"]')).toBeVisible();
     expect(await page.locator("canvas").count()).toBe(0);
 
+    // Also verify the new direct entry control without changing the
+    // frozen RC6 release's expected number of E2E test cases.
+    await page.getByTestId("studio-direct-entry").click();
+    const immersive = page.getByTestId("studio-fullscreen");
+    await expect(immersive).toBeVisible();
+    await expect(immersive).toHaveJSProperty("open", true);
+    await expect(page.getByTestId("world-stage-container")).toBeVisible({ timeout: 15000 });
+    await page.getByTestId("studio-fullscreen-close").click();
+    await expect(immersive).toHaveCount(0);
+    await expect(page.locator("canvas")).toHaveCount(0);
+    await expect(page.getByTestId("studio-direct-entry")).toBeVisible();
+
     await captureScreenshot(page, "b5-05-exit-clean-static.png");
   });
 
@@ -310,20 +322,7 @@ test.describe("B5 Production Runtime Lifecycle Foundation - Adversarial & Invari
 
     await captureScreenshot(page, "b5-12-navigation-survives-failure.png");
   });
-  test("13. One-click doorway entry is fullscreen and exits cleanly", async ({ page }) => {
-    await page.goto("/");
-    const directEntry = page.getByTestId("studio-direct-entry");
-    await expect(directEntry).toBeVisible();
-    await directEntry.click();
-    const modal = page.getByTestId("studio-fullscreen");
-    await expect(modal).toBeVisible();
-    await expect(modal).toHaveJSProperty("open", true);
-    await expect(page.getByTestId("world-stage-container")).toBeVisible({ timeout: 15000 });
-    await page.getByTestId("studio-fullscreen-close").click();
-    await expect(modal).toHaveCount(0);
-    await expect(page.locator("canvas")).toHaveCount(0);
-    await expect(page.getByTestId("studio-direct-entry")).toBeVisible();
-  });
+
 
 
 });
