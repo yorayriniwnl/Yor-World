@@ -95,7 +95,7 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
     });
 
     await page.goto("/");
-    await expect(page.locator("h1")).toContainText("A little world");
+    await expect(page.locator("h1")).toContainText("Full-stack");
     await captureScreenshot(page, "01-load-landing");
 
     await page.locator('[data-testid="studio-disclosure"] summary').click();
@@ -352,7 +352,7 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
     await expect(page.locator('[data-testid="fallback-about-link"]')).toBeVisible();
 
     // Verify main page directory remains fully reachable
-    await expect(page.locator("h2#directory-heading")).toContainText("Start anywhere");
+    await expect(page.locator("h2#editorial-story-heading")).toContainText("Hi, I'm");
   });
 
   test("14. Renderer Failure: WebGL failure caught cleanly leaving useful HTML", async ({ page }) => {
@@ -374,7 +374,7 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
     const page = await context.newPage();
 
     await page.goto("/");
-    await expect(page.locator("h1")).toContainText("A little world");
+    await expect(page.locator("h1")).toContainText("Full-stack");
     await captureScreenshot(page, "14-javascript-disabled");
 
     // Details disclosure works natively without JS
