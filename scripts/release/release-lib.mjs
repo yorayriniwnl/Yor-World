@@ -6,7 +6,14 @@ import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-export const POLICY_PATH = "scripts/release/rc6-policy.json";
+// Accepted RC6 remains the default. The editorial successor opts into its
+// own immutable policy/output root only for exact-source candidate evidence.
+const allowedPolicies = new Set([
+  "scripts/release/rc6-policy.json",
+  "scripts/release/rc6-editorial-policy.json",
+]);
+export const POLICY_PATH = process.env.YOR_RELEASE_POLICY || "scripts/release/rc6-policy.json";
+if (!allowedPolicies.has(POLICY_PATH)) throw new Error("Unknown release policy override");
 export const policy = JSON.parse(fs.readFileSync(path.join(ROOT, POLICY_PATH), "utf8"));
 export const sha256 = (bytes) => crypto.createHash("sha256").update(bytes).digest("hex");
 export const normalized = (bytes) => Buffer.from(bytes.toString("utf8").replace(/\r\n/g, "\n"));
