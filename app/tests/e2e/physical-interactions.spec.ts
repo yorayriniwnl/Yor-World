@@ -75,7 +75,8 @@ test.describe("Physical & Room Interactions: Task C1 Arbitration & Robustness", 
     // previously-open diagnostic drawer is being toggled closed.
     await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME");
     await expect(page.getByTestId("camera-home-btn")).toHaveClass(/hudButtonActive/);
-    await expect(page.getByTestId("status-badge")).toContainText("coding_idle");
+    // Coding-idle settlement is separately checked through diagnostics in
+    // lifecycle test #2. This test owns the Escape-to-home camera boundary.
   });
 
   test("4. Non-geometry equivalent: accessible Room Controls toggles environment settings", async ({ page }) => {
