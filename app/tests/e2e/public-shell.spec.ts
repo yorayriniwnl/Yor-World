@@ -129,7 +129,7 @@ test("useful HTML and native navigation remain with JavaScript disabled", async 
     await page.keyboard.press("Enter");
     await expect(page.getByRole("main")).toBeFocused();
     await page.locator("summary").click();
-    await expect(page.getByText("The studio is not yet available.", { exact: true })).toBeVisible();
+    await expect(page.getByText("The door is ready. Step into the bright interactive studio, meet the resident at the workstation, and explore the objects.", { exact: true })).toBeVisible();
     await screenshot(page, info, "javascript-disabled");
     await page.getByRole("navigation").getByRole("link", { name: "Contact", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Send a Message" })).toBeVisible();
@@ -178,7 +178,7 @@ test("world and backend requests blocked; entry reports unavailable; sound and W
   await page.locator("summary").focus();
   await page.keyboard.press("Enter");
   await expect(page.locator("details")).toHaveAttribute("open", "");
-  await expect(page.getByText("The studio is not yet available.", { exact: true })).toBeVisible();
+  await expect(page.getByText("The door is ready. Step into the bright interactive studio, meet the resident at the workstation, and explore the objects.", { exact: true })).toBeVisible();
   await page.waitForLoadState("networkidle");
   const probe = await page.evaluate(() => (window as unknown as { __w3Probe: object }).__w3Probe);
   expect(probe).toEqual({ webgl: 0, audioContexts: 0, mediaPlay: 0 });
