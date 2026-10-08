@@ -50,3 +50,11 @@ Keep commits scoped to the work that was just completed.
 If the worktree contains unrelated uncommitted changes, do not silently bundle them into the same commit. Separate the commit if the scope is clear, or ask the user if the boundary is ambiguous.
 
 If commit or push fails because of auth, network, branch protection, merge conflicts, or remote state, report it immediately.
+
+## Deployment-first completion rule (user directive, October 2026)
+
+For subsequent YOR WORLD portfolio implementation work, **deploy by default as part of completing the task**. Do not stop at a finished PR, a green build, or a preview without attempting the appropriate live release. The human has authorized deployment as the default workflow and does not need to be asked to reauthorize each routine release.
+
+Production deployment is conditional on the repository's release and security gates, successful build and browser checks, required configuration and migrations, and an available rollback path. Preserve independent acceptance/RC6 evidence rules; this directive does not allow bypassing failed checks or faking missing approvals.
+
+Expected finish: implement → test/review → stage/deploy → verify live behavior and domain → report the exact URL, commit, and deployment state. If deployment is blocked by authorization, access, or release prerequisites, report the blocker explicitly, do not describe the site as live, and leave the existing production domain working.
