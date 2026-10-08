@@ -79,6 +79,12 @@ test.describe("B5 Production Runtime Lifecycle Foundation - Adversarial & Invari
     // Wait for world stage
     const stage = page.locator('[data-testid="world-stage-container"]');
     await expect(stage).toBeVisible({ timeout: 15000 });
+    const immersive = page.getByTestId("studio-fullscreen");
+    await expect(immersive).toBeVisible();
+    const bounds = await immersive.boundingBox();
+    const viewport = page.viewportSize();
+    expect(bounds?.width ?? 0).toBeGreaterThan((viewport?.width ?? 0) * .95);
+    expect(bounds?.height ?? 0).toBeGreaterThan((viewport?.height ?? 0) * .95);
 
     // PROVE: exactly one canvas exists
     const canvases = await page.locator("canvas").count();
