@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useSyncExternalStore } from "react";
+import React, { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import dynamic from "next/dynamic";
 import styles from "./world.module.css";
 import portfolioStyles from "@/features/portfolio/portfolio.module.css";
@@ -17,19 +17,22 @@ function getServerSearchSnapshot(): string {
   return "";
 }
 
-// Dynamic import with ssr: false ensures ZERO Three.js code is loaded pre-entry
+// Keep the room, model files, and Three.js out of the initial HTML/download.
 const DynamicWorldRoot = dynamic(() => import("./WorldRoot"), {
   ssr: false,
   loading: () => (
     <div className={styles.stageContainer} data-testid="world-loading-placeholder">
       <div style={{ padding: "2rem", color: "#cadbee", textAlign: "center" }}>
-        Loading 3D Studio Environment...
+        Preparing your studio...
       </div>
     </div>
   ),
 });
 
-export function StudioLauncher({ projects = publishedProjects, publicationRevision = 1 }: {
+export function StudioLauncher({
+  projects = publishedProjects,
+  publicationRevision = 1,
+}: {
   projects?: readonly PublishedProject[];
   publicationRevision?: number;
 }) {
@@ -44,49 +47,78 @@ export function StudioLauncher({ projects = publishedProjects, publicationRevisi
   const simulateAssetError = params.get("simulateAssetError") === "1";
   const simulateRendererError = params.get("simulateRendererError") === "1";
 
-  const [manuallyClosed, setManuallyClosed] = useState<boolean>(false);
-  const [manuallyOpened, setManuallyOpened] = useState<boolean>(false);
+  const [manuallyClosed, setManuallyClosed] = useState(false);
+  const [manuallyOpened, setManuallyOpened] = useState(false);
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
   const isEntered = (autoEnter && !manuallyClosed) || manuallyOpened;
 
+  const closeStudio = () => {
+    setManuallyClosed(true);
+    setManuallyOpened(false);
+  };
+
+  // Browser-native modal focus containment and Escape handling.
+  // Escape remains owned by WorldRoot: it skips the entrance or settles an
+  // interaction. Visitors explicitly exit with the close control.
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!isEntered || !dialog) return;
+    if (!dialog.open) dialog.showModal();
+    return () => {
+      if (dialog.open) dialog.close();
+    };
+  }, [isEntered]);
+
   return (
-    <div>
+    <div className={portfolioStyles.studioEntry}>
       {!isEntered ? (
         <details className={portfolioStyles.studioDisclosure} data-testid="studio-disclosure">
-          <summary>Enter studio <span aria-hidden="true">+</span></summary>
+          <summary>
+            Enter YOR WORLD <span aria-hidden="true">↗</span>
+          </summary>
           <div className={portfolioStyles.studioMessage}>
-            <p>The studio is not yet available.</p>
-            <p>
-              Launch the <strong>G1 Interactive 3D Studio Feasibility Proof</strong> to experience the integrated bright white workstation, blue moving chair, resident, and ambient lighting:
-            </p>
-            <div style={{ marginTop: "0.75rem" }}>
-              <button
-                type="button"
-                id="enter-studio-btn"
-                data-testid="enter-studio-btn"
-                onClick={() => {
-                  setManuallyOpened(true);
-                  setManuallyClosed(false);
-                }}
-                className={portfolioStyles.primaryAction}
-                style={{ cursor: "pointer", border: "none" }}
-              >
-                Launch 3D Studio
-              </button>
-            </div>
+            <p>The door is ready. Step into the bright interactive studio, meet the resident at the workstation, and explore the objects.</p>
+            <p>Choose the 3D experience or continue with the regular portfolio. Motion can be skipped, and the full portfolio remains available without WebGL.</p>
+            <button
+              type="button"
+              id="enter-studio-btn"
+              data-testid="enter-studio-btn"
+              onClick={() => {
+                setManuallyOpened(true);
+                setManuallyClosed(false);
+              }}
+              className={portfolioStyles.primaryAction}
+            >
+              Open the door <span aria-hidden="true">↗</span>
+            </button>
           </div>
         </details>
       ) : (
-        <DynamicWorldRoot
-          projects={projects}
-          publicationRevision={publicationRevision}
-          onClose={() => {
-            setManuallyClosed(true);
-            setManuallyOpened(false);
-          }}
-          simulateAssetError={simulateAssetError}
-          simulateRendererError={simulateRendererError}
-        />
+        <dialog
+          ref={dialogRef}
+          className={portfolioStyles.studioFullscreen}
+          data-testid="studio-fullscreen"
+          aria-label="YOR WORLD interactive 3D studio"
+          onCancel={(event) => event.preventDefault()}
+        >
+          <button
+            type="button"
+            onClick={closeStudio}
+            className={portfolioStyles.studioExit}
+            data-testid="studio-fullscreen-close"
+            aria-label="Return to the portfolio"
+          >
+            <span aria-hidden="true">←</span> Return to portfolio
+          </button>
+          <DynamicWorldRoot
+            projects={projects}
+            publicationRevision={publicationRevision}
+            onClose={closeStudio}
+            simulateAssetError={simulateAssetError}
+            simulateRendererError={simulateRendererError}
+          />
+        </dialog>
       )}
     </div>
   );
