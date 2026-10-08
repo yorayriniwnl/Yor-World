@@ -68,7 +68,8 @@ test.describe("Actual production CSP and immutable asset behavior", () => {
     const before = Number(await canvas.getAttribute("data-rendered-frames"));
     await expect.poll(async () => Number(await canvas.getAttribute("data-rendered-frames"))).toBeGreaterThan(before + 2);
     await page.getByTestId("greet-resident-btn").click();
-    await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("link", { name: "Contact", exact: true }).click();
+    // Modal top layer makes the underlying header intentionally inert.
+    await page.getByTestId("studio-contact-link").click();
     await expect(page).toHaveURL(/\/contact$/);
     await expect(page.locator("canvas")).toHaveCount(0);
     await expect(page.locator("#contact-name")).toBeVisible();
