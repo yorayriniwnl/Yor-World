@@ -1,4 +1,17 @@
 import type { DeviceCapabilities } from "../room/quality-policy";
+import type { QualityTier } from "../../contracts/experience";
+
+/**
+ * Prevent the full-viewport studio from monopolizing the main thread on CPU
+ * WebGL. An explicit quality choice still controls materials, but raster
+ * resolution and costly shadows must respect the actual renderer.
+ */
+export function rasterDprCap(tier: QualityTier, software: boolean): number {
+  if (software) return tier === "low" ? 0.3 : 0.4;
+  if (tier === "high") return 1.5;
+  if (tier === "medium") return 1.25;
+  return 1;
+}
 
 export function isSoftwareRenderer(renderer: string): boolean {
   return /swiftshader|llvmpipe|softpipe|software rasterizer|microsoft basic render/i.test(renderer);
