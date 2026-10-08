@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const evidenceDir = process.env.G1_EVIDENCE_DIR || process.env.W3_EVIDENCE_DIR || "";
+const evidenceDir = process.env.G1_EVIDENCE_DIR || process.env.W3_EVIDENCE_DIR || process.env.B5_EVIDENCE_DIR || "";
 const screenshotDir = evidenceDir
   ? path.join(evidenceDir, "screenshots")
   : path.resolve(__dirname, "../../evidence/screenshots");
