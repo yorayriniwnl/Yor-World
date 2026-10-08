@@ -69,6 +69,8 @@ test.describe("Physical & Room Interactions: Task C1 Arbitration & Robustness", 
     await page.keyboard.press("Escape");
     await page.waitForTimeout(300);
 
+    // Native dialog stays open: Escape is reserved for the room's skip/cancel.
+    await expect(page.getByTestId("studio-fullscreen")).toHaveJSProperty("open", true);
     // Diagnostics should report home-desktop and coding pose
     await page.click('[data-testid="diagnostics-toggle-btn"]');
     const diagPre = page.locator('[data-testid="world-diagnostics"]');
@@ -130,8 +132,8 @@ test.describe("Physical & Room Interactions: Task C1 Arbitration & Robustness", 
     // Trigger greeting
     await page.click('[data-testid="greet-resident-btn"]');
 
-    // Click direct accessible navigation link in header to exit studio
-    const aboutLink = page.locator('nav a[href="/about"]').first();
+    // Use a real click inside the fullscreen modal. The page header is inert.
+    const aboutLink = page.getByTestId("studio-about-link");
     await expect(aboutLink).toBeVisible();
     await aboutLink.click();
 
