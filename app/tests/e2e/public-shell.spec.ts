@@ -4,7 +4,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const routes = [
-  ["/", "A little world."], ["/projects", "Projects"], ["/about", "About"],
+  ["/", "Full-stack"], ["/projects", "Projects"], ["/about", "About"],
   ["/contact", "Contact"], ["/resume", "Résumé"],
 ] as const;
 const worldPattern = /\.(?:glb|gltf|ktx2?|basis|wasm|mp3|ogg|wav)(?:\?|$)|\/(?:world|assets-runtime|draco|basis|api)(?:\/|\?|$)/i;
