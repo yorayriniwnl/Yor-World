@@ -157,8 +157,14 @@ test.describe("C3 Failure Recovery, Context Loss & Mobile Resilience", () => {
 
     const reducedMotion = page.getByTestId("toggle-reduced-motion-btn");
     await expect(reducedMotion).toHaveAttribute("aria-checked", "true");
-    await reducedMotion.click();
-    await expect(reducedMotion).toHaveAttribute("aria-checked", "false");
+    // SwiftShader can keep recomputing element stability while rendering.
+    // Dispatch a real pointer click at the observed control center instead
+    // of waiting for Playwright's auto-actionability loop to settle.
+    const bounds = await reducedMotion.boundingBox();
+    expect(bounds).not.toBeNull();
+    if (!bounds) throw new Error("Reduced-motion control has no clickable layout box");
+    await page.mouse.click(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+    await expect(reducedMotion).toHaveAttribute("aria-checked", "false", { timeout: 12000 });
     // Verify the in-world accessible route while the native fullscreen modal is active.
     await page.getByTestId("studio-projects-link").click();
     await expect(page).toHaveURL(/\/projects$/);
