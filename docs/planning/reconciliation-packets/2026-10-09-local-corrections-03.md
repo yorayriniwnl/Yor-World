@@ -56,4 +56,8 @@ Release integration addendum: release maker exclusively owns `scripts/release/ch
 
 ## Exit requirements
 
+### Three-worker handoff requested by owner
+
+On the owner's request for three work prompts, the current art/backend/runtime agents were observed interrupted. The handoff prompts in `docs/planning/handoffs/local-corrections-03/` consolidate the existing assignment: worker 1 owns backend plus release-tool sections, worker 2 owns the precise art allocation, and worker 3 owns runtime plus UI/experience sections. This replaces inactive maker ownership only; no additional concurrent owner is authorized for any path. Check actual worker/process state before resuming. Parent retains shared-build coordination, Git, status, independent audit assignment and acceptance. Neither the prompt handoff nor a maker report accepts source/assets/G7.
+
 Every completed scope returns actual files, commands, raw PASS/FAIL/NOT RUN evidence, source fingerprints and limits. Parent creates small scoped commits and pushes; no force push, unrelated bundling or bypass of required review. Shared dev/build execution is coordinated. Final verification includes all requested viewports/captures, reference comparison, combined budgets, full tests, exact frozen-source fresh checkout and hosted CI/artifacts, separate independent audit and Parent ruling. All production/manual/physical/assistive checks remain separate, and heap/GPU leak absence remains UNKNOWN without measurement. No purchase or upgrade is authorized.
