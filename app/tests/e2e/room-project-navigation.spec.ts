@@ -87,7 +87,7 @@ test.describe("Milestone C2: Studio Monitor, Project Navigation, Transitions & H
     await returnLink.click();
 
     // Verify arrival at home studio route
-    await expect(page.getByRole("heading", { name: "A little world." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Full-stack.*developer/i })).toBeVisible();
     expect(page.url()).toContain("studio=return");
   });
 
