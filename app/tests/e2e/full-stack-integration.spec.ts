@@ -52,7 +52,9 @@ test.describe("RC3 cross-lane full stack", () => {
   test("renderer failure leaves the real contact form functional", async ({ page }) => {
     await page.goto("/?studio=1&simulateRendererError=1");
     await expect(page.getByTestId("world-failure-container")).toBeVisible({ timeout: 15_000 });
-    await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("link", { name: "Contact", exact: true }).click();
+    // Background links are intentionally inert inside the fullscreen modal.
+    // Use the always-available accessible studio shortcut.
+    await page.getByTestId("studio-contact-link").click();
     await submitRealContact(page, "renderer");
   });
 
@@ -79,7 +81,7 @@ test.describe("RC3 cross-lane full stack", () => {
     const terminal = page.getByRole("textbox", { name: "Terminal command input" });
     await terminal.fill("open /admin");
     await terminal.press("Enter");
-    await expect(page.getByRole("dialog")).toContainText("Unknown project");
+    await expect(page.getByRole("dialog", { name: "Studio Monitor Launcher" })).toContainText("Unknown project");
     expect(new URL(page.url()).pathname).toBe("/");
     for (const endpoint of ["/api/admin/projects", "/api/admin/publish", "/api/admin/media"]) {
       expect((await request.get(endpoint)).status()).toBe(401);
