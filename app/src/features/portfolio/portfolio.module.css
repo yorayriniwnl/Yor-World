@@ -1521,3 +1521,43 @@
   .navList a { min-height: 44px; }
   .editorialSkillFilters button { min-height: 44px; }
 }
+
+
+/* Site shell, refined 2026-10-09: navigation belongs to the page grid and
+   must never float across/obscure hero typography. */
+.site { width:min(1530px,100%);padding-inline:clamp(15px,3vw,48px); }
+.header {
+  position:relative;top:auto;margin:0;min-height:76px;z-index:35;
+  padding:12px 9px;
+  border:0;border-bottom:1px solid #dbdad5;
+  border-radius:0;background:transparent;
+  box-shadow:none;backdrop-filter:none;
+}
+.brand {font-size:12px;letter-spacing:.055em;}
+.brandMark {width:36px;height:36px;border-radius:50%;box-shadow:none;}
+.brandSub {font-size:9px;color:#62615c;letter-spacing:.04em;}
+.navList {
+  border:0;border-radius:0;
+  background:transparent;gap:4px;padding:0;
+}
+.navList a {
+  min-height:44px;border-radius:999px;
+  color:#575657;font-size:11px;padding:11px 15px;
+}
+.navList a:hover,.navList a:focus-visible {background:#e4e1e9;color:#2b2b36;}
+.main {padding-top:0;padding-bottom:0;}
+.footer {padding-inline:13px;color:#66645f;}
+@media(max-width:760px) {
+  .header {position:relative;top:auto;margin:0;min-height:68px;border-radius:0;flex-wrap:wrap;gap:6px 15px;padding:12px 0;}
+  .navList {max-width:100%;border:0;background:none;}
+  .navList a {min-height:44px;padding:11px 10px;font-size:10px;}
+  .main {padding-top:0;}
+}
+@media(max-width:490px) {
+  .site {padding-inline:11px;}
+  .header {border-radius:0;top:auto;margin:0;padding:10px 3px;gap:5px;}
+  .brandMark {width:30px;height:30px;}
+  .brandSub {font-size:8px;}
+  .navList {overflow-x:auto;max-width:calc(100vw - 28px);}
+  .navList a {min-height:44px;font-size:10px;padding:10px 8px;}
+}
