@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { chooseInitialTier } from "../../src/features/room/quality-policy";
-import { readDeviceCapabilities } from "../../src/features/world/device-capabilities";
+import { rasterDprCap, readDeviceCapabilities } from "../../src/features/world/device-capabilities";
 
 interface BrowserOptions {
   width?: number;
@@ -66,6 +66,20 @@ function installBrowser(options: BrowserOptions = {}) {
 afterEach(() => {
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
+});
+
+describe("safe viewport raster caps", () => {
+  it("caps CPU-rendered WebGL across every active quality tier", () => {
+    expect(rasterDprCap("low", true)).toBe(0.3);
+    expect(rasterDprCap("medium", true)).toBe(0.4);
+    expect(rasterDprCap("high", true)).toBe(0.4);
+  });
+
+  it("preserves native hardware resolution where actual GPU capacity exists", () => {
+    expect(rasterDprCap("low", false)).toBe(1);
+    expect(rasterDprCap("medium", false)).toBe(1.25);
+    expect(rasterDprCap("high", false)).toBe(1.5);
+  });
 });
 
 describe("studio entry browser capabilities", () => {
