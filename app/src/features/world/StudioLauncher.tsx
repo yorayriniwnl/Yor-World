@@ -111,7 +111,8 @@ export function StudioLauncher({
               Open the door <span aria-hidden="true">↗</span>
             </button>
           </div>
-        </details>
+          </details>
+        </>
       ) : (
         <dialog
           ref={dialogRef}
