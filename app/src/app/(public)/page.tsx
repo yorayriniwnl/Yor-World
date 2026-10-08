@@ -7,7 +7,7 @@ import styles from "@/features/portfolio/portfolio.module.css";
 
 export const dynamic = "force-dynamic";
 
-const workArtwork: Record<string, string> = {
+const workArtwork: Record<string, string | undefined> = {
   "ai-vs-real": styles.editorialArtAi,
   zenith: styles.editorialArtZenith,
   helios: styles.editorialArtHelios,
