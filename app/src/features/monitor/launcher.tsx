@@ -14,6 +14,7 @@ import {
 } from "../experience/project-transition";
 import { NavigationAdapter } from "../experience/navigation-adapter";
 import { executeTerminalCommand } from "./commands";
+import { ModalDialog } from "@/ui/ModalDialog";
 import styles from "./monitor.module.css";
 
 export interface LauncherProps {
@@ -49,26 +50,6 @@ export function Launcher({
   ]);
   const [terminalInput, setTerminalInput] = useState("");
   const terminalEndRef = useRef<HTMLDivElement>(null);
-
-  // Keyboard shortcut: Escape closes launcher or active transition
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        if (activeTransition) {
-          activeTransition.abortController.abort("USER_ESCAPE");
-          setActiveTransition(null);
-        } else {
-          onClose?.();
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, activeTransition, onClose]);
 
   // Auto-scroll terminal history to bottom
   useEffect(() => {
@@ -156,13 +137,20 @@ export function Launcher({
   };
 
   return (
-    <div
-      role="dialog"
-      aria-label="Studio Monitor Launcher"
-      aria-modal="true"
+    <ModalDialog
+      label="Studio Monitor Launcher"
       className={`${styles.monitorContainer} ${
         isFramedFallback ? styles.framedFallback : ""
       }`}
+      onClose={() => onClose?.()}
+      onEscape={() => {
+        if (activeTransition) {
+          activeTransition.abortController.abort("USER_ESCAPE");
+          setActiveTransition(null);
+        } else {
+          onClose?.();
+        }
+      }}
     >
       <header className={styles.monitorHeader}>
         <div className={styles.titleGroup}>
@@ -324,6 +312,6 @@ export function Launcher({
           </button>
         </div>
       )}
-    </div>
+    </ModalDialog>
   );
 }

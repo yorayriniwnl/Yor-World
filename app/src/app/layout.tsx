@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { connection } from "next/server";
 import { publicBaseUrl } from "@/config/public-base-url";
 import { Navigation } from "@/features/portfolio/navigation";
+import { RouteFocus } from "@/ui/RouteFocus";
 import "@/styles/tokens.css";
 import styles from "@/features/portfolio/portfolio.module.css";
 
@@ -19,6 +20,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   return (
     <html lang="en">
       <body>
+        <RouteFocus />
         <a className={styles.skipLink} href="#main-content">Skip to content</a>
         <div className={styles.site}>
           <Navigation />

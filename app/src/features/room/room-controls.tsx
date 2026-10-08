@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import type { ExperienceController } from "../experience/controller";
 import type { ExperienceSnapshot } from "../../contracts/experience";
+import { ModalDialog } from "@/ui/ModalDialog";
 import styles from "./room-controls.module.css";
 
 export interface RoomControlsProps {
@@ -14,17 +15,6 @@ export interface RoomControlsProps {
 }
 
 export function RoomControls({ controller, snapshot: initialSnapshot, onClose, onSoundChange }: RoomControlsProps) {
-  const dialogRef = React.useRef<HTMLDialogElement>(null);
-  React.useLayoutEffect(() => {
-    const dialog = dialogRef.current;
-    const previousFocus = document.activeElement as HTMLElement | null;
-    dialog?.showModal();
-    return () => {
-      dialog?.close();
-      if (previousFocus?.isConnected) previousFocus.focus({ preventScroll: true });
-    };
-  }, []);
-
   const [snapshot, setSnapshot] = React.useState<ExperienceSnapshot>(
     () => initialSnapshot ?? controller.getSnapshot()
   );
@@ -38,14 +28,11 @@ export function RoomControls({ controller, snapshot: initialSnapshot, onClose, o
   const { world, preferences, characterAction, paintingAngleDeg } = snapshot;
 
   return (
-    <dialog
-      ref={dialogRef}
-      onCancel={(event) => { event.preventDefault(); onClose?.(); }}
-      aria-modal="true"
-      aria-label="Studio Room Controls"
+    <ModalDialog
+      label="Studio Room Controls"
       className={styles.container}
-      data-testid="room-controls-panel"
-      role="dialog"
+      testId="room-controls-panel"
+      onClose={() => onClose?.()}
     >
       <header className={styles.header}>
         <h2 className={styles.title}>Room controls</h2>

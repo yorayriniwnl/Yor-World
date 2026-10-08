@@ -12,6 +12,7 @@ import { StaticFallback } from "../room/static-fallback";
 import { AccessibilityControls } from "../portfolio/accessibility-controls";
 import { AudioController } from "../experience/audio";
 import { AdaptiveQualityController, chooseInitialTier } from "../room/quality-policy";
+import { ModalDialog } from "@/ui/ModalDialog";
 import type { QualityTier } from "../../contracts/experience";
 import type { ExperienceController } from "../experience/controller";
 import type { PublishedProject } from "@/contracts/content";
@@ -401,31 +402,25 @@ export default function WorldRoot({
           onContinue={handleContinueWithPortfolio}
         />
         {showLauncher && (
-          <div className={styles.modalOverlay} data-testid="monitor-launcher-modal">
-            <div style={{ maxWidth: "840px", width: "100%", maxHeight: "90vh", display: "flex" }}>
-              <Launcher
-                projects={projects}
-                publicationRevision={publicationRevision}
-                reducedMotion={reducedMotion}
-                isOpen={showLauncher}
-                onClose={() => {
-                  setShowLauncher(false);
-                  if (experienceController) {
-                    experienceController.send({ type: "ESCAPE" });
-                  }
-                }}
-              />
-            </div>
-          </div>
+          <Launcher
+            projects={projects}
+            publicationRevision={publicationRevision}
+            reducedMotion={reducedMotion}
+            isOpen={showLauncher}
+            onClose={() => {
+              setShowLauncher(false);
+              if (experienceController) {
+                experienceController.send({ type: "ESCAPE" });
+              }
+            }}
+          />
         )}
         {showRoomControls && experienceController && (
-          <div className={styles.modalOverlay} data-testid="room-controls-modal">
-            <RoomControls
-              controller={experienceController}
-              onSoundChange={handleSoundChange}
-              onClose={() => { setShowRoomControls(false); void experienceController.send({ type: "ESCAPE" }); }}
-            />
-          </div>
+          <RoomControls
+            controller={experienceController}
+            onSoundChange={handleSoundChange}
+            onClose={() => { setShowRoomControls(false); void experienceController.send({ type: "ESCAPE" }); }}
+          />
         )}
       </div>
     );
@@ -440,31 +435,25 @@ export default function WorldRoot({
           onDismiss={handleContinueWithPortfolio}
         />
         {showLauncher && (
-          <div className={styles.modalOverlay} data-testid="monitor-launcher-modal">
-            <div style={{ maxWidth: "840px", width: "100%", maxHeight: "90vh", display: "flex" }}>
-              <Launcher
-                projects={projects}
-                publicationRevision={publicationRevision}
-                reducedMotion={reducedMotion}
-                isOpen={showLauncher}
-                onClose={() => {
-                  setShowLauncher(false);
-                  if (experienceController) {
-                    experienceController.send({ type: "ESCAPE" });
-                  }
-                }}
-              />
-            </div>
-          </div>
+          <Launcher
+            projects={projects}
+            publicationRevision={publicationRevision}
+            reducedMotion={reducedMotion}
+            isOpen={showLauncher}
+            onClose={() => {
+              setShowLauncher(false);
+              if (experienceController) {
+                experienceController.send({ type: "ESCAPE" });
+              }
+            }}
+          />
         )}
         {showRoomControls && experienceController && (
-          <div className={styles.modalOverlay} data-testid="room-controls-modal">
-            <RoomControls
-              controller={experienceController}
-              onSoundChange={handleSoundChange}
-              onClose={() => { setShowRoomControls(false); void experienceController.send({ type: "ESCAPE" }); }}
-            />
-          </div>
+          <RoomControls
+            controller={experienceController}
+            onSoundChange={handleSoundChange}
+            onClose={() => { setShowRoomControls(false); void experienceController.send({ type: "ESCAPE" }); }}
+          />
         )}
       </div>
     );
@@ -581,54 +570,58 @@ export default function WorldRoot({
           <button type="button" onClick={() => setShowDiagnostics((prev) => !prev)} className={styles.hudButton} data-testid="diagnostics-toggle-btn" aria-expanded={showDiagnostics}>Diagnostics</button>
         </div>
         {isTransition && <span className={styles.transitionIndicator} data-testid="transition-indicator">Transition in progress...</span>}
-        {diagnostics && <span className={styles.statusBadge} data-testid="status-badge" data-lifecycle-state={lifecycleState}>{diagnostics.activeClip} / {diagnostics.mode}</span>}
+        {showDiagnostics && diagnostics && (
+          <span className={styles.statusBadge} data-testid="status-badge" data-lifecycle-state={lifecycleState}>
+            {diagnostics.activeClip} / {diagnostics.mode}
+          </span>
+        )}
         <span data-testid="lifecycle-badge" hidden>{lifecycleState}</span>
         {showDiagnostics && diagnostics && <pre className={styles.diagnosticsDrawer} data-testid="world-diagnostics">{JSON.stringify(diagnostics, null, 2)}</pre>}
       </div>
 
       {showRoomControls && experienceController && (
-        <div className={styles.modalOverlay} data-testid="room-controls-modal">
-          <RoomControls
-            controller={experienceController}
-            onSoundChange={handleSoundChange}
-            onClose={() => { setShowRoomControls(false); void experienceController.send({ type: "ESCAPE" }); }}
-          />
-        </div>
+        <RoomControls
+          controller={experienceController}
+          onSoundChange={handleSoundChange}
+          onClose={() => { setShowRoomControls(false); void experienceController.send({ type: "ESCAPE" }); }}
+        />
       )}
 
       {showLauncher && (
-        <div className={styles.modalOverlay} data-testid="monitor-launcher-modal">
-          <div style={{ maxWidth: "840px", width: "100%", maxHeight: "90vh", display: "flex" }}>
-            <Launcher
-              projects={projects}
-              publicationRevision={publicationRevision}
-              reducedMotion={reducedMotion}
-              isOpen={showLauncher}
-              onClose={() => {
-                setShowLauncher(false);
-                if (experienceController) {
-                  experienceController.send({ type: "ESCAPE" });
-                }
-              }}
-            />
-          </div>
-        </div>
+        <Launcher
+          projects={projects}
+          publicationRevision={publicationRevision}
+          reducedMotion={reducedMotion}
+          isOpen={showLauncher}
+          onClose={() => {
+            setShowLauncher(false);
+            if (experienceController) {
+              experienceController.send({ type: "ESCAPE" });
+            }
+          }}
+        />
       )}
+      
       {showReplay && experienceController && (
-        <div className={styles.modalOverlay}>
-          <section role="dialog" aria-modal="true" aria-label="Studio entrance replay" className={styles.fallbackBanner}>
-            <h2>Explore the studio again</h2>
-            <button type="button" className={styles.hudButton} onClick={() => {
-              setShowReplay(false);
-              void experienceController.send({ type: "ENTER", replay: true });
-            }}>Replay Entrance</button>
-            <button type="button" className={styles.hudButton} onClick={handleContinueWithPortfolio}>Return to Portfolio</button>
-            <button type="button" className={styles.hudButton} onClick={() => {
-              setShowReplay(false);
-              void experienceController.send({ type: "ESCAPE" });
-            }}>Close</button>
-          </section>
-        </div>
+        <ModalDialog
+          label="Studio entrance replay"
+          onClose={() => {
+            setShowReplay(false);
+            void experienceController.send({ type: "ESCAPE" });
+          }}
+          className={styles.fallbackBanner}
+        >
+          <h2>Explore the studio again</h2>
+          <button type="button" className={styles.hudButton} onClick={() => {
+            setShowReplay(false);
+            void experienceController.send({ type: "ENTER", replay: true });
+          }}>Replay Entrance</button>
+          <button type="button" className={styles.hudButton} onClick={handleContinueWithPortfolio}>Return to Portfolio</button>
+          <button type="button" className={styles.hudButton} onClick={() => {
+            setShowReplay(false);
+            void experienceController.send({ type: "ESCAPE" });
+          }}>Close</button>
+        </ModalDialog>
       )}
     </div>
   );
