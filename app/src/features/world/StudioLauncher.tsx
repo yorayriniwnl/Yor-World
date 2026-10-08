@@ -93,7 +93,7 @@ export function StudioLauncher({
           </button>
           <details className={portfolioStyles.studioDisclosure} data-testid="studio-disclosure">
           <summary>
-            Enter YOR WORLD <span aria-hidden="true">↗</span>
+            How the interactive studio works <span aria-hidden="true">↗</span>
           </summary>
           <div className={portfolioStyles.studioMessage}>
             <p>The door is ready. Step into the bright interactive studio, meet the resident at the workstation, and explore the objects.</p>
