@@ -1,6 +1,8 @@
 # YOR WORLD — planning package
 
-**Current candidate: v1.0.0-rc6 — source amendment and validation pending.** Accepted baseline: **G6-R1 / RC5** remains immutable. **G7 AUTHORIZED / PREPARATION** under owner instruction “Complete it.”, recorded as **G7-OWNER-AUTH-20261006**. RC6 needs independent delta review/Parent acceptance and real production-service/device evidence before completion. See [current status](docs/planning/current-status.json) and [PRE-G7-01](docs/planning/reconciliation-packets/2026-10-06-pre-g7-01.md).
+**Current candidate: v1.0.0-rc6 — R6 SOURCE ACCEPTED under RC6-R1 for production preparation.** Accepted baseline **G6-R1 / RC5** remains immutable. **G7 AUTHORIZED / PREPARATION** under **G7-OWNER-AUTH-20261006**; actual production/manual evidence and separate G7 acceptance remain required.
+
+[RC6-R1 source ruling](docs/planning/reviews/2026-10-08-rc6-r1.md) records the independently verified exact source/CI/artifact binding. The project is not yet production-complete.
 
 YOR WORLD is a personal portfolio experienced as an inhabited developer studio. A visitor can enter through a cinematic doorway, meet the creator, touch objects that respond physically, and explore real work. Projects, résumé, and contact remain directly accessible through ordinary web pages.
 

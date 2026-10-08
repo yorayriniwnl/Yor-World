@@ -25,7 +25,7 @@ Review and release boundary:
 - [x] GPT Plus #2 independent full-stack RC5 audit completed; six P2/P3 findings explicitly retained in G6-R1. No correction packet is dispatched here.
 - [x] Parent final G6 adjudication: G6 ACCEPTED (G6-R1). Maker proof and independent audit remain separate.
 - [x] Owner authorization received: G7-OWNER-AUTH-20261006.
-- [ ] Fresh RC6 source/bundle/hosted execution and independent delta adjudication.
+- [x] Exact R6 source/bundle, all-thirteen fresh/hosted and primary proof, independently verified raw CI artifact and RC6-R1 source ruling.
 - [ ] Real provider configuration, source/deployment binding, monitoring and recovery/thermal/manual evidence.
 - [ ] All ten [G7 requirements](../planning/releases/2026-10-02-g7-production-release-protocol.md) freshly verified on production, including real services, physical/manual tests, monitoring and rollback RTO<=5m/RPO=0.
 

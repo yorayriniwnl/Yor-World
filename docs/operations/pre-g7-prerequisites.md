@@ -1,16 +1,16 @@
-# Pre-G7 prerequisites for accepted RC5
+# Current production prerequisites
 
-**Accepted baseline: G6-R1 / RC5. Current candidate: v1.0.0-rc6. G7 AUTHORIZED / PREPARATION** under **G7-OWNER-AUTH-20261006** (owner: “Complete it.”). PRE-G7-01 through PRE-G7-06 assign bounded source, release and operational preparation. Fresh R3 source/bundle/export/hosted verification and independent adjudication remain required; rejected R2 remains preserved. These prerequisites are not completed evidence.
+**Accepted baseline: G6-R1 / RC5. Current candidate: v1.0.0-rc6. G7 AUTHORIZED / PREPARATION** under **G7-OWNER-AUTH-20261006** (owner: “Complete it.”). PRE-G7-01 through PRE-G7-09 assign bounded amendments. Current R6 source `8e5b954e147a87e36a6869d9940c40f3d4c123f0` has complete fresh local/primary proof and independent boundary checks; actual hosted artifact and independent/major reviews PASS, and RC6-R1 accepts this exact source for preparation. All earlier execution and audit identities remain preserved. This guide does not establish live completion.
 
 Accepted source `c34e01bb5bff210d924f42d5266e2fa1ed13288e`, app tree `88a65e85d1f120a9aa4397efa8cc779bdfe5cf08`, bundle `4380cab7f5211c836fe5bb97c68d67137c1b0fd7a2e4789bb29d0157ab5faa0f`. The [independent audit](../planning/reviews/2026-10-06-rc5-independent-full-stack-audit.md) and G6-R1 record all remaining debt and limitations. Any source amendment must use a separate Parent packet, a new binding and independent delta adjudication; accepted RC5 is not silently edited.
 
 ## Governance and implementation prerequisites
 
 - Owner production authorization is recorded; do not repeat consent requests for that scope. Actual provider access/configuration and accepted successor binding remain required.
-- Protect main using the owner-approved branch protection/ruleset and required reviews/CI. The independent audit observed main unprotected with no rulesets; no policy was changed here.
-- Implement missing `/api/health` under a separate authorized maker packet before relying on G7 health/monitoring proof.
-- Correct open studio Retry and STATIC visibility/resource behavior through a separate maker/delta-review packet. Replace unsupported memory-leak claims with real measurements or UNKNOWN. Do not waive these requirements by accepting G6.
-- Address the optional checksum inventory exception and repository-size debt through explicit evidence/storage packets; preserve accepted historical data.
+- Main protection is applied and fresh readback verified after exact-head CI: strict Integrity/Release Quality checks bound to GitHub Actions, one required PR review with stale dismissal, and force-push/deletion denial. [Actual receipt](../../deliveries/G7/preparation/governance/evidence/apply-20261008T033028291188Z/receipt.json) preserves the API evidence. Owner admin bypass remains enabled and no independent GitHub writer/reviewer is configured; local source audit is separate from GitHub approving review.
+- `/api/health` is implemented and locally checked. Readiness requires reachable configured database/Auth; explicit liveness only proves the process. Actual production readiness 200, error/privacy controls and external uptime monitoring remain NOT RUN.
+- Retry reconstruction, STATIC/visibility/disposal and single-loop loading behavior are corrected and independently checked. Actual heap/GPU leak absence remains UNKNOWN. Physical/thermal/device behavior still needs actual sessions.
+- New portable inventories explicitly omit optional ignored `.last-run.json` state; mandatory input hashes remain required. Repository-size/storage debt stays deferred without deleting accepted history.
 
 ## Exact schema and environment
 

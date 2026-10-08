@@ -1,0 +1,66 @@
+STDOUT
+✔ canonical accepted output paths reject without performing writes (137.3425ms)
+✔ Windows case aliases of accepted outputs reject without performing writes (91.9618ms)
+▶ resolved output guards with isolated filesystem aliases
+  ✔ contained directory alias rejects existing accepted output (3.155ms)
+  ✔ contained directory alias rejects nonexistent descendants (6.0004ms)
+  ✔ all preserved proof aliases reject writes to new descendants (45.708ms)
+  ✔ contained docs alias rejects exact immutable files and review directory (59.8911ms)
+  ✔ Windows aliases reject with alternate casing (10.1514ms)
+  ✔ escaping aliases reject both existing and nonexistent descendants (2.5781ms)
+  ✔ dangling directory aliases fail closed (1.413ms)
+  ✔ unsafe repository path inputs reject (0.5357ms)
+  ✔ hard-linked mutable outputs reject before protected bytes can be truncated (20.9039ms)
+  ✔ mutable successors and similar prefixes remain writable (43.0245ms)
+  ✔ rejected guards leave isolated accepted fixtures unchanged (0.9093ms)
+✔ resolved output guards with isolated filesystem aliases (273.1409ms)
+✔ committed policy binds the R6 delivery and canonical archive (1.2773ms)
+▶ policy drift fails all writing entry points before creating output
+  ✔ old archive under R1 (928.3772ms)
+  ✔ old archive under R2 (445.2972ms)
+  ✔ preserved R3 archive (427.9491ms)
+  ✔ preserved root deliveries/G7/rc6-candidate (366.6416ms)
+  ✔ preserved root deliveries/G7/rc6-candidate-r2 (404.412ms)
+  ✔ preserved root deliveries/G7/rc6-candidate-r3 (321.1898ms)
+  ✔ preserved root deliveries/G7/rc6-candidate-r4 (297.9868ms)
+  ✔ preserved root deliveries/G7/rc6-candidate-r5 (331.8639ms)
+  ✔ mismatched mutable root (318.7331ms)
+  ✔ outside delivery tree (334.6972ms)
+  ✔ nonportable drive archive (303.1203ms)
+  ✔ backslash archive (312.2572ms)
+  ✔ archive alternate stream (326.4018ms)
+  ✔ traversal root (275.6387ms)
+✔ policy drift fails all writing entry points before creating output (5458.8242ms)
+✔ CLI override outputs cannot escape the bound delivery or overwrite inputs (3308.3372ms)
+▶ validator protects every fixed input even when manifest bindings are absent
+  ✔ source-binding.json (324.0871ms)
+  ✔ release-composition.json (294.8825ms)
+  ✔ bundle-receipt.json (257.4591ms)
+  ✔ asset-validation.json (246.481ms)
+  ✔ evidence/versions.json (239.3885ms)
+  ✔ evidence/e2e/browser-results.json (262.6775ms)
+  ✔ evidence/accessibility/browser-results.json (257.6989ms)
+  ✔ evidence/performance/performance-results.json (265.5491ms)
+  ✔ evidence/performance/active-route-frame-pacing.json (248.1428ms)
+  ✔ evidence/performance/cold-loads-desktop-1440x900.json (266.7855ms)
+  ✔ evidence/performance/cold-loads-mobile-390x844.json (268.0767ms)
+  ✔ evidence/performance/cold-loads-narrow-320x600.json (278.5172ms)
+  ✔ evidence/performance/enter-exit-stability.json (273.7853ms)
+  ✔ evidence/performance/public-payloads.json (267.0079ms)
+  ✔ fixed inventory preflight precedes malformed JSON and wrong-shaped declarations (268.6511ms)
+✔ validator protects every fixed input even when manifest bindings are absent (4088.7312ms)
+✔ validator protects declared inputs and preserves detached receipt semantics (1096.4938ms)
+✔ direct Python JSON writer rejects hardlinked protected bytes and permits distinct outputs (247.7456ms)
+✔ Python output preflight protects every preserved root and filesystem alias (535.1167ms)
+✔ policy roots and nested outputs reject preserved and escaping filesystem aliases (142.8651ms)
+✔ driver verifies actual exported bundle and every final manifest input (6211.0929ms)
+ℹ tests 52
+ℹ suites 0
+ℹ pass 52
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 21363.5956
+
+STDERR

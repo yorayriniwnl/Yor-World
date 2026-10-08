@@ -1,0 +1,56 @@
+STDOUT
+{
+  "sourceCommit": "8e5b954e147a87e36a6869d9940c40f3d4c123f0",
+  "cases": [
+    {
+      "label": "Python safe_output hardlink preflight",
+      "rejected": true,
+      "message": "Hard-linked release output is forbidden: C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-r6-independent-driver-qsonwhxm\\writer\\repo\\deliveries\\G7\\rc6-candidate-r6\\hardlinked-output.json",
+      "status": "PASS"
+    },
+    {
+      "label": "Python write_json direct hardlinked output",
+      "rejected": true,
+      "message": "Hard-linked release output is forbidden: C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-r6-independent-driver-qsonwhxm\\writer\\repo\\deliveries\\G7\\rc6-candidate-r6\\hardlinked-output.json",
+      "status": "PASS",
+      "fileId": {
+        "dev": "7520623354770808286",
+        "ino": "3096224745239454",
+        "nlink": 2
+      }
+    },
+    {
+      "label": "Python reader digest permits hardlinked input",
+      "status": "PASS"
+    },
+    {
+      "label": "Python ordinary single-link JSON writer remains usable",
+      "status": "PASS"
+    },
+    {
+      "label": "Python case-alias preserved R5 output",
+      "rejected": true,
+      "message": "Preserved release proof cannot be overwritten: DELIVERIES/G7/RC6-CANDIDATE-R4/new/output.json",
+      "status": "PASS"
+    },
+    {
+      "label": "Python nested directory alias into protected R5",
+      "rejected": true,
+      "message": "Preserved release proof cannot be overwritten: deliveries/G7/rc6-candidate-r6/history-alias/new/output.json",
+      "status": "PASS"
+    },
+    {
+      "label": "Driver export preflights all destinations before any copy",
+      "rejected": true,
+      "message": "Hard-linked release output is forbidden: C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-r6-independent-driver-qsonwhxm\\export\\repo\\deliveries\\G7\\rc6-candidate-r6\\z-hard.json",
+      "status": "PASS"
+    },
+    {
+      "label": "Driver distinct canonical export remains usable",
+      "status": "PASS"
+    }
+  ],
+  "overallStatus": "PASS"
+}
+
+STDERR

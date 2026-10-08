@@ -1,0 +1,940 @@
+{
+  "createdAt": "2026-10-07T21:24:33.423Z",
+  "sourceCommit": "8e5b954e147a87e36a6869d9940c40f3d4c123f0",
+  "platform": "win32",
+  "reviewer": "/root/r6_independent_audit",
+  "executionClass": "Own production CLI/library execution of frozen source in labelled synthetic isolated Git fixture",
+  "fixturePath": "C:\\Users\\yoray\\AppData\\Local\\Temp\\yor-r6-independent-identity-05f3Gj\\repo",
+  "fixtureCommit": "f51b446f7dac2411d584dd50357b00aa9bd85f7f",
+  "frozenSourceInputs": [
+    {
+      "path": "scripts/release/build-rc4-bundle.mjs",
+      "sourceSha256": "63c8d51564a5ff9ffc0699f1a807793872a1de53f9710b2362de49412fceb632"
+    },
+    {
+      "path": "scripts/release/build-rc5-bundle.mjs",
+      "sourceSha256": "a7005577a4d7fb8cdc1f0fb92ebcb59db03fa6d1c1601305ce9f7628ff6256ac"
+    },
+    {
+      "path": "scripts/release/build-rc6-bundle.mjs",
+      "sourceSha256": "2482599a28bac47699b8f540f53313a05b5389488f4fb2d9f00c38b0f343c422"
+    },
+    {
+      "path": "scripts/release/build-release-bundle.mjs",
+      "sourceSha256": "d065930d6b22ede5cdd9593ea13e74d3bab45c85754687a31f7c01e4599cc561"
+    },
+    {
+      "path": "scripts/release/check-current-status.mjs",
+      "sourceSha256": "55151924930e2620cf729c0116b42d553e77c49a27b97609dcf44210ba985ec7"
+    },
+    {
+      "path": "scripts/release/check-performance-budgets.mjs",
+      "sourceSha256": "d3be3fd7de0cb5875c03d6cb43bf25d2c5cbdad3b03e419385f89f3aca3f79b7"
+    },
+    {
+      "path": "scripts/release/check-release-composition.mjs",
+      "sourceSha256": "d734d2b71a3657748f04945778079061754cc501a8de117f15b9181e4c349c67"
+    },
+    {
+      "path": "scripts/release/rc6-policy.json",
+      "sourceSha256": "cce0b1e19fae2d92d268c3432f5bce06a3b015f4e2f6c32afde3ae6b8e180623"
+    },
+    {
+      "path": "scripts/release/release-lib.mjs",
+      "sourceSha256": "1b87ae9751769cecaa702718b5e133ff3bfa6e4823627b5fe8518d51c3f546fb"
+    },
+    {
+      "path": "scripts/release/tests/immutable-output.test.mjs",
+      "sourceSha256": "169df1fe48ca22dc781f8674cf42fd505813b0be4d587369108379e4f0a24025"
+    },
+    {
+      "path": "scripts/release/tests/policy-output.test.mjs",
+      "sourceSha256": "fd2e3f78dce6da56518ff761bddc8ebb9a6ab3a9eb857b6d24a53ed9350500da"
+    },
+    {
+      "path": "scripts/release/validate-gltf-assets.mjs",
+      "sourceSha256": "c36d11dd2ff40e0bba64e3d32ae69e985fdbc5fbd777d32efab9ead2e6c85682"
+    },
+    {
+      "path": "scripts/release/validate-release.mjs",
+      "sourceSha256": "d4186591b853fe604075f1afd39042becdb4ca4d807b1fc7c2b4b5c32030fd70"
+    },
+    {
+      "path": "scripts/release/verify-active-benchmark.mjs",
+      "sourceSha256": "e872ff65d88a85e40938f18616025c20690efa48b0f028a62cbbd450fba34595"
+    },
+    {
+      "path": "scripts/release/verify-g7-release.mjs",
+      "sourceSha256": "909188a467009cc3bb966d2e89f1dc5ab5e547bdb83e6f2f07c66d36ac77993b"
+    },
+    {
+      "path": "scripts/release/verify-playwright-results.mjs",
+      "sourceSha256": "3bc5c0dfc520a36f7303741fca66219632d968582247a08626f38bad24c3f5ab"
+    }
+  ],
+  "cases": [
+    {
+      "label": "builder uppercase archive receipt, absent outputs",
+      "rejected": true,
+      "message": "FAIL v1.0.0-rc6 bundle: Bundle and receipt outputs must differ\n",
+      "executed": {
+        "command": [
+          "node",
+          "scripts/release/build-release-bundle.mjs",
+          "--source-commit",
+          "f51b446f7dac2411d584dd50357b00aa9bd85f7f",
+          "--receipt",
+          "deliveries/G7/rc6-candidate-r6/YOR-WORLD-V1.0.0-RC6.BUNDLE.TAR.GZ"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "FAIL v1.0.0-rc6 bundle: Bundle and receipt outputs must differ\n"
+      },
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/yor-world-v1.0.0-rc6.bundle.tar.gz",
+          "beforeSha256": null,
+          "afterSha256": null,
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/bundle-receipt.json",
+          "beforeSha256": null,
+          "afterSha256": null,
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "canonical distinct builder outputs remain usable",
+      "executed": {
+        "command": [
+          "node",
+          "scripts/release/build-release-bundle.mjs",
+          "--source-commit",
+          "f51b446f7dac2411d584dd50357b00aa9bd85f7f"
+        ],
+        "exitCode": 0,
+        "stdout": "PASS deterministic v1.0.0-rc6 bundle: 2 files, 2709 bytes, SHA-256 5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7\n",
+        "stderr": ""
+      },
+      "archiveSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+      "archiveBytes": 2709,
+      "receiptSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+      "status": "PASS"
+    },
+    {
+      "label": "builder uppercase archive receipt, existing gzip",
+      "rejected": true,
+      "message": "FAIL v1.0.0-rc6 bundle: Bundle and receipt outputs must differ\n",
+      "executed": {
+        "command": [
+          "node",
+          "scripts/release/build-release-bundle.mjs",
+          "--source-commit",
+          "f51b446f7dac2411d584dd50357b00aa9bd85f7f",
+          "--receipt",
+          "deliveries/G7/rc6-candidate-r6/YOR-WORLD-V1.0.0-RC6.BUNDLE.TAR.GZ"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "FAIL v1.0.0-rc6 bundle: Bundle and receipt outputs must differ\n"
+      },
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/yor-world-v1.0.0-rc6.bundle.tar.gz",
+          "beforeSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "afterSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "validator uppercase manifest receipt",
+      "rejected": true,
+      "message": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n",
+      "executed": {
+        "command": [
+          "node",
+          "scripts/release/validate-release.mjs",
+          "--strict",
+          "--receipt",
+          "deliveries/G7/rc6-candidate-r6/RELEASE-MANIFEST.JSON"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n"
+      },
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/release-manifest.json",
+          "beforeSha256": "2c69d79cfd8394dd7f2592a5cee1184a94b7db53b33fdf9e581312014a87fd45",
+          "afterSha256": "2c69d79cfd8394dd7f2592a5cee1184a94b7db53b33fdf9e581312014a87fd45",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/yor-world-v1.0.0-rc6.bundle.tar.gz",
+          "beforeSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "afterSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "validator uppercase archive receipt",
+      "rejected": true,
+      "message": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n",
+      "executed": {
+        "command": [
+          "node",
+          "scripts/release/validate-release.mjs",
+          "--strict",
+          "--receipt",
+          "deliveries/G7/rc6-candidate-r6/YOR-WORLD-V1.0.0-RC6.BUNDLE.TAR.GZ"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n"
+      },
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/release-manifest.json",
+          "beforeSha256": "2c69d79cfd8394dd7f2592a5cee1184a94b7db53b33fdf9e581312014a87fd45",
+          "afterSha256": "2c69d79cfd8394dd7f2592a5cee1184a94b7db53b33fdf9e581312014a87fd45",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/yor-world-v1.0.0-rc6.bundle.tar.gz",
+          "beforeSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "afterSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "validator implicit mandatory read-only receipt: source-binding.json",
+      "rejected": true,
+      "message": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n",
+      "executed": {
+        "command": [
+          "node",
+          "scripts/release/validate-release.mjs",
+          "--strict",
+          "--receipt",
+          "deliveries/G7/rc6-candidate-r6/SOURCE-BINDING.JSON"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n"
+      },
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/source-binding.json",
+          "beforeSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "afterSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/release-manifest.json",
+          "beforeSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "afterSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/yor-world-v1.0.0-rc6.bundle.tar.gz",
+          "beforeSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "afterSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "validator implicit mandatory read-only receipt: bundle-receipt.json",
+      "rejected": true,
+      "message": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n",
+      "executed": {
+        "command": [
+          "node",
+          "scripts/release/validate-release.mjs",
+          "--strict",
+          "--receipt",
+          "deliveries/G7/rc6-candidate-r6/BUNDLE-RECEIPT.JSON"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n"
+      },
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/bundle-receipt.json",
+          "beforeSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "afterSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/release-manifest.json",
+          "beforeSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "afterSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/yor-world-v1.0.0-rc6.bundle.tar.gz",
+          "beforeSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "afterSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "validator implicit mandatory read-only receipt: release-composition.json",
+      "rejected": true,
+      "message": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n",
+      "executed": {
+        "command": [
+          "node",
+          "scripts/release/validate-release.mjs",
+          "--strict",
+          "--receipt",
+          "deliveries/G7/rc6-candidate-r6/RELEASE-COMPOSITION.JSON"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n"
+      },
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/release-composition.json",
+          "beforeSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "afterSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/release-manifest.json",
+          "beforeSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "afterSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/yor-world-v1.0.0-rc6.bundle.tar.gz",
+          "beforeSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "afterSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "validator implicit mandatory read-only receipt: asset-validation.json",
+      "rejected": true,
+      "message": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n",
+      "executed": {
+        "command": [
+          "node",
+          "scripts/release/validate-release.mjs",
+          "--strict",
+          "--receipt",
+          "deliveries/G7/rc6-candidate-r6/ASSET-VALIDATION.JSON"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n"
+      },
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/asset-validation.json",
+          "beforeSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "afterSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/release-manifest.json",
+          "beforeSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "afterSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/yor-world-v1.0.0-rc6.bundle.tar.gz",
+          "beforeSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "afterSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "validator implicit mandatory read-only receipt: evidence/versions.json",
+      "rejected": true,
+      "message": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n",
+      "executed": {
+        "command": [
+          "node",
+          "scripts/release/validate-release.mjs",
+          "--strict",
+          "--receipt",
+          "deliveries/G7/rc6-candidate-r6/evidence/VERSIONS.JSON"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n"
+      },
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/evidence/versions.json",
+          "beforeSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "afterSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/release-manifest.json",
+          "beforeSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "afterSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/yor-world-v1.0.0-rc6.bundle.tar.gz",
+          "beforeSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "afterSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "validator implicit mandatory read-only receipt: evidence/e2e/browser-results.json",
+      "rejected": true,
+      "message": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n",
+      "executed": {
+        "command": [
+          "node",
+          "scripts/release/validate-release.mjs",
+          "--strict",
+          "--receipt",
+          "deliveries/G7/rc6-candidate-r6/evidence/e2e/BROWSER-RESULTS.JSON"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n"
+      },
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/evidence/e2e/browser-results.json",
+          "beforeSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "afterSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/release-manifest.json",
+          "beforeSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "afterSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/yor-world-v1.0.0-rc6.bundle.tar.gz",
+          "beforeSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "afterSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "validator implicit mandatory read-only receipt: evidence/accessibility/browser-results.json",
+      "rejected": true,
+      "message": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n",
+      "executed": {
+        "command": [
+          "node",
+          "scripts/release/validate-release.mjs",
+          "--strict",
+          "--receipt",
+          "deliveries/G7/rc6-candidate-r6/evidence/accessibility/BROWSER-RESULTS.JSON"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n"
+      },
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/evidence/accessibility/browser-results.json",
+          "beforeSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "afterSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/release-manifest.json",
+          "beforeSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "afterSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/yor-world-v1.0.0-rc6.bundle.tar.gz",
+          "beforeSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "afterSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "validator implicit mandatory read-only receipt: evidence/performance/performance-results.json",
+      "rejected": true,
+      "message": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n",
+      "executed": {
+        "command": [
+          "node",
+          "scripts/release/validate-release.mjs",
+          "--strict",
+          "--receipt",
+          "deliveries/G7/rc6-candidate-r6/evidence/performance/PERFORMANCE-RESULTS.JSON"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n"
+      },
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/evidence/performance/performance-results.json",
+          "beforeSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "afterSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/release-manifest.json",
+          "beforeSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "afterSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/yor-world-v1.0.0-rc6.bundle.tar.gz",
+          "beforeSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "afterSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "validator implicit mandatory read-only receipt: evidence/performance/active-route-frame-pacing.json",
+      "rejected": true,
+      "message": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n",
+      "executed": {
+        "command": [
+          "node",
+          "scripts/release/validate-release.mjs",
+          "--strict",
+          "--receipt",
+          "deliveries/G7/rc6-candidate-r6/evidence/performance/ACTIVE-ROUTE-FRAME-PACING.JSON"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n"
+      },
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/evidence/performance/active-route-frame-pacing.json",
+          "beforeSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "afterSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/release-manifest.json",
+          "beforeSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "afterSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/yor-world-v1.0.0-rc6.bundle.tar.gz",
+          "beforeSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "afterSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "validator implicit mandatory read-only receipt: evidence/performance/cold-loads-desktop-1440x900.json",
+      "rejected": true,
+      "message": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n",
+      "executed": {
+        "command": [
+          "node",
+          "scripts/release/validate-release.mjs",
+          "--strict",
+          "--receipt",
+          "deliveries/G7/rc6-candidate-r6/evidence/performance/COLD-LOADS-DESKTOP-1440X900.JSON"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n"
+      },
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/evidence/performance/cold-loads-desktop-1440x900.json",
+          "beforeSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "afterSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/release-manifest.json",
+          "beforeSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "afterSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/yor-world-v1.0.0-rc6.bundle.tar.gz",
+          "beforeSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "afterSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "validator implicit mandatory read-only receipt: evidence/performance/cold-loads-mobile-390x844.json",
+      "rejected": true,
+      "message": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n",
+      "executed": {
+        "command": [
+          "node",
+          "scripts/release/validate-release.mjs",
+          "--strict",
+          "--receipt",
+          "deliveries/G7/rc6-candidate-r6/evidence/performance/COLD-LOADS-MOBILE-390X844.JSON"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n"
+      },
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/evidence/performance/cold-loads-mobile-390x844.json",
+          "beforeSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "afterSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/release-manifest.json",
+          "beforeSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "afterSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/yor-world-v1.0.0-rc6.bundle.tar.gz",
+          "beforeSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "afterSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "validator implicit mandatory read-only receipt: evidence/performance/cold-loads-narrow-320x600.json",
+      "rejected": true,
+      "message": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n",
+      "executed": {
+        "command": [
+          "node",
+          "scripts/release/validate-release.mjs",
+          "--strict",
+          "--receipt",
+          "deliveries/G7/rc6-candidate-r6/evidence/performance/COLD-LOADS-NARROW-320X600.JSON"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n"
+      },
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/evidence/performance/cold-loads-narrow-320x600.json",
+          "beforeSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "afterSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/release-manifest.json",
+          "beforeSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "afterSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/yor-world-v1.0.0-rc6.bundle.tar.gz",
+          "beforeSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "afterSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "validator implicit mandatory read-only receipt: evidence/performance/enter-exit-stability.json",
+      "rejected": true,
+      "message": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n",
+      "executed": {
+        "command": [
+          "node",
+          "scripts/release/validate-release.mjs",
+          "--strict",
+          "--receipt",
+          "deliveries/G7/rc6-candidate-r6/evidence/performance/ENTER-EXIT-STABILITY.JSON"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n"
+      },
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/evidence/performance/enter-exit-stability.json",
+          "beforeSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "afterSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/release-manifest.json",
+          "beforeSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "afterSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/yor-world-v1.0.0-rc6.bundle.tar.gz",
+          "beforeSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "afterSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "validator implicit mandatory read-only receipt: evidence/performance/public-payloads.json",
+      "rejected": true,
+      "message": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n",
+      "executed": {
+        "command": [
+          "node",
+          "scripts/release/validate-release.mjs",
+          "--strict",
+          "--receipt",
+          "deliveries/G7/rc6-candidate-r6/evidence/performance/PUBLIC-PAYLOADS.JSON"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n"
+      },
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/evidence/performance/public-payloads.json",
+          "beforeSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "afterSha256": "9d03b624aed3ae899a0cfc9d9680a3119d942a2938ade45282cdc3b1ea16b7f2",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/release-manifest.json",
+          "beforeSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "afterSha256": "16f0002e6b1a28927350202208085b1d42a167eb9ce8fd320902d41d3f4d335f",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/yor-world-v1.0.0-rc6.bundle.tar.gz",
+          "beforeSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "afterSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "validator manifest-declared read-only receipt: evidenceHashes",
+      "rejected": true,
+      "message": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n",
+      "executed": {
+        "command": [
+          "node",
+          "scripts/release/validate-release.mjs",
+          "--strict",
+          "--receipt",
+          "deliveries/G7/rc6-candidate-r6/EXTRA-HASH-INPUT.JSON"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n"
+      },
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/extra-hash-input.json",
+          "beforeSha256": "c8bd187aef53bd433051ecd66c16a008256a47377e0838843945640237be7010",
+          "afterSha256": "c8bd187aef53bd433051ecd66c16a008256a47377e0838843945640237be7010",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/release-manifest.json",
+          "beforeSha256": "f3ae3de03a8f7c07ded05f0c134adeff27967aa270d5db5d40d5b39c461f83a0",
+          "afterSha256": "f3ae3de03a8f7c07ded05f0c134adeff27967aa270d5db5d40d5b39c461f83a0",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "validator manifest-declared read-only receipt: requiredChecks",
+      "rejected": true,
+      "message": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n",
+      "executed": {
+        "command": [
+          "node",
+          "scripts/release/validate-release.mjs",
+          "--strict",
+          "--receipt",
+          "deliveries/G7/rc6-candidate-r6/EXTRA-CHECK-INPUT.LOG"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "FAIL v1.0.0-rc6 manifest validation: Validation receipt must not overwrite its inputs\n"
+      },
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/extra-check-input.log",
+          "beforeSha256": "c8bd187aef53bd433051ecd66c16a008256a47377e0838843945640237be7010",
+          "afterSha256": "c8bd187aef53bd433051ecd66c16a008256a47377e0838843945640237be7010",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/release-manifest.json",
+          "beforeSha256": "8d10b481875e1944128f40433ea9a16eaa71283d2ac120856a0d5a1d608c5363",
+          "afterSha256": "8d10b481875e1944128f40433ea9a16eaa71283d2ac120856a0d5a1d608c5363",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "JS mutable output hard link to protected R5 sentinel",
+      "rejected": true,
+      "message": "Hard-linked release output is forbidden: deliveries/G7/rc6-candidate-r6/hardlink-output.json",
+      "executed": null,
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r5/SYNTHETIC-PROTECTED-SENTINEL.json",
+          "beforeSha256": "94ac025171c7f073f6907371f0b8eb368e133ab74528e294f2c2e9d53c55acb3",
+          "afterSha256": "94ac025171c7f073f6907371f0b8eb368e133ab74528e294f2c2e9d53c55acb3",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/hardlink-output.json",
+          "beforeSha256": "94ac025171c7f073f6907371f0b8eb368e133ab74528e294f2c2e9d53c55acb3",
+          "afterSha256": "94ac025171c7f073f6907371f0b8eb368e133ab74528e294f2c2e9d53c55acb3",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS",
+      "fileId": {
+        "dev": "1587469790",
+        "ino": "1407374884988710",
+        "nlink": "2"
+      }
+    },
+    {
+      "label": "readers can inspect hard-linked input",
+      "status": "PASS"
+    },
+    {
+      "label": "builder receipt hard link rejected before archive write",
+      "rejected": true,
+      "message": "FAIL v1.0.0-rc6 bundle: Hard-linked release output is forbidden: deliveries/G7/rc6-candidate-r6/hardlink-receipt.json\n",
+      "executed": {
+        "command": [
+          "node",
+          "scripts/release/build-release-bundle.mjs",
+          "--source-commit",
+          "f51b446f7dac2411d584dd50357b00aa9bd85f7f",
+          "--receipt",
+          "deliveries/G7/rc6-candidate-r6/hardlink-receipt.json"
+        ],
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "FAIL v1.0.0-rc6 bundle: Hard-linked release output is forbidden: deliveries/G7/rc6-candidate-r6/hardlink-receipt.json\n"
+      },
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r5/SYNTHETIC-PROTECTED-SENTINEL.json",
+          "beforeSha256": "94ac025171c7f073f6907371f0b8eb368e133ab74528e294f2c2e9d53c55acb3",
+          "afterSha256": "94ac025171c7f073f6907371f0b8eb368e133ab74528e294f2c2e9d53c55acb3",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/yor-world-v1.0.0-rc6.bundle.tar.gz",
+          "beforeSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "afterSha256": "5dc227a8dfa13e0fb79f434fb4a49fc3f87ee05969b35c87d2f5dfa216e43fb7",
+          "unchanged": true
+        },
+        {
+          "path": "deliveries/G7/rc6-candidate-r6/hardlink-receipt.json",
+          "beforeSha256": "94ac025171c7f073f6907371f0b8eb368e133ab74528e294f2c2e9d53c55acb3",
+          "afterSha256": "94ac025171c7f073f6907371f0b8eb368e133ab74528e294f2c2e9d53c55acb3",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "reserved historical output: deliveries/G7/rc6-candidate-r5/new/receipt.json",
+      "rejected": true,
+      "message": "Accepted RC1-RC5 evidence, audit and G6-R1 are immutable; original RC6, rejected R2, reconciled R3, canonical R4 and incoming R5 proof are preserved",
+      "executed": null,
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r5/SYNTHETIC-PROTECTED-SENTINEL.json",
+          "beforeSha256": "94ac025171c7f073f6907371f0b8eb368e133ab74528e294f2c2e9d53c55acb3",
+          "afterSha256": "94ac025171c7f073f6907371f0b8eb368e133ab74528e294f2c2e9d53c55acb3",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "reserved historical output: DELIVERIES/G7/RC6-CANDIDATE-R4/new/receipt.json",
+      "rejected": true,
+      "message": "Accepted RC1-RC5 evidence, audit and G6-R1 are immutable; original RC6, rejected R2, reconciled R3, canonical R4 and incoming R5 proof are preserved",
+      "executed": null,
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r5/SYNTHETIC-PROTECTED-SENTINEL.json",
+          "beforeSha256": "94ac025171c7f073f6907371f0b8eb368e133ab74528e294f2c2e9d53c55acb3",
+          "afterSha256": "94ac025171c7f073f6907371f0b8eb368e133ab74528e294f2c2e9d53c55acb3",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "nested junction into protected R5",
+      "rejected": true,
+      "message": "Accepted RC1-RC5 evidence, audit and G6-R1 are immutable; original RC6, rejected R2, reconciled R3, canonical R4 and incoming R5 proof are preserved",
+      "executed": null,
+      "preservation": [
+        {
+          "path": "deliveries/G7/rc6-candidate-r5/SYNTHETIC-PROTECTED-SENTINEL.json",
+          "beforeSha256": "94ac025171c7f073f6907371f0b8eb368e133ab74528e294f2c2e9d53c55acb3",
+          "afterSha256": "94ac025171c7f073f6907371f0b8eb368e133ab74528e294f2c2e9d53c55acb3",
+          "unchanged": true
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "label": "nested junction outside repository",
+      "rejected": true,
+      "message": "Symlink escapes repository: deliveries/G7/rc6-candidate-r6/outside-alias/new/receipt.json",
+      "executed": null,
+      "preservation": [],
+      "status": "PASS"
+    }
+  ],
+  "actualCandidateOrHistoryWrites": false,
+  "productionEvidence": false,
+  "overallStatus": "PASS"
+}
