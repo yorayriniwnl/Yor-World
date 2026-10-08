@@ -770,3 +770,108 @@
     padding: 0 !important;
   }
 }
+
+/* YOR WORLD doorway launch: the scene owns the viewport, not the CTA row.
+   The standard portfolio stays server-rendered and fully navigable. */
+.studioEntry {
+  flex: 1 1 185px;
+  max-width: 300px;
+}
+
+.studioEntry .studioDisclosure {
+  width: 100%;
+  max-width: 100%;
+}
+
+.studioEntry .studioDisclosure summary {
+  border-color: #436c9b;
+  background: linear-gradient(115deg, #f9fbff, #e6f5fa);
+  color: #203e65;
+  font-weight: 700;
+}
+
+.studioEntry .studioDisclosure summary:focus-visible,
+.studioMessage button:focus-visible,
+.studioExit:focus-visible {
+  outline: 3px solid #2362bc;
+  outline-offset: 3px;
+}
+
+.studioEntry .studioMessage {
+  width: min(400px, calc(100vw - 48px));
+  color: #31465a;
+  font-size: .9rem;
+  line-height: 1.6;
+}
+
+.studioEntry .studioMessage p + p { margin-top: 10px; }
+.studioEntry .studioMessage button { margin-top: 14px; cursor: pointer; }
+
+.studioFullscreen {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: #0c1017;
+  color: #f8f8fa;
+  overflow: hidden;
+}
+
+.studioFullscreen::backdrop { background: rgba(8, 13, 24, .88); }
+
+.studioFullscreen [data-testid="world-stage-container"],
+.studioFullscreen [data-testid="world-static-container"],
+.studioFullscreen [data-testid="world-loading-placeholder"] {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  max-height: none;
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.studioExit {
+  position: absolute;
+  top: max(10px, env(safe-area-inset-top));
+  right: max(10px, env(safe-area-inset-right));
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 45px;
+  padding: 10px 16px;
+  border: 1px solid rgba(255, 255, 255, .52);
+  border-radius: 5px;
+  background: rgba(9, 16, 25, .91);
+  color: #f6f6f2;
+  font: 600 12px/1.4 var(--font-body, sans-serif);
+  cursor: pointer;
+}
+
+.studioExit:hover { background: #23354a; }
+
+@media (max-width: 700px) {
+  .studioEntry { flex-basis: 100%; max-width: 100%; }
+  .studioFullscreen [data-testid="world-stage-container"],
+  .studioFullscreen [data-testid="world-static-container"] {
+    height: 100dvh;
+    min-height: 0;
+    max-height: none;
+  }
+  .studioExit {
+    top: max(8px, env(safe-area-inset-top));
+    right: max(8px, env(safe-area-inset-right));
+    padding: 8px 11px;
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .studioExit { scroll-behavior: auto; }
+}
