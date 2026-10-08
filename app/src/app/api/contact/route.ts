@@ -20,6 +20,7 @@ import {
 import { QuotaExceededError } from "@/server/contact/quota";
 import { PersistenceError } from "@/server/contact/outbox";
 import { getContactDb } from "@/server/contact/db";
+import { BodyTooLargeError, readBoundedBody } from "@/server/http/read-body";
 
 export const dynamic = "force-dynamic";
 
@@ -29,37 +30,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     "Pragma": "no-cache",
   };
 
-  // 1. Check Content-Length if present
-  const contentLength = request.headers.get("content-length");
-  if (contentLength && parseInt(contentLength, 10) > MAX_BODY_BYTES) {
-    return NextResponse.json(
-      {
-        error: "Payload Too Large: Request body exceeds 8 KiB ceiling.",
-        status: "rejected",
-      },
-      { status: 413, headers: noStoreHeaders }
-    );
-  }
-
-  // 2. Read and verify raw body size
+  // Content-Length is only a preflight hint; actual stream bytes enforce the ceiling.
   let rawText: string;
   try {
-    rawText = await request.text();
-  } catch {
+    rawText = (await readBoundedBody(request, MAX_BODY_BYTES)).text;
+  } catch (error) {
+    if (error instanceof BodyTooLargeError) return NextResponse.json(
+      { error: "Payload Too Large: Request body exceeds 8 KiB ceiling.", status: "rejected" },
+      { status: 413, headers: noStoreHeaders }
+    );
     return NextResponse.json(
       { error: "Failed to read request body.", status: "rejected" },
       { status: 400, headers: noStoreHeaders }
-    );
-  }
-
-  const byteLength = Buffer.byteLength(rawText, "utf8");
-  if (byteLength > MAX_BODY_BYTES) {
-    return NextResponse.json(
-      {
-        error: "Payload Too Large: Request body exceeds 8 KiB ceiling.",
-        status: "rejected",
-      },
-      { status: 413, headers: noStoreHeaders }
     );
   }
 

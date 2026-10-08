@@ -31,8 +31,8 @@ export const ContactInputSchema = z.strictObject({
   idempotencyKey: z
     .string()
     .trim()
-    .min(10, "Idempotency key must be at least 10 characters")
-    .max(128, "Idempotency key must not exceed 128 characters"),
+    .uuid("Idempotency key must be a UUID")
+    .transform((key) => key.toLowerCase()),
   website: z.string().optional(), // Honeypot field; must be empty/omitted
 });
 
