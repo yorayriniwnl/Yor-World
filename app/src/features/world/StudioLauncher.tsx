@@ -50,6 +50,7 @@ export function StudioLauncher({
 
   const [manuallyClosed, setManuallyClosed] = useState(false);
   const [manuallyOpened, setManuallyOpened] = useState(false);
+  const [dialogOpened, setDialogOpened] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   const isEntered = (autoEnter && !manuallyClosed) || manuallyOpened;
@@ -57,6 +58,7 @@ export function StudioLauncher({
   const closeStudio = () => {
     setManuallyClosed(true);
     setManuallyOpened(false);
+    setDialogOpened(false);
   };
 
   // Browser-native modal focus containment and Escape handling.
@@ -66,7 +68,10 @@ export function StudioLauncher({
     const dialog = dialogRef.current;
     if (!isEntered || !dialog) return;
     if (!dialog.open) dialog.showModal();
+    // The renderer must not measure the dialog while it is display:none.
+    const frame = window.requestAnimationFrame(() => setDialogOpened(true));
     return () => {
+      window.cancelAnimationFrame(frame);
       if (dialog.open) dialog.close();
     };
   }, [isEntered]);
@@ -120,13 +125,13 @@ export function StudioLauncher({
           >
             Browse projects <span aria-hidden="true">↗</span>
           </Link>
-          <DynamicWorldRoot
+          {dialogOpened && <DynamicWorldRoot
             projects={projects}
             publicationRevision={publicationRevision}
             onClose={closeStudio}
             simulateAssetError={simulateAssetError}
             simulateRendererError={simulateRendererError}
-          />
+          />}
         </dialog>
       )}
     </div>
