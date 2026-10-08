@@ -154,8 +154,9 @@ test.describe("B5 Production Runtime Lifecycle Foundation - Adversarial & Invari
     await expect(page.locator('[data-testid="world-stage-container"]')).toBeVisible({ timeout: 15000 });
     expect(await page.locator("canvas").count()).toBe(1);
 
-    // Navigate to Projects via semantic navigation
-    await page.locator('nav a[href="/projects"]').first().click();
+    // Navigate to Projects through the modal's accessible parallel path.
+    // Background page navigation is correctly inert while the dialog is open.
+    await page.getByTestId("studio-projects-link").click();
     await page.waitForURL("**/projects");
 
     // Canvas must be completely removed from DOM
