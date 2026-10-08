@@ -905,3 +905,68 @@
     font-size: 11px;
   }
 }
+
+/* Keep runtime controls available at the top of the screen.
+   Fullscreen navigation lives at the bottom, away from camera/quality buttons. */
+.studioFullscreen .studioExit {
+  top: auto;
+  right: max(12px, env(safe-area-inset-right));
+  bottom: max(14px, env(safe-area-inset-bottom));
+}
+.studioQuickNav {
+  position: absolute;
+  left: max(12px, env(safe-area-inset-left));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  z-index: 120;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  max-width: calc(100% - 176px);
+  padding: 5px;
+  background: rgba(9, 16, 25, .9);
+  border: 1px solid rgba(255,255,255,.27);
+  border-radius: 6px;
+  backdrop-filter: blur(12px);
+}
+.studioQuickNav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border-radius: 3px;
+  color: #f6f3ef;
+  text-decoration: none;
+  font: 600 12px/1.4 var(--font-body, sans-serif);
+}
+.studioQuickNav a span { color: #88d7ec; }
+.studioQuickNav a:hover,
+.studioQuickNav a:focus-visible {
+  background: #28465b;
+  color: #fff;
+  outline: 2px solid #84d3eb;
+  outline-offset: -2px;
+}
+@media (max-width: 760px) {
+  .studioQuickNav {
+    max-width: calc(100% - 111px);
+    left: max(7px, env(safe-area-inset-left));
+    bottom: max(8px, env(safe-area-inset-bottom));
+    gap: 0;
+    padding: 2px;
+  }
+  .studioQuickNav a {
+    min-height: 42px;
+    gap: 3px;
+    padding: 7px 8px;
+    font-size: 10px;
+  }
+  .studioQuickNav a span { display: none; }
+  .studioFullscreen .studioExit {
+    bottom: max(8px, env(safe-area-inset-bottom));
+    right: max(7px, env(safe-area-inset-right));
+    min-height: 48px;
+    max-width: 100px;
+  }
+}
