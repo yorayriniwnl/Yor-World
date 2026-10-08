@@ -57,7 +57,7 @@ export function AccessibilityControls({
         <button
           type="button"
           role="switch"
-          aria-checked={reducedMotion}
+          aria-checked={reducedMotion ? "true" : "false"}
           onClick={onReducedMotionToggle}
           className={`${styles.toggleButton} ${reducedMotion ? styles.toggleButtonActive : ""}`}
           aria-label="Toggle Reduced Motion"
@@ -71,7 +71,7 @@ export function AccessibilityControls({
         <button
           type="button"
           role="switch"
-          aria-checked={soundEnabled}
+          aria-checked={soundEnabled ? "true" : "false"}
           onClick={onSoundToggle}
           className={`${styles.toggleButton} ${soundEnabled ? styles.toggleButtonActive : ""}`}
           aria-label="Toggle Audio Sound"
@@ -85,7 +85,7 @@ export function AccessibilityControls({
         <button
           type="button"
           role="switch"
-          aria-checked={decorativePaused}
+          aria-checked={decorativePaused ? "true" : "false"}
           onClick={onDecorativePauseToggle}
           className={`${styles.toggleButton} ${decorativePaused ? styles.toggleButtonActive : ""}`}
           aria-label="Pause Decorative Animations"
