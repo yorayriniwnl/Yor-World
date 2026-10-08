@@ -39,7 +39,7 @@ export default async function HomePage() {
           </div>
           <div className={styles.editorialHeroFigure}>
             <div className={styles.editorialFigureTop}><span>YOR WORLD / STUDIO 001</span><span>DESIGNED TO BE EXPLORED ↗</span></div>
-            <div className={styles.editorialFigureWorld} aria-label="Illustrated studio entrance">
+            <div className={styles.editorialFigureWorld} role="img" aria-label="Illustrated studio entrance">
               <div className={styles.editorialFigureOrbit} aria-hidden="true" />
               <div className={styles.editorialFigurePortal} aria-hidden="true">
                 <div className={styles.editorialFigureInside}>
