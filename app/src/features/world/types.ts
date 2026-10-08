@@ -65,6 +65,7 @@ export interface Diagnostics {
   renderedFrames?: number | undefined;
   lastRenderedAt?: number | undefined;
   renderCalls?: number | undefined;
+  renderCallsIncludeAllPasses?: boolean | undefined;
   renderedTriangles?: number | undefined;
   renderPixelRatio?: number | undefined;
   interactions?: { boundProductionTargets: number; frozenHitProxyCount: number; lastActivatedId: string | null } | undefined;
@@ -99,6 +100,8 @@ export const WORLD_RENDERED_FRAME_EVENT = "yor-world-rendered-frame";
 
 /** Emitted only after the production renderer has rendered the integrated world. */
 export interface RenderedWorldFrame {
+  /** Includes shadows, transmission and every configured pass of this frame. */
+  renderCallsIncludeAllPasses?: boolean;
   frame: number;
   timestamp: number;
   durationMs: number;

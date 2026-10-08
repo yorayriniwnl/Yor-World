@@ -15,7 +15,7 @@ import { publishedProjects } from "../portfolio/public-content";
 import { WorldInteractionBinding } from "./WorldInteractionBinding";
 import { saveReturnSnapshot } from "../experience/return-snapshot";
 import { RuntimeMaterialQuality } from "./RuntimeMaterialQuality";
-import { LowQualityBatch } from "./LowQualityBatch";
+import { RigidWorldBatch } from "./RigidWorldBatch";
 import { isSoftwareRenderer } from "./device-capabilities";
 import { configureProductionLighting } from "./ProductionLighting";
 
@@ -57,7 +57,7 @@ export class WorldRuntime {
   private integratedResult: IntegratedSceneResult | null = null;
   private interactionBinding: WorldInteractionBinding | null = null;
   private materialQuality: RuntimeMaterialQuality | null = null;
-  private lowQualityBatch: LowQualityBatch | null = null;
+  private rigidWorldBatch: RigidWorldBatch | null = null;
   private readonly onFrameDuration: WorldRuntimeOptions["onFrameDuration"];
   private readonly onSamplingPause: WorldRuntimeOptions["onSamplingPause"];
 
@@ -211,6 +211,9 @@ export class WorldRuntime {
         preserveDrawingBuffer: false,
       });
       this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      // Three's automatic reset occurs after shadows and omits those draws.
+      // This runtime owns one reset before all passes of each complete frame.
+      this.renderer.info.autoReset = false;
       this.renderer.toneMappingExposure = 1.15;
       this.renderer.shadowMap.enabled = this.qualityTier !== "low" && this.qualityTier !== "static";
       this.renderer.shadowMap.type = this.qualityTier === "high" ? THREE.PCFSoftShadowMap : THREE.PCFShadowMap;
@@ -389,6 +392,8 @@ export class WorldRuntime {
     }
 
     if (this.renderer && this.integratedResult) {
+      this.rigidWorldBatch?.update();
+      this.renderer.info.reset();
       this.renderer.render(this.scene, this.camera);
       this.renderedFrames++;
       this.lastRenderedAt = currentTime;
@@ -398,6 +403,7 @@ export class WorldRuntime {
         activeClip: this.characterDirector?.currentClip ?? "none", characterMode: this.characterDirector?.mode ?? "unmounted",
         cameraPreset: this.cameraDirector?.getCurrentPreset() ?? "home-desktop", lifecycleState: this.lifecycleManager.getState(),
         renderCalls: this.renderer.info.render.calls, renderedTriangles: this.renderer.info.render.triangles,
+        renderCallsIncludeAllPasses: true,
       };
       this.canvas.dispatchEvent(new CustomEvent(WORLD_RENDERED_FRAME_EVENT, { detail: frame }));
     }
@@ -522,13 +528,15 @@ export class WorldRuntime {
   }
 
   private applySceneQuality(tier: QualityTier): void {
+    // Materials are borrowed by batches; restore sources before changing tiers.
+    this.rigidWorldBatch?.dispose();
+    this.rigidWorldBatch = null;
     this.materialQuality?.apply(tier);
     // Three's fallback submits each instance separately without this extension.
-    if (tier === "low" && this.materialQuality && !this.lowQualityBatch
-      && this.renderer?.getContext().getExtension("WEBGL_multi_draw")) {
-      this.lowQualityBatch = new LowQualityBatch(this.scene);
+    if (tier !== "static" && this.materialQuality && this.renderer) {
+      this.rigidWorldBatch = new RigidWorldBatch(this.scene,
+        Boolean(this.renderer.getContext().getExtension("WEBGL_multi_draw")), this.camera);
     }
-    this.lowQualityBatch?.apply(tier);
   }
 
   public setDecorativePaused(paused: boolean) {
@@ -566,6 +574,7 @@ export class WorldRuntime {
       lastRenderedAt: this.lastRenderedAt,
       renderCalls: this.renderer?.info.render.calls ?? 0,
       renderedTriangles: this.renderer?.info.render.triangles ?? 0,
+      renderCallsIncludeAllPasses: true,
       renderPixelRatio: this.renderer?.getPixelRatio() ?? 0,
       lifecycleState: this.lifecycleManager.getState(),
       residentCount: this.integratedResult?.nodeCounts.residentCount ?? 0,
@@ -613,8 +622,8 @@ export class WorldRuntime {
     this.loadingAbort.abort();
     this.interactionBinding?.dispose();
     this.interactionBinding = null;
-    this.lowQualityBatch?.dispose();
-    this.lowQualityBatch = null;
+    this.rigidWorldBatch?.dispose();
+    this.rigidWorldBatch = null;
     this.materialQuality?.dispose();
     this.materialQuality = null;
     this.sessionToken++; // Invalidate stale async operations

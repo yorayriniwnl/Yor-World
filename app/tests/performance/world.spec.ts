@@ -51,6 +51,45 @@ test.describe("C3 Performance Benchmarks & Budget Verification", () => {
   ];
 
   for (const profile of profiles) {
+    test(`Inclusive render-call ceilings on ${profile.name}`, async ({ page }) => {
+      await page.setViewportSize({ width: profile.width, height: profile.height });
+      await page.goto("/?studio=1", { waitUntil: "domcontentloaded" });
+      await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME", { timeout: 15000 });
+      const results = [];
+      for (const tier of ["high", "medium", "low"] as const) {
+        await page.getByTestId("studio-options-toggle").click();
+        await page.getByTestId("quality-tier-select").selectOption(tier);
+        await page.getByTestId("studio-options-toggle").click();
+        const samples = await page.getByTestId("world-canvas").evaluate(async (canvas, requestedTier) => {
+          return new Promise<RenderedWorldFrame[]>((resolve, reject) => {
+            const frames: RenderedWorldFrame[] = [];
+            const timeout = setTimeout(() => { canvas.removeEventListener("yor-world-rendered-frame", onFrame); reject(new Error("No 60 completed frames at requested tier")); }, 10000);
+            const onFrame = (event: Event) => {
+              const frame = (event as CustomEvent<RenderedWorldFrame>).detail;
+              if (frame.qualityTier !== requestedTier) return;
+              frames.push(frame);
+              if (frames.length === 60) {
+                clearTimeout(timeout);
+                canvas.removeEventListener("yor-world-rendered-frame", onFrame);
+                resolve(frames);
+              }
+            };
+            canvas.addEventListener("yor-world-rendered-frame", onFrame);
+          });
+        }, tier);
+        results.push({ tier, samples });
+      }
+      await savePerformanceReport(`inclusive-draws-${profile.name}.json`, { viewport: profile, ceiling: profile.width < 640 ? 80 : 120, results });
+      for (const { samples } of results) for (const frame of samples) {
+        expect(frame.renderCallsIncludeAllPasses).toBe(true);
+        expect(frame.renderCalls).toBeGreaterThan(0);
+        expect(frame.renderedTriangles).toBeGreaterThan(0);
+        expect(frame.renderCalls).toBeLessThanOrEqual(profile.width < 640 ? 80 : 120);
+      }
+    });
+  }
+
+  for (const profile of profiles) {
     test(`Five cold loads on ${profile.name}`, async ({ browser, baseURL }) => {
       if (!baseURL) throw new Error("Production test baseURL is required.");
       const loadTimes: number[] = [];
@@ -96,6 +135,7 @@ test.describe("C3 Performance Benchmarks & Budget Verification", () => {
     // AUTO may legitimately remove WebGL after sustained slow windows. This route
     // measures active 3D at an explicit supported tier through the real user control.
     const qualitySelect = page.getByTestId("quality-tier-select");
+    await page.getByTestId("studio-options-toggle").click();
     await qualitySelect.selectOption("low");
     await expect(qualitySelect).toHaveValue("low");
     await page.getByTestId("diagnostics-toggle-btn").click();
@@ -104,6 +144,7 @@ test.describe("C3 Performance Benchmarks & Budget Verification", () => {
     const initialRenderState = JSON.parse((await diagnostics.textContent())!) as Diagnostics;
     const rendererIdentity = initialRenderState.webglRenderer;
     await page.getByTestId("diagnostics-toggle-btn").click();
+    await page.getByTestId("studio-options-toggle").click();
 
     // Samples come from completed production renders, never an independent empty-page RAF.
     const framePacingData = await page.evaluate(async ({ rendererIdentity, initialRenderState }) => {
@@ -267,7 +308,9 @@ test.describe("C3 Performance Benchmarks & Budget Verification", () => {
       const t0 = Date.now();
       await page.goto("/?studio=1", { waitUntil: "domcontentloaded" });
       await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME", { timeout: 15000 });
+      await page.getByTestId("studio-options-toggle").click();
       await page.getByTestId("quality-tier-select").selectOption("low");
+      await page.getByTestId("studio-options-toggle").click();
       const canvas = page.getByTestId("world-canvas");
       await expect.poll(async () => Number(await canvas.getAttribute("data-rendered-frames"))).toBeGreaterThan(1);
       await page.getByTestId("diagnostics-toggle-btn").click();

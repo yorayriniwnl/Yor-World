@@ -12,7 +12,7 @@ interface BatchEntry {
   originals: Array<{ mesh: THREE.Mesh; layerMask: number }>;
 }
 
-function positiveOrthogonalTransform(matrix: THREE.Matrix4): boolean {
+export function positiveOrthogonalTransform(matrix: THREE.Matrix4): boolean {
   const elements = matrix.elements;
   if (!elements.every(Number.isFinite) || matrix.determinant() <= 0) return false;
   if (Math.abs(elements[3]!) > epsilon || Math.abs(elements[7]!) > epsilon
@@ -25,13 +25,14 @@ function positiveOrthogonalTransform(matrix: THREE.Matrix4): boolean {
     && Math.abs(axes[1]!.dot(axes[2]!)) <= epsilon;
 }
 
-function animatedNodes(scene: THREE.Object3D): Set<THREE.Object3D> {
+export function animatedNodes(scene: THREE.Object3D, allowRigidMotion = false): Set<THREE.Object3D> {
   const targets = new Set<THREE.Object3D>();
   scene.traverse((root) => {
     for (const clip of root.animations) {
       for (const track of clip.tracks) {
         try {
           const parsed = THREE.PropertyBinding.parseTrackName(track.name);
+          if (allowRigidMotion && /^(position|quaternion|rotation|scale|visible)$/.test(parsed.propertyName)) continue;
           const target = THREE.PropertyBinding.findNode(root, parsed.nodeName);
           if (target instanceof THREE.Object3D) targets.add(target);
           // An unresolved/malformed animation can still affect this subtree.
@@ -45,7 +46,7 @@ function animatedNodes(scene: THREE.Object3D): Set<THREE.Object3D> {
   return targets;
 }
 
-function attributeLayout(geometry: THREE.BufferGeometry): string | null {
+export function attributeLayout(geometry: THREE.BufferGeometry): string | null {
   const position = geometry.getAttribute("position");
   if (!position || position.itemSize !== 3 || position.count === 0
     || (geometry as THREE.InstancedBufferGeometry).isInstancedBufferGeometry) return null;
@@ -73,7 +74,7 @@ function attributeLayout(geometry: THREE.BufferGeometry): string | null {
   return JSON.stringify(layout);
 }
 
-function eligible(mesh: THREE.Mesh, animationTargets: Set<THREE.Object3D>): boolean {
+export function eligible(mesh: THREE.Mesh, animationTargets: Set<THREE.Object3D>, allowRigidMotion = false): boolean {
   if (mesh.constructor !== THREE.Mesh || Array.isArray(mesh.material)
     || Object.keys(mesh.geometry.morphAttributes).length > 0 || mesh.morphTargetInfluences
     || mesh.geometry.groups.length > 0 || mesh.customDepthMaterial || mesh.customDistanceMaterial
@@ -90,12 +91,13 @@ function eligible(mesh: THREE.Mesh, animationTargets: Set<THREE.Object3D>): bool
     || material.blending !== THREE.NormalBlending || material.onBeforeCompile !== THREE.Material.prototype.onBeforeCompile
     || material.onBeforeRender !== THREE.Material.prototype.onBeforeRender
     || material.customProgramCacheKey !== THREE.Material.prototype.customProgramCacheKey
+    || ((material as THREE.MeshStandardMaterial).normalMap && (material as THREE.MeshStandardMaterial).normalMapType === THREE.ObjectSpaceNormalMap)
     || (material as THREE.ShaderMaterial).isShaderMaterial) return false;
   const count = mesh.geometry.index?.count ?? mesh.geometry.getAttribute("position")?.count;
   if (!count || mesh.geometry.drawRange.start !== 0
     || (mesh.geometry.drawRange.count !== Infinity && mesh.geometry.drawRange.count !== count)) return false;
   for (let node: THREE.Object3D | null = mesh; node; node = node.parent) {
-    if (!node.visible || node.renderOrder !== 0 || dynamicNames.test(node.name) || animationTargets.has(node)
+    if (!node.visible || node.renderOrder !== 0 || (!allowRigidMotion && dynamicNames.test(node.name)) || animationTargets.has(node)
       || node.scale.x <= 0 || node.scale.y <= 0 || node.scale.z <= 0
       || !positiveOrthogonalTransform(node.matrixWorld)) return false;
   }

@@ -15,8 +15,18 @@ vi.mock("three", async (importOriginal) => {
     ...actual,
     WebGLRenderer: class {
       shadowMap = {};
-      info = { render: { calls: 1, triangles: 1 } };
-      render = render;
+      info = { autoReset: true, render: { calls: 0, triangles: 0 }, reset: () => {
+        this.info.render.calls = 0;
+        this.info.render.triangles = 0;
+      } };
+      render() {
+        render();
+        // GPU adapter models shadow, transmission and main draws in order.
+        this.info.render.calls += 3;
+        if (this.info.autoReset) this.info.reset();
+        this.info.render.calls += 5 + 7;
+        this.info.render.triangles += 90;
+      }
       getContext() { return { getExtension: () => null, getParameter: () => "test-renderer" }; }
       setPixelRatio() {}
       getPixelRatio() { return 1; }
@@ -148,6 +158,25 @@ describe("Production runtime failure retirement", () => {
 });
 
 describe("Single render loop with delayed assets", () => {
+  it("publishes inclusive shadow/transmission/main counts exactly once per consecutive frame", async () => {
+    const frames = frameHarness();
+    const load = delayedLoad();
+    const worldCanvas = canvas();
+    const samples: Array<{ renderCalls: number; renderedTriangles: number; renderCallsIncludeAllPasses: boolean }> = [];
+    worldCanvas.addEventListener("yor-world-rendered-frame", (event) => samples.push((event as CustomEvent).detail));
+    const runtime = startRuntime({ canvas: worldCanvas });
+    await load.complete();
+    frames.tick();
+    frames.tick();
+    expect(samples).toHaveLength(2);
+    for (const sample of samples) {
+      expect(sample.renderCalls).toBe(15);
+      expect(sample.renderedTriangles).toBe(90);
+      expect(sample.renderCallsIncludeAllPasses).toBe(true);
+    }
+    expect(runtime.getDiagnostics().renderCalls).toBe(15);
+    expect(runtime.getDiagnostics().renderCallsIncludeAllPasses).toBe(true);
+  });
   it("initialization starts one chain and each browser tick renders once", async () => {
     const frames = frameHarness();
     const load = delayedLoad();
