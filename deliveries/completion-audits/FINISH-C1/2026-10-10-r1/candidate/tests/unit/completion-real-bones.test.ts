@@ -1,0 +1,30 @@
+import { readFileSync,writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { describe,expect,it } from 'vitest';
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { CharacterDirector } from '../../src/features/world/CharacterDirector';
+describe('Independent real production GLB activation and pause',()=>{
+  it('changes actual bone transforms on first 0.5sec, freezes, resumes and finishes finite greeting paused',async()=>{
+    const project=resolve(process.cwd(),'../../../../..');
+    const load=async(name:string)=>{const b=readFileSync(resolve(project,'app/public/models',name)); return new GLTFLoader().parseAsync(b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength),'');};
+    const avatar=await load('resident-production.glb');
+    const chair=await load('fixture-production.glb');
+    const am=new THREE.AnimationMixer(avatar.scene), cm=new THREE.AnimationMixer(chair.scene);
+    const aa=Object.fromEntries(avatar.animations.map(c=>[c.name,am.clipAction(c)]));
+    const ca=Object.fromEntries(chair.animations.map(c=>[c.name,cm.clipAction(c)]));
+    const director=new CharacterDirector(am,cm,aa,ca,avatar.scene,chair.scene);
+    const snapshot=()=>{const values:number[]=[]; avatar.scene.traverse(n=>{if(n instanceof THREE.Bone) values.push(...n.position.toArray(),...n.quaternion.toArray());});return values;};
+    const difference=(a:number[],b:number[])=>a.reduce((sum,v,i)=>sum+Math.abs(v-b[i]!),0);
+    const initial=snapshot();director.advance(.5);const active=snapshot();
+    const firstDelta=difference(initial,active);expect(firstDelta).toBeGreaterThan(0);
+    expect(aa.coding_idle?.isScheduled()).toBe(true);
+    director.setDecorativePaused(true);director.advance(.5);expect(difference(active,snapshot())).toBe(0);
+    director.setDecorativePaused(false);director.advance(.5);expect(difference(active,snapshot())).toBeGreaterThan(0);
+    director.setDecorativePaused(true);director.playGreeting();director.advance(4.5);expect(director.mode).toBe('coding');expect(director.currentTime).toBe(0);
+    const resting=snapshot();director.advance(1);expect(difference(resting,snapshot())).toBe(0);
+    writeFileSync('../real-bones-observation.json',JSON.stringify({firstDelta,initialScheduled:true,pausedDelta:0,finiteGreetingReturnsFrozen:true},null,2));
+    console.log('REAL_BONES',JSON.stringify({firstDelta,initialScheduled:true,pausedDelta:0,finiteGreetingReturnsFrozen:true}));
+    director.dispose();
+  });
+});
