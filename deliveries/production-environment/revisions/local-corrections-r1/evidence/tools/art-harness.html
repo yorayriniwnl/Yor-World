@@ -1,0 +1,38 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Candidate art inspection</title>
+<script type="importmap">{"imports":{"three":"/three/build/three.module.js","three/addons/":"/three/examples/jsm/","three/examples/jsm/":"/three/examples/jsm/"}}</script>
+<style>html,body{margin:0;height:100%;background:#0c1017}canvas{width:100%;height:100%;display:block}</style></head><body><canvas></canvas><script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {integrateScene} from '/src/features/world/SceneIntegrator';
+import {RigidWorldBatch} from '/src/features/world/RigidWorldBatch';
+import {configureProductionLighting} from '/src/features/world/ProductionLighting';
+import {CameraDirector} from '/src/features/world/CameraDirector';
+import {CharacterDirector} from '/src/features/world/CharacterDirector';
+const renderer=new THREE.WebGLRenderer({canvas:document.querySelector('canvas'),antialias:true,preserveDrawingBuffer:true});
+renderer.info.autoReset=false;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(innerWidth,innerHeight,false);
+const scene=new THREE.Scene();scene.background=new THREE.Color('#0c1017');
+scene.add(new THREE.HemisphereLight(0xffffff,0x687c9a,2.1));
+const light=new THREE.DirectionalLight(0xfff5e8,3.1);light.position.set(-2,4,3);light.castShadow=true;light.shadow.mapSize.set(1024,1024);scene.add(light);
+for(const [color,intensity,position] of [[0x78e4ff,15,[2,2,-1]],[0xffa4e6,14,[-1,2.1,-1.6]]]){const l=new THREE.PointLight(color,intensity,8);l.position.set(...position);scene.add(l);}
+const candidate = new URLSearchParams(location.search).get('baseline') !== '1';
+const manifest=await fetch('/asset-manifest.json').then(response=>response.json());
+const assetUrl=id=>manifest.groups.find(group=>group.id===id).url;
+const environment = candidate ? assetUrl('production-room-full') : '/models/production-room-full.glb';
+const fixture = candidate ? assetUrl('fixture-chair-production') : '/models/fixture-production.glb';
+const loader=new GLTFLoader();const gltfs=await Promise.all([environment,'/models/resident-production.glb',fixture].map(url=>loader.loadAsync(url)));
+const integrated=integrateScene(...gltfs);scene.add(integrated.scene);configureProductionLighting(integrated.scene);for(const gltf of gltfs)gltf.scene.animations=gltf.animations;
+integrated.scene.getObjectByName('hidden-yor-mark').visible=false;
+const camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,0.05,30);const cameras=new CameraDirector(camera);cameras.resize(innerWidth,innerHeight);
+const character=new CharacterDirector(integrated.avatarMixer,integrated.chairMixer,integrated.avatarActions,integrated.chairActions,integrated.bodyTurn,integrated.chairRoot);character.settleToWork();
+const ext=renderer.getContext().getExtension('WEBGL_multi_draw');const batch=new RigidWorldBatch(scene,!!ext,camera);
+const bounds=name=>new THREE.Box3().setFromObject(integrated.scene.getObjectByName(name));
+window.art={renderer,scene,camera,cameras,character,integrated,batch,THREE,
+  resize(w,h){renderer.setSize(w,h,false);cameras.resize(w,h);},
+  setPreset(name){cameras.setPreset(name,true);},
+  inspect(){const gl=renderer.getContext();const debug=gl.getExtension('WEBGL_debug_renderer_info');return {candidate,nodeCounts:integrated.nodeCounts,camera:cameras.getDiagnostics(),renderer:debug?gl.getParameter(debug.UNMASKED_RENDERER_WEBGL):'not exposed',multiDraw:!!ext,
+    assetUrls:[environment,'/models/resident-production.glb',fixture],calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,
+    nodes:['certificate_glass','painting_canvas','desk_clock_display','painting-pivot','door-hinge','chair-root','desk'].map(name=>{const obj=integrated.scene.getObjectByName(name);return{name,position:obj.getWorldPosition(new THREE.Vector3()).toArray(),bounds:{min:bounds(name).min.toArray(),max:bounds(name).max.toArray()}};})};}
+};
+let last=performance.now();function frame(now){character.advance(Math.min((now-last)/1000,0.1));last=now;batch.update();renderer.info.reset();renderer.render(scene,camera);requestAnimationFrame(frame);}requestAnimationFrame(frame);window.ready=true;
+</script></body></html>

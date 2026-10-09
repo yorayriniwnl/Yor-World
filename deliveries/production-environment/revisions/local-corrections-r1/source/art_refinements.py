@@ -126,6 +126,32 @@ def refine_environment(bpy, mats, r2b, add_box, add_cylinder, add_sphere, keep_w
         for polygon in obj.data.polygons:
             polygon.use_smooth = True
 
+    # The casing follows the same curve behind the display. Straight wing boxes
+    # previously crossed its front and made one ultrawide look like three monitors.
+    for name, left, right in (("monitor_bezel_left", -0.48, -0.25),
+                             ("monitor_bezel_center", -0.25, 0.25),
+                             ("monitor_bezel_right", 0.25, 0.48)):
+        obj = bpy.data.objects[name]
+        inverse = obj.matrix_world.inverted()
+        vertices, faces = [], []
+        for i in range(7):
+            x = left + (right-left)*i/6
+            screen_z = -1.336 + 0.065*(x/0.46)**2
+            for y,z in ((0.86,screen_z-0.003),(1.24,screen_z-0.003),
+                        (1.24,screen_z-0.028),(0.86,screen_z-0.028)):
+                vertices.append(inverse @ Vector(r2b(x,y,z)))
+        for i in range(6):
+            for side in range(4):
+                a=i*4+side; b=i*4+(side+1)%4
+                faces.append((a,a+4,b+4,b))
+        faces.extend([(0,1,2,3), (27,26,25,24)])
+        replace_mesh(bpy,obj,vertices,faces)
+        # Preserve ordinary UV layout for compatible material batching; no
+        # screen artwork is assigned to this opaque casing material.
+        uv_layer=obj.data.uv_layers.new(name="UVMap")
+        for loop in obj.data.loops:
+            uv_layer.data[loop.index].uv=(0.0,0.0)
+
     # Reauthor foliage as pointed curved blades with connected stems and real shelf support.
     plants = bpy.data.objects["plants"]
     coll = plants.users_collection[0]
