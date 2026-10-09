@@ -12,6 +12,7 @@ import { PreferencesStore } from "./preferences-store";
 import { PaintingController } from "../room/painting-controller";
 import { EnvironmentController } from "../room/environment-controller";
 import { GreetingController } from "../character/greeting-controller";
+import { getRestorableCamera, validateReturnSnapshot, type ReturnSnapshot } from "./return-snapshot";
 
 export interface NavigationAdapter {
   openProject: (projectId: string) => void;
@@ -112,6 +113,23 @@ export class ExperienceController {
     this.environment.subscribe(() => {
       this.notify();
     });
+  }
+
+  public restoreSnapshot(snapshot: ReturnSnapshot): boolean {
+    const validated = validateReturnSnapshot(snapshot);
+    if (!validated || this.isDisposed) return false;
+    this.cancellation.abortCurrent("RESTORE_SAFE_SNAPSHOT");
+    this.greeting.settle();
+    this.preferencesStore.save(validated.preferences);
+    this.environment.restore(validated.world);
+    this.activeCamera = getRestorableCamera(validated);
+    this.cameraDirector?.setCameraPreset(this.activeCamera, true);
+    this.activeProject = null;
+    this.activePanel = null;
+    this.currentIntent = null;
+    this.phase = "explore";
+    this.notify();
+    return true;
   }
 
   public subscribe(listener: (snapshot: ExperienceSnapshot) => void): () => void {

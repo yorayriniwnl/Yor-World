@@ -21,7 +21,14 @@ async function expectPointerTarget(locator: Locator) {
   expect(result.receivesPointer).toBe(true);
 }
 
-for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }, { width: 320, height: 844 }, { width: 844, height: 390 }]) {
+for (const viewport of [
+  { width: 1440, height: 1000 },
+  { width: 1920, height: 1080 },
+  { width: 1024, height: 768 },
+  { width: 390, height: 844 },
+  { width: 320, height: 600 },
+  { width: 844, height: 390 },
+]) {
   test(`studio space, bounded controls and real Close at ${viewport.width}x${viewport.height}`, async ({ page }, info) => {
     await page.setViewportSize(viewport);
     await enterHome(page);
@@ -158,4 +165,49 @@ test("available studio copy is honest and existing Y identity supplies the favic
   expect(svg.status()).toBe(200);
   expect(await svg.text()).toContain(">Y</text>");
   await expect(page.locator('link[rel="icon"][href="/favicon.ico"]')).toHaveCount(1);
+});
+
+test("RouteFocus focuses destination heading on route transition and preserves first-load focus", async ({ page }) => {
+  await page.goto("/");
+  // Initial load does not force heading focus
+  expect(await page.evaluate(() => document.activeElement?.tagName)).not.toBe("H1");
+  // Navigate via client-side link to /projects
+  await page.locator('nav a[href="/projects"]').click();
+  await expect(page.locator("main h1")).toBeFocused();
+  // Navigate to /about
+  await page.locator('nav a[href="/about"]').click();
+  await expect(page.locator("main h1")).toBeFocused();
+});
+
+test("explicit entrance replay and option controls trigger clean re-entry", async ({ page }) => {
+  await enterHome(page);
+  const stage = page.getByTestId("world-stage-container");
+
+  await page.getByTestId("studio-options-toggle").click();
+  const replayBtn = page.getByTestId("replay-entrance-btn");
+  await expect(replayBtn).toBeVisible();
+  await replayBtn.click();
+  // Replay starts entrance or returns to home safely
+  await expect(stage).toHaveAttribute("data-lifecycle-state", /(ENTRANCE|HOME)/);
+});
+
+test("validated return snapshot skips intro and restores camera and room preferences", async ({ page }) => {
+  await page.addInitScript(() => {
+    window.sessionStorage.setItem("yor_world_return_snapshot_v1", JSON.stringify({
+      returnToStudio: true,
+      preferences: { version: 1, introCompleted: true, soundEnabled: false, quality: "auto", clock24h: true },
+      world: { version: 1, lampOn: false, blindsOpen: false, detailFound: true },
+      lastProjectId: "helios",
+      previousCamera: "monitor",
+      timestamp: Date.now(),
+    }));
+  });
+  await page.goto("/?studio=return");
+  const stage = page.getByTestId("world-stage-container");
+  await expect(stage).toHaveAttribute("data-lifecycle-state", "HOME", { timeout: 15000 });
+  await page.getByTestId("diagnostics-toggle-btn").click();
+  await expect.poll(async () => {
+    const diag = JSON.parse((await page.getByTestId("world-diagnostics").textContent())!);
+    return [diag.experienceSnapshot.world.lampOn, diag.experienceSnapshot.world.detailFound];
+  }).toEqual([false, true]);
 });

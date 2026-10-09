@@ -3,12 +3,19 @@ import { Preferences, PreferencesSchema, defaultPreferences } from "../../contra
 export class PreferencesStore {
   private static readonly STORAGE_KEY = "yor_world_preferences_v1";
   private inMemoryPreferences: Preferences;
+  private static fallbackOwner: Window | null = null;
+  private static fallbackPreferences: Preferences = { ...defaultPreferences };
 
   constructor(initial?: Partial<Preferences>) {
-    this.inMemoryPreferences = {
-      ...defaultPreferences,
-      ...(initial || {}),
-    };
+    const parsed = PreferencesSchema.safeParse({ ...defaultPreferences, ...(initial ?? {}) });
+    this.inMemoryPreferences = parsed.success ? parsed.data : { ...defaultPreferences };
+    if (typeof window !== "undefined") {
+      if (PreferencesStore.fallbackOwner !== window) {
+        PreferencesStore.fallbackOwner = window;
+        PreferencesStore.fallbackPreferences = { ...defaultPreferences };
+      }
+      if (!initial) this.inMemoryPreferences = { ...PreferencesStore.fallbackPreferences };
+    }
     this.inMemoryPreferences = this.load();
   }
 
@@ -40,6 +47,10 @@ export class PreferencesStore {
       }
     } catch (err) {
       console.warn("[PreferencesStore] Storage access denied or unavailable, using in-memory:", err);
+      if (err instanceof SyntaxError) {
+        this.inMemoryPreferences = { ...defaultPreferences };
+        return this.inMemoryPreferences;
+      }
       return this.inMemoryPreferences;
     }
   }
@@ -51,6 +62,7 @@ export class PreferencesStore {
     const validated = PreferencesSchema.safeParse(prefs);
     const toSave = validated.success ? validated.data : defaultPreferences;
     this.inMemoryPreferences = toSave;
+    if (typeof window !== "undefined") PreferencesStore.fallbackPreferences = { ...toSave };
 
     try {
       if (typeof window !== "undefined" && window.localStorage) {

@@ -1,105 +1,69 @@
-import type { CameraId, Preferences, WorldSnapshot } from "@/contracts/experience";
-import type { ProjectId } from "@/contracts/content";
+import { z } from "zod";
+import { CameraIdSchema, PreferencesSchema, WorldSnapshotSchema, defaultPreferences, defaultWorldSnapshot, type CameraId } from "@/contracts/experience";
+import { ProjectIdSchema } from "@/contracts/content";
 
-export interface ReturnSnapshot {
-  returnToStudio: boolean;
-  preferences: Preferences;
-  world: WorldSnapshot;
-  lastProjectId: ProjectId | null;
-  previousCamera: CameraId;
-  timestamp: number;
-}
-
-const STORAGE_KEY = "yor_world_return_snapshot_v1";
-
-// In-memory fallback for environments with blocked/disabled sessionStorage or SSR
+export const ReturnSnapshotSchema = z.strictObject({
+  returnToStudio: z.literal(true),
+  preferences: PreferencesSchema,
+  world: WorldSnapshotSchema,
+  lastProjectId: ProjectIdSchema.nullable(),
+  previousCamera: CameraIdSchema,
+  timestamp: z.number().finite().nonnegative(),
+});
+export type ReturnSnapshot = z.infer<typeof ReturnSnapshotSchema>;
+export const RETURN_SNAPSHOT_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+export const RETURN_SNAPSHOT_STORAGE_KEY = "yor_world_return_snapshot_v1";
 let memoryFallback: ReturnSnapshot | null = null;
 
-function isStorageAvailable(): boolean {
-  try {
-    if (typeof window === "undefined" || !window.sessionStorage) return false;
-    const testKey = "__yor_storage_test__";
-    window.sessionStorage.setItem(testKey, "1");
-    window.sessionStorage.removeItem(testKey);
-    return true;
-  } catch {
-    return false;
-  }
+export function validateReturnSnapshot(value: unknown, now = Date.now()): ReturnSnapshot | null {
+  const parsed = ReturnSnapshotSchema.safeParse(value);
+  if (!parsed.success || parsed.data.timestamp > now + 60_000 || now - parsed.data.timestamp > RETURN_SNAPSHOT_MAX_AGE_MS) return null;
+  return parsed.data;
+}
+
+export function getRestorableCamera(snapshot: ReturnSnapshot): CameraId {
+  return ["hallway", "entry", "reveal", "greeting"].includes(snapshot.previousCamera) ? "home-desktop" : snapshot.previousCamera;
 }
 
 export function saveReturnSnapshot(data: Partial<ReturnSnapshot>): void {
   const current = getReturnSnapshot();
-  const snapshot: ReturnSnapshot = {
+  const snapshot = validateReturnSnapshot({
     returnToStudio: true,
-    preferences: data.preferences ?? current?.preferences ?? {
-      version: 1,
-      introCompleted: true,
-      soundEnabled: false,
-      quality: "auto",
-      clock24h: true,
-    },
-    world: data.world ?? current?.world ?? {
-      version: 1,
-      lampOn: true,
-      blindsOpen: true,
-      detailFound: false,
-    },
+    preferences: data.preferences ?? current?.preferences ?? { ...defaultPreferences, introCompleted: true },
+    world: data.world ?? current?.world ?? defaultWorldSnapshot,
     lastProjectId: data.lastProjectId ?? current?.lastProjectId ?? null,
-    previousCamera: data.previousCamera ?? current?.previousCamera ?? "monitor",
+    previousCamera: data.previousCamera ?? current?.previousCamera ?? "home-desktop",
     timestamp: Date.now(),
-  };
-
+  });
+  if (!snapshot) return;
   memoryFallback = snapshot;
-
-  if (isStorageAvailable()) {
-    try {
-      window.sessionStorage.setItem(STORAGE_KEY, jsonStringify(snapshot));
-    } catch {
-      // Storage quota or restriction; fallback retained
-    }
-  }
+  try { window.sessionStorage.setItem(RETURN_SNAPSHOT_STORAGE_KEY, JSON.stringify(snapshot)); } catch { /* blocked storage retains this tab's memory snapshot */ }
 }
 
 export function getReturnSnapshot(): ReturnSnapshot | null {
-  if (isStorageAvailable()) {
-    try {
-      const raw = window.sessionStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as ReturnSnapshot;
-        if (parsed && typeof parsed.timestamp === "number") {
-          return parsed;
-        }
-      }
-    } catch {
-      // JSON parse error or access denied
-    }
+  try {
+    const raw = window.sessionStorage.getItem(RETURN_SNAPSHOT_STORAGE_KEY);
+    if (raw === null) return validateReturnSnapshot(memoryFallback);
+    const snapshot = validateReturnSnapshot(JSON.parse(raw));
+    // Corrupt/stale stored data cannot resurrect an older memory snapshot.
+    if (!snapshot) memoryFallback = null;
+    return snapshot;
+  } catch (error) {
+    if (error instanceof SyntaxError) { memoryFallback = null; return null; }
+    return validateReturnSnapshot(memoryFallback);
   }
-  return memoryFallback;
 }
 
-export function hasReturnSnapshot(): boolean {
-  return getReturnSnapshot() !== null;
-}
+export function hasReturnSnapshot(): boolean { return getReturnSnapshot() !== null; }
 
+// Retain the existing consuming API. History restoration uses the validated reader.
 export function restoreReturnSnapshot(): ReturnSnapshot | null {
   const snapshot = getReturnSnapshot();
-  if (snapshot) {
-    clearReturnSnapshot();
-  }
+  if (snapshot) clearReturnSnapshot();
   return snapshot;
 }
 
 export function clearReturnSnapshot(): void {
   memoryFallback = null;
-  if (isStorageAvailable()) {
-    try {
-      window.sessionStorage.removeItem(STORAGE_KEY);
-    } catch {
-      // Ignore
-    }
-  }
-}
-
-function jsonStringify(obj: unknown): string {
-  return JSON.stringify(obj);
+  try { window.sessionStorage.removeItem(RETURN_SNAPSHOT_STORAGE_KEY); } catch { /* storage may be blocked */ }
 }

@@ -13,6 +13,8 @@ export class AudioController {
   private enabled: boolean = false;
   private audioCtx: AudioContext | null = null;
   private isDisposed: boolean = false;
+  private requestVersion = 0;
+  private desiredEnabled = false;
   private listeners: Set<(enabled: boolean) => void> = new Set();
 
   constructor() {
@@ -51,65 +53,43 @@ export class AudioController {
    * and returns false.
    */
   public async setEnabled(enabled: boolean): Promise<boolean> {
-    if (this.isDisposed) {
-      return false;
-    }
-
+    if (this.isDisposed) return false;
+    const request = ++this.requestVersion;
+    this.desiredEnabled = enabled;
     if (!enabled) {
       this.enabled = false;
-      if (this.audioCtx && this.audioCtx.state === "running") {
-        try {
-          await this.audioCtx.suspend();
-        } catch {
-          // Ignore suspend failure during mute
-        }
-      }
       this.notify();
-      return false;
     }
-
-    // Attempt audio activation with browser permission / gesture handling
     try {
-      const AudioContextClass =
-        (typeof window !== "undefined"
-          ? window.AudioContext ||
-            (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
-          : undefined) ||
-        (typeof globalThis !== "undefined"
-          ? (globalThis as unknown as { AudioContext?: typeof AudioContext }).AudioContext
-          : undefined);
-
-      if (!AudioContextClass) {
-        console.warn("[AudioController] Web Audio API is not supported in this environment.");
-        this.enabled = false;
-        this.notify();
-        return false;
+      if (enabled && (!this.audioCtx || this.audioCtx.state === "closed")) {
+        const Context = typeof window !== "undefined"
+          ? window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+          : (globalThis as unknown as { AudioContext?: typeof AudioContext }).AudioContext;
+        if (!Context) return false;
+        this.audioCtx = new Context();
       }
-
-      if (!this.audioCtx || this.audioCtx.state === "closed") {
-        this.audioCtx = new AudioContextClass();
+      const context = this.audioCtx;
+      if (!context) return false;
+      if (enabled && context.state === "suspended") await context.resume();
+      if (!enabled && context.state === "running") await context.suspend();
+      if (this.isDisposed || context !== this.audioCtx) return false;
+      // An older resume/suspend can finish after a newer explicit request.
+      // Reconcile engine state to the latest request, never publish the old one.
+      if (request !== this.requestVersion) {
+        if (!this.desiredEnabled && context.state === "running") await context.suspend();
+        if (this.desiredEnabled && context.state === "suspended") await context.resume();
+        return this.enabled;
       }
-
-      if (this.audioCtx.state === "suspended") {
-        // Will reject if browser denies autoplay or user gesture is missing
-        await this.audioCtx.resume();
-      }
-
-      if (this.audioCtx.state === "running") {
-        this.enabled = true;
-        this.notify();
-        return true;
-      } else {
-        // Browser refused to transition to running
-        console.warn("[AudioController] AudioContext state remained suspended after resume attempt.");
-        this.enabled = false;
-        this.notify();
-        return false;
-      }
-    } catch (err) {
-      console.warn("[AudioController] Browser denied audio activation:", err);
-      this.enabled = false;
+      this.enabled = this.desiredEnabled && context.state === "running";
       this.notify();
+      return this.enabled;
+    } catch (error) {
+      if (!this.isDisposed && request === this.requestVersion) {
+        this.enabled = false;
+        this.desiredEnabled = false;
+        this.notify();
+        console.warn("[AudioController] Browser denied audio activation:", error);
+      }
       return false;
     }
   }
@@ -151,6 +131,8 @@ export class AudioController {
     }
 
     this.isDisposed = true;
+    ++this.requestVersion;
+    this.desiredEnabled = false;
     this.enabled = false;
     this.notify();
     this.listeners.clear();

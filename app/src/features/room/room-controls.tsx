@@ -34,7 +34,7 @@ export function RoomControls({ controller, snapshot: initialSnapshot, onClose, o
       testId="room-controls-panel"
       onClose={() => onClose?.()}
     >
-      <header className={styles.header}>
+      <header className={styles.header} data-testid="room-controls-modal">
         <h2 className={styles.title}>Room controls</h2>
         {onClose && (
           <button
@@ -234,6 +234,6 @@ export function RoomControls({ controller, snapshot: initialSnapshot, onClose, o
           Reset View / Escape to Explore (Escape Key)
         </button>
       </div>
-    </dialog>
+    </ModalDialog>
   );
 }

@@ -11,7 +11,8 @@ export type CancellationReason =
   | "RENDERER_FAILED"
   | "UNMOUNT"
   | "TIMED_OUT"
-  | "EXPLICIT_CANCEL";
+  | "EXPLICIT_CANCEL"
+  | "RESTORE_SAFE_SNAPSHOT";
 
 export interface TransitionToken {
   readonly id: number;
