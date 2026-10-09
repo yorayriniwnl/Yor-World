@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "YOR WORLD FINISH-B1 Asset Provenance",
+  "milestone": "FINISH-B1",
+  "authorLane": "Gemini #2 (World / art maker)",
+  "productionDate": "2026-10-09",
+  "cleanRoomPolicy": "Strict clean-room procedural generation. Zero external proprietary 3D assets or pre-baked meshes. 100% reproducible via included generation scripts.",
+  "inputs": [
+    {
+      "path": "references/images/main-reference.png",
+      "sha256": "4301fa3831201588147d3c5f4ea7c355c276eeec01f308df1f7b0a8806fe9f2d",
+      "role": "Single visual authority for room architecture, colors, lighting, fixtures, textures, and prop placement."
+    },
+    {
+      "path": "references/manifest.json",
+      "sha256": "4bbf674e2d3bbef80a5682855964f43407bf8fa489112285880ffc06cb3da3ef",
+      "role": "Asset provenance and reference catalog baseline."
+    },
+    {
+      "path": "docs/planning/production-prompts/completion-2026-10-09/world-runtime.md",
+      "role": "Milestone FINISH-B1 work packet and acceptance requirements."
+    },
+    {
+      "path": "app/src/features/world/WorldInteractionBinding.ts",
+      "role": "Frozen runtime canonical interaction node names and catalog ids."
+    },
+    {
+      "path": "app/src/features/world/CameraDirector.ts",
+      "role": "Canonical camera presets and coordinates."
+    },
+    {
+      "path": "app/src/features/world/ProductionLighting.ts",
+      "role": "Canonical production light intensity calibrations."
+    }
+  ],
+  "toolchain": {
+    "blender": {
+      "version": "Blender 5.2.2 LTS",
+      "executable": "C:\\Program Files\\Blender Foundation\\Blender 5.2\\blender.exe",
+      "renderEngine": "BLENDER_EEVEE",
+      "gltfExporter": "glTF 2.0 LTS Exporter"
+    },
+    "python": {
+      "version": "Python 3.12.8",
+      "modules": ["bpy", "math", "mathutils", "PIL (Pillow 11.1.0)", "hashlib"]
+    },
+    "node": {
+      "version": "Node.js v24.19.0",
+      "modules": ["gltf-validator 2.0.0-dev.3.10", "@playwright/test 1.63.0", "three 0.180.0"]
+    }
+  ],
+  "assetPipelines": [
+    {
+      "pipeline": "Procedural PBR Textures",
+      "script": "deliveries/FINISH-B1/scripts/generate-textures.py",
+      "artifacts": [
+        "assets/textures/floor-carpet-blue.png",
+        "assets/textures/monitor-wallpaper.png",
+        "assets/textures/desk-mat-pattern.png",
+        "assets/textures/clock-display-24h.png",
+        "assets/textures/clock-display-12h.png",
+        "assets/textures/clock-display.png",
+        "assets/textures/pegboard-pattern.png",
+        "assets/textures/acoustic-panel.png",
+        "assets/textures/wall-painting.png"
+      ],
+      "method": "Procedural noise synthesis, Voronoi carpet fibers, mathematical vector linework, 7-segment digital font rendering."
+    },
+    {
+      "pipeline": "Resident Character & Chair Fixture",
+      "script": "deliveries/FINISH-B1/scripts/build-resident-fixture.py",
+      "sourceFiles": [
+        "assets/source/resident-production.blend",
+        "assets/source/fixture-production.blend"
+      ],
+      "runtimeGlbs": [
+        "assets/resident-production.glb",
+        "assets/fixture-production.glb"
+      ],
+      "method": "Biped armature generation with 14 bones, 8 synchronized animation actions keyframed mathematically for natural developer workstation dynamics."
+    },
+    {
+      "pipeline": "Production Environment Room & Props",
+      "script": "deliveries/FINISH-B1/scripts/build-environment.py",
+      "sourceFiles": [
+        "assets/source/production-environment.blend"
+      ],
+      "runtimeGlbs": [
+        "assets/group-a-essential.glb",
+        "assets/group-b-props.glb",
+        "assets/on-demand-projects.glb",
+        "assets/production-room-full.glb",
+        "assets/mobile-room-lod.glb"
+      ],
+      "method": "Architectural F1 coordinate blockout, regular hexagonal prism arrays, spherical dual-chassis audio monitors, PBR BSDF node trees with sRGB albedo and non-color normal/roughness, door swing NLA track export."
+    }
+  ]
+}

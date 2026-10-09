@@ -1,0 +1,241 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "YOR WORLD FINISH-B1 Binding Inventory",
+  "packet": "FINISH-B1",
+  "authorLane": "Gemini #2 (World / art maker)",
+  "date": "2026-10-09",
+  "summary": "Inventory of door, resident character, chair fixture, and catalog prop motion bindings and interaction nodes for FINISH-B1 production assets.",
+  "bindings": [
+    {
+      "id": "door-entrance-swing",
+      "canonicalInteractionId": "entrance-door",
+      "targetNode": "door-hinge",
+      "containingGlbs": [
+        "assets/production-room-full.glb",
+        "assets/group-a-essential.glb",
+        "assets/mobile-room-lod.glb"
+      ],
+      "motionBindingType": "hierarchical_transform_keyframe",
+      "clipName": "Action_Door_Entrance_Swing",
+      "durationSec": 2.833,
+      "pivotPosition": [-1.2, 0.0, 1.8],
+      "motionRange": {
+        "axis": "+Z (Blender) / +Y (Three.js)",
+        "minDegrees": 0.0,
+        "maxDegrees": 85.0,
+        "restDegrees": 0.0
+      },
+      "physicalResponse": "Smooth inward swing into the room when triggered, holds open for visitor entry, closes smoothly.",
+      "runtimeCompatibility": [
+        "Three.js AnimationMixer via glTF animation clip 'Action_Door_Entrance_Swing'",
+        "EntranceCoordinator direct rotation.y transform fallback"
+      ],
+      "verificationEvidence": "captures/entry/door-swing-opening.png, captures/entry/door-swing-open.png"
+    },
+    {
+      "id": "resident-character-skeletal",
+      "canonicalInteractionId": "resident",
+      "targetNode": "resident",
+      "armatureNode": "Resident_Armature",
+      "containingGlbs": [
+        "assets/resident-production.glb"
+      ],
+      "motionBindingType": "skeletal_bone_armature",
+      "boneCount": 14,
+      "approvedClips": [
+        { "name": "coding_idle", "durationSec": 6.0, "purpose": "Focus typing and desk posture loop" },
+        { "name": "mouse_idle", "durationSec": 2.0, "purpose": "Right hand mouse micro-movements" },
+        { "name": "notice_visitor", "durationSec": 0.6, "purpose": "Rapid gaze shift toward door" },
+        { "name": "turn_to_visitor", "durationSec": 1.2, "purpose": "Upper torso and neck turn to door entrance" },
+        { "name": "greeting_nod", "durationSec": 0.9, "purpose": "Polite welcoming head nod" },
+        { "name": "return_to_work", "durationSec": 1.3, "purpose": "Smooth return to keyboard workstation posture" },
+        { "name": "attention_glance", "durationSec": 1.2, "purpose": "Quick ambient glance toward visitor" },
+        { "name": "breathing_idle", "durationSec": 4.0, "purpose": "Gentle resting chest and shoulder breathing cycle" }
+      ],
+      "physicalResponse": "Full anatomical articulation matching developer workstation behavior with natural easing.",
+      "runtimeCompatibility": "Three.js AnimationMixer on Resident_Armature bone hierarchy",
+      "verificationEvidence": "captures/desktop-home/resident-*.png, validator-logs/dimensions-anchors-check.json"
+    },
+    {
+      "id": "chair-fixture-swivel",
+      "canonicalInteractionId": "chair",
+      "targetNode": "chair-base",
+      "swivelPivotNode": "chair_swivel_pivot",
+      "mountAnchor": "chair-root",
+      "containingGlbs": [
+        "assets/fixture-production.glb"
+      ],
+      "anchorContainingGlbs": [
+        "assets/production-room-full.glb",
+        "assets/group-a-essential.glb"
+      ],
+      "motionBindingType": "hierarchical_transform_keyframe",
+      "clipCount": 8,
+      "approvedClips": [
+        { "name": "coding_idle", "durationSec": 6.0 },
+        { "name": "mouse_idle", "durationSec": 2.0 },
+        { "name": "notice_visitor", "durationSec": 0.6 },
+        { "name": "turn_to_visitor", "durationSec": 1.2 },
+        { "name": "greeting_nod", "durationSec": 0.9 },
+        { "name": "return_to_work", "durationSec": 1.3 },
+        { "name": "attention_glance", "durationSec": 1.2 },
+        { "name": "breathing_idle", "durationSec": 4.0 }
+      ],
+      "physicalResponse": "Synchronized rotation of chair upper assembly matching resident torso orientation toward door (+35 degrees on visitor turn).",
+      "runtimeCompatibility": "Three.js AnimationMixer synchronized with CharacterDirector",
+      "verificationEvidence": "validator-logs/dimensions-anchors-check.json"
+    },
+    {
+      "id": "prop-plant-leaf-deflection",
+      "canonicalInteractionId": "plant-leaves",
+      "targetNode": "plants",
+      "physicalNode": "plant_leaf_pivot",
+      "containingGlbs": [
+        "assets/production-room-full.glb",
+        "assets/group-b-props.glb"
+      ],
+      "motionBindingType": "hierarchical_transform",
+      "physicalResponse": "Spring-damper angular deflection response upon cursor hover or touch raycast interaction.",
+      "runtimeCompatibility": "Three.js transform tweening / spring physics on plant_leaf_pivot"
+    },
+    {
+      "id": "prop-book-nudge",
+      "canonicalInteractionId": "research-books",
+      "targetNode": "shelves",
+      "physicalNode": "book_nudge_pivot",
+      "containingGlbs": [
+        "assets/production-room-full.glb",
+        "assets/group-b-props.glb"
+      ],
+      "motionBindingType": "hierarchical_transform",
+      "physicalResponse": "Subtle forward/backward displacement nudge when inspecting bookshelf items.",
+      "runtimeCompatibility": "Three.js transform animation on book_nudge_pivot"
+    },
+    {
+      "id": "prop-keyboard-key-response",
+      "canonicalInteractionId": "keyboard",
+      "targetNode": "keyboard_body",
+      "physicalNode": "key_response_active",
+      "subTargetNode": "keycaps_main",
+      "containingGlbs": [
+        "assets/production-room-full.glb",
+        "assets/group-a-essential.glb"
+      ],
+      "motionBindingType": "hierarchical_transform",
+      "physicalResponse": "0.002m downward tactile displacement response during typing action simulation.",
+      "runtimeCompatibility": "Three.js position.y displacement on key_response_active"
+    },
+    {
+      "id": "prop-ai-camera-lens",
+      "canonicalInteractionId": "ai-real-camera",
+      "targetNode": "ai-real-camera",
+      "physicalNode": "ai_camera_lens",
+      "indicatorNode": "cam_status_led",
+      "containingGlbs": [
+        "assets/production-room-full.glb",
+        "assets/group-b-props.glb"
+      ],
+      "motionBindingType": "hierarchical_transform_and_emissive",
+      "physicalResponse": "Motorized pan/tilt lens tracking following cursor position; indicator LED toggles between active green and idle amber.",
+      "runtimeCompatibility": "Three.js lookAt tracking on ai_camera_lens; material.emissiveColor update on cam_status_led"
+    },
+    {
+      "id": "prop-helios-fan-blades",
+      "canonicalInteractionId": "helios-pc",
+      "targetNode": "helios-pc",
+      "physicalNode": "helios_fan_blades",
+      "indicatorNode": "helios_net_led",
+      "containingGlbs": [
+        "assets/production-room-full.glb",
+        "assets/group-b-props.glb",
+        "assets/on-demand-projects.glb"
+      ],
+      "motionBindingType": "rotary_transform_and_emissive_pulse",
+      "physicalResponse": "Continuous 360-degree rotary fan blade ventilation motion; network activity LED pulse.",
+      "runtimeCompatibility": "Three.js rotation.y continuous update; material emissive pulsing"
+    },
+    {
+      "id": "prop-zenith-energy-core",
+      "canonicalInteractionId": "zenith-model",
+      "targetNode": "zenith-model",
+      "physicalNode": "zenith_energy_core",
+      "containingGlbs": [
+        "assets/production-room-full.glb",
+        "assets/group-b-props.glb",
+        "assets/on-demand-projects.glb"
+      ],
+      "motionBindingType": "dual_axis_rotation_and_bloom_pulse",
+      "physicalResponse": "Gyroscopic rotation of internal energy rings with pulsing cyan-violet emission.",
+      "runtimeCompatibility": "Three.js dual-axis Euler rotation on zenith_energy_core"
+    },
+    {
+      "id": "prop-speaker-power-indicator",
+      "canonicalInteractionId": "speakers",
+      "targetNode": "speaker_left_cabinet",
+      "indicatorNode": "speaker_indicator_led",
+      "secondCabinetNode": "speaker_right_cabinet",
+      "containingGlbs": [
+        "assets/production-room-full.glb",
+        "assets/group-a-essential.glb"
+      ],
+      "motionBindingType": "emissive_state_toggle",
+      "physicalResponse": "Cyan power LED illumination indicating active studio audio output.",
+      "runtimeCompatibility": "Three.js material.emissiveIntensity toggle"
+    },
+    {
+      "id": "prop-microphone-indicator",
+      "canonicalInteractionId": "talks-microphone",
+      "targetNode": "talks-microphone",
+      "indicatorNode": "mic_led_indicator",
+      "containingGlbs": [
+        "assets/production-room-full.glb",
+        "assets/group-b-props.glb"
+      ],
+      "motionBindingType": "emissive_state_toggle",
+      "physicalResponse": "State toggle between red (standby) and cyan/green (active microphone capture).",
+      "runtimeCompatibility": "Three.js material.emissiveColor toggle"
+    },
+    {
+      "id": "prop-window-blinds",
+      "canonicalInteractionId": "window-blinds",
+      "targetNode": "window_frame",
+      "physicalNodes": [
+        "blind_slat_1", "blind_slat_2", "blind_slat_3", "blind_slat_4",
+        "blind_slat_5", "blind_slat_6", "blind_slat_7", "blind_slat_8",
+        "blind_slat_9", "blind_slat_10", "blind_slat_11", "blind_slat_12"
+      ],
+      "containingGlbs": [
+        "assets/production-room-full.glb",
+        "assets/group-a-essential.glb"
+      ],
+      "motionBindingType": "synchronized_slat_rotation",
+      "physicalResponse": "Synchronized rotation of all 12 blind slats along their long horizontal axis to adjust daylight transmission.",
+      "runtimeCompatibility": "Three.js rotation.x on all blind_slat_* nodes"
+    },
+    {
+      "id": "prop-desk-clock-display",
+      "canonicalInteractionId": "desk-clock",
+      "targetNode": "desk_clock_chassis",
+      "physicalNode": "clock_display",
+      "containingGlbs": [
+        "assets/production-room-full.glb",
+        "assets/group-a-essential.glb"
+      ],
+      "motionBindingType": "texture_canvas_update",
+      "physicalResponse": "Digital 7-segment clock display updating current local time (17:49 initial reference baseline).",
+      "runtimeCompatibility": "Three.js CanvasTexture / texture swap"
+    },
+    {
+      "id": "prop-wall-painting-tilt",
+      "canonicalInteractionId": "wall-painting",
+      "targetNode": "painting-pivot",
+      "containingGlbs": [
+        "assets/production-room-full.glb",
+        "assets/group-b-props.glb"
+      ],
+      "motionBindingType": "subtle_parallax_tilt",
+      "physicalResponse": "Gentle parallax angular deflection responding to camera orbit vantage.",
+      "runtimeCompatibility": "Three.js rotation offset on painting-pivot"
+    }
+  ]
+}
