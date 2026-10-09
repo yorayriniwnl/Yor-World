@@ -1,0 +1,21 @@
+{
+  "scope": "Local production build in headless Chromium. One optional texture is intentionally held by a browser route to diagnose readiness; this is fault injection, not actual network or production evidence.",
+  "baseURL": "http://127.0.0.1:3333",
+  "requests": [
+    "/models/production-room-full.glb",
+    "/models/resident-production.glb",
+    "/models/fixture-production.glb",
+    "/textures/deskmat-topography.png",
+    "/textures/monitor-wallpaper.png",
+    "/models/interaction-assets.glb"
+  ],
+  "after16Seconds": {
+    "state": "LOADING",
+    "stats": "88% · Required: 3/3 · Optional: 0/3",
+    "loadingOverlayVisible": true,
+    "retryVisible": false,
+    "continueVisible": true
+  },
+  "afterRelease": "HOME",
+  "result": "FAIL: completed essential assets await optional texture; no elapsed-time Retry offered"
+}

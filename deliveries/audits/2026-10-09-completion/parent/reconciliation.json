@@ -1,0 +1,352 @@
+{
+  "observedAtUtc": "2026-10-09T16:06:42.853451+00:00",
+  "scope": "Parent evidence reconciliation, not gate acceptance or live deployment proof",
+  "baselineHead": "f6a8df58095807b09004c2f0ab8a2382c3971e80",
+  "sourceAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+  "productionSourceDelta": "",
+  "buildId": "nq_n6upw1-keyBgwftJIB",
+  "nodeVersion": "v24.19.0",
+  "inputs": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "06738f97b03662ccac542fc29f25b77e476d167600f78411f34eb4ff14f4a0c4"
+    },
+    {
+      "path": "START_HERE.md",
+      "sha256": "3c376b0033819f60bebb26964641a02ab5bb74330beecbbfc8c35e5a01f14587"
+    },
+    {
+      "path": "docs/planning/delegation-and-work-orders.md",
+      "sha256": "be5093f0e4f1a14d57fae66ab24e47286f39744ec8246fffc4028890d2557b75"
+    },
+    {
+      "path": "docs/superpowers/specs/2026-09-30-yor-world-design.md",
+      "sha256": "c5e14f1f7c662041734d6332aa90e86909d152422b27fdcd40a2d47921c013c4"
+    },
+    {
+      "path": "docs/planning/validation-and-production.md",
+      "sha256": "0efa9bc08ce42f126d5845d33e58548ac9d8bf8904fd0d30497f47fdcba1ddef"
+    },
+    {
+      "path": "docs/planning/interaction-catalog.md",
+      "sha256": "c64127bcf4fb4fe4a1ffe86161e2180c079274a4f2bb3d14051ec9b4592e2806"
+    },
+    {
+      "path": "docs/planning/engineering-and-content.md",
+      "sha256": "43525c95089f5150a0b413d462502acf5e82c01c29ad689d202b6ca5b58ea391"
+    },
+    {
+      "path": "docs/planning/art-and-experience.md",
+      "sha256": "763d64d20176c6e3a6d9887bdff233fc71fb2751ee142ebd6fd28ed150126ded"
+    },
+    {
+      "path": "docs/planning/current-status.json",
+      "sha256": "031b8bc3a4ca089fabb993f0d7a812e78cd09a672e48ffd4d96407c5ee9f74de"
+    },
+    {
+      "path": "docs/planning/reviews/2026-10-08-rc6-r1.md",
+      "sha256": "cd4de2c4a73698e8b2b8afa809799c9ed3e6e70cc3d8fc6dd2da99923bb03b21"
+    },
+    {
+      "path": "docs/planning/reconciliation-packets/2026-10-09-completion-audit.md",
+      "sha256": "fbba3dc66f063ea69cbcff89951f4e55f6555733e702b3136731eb60320e2844"
+    }
+  ],
+  "checks": [
+    {
+      "name": "lint",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\yoray\\Projects\\Yor World\\app\\node_modules\\eslint\\bin\\eslint.js",
+        ".",
+        "--max-warnings=0"
+      ],
+      "cwd": "C:\\Users\\yoray\\Projects\\Yor World\\app",
+      "startedAt": "2026-10-09T15:47:36.521Z",
+      "finishedAt": "2026-10-09T15:48:09.888Z",
+      "durationMs": 33367,
+      "exitCode": 0,
+      "signal": null,
+      "status": "PASS",
+      "log": "deliveries\\audits\\2026-10-09-completion\\parent\\lint.log",
+      "scope": "Fresh local execution; browser backend is a synthetic embedded fixture, not production proof",
+      "receiptSha256": "9596c1c427b82ddf2a87049b0e8292b0103a07742a116cf4da16d620105c6393",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "typecheck",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\yoray\\Projects\\Yor World\\app\\node_modules\\typescript\\bin\\tsc",
+        "--noEmit"
+      ],
+      "cwd": "C:\\Users\\yoray\\Projects\\Yor World\\app",
+      "startedAt": "2026-10-09T15:48:38.667Z",
+      "finishedAt": "2026-10-09T15:48:41.468Z",
+      "durationMs": 2800,
+      "exitCode": 0,
+      "signal": null,
+      "status": "PASS",
+      "log": "deliveries\\audits\\2026-10-09-completion\\parent\\typecheck.log",
+      "scope": "Fresh local execution; browser backend is a synthetic embedded fixture, not production proof",
+      "receiptSha256": "a4fbef8b9ab5b4637394933e8db1d0e48c54ffee0e1a3fac6a56a2d0f46c2357",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "unit",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\yoray\\Projects\\Yor World\\app\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "--config",
+        "vitest.config.ts",
+        "--reporter=json",
+        "--outputFile",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\audits\\2026-10-09-completion\\parent\\unit-results.json"
+      ],
+      "cwd": "C:\\Users\\yoray\\Projects\\Yor World\\app",
+      "startedAt": "2026-10-09T15:47:36.529Z",
+      "finishedAt": "2026-10-09T15:47:43.136Z",
+      "durationMs": 6606,
+      "exitCode": 0,
+      "signal": null,
+      "status": "PASS",
+      "log": "deliveries\\audits\\2026-10-09-completion\\parent\\unit.log",
+      "scope": "Fresh local execution; browser backend is a synthetic embedded fixture, not production proof",
+      "receiptSha256": "68430a80ac838d864162eaa20b250c37cad65f0555635e5661f6f40ca75710dd",
+      "logSha256": "1ea6105b7faa2fb1ef5b16544231134e3269d476dba4681426230989578263ee"
+    },
+    {
+      "name": "integration",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\yoray\\Projects\\Yor World\\app\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "--reporter=json",
+        "--outputFile",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\audits\\2026-10-09-completion\\parent\\integration-results.json"
+      ],
+      "cwd": "C:\\Users\\yoray\\Projects\\Yor World\\app",
+      "startedAt": "2026-10-09T15:47:36.538Z",
+      "finishedAt": "2026-10-09T15:47:56.673Z",
+      "durationMs": 20134,
+      "exitCode": 0,
+      "signal": null,
+      "status": "PASS",
+      "log": "deliveries\\audits\\2026-10-09-completion\\parent\\integration.log",
+      "scope": "Fresh local execution; browser backend is a synthetic embedded fixture, not production proof",
+      "receiptSha256": "50a649439dfd6f57a6611e37ee6ba38a8841f3954fab02e7fdf9f9b763897893",
+      "logSha256": "45c25b6d65ff80b6d8a55bf6d8460a56a25c69fb809ae6111e898f9a6d7716dd"
+    },
+    {
+      "name": "build",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\yoray\\Projects\\Yor World\\app\\node_modules\\next\\dist\\bin\\next",
+        "build"
+      ],
+      "cwd": "C:\\Users\\yoray\\Projects\\Yor World\\app",
+      "startedAt": "2026-10-09T15:48:05.353Z",
+      "finishedAt": "2026-10-09T15:48:28.429Z",
+      "durationMs": 23075,
+      "exitCode": 0,
+      "signal": null,
+      "status": "PASS",
+      "log": "deliveries\\audits\\2026-10-09-completion\\parent\\build.log",
+      "scope": "Fresh local execution; browser backend is a synthetic embedded fixture, not production proof",
+      "receiptSha256": "286b23564055ce85e5ce9026665b219213a3ed11a56e9183516d65b3a1d56063",
+      "logSha256": "0de9e4eada791ac5f1f3428063b69f460b97217b0574c22bff1f003b5d0685e4"
+    },
+    {
+      "name": "e2e",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\yoray\\Projects\\Yor World\\app\\node_modules\\@playwright\\test\\cli.js",
+        "test",
+        "--output",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\audits\\2026-10-09-completion\\parent\\browser-output"
+      ],
+      "cwd": "C:\\Users\\yoray\\Projects\\Yor World\\app",
+      "startedAt": "2026-10-09T15:48:38.682Z",
+      "finishedAt": "2026-10-09T15:51:49.472Z",
+      "durationMs": 190790,
+      "exitCode": 0,
+      "signal": null,
+      "status": "PASS",
+      "log": "deliveries\\audits\\2026-10-09-completion\\parent\\e2e.log",
+      "scope": "Fresh local execution; browser backend is a synthetic embedded fixture, not production proof",
+      "receiptSha256": "18c8a80743810c3d864f2499a279a1d702dea76cb732498fb2a7825669101325",
+      "logSha256": "b2937d10e519e9e6927815d733020469d7d47a3e95aa0202cc6baabb25fddcca"
+    },
+    {
+      "name": "performance",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\yoray\\Projects\\Yor World\\app\\node_modules\\@playwright\\test\\cli.js",
+        "test",
+        "--config",
+        "playwright.performance.config.ts",
+        "--output",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\audits\\2026-10-09-completion\\parent\\performance-output"
+      ],
+      "cwd": "C:\\Users\\yoray\\Projects\\Yor World\\app",
+      "startedAt": "2026-10-09T15:53:50.924Z",
+      "finishedAt": "2026-10-09T15:55:36.661Z",
+      "durationMs": 105737,
+      "exitCode": 0,
+      "signal": null,
+      "status": "PASS",
+      "log": "deliveries\\audits\\2026-10-09-completion\\parent\\performance.log",
+      "scope": "Fresh local execution; browser backend is a synthetic embedded fixture, not production proof",
+      "receiptSha256": "ee1ae10f6b04529f1866baccaab2c8a2fb6554b0f408fb37661836acd03366c7",
+      "logSha256": "e09b0c494d098139f8916492ca61595fb70f6ee0a12cc2387bbd4cc66ce5d15d"
+    },
+    {
+      "name": "gltf",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\yoray\\Projects\\Yor World\\scripts\\release\\validate-gltf-assets.mjs",
+        "--output",
+        "deliveries/audits/2026-10-09-completion/parent/gltf-validation.json"
+      ],
+      "cwd": "C:\\Users\\yoray\\Projects\\Yor World\\app",
+      "startedAt": "2026-10-09T15:57:12.307Z",
+      "finishedAt": "2026-10-09T15:57:12.902Z",
+      "durationMs": 594,
+      "exitCode": 0,
+      "signal": null,
+      "status": "PASS",
+      "log": "deliveries\\audits\\2026-10-09-completion\\parent\\gltf.log",
+      "scope": "Fresh local execution; browser backend is a synthetic embedded fixture, not production proof",
+      "receiptSha256": "3c395af855b29685f0556ed2da5d0c5bf0c6ef3ddfb01955916aa6633d4ac5a3",
+      "logSha256": "e039857f5b2d7f1936bda065d9c63679a4609c404458ba00b5ba718146a55b8a"
+    },
+    {
+      "name": "composition",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\yoray\\Projects\\Yor World\\scripts\\release\\check-release-composition.mjs",
+        "--output",
+        "deliveries/audits/2026-10-09-completion/parent/release-composition.json"
+      ],
+      "cwd": "C:\\Users\\yoray\\Projects\\Yor World\\app",
+      "startedAt": "2026-10-09T15:57:12.316Z",
+      "finishedAt": "2026-10-09T15:57:12.960Z",
+      "durationMs": 644,
+      "exitCode": 0,
+      "signal": null,
+      "status": "PASS",
+      "log": "deliveries\\audits\\2026-10-09-completion\\parent\\composition.log",
+      "scope": "Fresh local execution; browser backend is a synthetic embedded fixture, not production proof",
+      "receiptSha256": "c4106e0f0db9b2b7372804926b715acfe326eead240e41e4447267f7b3cefc95",
+      "logSha256": "abeb6f42e6bcfe945bd4775f5db13e3d8376a6eeebd1d9eb71f4334aedd6e30a"
+    },
+    {
+      "name": "budgets",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\yoray\\Projects\\Yor World\\scripts\\release\\check-performance-budgets.mjs",
+        "--benchmark-dir",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\audits\\2026-10-09-completion\\parent",
+        "--output",
+        "deliveries/audits/2026-10-09-completion/parent/budget-validation.json"
+      ],
+      "cwd": "C:\\Users\\yoray\\Projects\\Yor World\\app",
+      "startedAt": "2026-10-09T15:57:12.335Z",
+      "finishedAt": "2026-10-09T15:57:13.093Z",
+      "durationMs": 757,
+      "exitCode": 0,
+      "signal": null,
+      "status": "PASS",
+      "log": "deliveries\\audits\\2026-10-09-completion\\parent\\budgets.log",
+      "scope": "Fresh local execution; browser backend is a synthetic embedded fixture, not production proof",
+      "receiptSha256": "9dd1b74b4b05cfa64deb3659e06f370175bcb5bb53410c815205c8af24ac14c3",
+      "logSha256": "1a4450827a222b07ce467cd22a1791450c194a391ec5ffe60a05052f8bf71379"
+    }
+  ],
+  "freshTestCounts": {
+    "unit": {
+      "total": 312,
+      "passed": 312,
+      "failed": 0,
+      "pending": 0
+    },
+    "integration": {
+      "total": 286,
+      "passed": 286,
+      "failed": 0,
+      "pending": 0
+    },
+    "e2e": {
+      "startTime": "2026-10-09T15:48:39.830Z",
+      "duration": 189618.773,
+      "expected": 109,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "performance": {
+      "startTime": "2026-10-09T15:53:51.459Z",
+      "duration": 105183.50499999999,
+      "expected": 6,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  "accessibilityCasesIncludedInE2e": 17,
+  "distinctPassingTests": 713,
+  "diagnostics": [
+    {
+      "artifact": "parent/character-startup-result.json",
+      "sha256": "def9b682d95047ce289674284fe01f15d082d712a08aae091acfd88c1ed5f2b4",
+      "artifactLastModifiedUtc": "2026-10-09T15:52:53.307160+00:00",
+      "scope": "Associated by Parent with the unchanged audited app and fresh build; file modification time is not a claimed process start time"
+    },
+    {
+      "artifact": "parent/optional-load-result.json",
+      "sha256": "af59975af1f741fe5b0f19c37e6c896dd074f3a8838a905fe183da7a65dc9ec8",
+      "artifactLastModifiedUtc": "2026-10-09T15:53:15.668476+00:00",
+      "scope": "Associated by Parent with the unchanged audited app and fresh build; file modification time is not a claimed process start time"
+    },
+    {
+      "artifact": "parent/native-entry-result.json",
+      "sha256": "50fd8c7c65f0a87331c423744eb942bf503551c1776f1ca4f170701614781904",
+      "artifactLastModifiedUtc": "2026-10-09T15:59:44.691095+00:00",
+      "scope": "Associated by Parent with the unchanged audited app and fresh build; file modification time is not a claimed process start time"
+    },
+    {
+      "artifact": "world/fresh-browser/results.json",
+      "sha256": "2087e8e8dc741cf010040e0870eae3e44c675e81b8b433f216e7a6799405da0b",
+      "artifactLastModifiedUtc": "2026-10-09T15:49:11.339957+00:00",
+      "scope": "Associated by Parent with the unchanged audited app and fresh build; file modification time is not a claimed process start time"
+    },
+    {
+      "artifact": "world/pause-proof/results.json",
+      "sha256": "05d7b4760c14964c42cbe9e74601b36db49051fdc09c51ec4cc1bea8d50e9e4e",
+      "artifactLastModifiedUtc": "2026-10-09T15:51:19.805096+00:00",
+      "scope": "Associated by Parent with the unchanged audited app and fresh build; file modification time is not a claimed process start time"
+    },
+    {
+      "artifact": "world/render-quality-proof/results.json",
+      "sha256": "e33c9c476fe0bda368e7eb8000b39f583c1d81b8749ab453961ccf6123220387",
+      "artifactLastModifiedUtc": "2026-10-09T15:57:40.669131+00:00",
+      "scope": "Associated by Parent with the unchanged audited app and fresh build; file modification time is not a claimed process start time"
+    }
+  ],
+  "diagnosticCommandExitPolicy": "Diagnostic utility exit 0 means observations were recorded; its observed FAIL finding is not relabeled PASS",
+  "productionProven": {
+    "g7Requirements": "0/10",
+    "ledgerObservations": "0/56",
+    "physicalManualSessions": "0/6"
+  },
+  "excludedFromPortableInventory": [
+    "parent/*-fixture-db/",
+    "parent/browser-output/",
+    "parent/performance-output/",
+    "SHA256SUMS.txt self-hash"
+  ],
+  "independentAdvice": "platform PASS; production PASS subject to final binding; world and production corroborate diagnostic scope"
+}
