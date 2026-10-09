@@ -1,6 +1,6 @@
 # Current production prerequisites
 
-**Accepted baseline: G6-R1 / RC5. Current candidate: v1.0.0-rc6. G7 AUTHORIZED / PREPARATION** under **G7-OWNER-AUTH-20261006** (owner: “Complete it.”). PRE-G7-01 through PRE-G7-09 assign bounded amendments. Current R6 source `8e5b954e147a87e36a6869d9940c40f3d4c123f0` has complete fresh local/primary proof and independent boundary checks; actual hosted artifact and independent/major reviews PASS, and RC6-R1 accepts this exact source for preparation. All earlier execution and audit identities remain preserved. This guide does not establish live completion.
+**Accepted baseline: G6-R1 / RC5. Current candidate: v1.0.0-rc6, R7 REMEDIATION IN PROGRESS; NOT SOURCE ACCEPTED. G7 AUTHORIZED / PREPARATION** under **G7-OWNER-AUTH-20261006** (owner: “Complete it.”). LOCAL-CORRECTIONS-01/02/03 assign the current bounded amendment. Historical R6 source `8e5b954e147a87e36a6869d9940c40f3d4c123f0` has complete local/hosted proof and independent/major reviews under RC6-R1; those results accept only that exact predecessor for preparation. Changed R7 source requires fresh binding, independent review and a separate Parent ruling. All earlier execution and audit identities remain preserved. This guide does not establish live completion.
 
 Accepted source `c34e01bb5bff210d924f42d5266e2fa1ed13288e`, app tree `88a65e85d1f120a9aa4397efa8cc779bdfe5cf08`, bundle `4380cab7f5211c836fe5bb97c68d67137c1b0fd7a2e4789bb29d0157ab5faa0f`. The [independent audit](../planning/reviews/2026-10-06-rc5-independent-full-stack-audit.md) and G6-R1 record all remaining debt and limitations. Any source amendment must use a separate Parent packet, a new binding and independent delta adjudication; accepted RC5 is not silently edited.
 
@@ -14,11 +14,12 @@ Accepted source `c34e01bb5bff210d924f42d5266e2fa1ed13288e`, app tree `88a65e85d1
 
 ## Exact schema and environment
 
-Schema revision remains **20261005000000_schema_v2**. Apply all three immutable migrations in filename order:
+Historical accepted R6 uses **20261005000000_schema_v2** and the first three immutable migrations below. The pending R7 candidate proposes **20261009000000_schema_v3** with the fourth forward migration; its release binding and independent review must complete before deployment. Use the migration inventory of the exact accepted deployment source, in filename order:
 
 1. `app/supabase/migrations/20261001000000_a3_owner_auth_rls.sql`
 2. `app/supabase/migrations/20261001000001_a4_publication_media.sql`
 3. `app/supabase/migrations/20261005000000_github_refresh_state.sql`
+4. R7 only: `app/supabase/migrations/20261009000000_owner_identity_media_integrity.sql`
 
 Then apply `app/supabase/operations/harden-publication-grants.sql` and verify effective PUBLIC/anon/authenticated/service-role privileges and direct mutation denial. Verify the private sixteenth table `github_refresh_state` as well as the fifteen public tables. The archived [RC3 environment contract](../../deliveries/G6/full-stack-integration/environment-contract.md) is historical and still describes schema v1/two migrations; use this guide and the accepted source `.env.example` for current preparation.
 
