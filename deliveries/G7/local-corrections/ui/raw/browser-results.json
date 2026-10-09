@@ -74,7 +74,7 @@
       "specs": [
         {
           "title": "studio space, bounded controls and real Close at 1440x1000",
-          "ok": true,
+          "ok": false,
           "tags": [],
           "tests": [
             {
@@ -87,114 +87,63 @@
                 {
                   "workerIndex": 0,
                   "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 8131,
-                  "errors": [],
+                  "status": "failed",
+                  "duration": 16601,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('world-stage-container')\nExpected: \u001b[32m\"HOME\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" getByTestId('world-stage-container') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('world-stage-container')\u001b[22m\n\u001b[2m    - locator resolved to <div tabindex=\"-1\" role=\"region\" aria-label=\"Interactive 3D Studio\" data-testid=\"world-stage-container\" data-lifecycle-state=\"ENTRY_REQUESTED\" class=\"world-module__FC9lxW__stageContainer\">…</div>\u001b[22m\n\u001b[2m    - unexpected value \"ENTRY_REQUESTED\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('world-stage-container')\nExpected: \u001b[32m\"HOME\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" getByTestId('world-stage-container') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('world-stage-container')\u001b[22m\n\u001b[2m    - locator resolved to <div tabindex=\"-1\" role=\"region\" aria-label=\"Interactive 3D Studio\" data-testid=\"world-stage-container\" data-lifecycle-state=\"ENTRY_REQUESTED\" class=\"world-module__FC9lxW__stageContainer\">…</div>\u001b[22m\n\u001b[2m    - unexpected value \"ENTRY_REQUESTED\"\u001b[22m\n\n    at enterHome (C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:7:23)\n    at C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:27:5",
+                    "location": {
+                      "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                      "column": 23,
+                      "line": 7
+                    },
+                    "snippet": "   5 |   await page.goto(\"/?studio=1\");\n   6 |   const stage = page.getByTestId(\"world-stage-container\");\n>  7 |   await expect(stage).toHaveAttribute(\"data-lifecycle-state\", \"HOME\", { timeout: 15000 });\n     |                       ^\n   8 |   await stage.scrollIntoViewIfNeeded();\n   9 |   await expect.poll(async () => Number(await page.getByTestId(\"world-canvas\").getAttribute(\"data-rendered-frames\"))).toBeGreaterThan(1);\n  10 | }"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                        "column": 23,
+                        "line": 7
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('world-stage-container')\nExpected: \u001b[32m\"HOME\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" getByTestId('world-stage-container') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('world-stage-container')\u001b[22m\n\u001b[2m    - locator resolved to <div tabindex=\"-1\" role=\"region\" aria-label=\"Interactive 3D Studio\" data-testid=\"world-stage-container\" data-lifecycle-state=\"ENTRY_REQUESTED\" class=\"world-module__FC9lxW__stageContainer\">…</div>\u001b[22m\n\u001b[2m    - unexpected value \"ENTRY_REQUESTED\"\u001b[22m\n\n\n   5 |   await page.goto(\"/?studio=1\");\n   6 |   const stage = page.getByTestId(\"world-stage-container\");\n>  7 |   await expect(stage).toHaveAttribute(\"data-lifecycle-state\", \"HOME\", { timeout: 15000 });\n     |                       ^\n   8 |   await stage.scrollIntoViewIfNeeded();\n   9 |   await expect.poll(async () => Number(await page.getByTestId(\"world-canvas\").getAttribute(\"data-rendered-frames\"))).toBeGreaterThan(1);\n  10 | }\n    at enterHome (C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:7:23)\n    at C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:27:5"
+                    }
+                  ],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-09T00:20:35.170Z",
+                  "startTime": "2026-10-08T18:13:03.049Z",
                   "annotations": [],
                   "attachments": [
                     {
-                      "name": "measured-layout",
-                      "contentType": "application/json",
-                      "body": "eyJzdGFnZVdpZHRoIjoxMzc2LCJjYW52YXNGcmFjdGlvbiI6MC45MjY4MjkyNjgyOTI2ODMsImNhbnZhc1BvaW50ZXJGcmFjdGlvbiI6MSwiZG9jdW1lbnRXaWR0aCI6MTQ0MH0="
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\ui\\raw\\playwright\\local-studio-usability-stu-20037-and-real-Close-at-1440x1000-chrome\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\ui\\raw\\playwright\\local-studio-usability-stu-20037-and-real-Close-at-1440x1000-chrome\\error-context.md"
                     }
-                  ]
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                    "column": 23,
+                    "line": 7
+                  }
                 }
               ],
-              "status": "expected"
+              "status": "unexpected"
             }
           ],
           "id": "1010eb3f2ae36aacd9d5-89dc481c1d3c61ad6949",
           "file": "local-studio-usability.spec.ts",
-          "line": 32,
-          "column": 3
-        },
-        {
-          "title": "studio space, bounded controls and real Close at 1920x1080",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 30000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chrome",
-              "projectName": "chrome",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 4817,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-09T00:20:43.646Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "measured-layout",
-                      "contentType": "application/json",
-                      "body": "eyJzdGFnZVdpZHRoIjoxNjAwLCJjYW52YXNGcmFjdGlvbiI6MC45MjY4MjkyNjgyOTI2ODMsImNhbnZhc1BvaW50ZXJGcmFjdGlvbiI6MSwiZG9jdW1lbnRXaWR0aCI6MTkyMH0="
-                    }
-                  ]
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "1010eb3f2ae36aacd9d5-2a9d79be21ec60f10659",
-          "file": "local-studio-usability.spec.ts",
-          "line": 32,
-          "column": 3
-        },
-        {
-          "title": "studio space, bounded controls and real Close at 1024x768",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 30000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chrome",
-              "projectName": "chrome",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 4790,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-09T00:20:48.488Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "measured-layout",
-                      "contentType": "application/json",
-                      "body": "eyJzdGFnZVdpZHRoIjo5NjAsImNhbnZhc0ZyYWN0aW9uIjowLjkwODA4Nzc5NTMwMzg2MDcsImNhbnZhc1BvaW50ZXJGcmFjdGlvbiI6MSwiZG9jdW1lbnRXaWR0aCI6MTAyNH0="
-                    }
-                  ]
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "1010eb3f2ae36aacd9d5-a4cf753b16efd7d0facf",
-          "file": "local-studio-usability.spec.ts",
-          "line": 32,
+          "line": 25,
           "column": 3
         },
         {
           "title": "studio space, bounded controls and real Close at 390x844",
-          "ok": true,
+          "ok": false,
           "tags": [],
           "tests": [
             {
@@ -205,36 +154,65 @@
               "projectName": "chrome",
               "results": [
                 {
-                  "workerIndex": 0,
+                  "workerIndex": 1,
                   "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 7360,
-                  "errors": [],
+                  "status": "failed",
+                  "duration": 16645,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('world-stage-container')\nExpected: \u001b[32m\"HOME\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" getByTestId('world-stage-container') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('world-stage-container')\u001b[22m\n\u001b[2m    - locator resolved to <div tabindex=\"-1\" role=\"region\" aria-label=\"Interactive 3D Studio\" data-testid=\"world-stage-container\" data-lifecycle-state=\"ENTRY_REQUESTED\" class=\"world-module__FC9lxW__stageContainer\">…</div>\u001b[22m\n\u001b[2m    - unexpected value \"ENTRY_REQUESTED\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('world-stage-container')\nExpected: \u001b[32m\"HOME\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" getByTestId('world-stage-container') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('world-stage-container')\u001b[22m\n\u001b[2m    - locator resolved to <div tabindex=\"-1\" role=\"region\" aria-label=\"Interactive 3D Studio\" data-testid=\"world-stage-container\" data-lifecycle-state=\"ENTRY_REQUESTED\" class=\"world-module__FC9lxW__stageContainer\">…</div>\u001b[22m\n\u001b[2m    - unexpected value \"ENTRY_REQUESTED\"\u001b[22m\n\n    at enterHome (C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:7:23)\n    at C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:27:5",
+                    "location": {
+                      "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                      "column": 23,
+                      "line": 7
+                    },
+                    "snippet": "   5 |   await page.goto(\"/?studio=1\");\n   6 |   const stage = page.getByTestId(\"world-stage-container\");\n>  7 |   await expect(stage).toHaveAttribute(\"data-lifecycle-state\", \"HOME\", { timeout: 15000 });\n     |                       ^\n   8 |   await stage.scrollIntoViewIfNeeded();\n   9 |   await expect.poll(async () => Number(await page.getByTestId(\"world-canvas\").getAttribute(\"data-rendered-frames\"))).toBeGreaterThan(1);\n  10 | }"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                        "column": 23,
+                        "line": 7
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('world-stage-container')\nExpected: \u001b[32m\"HOME\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" getByTestId('world-stage-container') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('world-stage-container')\u001b[22m\n\u001b[2m    - locator resolved to <div tabindex=\"-1\" role=\"region\" aria-label=\"Interactive 3D Studio\" data-testid=\"world-stage-container\" data-lifecycle-state=\"ENTRY_REQUESTED\" class=\"world-module__FC9lxW__stageContainer\">…</div>\u001b[22m\n\u001b[2m    - unexpected value \"ENTRY_REQUESTED\"\u001b[22m\n\n\n   5 |   await page.goto(\"/?studio=1\");\n   6 |   const stage = page.getByTestId(\"world-stage-container\");\n>  7 |   await expect(stage).toHaveAttribute(\"data-lifecycle-state\", \"HOME\", { timeout: 15000 });\n     |                       ^\n   8 |   await stage.scrollIntoViewIfNeeded();\n   9 |   await expect.poll(async () => Number(await page.getByTestId(\"world-canvas\").getAttribute(\"data-rendered-frames\"))).toBeGreaterThan(1);\n  10 | }\n    at enterHome (C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:7:23)\n    at C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:27:5"
+                    }
+                  ],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-09T00:20:53.296Z",
+                  "startTime": "2026-10-08T18:13:20.764Z",
                   "annotations": [],
                   "attachments": [
                     {
-                      "name": "measured-layout",
-                      "contentType": "application/json",
-                      "body": "eyJzdGFnZVdpZHRoIjozNTAsImNhbnZhc0ZyYWN0aW9uIjowLjg0NjY2NjUyMTQ2NDUwODksImNhbnZhc1BvaW50ZXJGcmFjdGlvbiI6MSwiZG9jdW1lbnRXaWR0aCI6MzkwfQ=="
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\ui\\raw\\playwright\\local-studio-usability-stu-0e86f-s-and-real-Close-at-390x844-chrome\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\ui\\raw\\playwright\\local-studio-usability-stu-0e86f-s-and-real-Close-at-390x844-chrome\\error-context.md"
                     }
-                  ]
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                    "column": 23,
+                    "line": 7
+                  }
                 }
               ],
-              "status": "expected"
+              "status": "unexpected"
             }
           ],
           "id": "1010eb3f2ae36aacd9d5-53896c0d946d683cd6a8",
           "file": "local-studio-usability.spec.ts",
-          "line": 32,
+          "line": 25,
           "column": 3
         },
         {
-          "title": "studio space, bounded controls and real Close at 320x600",
-          "ok": true,
+          "title": "studio space, bounded controls and real Close at 320x844",
+          "ok": false,
           "tags": [],
           "tests": [
             {
@@ -245,36 +223,65 @@
               "projectName": "chrome",
               "results": [
                 {
-                  "workerIndex": 0,
+                  "workerIndex": 2,
                   "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 4321,
-                  "errors": [],
+                  "status": "failed",
+                  "duration": 16027,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('world-stage-container')\nExpected: \u001b[32m\"HOME\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" getByTestId('world-stage-container') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('world-stage-container')\u001b[22m\n\u001b[2m    - locator resolved to <div tabindex=\"-1\" role=\"region\" aria-label=\"Interactive 3D Studio\" data-testid=\"world-stage-container\" data-lifecycle-state=\"ENTRY_REQUESTED\" class=\"world-module__FC9lxW__stageContainer\">…</div>\u001b[22m\n\u001b[2m    - unexpected value \"ENTRY_REQUESTED\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('world-stage-container')\nExpected: \u001b[32m\"HOME\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" getByTestId('world-stage-container') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('world-stage-container')\u001b[22m\n\u001b[2m    - locator resolved to <div tabindex=\"-1\" role=\"region\" aria-label=\"Interactive 3D Studio\" data-testid=\"world-stage-container\" data-lifecycle-state=\"ENTRY_REQUESTED\" class=\"world-module__FC9lxW__stageContainer\">…</div>\u001b[22m\n\u001b[2m    - unexpected value \"ENTRY_REQUESTED\"\u001b[22m\n\n    at enterHome (C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:7:23)\n    at C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:27:5",
+                    "location": {
+                      "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                      "column": 23,
+                      "line": 7
+                    },
+                    "snippet": "   5 |   await page.goto(\"/?studio=1\");\n   6 |   const stage = page.getByTestId(\"world-stage-container\");\n>  7 |   await expect(stage).toHaveAttribute(\"data-lifecycle-state\", \"HOME\", { timeout: 15000 });\n     |                       ^\n   8 |   await stage.scrollIntoViewIfNeeded();\n   9 |   await expect.poll(async () => Number(await page.getByTestId(\"world-canvas\").getAttribute(\"data-rendered-frames\"))).toBeGreaterThan(1);\n  10 | }"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                        "column": 23,
+                        "line": 7
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('world-stage-container')\nExpected: \u001b[32m\"HOME\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" getByTestId('world-stage-container') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('world-stage-container')\u001b[22m\n\u001b[2m    - locator resolved to <div tabindex=\"-1\" role=\"region\" aria-label=\"Interactive 3D Studio\" data-testid=\"world-stage-container\" data-lifecycle-state=\"ENTRY_REQUESTED\" class=\"world-module__FC9lxW__stageContainer\">…</div>\u001b[22m\n\u001b[2m    - unexpected value \"ENTRY_REQUESTED\"\u001b[22m\n\n\n   5 |   await page.goto(\"/?studio=1\");\n   6 |   const stage = page.getByTestId(\"world-stage-container\");\n>  7 |   await expect(stage).toHaveAttribute(\"data-lifecycle-state\", \"HOME\", { timeout: 15000 });\n     |                       ^\n   8 |   await stage.scrollIntoViewIfNeeded();\n   9 |   await expect.poll(async () => Number(await page.getByTestId(\"world-canvas\").getAttribute(\"data-rendered-frames\"))).toBeGreaterThan(1);\n  10 | }\n    at enterHome (C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:7:23)\n    at C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:27:5"
+                    }
+                  ],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-09T00:21:00.672Z",
+                  "startTime": "2026-10-08T18:13:38.434Z",
                   "annotations": [],
                   "attachments": [
                     {
-                      "name": "measured-layout",
-                      "contentType": "application/json",
-                      "body": "eyJzdGFnZVdpZHRoIjoyOTYsImNhbnZhc0ZyYWN0aW9uIjowLjY4NjI3NDUwOTgwMzkyMTYsImNhbnZhc1BvaW50ZXJGcmFjdGlvbiI6MSwiZG9jdW1lbnRXaWR0aCI6MzIwfQ=="
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\ui\\raw\\playwright\\local-studio-usability-stu-57d98-s-and-real-Close-at-320x844-chrome\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\ui\\raw\\playwright\\local-studio-usability-stu-57d98-s-and-real-Close-at-320x844-chrome\\error-context.md"
                     }
-                  ]
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                    "column": 23,
+                    "line": 7
+                  }
                 }
               ],
-              "status": "expected"
+              "status": "unexpected"
             }
           ],
-          "id": "1010eb3f2ae36aacd9d5-d021b9b6a3edce261d44",
+          "id": "1010eb3f2ae36aacd9d5-b03a1ac3a52afc647712",
           "file": "local-studio-usability.spec.ts",
-          "line": 32,
+          "line": 25,
           "column": 3
         },
         {
           "title": "studio space, bounded controls and real Close at 844x390",
-          "ok": true,
+          "ok": false,
           "tags": [],
           "tests": [
             {
@@ -285,36 +292,65 @@
               "projectName": "chrome",
               "results": [
                 {
-                  "workerIndex": 0,
+                  "workerIndex": 3,
                   "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 3739,
-                  "errors": [],
+                  "status": "failed",
+                  "duration": 16007,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('world-stage-container')\nExpected: \u001b[32m\"HOME\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" getByTestId('world-stage-container') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('world-stage-container')\u001b[22m\n\u001b[2m    - locator resolved to <div tabindex=\"-1\" role=\"region\" aria-label=\"Interactive 3D Studio\" data-testid=\"world-stage-container\" data-lifecycle-state=\"ENTRY_REQUESTED\" class=\"world-module__FC9lxW__stageContainer\">…</div>\u001b[22m\n\u001b[2m    - unexpected value \"ENTRY_REQUESTED\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('world-stage-container')\nExpected: \u001b[32m\"HOME\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" getByTestId('world-stage-container') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('world-stage-container')\u001b[22m\n\u001b[2m    - locator resolved to <div tabindex=\"-1\" role=\"region\" aria-label=\"Interactive 3D Studio\" data-testid=\"world-stage-container\" data-lifecycle-state=\"ENTRY_REQUESTED\" class=\"world-module__FC9lxW__stageContainer\">…</div>\u001b[22m\n\u001b[2m    - unexpected value \"ENTRY_REQUESTED\"\u001b[22m\n\n    at enterHome (C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:7:23)\n    at C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:27:5",
+                    "location": {
+                      "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                      "column": 23,
+                      "line": 7
+                    },
+                    "snippet": "   5 |   await page.goto(\"/?studio=1\");\n   6 |   const stage = page.getByTestId(\"world-stage-container\");\n>  7 |   await expect(stage).toHaveAttribute(\"data-lifecycle-state\", \"HOME\", { timeout: 15000 });\n     |                       ^\n   8 |   await stage.scrollIntoViewIfNeeded();\n   9 |   await expect.poll(async () => Number(await page.getByTestId(\"world-canvas\").getAttribute(\"data-rendered-frames\"))).toBeGreaterThan(1);\n  10 | }"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                        "column": 23,
+                        "line": 7
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('world-stage-container')\nExpected: \u001b[32m\"HOME\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" getByTestId('world-stage-container') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('world-stage-container')\u001b[22m\n\u001b[2m    - locator resolved to <div tabindex=\"-1\" role=\"region\" aria-label=\"Interactive 3D Studio\" data-testid=\"world-stage-container\" data-lifecycle-state=\"ENTRY_REQUESTED\" class=\"world-module__FC9lxW__stageContainer\">…</div>\u001b[22m\n\u001b[2m    - unexpected value \"ENTRY_REQUESTED\"\u001b[22m\n\n\n   5 |   await page.goto(\"/?studio=1\");\n   6 |   const stage = page.getByTestId(\"world-stage-container\");\n>  7 |   await expect(stage).toHaveAttribute(\"data-lifecycle-state\", \"HOME\", { timeout: 15000 });\n     |                       ^\n   8 |   await stage.scrollIntoViewIfNeeded();\n   9 |   await expect.poll(async () => Number(await page.getByTestId(\"world-canvas\").getAttribute(\"data-rendered-frames\"))).toBeGreaterThan(1);\n  10 | }\n    at enterHome (C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:7:23)\n    at C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:27:5"
+                    }
+                  ],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-09T00:21:05.009Z",
+                  "startTime": "2026-10-08T18:13:55.624Z",
                   "annotations": [],
                   "attachments": [
                     {
-                      "name": "measured-layout",
-                      "contentType": "application/json",
-                      "body": "eyJzdGFnZVdpZHRoIjo3ODAsImNhbnZhc0ZyYWN0aW9uIjowLjgzMzMzMzMzMzMzMzMzMzQsImNhbnZhc1BvaW50ZXJGcmFjdGlvbiI6MSwiZG9jdW1lbnRXaWR0aCI6ODQ0fQ=="
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\ui\\raw\\playwright\\local-studio-usability-stu-1d353-s-and-real-Close-at-844x390-chrome\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\ui\\raw\\playwright\\local-studio-usability-stu-1d353-s-and-real-Close-at-844x390-chrome\\error-context.md"
                     }
-                  ]
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                    "column": 23,
+                    "line": 7
+                  }
                 }
               ],
-              "status": "expected"
+              "status": "unexpected"
             }
           ],
           "id": "1010eb3f2ae36aacd9d5-c66723529678e35a74ec",
           "file": "local-studio-usability.spec.ts",
-          "line": 32,
+          "line": 25,
           "column": 3
         },
         {
           "title": "Room sound opt-in, HUD and actual runtime stay synchronized in both directions",
-          "ok": true,
+          "ok": false,
           "tags": [],
           "tests": [
             {
@@ -325,30 +361,65 @@
               "projectName": "chrome",
               "results": [
                 {
-                  "workerIndex": 0,
+                  "workerIndex": 4,
                   "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 4094,
-                  "errors": [],
+                  "status": "failed",
+                  "duration": 15894,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('world-stage-container')\nExpected: \u001b[32m\"HOME\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" getByTestId('world-stage-container') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('world-stage-container')\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('world-stage-container')\nExpected: \u001b[32m\"HOME\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" getByTestId('world-stage-container') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('world-stage-container')\u001b[22m\n\n    at enterHome (C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:7:23)\n    at C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:90:3",
+                    "location": {
+                      "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                      "column": 23,
+                      "line": 7
+                    },
+                    "snippet": "   5 |   await page.goto(\"/?studio=1\");\n   6 |   const stage = page.getByTestId(\"world-stage-container\");\n>  7 |   await expect(stage).toHaveAttribute(\"data-lifecycle-state\", \"HOME\", { timeout: 15000 });\n     |                       ^\n   8 |   await stage.scrollIntoViewIfNeeded();\n   9 |   await expect.poll(async () => Number(await page.getByTestId(\"world-canvas\").getAttribute(\"data-rendered-frames\"))).toBeGreaterThan(1);\n  10 | }"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                        "column": 23,
+                        "line": 7
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('world-stage-container')\nExpected: \u001b[32m\"HOME\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" getByTestId('world-stage-container') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('world-stage-container')\u001b[22m\n\n\n   5 |   await page.goto(\"/?studio=1\");\n   6 |   const stage = page.getByTestId(\"world-stage-container\");\n>  7 |   await expect(stage).toHaveAttribute(\"data-lifecycle-state\", \"HOME\", { timeout: 15000 });\n     |                       ^\n   8 |   await stage.scrollIntoViewIfNeeded();\n   9 |   await expect.poll(async () => Number(await page.getByTestId(\"world-canvas\").getAttribute(\"data-rendered-frames\"))).toBeGreaterThan(1);\n  10 | }\n    at enterHome (C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:7:23)\n    at C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:90:3"
+                    }
+                  ],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-09T00:21:08.762Z",
+                  "startTime": "2026-10-08T18:14:12.742Z",
                   "annotations": [],
-                  "attachments": []
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\ui\\raw\\playwright\\local-studio-usability-Roo-dfb0d-hronized-in-both-directions-chrome\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\ui\\raw\\playwright\\local-studio-usability-Roo-dfb0d-hronized-in-both-directions-chrome\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                    "column": 23,
+                    "line": 7
+                  }
                 }
               ],
-              "status": "expected"
+              "status": "unexpected"
             }
           ],
           "id": "1010eb3f2ae36aacd9d5-09b28645938d75127914",
           "file": "local-studio-usability.spec.ts",
-          "line": 96,
+          "line": 89,
           "column": 1
         },
         {
           "title": "browser audio denial leaves room preference, HUD and runtime muted",
-          "ok": true,
+          "ok": false,
           "tags": [],
           "tests": [
             {
@@ -359,25 +430,60 @@
               "projectName": "chrome",
               "results": [
                 {
-                  "workerIndex": 0,
+                  "workerIndex": 5,
                   "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 2850,
-                  "errors": [],
+                  "status": "failed",
+                  "duration": 16720,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('world-stage-container')\nExpected: \u001b[32m\"HOME\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" getByTestId('world-stage-container') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('world-stage-container')\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('world-stage-container')\nExpected: \u001b[32m\"HOME\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" getByTestId('world-stage-container') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('world-stage-container')\u001b[22m\n\n    at enterHome (C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:7:23)\n    at C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:133:3",
+                    "location": {
+                      "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                      "column": 23,
+                      "line": 7
+                    },
+                    "snippet": "   5 |   await page.goto(\"/?studio=1\");\n   6 |   const stage = page.getByTestId(\"world-stage-container\");\n>  7 |   await expect(stage).toHaveAttribute(\"data-lifecycle-state\", \"HOME\", { timeout: 15000 });\n     |                       ^\n   8 |   await stage.scrollIntoViewIfNeeded();\n   9 |   await expect.poll(async () => Number(await page.getByTestId(\"world-canvas\").getAttribute(\"data-rendered-frames\"))).toBeGreaterThan(1);\n  10 | }"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                        "column": 23,
+                        "line": 7
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByTestId('world-stage-container')\nExpected: \u001b[32m\"HOME\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" getByTestId('world-stage-container') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('world-stage-container')\u001b[22m\n\n\n   5 |   await page.goto(\"/?studio=1\");\n   6 |   const stage = page.getByTestId(\"world-stage-container\");\n>  7 |   await expect(stage).toHaveAttribute(\"data-lifecycle-state\", \"HOME\", { timeout: 15000 });\n     |                       ^\n   8 |   await stage.scrollIntoViewIfNeeded();\n   9 |   await expect.poll(async () => Number(await page.getByTestId(\"world-canvas\").getAttribute(\"data-rendered-frames\"))).toBeGreaterThan(1);\n  10 | }\n    at enterHome (C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:7:23)\n    at C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts:133:3"
+                    }
+                  ],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-09T00:21:12.888Z",
+                  "startTime": "2026-10-08T18:14:29.844Z",
                   "annotations": [],
-                  "attachments": []
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\ui\\raw\\playwright\\local-studio-usability-bro-4ed7f-rence-HUD-and-runtime-muted-chrome\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\ui\\raw\\playwright\\local-studio-usability-bro-4ed7f-rence-HUD-and-runtime-muted-chrome\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app\\tests\\e2e\\local-studio-usability.spec.ts",
+                    "column": 23,
+                    "line": 7
+                  }
                 }
               ],
-              "status": "expected"
+              "status": "unexpected"
             }
           ],
           "id": "1010eb3f2ae36aacd9d5-7bc37fec23b2a2161886",
           "file": "local-studio-usability.spec.ts",
-          "line": 135,
+          "line": 124,
           "column": 1
         },
         {
@@ -393,15 +499,15 @@
               "projectName": "chrome",
               "results": [
                 {
-                  "workerIndex": 0,
+                  "workerIndex": 6,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1024,
+                  "duration": 1793,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-09T00:21:15.754Z",
+                  "startTime": "2026-10-08T18:14:47.618Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -411,109 +517,7 @@
           ],
           "id": "1010eb3f2ae36aacd9d5-1b326736625c904d13d3",
           "file": "local-studio-usability.spec.ts",
-          "line": 157,
-          "column": 1
-        },
-        {
-          "title": "RouteFocus focuses destination heading on route transition and preserves first-load focus",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 30000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chrome",
-              "projectName": "chrome",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1447,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-09T00:21:16.796Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "1010eb3f2ae36aacd9d5-02fbd97e69ab1a4ad3c0",
-          "file": "local-studio-usability.spec.ts",
-          "line": 170,
-          "column": 1
-        },
-        {
-          "title": "explicit entrance replay and option controls trigger clean re-entry",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 30000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chrome",
-              "projectName": "chrome",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 2827,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-09T00:21:18.262Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "1010eb3f2ae36aacd9d5-c5aa8c8f58515232233b",
-          "file": "local-studio-usability.spec.ts",
-          "line": 182,
-          "column": 1
-        },
-        {
-          "title": "validated return snapshot skips intro and restores camera and room preferences",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 30000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chrome",
-              "projectName": "chrome",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 2370,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-09T00:21:21.105Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "1010eb3f2ae36aacd9d5-a3e0a6b195f83f40216d",
-          "file": "local-studio-usability.spec.ts",
-          "line": 194,
+          "line": 146,
           "column": 1
         }
       ]
@@ -521,11 +525,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-10-09T00:20:34.444Z",
-    "duration": 49381.215,
-    "expected": 12,
+    "startTime": "2026-10-08T18:13:02.375Z",
+    "duration": 107477.54699999999,
+    "expected": 1,
     "skipped": 0,
-    "unexpected": 0,
+    "unexpected": 6,
     "flaky": 0
   }
 }
