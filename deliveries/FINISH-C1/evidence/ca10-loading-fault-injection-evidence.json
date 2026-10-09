@@ -1,0 +1,45 @@
+{
+  "timestamp": "2026-10-09T17:31:16.282Z",
+  "checks": {
+    "essentialFailureCatches": true,
+    "maxRetriesIsTwo": true,
+    "exactThreeAttempts": true,
+    "failedAssetIdentified": true,
+    "truthfulProgressReporting": true,
+    "abortCancellationFired": true,
+    "abortIsFast": true,
+    "noRetriesOnAbort": true,
+    "onOptionalReadySupported": true
+  },
+  "attemptTrace": {
+    "totalAttempts": 3,
+    "maxRetries": 2,
+    "failedAsset": "production-room-full.glb",
+    "errorMessage": "Required asset \"production-room-full.glb\" failed to load after 3 attempts: Simulated asset failure for production-room-full.glb"
+  },
+  "progressReportsCount": 2,
+  "sampleProgressReports": [
+    {
+      "stage": "Initiating asset session...",
+      "progress": -1,
+      "requiredLoaded": 0,
+      "requiredTotal": 3,
+      "optionalLoaded": 0,
+      "optionalTotal": 3,
+      "retryCount": 0,
+      "maxRetries": 2
+    },
+    {
+      "stage": "Failed to load production-room-full.glb",
+      "progress": -1,
+      "requiredLoaded": 0,
+      "requiredTotal": 3,
+      "optionalLoaded": 0,
+      "optionalTotal": 3,
+      "retryCount": 3,
+      "maxRetries": 2,
+      "failedAsset": "production-room-full.glb"
+    }
+  ],
+  "abortDurationMs": 63
+}

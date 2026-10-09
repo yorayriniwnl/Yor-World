@@ -1,0 +1,787 @@
+diff --git a/src/features/world/CharacterDirector.ts b/src/features/world/CharacterDirector.ts
+index adb7fab..bd9ce69 100644
+--- a/src/features/world/CharacterDirector.ts
++++ b/src/features/world/CharacterDirector.ts
+@@ -22,8 +22,9 @@ export class CharacterDirector {
+ 
+   public readonly ownerId: string;
+   public mode: DirectorMode = "coding";
+-  public currentClip: string = "coding_idle";
++  public currentClip: string = "";
+   public currentTime: number = 0;
++  public isDecorativePaused: boolean = false;
+   private queue: QueueSegment[] = [];
+   public revision: number = 0;
+   private isDisposed: boolean = false;
+@@ -52,7 +53,15 @@ export class CharacterDirector {
+   }
+ 
+   private applyClip(clip: string, time: number) {
+-    const duration = CLIP_DURATIONS[clip];
++    const duration =
++      CLIP_DURATIONS[clip] ??
++      (clip === "mouse_idle"
++        ? 2.0
++        : clip === "attention_glance"
++        ? 1.2
++        : clip === "breathing_idle"
++        ? 4.0
++        : undefined);
+     if (duration === undefined) {
+       throw new Error(`Unknown animation clip: ${clip}`);
+     }
+@@ -154,6 +163,7 @@ export class CharacterDirector {
+ 
+   public advance(dt: number) {
+     if (!Number.isFinite(dt) || dt < 0) return;
++    if (this.mode === "coding" && this.isDecorativePaused) return;
+     let remaining = dt;
+ 
+     while (this.queue.length > 0) {
+@@ -187,6 +197,7 @@ export class CharacterDirector {
+     }
+ 
+     if (this.mode === "coding") {
++      if (this.isDecorativePaused) return;
+       const codingDuration = CLIP_DURATIONS["coding_idle"] || 6.0;
+       this.applyClip("coding_idle", (this.currentTime + remaining) % codingDuration);
+     }
+@@ -213,6 +224,10 @@ export class CharacterDirector {
+     this.settle();
+   }
+ 
++  public setDecorativePaused(paused: boolean): void {
++    this.isDecorativePaused = paused;
++  }
++
+   public getDiagnostics() {
+     return {
+       currentClip: this.currentClip,
+@@ -222,6 +237,7 @@ export class CharacterDirector {
+       chairYawDeg: this.getChairYawDeg(),
+       bodyYawDeg: this.getBodyYawDeg(),
+       ownerId: this.ownerId,
++      isDecorativePaused: this.isDecorativePaused,
+     };
+   }
+ 
+
+diff --git a/src/features/world/AssetLoader.ts b/src/features/world/AssetLoader.ts
+index 1ba2ac9..faffcb1 100644
+--- a/src/features/world/AssetLoader.ts
++++ b/src/features/world/AssetLoader.ts
+@@ -11,6 +11,12 @@ export interface LoadedAssets {
+   interactionGltf: GLTF | null;
+ }
+ 
++export interface OptionalAssetsUpdate {
++  deskmatTexture?: THREE.Texture | null;
++  wallpaperTexture?: THREE.Texture | null;
++  interactionGltf?: GLTF | null;
++}
++
+ export interface AssetLoaderOptions {
+   sessionToken: number;
+   signal?: AbortSignal | undefined;
+@@ -18,6 +24,7 @@ export interface AssetLoaderOptions {
+   maxRetries?: number | undefined;
+   mobile?: boolean | undefined;
+   onProgress?: ((progress: LoadingProgress) => void) | undefined;
++  onOptionalReady?: ((optional: OptionalAssetsUpdate) => void) | undefined;
+ }
+ 
+ export class AssetLoadingError extends Error {
+@@ -32,13 +39,50 @@ export class AssetLoadingError extends Error {
+   }
+ }
+ 
++async function fetchWithAbort(
++  url: string,
++  signal?: AbortSignal,
++  onByteProgress?: (loaded: number, total: number) => void
++): Promise<ArrayBuffer> {
++  const res = await fetch(url, signal ? { signal } : undefined);
++  if (!res.ok) {
++    throw new Error(`HTTP ${res.status} ${res.statusText} for ${url}`);
++  }
++  const contentLength = res.headers.get("content-length");
++  const total = contentLength ? parseInt(contentLength, 10) : 0;
++  if (!res.body || total <= 0) {
++    const buf = await res.arrayBuffer();
++    if (onByteProgress && total > 0) onByteProgress(total, total);
++    return buf;
++  }
++  const reader = res.body.getReader();
++  const chunks: Uint8Array[] = [];
++  let loaded = 0;
++  while (true) {
++    const { done, value } = await reader.read();
++    if (done) break;
++    if (value) {
++      chunks.push(value);
++      loaded += value.length;
++      if (onByteProgress) onByteProgress(loaded, total);
++    }
++  }
++  const combined = new Uint8Array(loaded);
++  let offset = 0;
++  for (const c of chunks) {
++    combined.set(c, offset);
++    offset += c.length;
++  }
++  return combined.buffer;
++}
++
+ export class AssetLoader {
+   private ownerId: string;
+   private maxRetries: number;
+ 
+   constructor(ownerId: string = "primary-asset-loader") {
+     this.ownerId = ownerId;
+-    this.maxRetries = 3;
++    this.maxRetries = 2; // Default 2 automatic retries (3 attempts total)
+   }
+ 
+   public getOwnerId(): string {
+@@ -46,133 +90,215 @@ export class AssetLoader {
+   }
+ 
+   public async loadSession(options: AssetLoaderOptions): Promise<LoadedAssets> {
+-    const { signal, simulateAssetError = false, maxRetries = 3, onProgress } = options;
++    const { signal, simulateAssetError = false, maxRetries = 2, onProgress, onOptionalReady } = options;
+     this.maxRetries = maxRetries;
++    let optionalLoadedCount = 0;
+ 
+     const report = (
+       stage: string,
+-      progress: number,
+       reqLoaded: number,
+       reqTotal: number,
+       optLoaded: number,
+       optTotal: number,
+       retryCount: number = 0,
+-      failedAsset?: string
++      failedAsset?: string,
++      bytesLoaded?: number,
++      bytesTotal?: number
+     ) => {
+       if (signal?.aborted) return;
+       if (onProgress) {
++        const progress =
++          bytesTotal && bytesTotal > 0 && typeof bytesLoaded === "number"
++            ? Math.min(Math.max(bytesLoaded / bytesTotal, 0), 1)
++            : -1; // -1 represents truthful indeterminate progress (no arbitrary weights)
+         onProgress({
+           stage,
+-          progress: Math.min(Math.max(progress, 0), 1),
++          progress,
+           requiredLoaded: reqLoaded,
+           requiredTotal: reqTotal,
+           optionalLoaded: optLoaded,
+           optionalTotal: optTotal,
+           retryCount,
+-          maxRetries,
++          maxRetries: this.maxRetries,
+           failedAsset,
++          bytesLoaded,
++          bytesTotal,
+         });
+       }
+     };
+ 
+-    report("Initiating asset session...", 0.05, 0, 3, 0, 3, 0);
++    report("Initiating asset session...", 0, 3, 0, 3, 0);
+ 
+     if (signal?.aborted) {
+       throw new DOMException("Asset loading aborted by user", "AbortError");
+     }
+ 
+-    if (simulateAssetError) {
+-      report("Failed to load required model asset", 0.1, 0, 3, 0, 3, 3, "production-room-full.glb");
+-      throw new AssetLoadingError(
+-        "Simulated Asset Loading 404 / Parse Failure (required asset: production-room-full.glb)",
+-        "production-room-full.glb",
+-        3
+-      );
+-    }
+-
+     const gltfLoader = new GLTFLoader();
+     const textureLoader = new THREE.TextureLoader();
+ 
+-    // Helper to load with bounded retry
+-    const loadRequiredGltf = async (url: string, name: string, baseProgress: number, stageName: string): Promise<GLTF> => {
++    // Helper to load with bounded retry (at most maxRetries automatic retries)
++    const loadRequiredGltf = async (
++      url: string,
++      name: string,
++      stageName: string,
++      reqIndex: number
++    ): Promise<GLTF> => {
+       let attempts = 0;
+       while (attempts <= this.maxRetries) {
+         if (signal?.aborted) {
+           throw new DOMException("Asset loading aborted by user", "AbortError");
+         }
+         try {
+-          report(`Loading ${stageName}...`, baseProgress, attempts, 3, 0, 3, attempts);
+-          const gltf = await gltfLoader.loadAsync(url);
++          if (simulateAssetError) {
++            throw new Error(`Simulated asset failure for ${name}`);
++          }
++          report(`Loading ${stageName}...`, reqIndex, 3, optionalLoadedCount, 3, attempts);
++          let gltf: GLTF;
++          if (typeof window !== "undefined") {
++            const buffer = await fetchWithAbort(url, signal, (loaded, total) => {
++              if (total > 0) {
++                report(`Loading ${stageName}...`, reqIndex, 3, optionalLoadedCount, 3, attempts, undefined, loaded, total);
++              }
++            });
++            if (signal?.aborted) {
++              throw new DOMException("Asset loading aborted by user", "AbortError");
++            }
++            gltf = await gltfLoader.parseAsync(buffer, url);
++          } else {
++            gltf = await gltfLoader.loadAsync(url);
++          }
+           if (signal?.aborted) {
+             throw new DOMException("Asset loading aborted by user", "AbortError");
+           }
+           return gltf;
+         } catch (err) {
++          if (signal?.aborted || (err as Error).name === "AbortError") {
++            throw new DOMException("Asset loading aborted by user", "AbortError");
++          }
+           attempts++;
+-          if (attempts > this.maxRetries || signal?.aborted) {
+-            report(`Failed to load ${name}`, baseProgress, 0, 3, 0, 3, attempts, name);
++          if (attempts > this.maxRetries) {
++            report(`Failed to load ${name}`, reqIndex, 3, optionalLoadedCount, 3, attempts, name);
+             throw new AssetLoadingError(
+               `Required asset "${name}" failed to load after ${attempts} attempts: ${(err as Error).message}`,
+               name,
+               attempts
+             );
+           }
+-          // Short delay before bounded retry
+-          await new Promise((resolve) => setTimeout(resolve, 100 * attempts));
++          // Bounded backoff before automatic retry
++          const backoffMs = Math.min(150 * Math.pow(2, attempts - 1), 600);
++          await new Promise<void>((resolve, reject) => {
++            if (signal?.aborted) {
++              reject(new DOMException("Asset loading aborted by user", "AbortError"));
++              return;
++            }
++            const timer = setTimeout(() => resolve(), backoffMs);
++            const onAbort = () => {
++              clearTimeout(timer);
++              reject(new DOMException("Asset loading aborted by user", "AbortError"));
++            };
++            signal?.addEventListener("abort", onAbort, { once: true });
++          });
+         }
+       }
+       throw new AssetLoadingError(`Required asset "${name}" exceeded max retries`, name, attempts);
+     };
+ 
+     // 1. Required Asset 1: Production environment
+-    const w1Gltf = await loadRequiredGltf("/models/production-room-full.glb", "production-room-full.glb", 0.15, "production environment (required)");
+-    report("Production environment loaded", 0.4, 1, 3, 0, 3, 0);
++    const w1Gltf = await loadRequiredGltf(
++      "/models/production-room-full.glb",
++      "production-room-full.glb",
++      "production environment (required)",
++      0
++    );
++    report("Production environment loaded", 1, 3, optionalLoadedCount, 3, 0);
+ 
+     // 2. Required Asset 2: Production resident
+-    const avatarGltf = await loadRequiredGltf("/models/resident-production.glb", "resident-production.glb", 0.45, "resident avatar (required)");
+-    report("Resident avatar loaded", 0.65, 2, 3, 0, 3, 0);
++    const avatarGltf = await loadRequiredGltf(
++      "/models/resident-production.glb",
++      "resident-production.glb",
++      "resident avatar (required)",
++      1
++    );
++    report("Resident avatar loaded", 2, 3, optionalLoadedCount, 3, 0);
+ 
+     // 3. Required Asset 3: Production chair fixture
+-    const fixtureGltf = await loadRequiredGltf("/models/fixture-production.glb", "fixture-production.glb", 0.7, "chair fixture (required)");
+-    report("Chair fixture loaded", 0.85, 3, 3, 0, 3, 0);
+-
+-    // 4. Optional assets preserve a complete DOM experience even when metadata/textures fail.
+-    // Optional asset failures DO NOT prevent world entrance
+-    report("Loading optional visual enhancements...", 0.88, 3, 3, 0, 3, 0);
++    const fixtureGltf = await loadRequiredGltf(
++      "/models/fixture-production.glb",
++      "fixture-production.glb",
++      "chair fixture (required)",
++      2
++    );
++    report("All required assets ready. Configuring scene...", 3, 3, optionalLoadedCount, 3, 0);
+ 
++    // Essential Group A is fully ready!
++    // Optional Group B starts in background without blocking world entrance readiness.
+     let deskmatTexture: THREE.Texture | null = null;
+     let wallpaperTexture: THREE.Texture | null = null;
++    let interactionGltf: GLTF | null = null;
+ 
+-    try {
+-      if (!signal?.aborted) {
+-        deskmatTexture = await textureLoader.loadAsync("/textures/deskmat-topography.png");
++    const loadOptionalAssets = async () => {
++      // 1. Deskmat texture
++      try {
++        if (!signal?.aborted) {
++          if (typeof window !== "undefined") {
++            const buf = await fetchWithAbort("/textures/deskmat-topography.png", signal);
++            const blob = new Blob([buf]);
++            const objectUrl = URL.createObjectURL(blob);
++            deskmatTexture = await textureLoader.loadAsync(objectUrl);
++            URL.revokeObjectURL(objectUrl);
++          } else {
++            deskmatTexture = await textureLoader.loadAsync("/textures/deskmat-topography.png");
++          }
++          optionalLoadedCount++;
++          report("Optional deskmat texture processed", 3, 3, optionalLoadedCount, 3, 0);
++          onOptionalReady?.({ deskmatTexture });
++        }
++      } catch {
++        console.warn("[AssetLoader] Optional asset deskmat-topography.png failed to load; using fallback material.");
+       }
+-    } catch {
+-      console.warn("[AssetLoader] Optional asset deskmat-topography.png failed to load; using fallback material.");
+-    }
+-    report("Optional deskmat texture processed", 0.92, 3, 3, 1, 3, 0);
+ 
+-    try {
+-      if (!signal?.aborted) {
+-        wallpaperTexture = await textureLoader.loadAsync("/textures/monitor-wallpaper.png");
++      // 2. Wallpaper texture
++      try {
++        if (!signal?.aborted) {
++          if (typeof window !== "undefined") {
++            const buf = await fetchWithAbort("/textures/monitor-wallpaper.png", signal);
++            const blob = new Blob([buf]);
++            const objectUrl = URL.createObjectURL(blob);
++            wallpaperTexture = await textureLoader.loadAsync(objectUrl);
++            URL.revokeObjectURL(objectUrl);
++          } else {
++            wallpaperTexture = await textureLoader.loadAsync("/textures/monitor-wallpaper.png");
++          }
++          optionalLoadedCount++;
++          report("Optional wallpaper texture processed", 3, 3, optionalLoadedCount, 3, 0);
++          onOptionalReady?.({ wallpaperTexture });
++        }
++      } catch {
++        console.warn("[AssetLoader] Optional asset monitor-wallpaper.png failed to load; using fallback material.");
+       }
+-    } catch {
+-      console.warn("[AssetLoader] Optional asset monitor-wallpaper.png failed to load; using fallback material.");
+-    }
+-    report("Optional wallpaper texture processed", 0.96, 3, 3, 2, 3, 0);
+ 
+-    if (signal?.aborted) {
+-      throw new DOMException("Asset loading aborted by user", "AbortError");
+-    }
++      // 3. Interaction GLTF
++      try {
++        if (!signal?.aborted) {
++          const url = options.mobile
++            ? "/models/interaction-assets-mobile.glb"
++            : "/models/interaction-assets.glb";
++          if (typeof window !== "undefined") {
++            const buf = await fetchWithAbort(url, signal);
++            interactionGltf = await gltfLoader.parseAsync(buf, url);
++          } else {
++            interactionGltf = await gltfLoader.loadAsync(url);
++          }
++          optionalLoadedCount++;
++          report("Optional interaction assets processed", 3, 3, optionalLoadedCount, 3, 0);
++          onOptionalReady?.({ interactionGltf });
++        }
++      } catch {
++        console.warn("[AssetLoader] Optional frozen interaction asset unavailable; production mesh and DOM controls remain available.");
++      }
++    };
+ 
+-    let interactionGltf: GLTF | null = null;
+-    try {
+-      interactionGltf = await gltfLoader.loadAsync(options.mobile ? "/models/interaction-assets-mobile.glb" : "/models/interaction-assets.glb");
+-    } catch {
+-      console.warn("[AssetLoader] Optional frozen interaction asset unavailable; production mesh and DOM controls remain available.");
+-    }
+-    if (signal?.aborted) throw new DOMException("Asset loading aborted by user", "AbortError");
+-    report("All required assets ready. Configuring scene...", 1.0, 3, 3, 3, 3, 0);
++    void loadOptionalAssets();
+ 
+     return {
+       w1Gltf,
+
+diff --git a/src/features/world/WorldRuntime.ts b/src/features/world/WorldRuntime.ts
+index 2ab246f..4a5684f 100644
+--- a/src/features/world/WorldRuntime.ts
++++ b/src/features/world/WorldRuntime.ts
+@@ -31,6 +31,7 @@ export interface WorldRuntimeOptions {
+   soundEnabled?: boolean | undefined;
+   reducedMotion?: boolean | undefined;
+   initialTier?: QualityTier | undefined;
++  decorativePaused?: boolean | undefined;
+   simulateAssetError?: boolean | undefined;
+   simulateRendererError?: boolean | undefined;
+   onReady?: ((diagnostics: Diagnostics) => void) | undefined;
+@@ -83,6 +84,7 @@ export class WorldRuntime {
+     this.soundEnabled = options.soundEnabled ?? false;
+     this.reducedMotion = options.reducedMotion ?? false;
+     this.qualityTier = options.initialTier ?? "high";
++    this.isDecorativePaused = options.decorativePaused ?? false;
+     this.lifecycleManager = options.lifecycleManager ?? new LifecycleManager();
+     this.assetLoader = new AssetLoader("primary-asset-loader");
+ 
+@@ -112,9 +114,15 @@ export class WorldRuntime {
+         },
+       });
+ 
++    if (this.isDecorativePaused) {
++      void this.experienceController.send({ type: "SET_PAUSED", paused: true });
++    }
++
+     // Attach canvas context loss listeners
+-    this.canvas.addEventListener("webglcontextlost", this.handleContextLost);
+-    this.canvas.addEventListener("webglcontextrestored", this.handleContextRestored);
++    if (this.canvas) {
++      this.canvas.addEventListener("webglcontextlost", this.handleContextLost);
++      this.canvas.addEventListener("webglcontextrestored", this.handleContextRestored);
++    }
+ 
+     // Attach document visibility listener
+     if (typeof document !== "undefined") {
+@@ -247,6 +255,13 @@ export class WorldRuntime {
+         onProgress: (prog) => {
+           this.lifecycleManager.updateLoadingProgress(token, prog);
+         },
++        onOptionalReady: (optional) => {
++          if (this.isDisposed || this.lifecycleManager.isStale(token)) return;
++          if (optional.interactionGltf && !this.scene.getObjectByName("interaction-assets")) {
++            optional.interactionGltf.scene.name = "interaction-assets";
++            this.scene.add(optional.interactionGltf.scene);
++          }
++        },
+       });
+     } catch (err) {
+       if (this.lifecycleManager.isStale(token)) return;
+@@ -280,6 +295,11 @@ export class WorldRuntime {
+       "primary-character-director"
+     );
+ 
++    if (this.isDecorativePaused) {
++      this.characterDirector.setDecorativePaused(true);
++      void this.experienceController.send({ type: "SET_PAUSED", paused: true });
++    }
++
+     this.entranceCoordinator = new EntranceCoordinator(
+       this.cameraDirector!,
+       this.characterDirector,
+@@ -386,6 +406,9 @@ export class WorldRuntime {
+ 
+     if (this.experienceController) {
+       this.experienceController.advance(dt);
++      if (this.isDecorativePaused) {
++        this.experienceController.greeting.update();
++      }
+     }
+ 
+     if (this.renderer && this.integratedResult) {
+@@ -443,6 +466,9 @@ export class WorldRuntime {
+   }
+ 
+   public skip(): number {
++    if (this.lifecycleManager.getState() === "LOADING") {
++      this.loadingAbort.abort();
++    }
+     const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+     if (this.entranceCoordinator) {
+       this.entranceCoordinator.skip(isMobile);
+@@ -455,6 +481,9 @@ export class WorldRuntime {
+   }
+ 
+   public escape(): number {
++    if (this.lifecycleManager.getState() === "LOADING") {
++      this.loadingAbort.abort();
++    }
+     const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+     if (this.entranceCoordinator) {
+       this.entranceCoordinator.skip(isMobile);
+@@ -533,6 +562,10 @@ export class WorldRuntime {
+ 
+   public setDecorativePaused(paused: boolean) {
+     this.isDecorativePaused = paused;
++    if (this.characterDirector) {
++      this.characterDirector.setDecorativePaused(paused);
++    }
++    void this.experienceController.send({ type: "SET_PAUSED", paused });
+   }
+ 
+   public getDiagnostics(): Diagnostics {
+@@ -544,6 +577,7 @@ export class WorldRuntime {
+       chairYawDeg: 0,
+       bodyYawDeg: 0,
+       ownerId: "none",
++      isDecorativePaused: this.isDecorativePaused,
+     };
+ 
+     const camDiag = this.cameraDirector?.getDiagnostics() ?? {
+
+diff --git a/src/features/world/WorldRoot.tsx b/src/features/world/WorldRoot.tsx
+index eab447e..6bf6a0a 100644
+--- a/src/features/world/WorldRoot.tsx
++++ b/src/features/world/WorldRoot.tsx
+@@ -43,9 +43,10 @@ export default function WorldRoot({
+   const audioControllerRef = useRef<AudioController | null>(null);
+   const qualityControllerRef = useRef<AdaptiveQualityController | null>(null);
+   const failureRetryCountRef = useRef(0);
+-  const failureRetryLimitRef = useRef(3);
++  const failureRetryLimitRef = useRef(2);
+   const [failureRetryExhausted, setFailureRetryExhausted] = useState(false);
+   const [runtimeGeneration, setRuntimeGeneration] = useState(0);
++  const [showLoadingRetry, setShowLoadingRetry] = useState(false);
+ 
+   const [lifecycleState, setLifecycleState] = useState<WorldLifecycleState>("ENTRY_REQUESTED");
+   const [diagnostics, setDiagnostics] = useState<Diagnostics | null>(null);
+@@ -69,6 +70,7 @@ export default function WorldRoot({
+   const [showDiagnostics, setShowDiagnostics] = useState<boolean>(false);
+ 
+   const initialReducedMotionRef = useRef(reducedMotion);
++  const initialDecorativePausedRef = useRef(decorativePaused);
+   const runtimeUnavailable = effectiveTier === "static" || lifecycleState === "FAILURE" || error !== null;
+ 
+   // Initialize runtime and lifecycle manager
+@@ -88,7 +90,7 @@ export default function WorldRoot({
+     }
+ 
+     const lm = new LifecycleManager();
+-    failureRetryLimitRef.current = lm.maxRetries;
++    failureRetryLimitRef.current = Math.min(lm.maxRetries, 2);
+     lifecycleManagerRef.current = lm;
+ 
+     // Subscribe to lifecycle state changes
+@@ -134,6 +136,7 @@ export default function WorldRoot({
+       soundEnabled: false,
+       reducedMotion: initialReducedMotionRef.current,
+       initialTier,
++      decorativePaused: initialDecorativePausedRef.current,
+       simulateAssetError,
+       simulateRendererError,
+       onReady: (diag) => {
+@@ -235,6 +238,17 @@ export default function WorldRoot({
+     }
+   }, [reducedMotion]);
+ 
++  // 15-second loading progress watchdog (CA-10)
++  useEffect(() => {
++    if (lifecycleState !== "LOADING" && lifecycleState !== "ENTRY_REQUESTED") {
++      return;
++    }
++    const timer = setTimeout(() => {
++      setShowLoadingRetry(true);
++    }, 15000);
++    return () => clearTimeout(timer);
++  }, [lifecycleState, runtimeGeneration]);
++
+   const handleGreet = useCallback(() => {
+     if (runtimeRef.current) {
+       runtimeRef.current.greet();
+@@ -340,6 +354,7 @@ export default function WorldRoot({
+     setShowLauncher(false);
+     setShowReplay(false);
+     setShowDiagnostics(false);
++    setShowLoadingRetry(false);
+     setActiveCamera("home-desktop");
+     setRuntimeGeneration((generation) => generation + 1);
+   }, [effectiveTier, error, lifecycleState, reducedMotion]);
+@@ -425,7 +440,13 @@ export default function WorldRoot({
+   const isEntrance = lifecycleState === "ENTRANCE";
+   const isTransition = lifecycleState === "TRANSITION";
+   const loadingProgress = diagnostics?.loadingProgress;
+-  const progressPercent = Math.round((loadingProgress?.progress ?? 0) * 100);
++  const hasMeasuredBytes =
++    typeof loadingProgress?.bytesTotal === "number" &&
++    loadingProgress.bytesTotal > 0 &&
++    typeof loadingProgress?.bytesLoaded === "number";
++  const progressPercent = hasMeasuredBytes
++    ? Math.round(((loadingProgress?.bytesLoaded ?? 0) / (loadingProgress?.bytesTotal ?? 1)) * 100)
++    : null;
+ 
+   return (
+     <div
+@@ -452,21 +473,31 @@ export default function WorldRoot({
+           <div
+             className={styles.progressBarTrack}
+             role="progressbar"
+-            aria-valuenow={progressPercent}
++            {...(progressPercent !== null ? { "aria-valuenow": progressPercent } : {})}
+             aria-valuemin={0}
+             aria-valuemax={100}
+             data-testid="world-loading-progress-bar"
+           >
+             <div
+               className={styles.progressBarFill}
+-              style={{ width: `${progressPercent}%` }}
++              style={{ width: progressPercent !== null ? `${progressPercent}%` : "100%" }}
+             />
+           </div>
+           <div className={styles.loadingStats} data-testid="world-loading-percentage">
+-            {progressPercent}% · Required: {loadingProgress?.requiredLoaded ?? 0}/
++            {progressPercent !== null ? `${progressPercent}% · ` : ""}Required: {loadingProgress?.requiredLoaded ?? 0}/
+             {loadingProgress?.requiredTotal ?? 3} · Optional: {loadingProgress?.optionalLoaded ?? 0}/
+             {loadingProgress?.optionalTotal ?? 3}
+           </div>
++          {showLoadingRetry && (
++            <button
++              type="button"
++              onClick={handleRetry}
++              className={styles.hudButton}
++              data-testid="loading-retry-btn"
++            >
++              Retry
++            </button>
++          )}
+           <button
+             type="button"
+             onClick={handleContinueWithPortfolio}
+
+diff --git a/src/features/world/types.ts b/src/features/world/types.ts
+index e3d7116..d6f1631 100644
+--- a/src/features/world/types.ts
++++ b/src/features/world/types.ts
+@@ -33,7 +33,7 @@ export type CharacterState =
+ 
+ export interface LoadingProgress {
+   stage: string;
+-  progress: number; // 0.0 to 1.0
++  progress: number; // 0.0 to 1.0, or -1 for indeterminate
+   requiredLoaded: number;
+   requiredTotal: number;
+   optionalLoaded: number;
+@@ -41,6 +41,8 @@ export interface LoadingProgress {
+   retryCount: number;
+   maxRetries: number;
+   failedAsset?: string | undefined;
++  bytesLoaded?: number | undefined;
++  bytesTotal?: number | undefined;
+ }
+ 
+ export interface EntranceDiagnostics {
+
+diff --git a/tests/unit/character-director.test.ts b/tests/unit/character-director.test.ts
+index 3c3dc2f..477ad41 100644
+--- a/tests/unit/character-director.test.ts
++++ b/tests/unit/character-director.test.ts
+@@ -101,4 +101,64 @@ describe("CharacterDirector", () => {
+     expect(director.currentClip).toBe("coding_idle");
+     expect(director.currentTime).toBe(0);
+   });
++
++  it("schedules initial coding_idle AnimationAction immediately on instantiation (CA-07)", () => {
++    const avatarScene = new THREE.Group();
++    const fixtureScene = new THREE.Group();
++    const avatarMixer = new THREE.AnimationMixer(avatarScene);
++    const chairMixer = new THREE.AnimationMixer(fixtureScene);
++    const avatarActions: Record<string, THREE.AnimationAction> = {};
++    const chairActions: Record<string, THREE.AnimationAction> = {};
++
++    for (const [name, dur] of Object.entries(CLIP_DURATIONS)) {
++      const track = new THREE.VectorKeyframeTrack(".position", [0, dur], [0, 0, 0, 0, 0, 0]);
++      const clip = new THREE.AnimationClip(name, dur, [track]);
++      avatarActions[name] = avatarMixer.clipAction(clip);
++      chairActions[name] = chairMixer.clipAction(clip);
++    }
++
++    const director = new CharacterDirector(
++      avatarMixer, chairMixer, avatarActions, chairActions,
++      new THREE.Group(), new THREE.Group()
++    );
++
++    expect(avatarActions.coding_idle?.isScheduled()).toBe(true);
++    expect(chairActions.coding_idle?.isScheduled()).toBe(true);
++    expect(director.currentClip).toBe("coding_idle");
++    expect(director.currentTime).toBe(0);
++  });
++
++  it("freezes decorative motion when isDecorativePaused is true and preserves pause across greetings (CA-06)", () => {
++    const { director } = createMockMixerAndActions();
++    director.advance(1.0);
++    expect(director.currentTime).toBeCloseTo(1.0);
++
++    // Turn on decorative pause
++    director.setDecorativePaused(true);
++    expect(director.isDecorativePaused).toBe(true);
++
++    // Advance 2.0s while paused in coding mode -> time should not advance
++    director.advance(2.0);
++    expect(director.currentTime).toBeCloseTo(1.0);
++
++    // User triggers greeting finite sequence
++    director.playGreeting();
++    expect(director.mode).toBe("sequence");
++
++    // Finite sequence advances to completion
++    director.advance(4.5);
++    expect(director.mode).toBe("coding");
++    expect(director.currentClip).toBe("coding_idle");
++    expect(director.currentTime).toBe(0);
++
++    // Still paused after greeting returns to coding
++    expect(director.isDecorativePaused).toBe(true);
++    director.advance(1.0);
++    expect(director.currentTime).toBe(0);
++
++    // Resume
++    director.setDecorativePaused(false);
++    director.advance(1.0);
++    expect(director.currentTime).toBeCloseTo(1.0);
++  });
+ });
+
+diff --git a/tests/unit/asset-loader.test.ts b/tests/unit/asset-loader.test.ts
+index 64f0109..31642a4 100644
+--- a/tests/unit/asset-loader.test.ts
++++ b/tests/unit/asset-loader.test.ts
+@@ -21,7 +21,7 @@ describe("AssetLoader - Single Session Owner and Asset Hierarchy", () => {
+     ).rejects.toThrow();
+   });
+ 
+-  it("distinguishes required vs optional assets on simulated failure", async () => {
++  it("distinguishes required vs optional assets on simulated failure and enforces maxRetries = 2 (CA-10)", async () => {
+     const loader = new AssetLoader();
+     const progressReports: LoadingProgress[] = [];
+ 
+@@ -37,6 +37,27 @@ describe("AssetLoader - Single Session Owner and Asset Hierarchy", () => {
+     const lastReport = progressReports[progressReports.length - 1];
+     expect(lastReport?.requiredTotal).toBe(3);
+     expect(lastReport?.optionalTotal).toBe(3);
++    expect(lastReport?.maxRetries).toBe(2);
+     expect(lastReport?.failedAsset).toBe("production-room-full.glb");
+   });
++
++  it("reports truthful indeterminate progress without arbitrary percentage weights (CA-10)", async () => {
++    const loader = new AssetLoader();
++    const progressReports: LoadingProgress[] = [];
++
++    await expect(
++      loader.loadSession({
++        sessionToken: 1,
++        simulateAssetError: true,
++        onProgress: (p) => progressReports.push(p),
++      })
++    ).rejects.toThrow();
++
++    for (const report of progressReports) {
++      // Progress must be either valid 0-1 or -1 (indeterminate); never hardcoded fake percentages
++      expect(report.progress === -1 || (report.progress >= 0 && report.progress <= 1)).toBe(true);
++      expect(report.requiredTotal).toBe(3);
++      expect(report.optionalTotal).toBe(3);
++    }
++  });
+ });
+
