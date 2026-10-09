@@ -40,9 +40,9 @@ async function main() {
   const output = workspacePath(values.output);
   check(output.startsWith(path.join(root, "deliveries/G7/evidence") + path.sep), "Live output must stay inside deliveries/G7/evidence");
   check(!fs.existsSync(output), "Existing live receipt must be preserved; choose a new observation path");
-  fs.mkdirSync(path.dirname(output), { recursive: true });
   const artifactDir = output.slice(0, -path.extname(output).length) + "-raw";
-  fs.mkdirSync(artifactDir, { recursive: true });
+  check(!fs.existsSync(artifactDir), "Raw artifact directory already exists; preserve historical attempt");
+  fs.mkdirSync(artifactDir);
   const executedAt = new Date().toISOString();
   const observations = [];
   const failures = [];

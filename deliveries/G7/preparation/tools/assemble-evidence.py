@@ -16,6 +16,23 @@ DEFAULT_POLICY = "scripts/release/rc6-policy.json"
 TEXT = re.compile(r"\.(?:[cm]?[jt]sx?|json|jsonl|ya?ml|md|txt|log|css|html|sql|svg|patch|toml|example)$")
 
 
+PRESERVED_OUTPUTS = [
+    "deliveries/C4", "deliveries/G6/full-stack-integration",
+    "deliveries/G6/rc4-candidate", "deliveries/G6/rc5-candidate",
+    "deliveries/G7/rc6-candidate", "deliveries/G7/rc6-candidate-r2",
+    "deliveries/G7/rc6-candidate-r3", "deliveries/G7/rc6-candidate-r4", "deliveries/G7/rc6-candidate-r5",
+    "deliveries/G7/rc6-candidate-r6",
+    "deliveries/G7/rc6-independent-delta/r6-audit",
+    "deliveries/G7/rc6-independent-delta/gate-advice/final-r6",
+    "docs/planning/reviews/2026-10-08-rc6-r1",
+    "docs/planning/reviews/2026-10-08-rc6-r1.md",
+    "docs/planning/reviews/2026-10-06-g6-r1",
+    "docs/planning/reviews/2026-10-06-g6-r1.md",
+    "docs/planning/reviews/2026-10-06-rc5-independent-full-stack-audit.md",
+    *[f"docs/releases/v1.0.0-rc{number}.md" for number in range(1, 6)],
+]
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repository", type=Path, default=Path(__file__).resolve().parents[4])
@@ -26,9 +43,18 @@ def main():
     root = args.repository.resolve()
     policy = json.loads((root / args.policy).read_text(encoding="utf-8"))
     DELIVERY = policy["deliveryRoot"]
-    if Path(DELIVERY).is_absolute() or ".." in Path(DELIVERY).parts or DELIVERY.startswith("deliveries/G6/"):
-        raise ValueError("Successor inventory cannot rewrite accepted delivery roots")
-    delivery = root / DELIVERY
+    if (not isinstance(DELIVERY, str) or not DELIVERY or re.search(r'[\\\x00-\x1f:<>"|?*]', DELIVERY)
+            or DELIVERY.startswith("/") or any(part in ["", ".", ".."] or part.endswith((".", " "))
+            for part in DELIVERY.split("/"))):
+        raise ValueError(f"Unsafe delivery root path: {DELIVERY}")
+    delivery = root.joinpath(*PurePosixPath(DELIVERY).parts)
+    resolved_delivery = delivery.resolve()
+    if not resolved_delivery.is_relative_to(root):
+        raise ValueError(f"Delivery path escapes repository: {DELIVERY}")
+    for reserved in PRESERVED_OUTPUTS:
+        protected = root / reserved
+        if delivery.is_relative_to(protected) or resolved_delivery.is_relative_to(protected.resolve()):
+            raise ValueError(f"Successor inventory cannot rewrite accepted delivery roots: {DELIVERY}")
 
     def git(*arguments):
         return subprocess.check_output(["git", *arguments], cwd=root, text=True, encoding="utf-8").strip()
@@ -37,7 +63,14 @@ def main():
         return json.loads((root / path).read_text(encoding="utf-8"))
 
     def write(name, data):
-        (delivery / name).write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8", newline="\n")
+        target = delivery / name
+        try:
+            stat = target.stat()
+            if target.is_file() and stat.st_nlink > 1:
+                raise ValueError(f"Hard-linked release output is forbidden: {target}")
+        except FileNotFoundError:
+            pass
+        target.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8", newline="\n")
 
     def digest(path):
         content = (root / path).read_bytes()
@@ -141,7 +174,17 @@ def main():
         lines.append(f"| {record['id']} (attempt {record['attempt']}) | `{subprocess.list2cmdline(record['command'])}` | {record['exitCode']} | {record['durationSeconds']} | [{path}]({path}) |")
     lines += ["", "Discovery and actual execution counts are bound in `evidence/browser-counts.json`; unit/integration counts are recorded in execution records and logs. Build ID, actual browser version/path and tool versions are in `evidence/versions.json`. Raw frame samples, renderer identity, explicit LOW preference, observed tiers and failure diagnostics are in `evidence/performance/active-route-frame-pacing.json`.", "",
               "Fixture configuration is used only for E2E/accessibility. Build and performance commands have no synthetic fixture configuration. File-backed embedded PostgreSQL evidence does not prove hosted PostgreSQL sessions, real Supabase MFA/Storage or mail delivery. Physical devices, screen readers, hosted restore/rollback and production operations remain NOT RUN. Heap/GPU leak absence remains UNKNOWN unless separately measured. Maker evidence does not supply independent delta review, successor acceptance or G7 acceptance.", ""]
-    (delivery / "commands-and-exit-codes.md").write_text("\n".join(lines), encoding="utf-8", newline="\n")
+    def write_text_file(filename, text_content):
+        target = delivery / filename
+        try:
+            stat = target.stat()
+            if target.is_file() and stat.st_nlink > 1:
+                raise ValueError(f"Hard-linked release output is forbidden: {target}")
+        except FileNotFoundError:
+            pass
+        target.write_text(text_content, encoding="utf-8", newline="\n")
+
+    write_text_file("commands-and-exit-codes.md", "\n".join(lines) + "\n")
     inventory = []
     omissions = []
     final_manifest = read(DELIVERY + "/release-manifest.json")
@@ -167,7 +210,7 @@ def main():
           "rule": "Required manifest evidence is mandatory; only optional ephemeral/Git-ignored artifacts are omitted from the portable checksum inventory."})
     inventory.append(f"{digest(DELIVERY + '/inventory-omissions.json')}  {DELIVERY}/inventory-omissions.json")
     inventory.sort(key=lambda line: line.split("  ", 1)[1])
-    (delivery / "SHA256SUMS.txt").write_text("\n".join(inventory) + "\n", encoding="utf-8", newline="\n")
+    write_text_file("SHA256SUMS.txt", "\n".join(inventory) + "\n")
     print(f"Bound {len(latest)} exact-source command identities; inventoried {len(inventory)} artifacts. LF hashes apply to text; raw hashes to binary artifacts.")
 
 

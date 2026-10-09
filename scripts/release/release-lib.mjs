@@ -233,11 +233,12 @@ export function buildBundle(commit) {
 }
 export function assetFiles() {
   const publicRoot = safePath(policy.canonicalApplicationRoot + "/public");
+  const knownAssets = [...(policy.acceptedAssets || []), ...(policy.candidateAssets || [])];
   const files = walk(publicRoot).filter((name) => /\.glb$/i.test(name)).map((full) => {
     const relative = path.relative(ROOT, full).split(path.sep).join("/");
     const bytes = fs.readFileSync(full);
     const hash = sha256(bytes);
-    const accepted = policy.acceptedAssets.find((item) => item.sha256 === hash && item.bytes === bytes.length);
+    const accepted = knownAssets.find((item) => item.sha256 === hash && item.bytes === bytes.length);
     if (!accepted) throw new Error(`Asset is outside accepted freeze: ${relative} (${hash})`);
     return { path: relative, url: "/" + path.relative(publicRoot, full).split(path.sep).join("/"), bytes: bytes.length, sha256: hash, accepted };
   });

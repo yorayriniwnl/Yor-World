@@ -2,7 +2,14 @@
 export const frozenModelPaths = [
   "group-a-essential.glb", "group-b-props.glb", "on-demand-projects.glb", "production-room-full.glb",
   "mobile-room-lod.glb", "resident-production.glb", "fixture-production.glb", "interaction-assets.glb", "interaction-assets-mobile.glb",
+  "world-art-local-corrections-20261009-r1/group-a-essential.e275dd9b.glb",
+  "world-art-local-corrections-20261009-r1/group-b-props.95867245.glb",
+  "world-art-local-corrections-20261009-r1/on-demand-projects.b809c043.glb",
+  "world-art-local-corrections-20261009-r1/production-room-full.d3ce1bfa.glb",
+  "world-art-local-corrections-20261009-r1/mobile-room-lod.d3ce1bfa.glb",
+  "world-art-local-corrections-20261009-r1/fixture-production.c7ed9909.glb",
 ].map((name) => "/models/" + name);
+
 export const apiContentSecurityPolicy = "default-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none';";
 
 function configuredHttpsOrigin(value: string | undefined): string | undefined {

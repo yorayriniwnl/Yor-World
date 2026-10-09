@@ -28,6 +28,48 @@ export function inspectCurrentStatus() {
       requireThat(text.includes(token), `${name} is missing current status: ${token}`);
     }
   }
+  if (status.acceptedSourcePredecessor) {
+    if (status.acceptedSourcePredecessor.acceptance === "ACCEPTED") {
+      requireThat(typeof status.acceptedSourcePredecessor.rulingDecisionPath === "string",
+        "Accepted predecessor requires an actual ruling decision path");
+      let predRuling = null;
+      try {
+        predRuling = readJson(status.acceptedSourcePredecessor.rulingDecisionPath);
+      } catch (err) {
+        requireThat(false, `Accepted predecessor ruling decision missing or invalid: ${err.message}`);
+      }
+      if (predRuling) {
+        requireThat(predRuling.authority === "Parent Codex" && String(predRuling.ruling).includes("ACCEPTED")
+          && predRuling.rulingId === "RC6-R1",
+          "Accepted predecessor ruling must be a verified Parent Codex ruling");
+        for (const key of ["releaseId", "sourceCommit", "sourceAppTree", "releaseBundleSha256", "manifestSha256"]) {
+          requireThat(status.acceptedSourcePredecessor[key] === predRuling[key],
+            `Accepted predecessor differs from ruling: ${key}`);
+        }
+      }
+    }
+  }
+  if (status.currentCandidate.acceptance === "ACCEPTED") {
+    requireThat(typeof status.currentCandidate.rulingDecisionPath === "string",
+      "Accepted current candidate requires an actual ruling decision path");
+    let candRuling = null;
+    try {
+      candRuling = readJson(status.currentCandidate.rulingDecisionPath);
+    } catch (err) {
+      requireThat(false, `Current candidate ruling decision missing or invalid: ${err.message}`);
+    }
+    if (candRuling) {
+      requireThat(candRuling.authority === "Parent Codex" && String(candRuling.ruling).includes("ACCEPTED"),
+        "Current candidate ruling must be a verified Parent Codex ruling");
+      for (const key of ["releaseId", "sourceCommit", "sourceAppTree", "releaseBundleSha256", "manifestSha256"]) {
+        requireThat(status.currentCandidate[key] === candRuling[key],
+          `Current candidate differs from ruling: ${key}`);
+      }
+    }
+  } else {
+    requireThat(status.currentCandidate.rulingDecisionPath === null,
+      "Pending current candidate must not reference an accepted ruling decision path");
+  }
   if (status.g7.acceptance === "ACCEPTED") {
     requireThat(status.currentCandidate.acceptance === "ACCEPTED" && typeof status.g7.rulingDecisionPath === "string"
       && /^https:\/\//.test(status.g7.productionOrigin || ""), "Completed G7 requires an accepted successor, actual HTTPS origin and separate ruling");

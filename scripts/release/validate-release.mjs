@@ -46,7 +46,16 @@ try {
   requireThat(manifest.releaseBundleSha256 === bundle.sha256 && sha256(actualArchive) === bundle.sha256, "Release bundle SHA-256 mismatch");
   requireThat(manifest.bundleMetadata?.fileCount === bundle.fileCount && manifest.bundleMetadata?.bytes === bundle.bytes, "Bundle file count/byte metadata mismatch");
   const bundleNames = new Set(bundle.files.map((item) => item.path));
-  for (const name of ["package.json", "pnpm-lock.yaml", ".env.example", "supabase/migrations/20261001000000_a3_owner_auth_rls.sql", "supabase/migrations/20261001000001_a4_publication_media.sql", "supabase/migrations/20261005000000_github_refresh_state.sql", "supabase/operations/harden-publication-grants.sql"]) requireThat(bundleNames.has(policy.canonicalApplicationRoot + "/" + name), `Required deployable bundle file absent: ${name}`);
+  for (const name of [
+    "package.json", "pnpm-lock.yaml", ".env.example",
+    "supabase/migrations/20261001000000_a3_owner_auth_rls.sql",
+    "supabase/migrations/20261001000001_a4_publication_media.sql",
+    "supabase/migrations/20261005000000_github_refresh_state.sql",
+    "supabase/migrations/20261009000000_owner_identity_media_integrity.sql",
+    "supabase/operations/harden-publication-grants.sql"
+  ]) requireThat(bundleNames.has(policy.canonicalApplicationRoot + "/" + name), `Required deployable bundle file absent: ${name}`);
+
+
   for (const [key, value] of Object.entries(policy.candidateGovernance)) {
     requireThat(manifest.governance?.[key] === value, `Candidate governance must preserve ${key}=${JSON.stringify(value)}`);
   }

@@ -36,9 +36,9 @@ async function main() {
     && !origin.search && !origin.hash && !["localhost", "127.0.0.1", "::1"].includes(origin.hostname), "Authorized public HTTPS origin required");
   const output = safe(values.output);
   check(output.startsWith(path.join(root, "deliveries/G7/evidence") + path.sep) && !fs.existsSync(output), "Preserve prior receipts; choose new output inside deliveries/G7/evidence");
-  fs.mkdirSync(path.dirname(output), { recursive: true });
   const artifactDir = output.slice(0, -path.extname(output).length) + "-raw";
-  fs.mkdirSync(artifactDir, { recursive: true });
+  check(!fs.existsSync(artifactDir), "Raw artifact directory already exists; preserve historical attempt");
+  fs.mkdirSync(artifactDir);
   const require = createRequire(path.join(root, "app/package.json"));
   const playwright = require("@playwright/test");
   const executedAt = new Date().toISOString();
