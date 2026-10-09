@@ -1,0 +1,46 @@
+{
+  "executor": "Parent Codex read-only isolated regression reproduction",
+  "sourceCommit": "5fe8e9d1299f5781f51838090764741dc568c744",
+  "inputRawSha256": {
+    "scripts/release/check-current-status.mjs": "55151924930e2620cf729c0116b42d553e77c49a27b97609dcf44210ba985ec7",
+    "scripts/release/release-lib.mjs": "9e08454a2bcc0ceac46ab6458faa1a111a12cf797df015065913df6a8b95f2b1",
+    "scripts/release/rc6-policy.json": "d6aad94866be717b5dc3025a041ce9ed58a32c94ffc3a62ba17755f5b0976e73",
+    "docs/planning/current-status.json": "9f6a0a94425d9a0e21903fe2ddbd3b99e402c20b49105b08fa93bc7272da7ec4",
+    "docs/planning/reviews/2026-10-06-g6-r1/decision.json": "1dc7fa51a2936c1886353d543317cbe2062c95512e534e9e4f3e334ad7e263e8",
+    "docs/planning/reviews/2026-10-08-rc6-r1/decision.json": "daf0c6b95ae2533cda7e732610b1a562094dfb4effdc5d45e0bf95d23713c31c",
+    "deliveries/G7/preparation/owner-authorization.json": "ac8ab7808baac62289806edddbc10b6506e501528897a24313202bce34a83346",
+    "app/package.json": "0867a027648bb13d677c61670e5dd1c13383e17b9fa03e02114fab750c6c71fb",
+    "README.md": "e3887921ae6ba11150b0743f597fe91e62f2c50283f09fa2547dc0c185ca174a",
+    "START_HERE.md": "f5b2db000539c266027bbdb8b9dcbdfd2264a118de527e10ec81d6e309798f11",
+    "docs/planning/delegation-and-work-orders.md": "cdb74b5d1b70057283bd9cbac1cb60000e9fd6331bc55ac6ba28f8266ca2c343"
+  },
+  "isolatedFixtures": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\scratch\\status-fixtures\\20261008T232430997900Z",
+  "actualProjectBytesPreserved": true,
+  "cases": [
+    {
+      "case": "legitimate-pending",
+      "exitCode": 0,
+      "stdout": "PASS current status: v1.0.0-rc6; accepted baseline G6-R1; G7 AUTHORIZED / PREPARATION\n",
+      "stderr": "",
+      "expectation": "valid pending input passes",
+      "regressionOutcome": "PASS"
+    },
+    {
+      "case": "false-current-accepted",
+      "exitCode": 0,
+      "stdout": "PASS current status: v1.0.0-rc6; accepted baseline G6-R1; G7 AUTHORIZED / PREPARATION\n",
+      "stderr": "",
+      "expectation": "false accepted claim must fail",
+      "regressionOutcome": "FAIL REPRODUCED"
+    },
+    {
+      "case": "false-predecessor-accepted",
+      "exitCode": 0,
+      "stdout": "PASS current status: v1.0.0-rc6; accepted baseline G6-R1; G7 AUTHORIZED / PREPARATION\n",
+      "stderr": "",
+      "expectation": "false accepted claim must fail",
+      "regressionOutcome": "FAIL REPRODUCED"
+    }
+  ],
+  "scope": "Original unsafe validator behavior reproduced; no production fixes or acceptance"
+}
