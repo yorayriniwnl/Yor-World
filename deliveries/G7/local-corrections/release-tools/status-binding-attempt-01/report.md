@@ -1,0 +1,9 @@
+# Exact source-acceptance status correction
+
+Executor: local Codex remediation_backend_implementation, assigned backend/release maker. Source before this correction: 86578fdd92636e9a112ef1652883fda2f5988ba9. This is maker verification, with independent review and Parent acceptance pending.
+
+The previous expanded checker still accepted substring rulings including NOT ACCEPTED and could compare fabricated or null identities without reading actual archive/reference bytes. The correction requires an exact accepted Parent source ruling, R1 predecessor/R2 successor identity and canonical decision location; full source/tree/hash shapes; actual Git commit/app tree; real archive and LF-normalized manifest hashes; manifest revision consistency; and actual independent-audit, major-advice and hosted-evidence reference hashes. R1 cannot accept changed R7. Active successor revisions must match current policy. These structural checks do not authenticate an operator or establish G7 completion.
+
+Executed `node --test scripts/release/tests/current-status.test.mjs`: 18/18 PASS, zero skipped. Raw output: tests.log. It exercises both original false acceptance reproductions, NOT ACCEPTED/rejected decisions, wrong authority/ruling ID, fabricated commits/trees, changed bundle/manifest/audit bytes, missing references, null identities, wrong decision location, valid pending metadata and a structurally valid successor fixture. Mutations occur only in a checked isolated temporary clone; real historical bytes are never written. The structurally valid successor is synthetic test data and accepts no actual candidate.
+
+Parent separately corrects living predecessor metadata to declare rulingId RC6-R1. The R7 root already contained two prior receipts; this correction did not invoke a writer against it. The historical initial release-tools/report.md is preserved; its 57-case checkpoint does not describe the subsequently expanded 8c3544d delta or this correction.

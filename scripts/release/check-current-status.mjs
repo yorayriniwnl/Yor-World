@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { policy, readJson, sha256 } from "./release-lib.mjs";
+import { policy, readJson, sha256, normalized, safePath, git } from "./release-lib.mjs";
 
 export function inspectCurrentStatus() {
   const status = readJson("docs/planning/current-status.json");
@@ -11,6 +11,44 @@ export function inspectCurrentStatus() {
   const pkg = readJson("app/package.json");
   const failures = [];
   const requireThat = (condition, reason) => { if (!condition) failures.push(reason); };
+  function verifyReference(reference, label) {
+    try {
+      requireThat(reference && typeof reference.path === "string" && /^[a-f0-9]{64}$/.test(reference.sha256 || "")
+        && ["lf", "raw"].includes(reference.hashMode), `${label} requires an exact path, SHA-256 and hash mode`);
+      if (!reference?.path) return;
+      const bytes = fs.readFileSync(safePath(reference.path));
+      requireThat(sha256(reference.hashMode === "lf" ? normalized(bytes) : bytes) === reference.sha256,
+        `${label} bytes differ from ruling reference`);
+    } catch (error) { requireThat(false, `${label} missing or invalid: ${error.message}`); }
+  }
+  function verifyAcceptedSource(claim, decision, label, expectedId, expectedPath, evidenceRoot) {
+    requireThat(claim.rulingId === expectedId, `${label} must identify ruling ${expectedId}`);
+    requireThat(claim.rulingDecisionPath === expectedPath, `${label} must use its canonical Parent ruling path`);
+    requireThat(decision.rulingId === expectedId && decision.ruling === "RC6 SOURCE ACCEPTED"
+      && decision.acceptance === "ACCEPTED" && decision.authority === "Parent Codex",
+    `${label} requires an explicit accepted Parent source ruling`);
+    requireThat(claim.evidenceRoot === evidenceRoot, `${label} evidence root differs from its assigned candidate`);
+    for (const key of ["releaseId", "sourceCommit", "sourceAppTree", "releaseBundleSha256", "manifestSha256"]) {
+      const shape = key === "releaseId" ? claim[key] === "v1.0.0-rc6"
+        : new RegExp(`^[a-f0-9]{${key.includes("Sha256") ? 64 : 40}}$`).test(claim[key] || "");
+      requireThat(shape && claim[key] === decision[key], `${label} differs from ruling or has invalid identity: ${key}`);
+    }
+    requireThat(decision.releaseBundlePath === `${evidenceRoot}/yor-world-v1.0.0-rc6.bundle.tar.gz`,
+      `${label} bundle path differs from candidate evidence root`);
+    try {
+      requireThat(git("cat-file", "-t", claim.sourceCommit) === "commit"
+        && git("rev-parse", `${claim.sourceCommit}:app`) === claim.sourceAppTree,
+      `${label} application tree differs from actual Git source`);
+      requireThat(sha256(fs.readFileSync(safePath(decision.releaseBundlePath))) === decision.releaseBundleSha256,
+        `${label} archive bytes differ from ruling`);
+      const manifestPath = `${evidenceRoot}/release-manifest.json`;
+      verifyReference({ path: manifestPath, sha256: decision.manifestSha256, hashMode: "lf" }, `${label} manifest`);
+      const manifest = readJson(manifestPath);
+      for (const key of ["releaseId", "sourceCommit", "sourceAppTree", "releaseBundleSha256", "assetRevision", "schemaRevision", "publicationRevision", "contactAmendment"])
+        requireThat(manifest[key] === decision[key], `${label} manifest differs from ruling: ${key}`);
+    } catch (error) { requireThat(false, `${label} source/archive binding missing or invalid: ${error.message}`); }
+    for (const key of ["independentAuditor", "majorGateAdvice", "hostedEvidence"]) verifyReference(decision[key], `${label} ${key}`);
+  }
   requireThat(ruling.ruling === "G6 ACCEPTED" && ruling.rulingId === status.acceptedBaseline.rulingId,
     "Accepted baseline must identify an actual independent-review Parent G6 ruling");
   for (const key of ["releaseId", "sourceCommit", "sourceAppTree", "releaseBundleSha256"]) {
@@ -38,15 +76,8 @@ export function inspectCurrentStatus() {
       } catch (err) {
         requireThat(false, `Accepted predecessor ruling decision missing or invalid: ${err.message}`);
       }
-      if (predRuling) {
-        requireThat(predRuling.authority === "Parent Codex" && String(predRuling.ruling).includes("ACCEPTED")
-          && predRuling.rulingId === "RC6-R1",
-          "Accepted predecessor ruling must be a verified Parent Codex ruling");
-        for (const key of ["releaseId", "sourceCommit", "sourceAppTree", "releaseBundleSha256", "manifestSha256"]) {
-          requireThat(status.acceptedSourcePredecessor[key] === predRuling[key],
-            `Accepted predecessor differs from ruling: ${key}`);
-        }
-      }
+      if (predRuling) verifyAcceptedSource(status.acceptedSourcePredecessor, predRuling, "Accepted predecessor", "RC6-R1",
+        "docs/planning/reviews/2026-10-08-rc6-r1/decision.json", "deliveries/G7/rc6-candidate-r6");
     }
   }
   if (status.currentCandidate.acceptance === "ACCEPTED") {
@@ -59,12 +90,12 @@ export function inspectCurrentStatus() {
       requireThat(false, `Current candidate ruling decision missing or invalid: ${err.message}`);
     }
     if (candRuling) {
-      requireThat(candRuling.authority === "Parent Codex" && String(candRuling.ruling).includes("ACCEPTED"),
-        "Current candidate ruling must be a verified Parent Codex ruling");
-      for (const key of ["releaseId", "sourceCommit", "sourceAppTree", "releaseBundleSha256", "manifestSha256"]) {
-        requireThat(status.currentCandidate[key] === candRuling[key],
-          `Current candidate differs from ruling: ${key}`);
-      }
+      requireThat(/^docs\/planning\/reviews\/\d{4}-\d{2}-\d{2}-rc6-r2\/decision\.json$/.test(status.currentCandidate.rulingDecisionPath),
+        "Current candidate must use a new canonical RC6-R2 ruling");
+      verifyAcceptedSource(status.currentCandidate, candRuling, "Current candidate", "RC6-R2",
+        status.currentCandidate.rulingDecisionPath, policy.deliveryRoot);
+      for (const key of ["assetRevision", "schemaRevision", "publicationRevision", "contactAmendment"])
+        requireThat(candRuling[key] === policy[key], `Current source ruling differs from active policy: ${key}`);
     }
   } else {
     requireThat(status.currentCandidate.rulingDecisionPath === null,
