@@ -53,5 +53,3 @@ Return source/patch, report.md, input-hashes.json, output-hashes.json, claim-reg
 
 GPT Plus #2 audits exact candidate and provenance hashes without fixing; Gemini #1 corrects assigned defects; GPT #2 delta-audits; GPT Plus #1 issues acceptance before separate Gemini #3 integration. Do not self-accept, integrate into shared app, deploy, change historical rulings, or call missing owner evidence complete.
 ```
-
-
