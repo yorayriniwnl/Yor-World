@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
+import type { AssetResourceOwner } from "./AssetLoader";
 
 export interface IntegratedSceneResult {
   scene: THREE.Group;
@@ -36,8 +37,11 @@ export const CLIP_DURATIONS: Readonly<Record<string, number>> = {
 export function integrateScene(
   w1Gltf: GLTF,
   avatarGltf: GLTF,
-  fixtureGltf: GLTF
+  fixtureGltf: GLTF,
+  resourceOwner?: AssetResourceOwner
 ): IntegratedSceneResult {
+  // Capture ownership before pruning: detached geometry still needs cleanup.
+  for (const gltf of [w1Gltf, avatarGltf, fixtureGltf]) resourceOwner?.adoptGltf(gltf);
   const rootGroup = new THREE.Group();
   rootGroup.name = "yor-world-root";
 
@@ -180,6 +184,7 @@ export function integrateScene(
     }
   }
 
+  resourceOwner?.releaseUnused(rootGroup);
   return {
     scene: rootGroup,
     resident,

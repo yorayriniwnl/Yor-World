@@ -51,15 +51,7 @@ export class WorldInteractionBinding {
       }
     }
     // IA supplies its accepted IDs/proxies. Visible art remains the frozen production environment.
-    if (options.interactionScene) {
-      options.interactionScene.updateMatrixWorld(true);
-      options.interactionScene.traverse((node) => {
-        node.visible = false;
-        if (node.userData["isHitProxy"] === true && typeof node.userData["assetId"] === "string") {
-          this.hitProxies.push(node);
-        }
-      });
-    }
+    if (options.interactionScene) this.attachInteractionScene(options.interactionScene);
     this.painting = options.scene.getObjectByName("painting-pivot");
     this.paintingRotation = this.painting?.rotation.x ?? 0;
     this.unsubscribers.push(options.controller.painting.subscribe((state) => {
@@ -81,6 +73,17 @@ export class WorldInteractionBinding {
     for (const type of ["pointerdown", "pointermove", "pointerup", "pointercancel", "lostpointercapture"] as const) {
       options.canvas.addEventListener(type, this.handlePointer);
     }
+  }
+
+  /** Optional proxies broaden existing targets; they never own light/paint baselines. */
+  public attachInteractionScene(scene: THREE.Object3D): boolean {
+    if (this.disposed || this.hitProxies.length > 0) return false;
+    scene.updateMatrixWorld(true);
+    scene.traverse((node) => {
+      node.visible = false;
+      if (node.userData["isHitProxy"] === true && typeof node.userData["assetId"] === "string") this.hitProxies.push(node);
+    });
+    return true;
   }
 
   private findId(event: PointerEvent): string | null {
@@ -175,6 +178,7 @@ export class WorldInteractionBinding {
   }
 
   public dispose(): void {
+    if (this.disposed) return;
     this.disposed = true;
     for (const type of ["pointerdown", "pointermove", "pointerup", "pointercancel", "lostpointercapture"] as const) this.options.canvas.removeEventListener(type, this.handlePointer);
     for (const unsubscribe of this.unsubscribers) unsubscribe();
@@ -182,5 +186,8 @@ export class WorldInteractionBinding {
     if (this.painting) this.painting.rotation.x = this.paintingRotation;
     this.options.canvas.style.cursor = "";
     this.targets.clear();
+    this.hitProxies.length = 0;
+    this.cooldowns.clear();
+    this.down = null;
   }
 }

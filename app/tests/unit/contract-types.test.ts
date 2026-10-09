@@ -1,8 +1,10 @@
-import { expectTypeOf, it } from "vitest";
+import { expect, expectTypeOf, it } from "vitest";
+import fs from "node:fs";
+import path from "node:path";
 import type * as Baseline from "../fixtures/engineering-section-4";
 import type * as Content from "../../src/contracts/content";
 import type * as Experience from "../../src/contracts/experience";
-import type * as Assets from "../../src/contracts/assets";
+import * as Assets from "../../src/contracts/assets";
 it("preserves every exact shared value type from engineering section 4", () => {
   expectTypeOf<Content.ProjectId>().toEqualTypeOf<Baseline.ProjectId>();
   expectTypeOf<Content.EvidenceStatus>().toEqualTypeOf<Baseline.EvidenceStatus>();
@@ -19,3 +21,13 @@ it("preserves every exact shared value type from engineering section 4", () => {
   expectTypeOf<Experience.ExperienceIntent>().toEqualTypeOf<Baseline.ExperienceIntent>();
   expectTypeOf<Assets.AssetManifest>().toEqualTypeOf<Baseline.AssetManifest>();
 });
+
+it("validates the canonical public asset manifest against AssetManifestSchema", () => {
+  const manifestJson = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../../public/asset-manifest.json"), "utf8"));
+  const parsed = Assets.AssetManifestSchema.safeParse(manifestJson);
+  if (!parsed.success) {
+    console.error("Zod issues:", parsed.error.issues);
+  }
+  expect(parsed.success).toBe(true);
+});
+

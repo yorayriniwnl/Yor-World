@@ -50,6 +50,8 @@ export class EntranceCoordinator {
   private rafId: number | null = null;
   private entranceCounter: number = 0;
   private isDisposed: boolean = false;
+  private activeIsMobile = false;
+  private removeExternalAbort: (() => void) | null = null;
 
   private currentDiagnostics: EntranceDiagnostics = {
     phase: "not_started",
@@ -98,6 +100,8 @@ export class EntranceCoordinator {
       durationSec = 5.0,
       onPhaseChange,
     } = options;
+    if (signal?.aborted) return Promise.resolve();
+    this.activeIsMobile = isMobile;
 
     // Bounded duration: must never exceed 8 seconds
     const boundedDurationSec = Math.min(Math.max(durationSec, 1.0), 8.0);
@@ -158,7 +162,7 @@ export class EntranceCoordinator {
           signal?.aborted ||
           localAbort.signal.aborted
         ) {
-          this.cleanupActive(entranceId);
+          if (this.activeEntranceId === entranceId) this.cleanupActive(entranceId);
           return;
         }
 
@@ -214,10 +218,18 @@ export class EntranceCoordinator {
     });
 
     this.activePromise = promise;
+    const abort = () => this.skip(this.activeIsMobile);
+    signal?.addEventListener("abort", abort, { once: true });
+    this.removeExternalAbort = () => signal?.removeEventListener("abort", abort);
     return promise;
   }
 
+  public setReducedMotion(enabled: boolean): void {
+    if (enabled && this.isRunning()) this.skip(this.activeIsMobile);
+  }
+
   public skip(isMobile: boolean = false): void {
+    if (this.isDisposed) return;
     safeCancelRaf(this.rafId);
     this.rafId = null;
     if (this.activeAbortController) {
@@ -240,9 +252,12 @@ export class EntranceCoordinator {
     }
     this.activeEntranceId = null;
     this.activePromise = null;
+    this.removeExternalAbort?.();
+    this.removeExternalAbort = null;
   }
 
   private cleanupActive(entranceId: number) {
+    if (this.activeEntranceId !== entranceId) return;
     safeCancelRaf(this.rafId);
     this.rafId = null;
     if (this.activeResolve) {
@@ -254,13 +269,24 @@ export class EntranceCoordinator {
       this.activeEntranceId = null;
       this.activePromise = null;
       this.activeAbortController = null;
+      this.removeExternalAbort?.();
+      this.removeExternalAbort = null;
     }
   }
 
   public dispose(): void {
+    if (this.isDisposed) return;
     this.isDisposed = true;
     safeCancelRaf(this.rafId);
     this.rafId = null;
-    this.skip();
+    this.activeAbortController?.abort();
+    this.activeAbortController = null;
+    this.removeExternalAbort?.();
+    this.removeExternalAbort = null;
+    this.activeResolve?.();
+    this.activeResolve = null;
+    this.activeEntranceId = null;
+    this.activePromise = null;
+    this.currentDiagnostics.active = false;
   }
 }

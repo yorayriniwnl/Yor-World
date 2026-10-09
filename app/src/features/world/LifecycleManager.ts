@@ -169,6 +169,16 @@ export class LifecycleManager {
     return true;
   }
 
+  public replayEntrance(token: number, reducedMotion = false): boolean {
+    if (this.isStale(token) || this.currentState !== "HOME") return false;
+    const previous = this.currentState;
+    this.currentState = reducedMotion ? "HOME" : "ENTRANCE";
+    this.entranceDiagnostics = { phase: reducedMotion ? "settled" : "hallway", progress: reducedMotion ? 1 : 0,
+      elapsedSec: 0, durationSec: reducedMotion ? 0 : 5, active: !reducedMotion, skipped: false };
+    this.notify(previous);
+    return true;
+  }
+
   public completeEntrance(token: number): boolean {
     if (this.isStale(token)) return false;
     if (this.currentState !== "ENTRANCE") return false;

@@ -20,6 +20,8 @@ import { publishedProjects } from "@/features/portfolio/public-content";
 import { useRouter } from "next/navigation";
 import { RuntimeQualitySampler } from "./RuntimeQualitySampler";
 import { readDeviceCapabilities } from "./device-capabilities";
+import { PreferencesStore } from "../experience/preferences-store";
+import { restoreReturnSnapshot } from "../experience/return-snapshot";
 
 export interface WorldRootProps {
   projects?: readonly PublishedProject[];
@@ -131,7 +133,17 @@ export default function WorldRoot({
       qualityControllerRef.current = qc;
       const sampler = new RuntimeQualitySampler(qc);
 
+      const preferencesStore = new PreferencesStore();
+      const currentPreferences = preferencesStore.get();
+      const returnSnapshot = restoreReturnSnapshot();
+      const shouldSkipEntrance = Boolean(returnSnapshot || currentPreferences.introCompleted);
+
       const runtime = new WorldRuntime({
+        initialSnapshot: returnSnapshot,
+        skipInitialEntrance: shouldSkipEntrance,
+        onIntroComplete: () => {
+          new PreferencesStore().update({ introCompleted: true });
+        },
         onFrameDuration: (durationMs, timestamp) => {
           const currentRuntime = runtimeRef.current;
           if (disposed || !currentRuntime) return;
@@ -556,6 +568,10 @@ export default function WorldRoot({
               <div className={styles.hudControls}>
                 <button type="button" onClick={handleCancel} className={styles.hudButton} data-testid="cancel-motion-btn" aria-label="Safely cancel motion and return to work">Cancel motion</button>
                 <button type="button" onClick={handleReducedMotionToggle} className={styles.hudButton} data-testid="reduced-motion-toggle-btn" aria-label={`Reduced Motion ${reducedMotion ? "On" : "Off"}`}>Reduced Motion: {reducedMotion ? "On" : "Off"}</button>
+                <button type="button" onClick={() => {
+                  if (optionsRef.current) optionsRef.current.open = false;
+                  void runtimeRef.current?.replayEntrance();
+                }} className={styles.hudButton} data-testid="replay-entrance-btn" aria-label="Replay entrance choreography">Replay Entrance</button>
               </div>
               <div className={styles.hudControls} aria-label="Studio cameras">
                 {([
@@ -570,8 +586,12 @@ export default function WorldRoot({
           <button type="button" onClick={() => setShowDiagnostics((prev) => !prev)} className={styles.hudButton} data-testid="diagnostics-toggle-btn" aria-expanded={showDiagnostics}>Diagnostics</button>
         </div>
         {isTransition && <span className={styles.transitionIndicator} data-testid="transition-indicator">Transition in progress...</span>}
-        {showDiagnostics && diagnostics && (
-          <span className={styles.statusBadge} data-testid="status-badge" data-lifecycle-state={lifecycleState}>
+        {diagnostics && (
+          <span
+            className={`${styles.statusBadge} ${showDiagnostics ? "" : styles.statusBadgeHidden}`}
+            data-testid="status-badge"
+            data-lifecycle-state={lifecycleState}
+          >
             {diagnostics.activeClip} / {diagnostics.mode}
           </span>
         )}
@@ -614,7 +634,8 @@ export default function WorldRoot({
           <h2>Explore the studio again</h2>
           <button type="button" className={styles.hudButton} onClick={() => {
             setShowReplay(false);
-            void experienceController.send({ type: "ENTER", replay: true });
+            void experienceController.send({ type: "ESCAPE" });
+            void runtimeRef.current?.replayEntrance();
           }}>Replay Entrance</button>
           <button type="button" className={styles.hudButton} onClick={handleContinueWithPortfolio}>Return to Portfolio</button>
           <button type="button" className={styles.hudButton} onClick={() => {

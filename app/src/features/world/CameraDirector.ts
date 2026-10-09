@@ -88,15 +88,14 @@ export class CameraDirector {
   public currentPreset: CameraPreset = "home-desktop";
   public reducedMotion: boolean = false;
   private currentTarget: THREE.Vector3 = new THREE.Vector3();
-  private activeTransitionAbort: AbortController | null = null;
+  private finishTransition: ((settle: boolean) => void) | null = null;
   private transitionRafId: number | null = null;
   private isDisposed: boolean = false;
 
   constructor(camera: THREE.PerspectiveCamera, initialPreset?: CameraPreset, ownerId: string = "primary-camera-director") {
     this.ownerId = ownerId;
     this.camera = camera;
-    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
-    const preset = initialPreset ?? (isMobile ? "home-mobile" : "home-desktop");
+    const preset = initialPreset ?? "home-desktop";
     this.setPreset(preset, true);
   }
 
@@ -114,10 +113,23 @@ export class CameraDirector {
 
   public setReducedMotion(enabled: boolean) {
     this.reducedMotion = enabled;
+    if (enabled) this.finishTransition?.(true);
+  }
+
+  private configFor(preset: CameraPreset | string): CameraConfig {
+    const config = CAMERA_PRESETS[preset as CameraPreset] ?? CAMERA_PRESETS["home-desktop"];
+    if (!String(preset).startsWith("home-")) return config;
+    // Preserve vertical composition on wide stages; portrait stages need enough
+    // horizontal field of view for the workstation and chair rather than clipping.
+    const minHorizontal = THREE.MathUtils.degToRad(62);
+    const fittedFov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(minHorizontal / 2) / Math.max(this.camera.aspect, 0.25)));
+    return { ...config, fov: Math.min(100, Math.max(config.fov, fittedFov)) };
   }
 
   public setPreset(preset: CameraPreset | string, immediate: boolean = false) {
-    const config = CAMERA_PRESETS[preset as CameraPreset] || CAMERA_PRESETS["home-desktop"];
+    if (this.isDisposed) return;
+    this.finishTransition?.(false);
+    const config = this.configFor(preset);
 
     this.currentPreset = preset as CameraPreset;
     const targetVec = new THREE.Vector3(...config.target);
@@ -138,6 +150,8 @@ export class CameraDirector {
   }
 
   public setDirect(pos: [number, number, number], target: [number, number, number], fov: number) {
+    if (this.isDisposed) return;
+    this.finishTransition?.(false);
     this.camera.position.set(...pos);
     this.currentTarget.set(...target);
     this.camera.fov = fov;
@@ -160,7 +174,8 @@ export class CameraDirector {
       signal = signalOrDuration as AbortSignal;
     }
 
-    const config = CAMERA_PRESETS[preset as CameraPreset] || CAMERA_PRESETS["home-desktop"];
+    if (signal?.aborted) return;
+    const config = this.configFor(preset);
 
     this.currentPreset = preset as CameraPreset;
 
@@ -170,16 +185,8 @@ export class CameraDirector {
       return;
     }
 
-    // Cancel any ongoing transition
-    safeCancelRaf(this.transitionRafId);
-    this.transitionRafId = null;
-    if (this.activeTransitionAbort) {
-      this.activeTransitionAbort.abort();
-      this.activeTransitionAbort = null;
-    }
-
-    const localAbort = new AbortController();
-    this.activeTransitionAbort = localAbort;
+    // Resolve superseded promises immediately, even when their RAF never runs.
+    this.finishTransition?.(false);
 
     const startPos = this.camera.position.clone();
     const endPos = new THREE.Vector3(...config.position);
@@ -191,13 +198,23 @@ export class CameraDirector {
     const startTime = performance.now();
 
     return new Promise<void>((resolve) => {
+      let finished = false;
+      const abort = () => finish(true);
+      const finish = (settle: boolean) => {
+        if (finished) return;
+        finished = true;
+        safeCancelRaf(this.transitionRafId);
+        this.transitionRafId = null;
+        signal?.removeEventListener("abort", abort);
+        if (this.finishTransition === finish) this.finishTransition = null;
+        if (settle && !this.isDisposed) this.setPreset(preset, true);
+        resolve();
+      };
+      this.finishTransition = finish;
+      signal?.addEventListener("abort", abort, { once: true });
       const step = (now: number) => {
-        if (this.isDisposed || signal?.aborted || localAbort.signal.aborted) {
-          // Instantly settle to target
-          this.setPreset(preset, true);
-          resolve();
-          return;
-        }
+        if (finished) return;
+        if (this.isDisposed || signal?.aborted) { finish(!this.isDisposed); return; }
 
         const elapsed = now - startTime;
         const rawProgress = Math.min(elapsed / durationMs, 1.0);
@@ -213,11 +230,7 @@ export class CameraDirector {
         this.camera.updateProjectionMatrix();
 
         if (rawProgress >= 1.0) {
-          this.setPreset(preset, true);
-          if (this.activeTransitionAbort === localAbort) {
-            this.activeTransitionAbort = null;
-          }
-          resolve();
+          finish(true);
         } else {
           this.transitionRafId = safeRaf(step);
         }
@@ -228,12 +241,7 @@ export class CameraDirector {
   }
 
   public settleHome(isMobile: boolean = false) {
-    safeCancelRaf(this.transitionRafId);
-    this.transitionRafId = null;
-    if (this.activeTransitionAbort) {
-      this.activeTransitionAbort.abort();
-      this.activeTransitionAbort = null;
-    }
+    this.finishTransition?.(false);
     const preset: CameraPreset = isMobile ? "home-mobile" : "home-desktop";
     this.setPreset(preset, true);
   }
@@ -242,13 +250,14 @@ export class CameraDirector {
     if (width <= 0 || height <= 0 || this.isDisposed) return;
     this.camera.aspect = width / height;
 
-    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+    const isMobile = width < 640;
     if (isMobile && this.currentPreset === "home-desktop") {
       this.setPreset("home-mobile", true);
     } else if (!isMobile && this.currentPreset === "home-mobile") {
       this.setPreset("home-desktop", true);
     } else {
-      this.camera.updateProjectionMatrix();
+      if (this.currentPreset.startsWith("home-")) this.setPreset(this.currentPreset, true);
+      else this.camera.updateProjectionMatrix();
     }
   }
 
@@ -266,11 +275,6 @@ export class CameraDirector {
 
   public dispose() {
     this.isDisposed = true;
-    safeCancelRaf(this.transitionRafId);
-    this.transitionRafId = null;
-    if (this.activeTransitionAbort) {
-      this.activeTransitionAbort.abort();
-      this.activeTransitionAbort = null;
-    }
+    this.finishTransition?.(false);
   }
 }

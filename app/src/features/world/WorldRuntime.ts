@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { integrateScene, IntegratedSceneResult } from "./SceneIntegrator";
 import { CharacterDirector } from "./CharacterDirector";
 import { CameraDirector } from "./CameraDirector";
-import { AssetLoader } from "./AssetLoader";
+import { AssetLoader, AssetResourceOwner } from "./AssetLoader";
 import { EntranceCoordinator } from "./EntranceCoordinator";
 import { TransitionCoordinator } from "./TransitionCoordinator";
 import { LifecycleManager } from "./LifecycleManager";
@@ -13,13 +13,16 @@ import type { QualityTier } from "../../contracts/experience";
 import type { PublishedProject } from "../../contracts/content";
 import { publishedProjects } from "../portfolio/public-content";
 import { WorldInteractionBinding } from "./WorldInteractionBinding";
-import { saveReturnSnapshot } from "../experience/return-snapshot";
+import { saveReturnSnapshot, type ReturnSnapshot } from "../experience/return-snapshot";
 import { RuntimeMaterialQuality } from "./RuntimeMaterialQuality";
 import { RigidWorldBatch } from "./RigidWorldBatch";
 import { isSoftwareRenderer } from "./device-capabilities";
 import { configureProductionLighting } from "./ProductionLighting";
 
 export interface WorldRuntimeOptions {
+  initialSnapshot?: ReturnSnapshot | null | undefined;
+  skipInitialEntrance?: boolean | undefined;
+  onIntroComplete?: (() => void) | undefined;
   onFrameDuration?: ((durationMs: number, timestamp: number) => void) | undefined;
   onSamplingPause?: (() => void) | undefined;
   projects?: readonly PublishedProject[] | undefined;
@@ -75,11 +78,18 @@ export class WorldRuntime {
   private renderedFrames = 0;
   private lastRenderedAt = 0;
   private readonly loadingAbort = new AbortController();
+  private resourceOwner = new AssetResourceOwner();
+  private resizeObserver: ResizeObserver | null = null;
+  private containerWidth = 0;
+  private containerHeight = 0;
+  private onIntroComplete: WorldRuntimeOptions["onIntroComplete"];
+  private introCompletionReported = false;
 
   constructor(options: WorldRuntimeOptions) {
     this.onFrameDuration = options.onFrameDuration;
     this.onSamplingPause = options.onSamplingPause;
     this.canvas = options.canvas;
+    this.onIntroComplete = options.onIntroComplete;
     this.soundEnabled = options.soundEnabled ?? false;
     this.reducedMotion = options.reducedMotion ?? false;
     this.qualityTier = options.initialTier ?? "high";
@@ -125,6 +135,8 @@ export class WorldRuntime {
       if (this.isDisposed || this.lifecycleManager.isStale(this.sessionToken)) return;
       console.error("[WorldRuntime] Initialization error:", err);
       this.lifecycleManager.fail(err.message, this.sessionToken);
+      this.loadingAbort.abort();
+      this.resourceOwner.dispose();
       if (options.onError) {
         options.onError(err instanceof Error ? err : new Error(String(err)));
       }
@@ -239,6 +251,11 @@ export class WorldRuntime {
 
     // 3. Asset Loading via single AssetLoader owner
     this.lifecycleManager.startLoading(token);
+    this.resize();
+    if (typeof ResizeObserver !== "undefined" && this.canvas.parentElement) {
+      this.resizeObserver = new ResizeObserver(() => this.resize());
+      this.resizeObserver.observe(this.canvas.parentElement);
+    }
 
     let loadedAssets;
     try {
@@ -246,7 +263,7 @@ export class WorldRuntime {
         sessionToken: token,
         signal: this.loadingAbort.signal,
         simulateAssetError: options.simulateAssetError,
-        mobile: typeof window !== "undefined" && window.innerWidth < 640,
+        mobile: this.containerWidth > 0 && this.containerWidth < 640,
         onProgress: (prog) => {
           this.lifecycleManager.updateLoadingProgress(token, prog);
         },
@@ -257,13 +274,20 @@ export class WorldRuntime {
       throw err;
     }
 
-    if (this.lifecycleManager.isStale(token)) return;
+    const resourceOwner = loadedAssets.resourceOwner ?? new AssetResourceOwner();
+    for (const gltf of [loadedAssets.w1Gltf, loadedAssets.avatarGltf, loadedAssets.fixtureGltf]) resourceOwner.adoptGltf(gltf);
+    if (this.isDisposed || this.lifecycleManager.isStale(token) || this.loadingAbort.signal.aborted) {
+      resourceOwner.dispose();
+      return;
+    }
+    this.resourceOwner = resourceOwner;
 
     // 4. Integrate Scene Graph per G1 invariants
     this.integratedResult = integrateScene(
       loadedAssets.w1Gltf,
       loadedAssets.avatarGltf,
-      loadedAssets.fixtureGltf
+      loadedAssets.fixtureGltf,
+      this.resourceOwner
     );
     this.scene.add(this.integratedResult.scene);
     configureProductionLighting(this.integratedResult.scene);
@@ -306,7 +330,20 @@ export class WorldRuntime {
       reducedMotion: () => this.reducedMotion,
       onToggleSound: options.onToggleSound,
     });
-    if (loadedAssets.interactionGltf) this.scene.add(loadedAssets.interactionGltf.scene);
+    if (loadedAssets.interactionGltf) {
+      this.resourceOwner.adoptGltf(loadedAssets.interactionGltf);
+      this.scene.add(loadedAssets.interactionGltf.scene);
+    }
+    void loadedAssets.optionalEnhancements?.then((enhancements) => {
+      if (this.isDisposed || this.loadingAbort.signal.aborted || this.lifecycleManager.isStale(token) || !this.integratedResult) return;
+      if (enhancements.interactionGltf && this.interactionBinding?.attachInteractionScene(enhancements.interactionGltf.scene)) {
+        this.scene.add(enhancements.interactionGltf.scene);
+      }
+      // Standalone legacy textures have no production material binding; embedded
+      // GLB materials remain authoritative and unused enhancements are released.
+      if (enhancements.deskmatTexture) this.resourceOwner.discardResource(enhancements.deskmatTexture);
+      if (enhancements.wallpaperTexture) this.resourceOwner.discardResource(enhancements.wallpaperTexture);
+    });
     this.materialQuality = new RuntimeMaterialQuality(this.scene);
     this.applySceneQuality(this.qualityTier);
 
@@ -318,17 +355,20 @@ export class WorldRuntime {
     this.scheduleAnimationFrame();
 
     // 8. Start Entrance Choreography
-    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
-    this.lifecycleManager.startEntrance(token, this.reducedMotion);
+    const isMobile = this.containerWidth > 0 && this.containerWidth < 640;
+    this.lifecycleManager.startEntrance(token, this.reducedMotion || options.skipInitialEntrance);
 
-    if (this.reducedMotion) {
+    if (this.reducedMotion || options.skipInitialEntrance) {
       if (this.entranceCoordinator) {
         this.entranceCoordinator.skip(isMobile);
       }
+      if (options.initialSnapshot) this.experienceController.restoreSnapshot(options.initialSnapshot);
+      this.reportIntroComplete();
     } else {
       this.entranceCoordinator
         .playEntrance({
           sessionToken: token,
+          signal: this.loadingAbort.signal,
           isMobile,
           reducedMotion: false,
           durationSec: 5.0,
@@ -339,8 +379,10 @@ export class WorldRuntime {
           },
         })
         .then(() => {
-          if (!this.lifecycleManager.isStale(token)) {
+          if (!this.isDisposed && !this.lifecycleManager.isStale(token)) {
             this.lifecycleManager.completeEntrance(token);
+            if (options.initialSnapshot) this.experienceController.restoreSnapshot(options.initialSnapshot);
+            this.reportIntroComplete();
           }
         })
         .catch((e) => {
@@ -383,11 +425,11 @@ export class WorldRuntime {
     const dt = Math.min(durationMs / 1000, 0.1);
     this.lastTime = currentTime;
 
-    if (this.characterDirector) {
+    if (this.characterDirector && !this.isDecorativePaused && !this.reducedMotion) {
       this.characterDirector.advance(dt);
     }
 
-    if (this.experienceController) {
+    if (this.experienceController && !this.isDecorativePaused && !this.reducedMotion) {
       this.experienceController.advance(dt);
     }
 
@@ -414,13 +456,35 @@ export class WorldRuntime {
     const parent = this.canvas.parentElement;
     if (!parent) return;
 
-    const width = parent.clientWidth || window.innerWidth;
-    const height = parent.clientHeight || window.innerHeight;
+    const width = parent.clientWidth;
+    const height = parent.clientHeight;
+    if (width <= 0 || height <= 0) return;
+    const changed = this.containerWidth !== width || this.containerHeight !== height;
+    this.containerWidth = width;
+    this.containerHeight = height;
 
     this.renderer.setSize(width, height, false);
     if (this.cameraDirector) {
       this.cameraDirector.resize(width, height);
     }
+    if (changed && this.entranceCoordinator?.isRunning()) this.skip();
+  }
+
+  private reportIntroComplete(): void {
+    if (this.introCompletionReported || this.isDisposed || this.lifecycleManager.isStale(this.sessionToken)) return;
+    this.introCompletionReported = true;
+    this.onIntroComplete?.();
+  }
+
+  public async replayEntrance(): Promise<void> {
+    if (this.isDisposed || !this.integratedResult || !this.entranceCoordinator) return;
+    if (!this.lifecycleManager.replayEntrance(this.sessionToken, this.reducedMotion)) return;
+    this.experienceController.greeting.settle();
+    await this.entranceCoordinator.playEntrance({ sessionToken: this.sessionToken,
+      signal: this.loadingAbort.signal, isMobile: this.containerWidth > 0 && this.containerWidth < 640,
+      reducedMotion: this.reducedMotion, durationSec: 5,
+      onPhaseChange: () => this.lifecycleManager.updateEntranceDiagnostics(this.sessionToken, this.entranceCoordinator!.getDiagnostics()) });
+    if (!this.isDisposed) this.lifecycleManager.completeEntrance(this.sessionToken);
   }
 
   public greet(): number {
@@ -449,19 +513,21 @@ export class WorldRuntime {
   }
 
   public skip(): number {
-    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+    const isMobile = this.containerWidth > 0 && this.containerWidth < 640;
     if (this.entranceCoordinator) {
       this.entranceCoordinator.skip(isMobile);
     }
     if (this.transitionCoordinator) {
       this.transitionCoordinator.skip();
     }
+    const wasEntrance = this.lifecycleManager.getState() === "ENTRANCE";
     this.lifecycleManager.skip(this.sessionToken);
+    if (wasEntrance) this.reportIntroComplete();
     return this.characterDirector ? this.characterDirector.settle() : 0;
   }
 
   public escape(): number {
-    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+    const isMobile = this.containerWidth > 0 && this.containerWidth < 640;
     if (this.entranceCoordinator) {
       this.entranceCoordinator.skip(isMobile);
     }
@@ -503,6 +569,14 @@ export class WorldRuntime {
     if (this.cameraDirector) {
       this.cameraDirector.setReducedMotion(enabled);
     }
+    if (enabled) {
+      this.entranceCoordinator?.setReducedMotion(true);
+      this.characterDirector?.settle();
+      if (this.lifecycleManager.getState() === "ENTRANCE") {
+        this.lifecycleManager.completeEntrance(this.sessionToken);
+        this.reportIntroComplete();
+      }
+    }
   }
 
   public setQualityTier(tier: QualityTier) {
@@ -541,6 +615,7 @@ export class WorldRuntime {
 
   public setDecorativePaused(paused: boolean) {
     this.isDecorativePaused = paused;
+    void this.experienceController.send({ type: "SET_PAUSED", paused });
   }
 
   public getDiagnostics(): Diagnostics {
@@ -620,6 +695,8 @@ export class WorldRuntime {
     this.onSamplingPause?.();
     this.isDisposed = true;
     this.loadingAbort.abort();
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
     this.interactionBinding?.dispose();
     this.interactionBinding = null;
     this.rigidWorldBatch?.dispose();
@@ -667,22 +744,12 @@ export class WorldRuntime {
       this.transitionCoordinator = null;
     }
 
-    // Traverse scene and recursively dispose GPU resources (ASTRA-G1-01)
+    // Batch copies and quality variants have already been released/restored.
+    // One session ledger deduplicates source resources shared across meshes,
+    // including the discarded source subtrees captured before integration.
+    this.resourceOwner.adoptObject(this.scene);
+    this.resourceOwner.dispose();
     this.scene.traverse((obj) => {
-      if (obj instanceof THREE.Mesh || obj instanceof THREE.SkinnedMesh) {
-        if (obj.geometry) {
-          obj.geometry.dispose();
-        }
-        if (obj.material) {
-          if (Array.isArray(obj.material)) {
-            for (const mat of obj.material) {
-              this.disposeMaterial(mat);
-            }
-          } else {
-            this.disposeMaterial(obj.material);
-          }
-        }
-      }
       if (obj instanceof THREE.Light) {
         if (obj.shadow && obj.shadow.map) {
           obj.shadow.map.dispose();
@@ -699,19 +766,4 @@ export class WorldRuntime {
     }
   }
 
-  private disposeMaterial(material: THREE.Material) {
-    const mat = material as unknown as Record<string, unknown>;
-    const textureKeys = [
-      "map", "alphaMap", "aoMap", "bumpMap", "displacementMap",
-      "emissiveMap", "envMap", "lightMap", "metalnessMap",
-      "normalMap", "roughnessMap", "clearcoatMap", "clearcoatRoughnessMap"
-    ];
-    for (const key of textureKeys) {
-      const val = mat[key];
-      if (val && typeof (val as { dispose?: () => void }).dispose === "function") {
-        (val as { dispose: () => void }).dispose();
-      }
-    }
-    material.dispose();
-  }
 }

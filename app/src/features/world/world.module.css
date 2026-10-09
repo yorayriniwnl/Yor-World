@@ -46,6 +46,7 @@
   border-radius: 8px;
   padding: 0 0.75rem 0.75rem;
   box-shadow: 0 8px 32px #0008;
+  z-index: 50;
 }
 .optionsHeader { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; background: #0f172a; padding: 0.5rem 0; }
 .optionsHeader h2 { font-size: 1rem; margin: 0; color: #f8fafc; }
@@ -103,9 +104,21 @@
   border-radius: 4px;
 }
 
+.statusBadgeHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  opacity: 0.01;
+  pointer-events: none;
+}
+
 .diagnosticsDrawer {
   position: absolute;
-  right: 0.5rem;
+  left: 0.5rem;
+  right: auto;
   bottom: calc(100% + 0.5rem);
   width: min(420px, calc(100% - 1rem));
   max-height: min(360px, 45dvh);
@@ -120,6 +133,7 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 6px;
   pointer-events: auto;
+  z-index: 20;
 }
 
 .fallbackBanner {
