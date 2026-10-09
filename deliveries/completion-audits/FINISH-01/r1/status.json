@@ -1,0 +1,251 @@
+{
+  "auditDate": "2026-10-09",
+  "auditorLane": "GPT Plus #2 (GPT-6.1 Sol)",
+  "authorityLane": "GPT Plus #1",
+  "auditTarget": "Parent-assigned packets and source/artifact hashes under FINISH-01 completion sequence",
+  "pipelineState": "AWAITING_PARENT_CONTRACT_GATE_FINISH_00",
+  "auditAdvice": "REWORK_REQUIRED_BEFORE_MAKER_DISPATCH",
+  "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+  "coordinationHead": "ab369d413c7501224e3d79aa78e56172f97839ff",
+  "governanceInvariants": {
+    "auditorIsFixer": false,
+    "auditorAuthoredProductionFixes": 0,
+    "makerApprovedItself": false,
+    "acceptedBaselinesMutated": false,
+    "immutableBaselines": ["G6-R1", "RC6-R1"]
+  },
+  "packetLedger": [
+    {
+      "packetId": "FINISH-00",
+      "lane": "GPT Plus #1 (Parent)",
+      "type": "Contract Gate & Allowlist Binding",
+      "status": "PENDING_PARENT_ISSUANCE",
+      "dependency": "Spec rev 2, completion audit CA-01..13",
+      "ownedRoot": "docs/planning/reconciliation-packets/finish-contracts/",
+      "auditOutcome": "INCOMPLETE_HANDOFF_UNBOUND_CONTRACTS",
+      "blocking": true
+    },
+    {
+      "packetId": "FINISH-A1",
+      "lane": "Gemini #1 (Platform Maker)",
+      "type": "Case-study block editor & private draft preview",
+      "status": "NOT_DISPATCHED",
+      "dependency": "Accepted FINISH-00",
+      "ownedRoot": "deliveries/FINISH-A1/",
+      "auditOutcome": "NOT_RUN",
+      "blocking": true
+    },
+    {
+      "packetId": "FINISH-B1",
+      "lane": "Gemini #2 (World/Art Maker)",
+      "type": "Reference-faithful room & motion bindings",
+      "status": "NOT_DISPATCHED",
+      "dependency": "Accepted FINISH-00",
+      "ownedRoot": "deliveries/FINISH-B1/",
+      "auditOutcome": "NOT_RUN",
+      "blocking": true
+    },
+    {
+      "packetId": "FINISH-C1",
+      "lane": "Gemini #3 (Runtime Maker)",
+      "type": "Initial animation, pause & loading/retry behavior",
+      "status": "NOT_DISPATCHED",
+      "dependency": "Accepted FINISH-00",
+      "ownedRoot": "deliveries/FINISH-C1/",
+      "auditOutcome": "NOT_RUN",
+      "blocking": true
+    },
+    {
+      "packetId": "FINISH-A2",
+      "lane": "Gemini #1 (Platform Maker)",
+      "type": "Site-content versioning, rollback, approved resume",
+      "status": "NOT_DISPATCHED",
+      "dependency": "Accepted FINISH-A1 & approved schema design",
+      "ownedRoot": "deliveries/FINISH-A2/",
+      "auditOutcome": "NOT_RUN",
+      "blocking": true
+    },
+    {
+      "packetId": "FINISH-C2",
+      "lane": "Gemini #3 (Runtime Maker)",
+      "type": "Door/arrival & interaction catalog integration",
+      "status": "NOT_DISPATCHED",
+      "dependency": "Accepted FINISH-B1 and FINISH-C1",
+      "ownedRoot": "deliveries/FINISH-C2/",
+      "auditOutcome": "NOT_RUN",
+      "blocking": true
+    },
+    {
+      "packetId": "FINISH-C3",
+      "lane": "Gemini #3 (Runtime Maker)",
+      "type": "Mobile HUD & input coverage",
+      "status": "NOT_DISPATCHED",
+      "dependency": "Accepted FINISH-C2",
+      "ownedRoot": "deliveries/FINISH-C3/",
+      "auditOutcome": "NOT_RUN",
+      "blocking": true
+    },
+    {
+      "packetId": "FINISH-I1",
+      "lane": "Gemini #3 (Integration Maker)",
+      "type": "Successor canonical integration & strict build/CI",
+      "status": "NOT_DISPATCHED",
+      "dependency": "Accepted A2, B1, C3",
+      "ownedRoot": "deliveries/FINISH-I1/",
+      "auditOutcome": "NOT_RUN",
+      "blocking": true
+    },
+    {
+      "packetId": "FINISH-G7",
+      "lane": "Gemini #1, #2, #3; GPT #2; GPT #1",
+      "type": "Production deployment, live verification, rollback",
+      "status": "AUTHORIZED_PREPARATION_NOT_ACCEPTED",
+      "dependency": "Accepted successor source, provider credentials",
+      "ownedRoot": "deliveries/G7/completion/",
+      "auditOutcome": "0_OF_10_LIVE_PASS_10_OF_10_NOT_RUN",
+      "blocking": true
+    },
+    {
+      "packetId": "EXT-01..06",
+      "lane": "Gemini #2 (Assets), Gemini #3 (Runtime)",
+      "type": "Six post-V1 feature extension groups",
+      "status": "QUEUED_POST_V1",
+      "dependency": "Accepted V1 & G7 baseline",
+      "ownedRoot": "deliveries/EXT-*/",
+      "auditOutcome": "0_OF_6_ACCEPTED_6_OF_6_NOT_RUN",
+      "blocking": true
+    }
+  ],
+  "completionFindingsClosureMatrix": [
+    {
+      "id": "CA-01",
+      "severity": "HIGH",
+      "requirement": "P10",
+      "title": "Case-study body blocks cannot be edited in the CMS UI",
+      "sourcePath": "app/src/features/admin/project-editor.tsx:328",
+      "assignedMaker": "Gemini #1 (Platform Maker via FINISH-A1)",
+      "status": "OPEN",
+      "auditEvidence": "Truncated read-only block summaries in project-editor.tsx; substantive editing absent"
+    },
+    {
+      "id": "CA-02",
+      "severity": "HIGH",
+      "requirement": "P10",
+      "title": "Authenticated draft preview is missing",
+      "sourcePath": "app/src/app/admin/publish/page.tsx:16, app/src/features/admin/publish-review.tsx:181",
+      "assignedMaker": "Gemini #1 (Platform Maker via FINISH-A1)",
+      "status": "OPEN",
+      "auditEvidence": "Publish review displays active public snapshot instead of drafts pending publication"
+    },
+    {
+      "id": "CA-03",
+      "severity": "HIGH",
+      "requirement": "P10",
+      "title": "Biography/settings/résumé CMS versioning is absent",
+      "sourcePath": "app/src/features/admin, database schema",
+      "assignedMaker": "Gemini #1 (Platform Maker via FINISH-A2)",
+      "status": "OPEN",
+      "auditEvidence": "site_revisions table exists in SQL inventory but has no editor/service/public reader"
+    },
+    {
+      "id": "CA-04",
+      "severity": "MEDIUM",
+      "requirement": "P01",
+      "title": "Approved résumé download is missing",
+      "sourcePath": "app/src/app/(public)/resume/page.tsx:26",
+      "assignedMaker": "Gemini #1 (Platform Maker via FINISH-A2)",
+      "status": "OPEN",
+      "auditEvidence": "No approved downloadable artifact/route; only HTML/external links rendered"
+    },
+    {
+      "id": "CA-05",
+      "severity": "HIGH",
+      "requirement": "P03",
+      "title": "Entrance has no visible door opening or automatic resident greeting",
+      "sourcePath": "app/src/features/world/EntranceCoordinator.ts:134",
+      "assignedMaker": "Gemini #3 (Runtime Maker via FINISH-C2) & Gemini #2 (Art Maker via FINISH-B1)",
+      "status": "OPEN",
+      "auditEvidence": "Door animation hidden in unplayed IA scene; character settles without acknowledgment"
+    },
+    {
+      "id": "CA-06",
+      "severity": "HIGH",
+      "requirement": "P12",
+      "title": "Decorative pause does not stop character playback",
+      "sourcePath": "app/src/features/world/WorldRuntime.ts:534",
+      "assignedMaker": "Gemini #3 (Runtime Maker via FINISH-C1)",
+      "status": "OPEN",
+      "auditEvidence": "WorldRuntime stores unused paused flag; CharacterDirector continues advancing time"
+    },
+    {
+      "id": "CA-07",
+      "severity": "HIGH",
+      "requirement": "P04",
+      "title": "Initial coding animation action is not activated",
+      "sourcePath": "app/src/features/world/CharacterDirector.ts",
+      "assignedMaker": "Gemini #3 (Runtime Maker via FINISH-C1)",
+      "status": "OPEN",
+      "auditEvidence": "CharacterDirector skips .play() on initial idle; actions remain unscheduled until first transition"
+    },
+    {
+      "id": "CA-08",
+      "severity": "HIGH",
+      "requirement": "P05, P07",
+      "title": "Promised local physical reactions are substitutes",
+      "sourcePath": "app/src/features/world/ExperienceController.ts",
+      "assignedMaker": "Gemini #3 (Runtime Maker via FINISH-C2) & Gemini #2 (Art Maker via FINISH-B1)",
+      "status": "OPEN",
+      "auditEvidence": "Plant toggles pause, chair triggers greeting, clock stores preference; missing leaf/posture/book/clock reactions"
+    },
+    {
+      "id": "CA-09",
+      "severity": "MEDIUM",
+      "requirement": "P06, P07",
+      "title": "Project physical motifs and runtime avatar clips are incomplete",
+      "sourcePath": "app/src/features/world/ProjectExperienceController.ts",
+      "assignedMaker": "Gemini #3 (Runtime Maker via FINISH-C2) & Gemini #2 (Art Maker via FINISH-B1)",
+      "status": "OPEN",
+      "auditEvidence": "Project motifs limited to camera/navigation; 3 of 8 avatar clips unused; IA clip subtree unplayed"
+    },
+    {
+      "id": "CA-10",
+      "severity": "MEDIUM",
+      "requirement": "P12",
+      "title": "Essential entry waits for optional media; retry contract differs from spec",
+      "sourcePath": "app/src/features/world/WorldLoader.ts",
+      "assignedMaker": "Gemini #3 (Runtime Maker via FINISH-C1)",
+      "status": "OPEN",
+      "auditEvidence": "Optional texture hold blocks HOME entry; loader allows 3 retries instead of 2 specified"
+    },
+    {
+      "id": "CA-11",
+      "severity": "HIGH",
+      "requirement": "P09, P13",
+      "title": "Room presentation, reference fidelity, and mobile HUD clipping",
+      "sourcePath": "app/public/models, app/src/features/world/WorldRoot.tsx",
+      "assignedMaker": "Gemini #2 (Art Maker via FINISH-B1) & Gemini #3 (HUD via FINISH-C3)",
+      "status": "OPEN",
+      "auditEvidence": "Rectangular light panels, cabinet speakers; 8 buttons clipped below mobile viewport stage"
+    },
+    {
+      "id": "CA-12",
+      "severity": "MEDIUM",
+      "requirement": "P13",
+      "title": "Public claim verification cannot all be reproduced from retained receipts",
+      "sourcePath": "deliveries/A2, app/src/features/projects",
+      "assignedMaker": "Gemini #1 (Platform Maker via FINISH-A2)",
+      "status": "OPEN",
+      "auditEvidence": "Inspected A2 register lacks underlying external evaluation/certificate receipt attachments"
+    },
+    {
+      "id": "CA-13",
+      "severity": "HIGH",
+      "requirement": "P14, G7",
+      "title": "Production/service/recovery and manual acceptance remain unexecuted",
+      "sourcePath": "docs/operations, live deployment domain",
+      "assignedMaker": "Gemini #1, #2, #3; GPT #2; GPT #1 (Parent Acceptance)",
+      "status": "OPEN",
+      "auditEvidence": "0 of 10 live G7 criteria verified; 0 of 6 manual assistive/physical sessions executed; live domain NOT RUN"
+    }
+  ]
+}
