@@ -18,6 +18,7 @@ export async function createFixtureDb(): Promise<QueryableDb> {
   if (!refreshTable.rows[0]?.["name"]) {
     await db.exec(await readFile(path.join(process.cwd(),"supabase","migrations","20261005000000_github_refresh_state.sql"),"utf8"));
   }
+  await db.exec(await readFile(path.join(process.cwd(), "supabase", "migrations", "20261009000000_owner_identity_media_integrity.sql"), "utf8"));
   await db.exec(await readFile(path.join(process.cwd(),"supabase","operations","harden-publication-grants.sql"),"utf8"));
   await db.query("INSERT INTO auth.users(id,email) VALUES($1,$2) ON CONFLICT(id) DO NOTHING", ["11111111-1111-1111-1111-111111111111", "owner@yorworld.test"]);
   await db.query("INSERT INTO public.admin_users(id,role,active) VALUES($1,'owner',true) ON CONFLICT(id) DO NOTHING", ["11111111-1111-1111-1111-111111111111"]);

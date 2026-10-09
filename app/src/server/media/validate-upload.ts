@@ -11,7 +11,9 @@ import { createHash } from "node:crypto";
 import type { OwnerContext } from "../auth/types";
 import { createAdminServiceRoleClient } from "../auth/clients";
 import { getPlatformDb } from "../database";
+import type { QueryableDb } from "../contact/quota";
 import { isDraftTestRegistryEnabled } from "../content/revisions";
+import { boundedMediaOperation, verifyStoredMedia } from "./integrity";
 
 export const ALLOWED_MIME_TYPES = ["image/png", "image/jpeg", "image/webp"] as const;
 export type AllowedMimeType = (typeof ALLOWED_MIME_TYPES)[number];
@@ -40,6 +42,7 @@ export interface ValidatedMedia {
 export interface MediaAssetRecord {
   id: string;
   objectKey: string;
+  storageBucket?: string;
   hash: string;
   mime: AllowedMimeType;
   bytes: number;
@@ -65,10 +68,12 @@ function initializeDefaultMedia(): Map<string, MediaAssetRecord> {
 
 // In-memory test registry for isolated testing
 let testMediaRegistry: Map<string, MediaAssetRecord> | null = null;
+const testMediaBytes = new Map<string, Uint8Array>();
 
 export function setTestMediaRegistry(registry: Map<string, MediaAssetRecord> | null) {
   if (!isDraftTestRegistryEnabled()) throw new Error("Media registry is test-only.");
   testMediaRegistry = registry;
+  testMediaBytes.clear();
 }
 
 export function getTestMediaRegistry(): Map<string, MediaAssetRecord> {
@@ -76,6 +81,14 @@ export function getTestMediaRegistry(): Map<string, MediaAssetRecord> {
     testMediaRegistry = initializeDefaultMedia();
   }
   return testMediaRegistry;
+}
+
+/** Explicit synthetic registry bytes; never used as production/provider evidence. */
+export function verifyTestMediaBytes(id: string): boolean {
+  const asset = getTestMediaRegistry().get(id);
+  const buffer = testMediaBytes.get(id);
+  return Boolean(asset && buffer && buffer.byteLength === asset.bytes
+    && createHash("sha256").update(buffer).digest("hex") === asset.hash);
 }
 
 /**
@@ -242,7 +255,9 @@ export async function registerMediaAsset(
   };
 
   if (isDraftTestRegistryEnabled()) {
+    if (!validated.buffer) throw new MediaValidationError("Validated media bytes are required.");
     getTestMediaRegistry().set(assetId,record);
+    testMediaBytes.set(assetId, new Uint8Array(validated.buffer));
     return record;
   }
   if (!validated.buffer) throw new MediaValidationError("Validated media bytes are required.");
@@ -250,17 +265,45 @@ export async function registerMediaAsset(
   const privateKey = `drafts/${validated.hash}/${safeFilename}`;
   const bucket = process.env.MEDIA_PRIVATE_BUCKET;
   if (!bucket) throw new Error("Private media storage is not configured.");
-  const storage = createAdminServiceRoleClient().storage.from(bucket);
-  const uploaded = await storage.upload(privateKey,validated.buffer,{ contentType: validated.mime,upsert: false });
-  if (uploaded.error) throw new Error("Private media upload failed.");
+  let cleaned = false;
+  const cleanupOwnedObject = async () => {
+    if (cleaned) return;
+    cleaned = true;
+    try {
+      const result = await boundedMediaOperation((signal) => createAdminServiceRoleClient(signal).storage.from(bucket).remove([privateKey]));
+      if (result.error) console.error("MEDIA_ORPHAN_CLEANUP_UNAVAILABLE");
+    } catch { console.error("MEDIA_ORPHAN_CLEANUP_UNAVAILABLE"); }
+  };
+  await boundedMediaOperation(async (signal) => {
+    const result = await createAdminServiceRoleClient(signal).storage.from(bucket)
+      .upload(privateKey, validated.buffer!, { contentType: validated.mime, upsert: false });
+    if (result.error) throw new Error("Private media upload failed.");
+    if (signal.aborted) { await cleanupOwnedObject(); throw new Error("Private media upload timed out."); }
+  });
   try {
     const db = await getPlatformDb();
-    const rows = await db.query(`INSERT INTO public.media_assets(object_key,hash,mime,bytes,dimensions,provenance,approval_status)
-      VALUES($1,$2,$3,$4,$5,$6,'pending') RETURNING *`, [privateKey,validated.hash,validated.mime,validated.bytes,
-      JSON.stringify(validated.dimensions),JSON.stringify({ uploadedBy: actor.userId,filename: safeFilename })]);
+    const executeInsert = async (runner: QueryableDb) => {
+      try {
+        return await runner.query(`INSERT INTO public.media_assets(object_key,hash,mime,bytes,dimensions,provenance,storage_bucket,approval_status)
+          VALUES($1,$2,$3,$4,$5,$6,$7,'pending') RETURNING *`, [privateKey,validated.hash,validated.mime,validated.bytes,
+          JSON.stringify(validated.dimensions),JSON.stringify({ uploadedBy: actor.userId,filename: safeFilename }), bucket]);
+      } catch (err: unknown) {
+        if (err && typeof err === "object" && "code" in err && (err as { code: string }).code === "42703") {
+          return await runner.query(`INSERT INTO public.media_assets(object_key,hash,mime,bytes,dimensions,provenance,approval_status)
+            VALUES($1,$2,$3,$4,$5,$6,'pending') RETURNING *`, [privateKey,validated.hash,validated.mime,validated.bytes,
+            JSON.stringify(validated.dimensions),JSON.stringify({ uploadedBy: actor.userId,filename: safeFilename })]);
+        }
+        throw err;
+      }
+    };
+    const rows = db.transaction ? await db.transaction(executeInsert) : await executeInsert(db);
     return rowToMedia(rows.rows[0]!);
   } catch (error) {
-    await storage.remove([privateKey]);
+    try {
+      const db = await getPlatformDb();
+      const registered = await db.query("SELECT id FROM public.media_assets WHERE object_key=$1", [privateKey]);
+      if (!registered.rows.length) await cleanupOwnedObject();
+    } catch { console.error("MEDIA_ORPHAN_REGISTRATION_UNKNOWN"); }
     throw error;
   }
 }
@@ -276,21 +319,27 @@ export async function approveMediaAsset(
   if (isDraftTestRegistryEnabled()) {
     const existing = getTestMediaRegistry().get(mediaId);
     if (!existing) throw new MediaValidationError("Media asset not found.");
+    if (!verifyTestMediaBytes(mediaId)) throw new MediaValidationError("Synthetic media bytes do not match their identity.");
     existing.approvalStatus="approved";
     return existing;
   }
   const db=await getPlatformDb();
   if (!db.transaction) throw new Error("Transactional database is required.");
   return db.transaction(async (tx) => {
-    const rows=await tx.query("UPDATE public.media_assets SET approval_status='approved' WHERE id::text=$1 RETURNING *", [mediaId]);
-    if (!rows.rows[0]) throw new MediaValidationError("Media asset not found.");
+    await tx.query("SELECT pg_advisory_xact_lock(hashtext('yor-publication'))");
+    const current = await tx.query("SELECT * FROM public.media_assets WHERE id::text=$1 FOR UPDATE", [mediaId]);
+    if (!current.rows[0]) throw new MediaValidationError("Media asset not found.");
+    await verifyStoredMedia(current.rows[0] as unknown as Parameters<typeof verifyStoredMedia>[0]);
+    const rows=await tx.query("UPDATE public.media_assets SET approval_status='approved',integrity_verified_at=now() WHERE id::text=$1 RETURNING *", [mediaId]);
     await tx.query("INSERT INTO public.audit_events(actor,action,entity_type,entity_id) VALUES($1,'media_approved','media',$2)", [_actor.userId,mediaId]);
+    if (!rows.rows[0]) throw new MediaValidationError("Media asset not found after update.");
     return rowToMedia(rows.rows[0]);
   });
 }
 
 function rowToMedia(row: Record<string,unknown>): MediaAssetRecord {
   return { id: String(row["id"]),objectKey: String(row["object_key"]),hash: String(row["hash"]),
+    ...(typeof row["storage_bucket"] === "string" ? { storageBucket: row["storage_bucket"] } : {}),
     mime: row["mime"] as AllowedMimeType,bytes: Number(row["bytes"]),dimensions: row["dimensions"] as MediaAssetRecord["dimensions"],
     approvalStatus: row["approval_status"] as MediaAssetRecord["approvalStatus"],createdAt: new Date(String(row["created_at"])).toISOString() };
 }

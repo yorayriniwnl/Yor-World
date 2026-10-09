@@ -6,7 +6,8 @@
  */
 
 import type { Publication } from "@/contracts/content";
-import { getTestMediaRegistry, MediaValidationError } from "./validate-upload";
+import { getTestMediaRegistry, MediaValidationError, verifyTestMediaBytes } from "./validate-upload";
+import { boundedMediaOperation, MediaStorageUnavailableError, PUBLICATION_MEDIA_TIMEOUT_MS, verifyStoredMedia } from "./integrity";
 import { isDraftTestRegistryEnabled } from "../content/revisions";
 import { getPlatformDb } from "../database";
 import { createAdminServiceRoleClient } from "../auth/clients";
@@ -29,14 +30,14 @@ export async function checkMediaApproved(mediaIds: string[], transaction?: Query
     return { approved: true, unapprovedIds: [] };
   }
 
-  const uniqueIds = Array.from(new Set(mediaIds));
+  const uniqueIds = Array.from(new Set(mediaIds)).sort();
   const testRegistry = !transaction && isDraftTestRegistryEnabled() ? getTestMediaRegistry() : null;
 
   if (testRegistry) {
     const unapproved: string[] = [];
     for (const id of uniqueIds) {
       const asset = testRegistry.get(id);
-      if (!asset || asset.approvalStatus !== "approved") {
+      if (!asset || asset.approvalStatus !== "approved" || !verifyTestMediaBytes(id)) {
         unapproved.push(id);
       }
     }
@@ -48,17 +49,31 @@ export async function checkMediaApproved(mediaIds: string[], transaction?: Query
 
   try {
     const db=transaction ?? await getPlatformDb();
-    const { rows } = await db.query("SELECT id,approval_status FROM public.media_assets WHERE id::text = ANY($1::text[])" + (transaction ? " FOR SHARE" : ""),[uniqueIds]);
-    const approvedSet = new Set(rows.filter((row) => row["approval_status"] === "approved").map((row) => String(row["id"])));
-
+    const { rows } = await db.query("SELECT * FROM public.media_assets WHERE id::text = ANY($1::text[]) ORDER BY id" + (transaction ? " FOR SHARE" : ""),[uniqueIds]);
+    const approvedSet = new Set<string>();
+    await boundedMediaOperation(async (signal) => {
+      for (const row of rows) {
+        if (row["approval_status"] !== "approved") continue;
+        if (row["storage_bucket"] && row["integrity_verified_at"]) {
+          try {
+            await verifyStoredMedia(row as unknown as Parameters<typeof verifyStoredMedia>[0], signal);
+            approvedSet.add(String(row["id"]));
+          } catch (error) {
+            if (!(error instanceof MediaValidationError)) throw error;
+          }
+        } else {
+          approvedSet.add(String(row["id"]));
+        }
+      }
+    }, PUBLICATION_MEDIA_TIMEOUT_MS);
     const unapproved = uniqueIds.filter((id) => !approvedSet.has(id));
     return {
       approved: unapproved.length === 0,
       unapprovedIds: unapproved,
     };
-  } catch {
-    // If DB is unreachable and no test registry, check against test registry fallback
-    return { approved: false, unapprovedIds: uniqueIds };
+  } catch (error) {
+    if (error instanceof MediaValidationError) return { approved: false, unapprovedIds: uniqueIds };
+    throw new MediaStorageUnavailableError();
   }
 }
 
@@ -107,20 +122,35 @@ export async function readApprovedPublishedMediaUrls(publication: Publication): 
       .flatMap((project) => project.sections.flatMap((section) => section.blocks.flatMap((block) => block.type === "image" ? [block.mediaId] : []))));
     const currentIds=collect(approved);
     const wanted=[...collect(requested)].filter((id) => currentIds.has(id) && !id.startsWith("missing"));
-    const bucket=process.env.MEDIA_PRIVATE_BUCKET;
-    if (!wanted.length || !bucket) return {};
+    if (!wanted.length) return {};
     const db=await getPlatformDb();
-    const assets=await db.query("SELECT id,object_key FROM public.media_assets WHERE approval_status='approved' AND id::text=ANY($1::text[])",[wanted]);
-    if (!assets.rows.length) return {};
-    const signed=await createAdminServiceRoleClient().storage.from(bucket).createSignedUrls(assets.rows.map((row) => String(row["object_key"])),900);
-    if (signed.error || !signed.data) return {};
-    const byPath=new Map(assets.rows.map((row) => [String(row["object_key"]),String(row["id"])]));
-    const urls: Record<string,string>={};
-    for (const item of signed.data) {
-      if (!item.path || !item.signedUrl || item.error) continue;
-      const id=byPath.get(item.path);
-      if (id && new URL(item.signedUrl).protocol === "https:") urls[id]=item.signedUrl;
+    let assets;
+    try {
+      assets=await db.query("SELECT id,object_key,storage_bucket FROM public.media_assets WHERE approval_status='approved' AND id::text=ANY($1::text[])",[wanted]);
+    } catch (err: unknown) {
+      if (err && typeof err === "object" && "code" in err && (err as { code: string }).code === "42703") {
+        assets=await db.query("SELECT id,object_key FROM public.media_assets WHERE approval_status='approved' AND id::text=ANY($1::text[])",[wanted]);
+      } else {
+        throw err;
+      }
     }
+    if (!assets.rows.length) return {};
+    const defaultBucket = process.env.MEDIA_PRIVATE_BUCKET;
+    const urls: Record<string,string>={};
+    await boundedMediaOperation(async (signal) => {
+      const buckets = [...new Set(assets.rows.map((row) => String(row["storage_bucket"] || defaultBucket || "")).filter(Boolean))];
+      for (const bucket of buckets) {
+        const bound = assets.rows.filter((row) => String(row["storage_bucket"] || defaultBucket) === bucket);
+        const signed = await createAdminServiceRoleClient(signal).storage.from(bucket).createSignedUrls(bound.map((row) => String(row["object_key"])), 900);
+        if (signal.aborted || signed.error || !signed.data) throw new MediaStorageUnavailableError();
+        const byPath = new Map(bound.map((row) => [String(row["object_key"]), String(row["id"])]));
+        for (const item of signed.data) {
+          if (!item.path || !item.signedUrl || item.error) continue;
+          const id = byPath.get(item.path);
+          if (id && new URL(item.signedUrl).protocol === "https:") urls[id] = item.signedUrl;
+        }
+      }
+    });
     return urls;
   } catch { return {}; }
 }

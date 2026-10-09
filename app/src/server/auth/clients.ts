@@ -58,7 +58,7 @@ export function createPublicServerClient(cookieStore?: { getAll: () => Array<{ n
  * Creates a privileged service-role client strictly for server-side verification and background jobs.
  * This client bypasses RLS and MUST NEVER be exposed or passed outside server domain boundaries.
  */
-export function createAdminServiceRoleClient(): SupabaseClient {
+export function createAdminServiceRoleClient(signal?: AbortSignal): SupabaseClient {
   const env = getSupabaseEnv();
 
   if (!env.supabaseServiceRoleKey) {
@@ -66,6 +66,9 @@ export function createAdminServiceRoleClient(): SupabaseClient {
   }
 
   return createClient(env.supabaseUrl, env.supabaseServiceRoleKey, {
+    ...(signal ? { global: { fetch: (input, init) => fetch(input, {
+      ...init, signal: init?.signal ? AbortSignal.any([signal, init.signal]) : signal,
+    }) } } : {}),
     auth: {
       persistSession: false,
       autoRefreshToken: false,

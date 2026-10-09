@@ -19,7 +19,14 @@ describe("Public media signed URL resolver preserves approval and publication bo
   let snapshot: Publication;
   beforeAll(async () => {
     db=new PGlite();
-    await db.exec(await readFile("supabase/migrations/20261001000000_a3_owner_auth_rls.sql","utf8"));
+    for (const name of [
+      "20261001000000_a3_owner_auth_rls.sql",
+      "20261001000001_a4_publication_media.sql",
+      "20261005000000_github_refresh_state.sql",
+      "20261009000000_owner_identity_media_integrity.sql",
+    ]) {
+      await db.exec(await readFile(`supabase/migrations/${name}`,"utf8"));
+    }
   });
   beforeEach(async () => {
     storage.keys=[];storage.protocol="https:";storage.fail=false;
@@ -27,7 +34,9 @@ describe("Public media signed URL resolver preserves approval and publication bo
     await db.exec("TRUNCATE public.media_assets,public.published_content CASCADE");
     snapshot={ ...approvedPublication,projects: approvedPublication.projects.map((project) => ({ ...project,sections: project.sections.map((section) => ({ ...section,blocks: section.blocks.map((block) => block.type === "image" ? { ...block,mediaId: publishedId } : block) })) })) };
     await db.query("INSERT INTO public.published_content(revision,payload) VALUES($1,$2)",[snapshot.revision,JSON.stringify(snapshot)]);
-    for (const [id,key] of [[publishedId,"approved-image.png"],[privateId,"private-draft.png"]]) await db.query("INSERT INTO public.media_assets(id,object_key,hash,mime,bytes,approval_status) VALUES($1,$2,'synthetic','image/png',1,'approved')",[id,key]);
+    const validHash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+    for (const [id,key] of [[publishedId,"approved-image.png"],[privateId,"private-draft.png"]])
+      await db.query("INSERT INTO public.media_assets(id,object_key,hash,mime,bytes,approval_status,storage_bucket,integrity_verified_at) VALUES($1,$2,$3,'image/png',1,'approved','synthetic-private',now())",[id,key,validHash]);
     setPlatformDbForTests(db);
   });
   afterEach(() => { setPlatformDbForTests(null); delete process.env.MEDIA_PRIVATE_BUCKET; });

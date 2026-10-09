@@ -1,10 +1,12 @@
-import { afterAll,afterEach,beforeAll,beforeEach,describe,expect,it } from "vitest";
+import { afterAll,afterEach,beforeAll,beforeEach,describe,expect,it,vi } from "vitest";
 import { PGlite } from "@electric-sql/pglite";
 import { readFile } from "node:fs/promises";
-import { randomUUID } from "node:crypto";
+import { randomUUID, createHash } from "node:crypto";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { NextRequest } from "next/server";
 import { approvedPublication } from "@/content/approved-publication";
 import { getPlatformDb,setPlatformDbForTests } from "@/server/database";
+import * as authClients from "@/server/auth/clients";
 import { POST as contact } from "@/app/api/contact/route";
 import { saveProjectDraft,listProjectDrafts,RevisionConflictError } from "@/server/content/revisions";
 import { publishRevision,readPublicPublication,readPublicationHistory,rollbackPublication } from "@/server/content/publish";
@@ -20,7 +22,12 @@ describe("Canonical production provider and actual platform route integration",(
   let db: PGlite;
   beforeAll(async () => {
     db=new PGlite();
-    for (const name of ["20261001000000_a3_owner_auth_rls.sql","20261001000001_a4_publication_media.sql"])
+    for (const name of [
+      "20261001000000_a3_owner_auth_rls.sql",
+      "20261001000001_a4_publication_media.sql",
+      "20261005000000_github_refresh_state.sql",
+      "20261009000000_owner_identity_media_integrity.sql",
+    ])
       await db.exec(await readFile(`supabase/migrations/${name}`,"utf8"));
     await db.exec(await readFile("supabase/operations/harden-publication-grants.sql","utf8"));
     await db.query("INSERT INTO auth.users(id,email) VALUES($1,$2)",[actor.userId,actor.email]);
@@ -119,27 +126,52 @@ describe("Canonical production provider and actual platform route integration",(
 
   it("validates and locks approved image records on the publication transaction connection",async () => {
     const mediaId="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa";
-    await db.query("INSERT INTO public.media_assets(id,object_key,hash,mime,bytes,approval_status) VALUES($1,'approved.png','synthetic','image/png',1,'approved')",[mediaId]);
-    const projects=approvedPublication.projects.map((project) => ({ ...project,sections: project.sections.map((section) => ({ ...section,blocks: section.blocks.map((block) => block.type === "image" ? { ...block,mediaId } : block) })) }));
-    let inTransaction=false;
-    let lockedMediaChecks=0;
-    const provider: QueryableDb={ query: async (sql,params) => {
-      if (inTransaction) throw new Error("Publication escaped its transaction connection.");
-      return db.query(sql,params);
-    },transaction: async (run) => db.transaction(async (tx) => {
-      inTransaction=true;
-      try { return await run({ query: async (sql,params) => {
-        if (sql.includes("FROM public.media_assets") && sql.includes("FOR SHARE")) lockedMediaChecks++;
-        return tx.query(sql,params);
-      } }); } finally { inTransaction=false; }
-    }) };
-    setPlatformDbForTests(provider);
-    const next=await publishRevision({ expectedRevision: approvedPublication.revision,customProjects: projects },actor);
-    expect(lockedMediaChecks).toBe(1);
-    expect(next.revision).toBe(2);
-    await db.query("UPDATE public.media_assets SET approval_status='rejected' WHERE id=$1",[mediaId]);
-    await expect(rollbackPublication(next.revision,actor)).rejects.toThrow(/unapproved or missing media/);
-    expect((await readPublicPublication())?.revision).toBe(next.revision);
+    const validPng = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==", "base64");
+    const hash = createHash("sha256").update(validPng).digest("hex");
+    const bucket = "fixture-private";
+    const objectKey = "drafts/approved.png";
+    const spy = vi.spyOn(authClients, "createAdminServiceRoleClient").mockReturnValue({
+      storage: {
+        from: () => ({
+          download: () => ({
+            asStream: async () => ({
+              data: new ReadableStream({
+                start(controller) {
+                  controller.enqueue(new Uint8Array(validPng));
+                  controller.close();
+                },
+              }),
+              error: null,
+            }),
+          }),
+        }),
+      },
+    } as unknown as SupabaseClient);
+    try {
+      await db.query("INSERT INTO public.media_assets(id,object_key,hash,mime,bytes,approval_status,storage_bucket,integrity_verified_at) VALUES($1,$2,$3,'image/png',$4,'approved',$5,now())",[mediaId,objectKey,hash,validPng.length,bucket]);
+      const projects=approvedPublication.projects.map((project) => ({ ...project,sections: project.sections.map((section) => ({ ...section,blocks: section.blocks.map((block) => block.type === "image" ? { ...block,mediaId } : block) })) }));
+      let inTransaction=false;
+      let lockedMediaChecks=0;
+      const provider: QueryableDb={ query: async (sql,params) => {
+        if (inTransaction) throw new Error("Publication escaped its transaction connection.");
+        return db.query(sql,params);
+      },transaction: async (run) => db.transaction(async (tx) => {
+        inTransaction=true;
+        try { return await run({ query: async (sql,params) => {
+          if (sql.includes("FROM public.media_assets") && sql.includes("FOR SHARE")) lockedMediaChecks++;
+          return tx.query(sql,params);
+        } }); } finally { inTransaction=false; }
+      }) };
+      setPlatformDbForTests(provider);
+      const next=await publishRevision({ expectedRevision: approvedPublication.revision,customProjects: projects },actor);
+      expect(lockedMediaChecks).toBe(1);
+      expect(next.revision).toBe(2);
+      await db.query("UPDATE public.media_assets SET approval_status='rejected' WHERE id=$1",[mediaId]);
+      await expect(rollbackPublication(next.revision,actor)).rejects.toThrow(/unapproved or missing media/);
+      expect((await readPublicPublication())?.revision).toBe(next.revision);
+    } finally {
+      spy.mockRestore();
+    }
   });
 
   it("missing configured database fails closed and never selects ephemeral storage",async () => {

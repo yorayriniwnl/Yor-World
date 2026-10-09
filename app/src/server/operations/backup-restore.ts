@@ -5,7 +5,7 @@ const COLUMNS = {
   projects: ["id","slug","title","draft_revision","archived_at"],
   project_revisions: ["id","project_id","revision","payload","created_by","created_at"],
   evidence_records: ["id","project_id","kind","source_url","checked_at","status","notes"],
-  media_assets: ["id","object_key","hash","mime","bytes","dimensions","provenance","approval_status","created_at"],
+  media_assets: ["id","object_key","hash","mime","bytes","dimensions","provenance","approval_status","created_at","storage_bucket","integrity_verified_at"],
   site_revisions: ["id","revision","payload","created_by","created_at"],
   published_content: ["id","revision","payload","published_at"],
   publication_history: ["id","revision","snapshot","actor","created_at"],
