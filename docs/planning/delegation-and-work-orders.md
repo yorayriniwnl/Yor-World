@@ -8,6 +8,8 @@ The user authorized the full vision and delegated production. The parent Codex c
 
 ## Current completion packet and successor review
 
+The [2026-10-09 completion audit](reviews/2026-10-09-completion-audit.md) identifies substantive unfinished V1 behavior in addition to production/manual and full-product backlog work; the prior percentage estimates are withdrawn. [FINISH-01](reconciliation-packets/2026-10-09-finish-01.md) issues [bounded completion prompts](production-prompts/completion-2026-10-09/README.md) for contract amendments, separate platform/art/runtime corrections, successor integration, actual G7 verification and six post-V1 extension groups. These prompts do not dispatch external accounts or alter RC6-R1 source acceptance.
+
 Owner instruction “Complete it.” authorizes remaining corrections, production setup/publishing and complete G7 verification. [PRE-G7-01](reconciliation-packets/2026-10-06-pre-g7-01.md), [PRE-G7-02](reconciliation-packets/2026-10-06-pre-g7-02.md), [PRE-G7-03](reconciliation-packets/2026-10-06-pre-g7-03.md) and [PRE-G7-04](reconciliation-packets/2026-10-07-pre-g7-04.md) define exact ownership and regression evidence. Authorization is recorded as **G7-OWNER-AUTH-20261006**; deployment consent persists.
 
 Accepted RC5 / [G6-R1](reviews/2026-10-06-g6-r1.md) remains immutable, including the independent audit and all prior historical receipts. The new RC6 source is a separately bound successor requiring independent maker-delta review and Parent adjudication. G7 AUTHORIZED / PREPARATION is not G7 acceptance. Real Vercel/Supabase/email access is not confirmed; physical mobile/screen-reader/thermal and actual live restore/rollback checks remain NOT RUN.

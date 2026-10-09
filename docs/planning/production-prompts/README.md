@@ -1,5 +1,7 @@
 # YOR WORLD production prompt split
 
+Current corrective work uses the [2026-10-09 completion prompt pack](completion-2026-10-09/README.md), issued by [FINISH-01](../reconciliation-packets/2026-10-09-finish-01.md) against the independently reviewed completion audit. It covers the unfinished V1 behaviors, actual G7 proof and all six full-product extension groups. The original track prompts below remain background scope; their historical feasibility wording is not current release status.
+
 These three track prompts organize the current project scope for production:
 
 | Prompt | Track | Canonical plan | Work |
