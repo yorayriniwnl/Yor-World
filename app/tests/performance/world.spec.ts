@@ -84,7 +84,7 @@ test.describe("C3 Performance Benchmarks & Budget Verification", () => {
         expect(frame.renderCallsIncludeAllPasses).toBe(true);
         expect(frame.renderCalls).toBeGreaterThan(0);
         expect(frame.renderedTriangles).toBeGreaterThan(0);
-        const ceiling = profile.width < 640 && tier === "low" ? 80 : 120;
+        const ceiling = profile.width < 640 ? 80 : 120;
         expect(frame.renderCalls).toBeLessThanOrEqual(ceiling);
       }
     });
