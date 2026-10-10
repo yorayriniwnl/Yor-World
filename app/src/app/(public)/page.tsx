@@ -26,35 +26,49 @@ export default async function HomePage() {
           <span>AYUSH ROY · PORTFOLIO / 2026</span>
         </div>
 
-        <div className={styles.heroBody}>
+        <div className={styles.heroStage}>
+          <span className={styles.stageWatermark} aria-hidden="true">AYUSH<br />ROY.</span>
+          <div className={styles.stageTopCaption}>
+            <span>AN ENGINEER&apos;S PERSONAL UNIVERSE</span>
+            <span>01 / 06</span>
+          </div>
+          <div className={styles.stagePortrait}>
+            <div className={styles.heroVisualShell}>
+              <div className={styles.heroArtwork} aria-hidden="true">
+                <StudioSceneIllustration />
+              </div>
+              <span className={styles.artOrbitText}>A WORLD BEYOND THE SCREEN ↗</span>
+              <div className={styles.heroFigureCaption}>
+                <span>STUDIO NO. 001</span>
+                <span>AN ILLUSTRATED WORLD CONCEPT</span>
+              </div>
+            </div>
+          </div>
+          <div className={styles.stageSignature}>
+            <span className={styles.stageSignatureMark} aria-hidden="true">AR.</span>
+            <span>DESIGN MINDED.<br />ENGINEERING DRIVEN.</span>
+          </div>
+          <div className={styles.stageSideCaption} aria-hidden="true">BUILT WITH CURIOSITY · 2026</div>
+        </div>
+
+        <div className={styles.heroIntro}>
           <div className={styles.heroCopy}>
             <p className={styles.kicker}>
               <span className={styles.kickerMark} aria-hidden="true">✳</span>
               Hello, I&apos;m {ownerIdentity.name}.
             </p>
             <h1 id="welcome-heading"><span>Full-stack</span><em>developer.</em></h1>
+          </div>
+          <div className={styles.heroDetails}>
             <p className={styles.heroDescription}>
-              I design and build software that makes complex ideas feel intuitive.
-              Thoughtful interfaces, resilient systems and a world you can actually step inside.
+              I build digital things with a pulse. From dependable systems
+              to immersive experiences, every detail is designed to feel intentional.
             </p>
             <div className={styles.heroActions}>
               <Link className={styles.mainLink} href="/projects" prefetch={false}>
-                Explore my work <span aria-hidden="true">↗</span>
+                Explore selected work <span aria-hidden="true">↗</span>
               </Link>
               <StudioLauncher projects={publication.projects} publicationRevision={publication.revision} />
-            </div>
-          </div>
-
-          <div className={styles.heroAside}>
-            <div className={styles.heroVisualShell}>
-              <div className={styles.heroArtwork} aria-hidden="true">
-                <StudioSceneIllustration />
-              </div>
-              <span className={styles.artOrbitText}>YOUR WINDOW INTO YOR WORLD</span>
-              <div className={styles.heroFigureCaption}>
-                <span>FIG. 01 / A WORLD BUILT TO EXPLORE</span>
-                <span>ILLUSTRATED STUDIO CONCEPT ↗</span>
-              </div>
             </div>
           </div>
         </div>
