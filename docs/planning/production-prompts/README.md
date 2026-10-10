@@ -1,6 +1,8 @@
 # YOR WORLD production prompt split
 
-Current corrective work uses the [2026-10-09 completion prompt pack](completion-2026-10-09/README.md), issued by [FINISH-01](../reconciliation-packets/2026-10-09-finish-01.md) against the independently reviewed completion audit. It covers the unfinished V1 behaviors, actual G7 proof and all six full-product extension groups. The original track prompts below remain background scope; their historical feasibility wording is not current release status.
+The [October 10 detailed successor pack](completion-2026-10-10/README.md), issued by [FINISH-02](../reconciliation-packets/2026-10-10-finish-02.md), provides 25 copy-ready prompts incorporating the latest independent recheck. Start with its versioned Parent amendment prompt, then use the separate maker corrections, platform work, audits, integration, G7 and six extension prompts. It preserves existing accepted history and does not itself approve new contracts or implementation.
+
+The earlier [2026-10-09 completion prompt pack](completion-2026-10-09/README.md), issued by [FINISH-01](../reconciliation-packets/2026-10-09-finish-01.md) against the independently reviewed completion audit, remains historical context. It covers the unfinished V1 behaviors, actual G7 proof and all six full-product extension groups. The original track prompts below remain background scope; their historical feasibility wording is not current release status.
 
 These three track prompts organize the current project scope for production:
 
