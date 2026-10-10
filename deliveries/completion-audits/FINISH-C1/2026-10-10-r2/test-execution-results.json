@@ -1,0 +1,29 @@
+{
+  "typescriptTypecheck": {
+    "command": "pnpm --dir deliveries/FINISH-C1-R2/candidate exec tsc --noEmit",
+    "exitCode": 0,
+    "errors": 0,
+    "status": "PASS"
+  },
+  "eslint": {
+    "command": "pnpm --dir deliveries/FINISH-C1-R2/candidate run lint",
+    "exitCode": 0,
+    "warnings": 0,
+    "errors": 0,
+    "status": "PASS"
+  },
+  "vitestTargetedTests": {
+    "command": "vitest run tests/unit/world/completion-*.test.ts",
+    "testFilesPassed": 3,
+    "testsPassed": 4,
+    "failed": 0,
+    "status": "PASS"
+  },
+  "vitestFullRuntimeSuite": {
+    "command": "vitest run tests/unit/{asset-loader,character-director,lifecycle-manager,preferences-resilience,contracts}.test.ts",
+    "testFilesPassed": 5,
+    "testsPassed": 79,
+    "failed": 0,
+    "status": "PASS"
+  }
+}
