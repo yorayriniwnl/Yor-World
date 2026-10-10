@@ -1,0 +1,40 @@
+{
+  "advice": "REWORK",
+  "scope": "proposed FINISH-00-R2 contract manifest65126f6a196449f0167263574b84bbc8aaa439760f17323e2cca447f1f74056d",
+  "findings": [
+    {
+      "id": "PLAT-R2-01",
+      "severity": "HIGH",
+      "confidence": "CONFIRMED",
+      "class": "architectural identity gap",
+      "owner": "Parent GPT Plus #1",
+      "affectedMaker": "Gemini #1 after reviewed/accepted design",
+      "requirement": "Exact reviewed media identity and post-review approval mutation rejection",
+      "sources": [
+        "02-platform-schema-recovery.md:69",
+        "02-platform-schema-recovery.md:89",
+        "02-platform-schema-recovery.md:101",
+        "app/src/contracts/content.ts:28",
+        "app/supabase/migrations/20261001000000_a3_owner_auth_rls.sql:129",
+        "app/supabase/migrations/20261001000000_a3_owner_auth_rls.sql:254",
+        "app/supabase/migrations/20261001000000_a3_owner_auth_rls.sql:371",
+        "app/src/server/media/validate-upload.ts:271"
+      ],
+      "observed": "Different valid media mapping for same referenced mediaId leaves documented review hash equal",
+      "evidence": "review-media-identity-result.json",
+      "result": "DEFECT REPRODUCED; desired requirement FAIL at contract boundary",
+      "limitations": "Hypothetical minimal fragment/rows; no SQL/provider/A1 implementation execution",
+      "requiredCorrection": "Bind reviewed bytes/object/approval identity or enforce immutable media-ID mappings with explicit approval-change semantics",
+      "makerProofRequired": "Change valid approved mapping after review; reject old identity with no history/content/audit partial writes"
+    }
+  ],
+  "clarifications": [
+    {
+      "id": "PLAT-R2-C01",
+      "blocking": false,
+      "subject": "Explicit scope for private response header sentence at platform contract line101"
+    }
+  ],
+  "productionRegressionExecution": "NOT RUN; no production patch",
+  "freshApplicationTests": 0
+}
