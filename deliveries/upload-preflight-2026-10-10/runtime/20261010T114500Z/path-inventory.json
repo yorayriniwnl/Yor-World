@@ -1,0 +1,240 @@
+{
+  "lane": "Gemini #3 \u2014 runtime, integration and deployment maker",
+  "timestamp": "2026-10-10T11:45:00Z",
+  "scope": "Runtime, Lifecycle, Preferences, Catalog & Integration Path Inventory",
+  "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+  "c1DeliveredReplacements": {
+    "app/src/features/world/AssetLoader.ts": {
+      "state": "E",
+      "auditStatus": "REWORK",
+      "defectGaps": [
+        "C1-R1: Asynchronous optional textures (deskmat/wallpaper) ignored in consumer callback; no adoption handshake.",
+        "C1-R2: AbortSignal checked before awaits but not after awaits; late decodes publish without session fencing; object URLs not revoked in finally; abort listeners on retry backoff leaked.",
+        "C1-R3: Decoded stream body length compared to Content-Length; compressed stream produces 125% in UI; no aggregate confirmed totals."
+      ]
+    },
+    "app/src/features/world/WorldRuntime.ts": {
+      "state": "E",
+      "auditStatus": "REWORK",
+      "defectGaps": [
+        "C1-R1: Callback silently returns on stale/disposed session without disposing delivered resources; late interactionGltf added directly as outer scene without WorldInteractionBinding or material quality integration.",
+        "C1-R4: initialDecorativePausedRef not updated on toggle or retry; runtime recreation does not persist pause across unmount."
+      ]
+    },
+    "app/src/features/world/CharacterDirector.ts": {
+      "state": "E",
+      "auditStatus": "PASS_TARGETED_REPRESENTATION",
+      "defectGaps": [
+        "CA-07 initial action and pause independently verified on real GLB bones, but needs integration with full session lifecycle and civil time."
+      ]
+    },
+    "app/src/features/world/types.ts": {
+      "state": "E",
+      "auditStatus": "GOVERNANCE_BLOCKER",
+      "defectGaps": [
+        "C1-R5: Out-of-allowlist modification under historical FINISH-00 contract; requires explicit allocation in FINISH-00-R2."
+      ]
+    },
+    "app/src/features/world/WorldRoot.tsx": {
+      "state": "E",
+      "auditStatus": "GOVERNANCE_BLOCKER_AND_ARITHMETIC_BUG",
+      "defectGaps": [
+        "C1-R3: UI arithmetic computes 125% from loader loaded/total mismatch, rendering invalid aria-valuenow.",
+        "C1-R4: initialDecorativePausedRef never updated; retry resets pause to false.",
+        "C1-R5: Out-of-allowlist modification under historical FINISH-00 contract; requires FINISH-00-R2 allocation.",
+        "C1-R7: Button says Retry instead of contract Retry 3D; watchdog lacks real 15s browser execution receipt."
+      ]
+    },
+    "app/tests/unit/asset-loader.test.ts": {
+      "state": "E",
+      "auditStatus": "GOVERNANCE_BLOCKER",
+      "defectGaps": [
+        "C1-R5: Existing test modification not in historical C1 allowlist."
+      ]
+    },
+    "app/tests/unit/character-director.test.ts": {
+      "state": "E",
+      "auditStatus": "GOVERNANCE_BLOCKER",
+      "defectGaps": [
+        "C1-R5: Existing test modification not in historical C1 allowlist."
+      ]
+    }
+  },
+  "r2AllocatedPathsC1R2": [
+    {
+      "path": "src/contracts/experience.ts",
+      "state": "E",
+      "responsibility": "Add default-compatible paused preference only; retain other intents/versions"
+    },
+    {
+      "path": "src/features/experience/preferences-store.ts",
+      "state": "E",
+      "responsibility": "Validated document-memory persistence and existing storage compatibility"
+    },
+    {
+      "path": "src/features/experience/controller.ts",
+      "state": "E",
+      "responsibility": "Restore/persist pause, separate ambient from finite requested action updates"
+    },
+    {
+      "path": "src/features/experience/return-snapshot.ts",
+      "state": "E",
+      "responsibility": "Default-compatible paused serialization/restore; no navigation redesign"
+    },
+    {
+      "path": "src/features/world/CharacterDirector.ts",
+      "state": "E",
+      "responsibility": "Actual first idle activation; pause/finite action safe-return semantics"
+    },
+    {
+      "path": "src/features/world/SceneIntegrator.ts",
+      "state": "E",
+      "responsibility": "Required adoption/discarded-resource bookkeeping; retain current five-clip integration until C2"
+    },
+    {
+      "path": "src/features/world/AssetLoader.ts",
+      "state": "E",
+      "responsibility": "Session identity, bounded retries, required readiness, optional adoption, factual bytes; disable old IA requests"
+    },
+    {
+      "path": "src/features/world/asset-resources.ts",
+      "state": "N",
+      "responsibility": "Deduplicated loader/runtime resource ownership and disposal ledger"
+    },
+    {
+      "path": "src/features/world/WorldRuntime.ts",
+      "state": "E",
+      "responsibility": "Readiness adoption, late texture consumer/quality wiring, generation fencing and pause propagation"
+    },
+    {
+      "path": "src/features/world/LifecycleManager.ts",
+      "state": "E",
+      "responsibility": "New progress shape, session fencing/watchdog lifecycle; no simulated progress"
+    },
+    {
+      "path": "src/features/world/types.ts",
+      "state": "E",
+      "responsibility": "Shared progress/session diagnostics types, no camera catalog redesign"
+    },
+    {
+      "path": "src/features/world/WorldRoot.tsx",
+      "state": "E",
+      "responsibility": "Loading/status/Retry 3D/Continue/watchdog and preferences subscription only"
+    },
+    {
+      "path": "src/features/world/RuntimeMaterialQuality.ts",
+      "state": "E",
+      "responsibility": "Late-map refresh/registration and generated-material disposal"
+    },
+    {
+      "path": "src/features/world/LowQualityBatch.ts",
+      "state": "E",
+      "responsibility": "Mutable-target exclusion or affected-batch invalidation for late material adoption"
+    },
+    {
+      "path": "src/features/world/world.module.css",
+      "state": "E",
+      "responsibility": "Indeterminate loading styling only; no HUD/mobile layout changes"
+    },
+    {
+      "path": "tests/unit/character-director.test.ts",
+      "state": "E",
+      "responsibility": "Meaningful startup/pause behavior regression checks"
+    },
+    {
+      "path": "tests/unit/asset-loader.test.ts",
+      "state": "E",
+      "responsibility": "Real loader boundary/cleanup/retry/progress regressions"
+    },
+    {
+      "path": "tests/unit/preferences-resilience.test.ts",
+      "state": "E",
+      "responsibility": "Pause and denied-storage compatibility"
+    },
+    {
+      "path": "tests/unit/contracts.test.ts",
+      "state": "E",
+      "responsibility": "Historical preference inputs and additive output compatibility"
+    },
+    {
+      "path": "tests/unit/project-transition.test.ts",
+      "state": "E",
+      "responsibility": "Paused preference fixture compatibility and unaffected routing"
+    },
+    {
+      "path": "tests/fixtures/engineering-section-4.ts",
+      "state": "E",
+      "responsibility": "Add paused only where typed Preferences outputs require it; keep legacy input fixture"
+    },
+    {
+      "path": "tests/unit/lifecycle-manager.test.ts",
+      "state": "E",
+      "responsibility": "Factual progress/watchdog lifecycle compatibility"
+    },
+    {
+      "path": "tests/unit/runtime-material-quality.test.ts",
+      "state": "E",
+      "responsibility": "Late maps/ownership/current quality"
+    },
+    {
+      "path": "tests/unit/low-quality-batch.test.ts",
+      "state": "E",
+      "responsibility": "Late material/batch regression"
+    },
+    {
+      "path": "tests/unit/world/completion-character-startup.test.ts",
+      "state": "N",
+      "responsibility": "First real action and safe pose verification"
+    },
+    {
+      "path": "tests/unit/world/completion-decorative-pause.test.ts",
+      "state": "N",
+      "responsibility": "Ambient/finite-action pause separation"
+    },
+    {
+      "path": "tests/unit/world/completion-essential-loader.test.ts",
+      "state": "N",
+      "responsibility": "Held optional decode, failure, races, byte/retry cleanup"
+    },
+    {
+      "path": "tests/integration/world/completion-runtime-lifecycle.test.ts",
+      "state": "N",
+      "responsibility": "Session/adoption/pause integrated boundary"
+    },
+    {
+      "path": "tests/e2e/world/completion-loading-pause.spec.ts",
+      "state": "N",
+      "responsibility": "Browser watchdog, cancellation, rendered startup, retry/re-entry"
+    }
+  ],
+  "c2CatalogConsumers": {
+    "totalRowsRequired": 25,
+    "currentRegistryCount": 21,
+    "missingCatalogEntriesInRegistry": [
+      "project-shortcuts",
+      "certificate-frame",
+      "about-personal-object",
+      "hidden-yor-mark"
+    ],
+    "typeSeams": {
+      "worldTypesCameraPreset": "Lacks 'reveal' and 'greeting' literals needed for CameraDirector and EntranceCoordinator.",
+      "experienceIntentSchema": "Needs narrow addition of ACTIVATE_OBJECT with CatalogObjectId enum (25 IDs) and source room|control.",
+      "experienceContractFixtures": "tests/fixtures/engineering-section-4.ts needs CatalogObjectId/ACTIVATE_OBJECT without overwriting A2 publication site fixtures."
+    },
+    "entranceSeams": {
+      "doorMotion": "Door hinge node Room_Root/door/Door_Hinge owns door leaf yaw rotation; entrance coordinator owns timeline <=8s, skip <=50ms; zero mixer clips on door in GLB.",
+      "residentChoreography": "Eight clips paired with fixture: coding_idle, mouse_idle, notice_visitor, turn_to_visitor, greeting_nod, return_to_work, attention_glance, breathing_idle.",
+      "safeHomeSettlement": "Entrance arrives at settled home within <=8s after readiness; Skip/Escape completes <=50ms to safe home."
+    },
+    "newModules": [
+      {
+        "path": "src/features/world/PropMotionDirector.ts",
+        "responsibility": "Bounded deterministic prop motions (plant sway, painting drag/settle); no secondary character/camera owner"
+      },
+      {
+        "path": "src/features/world/RoomClock.ts",
+        "responsibility": "Live Asia/Kolkata wall clock texture, 12/24 format, minute boundary updates; decorative ticks pause while civil time stays real"
+      }
+    ]
+  }
+}

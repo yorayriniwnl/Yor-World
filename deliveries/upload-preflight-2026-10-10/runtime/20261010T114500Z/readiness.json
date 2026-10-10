@@ -1,0 +1,72 @@
+{
+  "packet": "upload-preflight-2026-10-10",
+  "lane": "Gemini #3 — runtime, integration and deployment maker",
+  "preflightTimestamp": "2026-10-10T11:45:00Z",
+  "gitContext": {
+    "coordinationHead": "de2c8afe516099d7d7be30a63e16a883b753133a",
+    "branch": "audit/completion-2026-10-09",
+    "packagingBaseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+    "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+    "appTreeDiff": "EMPTY"
+  },
+  "gateEvaluation": {
+    "finish00R2Accepted": false,
+    "finish00R2Status": "DRAFT under independent audit; Astra architectural delta advice r2 is PASS, but Parent acceptance ruling is not yet archived in docs/planning/reviews/",
+    "finishC1R2Issued": false,
+    "finishC1R2PrerequisitesMet": false,
+    "finishC2PrerequisitesMet": false,
+    "readyForImplementation": false,
+    "status": "WAITING_FOR_PARENT_ACCEPTANCE_OF_FINISH_00_R2"
+  },
+  "inspectedC1CandidateFindings": {
+    "C1-R1": "HIGH — Optional assets (deskmat/wallpaper) ignored in consumer; late IA added directly to scene bypassing WorldInteractionBinding and quality initialization; no atomic adoption or disposal.",
+    "C1-R2": "HIGH — Cancellation / abort lacks post-await session fencing; object URLs not revoked in finally; retry abort listeners leaked; partial decode cleanup missing on subsequent required failure.",
+    "C1-R3": "MEDIUM — Streaming progress compares decoded stream to Content-Length; compressed streams produce UI 125% and invalid ARIA aria-valuenow125 > 100; sequential downloads reach 100% and reset.",
+    "C1-R4": "MEDIUM — Pause preference not updated on toggle/retry; retry resets to false; unmount/re-entry loses pause preference; needs document-memory fallback in PreferencesStore and PreferencesSchema update.",
+    "C1-R5": "HIGH governance blocker — WorldRoot.tsx, types.ts, and existing unit tests were modified outside historical FINISH-00 allowlist; resolved in pending FINISH-00-R2 allowlist.",
+    "C1-R6": "MEDIUM — Overstated diagnostic scope; CA06 mock canvas had 0 rendered frames; cancellation threshold 500ms (63ms observed) did not prove <=50ms in browser; wrong TS version.",
+    "C1-R7": "LOW/MEDIUM — Retry backoff was 150/300ms instead of 500/1500ms; button says 'Retry' instead of 'Retry 3D'; watchdog lacks real 15s browser execution receipt."
+  },
+  "independentEvidenceReused": {
+    "ca07RealBones": {
+      "verdict": "PASS",
+      "summedAbsoluteDeltaFirst500ms": 0.05224497440459329,
+      "pausedDelta": 0,
+      "initialScheduled": true,
+      "finiteGreetingReturnsFrozen": true,
+      "provenance": "deliveries/completion-audits/FINISH-C1/2026-10-10-r1/real-bones-observation.json"
+    },
+    "observationalDefectLateOptional": {
+      "verdict": "DEFECT_REPRODUCED",
+      "essentialModelsParsed": 3,
+      "heldOptionalNonblocking": true,
+      "lateCallbackAfterAbort": true,
+      "lateTextureDisposed": false,
+      "provenance": "deliveries/completion-audits/FINISH-C1/2026-10-10-r1/late-optional-observation.json"
+    },
+    "observationalDefectByteProgress": {
+      "verdict": "DEFECT_REPRODUCED",
+      "contentLength": 80,
+      "decodedBody": 100,
+      "loaderClampedProgress": 1.0,
+      "uiCalculatedPercent": 125,
+      "provenance": "deliveries/completion-audits/FINISH-C1/2026-10-10-r1/byte-progress-observation.json"
+    }
+  },
+  "c2PrerequisiteAndConsumerAnalysis": {
+    "isolatedOverlayRequirement": "C2 must NOT edit canonical app/ or assume canonical I1 integration. Parent will bind isolated assembly deliveries/FINISH-C2/base/ from accepted B1-R2 + C1-R2.",
+    "controllerConsumers": "app/src/features/experience/controller.ts must handle ACTIVATE_OBJECT with 25 CatalogObjectId enums, routing through existing arbitration without creating a competing controller.",
+    "registryDeficiency": "app/src/features/experience/interaction-registry.ts has only 21 items in FROZEN_V1_CATALOG; missing project-shortcuts, certificate-frame, about-personal-object, hidden-yor-mark.",
+    "cameraTypeSeam": "app/src/features/world/types.ts CameraPreset union lacks 'reveal' and 'greeting' literals.",
+    "entranceCoordinatorSeam": "Door leaf yaw rotation owned via door hinge node Room_Root/door/Door_Hinge; entrance timeline <=8s, skip <=50ms; zero door mixer clips in GLB.",
+    "newModulesRequired": [
+        "src/features/world/PropMotionDirector.ts",
+        "src/features/world/RoomClock.ts"
+    ]
+  },
+  "nextAction": {
+    "nextOwner": "Parent (GPT Plus #1)",
+    "requiredDecision": "Formal acceptance ruling for FINISH-00-R2 contracts and issuance of FINISH-C1-R2 work order.",
+    "nextExecutableMakerTask": "P05 (FINISH-C1-R2) upon Parent issuance"
+  }
+}
