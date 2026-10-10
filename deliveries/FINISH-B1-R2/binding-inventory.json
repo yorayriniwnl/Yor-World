@@ -1,0 +1,262 @@
+[
+  {
+    "catalogId": "entrance-door",
+    "target": "door",
+    "children": [
+      "Door_Frame",
+      "Door_Hinge",
+      "Door_Leaf"
+    ],
+    "hook": "EntranceCoordinator direct hinge yaw 0->pi/2",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "door-inside",
+    "target": "door",
+    "children": [
+      "Door_Frame",
+      "Door_Hinge",
+      "Door_Leaf"
+    ],
+    "hook": "Replay confirmation dialog",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "resident",
+    "target": "resident",
+    "children": [
+      "resident-body",
+      "body-turn",
+      "head"
+    ],
+    "hook": "CharacterDirector paired 8-clip director",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "chair",
+    "target": "chair-root",
+    "children": [
+      "Chair_Seat",
+      "chair-base"
+    ],
+    "hook": "CharacterDirector swivel and posture response",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "wall-painting",
+    "target": "wall-painting",
+    "children": [
+      "painting-pivot",
+      "painting_frame",
+      "painting_canvas"
+    ],
+    "hook": "Hanging pivot tilt <=6 deg",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "hidden-yor-mark",
+    "target": "hidden-yor-mark",
+    "children": [],
+    "hook": "Fixed to wall behind painting, sibling of painting-pivot",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "main-monitor",
+    "target": "monitor",
+    "children": [
+      "monitor-surface",
+      "monitor_screen_center"
+    ],
+    "hook": "DOM launcher alignment anchor (0.0, 1.05, -1.30)",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "candidatex-launcher",
+    "target": "monitor",
+    "children": [
+      "monitor-surface"
+    ],
+    "hook": "DOM launcher control / monitor surface",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "project-shortcuts",
+    "target": "monitor",
+    "children": [
+      "monitor-surface"
+    ],
+    "hook": "DOM project rail direct navigation",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "keyboard",
+    "target": "keyboard_body",
+    "children": [
+      "key_response_active",
+      "keycaps_main"
+    ],
+    "hook": "Key stroke <=0.002m local Y",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "mouse",
+    "target": "mouse_body",
+    "children": [
+      "mouse_wheel"
+    ],
+    "hook": "Wake launcher at (0.24, 0.768, -0.98)",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "research-books",
+    "target": "Books_Stack",
+    "children": [
+      "book_vol_1",
+      "book_vol_2",
+      "book_vol_3",
+      "book_vol_4",
+      "book_vol_5"
+    ],
+    "hook": "Books_Stack pivot at (0.45, 2.27, -1.68) nudge <=0.02m",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "plant-leaves",
+    "target": "plants",
+    "children": [
+      "Plant_Leaf_01",
+      "Plant_Leaf_02"
+    ],
+    "hook": "Genuine mesh pivots at (-1.65, 0.65, 0.85) and (-1.52, 0.72, 0.78)",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "helios-pc",
+    "target": "helios-pc",
+    "children": [
+      "PC_Fan_Group",
+      "Helios_Network_LED"
+    ],
+    "hook": "Fan group at (1.05, 0.99, -0.914) spin +Z",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "zenith-model",
+    "target": "zenith-model",
+    "children": [
+      "Zenith_Core",
+      "zenith_solar_panel"
+    ],
+    "hook": "Core pivot at (0.70, 0.805, -1.388) energy trace",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "ai-real-camera",
+    "target": "ai-real-camera",
+    "children": [
+      "Camera_Lens_Ring",
+      "Camera_Status_LED"
+    ],
+    "hook": "Lens pivot at (-1.45, 1.77, -1.635) faces +Z",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "talks-microphone",
+    "target": "talks-microphone",
+    "children": [
+      "Mic_LED",
+      "mic_shockmount"
+    ],
+    "hook": "Mic_LED at (-0.62, 1.11, -1.08) Project_MicRedLED",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "desk-clock",
+    "target": "desk_clock_chassis",
+    "children": [
+      "Clock_Face"
+    ],
+    "hook": "Clock_Face at (-0.50, 0.81, -1.114) Clock_CyanDisplay",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "speakers",
+    "target": "audio_and_accessories",
+    "children": [
+      "speaker_left_cabinet",
+      "speaker_right_cabinet",
+      "Speaker_LED"
+    ],
+    "hook": "Round speakers pair, LED at (-0.68, 0.88, -1.17)",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "desk-lamp",
+    "target": "monitor",
+    "children": [
+      "lightbar_chassis",
+      "Light_TaskDownlight"
+    ],
+    "hook": "Separately switchable warm task lighting",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "window-blinds",
+    "target": "window_frame",
+    "children": [
+      "blind_slat_1",
+      "blind_slat_2",
+      "blind_slat_3",
+      "blind_slat_4",
+      "blind_slat_5",
+      "blind_slat_6",
+      "blind_slat_7",
+      "blind_slat_8",
+      "blind_slat_9",
+      "blind_slat_10",
+      "blind_slat_11",
+      "blind_slat_12"
+    ],
+    "hook": "12 rotatable slats along local Z 0->pi/2",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "contact-phone",
+    "target": "audio_and_accessories",
+    "children": [
+      "contact_phone_body",
+      "contact_phone_screen"
+    ],
+    "hook": "Center (0.45, 0.755, -0.92) opens Contact",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "skills-board",
+    "target": "pegboard_system",
+    "children": [
+      "skills-board",
+      "pegboard_panel"
+    ],
+    "hook": "Pegboard hit area opens Skills",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "certificate-frame",
+    "target": "shelves",
+    "children": [
+      "certificate_frame",
+      "certificate_glass"
+    ],
+    "hook": "World (-2.08, 1.85, 0.30) credential decor",
+    "status": "PASS"
+  },
+  {
+    "catalogId": "about-personal-object",
+    "target": "about-personal-object",
+    "children": [
+      "about_personal_object_placeholder"
+    ],
+    "hook": "Neutral placeholder at (0.72, 0.82, -0.84)",
+    "status": "PASS"
+  }
+]
