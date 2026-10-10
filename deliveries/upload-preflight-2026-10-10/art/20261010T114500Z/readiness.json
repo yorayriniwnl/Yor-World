@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Gemini #2 Art Lane Readiness Assessment",
+  "lane": "Gemini #2 (World / art maker)",
+  "revision": "20261010T114500Z",
+  "date": "2026-10-10",
+  "preflightStatus": "COMPLETE",
+  "p04ExecutionEligible": false,
+  "gates": {
+    "acceptedFinish00R2": {
+      "status": "BLOCKED",
+      "reason": "Draft contract exists in docs/planning/reconciliation-packets/finish-contracts-r2/; Astra architecture advice r2 is PASS, but Parent formal acceptance ruling is pending and independent delta audit is pending."
+    },
+    "issuedFinishB1R2Handoff": {
+      "status": "BLOCKED",
+      "reason": "Parent has not yet issued the formal FINISH-B1-R2 handoff with bound amendment revision."
+    },
+    "toolchainReadiness": {
+      "status": "READY",
+      "details": {
+        "blender": "Blender 5.2.2 LTS available at C:\\Program Files\\Blender Foundation\\Blender 5.2\\blender.exe",
+        "python": "Python 3.12.10 available",
+        "node": "Node.js v24.19.0 available",
+        "gltfValidator": "gltf-validator 2.0.0-dev.3.10 available in app/node_modules/gltf-validator",
+        "pillow": "Pillow 12.3.0 available"
+      }
+    },
+    "visualReferenceAccess": {
+      "status": "READY",
+      "details": "references/images/main-reference.png accessible, 1504x1128, SHA-256 37adfb0ee344642798978e954a0cfc8d9715eac1b3ca4e5a84ab87a228c53362"
+    }
+  },
+  "defectPreflightSummary": {
+    "B1-R1": {
+      "category": "Exact binding/file handoff",
+      "finding": "Delivered GLBs use production-room-full.glb, resident-production.glb, and lowercase nodes instead of assets/room.glb, resident.glb, fixture.glb and 12 literal uppercase node names. finish-contracts-r2 specifies conforming exports in deliveries/FINISH-B1-R2/.",
+      "actionNeeded": "Wait for Parent acceptance of finish-contracts-r2; then author conforming exports with literal nodes and one base room."
+    },
+    "B1-R2": {
+      "category": "Door animation timing & hinge offset",
+      "finding": "Delivered GLB door animation accessor max time is 3.541667s (85 frames @ 24 FPS scene rate), starting at 0.041667s; prose claims 2.833s @ 30 FPS. Authoring includes unwanted closing segment (frames 60-85) and 85\u00b0 rotation vs 90\u00b0/2.5s. Hinge is [-1.65, 0, 1.8], and door_leaf local offset (-1.2, 1.05, 1.8) under hinge creates world position error (-2.85).",
+      "actionNeeded": "Conforming export will omit exported door mixer clips (EntranceCoordinator controls direct hinge yaw); correct door_leaf local offset to (+0.45, 1.05, 0.0) under Door_Hinge at (-1.65, 0, 1.8)."
+    },
+    "B1-R3": {
+      "category": "Severe browser canvas overexposure",
+      "finding": "Three.js browser canvas captures have 90.79% (desktop-home) and 86.4% (mobile-home) white clipped pixels (mean RGB > 240), whereas Blender EEVEE raw-frame has 0.0% clipping (mean RGB ~63). Overexposure obliterates pink/lilac hex panel glow, speaker details, and blue carpet.",
+      "actionNeeded": "Calibrate lighting, emissive materials, tone mapping, and exposure in owned asset/harness rendering; submit matched reference evidence."
+    },
+    "B1-R4": {
+      "category": "Report/metadata vs conforming F1 geometry",
+      "finding": "Inspected GLBs and generation scripts ALREADY conform to F1 chair/resident root [0.30, 0, -0.36] and room 4.2x3.6x2.8m. Discrepancy was solely in maker report prose (claimed [-0.05, 0, -0.65]). Armature has 26 joints (not 14). Conforming locators must NOT be moved.",
+      "actionNeeded": "Preserve conforming [0.30, 0, -0.36] locators; update report prose, binding inventory, and metadata to accurately describe the 26-joint skeleton."
+    },
+    "B1-R5": {
+      "category": "Mobile optimization and budget proof",
+      "finding": "mobile-room-lod.glb and production-room-full.glb are byte-identical 919,112 bytes with matching SHA-256 (51acad9b...). No separate mobile LOD exists. Static HUD text was used instead of true renderer.info.",
+      "actionNeeded": "Under finish-contracts-r2, shared geometry is permitted across high/medium/low with runtime tier controls; measure actual renderer.info and frame pacing honestly."
+    },
+    "B1-R6": {
+      "category": "Provenance, tool receipts, and capture labels",
+      "finding": "browser-canvas.png and composited-frame.png are identical in size/content; EEVEE raw-frame.png was confused with WebGL frame. References manifest hash for main-reference.png was mismatched in provenance.json (claimed 4301fa38... vs actual 37adfb0e...).",
+      "actionNeeded": "Provide distinct raw WebGL frame captures vs composited DOM screenshots; record accurate SHA-256 hashes and reproducible command receipts."
+    }
+  },
+  "nextStep": "Return preflight report and wait for Parent GPT Plus #1 formal acceptance of FINISH-00-R2 and issuance of FINISH-B1-R2 packet."
+}

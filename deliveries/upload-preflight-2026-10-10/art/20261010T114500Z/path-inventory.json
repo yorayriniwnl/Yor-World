@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Gemini #2 Art Lane Path & Artifact Inventory",
+  "lane": "Gemini #2 (World / art maker)",
+  "revision": "20261010T114500Z",
+  "date": "2026-10-10",
+  "inspectedRoots": {
+    "finish_b1_candidate": "deliveries/FINISH-B1/",
+    "completion_audits": "deliveries/completion-audits/FINISH-B1/2026-10-10-r1/",
+    "contract_drafts": "docs/planning/reconciliation-packets/finish-contracts-r2/",
+    "architecture_advice": "deliveries/completion-audits/FINISH-00-R2/architecture/r2/",
+    "visual_reference": "references/images/main-reference.png",
+    "preflight_exclusive_root": "deliveries/upload-preflight-2026-10-10/art/20261010T114500Z/"
+  },
+  "b1DeliveredAssets": [
+    {
+      "path": "deliveries/FINISH-B1/assets/production-room-full.glb",
+      "bytes": 919112,
+      "sha256": "51acad9b1c2737b912da09b7a9276369d996c7d86af6ea2f7511ff408f90e084",
+      "notes": "Full room candidate; byte-identical to mobile-room-lod.glb"
+    },
+    {
+      "path": "deliveries/FINISH-B1/assets/mobile-room-lod.glb",
+      "bytes": 919112,
+      "sha256": "51acad9b1c2737b912da09b7a9276369d996c7d86af6ea2f7511ff408f90e084",
+      "notes": "Identical byte-for-byte to production-room-full.glb; not an authored LOD"
+    },
+    {
+      "path": "deliveries/FINISH-B1/assets/resident-production.glb",
+      "bytes": 575900,
+      "sha256": "ee50b195c4fd9036036c339115d1b076341018e9f70125720fa96cde0f692d0a",
+      "notes": "26-joint full body armature; 8 approved animation clips"
+    },
+    {
+      "path": "deliveries/FINISH-B1/assets/fixture-production.glb",
+      "bytes": 320748,
+      "sha256": "c4b48f1998d87d9c148b3fac15d999e85ad4a7ecf3c528f8c96941cf4bbef9d7",
+      "notes": "62 nodes; 8 synchronized chair swivel clips matching resident actions"
+    },
+    {
+      "path": "deliveries/FINISH-B1/assets/group-a-essential.glb",
+      "bytes": 545364,
+      "sha256": "78b0fae71c30a628b98a2552e3d456cfb18ce674c5ba785f0831f7a18b00222d",
+      "notes": "103 nodes; partial essential group"
+    },
+    {
+      "path": "deliveries/FINISH-B1/assets/group-b-props.glb",
+      "bytes": 281896,
+      "sha256": "af4f4cb9fa7aaee1f995aff4057102bd9bd2d67887ea1ed4097be5811bd0b6e3",
+      "notes": "66 nodes; decorative optional props"
+    },
+    {
+      "path": "deliveries/FINISH-B1/assets/on-demand-projects.glb",
+      "bytes": 97584,
+      "sha256": "4f063c5c82510c022802b23aabc76240befa6a885f06c5be564e0fd4172e88fe",
+      "notes": "33 nodes; project visual focus overlays"
+    }
+  ],
+  "b1SourceBlendFiles": [
+    {
+      "path": "deliveries/FINISH-B1/assets/source/production-environment.blend",
+      "bytes": 234049,
+      "notes": "Blender 5.2.2 environment source"
+    },
+    {
+      "path": "deliveries/FINISH-B1/assets/source/fixture-production.blend",
+      "bytes": 1302614,
+      "notes": "Blender 5.2.2 chair fixture source"
+    },
+    {
+      "path": "deliveries/FINISH-B1/assets/source/resident-production.blend",
+      "bytes": 1302730,
+      "notes": "Blender 5.2.2 resident character source"
+    }
+  ],
+  "b1ProceduralScripts": [
+    {
+      "path": "deliveries/FINISH-B1/scripts/build-environment.py",
+      "bytes": 58556,
+      "purpose": "Procedural room environment, desk, door, lighting, and catalog nodes"
+    },
+    {
+      "path": "deliveries/FINISH-B1/scripts/build-resident-fixture.py",
+      "bytes": 36927,
+      "purpose": "Procedural resident character rig and chair fixture with 8 paired clips"
+    },
+    {
+      "path": "deliveries/FINISH-B1/scripts/generate-textures.py",
+      "bytes": 16277,
+      "purpose": "Procedural PBR textures (carpet, deskmat, wallpaper, clock, pegboard, acoustic)"
+    },
+    {
+      "path": "deliveries/FINISH-B1/scripts/adapt_resident.py",
+      "bytes": 1639,
+      "purpose": "Skeletal adaptation helper"
+    },
+    {
+      "path": "deliveries/FINISH-B1/scripts/validate-gltf.mjs",
+      "bytes": 3164,
+      "purpose": "Khronos gltf-validator runner"
+    },
+    {
+      "path": "deliveries/FINISH-B1/scripts/check-dimensions-anchors-clips.mjs",
+      "bytes": 6749,
+      "purpose": "Dimension, anchor, and clip duration validator"
+    },
+    {
+      "path": "deliveries/FINISH-B1/scripts/test-browser-playback.mjs",
+      "bytes": 19594,
+      "purpose": "Playwright headless browser canvas capture and clip test harness"
+    },
+    {
+      "path": "deliveries/FINISH-B1/scripts/create-comparisons.py",
+      "bytes": 4285,
+      "purpose": "Composite side-by-side comparison images with main reference"
+    }
+  ],
+  "futureCandidateOwnedPaths": {
+    "exclusiveDeliveryRoot": "deliveries/FINISH-B1-R2/",
+    "targetAssets": [
+      "deliveries/FINISH-B1-R2/assets/room.glb",
+      "deliveries/FINISH-B1-R2/assets/resident.glb",
+      "deliveries/FINISH-B1-R2/assets/fixture.glb",
+      "deliveries/FINISH-B1-R2/assets/group-b-props.glb",
+      "deliveries/FINISH-B1-R2/assets/on-demand-projects.glb",
+      "deliveries/FINISH-B1-R2/assets/textures/floor-carpet-blue.png",
+      "deliveries/FINISH-B1-R2/assets/textures/deskmat-topography.png",
+      "deliveries/FINISH-B1-R2/assets/textures/monitor-wallpaper.png",
+      "deliveries/FINISH-B1-R2/assets/textures/clock-display-24h.png"
+    ],
+    "targetEvidence": [
+      "deliveries/FINISH-B1-R2/report.md",
+      "deliveries/FINISH-B1-R2/binding-inventory.json",
+      "deliveries/FINISH-B1-R2/provenance.json",
+      "deliveries/FINISH-B1-R2/candidate-asset-manifest.json",
+      "deliveries/FINISH-B1-R2/input-hashes.json",
+      "deliveries/FINISH-B1-R2/output-hashes.json",
+      "deliveries/FINISH-B1-R2/captures/"
+    ]
+  }
+}
