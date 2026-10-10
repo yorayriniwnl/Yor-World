@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ownerIdentity } from "@/features/portfolio/public-content";
 import { StudioLauncher } from "@/features/world/StudioLauncher";
 import { SkillsAtlas } from "@/features/portfolio/skills-atlas";
+import { StudioSceneIllustration } from "@/features/portfolio/StudioSceneIllustration";
 import { readServerPublication } from "@/content/server-publication";
 import styles from "@/features/portfolio/home-refined.module.css";
 
@@ -51,13 +52,16 @@ export default async function HomePage() {
           </div>
 
           <div className={styles.heroAside}>
-            <div className={styles.heroArtwork} aria-hidden="true">
-              <span className={styles.artIndex}>INDEPENDENT / 2026</span>
-              <span className={styles.artGlyph}>Y.</span>
-              <div className={styles.artStatement}><span>DESIGN &amp;<br />ENGINEERING</span><span>BUILT WITH<br />INTENTION ↗</span></div>
+            <div className={styles.heroVisualShell}>
+              <div className={styles.heroArtwork} aria-hidden="true">
+                <StudioSceneIllustration />
+              </div>
+              <span className={styles.artOrbitText}>YOUR WINDOW INTO YOR WORLD</span>
+              <div className={styles.heroFigureCaption}>
+                <span>FIG. 01 / A WORLD BUILT TO EXPLORE</span>
+                <span>ILLUSTRATED STUDIO CONCEPT ↗</span>
+              </div>
             </div>
-            <span className={styles.artOrbitText}>creative engineering ✳</span>
-            <span className={styles.artSideLabel}>3D STUDIO, OPEN TO EXPLORE ↗</span>
           </div>
         </div>
 
