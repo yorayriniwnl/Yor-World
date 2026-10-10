@@ -465,3 +465,217 @@
   .workVisual {transition:none;}
   .workSurface:hover .workVisual {transform:none;}
 }
+
+
+/*
+ * YOR WORLD / portrait-stage edition.
+ * The composition follows the supplied editorial reference: a dominant
+ * full-width identity stage and oversized typography BELOW the stage.
+ * The centered artwork is explicitly an illustration, never a fake photo.
+ */
+.hero {
+  display: block;
+  min-height: 0;
+  padding: 25px clamp(20px,4.4vw,67px) 22px;
+  background: #f6f3e9;
+}
+.hero::before {
+  height: 780px;
+  background: radial-gradient(ellipse at 52% 42%, rgba(222,216,204,.63),transparent 63%);
+}
+.heroStage {
+  height: clamp(450px, 47vw, 590px);
+  margin-top: 20px;
+  position: relative;
+  isolation: isolate;
+  border-top: 1px solid rgba(53,49,61,.12);
+  background:
+    radial-gradient(ellipse 34% 49% at 51% 70%, rgba(211,205,219,.55),transparent 100%),
+    linear-gradient(180deg, rgba(247,244,237,.4),rgba(236,231,223,.4));
+  overflow: hidden;
+}
+.stageWatermark {
+  position: absolute;
+  z-index: -1;
+  inset: 18% 0 auto;
+  text-align: center;
+  font: 800 clamp(130px, 23vw, 345px)/.73 Arial,Helvetica,sans-serif;
+  letter-spacing: -.11em;
+  color: #dfdbd1;
+  opacity: .83;
+  user-select: none;
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translateX(-.04em);
+}
+.stageWatermark::after {
+  content: "";
+  display: block;
+  width: 70%;
+  height: 1px;
+  background: #d1cbc4;
+  margin: 16px auto 0;
+}
+.stageTopCaption {
+  position: absolute;
+  inset: 23px 29px auto;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  color: #4e4a49;
+  font: 750 10px/1.4 Arial,sans-serif;
+  letter-spacing: .13em;
+}
+.stagePortrait {
+  position: absolute;
+  z-index: 2;
+  inset: 8px 0 -8px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  pointer-events: none;
+}
+.stagePortrait .heroVisualShell {
+  width: clamp(320px,38vw,455px);
+  margin: 0;
+  pointer-events: auto;
+  filter: drop-shadow(0 22px 22px rgba(43,36,54,.11));
+  transform-origin: center bottom;
+  transition: transform .5s cubic-bezier(.25,.75,.25,1);
+}
+.stagePortrait .heroArtwork {
+  border-radius: 43% 43% 19px 19px;
+  border: 8px solid #f6f2ea;
+  outline: 1px solid rgba(76,69,91,.2);
+  box-shadow: 0 26px 42px rgba(52,45,63,.2);
+  background: #dbd9d2;
+}
+.stagePortrait .heroVisualShell::before { display:none; }
+.stagePortrait .heroVisualShell:hover { transform:translateY(-9px) rotate(-1deg); }
+.stagePortrait .heroVisualShell:hover .heroArtwork { transform:none; }
+.stagePortrait .heroFigureCaption {
+  position: absolute;
+  inset: auto 17px 28px;
+  padding: 0;
+  z-index: 2;
+  color: #fffdf8;
+  text-shadow: 0 1px 6px rgba(21,23,28,.75);
+  font-size: 8px;
+}
+.stagePortrait .artOrbitText {
+  z-index: 4;
+  top: 25%;
+  right: -23%;
+  border-radius: 6px;
+  padding: 12px 15px;
+  transform: rotate(4deg);
+}
+.stageSignature {
+  position: absolute;
+  z-index: 3;
+  bottom: 11%;
+  right: 3%;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap: 11px;
+  color:#28283b;
+  font: 750 10px/1.55 Arial,Helvetica,sans-serif;
+  letter-spacing:.13em;
+}
+.stageSignatureMark {
+  display:grid;
+  place-items:center;
+  width: 94px;
+  height: 94px;
+  border:1px solid rgba(42,38,58,.31);
+  background:#f7f2e7;
+  border-radius:50%;
+  font: italic 44px/.9 Georgia,serif;
+  letter-spacing:-.09em;
+  box-shadow: 5px 9px 0 rgba(75,62,83,.09);
+}
+.stageSideCaption {
+  position: absolute;
+  z-index: 3;
+  bottom:14%;
+  left:4%;
+  color:#565153;
+  font-size:10px;
+  font-weight:750;
+  letter-spacing:.17em;
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+}
+.heroIntro {
+  display:grid;
+  grid-template-columns:minmax(0,1.22fr) minmax(310px,.78fr);
+  align-items:end;
+  column-gap: clamp(25px,5vw,70px);
+  padding: clamp(40px,5.5vw,78px) 0 clamp(40px,5vw,64px);
+}
+.heroIntro .heroCopy { padding:0; align-self:end; }
+.heroIntro .kicker { margin-bottom:clamp(21px,3vw,40px)!important; }
+.heroIntro h1 {
+  font-size:clamp(72px,8.2vw,121px);
+  line-height:.9;
+  letter-spacing:-.085em;
+}
+.heroIntro h1 em { white-space:nowrap; }
+.heroDetails { padding:0 0 5px; }
+.heroIntro .heroDescription {
+  margin-top:0!important;
+  max-width:470px;
+  font-size:clamp(15px,1.3vw,18px);
+  line-height:1.75;
+  color:#535052;
+}
+.heroIntro .heroActions {
+  display:flex;
+  flex-wrap:wrap;
+  gap:11px;
+  margin-top:26px;
+}
+.heroIntro .heroActions > div {flex:1 1 190px;min-width:170px;max-width:250px;}
+.heroIntro .mainLink {flex:1 1 170px;min-width:175px;}
+.footline { margin-top:0; }
+@media (max-width:1000px) {
+  .heroIntro {grid-template-columns:1fr 1fr;}
+  .heroIntro h1 {font-size:clamp(62px,7.6vw,91px);}
+  .stagePortrait .artOrbitText {right:-12%;}
+  .stageSignatureMark {width:70px;height:70px;font-size:34px;}
+}
+@media (max-width:760px) {
+  .hero {padding:17px 18px 20px;}
+  .heroStage {height: min(118vw,520px);min-height:390px;margin-top:15px;}
+  .stageWatermark {inset:26% 0 auto;font-size:clamp(105px,27vw,196px);}
+  .stagePortrait .heroVisualShell {width:clamp(265px,59vw,370px);}
+  .stageSignature {right:10px;bottom:12%;font-size:8px;}
+  .stageSignatureMark {width:55px;height:55px;font-size:27px;}
+  .stageTopCaption {inset:18px 16px auto;font-size:8px;}
+  .stageSideCaption {font-size:8px;}
+  .stagePortrait .artOrbitText {top:17%;right:-5%;max-width:140px;font-size:8px;padding:8px;}
+  .heroIntro {grid-template-columns:1fr;gap:25px;padding:50px 5px 38px;}
+  .heroIntro h1 {font-size:clamp(65px,10.8vw,95px);}
+  .heroIntro .heroDescription {max-width:590px;}
+}
+@media (max-width:470px) {
+  .heroStage {min-height:370px;height:400px;}
+  .stageWatermark {font-size:29vw;top:29%;}
+  .stagePortrait .heroVisualShell {width:min(72%,310px);}
+  .stagePortrait .heroFigureCaption {font-size:6px;bottom:19px;left:11px;right:11px;}
+  .stagePortrait .artOrbitText {right:-8%;top:21%;max-width:99px;font-size:7px;line-height:1.4;padding:6px;}
+  .stageSignature {bottom:10%;right:2%;gap:6px;font-size:7px;}
+  .stageSignatureMark {height:42px;width:42px;font-size:22px;}
+  .stageSideCaption {left:1%;bottom:7%;font-size:7px;}
+  .heroIntro {padding:36px 2px 36px;}
+  .heroIntro h1 {font-size:clamp(52px,12vw,64px);}
+  .heroIntro .kicker {font-size:12px;margin-bottom:25px!important;}
+  .heroIntro .heroActions > div {flex:1 1 170px;max-width:none;}
+}
+@media (prefers-reduced-motion:reduce) {
+  .stagePortrait .heroVisualShell {transition:none;}
+  .stagePortrait .heroVisualShell:hover {transform:none;}
+}
