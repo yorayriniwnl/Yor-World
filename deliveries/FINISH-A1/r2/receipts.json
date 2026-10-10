@@ -1,0 +1,41 @@
+{
+  "packet": "FINISH-A1",
+  "revision": "r2",
+  "lane": "platform",
+  "executedAt": "2026-10-10T14:00:00Z",
+  "environment": {
+    "node": "v24.19.0",
+    "pnpm": "9.15.9",
+    "os": "Windows_NT"
+  },
+  "receipts": [
+    {
+      "command": "pnpm typecheck",
+      "cwd": "app",
+      "exitCode": 0,
+      "status": "PASS",
+      "summary": "TypeScript compiler verification passed with 0 errors (tsc --noEmit)."
+    },
+    {
+      "command": "pnpm lint",
+      "cwd": "app",
+      "exitCode": 0,
+      "status": "PASS",
+      "summary": "ESLint verification passed with 0 warnings (eslint . --max-warnings=0)."
+    },
+    {
+      "command": "pnpm test:unit",
+      "cwd": "app",
+      "exitCode": 0,
+      "status": "PASS",
+      "summary": "Vitest unit suite passed: 24/24 test files passed, 320/320 tests passed."
+    },
+    {
+      "command": "pnpm test:integration",
+      "cwd": "app",
+      "exitCode": 0,
+      "status": "PASS",
+      "summary": "Vitest integration suite passed: 28/28 test files passed, 292/292 tests passed."
+    }
+  ]
+}
