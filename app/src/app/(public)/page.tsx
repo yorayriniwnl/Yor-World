@@ -3,6 +3,7 @@ import { ownerIdentity } from "@/features/portfolio/public-content";
 import { StudioLauncher } from "@/features/world/StudioLauncher";
 import { SkillsAtlas } from "@/features/portfolio/skills-atlas";
 import { StudioSceneIllustration } from "@/features/portfolio/StudioSceneIllustration";
+import { ProjectVisual } from "@/features/portfolio/ProjectVisual";
 import { readServerPublication } from "@/content/server-publication";
 import styles from "@/features/portfolio/home-refined.module.css";
 
@@ -12,15 +13,8 @@ const artClass: Record<string, string | undefined> = {
   "ai-vs-real": styles.workSurfaceAi,
   zenith: styles.workSurfaceZenith,
   helios: styles.workSurfaceHelios,
-  "yor-talks": styles.workSurfaceTalks,
+  talks: styles.workSurfaceTalks,
 };
-const artLetter: Record<string, string> = {
-  "ai-vs-real": "AI.",
-  zenith: "☼",
-  helios: "H.",
-  "yor-talks": "YT.",
-};
-
 export default async function HomePage() {
   const publication = await readServerPublication();
 
@@ -116,7 +110,7 @@ export default async function HomePage() {
                   <span>PROJECT {String(index + 1).padStart(2, "0")} / {String(publication.projects.length).padStart(2,"0")}</span>
                   <span aria-hidden="true">↗</span>
                 </div>
-                <span className={styles.workArtType} aria-hidden="true">{artLetter[project.slug] ?? "Y."}</span>
+                <span className={styles.workVisual} aria-hidden="true"><ProjectVisual slug={project.slug} /></span>
                 <h3>{project.title}</h3>
               </Link>
               <div className={styles.workFooter}>
