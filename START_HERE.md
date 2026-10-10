@@ -8,6 +8,8 @@ This is the shared entry point for the user and workers with actual local or con
 
 Current completion handoff: [FINISH-04](docs/planning/reconciliation-packets/2026-10-10-finish-04.md) binds the reviewed FINISH-00-R2 design and fresh A1-R3, B1-R3 and C1-R3 corrections. Read its exact ruling before implementation. Received r2 candidates and their earlier audit advice remain preserved; implementation acceptance and canonical integration are pending. Existing FINISH-03 upload prompts discover these assignments through the work-order hub.
 
+Latest local re-audit: [October 11 FINISH-04 results](docs/planning/reviews/2026-10-11-finish-04-reaudit.md) records REWORK for the actual A1/r2, B1-R2 and C1-R2 returns, with new independent behavioral and exported-asset evidence. The existing R3 correction assignments remain current; read the corresponding fresh findings before correction.
+
 | Input | Local file |
 | --- | --- |
 | Main visual reference | [references/images/main-reference.png](references/images/main-reference.png) |

@@ -1,0 +1,93 @@
+{
+  "createdAtUtc": "2026-10-10T21:19:15.350742+00:00",
+  "userRequest": "Reaudit. They are completed. / See local files.",
+  "scope": "Independent complete-scope re-audit of actual locally available FINISH maker deliveries against FINISH-04. No implementation acceptance inferred from labels.",
+  "candidateRoots": [
+    "deliveries/FINISH-A1/r2",
+    "deliveries/FINISH-B1-R2",
+    "deliveries/FINISH-C1-R2"
+  ],
+  "assignedR3RootExistence": {
+    "deliveries/FINISH-A1/r3": false,
+    "deliveries/FINISH-B1-R3": false,
+    "deliveries/FINISH-C1-R3": false
+  },
+  "discovery": "Parent fetched origin successfully and read advertised branch heads; no newer R3 return found. A separate read-only collaborator searched main and seven related Projects/Yor-World-* checkouts. This does not establish absence from other external sessions.",
+  "governingInputs": [
+    {
+      "path": "docs/planning/reconciliation-packets/2026-10-10-finish-04.md",
+      "bytes": 4915,
+      "sha256": "6a2b37e049861c6075c2c738dfa8113ae63f7c4197fac5cf7532c2f092e2e9d3"
+    },
+    {
+      "path": "docs/planning/reviews/2026-10-10-finish-00-r2/decision.json",
+      "bytes": 3122,
+      "sha256": "91365b50ee30f7e22ba74862d34d6dd1c87e7d4868d018d11b2efa720aa3efdb"
+    },
+    {
+      "path": "docs/planning/reconciliation-packets/finish-contracts-r2/output-hashes.json",
+      "bytes": 13402,
+      "sha256": "8038db147824b0a31de1028c330383352177020b2247dd627d1674d6dc14c6af"
+    },
+    {
+      "path": "docs/planning/reviews/2026-10-10-finish-04/readiness.md",
+      "bytes": 5300,
+      "sha256": "91d3328bdd724df4e98c38c86f33dd9d324afaa079d6475f56de285aab9fdd4f"
+    }
+  ],
+  "receipts": [
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exitCode": 0,
+      "stdout": "afc69a9a154d2036562728bb61d9948297871149\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD:app"
+      ],
+      "exitCode": 0,
+      "stdout": "42ea29ec235225046a75959eb19eb386ac2f821d\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "exitCode": 0,
+      "stdout": "?? deliveries/G6/rc4-candidate/ci-results.json\n?? deliveries/G7/preparation/tools/__pycache__/\n?? deliveries/completion-audits/FINISH-A1/finish-04/\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "log",
+        "--all",
+        "--oneline",
+        "--",
+        "deliveries/FINISH-A1/r3",
+        "deliveries/FINISH-B1-R3",
+        "deliveries/FINISH-C1-R3"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "modelAssignments": {
+    "platform": "gpt-6.1-sol / ultra",
+    "art": "gpt-6.1-sol / ultra",
+    "runtime": "gpt-6.1-sol / ultra"
+  },
+  "modelProvenance": "Actual collaboration tool assignments for three disjoint audit packets; no external GPT/Gemini account dispatch or serving-infrastructure introspection claimed.",
+  "canonicalWritesAuthorized": false,
+  "makerWritesAuthorized": false
+}

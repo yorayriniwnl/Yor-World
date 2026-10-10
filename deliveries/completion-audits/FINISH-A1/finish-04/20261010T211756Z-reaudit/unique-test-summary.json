@@ -1,0 +1,131 @@
+{
+  "uniqueExecutedCases": 24,
+  "passed": 6,
+  "failed": 18,
+  "overlap": 0,
+  "rows": [
+    {
+      "name": "service rejects omitted review with no durable writes",
+      "status": "failed",
+      "run": "requirement-results.json"
+    },
+    {
+      "name": "API rejects omitted review with 422 and no durable writes",
+      "status": "failed",
+      "run": "requirement-results.json"
+    },
+    {
+      "name": "review uses durable current publication rather than process-local revision",
+      "status": "failed",
+      "run": "requirement-results.json"
+    },
+    {
+      "name": "review takes one consistent transaction and ordered publication/project locks",
+      "status": "failed",
+      "run": "requirement-results.json"
+    },
+    {
+      "name": "review returns exact DTO checks, site identity, draft vector and canPublish",
+      "status": "failed",
+      "run": "requirement-results.json"
+    },
+    {
+      "name": "old review rejects valid approved same-ID object-key-only change with 409 and no writes",
+      "status": "failed",
+      "run": "requirement-results.json"
+    },
+    {
+      "name": "old review rejects valid approved same-ID provenance change with 409 and no writes",
+      "status": "failed",
+      "run": "requirement-results.json"
+    },
+    {
+      "name": "old review rejects valid approved same-ID createdAt change with 409 and no writes",
+      "status": "failed",
+      "run": "requirement-results.json"
+    },
+    {
+      "name": "old review rejects valid approved same-ID approvalAudit change with 409 and no writes",
+      "status": "failed",
+      "run": "requirement-results.json"
+    },
+    {
+      "name": "review verifies actual Storage bytes against recorded hash",
+      "status": "failed",
+      "run": "requirement-results.json"
+    },
+    {
+      "name": "private image proxy rejects tampered Storage bytes",
+      "status": "failed",
+      "run": "requirement-results.json"
+    },
+    {
+      "name": "draft save rejects a missing/unapproved image with 422 and unchanged pointer",
+      "status": "failed",
+      "run": "requirement-results.json"
+    },
+    {
+      "name": "private preview honors genuine CandidateX projectId and keeps public CandidateX absent",
+      "status": "failed",
+      "run": "requirement-results.json"
+    },
+    {
+      "name": "rollback rejects omitted expectedRevision/reason with 422",
+      "status": "failed",
+      "run": "requirement-results.json"
+    },
+    {
+      "name": "published rendering rejects a private proxy URL with traversal/query suffix",
+      "status": "failed",
+      "run": "requirement-results.json"
+    },
+    {
+      "name": "review hash ignores equivalent JSON object insertion order",
+      "status": "failed",
+      "run": "requirement-results.json"
+    },
+    {
+      "name": "media list supplies assets and the approved fixture is valid",
+      "status": "passed",
+      "run": "requirement-results.json"
+    },
+    {
+      "name": "denies nonowner across private preview/publish/project/rollback/media routes",
+      "status": "passed",
+      "run": "requirement-results.json"
+    },
+    {
+      "name": "denies aal1 across private preview/publish/project/rollback/media routes",
+      "status": "passed",
+      "run": "requirement-results.json"
+    },
+    {
+      "name": "denies revoked across private preview/publish/project/rollback/media routes",
+      "status": "passed",
+      "run": "requirement-results.json"
+    },
+    {
+      "name": "denies anonymous private preview with 401 and no-store",
+      "status": "passed",
+      "run": "requirement-results.json"
+    },
+    {
+      "name": "API rejects disagreed review publication revision with 422",
+      "status": "failed",
+      "run": "requirement-delta-results.json"
+    },
+    {
+      "name": "publication rechecks unchanged-row tampered Storage bytes before writes",
+      "status": "failed",
+      "run": "requirement-delta-results.json"
+    },
+    {
+      "name": "changed draft after review rejects with 409 and no snapshot/history/audit writes",
+      "status": "passed",
+      "run": "requirement-delta-results.json"
+    }
+  ],
+  "discoveredDeltaCount": 24,
+  "deltaSkippedPriorCases": 21,
+  "scope": "embedded PGlite/synthetic auth/mocked Storage/React server rendering; no browser/native/provider"
+}

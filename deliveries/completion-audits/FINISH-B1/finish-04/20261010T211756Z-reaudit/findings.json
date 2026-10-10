@@ -1,0 +1,111 @@
+{
+  "advice": "REWORK",
+  "acceptance": false,
+  "findingIds": [
+    "B3-01",
+    "B3-02",
+    "B3-03",
+    "B3-04",
+    "B3-05"
+  ],
+  "findings": [
+    {
+      "id": "B3-01",
+      "severity": "MEDIUM",
+      "type": "invalid_measurement_evidence",
+      "status": "OPEN",
+      "location": "deliveries/FINISH-B1-R2/scripts/generate-manifest-and-metadata.py:54",
+      "contract": "docs/planning/production-prompts/corrections-2026-10-10/02-GEMINI2-B1-R3.md:12",
+      "trigger": "Generate dimensions-anchors-check.json and rest-transforms.json from current scripts.",
+      "expected": "Executable measurements derive evaluated geometry, world/local rest transforms, resource identity and tolerances from current exported bytes.",
+      "observed": "Dimensions/anchors have literal expected and measured values with unconditional PASS; supplied rest-transforms contains local TRS only. This does not establish measured geometry. Independent new 25 checks and envelope/desk bounds are conforming; no wrong rigid geometry inferred.",
+      "evidence": [
+        "geometry-checks.json",
+        "glb-inventory.json",
+        "skeleton-comparison.json",
+        "ownership-checks.json"
+      ],
+      "makerAction": "Retain conforming assets, implement actual measured geometry/transform/bind-matrix/resource checks and bind raw results/tolerances to export SHA-256 in the fresh revision."
+    },
+    {
+      "id": "B3-02",
+      "severity": "HIGH",
+      "type": "missing_required_behavior_evidence",
+      "status": "OPEN",
+      "location": "deliveries/FINISH-B1-R2/scripts/test-browser-playback.mjs:531",
+      "contract": "docs/planning/reconciliation-packets/finish-contracts-r2/03-asset-bindings.md:80",
+      "trigger": "Run supplied browser clip and door validation.",
+      "expected": "Full >=60Hz exported-deformation checks, loop/transition/repetition/cancel/interrupt outcomes and entire door/frame/camera clearance path.",
+      "observed": "Each clip waits 200ms then unconditionally appends PASS. Door jumps between three angles with 100ms waits; no 2.5s progression or clearance oracle. Native Blender 60Hz evidence is separate. New independent browser diagnostics cover complete clip intervals and panel positions, but no supplied director, loop, transitions, 20 repeats, finite cancellation, skip/navigation/re-entry or frame/camera clearance evidence exists. These missing outcomes are NOT RUN, not observed collision failures.",
+      "evidence": [
+        "browser-deformation-results.json",
+        "browser-console.json"
+      ],
+      "makerAction": "Measure complete clips plus loop seams and actual action transitions; add genuine assertions/raw samples for twenty repeats and finite start/mid/end cancellation/skip/navigation/re-entry. Measure frame/hinge sweep and allocated camera aperture/frustum path with one direct-transform owner; preserve native results separately."
+    },
+    {
+      "id": "B3-03",
+      "severity": "MEDIUM",
+      "type": "capture_provenance_and_budget_evidence",
+      "status": "OPEN",
+      "location": "deliveries/FINISH-B1-R2/scripts/test-browser-playback.mjs:488",
+      "relatedLocations": [
+        "deliveries/FINISH-B1-R2/scripts/test-browser-playback.mjs:480",
+        "deliveries/FINISH-B1-R2/scripts/generate-manifest-and-metadata.py:452",
+        "deliveries/FINISH-B1-R2/validator-logs/budget-evidence.json:38",
+        "deliveries/FINISH-B1-R2/report.md:105"
+      ],
+      "contract": "docs/planning/reconciliation-packets/finish-contracts-r2/03-asset-bindings.md:125",
+      "trigger": "Inspect supplied capture index/raw images and render budget PASS.",
+      "expected": "Raw canvas/native/DOM distinct, true desktop/mobile surfaces, project/greeting captures, per-capture provenance and measured applicable tier/frame/GPU budgets or exact runtime-dependent NOT RUN owner.",
+      "observed": "Five canonical view folders exist; project-focus/greeting-contact absent. browser-canvas.png is a compositor screenshot visibly containing DOM HUD. Mobile canvas actual1920x1080 conflicts with declared720x1280; setViewportSize never resizes renderer/canvas or camera aspect. Index provides bytes/hash only. 398 calls is unconditionally PASS with future batching cited; diagnostic reproduces398 desktop/362 mobile calls in raw harness. Target tier/cold/warm/network/overlap/GPU/frame-time proof is absent.",
+      "evidence": [
+        "capture-exposure-check.json",
+        "browser-frame-diagnostic.json",
+        "browser-deformation-results.json",
+        "manifest-verification.json"
+      ],
+      "makerAction": "Supply true framebuffer readback alongside DOM/native captures, real resized mobile renderer/aspect, required focus/greeting views and complete per-capture provenance. Remove unconditional budget PASS; prove ceilings or explicitly mark C2 batching/tier and C3 target-profile thresholds NOT RUN. Request bounded Parent amendment for any new LOD/quality change."
+    },
+    {
+      "id": "B3-04",
+      "severity": "HIGH",
+      "type": "observed_export_behavior_defect",
+      "status": "OPEN",
+      "location": "deliveries/FINISH-B1-R2/scripts/build-resident-fixture.py:35",
+      "contract": "docs/planning/reconciliation-packets/finish-contracts-r2/03-asset-bindings.md:72",
+      "trigger": "Sample chair-root relative rest yaw at turn_to_visitor t=1.2000000477s; greeting_nod start/end; return_to_work start/end.",
+      "expected": "Chair/body coordinated0->35degrees, hold35 greeting,35->0 return.",
+      "observed": "Actual browser chair-root yaw0->125.000022505deg; greeting125.000022911deg; return125.000022911->0deg. Chair-root is a scene-root sibling with identity rest quaternion/unit scale; yaw is local/world Y relative identity rest, not inferred heading. Source TURN=radians(125) and current GLB rotation channel match.",
+      "asset": "assets/fixture.glb#/nodes/19; animation channels targeting chair-root rotation",
+      "evidence": [
+        "browser-deformation-results.json",
+        "glb-inventory.json"
+      ],
+      "makerAction": "Correct the maker motion generation/paired resident-chair exports to accepted35degree curve and validate all complete intervals/seams/clearances without retargeting skeleton or changing the contract."
+    },
+    {
+      "id": "B3-05",
+      "severity": "HIGH",
+      "type": "observed_export_contact_defect",
+      "status": "OPEN",
+      "location": "deliveries/FINISH-B1-R2/scripts/build-resident-fixture.py:308",
+      "relatedLocations": [
+        "deliveries/FINISH-B1-R2/scripts/build-resident-fixture.py:315",
+        "deliveries/FINISH-B1-R2/scripts/build-resident-fixture.py:524",
+        "deliveries/FINISH-B1-R2/scripts/build-resident-fixture.py:529",
+        "deliveries/FINISH-B1-R2/scripts/build-environment.py:704",
+        "deliveries/FINISH-B1-R2/scripts/build-environment.py:711"
+      ],
+      "contract": "docs/planning/reconciliation-packets/finish-contracts-r2/03-asset-bindings.md:74",
+      "trigger": "Sample actual skinned hand/finger vertices at coding_idle t=0 and return_to_work t=1.2999999523s; mouse_idle t=2s after full reach.",
+      "expected": "Returned hands align to actual room keys; mouse action reaches actual room mouse and returns safely (contract lines70,74,80).",
+      "observed": "Return/coding left-hand X[.095490,.191000], right[.409000,.504510] versus actual keycaps X[-.240000,.080000]: both horizontal bounds disjoint. Return wrists(.155000,.822000,-.815000)/(.445000,.822000,-.815000). Mouse final hand X[.564000,.659510] versus actual mouse X[.207500,.272500], wrist(.600000,.825000,-.800000); supplied mouse_reach remains1 at end. Old proof props X=.30/.58 differ from final room X=-.08/.24.",
+      "evidence": [
+        "browser-deformation-results.json",
+        "geometry-checks.json"
+      ],
+      "makerAction": "Bind hand/finger trajectories and finite mouse return to final room keyboard/mouse world geometry while preserving accepted roots and pinned skeleton; rerun actual exported browser contact/clearance/seam/cancel proof. Do not shift conforming room or add runtime offsets to hide the mismatch."
+    }
+  ]
+}

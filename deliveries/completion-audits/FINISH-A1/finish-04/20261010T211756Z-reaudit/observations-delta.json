@@ -1,0 +1,58 @@
+{
+  "scope": "PGlite embedded SQL, synthetic auth registry and mocked Storage; no browser/native/provider execution",
+  "observations": [
+    {
+      "trigger": "review expectedPublicationRevision 7 versus body expectedRevision 1",
+      "observed": {
+        "status": 200,
+        "counts": [
+          {
+            "content": 1,
+            "history": 2,
+            "audit": 1
+          }
+        ]
+      }
+    },
+    {
+      "trigger": "tampered bytes publication",
+      "observed": {
+        "error": "undefined",
+        "before": [
+          {
+            "content": 0,
+            "history": 0,
+            "audit": 2
+          }
+        ],
+        "after": [
+          {
+            "content": 1,
+            "history": 2,
+            "audit": 3
+          }
+        ],
+        "reads": []
+      }
+    },
+    {
+      "trigger": "changed draft rejected with no publication writes",
+      "observed": {
+        "before": [
+          {
+            "content": 0,
+            "history": 0,
+            "audit": 1
+          }
+        ],
+        "after": [
+          {
+            "content": 0,
+            "history": 0,
+            "audit": 1
+          }
+        ]
+      }
+    }
+  ]
+}

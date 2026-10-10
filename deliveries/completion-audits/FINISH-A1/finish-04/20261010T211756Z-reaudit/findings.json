@@ -1,0 +1,87 @@
+{
+  "advice": "REWORK",
+  "implementationAcceptance": false,
+  "sourceLocationBase": "deliveries/FINISH-A1/r2",
+  "findings": [
+    {
+      "id": "A3-01",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "title": "Patch applicability and exhaustive path ownership fail",
+      "locations": [
+        "source.patch",
+        "source/src/contracts/content.ts",
+        "source/tests/unit/completion-authoring-blocks.test.ts"
+      ],
+      "evidence": [
+        "identity-verification.json",
+        "identity-command-receipts.json"
+      ]
+    },
+    {
+      "id": "A3-02",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "title": "Omitted or mismatched review permits publication",
+      "locations": [
+        "source/src/server/content/publish.ts:219",
+        "source/src/server/content/publish.ts:448",
+        "source/src/app/api/admin/publish/route.ts:52"
+      ],
+      "evidence": [
+        "requirement-results.json",
+        "requirement-delta-results.json",
+        "observations-delta.json"
+      ]
+    },
+    {
+      "id": "A3-03",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "title": "Durable review, canonical hash and complete approved-media byte identity fail",
+      "locations": [
+        "source/src/server/content/preview.ts:97",
+        "source/src/server/content/preview.ts:122",
+        "source/src/server/content/preview.ts:289",
+        "source/src/server/content/publish.ts:448"
+      ],
+      "evidence": [
+        "requirement-results.json",
+        "requirement-delta-results.json",
+        "observations.json",
+        "observations-delta.json"
+      ]
+    },
+    {
+      "id": "A3-04",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "title": "Actual approved picker, save and private image validation are disconnected",
+      "locations": [
+        "source/src/features/admin/project-editor.tsx:53",
+        "source/src/app/api/admin/preview/media/[id]/route.ts:81"
+      ],
+      "evidence": [
+        "requirement-results.json",
+        "observations.json"
+      ]
+    },
+    {
+      "id": "A3-05",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "title": "Private review, truthful authoring, rollback and required execution evidence remain incomplete",
+      "locations": [
+        "source/src/features/admin/project-editor.tsx:164",
+        "source/src/features/portfolio/case-study.tsx:31",
+        "source/src/server/content/preview.ts:10"
+      ],
+      "evidence": [
+        "requirement-results.json",
+        "execution-receipts.json",
+        "report.md"
+      ]
+    }
+  ],
+  "narrativeProvenance": "Parent compiled from independent reviewer saved source/identity/behavioral results after reviewer usage limit."
+}

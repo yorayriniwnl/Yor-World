@@ -1,0 +1,55 @@
+{
+  "patchSha256": "a3df6b2b209a8c2cf3faa5c5c17a09b07a04c95dfda067c02f9067df1238cbfe",
+  "earlierNestedCheckWasNoOp": true,
+  "earlierCheckExplanation": "git discovery found parent repository and skipped all app paths outside the nested working prefix; exit 0 did not establish applicability. Corrected check excludes parent discovery. No production/index mutation occurred.",
+  "isolatedExactBaseCheckExit": 128,
+  "canonicalUnchangedExactAppCheckExit": 128,
+  "appliedPatch": false,
+  "agreementWithReplacements": "NOT RUN: applicable patch prerequisite failed; diagnostic assembly separately matches all 29 replacements byte for byte",
+  "receipts": [
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "--show-toplevel"
+      ],
+      "cwd": "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\completion-audits\\FINISH-C1\\finish-04\\20261010T211756Z-reaudit\\scratch",
+      "environmentOverride": {
+        "GIT_CEILING_DIRECTORIES": "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\completion-audits\\FINISH-C1\\finish-04\\20261010T211756Z-reaudit"
+      },
+      "exit": 128,
+      "stdout": "",
+      "stderr": "fatal: not a git repository (or any of the parent directories): .git\n"
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "--verbose",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\FINISH-C1-R2\\source.patch"
+      ],
+      "cwd": "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\completion-audits\\FINISH-C1\\finish-04\\20261010T211756Z-reaudit\\scratch",
+      "environmentOverride": {
+        "GIT_CEILING_DIRECTORIES": "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\completion-audits\\FINISH-C1\\finish-04\\20261010T211756Z-reaudit"
+      },
+      "exit": 128,
+      "stdout": "",
+      "stderr": "Checking patch app/src/contracts/experience.ts => \"app/src/contracts/experience.tsdeliveries/FINISH-C1-R2\\\\source/src/contracts/experience.ts\"...\nerror: invalid path 'app/src/contracts/experience.tsdeliveries/FINISH-C1-R2\\source/src/contracts/experience.ts'\n"
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "--verbose",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\FINISH-C1-R2\\source.patch"
+      ],
+      "cwd": "C:\\Users\\yoray\\Projects\\Yor World",
+      "environmentOverride": {},
+      "exit": 128,
+      "stdout": "",
+      "stderr": "Checking patch app/src/contracts/experience.ts => \"app/src/contracts/experience.tsdeliveries/FINISH-C1-R2\\\\source/src/contracts/experience.ts\"...\nerror: invalid path 'app/src/contracts/experience.tsdeliveries/FINISH-C1-R2\\source/src/contracts/experience.ts'\n"
+    }
+  ]
+}
