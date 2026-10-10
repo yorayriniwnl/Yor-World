@@ -1,0 +1,61 @@
+{
+  "delivery": "FINISH-C1-R3",
+  "date": "2026-10-11",
+  "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+  "baseAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+  "acceptedDesignOutputManifestSha256": "8038db147824b0a31de1028c330383352177020b2247dd627d1674d6dc14c6af",
+  "commands": [
+    {
+      "command": "pnpm test:unit",
+      "exitCode": 0,
+      "files": "26 passed",
+      "tests": 347,
+      "log": "evidence/unit.log"
+    },
+    {
+      "command": "pnpm exec vitest run --config vitest.integration.config.ts --maxWorkers=1 --no-file-parallelism",
+      "exitCode": 0,
+      "files": "28 passed",
+      "tests": 290,
+      "log": "evidence/integration.log"
+    },
+    {
+      "command": "pnpm lint",
+      "exitCode": 0,
+      "warnings": 0,
+      "log": "evidence/lint.log"
+    },
+    {
+      "command": "pnpm exec tsc --noEmit",
+      "exitCode": 0,
+      "log": "evidence/typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "exitCode": 0,
+      "framework": "Next.js 16.3.8",
+      "log": "evidence/build.log"
+    },
+    {
+      "command": "pnpm test:e2e -- tests/e2e/world/completion-loading-pause.spec.ts",
+      "exitCode": 0,
+      "browser": "Chromium / production server",
+      "passed": 3,
+      "failed": 0,
+      "flaky": 0,
+      "log": "evidence/browser.log",
+      "results": "evidence/browser-results.json"
+    }
+  ],
+  "browserMeasurements": "evidence/browser-measurements.json",
+  "patchCheck": "evidence/patch-check-receipt.json",
+  "independentAudit": "PENDING",
+  "patch": {
+    "changedPathCount": 28,
+    "returnedSourcePathCount": 29,
+    "unchangedPaths": [
+      "app/src/features/world/SceneIntegrator.ts"
+    ],
+    "sourcePatchSha256": "e1be558f734378fe69659dcf8271c4e5e57d87fbfbdca1582823be103082dc5d"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "result": "SUPERSEDED-ENUMERATION-METHOD",
+  "attempts": [
+    {
+      "candidate": "candidate-patchcheck-r7",
+      "gitApplyCheck": "passed",
+      "gitApply": "passed",
+      "failedValidation": "Compared git diff --name-only on the applied copy; that command omits untracked newly added files, so it did not equal candidate diff --name-only with intent-to-add entries."
+    },
+    {
+      "candidate": "candidate-patchcheck-r8",
+      "gitApplyCheck": "passed",
+      "gitApply": "passed",
+      "failedValidation": "git status --porcelain without --untracked-files=all collapsed newly added directories and did not enumerate each added path."
+    },
+    {
+      "candidate": "candidate-patchcheck-r9",
+      "gitApplyCheck": "passed",
+      "gitApply": "passed",
+      "failedValidation": "The receipt helper stripped leading spaces from the first porcelain status line before parsing XY columns, so it omitted the first modified path. Direct status inspection confirmed that path was modified."
+    }
+  ],
+  "recovery": "The final receipt reads porcelain output without stripping it, then parses each status row, verifies the exact patch path set, and hashes every source output."
+}

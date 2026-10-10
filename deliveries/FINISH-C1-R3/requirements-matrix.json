@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "delivery": "FINISH-C1-R3",
+  "implementationStatus": "RETURNED_FOR_INDEPENDENT_AUDIT",
+  "acceptanceStatus": "PENDING",
+  "findings": [
+    {
+      "id": "RT-RA-01",
+      "status": "PASS",
+      "evidence": [
+        "evidence/patch-check-receipt.json"
+      ],
+      "result": "UTF-8 patch checks and applies to the bound app tree; all 29 files match source bytes."
+    },
+    {
+      "id": "RT-RA-02",
+      "status": "PASS",
+      "evidence": [
+        "source/src/contracts/experience.ts",
+        "evidence/unit.log"
+      ],
+      "result": "Version-1 Preferences parse without paused and default it to false."
+    },
+    {
+      "id": "RT-RA-03",
+      "status": "PASS",
+      "evidence": [
+        "source/src/features/experience/preferences-store.ts",
+        "evidence/unit.log"
+      ],
+      "result": "A denied localStorage getter retains validated document-memory preferences across store/runtime instances."
+    },
+    {
+      "id": "RT-RA-04",
+      "status": "PASS",
+      "evidence": [
+        "evidence/browser-results.json",
+        "evidence/browser-measurements.json"
+      ],
+      "result": "Saved paused=true is active on initial real render after failed-load retry and after full /about navigation/re-entry."
+    },
+    {
+      "id": "RT-RA-05",
+      "status": "PASS",
+      "evidence": [
+        "source/tests/unit/project-transition.test.ts",
+        "evidence/unit.log"
+      ],
+      "result": "Explicit painting spring settles while global pause remains set; greeting and rendered coding action are separately verified."
+    },
+    {
+      "id": "RT-RA-06",
+      "status": "PASS",
+      "evidence": [
+        "source/tests/unit/world/completion-essential-loader.test.ts",
+        "evidence/unit.log"
+      ],
+      "result": "Required bytes remain indeterminate until three trustworthy same-representation lengths are known; shorter/longer EOF mismatches, compressed/unknown lengths, and ArrayBuffer byte length are covered."
+    },
+    {
+      "id": "RT-RA-07",
+      "status": "PASS",
+      "evidence": [
+        "source/tests/e2e/world/completion-loading-pause.spec.ts",
+        "evidence/browser-results.json"
+      ],
+      "result": "Real indeterminate progress omits aria-valuenow and percent text and selects indeterminate styling."
+    },
+    {
+      "id": "RT-RA-08",
+      "status": "PASS",
+      "evidence": [
+        "source/tests/unit/lifecycle-manager.test.ts",
+        "evidence/browser-results.json",
+        "evidence/browser-measurements.json"
+      ],
+      "result": "Only required high-water/decode/integration progress resets the 15-second watchdog; a held production request fails at 15.34 seconds with retry and continue actions."
+    },
+    {
+      "id": "RT-RA-09",
+      "status": "PASS",
+      "evidence": [
+        "source/tests/unit/lifecycle-manager.test.ts",
+        "evidence/unit.log"
+      ],
+      "result": "Generations are monotonic and stale token/generation progress and entrance callbacks cannot affect the current session."
+    },
+    {
+      "id": "RT-RA-10",
+      "status": "PASS",
+      "evidence": [
+        "source/tests/unit/asset-loader.test.ts",
+        "evidence/unit.log"
+      ],
+      "result": "Retry ceiling is two automatic retries with exact 500ms/1500ms waits, session-local policy, and abortable cleanup."
+    },
+    {
+      "id": "RT-RA-11",
+      "status": "PASS",
+      "evidence": [
+        "source/tests/unit/world/completion-essential-loader.test.ts",
+        "evidence/integration.log"
+      ],
+      "result": "Throwing/rejected optional consumers release once; successful adoption uses the shared session ledger and optional abort remains independent."
+    },
+    {
+      "id": "RT-RA-12",
+      "status": "PASS",
+      "evidence": [
+        "source/tests/integration/world/completion-runtime-lifecycle.test.ts",
+        "evidence/browser-results.json",
+        "evidence/browser-measurements.json"
+      ],
+      "result": "Typed per-ID results buffer before integration and replay only to each ID?s target. Scene target resolution rejects absent IDs and installation is transactional; production browser reports desk_mat and monitor_screen_center separately."
+    },
+    {
+      "id": "RT-RA-13",
+      "status": "PASS",
+      "evidence": [
+        "source/src/features/world/asset-resources.ts",
+        "source/tests/unit/world/completion-essential-loader.test.ts",
+        "evidence/unit.log"
+      ],
+      "result": "Shared/pruned GLTF geometry, material, map texture, ImageBitmap, object URLs, and late registration are captured and released idempotently."
+    },
+    {
+      "id": "RT-RA-14",
+      "status": "PASS",
+      "evidence": [
+        "source/tests/unit/runtime-material-quality.test.ts",
+        "source/tests/integration/world/completion-runtime-lifecycle.test.ts",
+        "evidence/browser-measurements.json"
+      ],
+      "result": "Late maps stay target-isolated across LOW/HIGH, use sRGB, roll back atomically, and are excluded from static batching by matching mutable-name rules."
+    },
+    {
+      "id": "RT-RA-15",
+      "status": "PASS",
+      "evidence": [
+        "evidence/build.log",
+        "evidence/browser.log",
+        "evidence/browser-results.json",
+        "evidence/browser-measurements.json"
+      ],
+      "result": "Three production-Chromium scenarios cover loading, <50ms Continue, failed retry/recreation, pause restoration, rendered action time, route round-trip, late textures/quality, and genuine watchdog recovery."
+    },
+    {
+      "id": "C3-01",
+      "status": "PASS",
+      "evidence": [
+        "evidence/patch-check-receipt.json",
+        "evidence/unit.log",
+        "evidence/browser-results.json"
+      ],
+      "result": "Base identity, historical pause preference compatibility and denial-safe persistence."
+    },
+    {
+      "id": "C3-02",
+      "status": "PASS",
+      "evidence": [
+        "evidence/unit.log",
+        "evidence/integration.log",
+        "evidence/browser-results.json"
+      ],
+      "result": "Factual progress, generations, retry ceilings, watchdog and accessible recovery."
+    },
+    {
+      "id": "C3-03",
+      "status": "PASS",
+      "evidence": [
+        "evidence/integration.log",
+        "evidence/browser-measurements.json"
+      ],
+      "result": "Typed, per-session optional result adoption and rollback."
+    },
+    {
+      "id": "C3-04",
+      "status": "PASS",
+      "evidence": [
+        "evidence/unit.log"
+      ],
+      "result": "Unified idempotent Three.js/bitmap/object-URL resource ownership."
+    },
+    {
+      "id": "C3-05",
+      "status": "PASS",
+      "evidence": [
+        "evidence/unit.log",
+        "evidence/browser-measurements.json"
+      ],
+      "result": "Late material map refresh, LOW/HIGH consistency, exact target names and static batch exclusion."
+    }
+  ],
+  "limitations": [
+    "This is implementation evidence from the assigned local worker, not GPT #2 independent audit or Parent acceptance.",
+    "The canonical app tree remains unchanged; integration requires a later explicit I1 packet after upstream platform/art corrections and this runtime revision are independently accepted.",
+    "Physical mobile devices, assistive-technology sessions, live hosted/CDN behavior and real context-loss recovery are not exercised by this local candidate.",
+    "The first parallel integration run exhausted Node worker memory. The successful serial worker run is recorded; the earlier OOM receipt is preserved."
+  ]
+}

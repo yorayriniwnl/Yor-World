@@ -1,0 +1,19 @@
+{
+  "attempt": "final full integration suite using default parallelism",
+  "command": "pnpm test:integration",
+  "exitCode": 1,
+  "observedResult": {
+    "passedFiles": 25,
+    "totalFiles": 28,
+    "passedTests": 259,
+    "unhandledWorkerErrors": 3
+  },
+  "failure": "Node fatal process out of memory while Vitest fork workers were starting; no assertion failure was reported for the completed tests.",
+  "supersededBy": {
+    "command": "pnpm exec vitest run --config vitest.integration.config.ts --maxWorkers=1 --no-file-parallelism",
+    "exitCode": 0,
+    "passedFiles": 28,
+    "passedTests": 290,
+    "evidence": "evidence/integration.log"
+  }
+}
