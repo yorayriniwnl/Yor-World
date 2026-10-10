@@ -16,7 +16,7 @@ import { WorldInteractionBinding } from "./WorldInteractionBinding";
 import { saveReturnSnapshot } from "../experience/return-snapshot";
 import { RuntimeMaterialQuality } from "./RuntimeMaterialQuality";
 import { LowQualityBatch } from "./LowQualityBatch";
-import { isSoftwareRenderer } from "./device-capabilities";
+import { isSoftwareRenderer, rasterDprCap } from "./device-capabilities";
 import { configureProductionLighting } from "./ProductionLighting";
 
 export interface WorldRuntimeOptions {
@@ -221,8 +221,9 @@ export class WorldRuntime {
         ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)
         : gl.getParameter(gl.RENDERER) || "WebGL";
       this.softwareRenderer = isSoftwareRenderer(this.webglRendererName);
-      const maxDpr = this.qualityTier === "high" ? 1.5 : this.qualityTier === "medium" ? 1.25 : this.softwareRenderer ? 0.3 : 1;
+      const maxDpr = rasterDprCap(this.qualityTier, this.softwareRenderer);
       this.renderer.setPixelRatio(Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, maxDpr));
+      if (this.softwareRenderer) this.renderer.shadowMap.enabled = false;
     } catch (e) {
       const err = new Error(`WebGL context creation failed: ${(e as Error).message}`);
       this.lifecycleManager.fail(err.message, token);
@@ -503,22 +504,19 @@ export class WorldRuntime {
     this.qualityTier = tier;
     this.applySceneQuality(tier);
     if (!this.renderer) return;
-    if (tier === "high") {
-      this.renderer.setPixelRatio(Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, 1.5));
-      this.renderer.shadowMap.enabled = true;
-      this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    } else if (tier === "medium") {
-      this.renderer.setPixelRatio(Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, 1.25));
-      this.renderer.shadowMap.enabled = true;
-      this.renderer.shadowMap.type = THREE.PCFShadowMap;
-    } else if (tier === "low") {
-      // Reduce real raster work even when device DPR is already 1. CSS/DOM
-      // controls and camera framing keep their full logical resolution.
-      this.renderer.setPixelRatio(Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, this.softwareRenderer ? 0.3 : 1));
-      this.renderer.shadowMap.enabled = false;
-    } else if (tier === "static") {
+    if (tier === "static") {
       this.pause();
+      return;
     }
+    // A user selecting Medium or High must not undo the software-renderer
+    // cap: a full-screen 3D canvas can otherwise freeze pointer controls.
+    this.renderer.setPixelRatio(Math.min(
+      typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1,
+      rasterDprCap(tier, this.softwareRenderer),
+    ));
+    this.renderer.shadowMap.enabled = !this.softwareRenderer && tier !== "low";
+    if (tier === "high") this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    else if (tier === "medium") this.renderer.shadowMap.type = THREE.PCFShadowMap;
   }
 
   private applySceneQuality(tier: QualityTier): void {

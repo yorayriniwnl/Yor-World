@@ -62,7 +62,7 @@ test("five cold loads per desktop and mobile profile record actual production pa
         });
         await page.goto("/");
         await page.waitForLoadState("networkidle");
-        await expect(page.getByRole("heading", { level: 1 })).toContainText("A little world.");
+        await expect(page.getByRole("heading", { level: 1 })).toContainText("Full-stack");
         const timing = await page.evaluate(() => {
           const resources = performance.getEntriesByType("resource") as PerformanceResourceTiming[];
           const navigation = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];

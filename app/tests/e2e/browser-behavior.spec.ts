@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const evidenceDir = process.env.G1_EVIDENCE_DIR || process.env.W3_EVIDENCE_DIR || "";
+const evidenceDir = process.env.G1_EVIDENCE_DIR || process.env.W3_EVIDENCE_DIR || process.env.B5_EVIDENCE_DIR || "";
 const screenshotDir = evidenceDir
   ? path.join(evidenceDir, "screenshots")
   : path.resolve(__dirname, "../../evidence/screenshots");
@@ -95,7 +95,7 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
     });
 
     await page.goto("/");
-    await expect(page.locator("h1")).toContainText("A little world");
+    await expect(page.locator("h1")).toContainText("Full-stack");
     await captureScreenshot(page, "01-load-landing");
 
     await page.locator('[data-testid="studio-disclosure"] summary').click();
@@ -104,6 +104,17 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
     // Verify ZERO .glb files were loaded prior to explicit entry
     expect(glbRequests).toEqual([]);
     await expect(page.locator('[data-testid="world-canvas"]')).toHaveCount(0);
+
+    // Capture the reference-led page as it actually renders, not only the hero.
+    // Keep the frozen E2E case count unchanged.
+    await page.locator("#skills").scrollIntoViewIfNeeded();
+    await captureScreenshot(page, "01b-skills-atlas-desktop");
+    await page.locator("#work").scrollIntoViewIfNeeded();
+    await captureScreenshot(page, "01c-selected-projects-desktop");
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+    await expect(page.locator("h1")).toContainText("Full-stack");
+    await captureScreenshot(page, "01d-home-mobile");
   });
 
   test("2. Entry & 3. Home Camera: explicit entry mounts world with single resident and chair at F1 coordinates", async ({ page }) => {
@@ -352,7 +363,7 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
     await expect(page.locator('[data-testid="fallback-about-link"]')).toBeVisible();
 
     // Verify main page directory remains fully reachable
-    await expect(page.locator("h2#directory-heading")).toContainText("Start anywhere");
+    await expect(page.locator("h2#editorial-story-heading")).toContainText("Hi, I'm");
   });
 
   test("14. Renderer Failure: WebGL failure caught cleanly leaving useful HTML", async ({ page }) => {
@@ -374,7 +385,7 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
     const page = await context.newPage();
 
     await page.goto("/");
-    await expect(page.locator("h1")).toContainText("A little world");
+    await expect(page.locator("h1")).toContainText("Full-stack");
     await captureScreenshot(page, "14-javascript-disabled");
 
     // Details disclosure works natively without JS

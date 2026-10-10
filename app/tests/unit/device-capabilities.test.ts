@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { chooseInitialTier } from "../../src/features/room/quality-policy";
-import { readDeviceCapabilities } from "../../src/features/world/device-capabilities";
+import { rasterDprCap, readDeviceCapabilities } from "../../src/features/world/device-capabilities";
 
 interface BrowserOptions {
   width?: number;
@@ -104,6 +104,10 @@ describe("studio entry browser capabilities", () => {
     expect(capabilities.isSoftwareRenderer).toBe(true);
     expect(chooseInitialTier(capabilities)).toBe("low");
     expect(chooseInitialTier({ ...capabilities, userPreference: "high" })).toBe("high");
+    // Explicit manual quality may change materials, not saturate a CPU renderer.
+    expect(rasterDprCap("low", true)).toBe(0.3);
+    expect(rasterDprCap("medium", true)).toBe(0.4);
+    expect(rasterDprCap("high", true)).toBe(0.4);
     expect(browser.loseContext).toHaveBeenCalledOnce();
   });
 
@@ -115,6 +119,9 @@ describe("studio entry browser capabilities", () => {
     expect(capabilities.isSoftwareRenderer).toBe(false);
     expect(capabilities.maxTextureSize).toBe(16384);
     expect(chooseInitialTier(capabilities)).toBe("high");
+    expect(rasterDprCap("low", false)).toBe(1);
+    expect(rasterDprCap("medium", false)).toBe(1.25);
+    expect(rasterDprCap("high", false)).toBe(1.5);
     expect(browser.loseContext).toHaveBeenCalledOnce();
   });
 

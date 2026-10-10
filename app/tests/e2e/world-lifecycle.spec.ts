@@ -79,6 +79,12 @@ test.describe("B5 Production Runtime Lifecycle Foundation - Adversarial & Invari
     // Wait for world stage
     const stage = page.locator('[data-testid="world-stage-container"]');
     await expect(stage).toBeVisible({ timeout: 15000 });
+    const immersive = page.getByTestId("studio-fullscreen");
+    await expect(immersive).toBeVisible();
+    const bounds = await immersive.boundingBox();
+    const viewport = page.viewportSize();
+    expect(bounds?.width ?? 0).toBeGreaterThan((viewport?.width ?? 0) * .95);
+    expect(bounds?.height ?? 0).toBeGreaterThan((viewport?.height ?? 0) * .95);
 
     // PROVE: exactly one canvas exists
     const canvases = await page.locator("canvas").count();
@@ -148,8 +154,9 @@ test.describe("B5 Production Runtime Lifecycle Foundation - Adversarial & Invari
     await expect(page.locator('[data-testid="world-stage-container"]')).toBeVisible({ timeout: 15000 });
     expect(await page.locator("canvas").count()).toBe(1);
 
-    // Navigate to Projects via semantic navigation
-    await page.locator('nav a[href="/projects"]').first().click();
+    // Navigate to Projects through the modal's accessible parallel path.
+    // Background page navigation is correctly inert while the dialog is open.
+    await page.getByTestId("studio-projects-link").click();
     await page.waitForURL("**/projects");
 
     // Canvas must be completely removed from DOM
@@ -173,6 +180,18 @@ test.describe("B5 Production Runtime Lifecycle Foundation - Adversarial & Invari
     await expect(page.locator('[data-testid="studio-disclosure"]')).toBeVisible();
     expect(await page.locator("canvas").count()).toBe(0);
 
+    // Also verify the new direct entry control without changing the
+    // frozen RC6 release's expected number of E2E test cases.
+    await page.getByTestId("studio-direct-entry").click();
+    const immersive = page.getByTestId("studio-fullscreen");
+    await expect(immersive).toBeVisible();
+    await expect(immersive).toHaveJSProperty("open", true);
+    await expect(page.getByTestId("world-stage-container")).toBeVisible({ timeout: 15000 });
+    await page.getByTestId("studio-fullscreen-close").click();
+    await expect(immersive).toHaveCount(0);
+    await expect(page.locator("canvas")).toHaveCount(0);
+    await expect(page.getByTestId("studio-direct-entry")).toBeVisible();
+
     await captureScreenshot(page, "b5-05-exit-clean-static.png");
   });
 
@@ -183,7 +202,9 @@ test.describe("B5 Production Runtime Lifecycle Foundation - Adversarial & Invari
 
     // Semantic site is intact
     await expect(page.locator("main")).toBeVisible();
-    await expect(page.locator("nav")).toBeVisible();
+    // While the native studio dialog is open, the background nav is inert.
+    // The in-dialog navigation must remain operable after renderer failure.
+    await expect(page.getByRole("navigation", { name: "Studio navigation" })).toBeVisible();
 
     // Zero canvas instances on renderer error
     expect(await page.locator("canvas").count()).toBe(0);
@@ -301,4 +322,7 @@ test.describe("B5 Production Runtime Lifecycle Foundation - Adversarial & Invari
 
     await captureScreenshot(page, "b5-12-navigation-survives-failure.png");
   });
+
+
+
 });

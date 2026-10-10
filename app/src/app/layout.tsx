@@ -5,11 +5,15 @@ import { Navigation } from "@/features/portfolio/navigation";
 import "@/styles/tokens.css";
 import styles from "@/features/portfolio/portfolio.module.css";
 
+// Default to noindex on previews. Enable search indexing only on the
+// verified public production deployment after G7 release acceptance.
+const allowSearchIndexing = process.env.SEARCH_INDEXING_ENABLED === "1";
+
 export const metadata: Metadata = {
   metadataBase: new URL(publicBaseUrl),
   title: { default: "YOR WORLD — Ayush Roy Portfolio", template: "%s — YOR WORLD" },
   description: "Personal developer portfolio and verified engineering case studies of Ayush Roy (yorayriniwnl).",
-  robots: { index: false, follow: false },
+  robots: { index: allowSearchIndexing, follow: allowSearchIndexing },
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
