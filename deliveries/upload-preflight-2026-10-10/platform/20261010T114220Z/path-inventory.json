@@ -1,0 +1,289 @@
+{
+  "preflightRoot": "deliveries/upload-preflight-2026-10-10/platform/20261010T114220Z",
+  "lane": "Gemini #1 — Platform and Backend Maker",
+  "baseCommit": "de2c8afe516099d7d7be30a63e16a883b753133a",
+  "appTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+  "canonicalApplicationRoot": "app/",
+  "totalA1Paths": 20,
+  "totalA2Paths": 25,
+  "a1Inventory": [
+    {
+      "path": "src/features/admin/project-editor.tsx",
+      "state": "existing",
+      "category": "ui_component",
+      "description": "Full section/block/list controls, unsaved edit buffer retention, keyboard reordering, approved media selection, preview action link"
+    },
+    {
+      "path": "src/features/admin/structured-block-editor.tsx",
+      "state": "new",
+      "category": "ui_component",
+      "description": "Accessible block editor supporting all four ContentSection variants: paragraph, image, list, code with add/edit/delete/reorder controls"
+    },
+    {
+      "path": "src/features/admin/draft-preview.tsx",
+      "state": "new",
+      "category": "ui_component",
+      "description": "Authenticated private draft presentation component consuming ReviewIdentity and executed check results"
+    },
+    {
+      "path": "src/features/admin/publish-review.tsx",
+      "state": "existing",
+      "category": "ui_component",
+      "description": "Dynamically executed pre-flight checks against candidate draft vector/hash, publication button binding reviewed vector, rollback concurrency/reason form"
+    },
+    {
+      "path": "src/features/portfolio/case-study.tsx",
+      "state": "existing",
+      "category": "renderer",
+      "description": "Shared semantic renderer gaining CaseStudyPresentation interface; draft mode displays neutral labels ('Draft preview · Rev X') and accepts private relative media URLs"
+    },
+    {
+      "path": "src/app/admin/editor/page.tsx",
+      "state": "existing",
+      "category": "admin_page",
+      "description": "Owner/AAL2 page supplying authentic draft state and approved media list to ProjectEditor"
+    },
+    {
+      "path": "src/app/admin/publish/page.tsx",
+      "state": "existing",
+      "category": "admin_page",
+      "description": "Owner/AAL2 publication review page loading actual project drafts, executing pre-flight review checks, separating active vs draft state"
+    },
+    {
+      "path": "src/app/admin/preview/page.tsx",
+      "state": "new",
+      "category": "admin_page",
+      "description": "Owner/AAL2 private preview index listing project drafts, review check summary, and preview links"
+    },
+    {
+      "path": "src/app/admin/preview/[slug]/page.tsx",
+      "state": "new",
+      "category": "admin_page",
+      "description": "Owner/AAL2 private preview detail page rendering unpublished candidate case study using CaseStudy component in draft presentation mode"
+    },
+    {
+      "path": "src/server/content/preview.ts",
+      "state": "new",
+      "category": "server_service",
+      "description": "Candidate assembly, deterministic canonical JSON hashing (candidateSha256), executed checks (schema, HTTPS links, evidence records, approved media), ReviewIdentity generation"
+    },
+    {
+      "path": "src/server/content/revisions.ts",
+      "state": "existing",
+      "category": "server_service",
+      "description": "Optimistic concurrency draft saving (expectedRevision), write-time non-empty list and unique section ID validation, image approval validation, transactional draft locks"
+    },
+    {
+      "path": "src/server/content/publish.ts",
+      "state": "existing",
+      "category": "server_service",
+      "description": "Review-bound publication transaction verifying expectedRevision and ReviewIdentity (candidateSha256 + draft vector), stale draft rejection (409), rollback verification"
+    },
+    {
+      "path": "src/server/media/manifest.ts",
+      "state": "existing",
+      "category": "server_service",
+      "description": "Draft-scoped media resolution (readApprovedDraftMediaUrls) separating private preview images from public published images"
+    },
+    {
+      "path": "src/app/api/admin/preview/route.ts",
+      "state": "new",
+      "category": "api_route",
+      "description": "Owner/AAL2 endpoint returning PrivateDraftReview (checks, candidateSha256, draft revisions) and per-project preview data with private, no-store headers"
+    },
+    {
+      "path": "src/app/api/admin/preview/media/[id]/route.ts",
+      "state": "new",
+      "category": "api_route",
+      "description": "Owner/AAL2 endpoint streaming approved draft image bytes with private, no-store, Vary: Authorization,Cookie headers, eliminating signed URL leakage"
+    },
+    {
+      "path": "src/app/api/admin/projects/route.ts",
+      "state": "existing",
+      "category": "api_route",
+      "description": "Owner/AAL2 draft save endpoint enforcing 409 stale revision, 422 content/media errors, returning updated draftRevision and project payload with private no-store headers"
+    },
+    {
+      "path": "src/app/api/admin/publish/route.ts",
+      "state": "existing",
+      "category": "api_route",
+      "description": "Owner/AAL2 publication endpoint requiring { expectedRevision, review: ReviewIdentity }, rejecting stale draft mutations with 409"
+    },
+    {
+      "path": "src/app/api/admin/rollback/route.ts",
+      "state": "existing",
+      "category": "api_route",
+      "description": "Owner/AAL2 rollback endpoint requiring targetRevision, expectedRevision, and audit reason"
+    },
+    {
+      "path": "src/app/api/admin/media/route.ts",
+      "state": "existing",
+      "category": "api_route",
+      "description": "Owner/AAL2 media listing endpoint returning approved media assets for block editor selection with private no-store headers"
+    },
+    {
+      "path": "tests/unit/platform/completion-authoring-blocks.test.ts",
+      "state": "new",
+      "category": "test",
+      "description": "Unit tests for four block variants, full round-trip serialization, Unicode/newline preservation, section reordering, empty block validation"
+    },
+    {
+      "path": "tests/integration/platform/completion-authoring-preview.test.ts",
+      "state": "new",
+      "category": "test",
+      "description": "Integration tests for private preview authorization (anon 401, nonowner 403, AAL1 403, revoked 403), draft media proxy, stale review-draft conflict (409)"
+    },
+    {
+      "path": "tests/e2e/platform/completion-authoring-workflow.spec.ts",
+      "state": "new",
+      "category": "test",
+      "description": "Browser E2E test verifying edit block, reorder sections/items, save/reopen, cancel buffer preservation, private preview, publish, and public verification"
+    }
+  ],
+  "a2Inventory": [
+    {
+      "path": "src/contracts/content.ts",
+      "state": "existing",
+      "category": "contract",
+      "description": "Additive SiteContentSchema, ResumeReferenceSchema, and optional site property on PublicationSchema; preserves Revision 1 compatibility"
+    },
+    {
+      "path": "supabase/migrations/20261009000000_site_content_and_resume.sql",
+      "state": "new",
+      "category": "migration",
+      "description": "Additive migration expanding check_media_mime constraint to include application/pdf, and creating idx_site_revisions_lookup on site_revisions"
+    },
+    {
+      "path": "src/content/default-site-content.ts",
+      "state": "new",
+      "category": "content_fallback",
+      "description": "Immutable fallback site content baseline providing truthful biography, skills, availability, and project order during offline/legacy operation"
+    },
+    {
+      "path": "src/features/admin/site-editor.tsx",
+      "state": "new",
+      "category": "ui_component",
+      "description": "Admin UI for authoring biography, availability, labels, skills, education, experience, research, and selecting approved résumé"
+    },
+    {
+      "path": "src/features/admin/site-preview.tsx",
+      "state": "new",
+      "category": "ui_component",
+      "description": "Sanitized private preview component for unpublished site content drafts"
+    },
+    {
+      "path": "src/app/admin/site/page.tsx",
+      "state": "new",
+      "category": "admin_page",
+      "description": "Owner/AAL2 page hosting the site content editor"
+    },
+    {
+      "path": "src/app/admin/layout.tsx",
+      "state": "existing",
+      "category": "admin_page",
+      "description": "Admin navigation layout updated to include Site and Preview links"
+    },
+    {
+      "path": "src/server/content/site-revisions.ts",
+      "state": "new",
+      "category": "server_service",
+      "description": "Site draft revision persistence, optimistic concurrency CAS, and validation"
+    },
+    {
+      "path": "src/app/api/admin/site/route.ts",
+      "state": "new",
+      "category": "api_route",
+      "description": "Owner/AAL2 endpoint for reading and saving site content drafts"
+    },
+    {
+      "path": "src/server/media/resume.ts",
+      "state": "new",
+      "category": "server_service",
+      "description": "Approved PDF registration, SHA-256 validation, MIME signature verification (%PDF-), and approval ledger"
+    },
+    {
+      "path": "src/app/api/admin/resume/route.ts",
+      "state": "new",
+      "category": "api_route",
+      "description": "Owner/AAL2 endpoint for registering and approving résumé documents"
+    },
+    {
+      "path": "src/app/api/content/resume/download/route.ts",
+      "state": "new",
+      "category": "api_route",
+      "description": "Public download route streaming approved PDF with Content-Disposition, nosniff, and immutable cache headers when verified by hash"
+    },
+    {
+      "path": "src/content/publication-reader.ts",
+      "state": "existing",
+      "category": "content_reader",
+      "description": "Site content extraction helper resolveSiteContent, project ordering helper orderPublicationProjects, legacy backward compatibility"
+    },
+    {
+      "path": "src/content/server-publication.ts",
+      "state": "existing",
+      "category": "server_service",
+      "description": "Request-memoized public publication snapshot loader"
+    },
+    {
+      "path": "src/features/portfolio/public-content.ts",
+      "state": "existing",
+      "category": "content_reader",
+      "description": "Legacy export aliases backed by default-site-content fallback"
+    },
+    {
+      "path": "src/app/layout.tsx",
+      "state": "existing",
+      "category": "public_page",
+      "description": "Root layout consuming published site labels, metadata, and branding"
+    },
+    {
+      "path": "src/features/portfolio/navigation.tsx",
+      "state": "existing",
+      "category": "ui_component",
+      "description": "Navigation component accepting published labels prop"
+    },
+    {
+      "path": "src/app/(public)/page.tsx",
+      "state": "existing",
+      "category": "public_page",
+      "description": "Public home page rendering published biography summary, availability status, and ordered project listing"
+    },
+    {
+      "path": "src/app/(public)/about/page.tsx",
+      "state": "existing",
+      "category": "public_page",
+      "description": "Public about page rendering published biography, skills, education, experience, and research paragraphs"
+    },
+    {
+      "path": "src/app/(public)/contact/page.tsx",
+      "state": "existing",
+      "category": "public_page",
+      "description": "Public contact page rendering published contact labels and availability note"
+    },
+    {
+      "path": "src/app/(public)/resume/page.tsx",
+      "state": "existing",
+      "category": "public_page",
+      "description": "Public resume page rendering published HTML resume summary and approved download link"
+    },
+    {
+      "path": "src/app/(public)/projects/page.tsx",
+      "state": "existing",
+      "category": "public_page",
+      "description": "Public projects listing rendering published project order"
+    },
+    {
+      "path": "src/app/(public)/projects/[slug]/page.tsx",
+      "state": "existing",
+      "category": "public_page",
+      "description": "Public project case study page rendering coherent publication snapshot"
+    },
+    {
+      "path": "src/server/operations/backup-restore.ts",
+      "state": "existing",
+      "category": "operations",
+      "description": "Application export version 2 covering all 16 public tables with backward compatibility for v1 partial exports"
+    }
+  ]
+}
