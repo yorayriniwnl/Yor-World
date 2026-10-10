@@ -420,3 +420,48 @@
   .heroArtwork {transition: none;}
   .heroVisualShell:hover .heroArtwork {transform:none;}
 }
+
+/* Projects are now anchored in their actual technical domains, not letter placeholders. */
+.workSurface {
+  min-height: 410px;
+  padding: 25px 27px 29px;
+  border-radius: 17px;
+  isolation: isolate;
+  box-shadow: inset 0 1px rgba(255,255,255,.33);
+}
+.workSurface::before,.workSurface::after { display: none; }
+.workVisual {
+  position: absolute;
+  z-index: 0;
+  display: block;
+  inset: 51px -1.5% 66px;
+  opacity: .96;
+  pointer-events: none;
+  transition: transform .45s cubic-bezier(.22,.75,.33,1);
+}
+.workVisual svg { width: 100%; height: 100%; object-fit: contain; display: block; }
+.workSurface:hover .workVisual { transform: scale(1.05) translateY(-4px); }
+.workSurface h3 {
+  z-index: 2;
+  max-width: 85%;
+  padding: 7px 15px 8px 0;
+  text-shadow: 0 2px 13px rgba(250,246,240,.74);
+}
+.workSurfaceAi { background: linear-gradient(142deg,#ede0e1,#ceb9d3 80%); }
+.workSurfaceZenith { background: linear-gradient(142deg,#eee7d4,#d4decb 83%); }
+.workSurfaceHelios { background: linear-gradient(142deg,#cadcdd,#abc4d0 83%); }
+.workSurfaceTalks { background: linear-gradient(142deg,#eadfe9,#cbbfd9 85%); }
+.workSurfaceDefault { background: linear-gradient(142deg,#e4e1db,#cbd5d4 85%); }
+@media(max-width:1050px) {
+  .workSurface { min-height: 360px; }
+  .workVisual { inset: 42px -2% 59px; }
+}
+@media(max-width:470px) {
+  .workSurface { min-height: 340px; }
+  .workVisual { inset: 44px -6% 58px; }
+  .workSurface h3 {font-size: 31px; max-width: 90%;}
+}
+@media(prefers-reduced-motion:reduce) {
+  .workVisual {transition:none;}
+  .workSurface:hover .workVisual {transform:none;}
+}
