@@ -27,7 +27,7 @@
     "rulingDecisionPath": "docs/planning/reviews/2026-10-08-rc6-r1/decision.json"
   },
   "completionProgram": {
-    "status": "DELIVERED CANDIDATES / INDEPENDENT REWORK ADVISED",
+    "status": "R2 DESIGN ACCEPTED / THREE CORRECTIONS ISSUED / IMPLEMENTATIONS UNACCEPTED",
     "coordinationCommit": "ab369d413c7501224e3d79aa78e56172f97839ff",
     "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
     "contractsGate": {
@@ -46,9 +46,20 @@
       "FINISH-A1": {
         "maker": "Gemini #1",
         "scope": "Structured Block Editing and Private Preview",
-        "status": "ISSUED / NO LOCAL DELIVERY FOUND",
-        "deliveryRoot": "deliveries/FINISH-A1/",
-        "makerExecution": "UNCONFIRMED"
+        "status": "R2 RECEIVED / PARENT REWORK / R3 ISSUED",
+        "deliveryRoot": "deliveries/FINISH-A1/r2/",
+        "makerExecution": "RECEIVED FILES; EXTERNAL SESSION CONTROL UNAVAILABLE HERE",
+        "priorObservedIssuanceState": {
+          "maker": "Gemini #1",
+          "scope": "Structured Block Editing and Private Preview",
+          "status": "ISSUED / NO LOCAL DELIVERY FOUND",
+          "deliveryRoot": "deliveries/FINISH-A1/",
+          "makerExecution": "UNCONFIRMED"
+        },
+        "independentAuditReport": "deliveries/completion-audits/FINISH-A1/r2/report.md",
+        "independentAdvice": "REWORK; prior narrow lint finding preserved",
+        "parentImplementationAcceptance": "NOT ACCEPTED",
+        "canonicalIntegration": false
       },
       "FINISH-B1": {
         "maker": "Gemini #2",
@@ -67,6 +78,57 @@
         "independentAuditReport": "deliveries/completion-audits/FINISH-C1/2026-10-10-r1/report.md",
         "parentImplementationAcceptance": "NOT RECORDED",
         "canonicalIntegration": false
+      },
+      "FINISH-B1-R2": {
+        "maker": "Gemini #2",
+        "status": "RECEIVED / PRIOR PASS ADVICE / PARENT REWORK / R3 ISSUED",
+        "deliveryRoot": "deliveries/FINISH-B1-R2/",
+        "independentAuditReport": "deliveries/completion-audits/FINISH-B1/2026-10-10-r2/report.md",
+        "independentAdvice": "PASS advice for recorded scope; complete-scope supplement required",
+        "parentImplementationAcceptance": "NOT ACCEPTED",
+        "canonicalIntegration": false
+      },
+      "FINISH-C1-R2": {
+        "maker": "Gemini #3",
+        "status": "RECEIVED / PRIOR PASS ADVICE / PARENT REWORK / R3 ISSUED",
+        "deliveryRoot": "deliveries/FINISH-C1-R2/",
+        "independentAuditReport": "deliveries/completion-audits/FINISH-C1/2026-10-10-r2/report.md",
+        "independentAdvice": "PASS advice for recorded scope; complete-scope supplement required",
+        "parentImplementationAcceptance": "NOT ACCEPTED",
+        "canonicalIntegration": false
+      },
+      "FINISH-A1-R3": {
+        "maker": "Gemini #1",
+        "status": "ISSUED / NO RETURN RECORDED",
+        "deliveryRoot": "deliveries/FINISH-A1/r3/",
+        "promptPath": "docs/planning/production-prompts/corrections-2026-10-10/01-GEMINI1-A1-R3.md",
+        "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+        "sourceAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+        "makerExecution": "UNCONFIRMED",
+        "parentImplementationAcceptance": "NOT RECORDED",
+        "canonicalIntegration": false
+      },
+      "FINISH-B1-R3": {
+        "maker": "Gemini #2",
+        "status": "ISSUED / NO RETURN RECORDED",
+        "deliveryRoot": "deliveries/FINISH-B1-R3/",
+        "promptPath": "docs/planning/production-prompts/corrections-2026-10-10/02-GEMINI2-B1-R3.md",
+        "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+        "sourceAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+        "makerExecution": "UNCONFIRMED",
+        "parentImplementationAcceptance": "NOT RECORDED",
+        "canonicalIntegration": false
+      },
+      "FINISH-C1-R3": {
+        "maker": "Gemini #3",
+        "status": "ISSUED / NO RETURN RECORDED",
+        "deliveryRoot": "deliveries/FINISH-C1-R3/",
+        "promptPath": "docs/planning/production-prompts/corrections-2026-10-10/03-GEMINI3-C1-R3.md",
+        "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+        "sourceAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+        "makerExecution": "UNCONFIRMED",
+        "parentImplementationAcceptance": "NOT RECORDED",
+        "canonicalIntegration": false
       }
     },
     "latestIndependentRecheck": {
@@ -76,6 +138,24 @@
       "canonicalSourceChanged": false,
       "productionFixesIntegrated": false,
       "advice": "REWORK before maker acceptance/integration"
+    },
+    "successorContractsGate": {
+      "packetId": "FINISH-00-R2",
+      "status": "ACCEPTED DESIGN / FROZEN",
+      "rulingPath": "docs/planning/reviews/2026-10-10-finish-00-r2.md",
+      "rulingDecisionPath": "docs/planning/reviews/2026-10-10-finish-00-r2/decision.json",
+      "outputManifestSha256": "8038db147824b0a31de1028c330383352177020b2247dd627d1674d6dc14c6af",
+      "independentAuditReport": "deliveries/completion-audits/FINISH-00-R2/independent/r2/report.md",
+      "independentAdvice": "PASS",
+      "architectureReport": "deliveries/completion-audits/FINISH-00-R2/architecture/r3/report.md",
+      "implementationAcceptance": false
+    },
+    "latestParentContinuation": {
+      "packetId": "FINISH-04",
+      "path": "docs/planning/reconciliation-packets/2026-10-10-finish-04.md",
+      "readinessPath": "docs/planning/reviews/2026-10-10-finish-04/readiness.md",
+      "canonicalSourceChanged": false,
+      "productionFixesIntegrated": false
     }
   },
   "g7": {

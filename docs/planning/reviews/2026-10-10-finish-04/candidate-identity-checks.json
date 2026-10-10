@@ -1,0 +1,82 @@
+{
+  "packet": "FINISH-04",
+  "declaredIdentityChecks": [
+    {
+      "deliveryRoot": "deliveries/FINISH-A1/r2",
+      "declaredOutputCount": 22,
+      "failures": [],
+      "scope": "Declared raw output identities only; unlisted files are not implied to be bound"
+    },
+    {
+      "deliveryRoot": "deliveries/FINISH-B1-R2",
+      "declaredOutputCount": 85,
+      "failures": [],
+      "scope": "Declared raw output identities only; unlisted files are not implied to be bound"
+    },
+    {
+      "deliveryRoot": "deliveries/FINISH-C1-R2",
+      "declaredOutputCount": 29,
+      "failures": [],
+      "scope": "Declared raw output identities only; unlisted files are not implied to be bound"
+    }
+  ],
+  "readOnlyCommandReceipts": [
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exitCode": 0,
+      "stdout": "9fce876096ed4948ec383c7a4ccc745290c3e2d5\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD:app"
+      ],
+      "exitCode": 0,
+      "stdout": "42ea29ec235225046a75959eb19eb386ac2f821d\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "f62a43c5e71c00dcb89e28275ea81d842167db80",
+        "--",
+        "app"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "deliveries/FINISH-A1/r2/source.patch"
+      ],
+      "exitCode": 128,
+      "stdout": "",
+      "stderr": "error: No valid patches in input (allow with \"--allow-empty\")\n"
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "deliveries/FINISH-C1-R2/source.patch"
+      ],
+      "exitCode": 128,
+      "stdout": "",
+      "stderr": "error: invalid path 'app/src/contracts/experience.tsdeliveries/FINISH-C1-R2\\source/src/contracts/experience.ts'\n"
+    }
+  ],
+  "applicationTestsRun": 0,
+  "newDeliveryRoots": "Absent at packet preparation; fresh roots allocated by Parent",
+  "scope": "No implementation acceptance, application/browser/provider/device tests or maker edits"
+}

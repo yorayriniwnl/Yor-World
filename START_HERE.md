@@ -6,6 +6,8 @@ The user selected local coding tools with project-folder access for GPT/Gemini a
 
 This is the shared entry point for the user and workers with actual local or connected workspace access. Read [AGENTS.md](AGENTS.md), then the assigned packet; only load the document sections that packet needs.
 
+Current completion handoff: [FINISH-04](docs/planning/reconciliation-packets/2026-10-10-finish-04.md) binds the reviewed FINISH-00-R2 design and fresh A1-R3, B1-R3 and C1-R3 corrections. Read its exact ruling before implementation. Received r2 candidates and their earlier audit advice remain preserved; implementation acceptance and canonical integration are pending. Existing FINISH-03 upload prompts discover these assignments through the work-order hub.
+
 | Input | Local file |
 | --- | --- |
 | Main visual reference | [references/images/main-reference.png](references/images/main-reference.png) |

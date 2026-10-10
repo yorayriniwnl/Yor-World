@@ -1,0 +1,79 @@
+{
+  "scope": "Exact command/result metadata for independent delta diagnostics; hashes/rows are not application test cases",
+  "workingDirectory": "C:\\Users\\yoray\\Projects\\Yor World",
+  "commands": [
+    {
+      "argv": [
+        "python",
+        "deliveries/completion-audits/FINISH-00-R2/independent/r2/inspect_delta.py",
+        "8038db147824b0a31de1028c330383352177020b2247dd627d1674d6dc14c6af"
+      ],
+      "result": "delta-results.json",
+      "exitCode": 0,
+      "endObservationUTC": "2026-10-10T17:34:09.439279+00:00",
+      "startUTC": null,
+      "timingLimit": "Initial invocation start time not retained; no invented timestamp"
+    },
+    {
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\completion-audits\\FINISH-00-R2\\independent\\r2\\review-media-delta.mjs"
+      ],
+      "result": "review-media-delta-results.json",
+      "cwd": "C:\\Users\\yoray\\Projects\\Yor World",
+      "startUTC": "2026-10-10T17:36:13.067Z",
+      "endUTC": "2026-10-10T17:36:13.072Z",
+      "node": "v24.19.0",
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "python",
+        "deliveries/completion-audits/FINISH-00-R2/independent/r2/check_source_provenance.py"
+      ],
+      "result": "source-provenance-results.json",
+      "exitCode": 0,
+      "startUTC": "2026-10-10T17:36:50.791711+00:00",
+      "endUTC": "2026-10-10T17:36:58.438275+00:00"
+    },
+    {
+      "argv": [
+        "python",
+        "deliveries/completion-audits/FINISH-00-R2/independent/r2/run_final_checks.py"
+      ],
+      "result": "command-receipts.json",
+      "exitCode": 0,
+      "timing": "Individual child commands have exact times and raw streams in command-receipts.json"
+    },
+    {
+      "argv": [
+        "python",
+        "deliveries/completion-audits/FINISH-00-R2/independent/r2/archive_inputs.py"
+      ],
+      "result": "input-hashes.json and advisor-manifest-verification.json",
+      "exitCode": 0,
+      "endObservationUTC": "2026-10-10T17:40:14.741453+00:00"
+    }
+  ],
+  "exploratoryFailures": [
+    {
+      "path": "docs/planning/reconciliation-packets/finish-contracts-r2/validate_contracts.py",
+      "result": "MISSING INPUT guessed underscore filename; actual validate-contracts.py directly read and executed"
+    },
+    {
+      "path": "docs/planning/production-prompts/completion-2026-10-10/p22-independent-delta-audit.md",
+      "result": "MISSING INPUT guessed split filename; actual audit-and-acceptance.md P22 section directly read"
+    },
+    {
+      "path": "deliveries/completion-audits/FINISH-00-R2/20261010T120420Z/audit.json",
+      "result": "MISSING INPUT; external report.md, diagnostic program/results and candidate manifests directly read instead"
+    },
+    {
+      "command": "rg -n <patterns> docs/planning/reconciliation-packets/finish-contracts-r2/0*.md",
+      "exitCode": 1,
+      "result": "Windows literal wildcard IO error123; corrected with -g *.md and directory path, exit0. No missed-file inspection claimed."
+    }
+  ],
+  "freshApplicationTests": 0,
+  "priorTypeSeamProof": "r1 TS6.0.3 diagnostic reproduced two TS2322 and one TS2353; original programs/results and two unsuccessful attempts remain intact and were not rerun as successor proof"
+}

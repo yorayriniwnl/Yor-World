@@ -1,0 +1,328 @@
+--- r1/00-contract-decision.md
++++ r2/00-contract-decision.md
+@@ -20,6 +20,7 @@
+ | B1-R3/R5/R6, CA-11 | Correct exposure/composition and measured budgets/camera/native provenance; valid GLB is not visual approval | [Asset bindings](03-asset-bindings.md) |
+ | GOV-05/08 dependencies/paths | C2 assembles accepted art/C1 in an isolated hash-bound overlay; canonical integration occurs at I1; use actual controller/registry paths | [Handoffs/DAG](05-handoffs-and-dependencies.md) |
+ | CA-01/02 | Existing four ContentSection variants, authentic AAL2 private rendering, current draft concurrency/media checks and executed publish review | [Platform/schema/recovery](02-platform-schema-recovery.md) |
++| PLAT-R2-01, PLAT-R2-C01 | Bind reviewed media object/bytes/metadata and existing approval audit identity; rederive under transaction locks; require complete review at API/service boundaries; scope private headers to allocated handlers | [Platform/schema/recovery](02-platform-schema-recovery.md) |
+ | CA-03/04/12 | Additive optional publication site plus write-intent validation, compatible historical rollback, approved PDF bytes and retained claim provenance | [Platform/schema/recovery](02-platform-schema-recovery.md) |
+ | GOV-06 | Authenticated POST for the three real internal jobs, scheduler overlap/retry/catch-up receipts | [Platform/schema/recovery](02-platform-schema-recovery.md) |
+ | GOV-07, C1-R6, CA-13 | Distinct delivered/reviewed/accepted/integrated/deployed/verified states, fresh source-bound proof and actual remaining provider/device work | [Missing inputs](06-missing-inputs.md) and [handoffs](05-handoffs-and-dependencies.md) |
+@@ -36,4 +37,6 @@
+ 
+ ## Review and freeze policy
+ 
+-The review unit is this directory's `output-hashes.json` with raw-byte identities and `input-hashes.json`; the output manifest excludes itself. Review/ruling artifacts live outside this directory to avoid circular hashes. Changes after an initial review are preserved with before/after manifests and require delta review. The ruling accepts contracts/design only. Makers produce separate revisions and stop for independent audit; none can self-accept. Extension groups EXT-01 through EXT-06 and actual G7 remain open.
++The review unit is this directory's `output-hashes.json` with raw-byte identities and `input-hashes.json`; the output manifest excludes itself. Review/ruling artifacts live outside this directory to avoid circular hashes. Changes after an initial review are preserved with before/after manifests and require delta review. The initial proposal is preserved in independent/r1; manifest65126 is preserved in the independent 20261010T120420Z audit snapshot and architecture/r2 advice. That audit's PLAT-R2-01 REWORK is historical evidence of the defect, not overridden by the earlier limited architecture PASS. Raw inspected inputs whose Git blobs differ under EOL rules have immutable raw snapshots plus separate base-blob identities, so clean checkout can verify both provenance and observed bytes.
++
++During review, external sessions delivered FINISH-A1/r2, FINISH-B1-R2 and FINISH-C1-R2 before a formal R2 Parent ruling. Their source/evidence and existing audits are preserved. This amendment does not retroactively authorize or accept those candidates; occupied delivery roots cannot be reused. Later packets must bind existing candidates and allocate fresh correction roots where required. The ruling accepts contracts/design only. Makers produce separate revisions and stop for independent audit; none can self-accept. Extension groups EXT-01 through EXT-06 and actual G7 remain open.
+--- r1/01-runtime-lifecycle.md
++++ r2/01-runtime-lifecycle.md
+@@ -26,7 +26,7 @@
+ type OptionalConsumer = (result: OptionalAssetResult) => Adoption;
+ ```
+ 
+-Loader owns each result until a synchronous consumer returns `adopted`; runtime owns it thereafter. Loader disposes on rejection, exception or stale/aborted completion. No callback receives partial results or null success. Optional failures produce sanitized diagnostics and retain base materials/behavior. Consumer installation occurs before optional work starts, so immediately resolving optional assets cannot race runtime initialization. It may buffer results in the loader's ledger until runtime integration acknowledges readiness.
++Loader owns each result until a synchronous consumer returns `adopted`; runtime owns it thereafter. Adoption is atomic: validate targets/session/quality registration before connection; if any consumer step throws or rejects, undo material/scene/registry connections and restore the previous base before propagating failure. Loader then disposes on rejection, exception or stale/aborted completion. No callback receives partial results or null success. Optional failures produce sanitized diagnostics and retain base materials/behavior. Consumer installation occurs before optional work starts, so immediately resolving optional assets cannot race runtime initialization. It may buffer results in the loader's ledger until runtime integration acknowledges readiness.
+ 
+ ## Resource lifecycle and consumers
+ 
+@@ -88,4 +88,8 @@
+ 
+ ## Required maker evidence
+ 
++C2 extends the existing ExperienceIntent discriminated union with exactly `{ type: "ACTIVATE_OBJECT"; objectId: CatalogObjectId; source: "room" | "control" }`. `CatalogObjectIdSchema` is a literal enum of the existing 25 catalog IDs: entrance-door, resident, wall-painting, main-monitor, candidatex-launcher, helios-pc, zenith-model, ai-real-camera, talks-microphone, project-shortcuts, research-books, skills-board, certificate-frame, contact-phone, desk-lamp, window-blinds, desk-clock, speakers, plant-leaves, keyboard, mouse, chair, about-personal-object, door-inside, hidden-yor-mark. `CatalogObjectId` is its inferred type. Existing intent payloads/versions are unchanged. Both mesh and named DOM controls dispatch this same intent; controller/registry/arbitration map each ID to its existing catalog outcome and readiness. Unknown IDs fail validation; unpublished/unsupported outcomes return the truthful unavailable result. This creates one typed entry into existing ownership, not a competing interaction controller. C1 does not add this C2 intent.
++
++Typed contract fixtures and exact expectTypeOf assertions are amended by the packet that adds the corresponding contract: A2 adds Publication.site, C2 adds CatalogObjectId/ACTIVATE_OBJECT, C1 adds paused Preferences. Preserve separate tests for accepted legacy inputs; changing a shared fixture cannot disguise a breaking parser. I1's later packet binds a merge of these independent fixture sections with actual predecessor hashes and verifies that no accepted section is overwritten.
++
+ Bind source replacements/patch, dependency lock and production build hashes to command receipts. Test held optional fetch/parse/decode through actual loader consumers, required failure after earlier success, callback throw/reject, immediate optional result before integration, compressed/unknown/mismatched lengths, parallel requests/retry counters, paused retry/re-entry/denied-storage and clock hidden-return. Real browser fault injection must exercise the 15-second watchdog, <=50ms cancellation, actual first rendered idle, navigation during pause, quality switches after late maps, and repeated enter/exit cleanup. Exact stage/mock/Node/browser/physical scope is reported separately; self-created callbacks and mock canvases cannot pass rendered requirements. Discover actual successor test counts; old counts are not targets.
+--- r1/02-platform-schema-recovery.md
++++ r2/02-platform-schema-recovery.md
+@@ -70,8 +70,17 @@
+   expectedPublicationRevision: number;
+   projects: Array<{ projectId: ProjectId; draftRevision: number }>;
+   siteDraftRevision: number | null; // null in A1; extended by A2
++  media: ReviewedMedia[]; // server-derived, unique IDs sorted by code-point order
+   candidateSha256: string; // lowercase hex of deterministic candidate content
+ };
++type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue };
++type ReviewedMedia =
++  | { kind: 'asset'; mediaId: string; objectKey: string; sha256: string;
++      mime: string; bytes: number; dimensions: JsonValue; provenance: JsonValue;
++      approvalStatus: string; createdAt: string;
++      approvalAudit: { eventId: string; createdAt: string } | null }
++  | { kind: 'accepted-placeholder'; mediaId: string }
++  | { kind: 'missing'; mediaId: string };
+ type ReviewCheck = {
+   scope: 'project' | 'site'; id: string;
+   kind: 'schema' | 'evidence-records' | 'https-links' | 'approved-media' | 'publication-rules';
+@@ -86,7 +95,15 @@
+   | { mode: 'draft'; draftRevision: number };
+ ```
+ 
+-`preview.ts` owns candidate assembly/checks and deterministic JSON hashing: recursively sort object keys; preserve array order; UTF-8 JSON without whitespace; hash `{projects, siteDraftRevision, site, assetManifestRevision}` (site=null in A1); omit review time, publication number and future publishedAt. Return projects sorted by ProjectId in identity; document content order is preserved in the hashed projects. Only projects eligible for publication enter that candidate; a private CandidateX preview is independent and cannot become canPublish=true. CandidateX stays publicly 404 without a separately accepted content decision.
++`preview.ts` owns the strict ReviewIdentity/ReviewCheck DTO schemas and types, candidate assembly/checks and deterministic JSON hashing; these DTOs do not amend the historical content schema. Recursively sort object keys with code-point comparison (no locale-dependent comparison); preserve array order; UTF-8 JSON without whitespace; hash `{projects, siteDraftRevision, site, assetManifestRevision, media}` (site=null in A1). Omit review time, publication number and future publishedAt. Return projects sorted by ProjectId in identity; document content order is preserved in the hashed projects. Only projects eligible for publication enter that candidate; a private CandidateX preview is independent and cannot become canPublish=true. CandidateX stays publicly 404 without a separately accepted content decision.
++
++**PLAT-R2-01 correction: media identity is part of the reviewed candidate.** `manifest.ts` collects every referenced image ID from the publishable candidate, plus the A2 site's resume ID when present, then returns one ordered, unique `ReviewedMedia` vector. It reads existing `public.media_assets` columns directly: id, object_key, hash, mime, bytes, dimensions, provenance, approval_status and created_at. Normalize timestamps to UTC ISO strings and require a safe integer byte count and lowercase SHA-256. Preserve JSON nulls, arrays and values in dimensions/provenance; recursively canonicalize their object keys. Bind the latest existing `public.audit_events` media_approved event for that media ID by `(created_at, id)` order as approvalAudit, or null when none exists. This is an existing audit identity, not a fictional approved_at/approved_by column or a new migration. The upload/approval service remains unchanged.
++
++Review reads participating drafts and media in a single consistent transaction under the same publication/draft locks used at publish (A2 also takes yor-site-draft); lock existing media rows FOR SHARE in ordered ID order before checks. The byte-verification helper checks bounded private Storage bytes against the recorded SHA-256, size and allowed image/PDF type both at review and publish. An unchanged row cannot authorize a replaced object with different bytes. No credentials, bearer Storage URL or object bytes enter the returned identity; object metadata is owner-only. Storage-unavailable or malformed identity produces a failed review/error, never an approved synthetic hash. Test registries supply equivalent explicitly labeled byte/row/audit fixtures.
++
++An exact accepted missing-* placeholder block stays visibly unresolved and is bound as accepted-placeholder; do not query it as a UUID or treat it as approved media. Any other missing ID is bound as missing and makes canPublish=false. An existing but pending/rejected asset is bound with its actual row state and also fails checks. Multiple references share one media entry; the hashed project/site content retains each ordered block. At publish, derive the entire vector again on the server, compare it and the candidate hash before any mutation, then rerun byte/approval checks under those locks. A different valid approved object_key, hash, size, MIME, dimensions, provenance, createdAt or approvalAudit under the same mediaId must yield 409 using the old review. A current identity with invalid media yields 422. A metadata-equivalent Storage replacement with different bytes fails byte verification and cannot publish. This binds observed state and existing approval audit events; it does not invent a history of unaudited direct SQL edits that return every field to the identical value.
++
++The A1 integration regression must start with a genuinely valid approved fixture, generate review, replace its mapping with a second valid approved object under the same ID without editing the draft, and require stale-review409 plus unchanged published_content, publication_history and audit_events counts/content. Test object-key-only/metadata changes and approvalAudit advancement, missing-review rejection, equivalent JSON key ordering, dedup/order stability, failed Storage checks and untouched accepted placeholders. A2 repeats the mapping case for its referenced resume. These are future maker behavior checks; the architectural hash-sensitivity diagnostic does not execute the transaction or fulfill them.
+ 
+ API `GET /api/admin/preview` returns this executed review; `GET /api/admin/preview?projectId=<id>` returns the identified private draft and checks, including CandidateX only if a genuine draft exists. `/admin/preview` lists private drafts/review and `/admin/preview/[slug]` renders the actual durable draft. API anonymous=401; nonowner/AAL1/revoked=403. Page owner helper may redirect denied page visits to login; no draft bytes render first. Each page and API independently calls existing owner/AAL2 guards. No client role, dropdown or cached prior authorization is authority.
+ 
+@@ -98,7 +115,7 @@
+ 
+ Publish-review shows executed checks against the candidate draft vector/hash, a timestamp and failure reasons. A secure HTTPS URL check is reported as **record/URL validation**, not a claimed fresh live link or metric verification. No arbitrary evidence-URL server fetch is introduced. Retained source receipts determine evidence assertions; mutation-time dropdown validation alone cannot manufacture those receipts.
+ 
+-`POST /api/admin/publish` requires `{expectedRevision, review: ReviewIdentity}`. Server enters transaction, takes `yor-publication` advisory lock and participating `yor-draft-<id>` locks in lexicographic ID order, rereads exact candidate/draft revisions, compares both revision vector and candidateSha256 and reruns all checks with approval rows locked FOR SHARE. Any post-review draft/body/approval/publication change ->409 for identity mismatch or422 for invalid content; no snapshot/history/audit partial write. Matching client hash is concurrency identity, never authorization. All service/direct fixture callers of publishRevision must supply review identity; update named existing tests rather than retaining an unreviewed bypass. All success/error/401/403/404/409/422/503 private responses use private,no-store, Vary Authorization,Cookie. Proxy document no-store remains additional protection; dynamic routes/headers must be tested, including build/static artifacts.
++`POST /api/admin/publish` strictly requires `{expectedRevision, review: ReviewIdentity}`; require expectedRevision to equal review.expectedPublicationRevision and reject missing review at both API and service boundaries. Server enters transaction, takes `yor-publication` advisory lock and participating `yor-draft-<id>` locks in code-point ID order, rereads the durable active publication and exact candidate/draft revisions, compares revision vector, media vector and candidateSha256 and reruns all checks with media rows locked FOR SHARE. A changed observed draft/body/media/approval/publication identity ->409; matching identity with invalid content ->422; no snapshot/history/audit partial write. Matching client hash is concurrency identity, never authorization. All service/direct fixture callers of publishRevision must supply review identity; update named existing tests rather than retaining an unreviewed bypass. The allocated admin project, preview (including media), publish, rollback and media-list APIs, plus A2's allocated site/resume APIs, apply private,no-store and Vary Authorization,Cookie on every success/error/401/403/404/409/422/503 branch. This sentence does not allocate unrelated existing media-detail/approval handlers. Proxy document no-store remains additional protection; dynamic routes/headers must be tested, including build/static artifacts.
+ 
+ ## A2 exact site design, historical reads and additive SQL design
+ 
+@@ -184,7 +201,7 @@
+ | `src/server/content/preview.ts` | new | Executed review assembly/types/deterministic hash, private preview |
+ | `src/server/content/revisions.ts` | existing | Save-time write/media checks and authorized409 identity |
+ | `src/server/content/publish.ts` | existing | Review-bound revalidation, transactions/locks, honest visibility result; rollback concurrency/reason |
+-| `src/server/media/manifest.ts` | existing | Approved image MIME/byte checks and separate owner-only draft resolution |
++| `src/server/media/manifest.ts` | existing | Server-derived reviewed row/approval-audit vector, bounded byte/hash/type checks and separate owner-only draft resolution |
+ | `src/app/api/admin/preview/route.ts` | new | Guarded review/private draft API and cache policy |
+ | `src/app/api/admin/preview/media/[id]/route.ts` | new | Guarded approved draft image-byte read with no bearer URL leakage |
+ | `src/app/api/admin/projects/route.ts` | existing | Strict save body/conflict/media422/private headers |
+@@ -192,7 +209,7 @@
+ | `src/app/api/admin/rollback/route.ts` | existing | Strict expected revision/reason and private response headers |
+ | `src/app/api/admin/media/route.ts` | existing | Sanitized image selection metadata and no-store all branches; upload semantics unchanged |
+ | `tests/unit/platform/completion-authoring-blocks.test.ts` | new | Exact roundtrip/reorder/schema/renderer semantics |
+-| `tests/integration/platform/completion-authoring-preview.test.ts` | new | Private guard/media/review/changed-draft identity/concurrency/atomicity |
++| `tests/integration/platform/completion-authoring-preview.test.ts` | new | Private guard/media/review/changed-draft and valid approved-mapping identity409/concurrency/no partial writes |
+ | `tests/e2e/platform/completion-authoring-workflow.spec.ts` | new | Actual edit/save/reopen/cancel/preview/publish/keyboard/cache leakage browser proof |
+ | `tests/integration/platform/publication.test.ts` | existing | Update changed publish/rollback inputs and preserve meaningful regression expectations |
+ | `tests/integration/platform/canonical-platform.test.ts` | existing | Actual direct publish/rollback caller inputs and approved-image byte fixture updates; preserve durable regressions |
+@@ -240,6 +257,8 @@
+ | `src/server/operations/backup-restore.ts` | existing | v2 full sixteen-table application export and honest legacy partial compatibility |
+ | `src/server/test-fixture.ts` | existing | Apply new migration and labeled document/site fixtures; never production approval |
+ | `tests/unit/platform/completion-site-content.test.ts` | new | Strict site/order/legacy/historical fallback/component site input |
++| `tests/fixtures/engineering-section-4.ts` | existing | Add optional Publication.site fixture/type definition only; preserve accepted experience/legacy sections |
++| `tests/unit/contract-types.test.ts` | existing | Publication exact-type successor and separate legacy-input compatibility assertions |
+ | `tests/integration/platform/completion-site-publishing.test.ts` | new | Site CAS/review/atomicity/legacy rollback/new-write requirement |
+ | `tests/integration/platform/completion-resume-download.test.ts` | new | Missing/pending/rejected/tampered/doc-type/hash/headers/registration/approval |
+ | `tests/integration/platform/completion-schema-v3.test.ts` | new | Additive pristine/upgraded schema/grants/legacy records/exportv2/v1 partial |
+--- r1/03-asset-bindings.md
++++ r2/03-asset-bindings.md
+@@ -34,7 +34,7 @@
+ | `assets/textures/deskmat-topography.png` | `deskmat-topography` (loading descriptor; existing v1 manifest remains GLTF groups) | Late optional texture; all 3D tiers subject to decoded memory budget | Only map of `desk_mat` / `Desk_MatTopography`. |
+ | `assets/textures/monitor-wallpaper.png` | `monitor-wallpaper` (loading descriptor) | Late optional texture; all 3D tiers subject to decoded memory budget | Only map of `monitor_screen_center` / `Monitor_ScreenWallpaper`. |
+ 
+-No GLTF, optional texture, decoder or audio request in static mode. High/medium/low use the same essential filenames and may use byte-identical geometry, explicitly recorded as shared geometry. C3 controls effects/DPR/shadows/material simplification; it must demonstrate mobile budgets. If shared geometry cannot meet mobile ceilings, return a Parent amendment proposal for specific new LOD files and unchanged semantic hooks; do not publish a misleading `mobile-room-lod.glb` alias as optimization.
++No GLTF, optional texture, decoder or audio request in static mode. High/medium/low use the same essential filenames and may use byte-identical geometry, explicitly recorded as shared geometry. C1/C2 retain the allocated runtime effects/DPR/shadow/material-quality controls; C3 verifies that accepted tier behavior and mobile budgets with its framing/layout changes. C3 has no implicit permission to rewrite those quality paths. A necessary new performance change receives a separate exact Parent packet. If shared geometry cannot meet mobile ceilings, return a Parent amendment proposal for specific new LOD files and unchanged semantic hooks; do not publish a misleading `mobile-room-lod.glb` alias as optimization.
+ 
+ `room.glb` includes low-cost visible base versions of every required catalog object and hit target. Optional enhancements are not a prerequisite to essential readiness. A pending optional detail can show unavailable detail while its content route and base action remain functional. Exactly one room-shell, desk, resident, chair-root, chair-base, door leaf, main monitor and each project base exists in the assembled scene. Old `production-room-full`, `mobile-room-lod`, legacy group chunks and `interaction-assets[-mobile].glb` are not mounted or fetched for this successor. Historical assets stay in retained releases.
+ 
+@@ -48,7 +48,7 @@
+ 
+ Room interior envelope: X[-2.1,2.1], Z[-1.8,1.8], Y[0,2.8]. Rear wall interior at Z=-1.8; entrance extension is outside the front wall and reported separately from interior dimensions. Desk top footprint 2.6×0.8 m, center X/Z=(0,-1.15), upper surface Y=.75. Chair-root and resident world/rest T=(.30,0,-.36), identity quaternion, unit scale. Preserve actual conforming F1 locators; assets do not move to wrong prose values. Compare bound geometry, not only empty locators.
+ 
+-`Room_Root` is identity and owns identity `room-shell`, `desk`, `door`, `monitor` and static organizational groups. `door` owns identity `Door_Frame` and `Door_Hinge`; `Door_Hinge` owns `Door_Leaf`; handle meshes are children of leaf, never the frame. `Door_Frame` owns static frame jamb/header geometry. `Door_Hinge` local/world rest T=(-1.65,0,1.8), identity quaternion, unit scale. `Door_Leaf` local T=(.45,1.05,0), identity quaternion, unit scale, mesh panel width .88 m / height 2.08 m / thickness .04 m. Its evaluated closed world center is (-1.2,1.05,1.8); opening clearance is .9×2.1 m nominal, including frame tolerances. Door rotation is local +Y about the hinge, not about leaf center. `door-hinge` is not a second exported synonym; C2's existing logical anchor maps explicitly to `Door_Hinge`.
++`Room_Root` is identity and owns identity `room-shell`, `desk`, `door`, `monitor` and static organizational groups. The exact tree is `Room_Root/door/{Door_Frame,Door_Hinge/Door_Leaf}`: `Door_Frame` and `Door_Hinge` are siblings under `door`. `Door_Frame` has identity translation/quaternion/unit scale and owns static frame jamb/header geometry. `Door_Hinge` has local/world rest translation T=(-1.65,0,1.8), identity quaternion and unit scale; it owns `Door_Leaf`. Handle meshes are children of leaf, never the frame. `Door_Leaf` local T=(.45,1.05,0), identity quaternion, unit scale, mesh panel width .88 m / height 2.08 m / thickness .04 m. Its evaluated closed world center is (-1.2,1.05,1.8); opening clearance is .9×2.1 m nominal, including frame tolerances. Door rotation is local +Y about the hinge, not about leaf center. `door-hinge` is not a second exported synonym; C2's existing logical anchor maps explicitly to `Door_Hinge`.
+ 
+ `fixture.glb` has two scene-root siblings: `chair-root` and `chair-base`, both rest T=(.30,0,-.36), identity quaternion/unit scale. Upper seat/back/arms descend from chair-root; wheels/pedestal descend from chair-base. `Chair_Seat` local rest T=(0,.42,.025), identity quaternion/unit scale, replacing old chair-seat literally. Upper swivel is driven only by paired clips through CharacterDirector; chair-base stays static. Room may carry a uniquely named `chair-mount` locator at F1 root, but must not export another `chair-root`. No runtime mounting offset is applied to resident/fixture scene containers.
+ 
+@@ -85,7 +85,7 @@
+ 
+ | Catalog IDs | Exact visible target / required child | Hook and ownership |
+ | --- | --- | --- |
+-| entrance-door, door-inside | door / Door_Frame→Door_Hinge→Door_Leaf | Common physical door; inside action opens replay confirmation. Separate labels/hit surfaces, not another door. |
++| entrance-door, door-inside | door / {Door_Frame, Door_Hinge→Door_Leaf} | Frame/hinge siblings; common physical door; inside action opens replay confirmation. Separate labels/hit surfaces, not another door. |
+ | resident | resident / resident-body, body-turn, head (resident.glb) | Paired eight-clip director. |
+ | chair | chair-root / Chair_Seat, chair-base (fixture.glb) | Bounded posture response from CharacterDirector while idle, blocked during turn. |
+ | wall-painting | wall-painting / painting-pivot→painting_frame, painting_canvas | Hanging pivot world (2.08,1.75,-.40), tilt ≤6°, damp to neutral ≤1.2 s. |
+--- r1/04-path-ownership.md
++++ r2/04-path-ownership.md
+@@ -2,7 +2,7 @@
+ 
+ Paths below are relative to `app/`. **E** means present in the bound canonical tree; **N** means deliberately new. Production makers write replacements/patches only inside their delivery roots. No permission to edit canonical `app/` is granted before an explicit I1 integration packet. Unlisted source paths require a new Parent amendment, not silent expansion. Directory wildcards authorize delivery evidence, never additional production source.
+ 
+-Platform A1/A2 allowlists, E/N state and per-path responsibilities are exhaustive in [02-platform-schema-recovery.md](02-platform-schema-recovery.md). The following tables are exhaustive for runtime and identify cross-packet sequential ownership. A1/B1-R2/C1-R2 may run concurrently; shared paths below only pass between sequentially accepted packets.
++Platform A1/A2 allowlists, E/N state and per-path responsibilities are exhaustive in [02-platform-schema-recovery.md](02-platform-schema-recovery.md). The following tables are exhaustive for runtime and identify cross-packet sequential ownership. A1/B1-R2/C1-R2 may run concurrently; shared paths below pass between sequentially accepted packets, except the explicitly independent A2/C1/C2 fixture/type-test sections composed by I1 below. Those makers work in separate delivery roots and cannot overwrite another section's accepted changes.
+ 
+ ## FINISH-C1-R2: generation, readiness, pause and loading controls
+ 
+@@ -50,6 +50,7 @@
+ | --- | --- | --- |
+ | src/features/world/EntranceCoordinator.ts | E | One common entrance timeline and visible door hinge ownership |
+ | src/features/world/CameraDirector.ts | E | Exact named reveal/greeting presets and focus retargets from accepted node centers; preserve sole camera ownership and measured clearances |
++| src/features/world/types.ts | E | Add reveal/greeting CameraPreset literals to match the exact typed preset map; preserve C1 progress/session contracts |
+ | src/features/world/WorldInteractionBinding.ts | E | Exact R2 node/proxy/detail registration and visible catalog reactions |
+ | src/features/world/SceneIntegrator.ts | E | Eight paired clips, conforming successor exports and unique actor counts |
+ | src/features/world/WorldRuntime.ts | E | Bind catalog/motif/clock directors and optional detail consumers |
+@@ -69,6 +70,8 @@
+ | src/features/world/WorldRoot.tsx | E | Wire accurate readable clock/explicit outcomes only; preserve C1 loading, no mobile redesign |
+ | src/contracts/experience.ts | E | Add typed ACTIVATE_OBJECT intent with frozen catalog IDs; no new controller/preference system |
+ | tests/unit/interaction-registry.test.ts | E | Catalog entry/availability regressions |
++| tests/fixtures/engineering-section-4.ts | E | Add CatalogObjectId/ACTIVATE_OBJECT fixture union only, preserving C1 preference and original publication sections |
++| tests/unit/contract-types.test.ts | E | Exact ExperienceIntent successor union and explicit retained legacy compatibility assertions |
+ | tests/unit/interaction-controller.test.ts | E | Catalog dispatch/single owner/route outcomes |
+ | tests/unit/intent-arbitration.test.ts | E | Cancellation and finite action/cooldown policy |
+ | tests/unit/character-director.test.ts | E | Eight clips/glance/posture/interrupt integration |
+@@ -99,9 +102,10 @@
+ - E `public/asset-manifest.json`: regenerate from exact accepted runtime asset bytes with correct tiers/size/SHA-256 and actual canonical URLs.
+ - N `public/models/room.glb`, `public/models/resident.glb`, `public/models/fixture.glb`: copy exact accepted exports, no re-export. E `public/models/group-b-props.glb` and `public/models/on-demand-projects.glb`, E `public/textures/deskmat-topography.png`, E `public/textures/monitor-wallpaper.png`: exact accepted successor mappings when delivered/accepted. Any additional texture file mapping must be enumerated in the B1 acceptance/assembly manifest before I1.
+ - N `tests/integration/completion-successor.test.ts`, N `tests/e2e/completion-successor.spec.ts`: combined site/monitor/catalog/loading/mobile/release binding proof.
++- E `tests/fixtures/engineering-section-4.ts`, E `tests/unit/contract-types.test.ts`: explicitly merge independently accepted A2 Publication.site and C1/C2 preferences/intent sections. Parent's later I1 packet must bind the exact predecessor hashes and section-level composition; full-file replacement cannot silently discard another lane's accepted type assertions.
+ 
+ I1 cannot resolve a contract conflict by silently editing a maker's accepted revision. It returns the conflict to Parent and the assigned maker; accepted overlays stay immutable. Packaging metadata/release paths and actual dependency base are bound in its dispatch packet after predecessors exist.
+ 
+ ## Sequential ownership summary
+ 
+-`WorldRoot`: C1 loading/pause -> C2 clock/outcome wiring -> C3 layout -> I1 published-site prop seam. `world.module.css`: C1 indicator -> C3 layout. `controller`/`experience` contracts: C1 preference compatibility -> C2 catalog intents. `RuntimeMaterialQuality`/`LowQualityBatch`: C1 late-map ownership -> C2 late-detail/animated bindings. `room-controls`: C2 semantic dispatch -> C3 layout. Platform content contracts remain A2 only. No simultaneous owner shares these source paths.
++`WorldRoot`: C1 loading/pause -> C2 clock/outcome wiring -> C3 layout -> I1 published-site prop seam. `world.module.css`: C1 indicator -> C3 layout. `controller`/`experience` contracts: C1 preference compatibility -> C2 catalog intents. `RuntimeMaterialQuality`/`LowQualityBatch`: C1 late-map ownership -> C2 late-detail/animated bindings. `room-controls`: C2 semantic dispatch -> C3 layout. Platform content contracts remain A2 only. These production paths have sequential owners. The named fixture/type-test sections are the explicit independent-section exception, merged only under I1's bound predecessor identities.
+--- r1/05-handoffs-and-dependencies.md
++++ r2/05-handoffs-and-dependencies.md
+@@ -2,7 +2,9 @@
+ 
+ First source base for A1, B1-R2 and C1-R2: **commit f62a43c5e71c00dcb89e28275ea81d842167db80; app tree 42ea29ec235225046a75959eb19eb386ac2f821d**. Use `git show` or an isolated checkout of that commit; unchanged canonical files are direct local inputs, original B1/C1 are correction reference only. Raw input identities are [input-hashes.json](input-hashes.json). Frozen design is this pack's [output-hashes.json](output-hashes.json), plus the subsequent Parent ruling. No maker starts from an unaccepted candidate.
+ 
+-## First three concrete packets
++## First three concrete packet slots (preserved issuance history)
++
++The roots below became occupied by received candidates while this design review was pending. Preserve them. No formal Parent R2 ruling existed at that time; current delivery does not satisfy the acceptance prerequisite below. A later Parent continuation packet binds those exact candidates and allocates a fresh root for each required correction. Do not rerun an original prompt into an occupied root.
+ 
+ | Packet | Actual assigned maker | Delivery root | Concrete outcome and evidence | Dispatch prerequisite |
+ | --- | --- | --- | --- | --- |
+@@ -14,7 +16,7 @@
+ 
+ Each maker reads relevant actual canonical source/test/contracts and its own original candidate/audit. Missing external provider/doc/device inputs are named; they do not justify invented results. Do not change lock/dependency versions, three historical migrations, unrelated delivery roots or accepted evidence. Return actual `source/`, `source.patch` (platform/runtime), editable/exported files (art), `report.md`, raw-byte input/output hashes, changed-path list and bound command receipts. Include PASS/FAIL/NOT RUN per requirement and exact test scope. Commit/push only owned completed changes, and stop for independent review. Parent owns the ruling; the maker cannot accept itself.
+ 
+-A1/B1-R2/C1-R2 can execute independently in separate roots. Account aliases are the requested work lanes, not proof this session can access three Gemini accounts. Actual start/return status must be recorded from a real session or received artifacts. Current callable Gemini access is unavailable; prepared handoffs are not dispatched.
++A1/B1-R2/C1-R2 can execute independently in separate roots. Account aliases are the requested work lanes, not proof this session can access three Gemini accounts. The owner identifies Antigravity or an IDE with this folder open. This coordinator has no callable Gemini session control; separate sessions have returned the three candidates and scoped Git commits. Their reports record claimed execution, while acceptance requires independent evidence. Original local prompts were prepared here; delivery is observed from received files, without inventing an automatic dispatch event.
+ 
+ ## Dependency graph
+ 
+--- r1/06-missing-inputs.md
++++ r2/06-missing-inputs.md
+@@ -4,7 +4,7 @@
+ 
+ | Input | Current evidence/limit | Owner and next action | Affected work |
+ | --- | --- | --- | --- |
+-| Three Gemini maker sessions | Owner confirms three Gemini; gemini not on current PATH and no callable Gemini connector exposed | Owner opens the maker tool with this project; Parent supplies one exact accepted handoff per lane and records actual start/return | External maker dispatch; contract work continues locally |
++| Three Gemini maker sessions | Owner confirms three Gemini in Antigravity or an IDE with this folder open; no callable Gemini connector exposed here | Parent supplies exact local lane handoffs and records actual received deliveries; separate IDE sessions load them | External session control is unavailable here; three candidates have returned |
+ | Independent model review | Local collaboration tools available; owner requests GPT-6.1 Sol ultra | Parent invokes actual distinct review agent against frozen artifacts; retain actual model/limits | R2 independent audit |
+ | Approved resume | No owner-approved PDF identified by this packet; no arbitrary filename/search is proof of approval | Owner supplies approval and exact bytes through the established workflow; Gemini #1 implements validation/registration/download | Actual A2 resume fulfillment remains unmet until input |
+ | Credential/evaluation receipts | Earlier ledger retains private/unverified receipts and model-metric drift | Owner/content maker archives provenance without public fabricated certificates/metrics | Claim acceptance and conditional prop actions |
+@@ -18,7 +18,7 @@
+ | Full-service recovery capacity | Current DB/provider backup/export ability unverified | Backend maker proves actual DB/Auth/MFA/session/Storage restore cut-off, time and limitations; runtime maker binds target/availability | Full-service recovery rehearsal, separate from app rollback |
+ | Physical mobile/thermal | Actual iOS/Android sessions NOT RUN | Owner/device operator with runtime maker executes required device sessions and sustained scene logs | G7 manual/thermal; emulation is separate |
+ | Assistive technology | Actual NVDA/VoiceOver/TalkBack sessions NOT RUN | Owner/operator runs bound manual sessions with accessible routes/controls | G7 manual accessibility |
+-| New conforming art/runtime/platform bytes | Old B1/C1 candidates remain independently REWORK; A1 delivery absent at start | Assigned Gemini makers return new exact source/assets and fresh receipts | Implementation audit/acceptance, canonical integration |
++| New conforming art/runtime/platform bytes | Old B1/C1 remain independently REWORK; A1 was absent at inspection start. Now FINISH-A1/r2, FINISH-B1-R2 and FINISH-C1-R2 exist; platform audit REWORK, art/runtime audits PASS advice | Parent binds actual new candidates, issues platform correction and any complete-scope audit supplements; makers preserve occupied roots | No Parent implementation acceptance or canonical integration yet |
+ | Reference rights/likeness | Reference provenance records unknown rights; no new likeness/voice permission inferred | Art maker authors assets with provenance; owner supplies sources only when actually used | Visual/reference/art acceptance and extensions |
+ 
+ Input absence does not invent a pass and does not cancel independent work. No current broad app suites are rerun merely for this documentation amendment. Contract validation is path/hash/link/source-inventory checking; browser/device/live tests remain future maker evidence. Earlier failed/original logs and accepted baselines stay intact.
+--- r1/validate-contracts.py
++++ r2/validate-contracts.py
+@@ -26,6 +26,12 @@
+     return subprocess.check_output(["git", *args], cwd=ROOT).decode().strip()
+ 
+ 
++def base_blob(rel: str) -> bytes | None:
++    result = subprocess.run(["git", "cat-file", "blob", f"{BASE}:{rel}"], cwd=ROOT,
++                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
++    return result.stdout if result.returncode == 0 else None
++
++
+ def write_json(path: Path, obj: object) -> None:
+     path.write_text(json.dumps(obj, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+ 
+@@ -36,6 +42,9 @@
+     # Normalize only newly owned docs; never normalize predecessor source/evidence.
+     for path in PACK.glob("*.md"):
+         path.write_bytes(path.read_bytes().replace(b"\r\n", b"\n"))
++    prior_path = PACK / "input-hashes.json"
++    prior = json.loads(prior_path.read_text(encoding="utf-8")) if prior_path.exists() else {}
++    prior_rows = {item["path"]: item for item in prior.get("inputs", [])}
+     inspected: dict[str, str] = {}
+     for name in ["02-platform-schema-recovery.md", "03-asset-bindings.md"]:
+         for rel, digest in re.findall(r"\| `([^`]+)` \| `([a-f0-9]{64})` \|", (PACK / name).read_text(encoding="utf-8")):
+@@ -55,21 +64,46 @@
+     inputs = []
+     for rel in sorted(set(inspected) | set(extra)):
+         source = ROOT / rel
+-        item = record(source)
++        snap = PACK / "input-snapshots" / rel
++        observed = snap if snap.exists() else source
++        blob = base_blob(rel)
++        expected = inspected.get(rel, prior_rows.get(rel, {}).get("sha256"))
++        reconstructed = False
++        if expected and hashlib.sha256(observed.read_bytes()).hexdigest() != expected:
++            # A clean Git restore can replace the inspected CRLF working bytes
++            # with LF without changing the source tree. Recover only when the
++            # exact previously bound raw SHA-256 proves the reconstruction.
++            candidates = [] if blob is None else [blob, blob.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")]
++            matches = [value for value in candidates if hashlib.sha256(value).hexdigest() == expected]
++            if not matches:
++                raise ValueError(f"Inspected input changed before binding: {rel}")
++            snap.parent.mkdir(parents=True, exist_ok=True)
++            snap.write_bytes(matches[0])
++            observed = snap
++            reconstructed = True
++        item = record(observed)
++        item["path"] = rel
+         if rel in inspected and item["sha256"] != inspected[rel]:
+             raise ValueError(f"Inspected input changed before binding: {rel}")
+         item["inspection"] = "contributor-read" if rel in inspected else "parent-source-or-identity-inventory"
+-        if rel in MUTABLE:
+-            snap = PACK / "input-snapshots" / rel
++        if blob is not None:
++            item["baseGitBlobSha256"] = hashlib.sha256(blob).hexdigest()
++            item["baseGitBlobBytes"] = len(blob)
++        # Preserve inspected raw bytes when Git's EOL policy changes the blob.
++        # The separate blob identity binds the portable source commit as well.
++        if rel in MUTABLE or (blob is not None and blob != observed.read_bytes()):
+             snap.parent.mkdir(parents=True, exist_ok=True)
+-            if snap.exists() and snap.read_bytes() != source.read_bytes():
+-                raise ValueError(f"Preserved mutable input snapshot cannot be overwritten: {rel}")
+-            snap.write_bytes(source.read_bytes())
++            if not snap.exists():
++                snap.write_bytes(observed.read_bytes())
+             item["snapshotPath"] = snap.relative_to(ROOT).as_posix()
++        if reconstructed or prior_rows.get(rel, {}).get("snapshotOrigin"):
++            item["snapshotOrigin"] = "Base Git blob EOL reconstruction verified against previously observed raw SHA-256"
+         inputs.append(item)
+     write_json(PACK / "input-hashes.json", {"packet": "FINISH-00-R2", "hashPolicy": "SHA-256 of raw bytes",
+         "baseCommit": BASE, "sourceAppTree": APP_TREE,
+         "mutableInputPolicy": "Preserved observed raw snapshots, not later living coordination bytes",
++        "portableInputPolicy": "Preserve raw observed bytes when different from base Git blob; independently bind both identities",
++        "priorRawInputManifestSha256": prior.get("priorRawInputManifestSha256", hashlib.sha256(prior_path.read_bytes()).hexdigest() if prior_path.exists() else None),
+         "inputs": inputs})
+     outputs = [record(p) for p in sorted(PACK.rglob("*"))
+                if p.is_file() and p.name != "output-hashes.json" and "__pycache__" not in p.parts]
+@@ -84,6 +118,7 @@
+     inputs = json.loads((PACK / "input-hashes.json").read_text(encoding="utf-8"))
+     outputs = json.loads((PACK / "output-hashes.json").read_text(encoding="utf-8"))
+     checked = 0
++    blob_checks = 0
+     for items in [inputs["inputs"], outputs["outputs"]]:
+         for item in items:
+             path = ROOT / item.get("snapshotPath", item["path"])
+@@ -93,6 +128,11 @@
+             actual = record(path)
+             if actual["bytes"] != item["bytes"] or actual["sha256"] != item["sha256"]:
+                 errors.append(f"Raw-byte identity mismatch: {item['path']}")
++            if "baseGitBlobSha256" in item:
++                blob = base_blob(item["path"])
++                if blob is None or len(blob) != item["baseGitBlobBytes"] or hashlib.sha256(blob).hexdigest() != item["baseGitBlobSha256"]:
++                    errors.append(f"Base Git blob identity mismatch: {item['path']}")
++                blob_checks += 1
+             checked += 1
+     declared = {x["path"] for x in outputs["outputs"]}
+     current = {p.relative_to(ROOT).as_posix() for p in PACK.rglob("*")
+@@ -135,6 +175,7 @@
+     if git("rev-parse", "HEAD:app") != APP_TREE or git("diff", BASE, "--", "app"):
+         errors.append("Canonical application changed from bound source")
+     return {"packet": "FINISH-00-R2", "status": "FAIL" if errors else "PASS", "hashChecks": checked,
++        "baseGitBlobChecks": blob_checks,
+         "allowlistChecks": ownership_checks, "localLinkChecks": link_checks, "migrationCount": len(migrations),
+         "publicTableCount": len(tables), "sourceAppTree": APP_TREE, "errors": errors,
+         "scope": "Architecture document identity/path/schema checks; application/browser/live tests NOT RUN"}

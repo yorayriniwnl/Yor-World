@@ -1,0 +1,45 @@
+{
+  "workingDirectory": "C:\\Users\\yoray\\Projects\\Yor World",
+  "pythonVersion": "3.12.10",
+  "commands": [
+    {
+      "command": "python deliveries/completion-audits/FINISH-00-R2/independent/r1/inspect_identity.py",
+      "exitCode": 0,
+      "timestampUTC": "2026-10-10T11:24:06.731970+00:00",
+      "result": "identity-results.json; manifest-verification.json; path-state-results.json; sql-inventory-results.json; glb-inventory-results.json"
+    },
+    {
+      "command": "node deliveries/completion-audits/FINISH-00-R2/independent/r1/type-seam-probe.mjs",
+      "attempt": 1,
+      "exitCode": 1,
+      "result": "type-seam-first-attempt.json"
+    },
+    {
+      "command": "node deliveries/completion-audits/FINISH-00-R2/independent/r1/type-seam-probe.mjs",
+      "attempt": 2,
+      "exitCode": 1,
+      "result": "type-seam-second-attempt.json"
+    },
+    {
+      "command": "node deliveries/completion-audits/FINISH-00-R2/independent/r1/type-seam-probe.mjs",
+      "attempt": 3,
+      "exitCode": 0,
+      "timestampUTC": "2026-10-10T11:30:29.606Z",
+      "result": "type-seam-results.json",
+      "interpretation": "DEFECT REPRODUCED: three intended compiler failures"
+    }
+  ],
+  "readOnlyProbes": [
+    "git rev-parse HEAD",
+    "git rev-parse HEAD:app",
+    "git diff f62a43c5e71c00dcb89e28275ea81d842167db80 -- app",
+    "rg/read direct named source",
+    "main-reference.png view_image"
+  ],
+  "failedReadProbes": [
+    "app/src/server/media/storage.ts",
+    "app/src/server/operations/job-runner.ts",
+    "app/src/server/auth/owner.ts"
+  ],
+  "failedReadDisposition": "Not inspected; actual source resolved with rg and named in report."
+}

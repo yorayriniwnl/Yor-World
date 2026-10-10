@@ -1,0 +1,101 @@
+{
+  "packet": "FINISH-00-R2",
+  "reviewRevision": "architecture/r1",
+  "date": "2026-10-10",
+  "role": "independent dangerous-cross-lane architecture advisor; not full contract auditor or acceptance authority",
+  "model": "gpt-6-astra",
+  "modelDisplayName": "Astra",
+  "modelProvenance": "actual Parent agent invocation assignment; no independent serving-infrastructure introspection",
+  "advice": "REWORK",
+  "implementationAcceptance": false,
+  "parentRuling": false,
+  "reviewedOutputManifestSha256": "2271b1b7ae763e7b859f512df10da11231d0e50bb146734b9459fc0e56321bf8",
+  "reviewedInputManifestSha256": "91b00ad8b1122a1392c7f541485f502dcf4b97723039084ae5688926387a606a",
+  "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+  "observedHead": "de2c8afe516099d7d7be30a63e16a883b753133a",
+  "appTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+  "checks": [
+    {
+      "name": "raw input manifest hashes and sizes",
+      "status": "PASS",
+      "entries": 146,
+      "mismatches": 0,
+      "mutablePolicy": "snapshotPath"
+    },
+    {
+      "name": "raw output manifest hashes and sizes",
+      "status": "PASS",
+      "entries": 13,
+      "mismatches": 0
+    },
+    {
+      "name": "canonical app diff",
+      "status": "PASS",
+      "changedPaths": []
+    },
+    {
+      "name": "actual GLB JSON metadata",
+      "status": "PASS",
+      "files": [
+        "deliveries/FINISH-B1/assets/production-room-full.glb",
+        "deliveries/FINISH-B1/assets/resident-production.glb",
+        "deliveries/FINISH-B1/assets/fixture-production.glb",
+        "app/public/models/production-room-full.glb"
+      ],
+      "scope": "raw hashes, selected node parent/TRS, skins and animation accessor min/max; no mesh decode/render"
+    },
+    {
+      "name": "five cross-lane source/contract consistency decisions",
+      "status": "FAIL",
+      "reason": "AR2-01 exact door hierarchy conflict; other choices viable at design level"
+    },
+    {
+      "name": "app broad suites/browser/native exports/devices/providers/migrations/concurrency/recovery",
+      "status": "NOT RUN",
+      "reason": "read-only documentation architecture review; future maker evidence remains required"
+    }
+  ],
+  "findings": [
+    {
+      "id": "AR2-01",
+      "severity": "MEDIUM",
+      "blocking": true,
+      "title": "Conflicting exact door hierarchy and identity terminology",
+      "locations": [
+        {
+          "path": "docs/planning/reconciliation-packets/finish-contracts-r2/03-asset-bindings.md",
+          "line": 51,
+          "clause": "section 3 coordinate/hierarchy/rest pose"
+        },
+        {
+          "path": "docs/planning/reconciliation-packets/finish-contracts-r2/03-asset-bindings.md",
+          "line": 89,
+          "clause": "section 5 entrance-door/door-inside exact catalog row"
+        }
+      ],
+      "minimalCorrection": "Use Room_Root/door/{Door_Frame,Door_Hinge/Door_Leaf} consistently. Door_Frame is identity; Door_Hinge translation is (-1.65,0,1.8), identity quaternion and unit scale; leaf local translation remains (.45,1.05,0).",
+      "fixOwner": "Parent contract author",
+      "requiredFollowup": "Preserve r1, bind corrected output manifest, obtain architecture delta advice and separate full contract delta audit before Parent ruling"
+    }
+  ],
+  "decisionAdvice": {
+    "conformingExportsSingleRoomTiers": "PASS design only",
+    "singleDoorOwnerTransforms": "REWORK AR2-01",
+    "additiveSiteWriteReadHistoryFallback": "PASS design only",
+    "pauseControllerBatchingDisposal": "PASS design only",
+    "isolatedAssemblyI1SiteSeam": "PASS design only"
+  },
+  "limitations": [
+    "No full semantic audit of all 146 hashed inputs.",
+    "No future successor implementation accepted.",
+    "No physical/deformed bounds or visual performance result.",
+    "Full contract auditor is separate; Parent alone accepts."
+  ],
+  "writes": [
+    "deliveries/completion-audits/FINISH-00-R2/architecture/r1/report.md",
+    "deliveries/completion-audits/FINISH-00-R2/architecture/r1/review.json",
+    "deliveries/completion-audits/FINISH-00-R2/architecture/r1/output-hashes.json"
+  ],
+  "commitsPerformed": false,
+  "sourceOrContractFixesPerformed": false
+}
