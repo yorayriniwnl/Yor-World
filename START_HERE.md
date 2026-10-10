@@ -12,6 +12,8 @@ Latest local re-audit: [October 11 FINISH-04 results](docs/planning/reviews/2026
 
 Detailed independent repair prompts: [FINISH-05](docs/planning/reconciliation-packets/2026-10-11-finish-05.md) supplies [separate account prompts](docs/planning/production-prompts/repairs-2026-10-11/README.md) for the three existing R3 corrections, independent Sol Ultra review, later completion/release and six extensions. It adds the current audit findings without changing accepted contracts or implementation status. Recheck occupied maker roots before writing; a partial folder is not a completed return.
 
+The A1-R3 root was subsequently confirmed occupied by an incomplete, misbound candidate. [FINISH-07](docs/planning/reconciliation-packets/2026-10-11-finish-07-a1-r4.md) allocates a fresh A1-R4 root while preserving R3. It is a local Codex implementation assignment, not external Gemini dispatch. B1-R3 remains governed by FINISH-04/05; C1-R4 has its own [Parent allocation](docs/planning/reconciliation-packets/2026-10-11-finish-06-c1-r4.md), subject to its delivery-root collision check.
+
 | Input | Local file |
 | --- | --- |
 | Main visual reference | [references/images/main-reference.png](references/images/main-reference.png) |
