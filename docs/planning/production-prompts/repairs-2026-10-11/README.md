@@ -11,10 +11,13 @@ Send each Gemini account only its own maker prompt. Use the GPT-6.1 Sol Ultra ch
 | [03 — Runtime](03-GEMINI3-RUNTIME.md) | Gemini #3 | Historical pause compatibility, truthful aggregate loading, stall/retry/generation ownership, atomic adoption and exact resource cleanup |
 | [04 — Independent auditor](04-SOL-INDEPENDENT-AUDITOR.md) | GPT-6.1 Sol Ultra | Complete-scope and delta checks of actual maker outputs, with findings returned to the original makers |
 | [07 — A1-R4 platform correction](07-GEMINI1-A1-R4.md) | Local Codex platform-maker worker | Fresh A1 revision after the occupied, incomplete R3 root; full A3-01 through A3-05 correction and evidence |
+| [08 — C1-R5 runtime correction](08-CODEX-C1-R5.md) | Local Codex runtime-maker worker | Fresh C1 revision after the occupied, incomplete R4 root; original six findings plus source-level follow-up regressions |
 
 The partial runtime R3 folder appeared during drafting without a complete report/patch/hash handoff at the recorded check. Preserve it and inspect current ownership/completeness; do not overwrite it or treat it as accepted. The other two R3 roots were absent at that check. Recheck current state when using these prompts.
 
 After that recorded check, the A1-R3 root was confirmed occupied by an incomplete 268-file candidate without a valid R3 source patch/report; its only manifest identifies the W2 art lane. FINISH-07 therefore assigns A1-R4 in a new root. The prompt is a local Codex maker handoff and does not claim external account dispatch.
+
+The C1-R4 root is also occupied and incomplete. Its read-only source review is recorded in the FINISH-08 packet, which allocates C1-R5 without modifying R4. The R3 art correction remains in its original FINISH-04 root.
 
 | Use at the appropriate next stage | Recipient | Purpose |
 | --- | --- | --- |
