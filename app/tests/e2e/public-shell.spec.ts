@@ -66,8 +66,8 @@ test("direct loads, refreshes, route headings, honest empty states and 404", asy
     statuses.push({ route, direct: response?.status(), refresh: 200 });
   }
   await page.goto("/");
-  await expect(page.getByText("Verified identity", { exact: true })).toBeVisible();
-  await expect(page.getByText("Building realtime systems, 3D product interfaces, and applied ML.")).toBeVisible();
+  await expect(page.getByText("Independent developer & engineer", { exact: true })).toBeVisible();
+  await expect(page.getByText(/I design and build software that makes complex ideas feel intuitive/i)).toBeVisible();
   await page.goto("/projects");
   await expect(page.getByText(/verified projects published/i)).toBeVisible();
   await expect(page.locator('a[href^="/projects/"]')).toHaveCount(4);
@@ -95,7 +95,7 @@ test("keyboard skip link and all primary destinations work without pointer input
   await page.keyboard.press("Enter");
   await expect(page.getByRole("main")).toBeFocused();
   await page.keyboard.press("Tab");
-  await expect(page.getByRole("link", { name: "View projects" })).toBeFocused();
+  await expect(page.getByRole("link", { name: /Explore my work/i })).toBeFocused();
   for (const [index, label] of ["Projects", "About", "Contact", "Résumé"].entries()) {
     await page.goto("/");
     // Skip link, home brand, then the four persistent native links.
@@ -108,7 +108,7 @@ test("keyboard skip link and all primary destinations work without pointer input
     await page.keyboard.press("Enter");
     await expect(page.getByRole("main").getByRole("heading", { level: 1 })).toHaveText(label);
   }
-  await save(info, "keyboard.json", { skipFocus: "main-content", firstContentLink: "View projects", sequence });
+  await save(info, "keyboard.json", { skipFocus: "main-content", firstContentLink: "Explore my work", sequence });
 });
 
 test("useful HTML and native navigation remain with JavaScript disabled", async ({ browser, baseURL }, info) => {
