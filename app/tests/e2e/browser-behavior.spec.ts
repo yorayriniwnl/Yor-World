@@ -104,6 +104,17 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
     // Verify ZERO .glb files were loaded prior to explicit entry
     expect(glbRequests).toEqual([]);
     await expect(page.locator('[data-testid="world-canvas"]')).toHaveCount(0);
+
+    // Capture the reference-led page as it actually renders, not only the hero.
+    // Keep the frozen E2E case count unchanged.
+    await page.locator("#skills").scrollIntoViewIfNeeded();
+    await captureScreenshot(page, "01b-skills-atlas-desktop");
+    await page.locator("#work").scrollIntoViewIfNeeded();
+    await captureScreenshot(page, "01c-selected-projects-desktop");
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+    await expect(page.locator("h1")).toContainText("Full-stack");
+    await captureScreenshot(page, "01d-home-mobile");
   });
 
   test("2. Entry & 3. Home Camera: explicit entry mounts world with single resident and chair at F1 coordinates", async ({ page }) => {
