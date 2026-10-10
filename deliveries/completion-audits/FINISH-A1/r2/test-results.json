@@ -1,0 +1,29 @@
+{
+  "typescriptTypecheck": {
+    "command": "tsc --noEmit",
+    "exitCode": 0,
+    "errors": 0,
+    "status": "PASS"
+  },
+  "eslint": {
+    "command": "eslint . --max-warnings=0",
+    "exitCode": 1,
+    "warnings": 1,
+    "errors": 0,
+    "status": "FAIL",
+    "findingId": "A1-R1",
+    "details": "src/server/content/preview.ts:10:8 warning: 'ProjectId' is defined but never used (@typescript-eslint/no-unused-vars)"
+  },
+  "vitestUnit": {
+    "command": "vitest run tests/unit/completion-authoring-blocks.test.ts",
+    "testsPassed": 8,
+    "testsFailed": 0,
+    "status": "PASS"
+  },
+  "vitestIntegration": {
+    "command": "vitest run -c vitest.integration.config.ts tests/integration/platform/completion-authoring-preview.test.ts",
+    "testsPassed": 6,
+    "testsFailed": 0,
+    "status": "PASS"
+  }
+}
