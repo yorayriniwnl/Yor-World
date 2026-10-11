@@ -27,7 +27,7 @@
     "rulingDecisionPath": "docs/planning/reviews/2026-10-08-rc6-r1/decision.json"
   },
   "completionProgram": {
-    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 FINISH-24 INDEPENDENT AUDIT PENDING / B1-R3 FINISH-20 REWORK / B1-R4 FINISH-25 MATERIAL CORRECTION AUTHORIZED, MAKER PENDING / C1-R6 FINISH-16 REWORK FOR E-01 / C1-R7 FINISH-26 DELTA AUDIT REALLOCATED, PENDING / NO CANONICAL COMPLETION INTEGRATION",
+    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 FINISH-24 REWORK; FINISH-27 CORRECTION ACTIVE / B1-R3 FINISH-20 REWORK / B1-R4 FINISH-25-R1 VISIBILITY AMENDMENT ACTIVE / C1-R6 FINISH-16 E-01 PENDING / C1-R7 FINISH-26 REWORK FOR E-02; FINISH-28 CORRECTION ACTIVE / NO CANONICAL COMPLETION INTEGRATION",
     "coordinationCommit": "ab369d413c7501224e3d79aa78e56172f97839ff",
     "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
     "contractsGate": {
@@ -139,14 +139,17 @@
       },
       "FINISH-B1-R4": {
         "maker": "Local Codex art-maker worker",
-        "status": "FINISH-25 AUTHORIZED / MAKER PENDING",
+        "status": "FINISH-25-R1 AMENDMENT ISSUED / MAKER ACTIVE",
         "deliveryRoot": "deliveries/FINISH-B1-R4/",
-        "promptPath": "docs/planning/production-prompts/repairs-2026-10-11/15-CODEX-B1-R4.md",
+        "promptPath": "docs/planning/production-prompts/repairs-2026-10-11/16-CODEX-B1-R4-R1.md",
+        "priorPromptPath": "docs/planning/production-prompts/repairs-2026-10-11/15-CODEX-B1-R4.md",
         "packetPath": "docs/planning/reconciliation-packets/2026-10-11-finish-25-b1-r4-material-pass-correction.md",
+        "amendmentPath": "docs/planning/reconciliation-packets/2026-10-11-finish-25-r1-b1-glass-visibility-amendment.md",
         "baseCandidateCommit": "1753b9278c4537b5377c3893172b2a0f26d13b10",
         "baseCandidateTree": "9759ac9879bcc9489770b7c5784ead2f022157b0",
         "finding": "FINISH-20 confirmed the PC_TemperedGlass transmission pass duplicates scene calls: 202/120 desktop and 146/80 mobile.",
-        "scope": "Correct the glass material representation and necessary room source/export only; preserve geometry, door/camera path, runtime, other assets, and frozen budgets.",
+        "scope": "FINISH-25 plus FINISH-25-R1: correct the glass representation and only the bounded PC/window visibility geometry; preserve all other geometry, door/camera path, runtime, other assets, and frozen budgets.",
+        "makerExecution": "Material-only checkpoint preserved; visibility blockers diagnosed; geometry work resumed after pushed FINISH-25-R1 amendment b33631a9",
         "parentImplementationAcceptance": "NOT ACCEPTED",
         "canonicalIntegration": false
       },
@@ -209,7 +212,7 @@
       },
       "FINISH-C1-R7": {
         "maker": "Local Codex runtime evidence-maker worker",
-        "status": "DELIVERED / CANDIDATE PUSHED / INDEPENDENT DELTA AUDIT PENDING",
+        "status": "DELIVERED / FINISH-26 LOCAL AUDIT REWORK FOR E-02 / FINISH-28 CORRECTION ACTIVE",
         "deliveryRoot": "deliveries/FINISH-C1-R7/",
         "deliveryCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
         "makerReport": "deliveries/FINISH-C1-R7/report.md",
@@ -219,17 +222,33 @@
         "r6CandidateCommit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
         "r5CandidateCommit": "5e85e6a8a248581fe3893fd80c7da3d05079f305",
         "finding": "FINISH-16 E-01; FINISH-21-R1 maps 27 repository-backed inputs and two installed Three.js files without rewriting original receipts",
-        "independentDeltaAudit": "FINISH-23 ROOT OCCUPIED AND PRESERVED / FINISH-26 REALLOCATED, REVIEW PENDING / EXTERNAL GPT PLUS #2 NOT RUN",
+        "independentDeltaAudit": "FINISH-26 COMPLETE / LOCAL AUDIT REWORK FOR E-02 / FINISH-28 VERIFIER CORRECTION ACTIVE / EXTERNAL GPT PLUS #2 NOT RUN",
         "auditPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-23-c1-r7-delta-audit.md",
         "auditRoot": "deliveries/completion-audits/FINISH-C1/finish-12/20261011T133844Z-c1-r7-delta-review-02/",
+        "auditReport": "deliveries/completion-audits/FINISH-C1/finish-12/20261011T133844Z-c1-r7-delta-review-02/report.md",
+        "auditRecommendation": "REWORK; duplicated sourceManifest and installed-package declaration fields are not fail-closed",
         "priorAuditRoot": "deliveries/completion-audits/FINISH-C1/finish-11/20261011T073003Z-c1-r7-delta-review-01/",
         "auditReallocationPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-26-c1-r7-audit-root-reallocation.md",
-        "parentImplementationAcceptance": "NOT RATIFIED",
+        "correctionPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-28-c1-r7-verifier-correction.md",
+        "correctionDeliveryRoot": "deliveries/FINISH-C1-R8/",
+        "parentImplementationAcceptance": "NOT ACCEPTED; E-01 remains separately pending; E-02 REWORK",
         "canonicalIntegration": false
       },
+    "FINISH-C1-R8": {
+      "maker": "Local Codex evidence-maker worker",
+      "status": "FINISH-28 AUTHORIZED / MAKER EXECUTION ACTIVE",
+      "deliveryRoot": "deliveries/FINISH-C1-R8/",
+      "packetPath": "docs/planning/reconciliation-packets/2026-10-11-finish-28-c1-r7-verifier-correction.md",
+      "promptPath": "docs/planning/production-prompts/repairs-2026-10-11/18-CODEX-C1-R8.md",
+      "baseCandidateCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
+      "scope": "Evidence verifier and negative regressions only; no app/runtime/dependency or historical receipt changes",
+      "parentImplementationAcceptance": "NOT ACCEPTED; E-01 remains separately pending",
+      "canonicalIntegration": false,
+      "externalGPTPlus2Audit": "NOT RUN"
+    },
       "FINISH-A1-R5": {
         "maker": "Local Codex platform-maker worker",
-        "status": "DELIVERED / COMMITTED AND PUSHED / FINISH-24 LOCAL INDEPENDENT AUDIT PENDING",
+        "status": "DELIVERED / FINISH-24 LOCAL AUDIT REWORK / FINISH-27 CORRECTION AUTHORIZED",
         "deliveryRoot": "deliveries/FINISH-A1/r5-05/",
         "allocationPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-22-a1-r5-r5-04-collision.md",
         "deliveryCommit": "8f3aa566f36c92bb98658090ef91f9bfa96e8a79",
@@ -241,7 +260,14 @@
         "requirementMatrix": "deliveries/FINISH-A1/r5-05/requirement-matrix.json",
         "auditPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-24-a1-r5-independent-audit.md",
         "auditRoot": "deliveries/completion-audits/FINISH-A1/finish-06/20261011T132805Z-a1-r5-independent-review-01/",
-        "auditStatus": "AUTHORIZED / LOCAL INDEPENDENT REVIEW PENDING / EXTERNAL GPT PLUS #2 NOT RUN",
+        "auditStatus": "COMPLETE / LOCAL INDEPENDENT REVIEW RECOMMENDS REWORK / EXTERNAL GPT PLUS #2 NOT RUN",
+        "auditRecommendation": "REWORK; findings A1R5-01 through A1R5-06",
+        "auditReport": "deliveries/completion-audits/FINISH-A1/finish-06/20261011T132805Z-a1-r5-independent-review-01/report.md",
+        "auditStableOutputHashVerification": "PASS; 31 of 31 listed stable files verified by Parent",
+        "correctionPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-27-a1-r5-rework.md",
+        "correctionDeliveryRoot": "deliveries/FINISH-A1/r5-06/",
+      "correctionPromptPath": "docs/planning/production-prompts/repairs-2026-10-11/17-CODEX-A1-R5-R6.md",
+        "correctionStatus": "AUTHORIZED / MAKER EXECUTION IN PROGRESS",
         "promptPath": "docs/planning/production-prompts/repairs-2026-10-11/13-CODEX-A1-R5.md",
         "priorReallocationPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-19-a1-r5-reallocation.md",
         "scopeClarificationPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-14-a1-r5-scope-clarification.md",
@@ -276,7 +302,7 @@
       "productionFixesIntegrated": false,
       "advice": "REWORK before maker acceptance/integration"
     },
-    "latestCorrectionAllocation": {
+    "priorCorrectionAllocation": {
       "packetId": "FINISH-21-R1",
       "path": "docs/planning/reconciliation-packets/2026-10-11-finish-21-r1-candidate-input-provenance.md",
       "basePacketId": "FINISH-21",
@@ -288,6 +314,28 @@
       "status": "DELIVERED / INDEPENDENT DELTA AUDIT PENDING; E-01 NOT YET CLOSED",
       "canonicalSourceChanged": false
     },
+    "priorA1CorrectionAllocation": {
+      "packetId": "FINISH-27",
+      "path": "docs/planning/reconciliation-packets/2026-10-11-finish-27-a1-r5-rework.md",
+      "basePacketId": "FINISH-24",
+      "basePacketPath": "docs/planning/reconciliation-packets/2026-10-11-finish-24-a1-r5-independent-audit.md",
+      "lane": "FINISH-A1-R5",
+      "deliveryRoot": "deliveries/FINISH-A1/r5-06/",
+      "candidateCommit": "8f3aa566f36c92bb98658090ef91f9bfa96e8a79",
+      "status": "AUTHORIZED / MAKER EXECUTION IN PROGRESS / CANONICAL SOURCE UNCHANGED",
+      "canonicalSourceChanged": false
+    },
+    "latestCorrectionAllocation": {
+      "packetId": "FINISH-28",
+      "path": "docs/planning/reconciliation-packets/2026-10-11-finish-28-c1-r7-verifier-correction.md",
+      "basePacketId": "FINISH-26",
+      "basePacketPath": "docs/planning/reconciliation-packets/2026-10-11-finish-26-c1-r7-audit-root-reallocation.md",
+      "lane": "FINISH-C1-R7",
+      "deliveryRoot": "deliveries/FINISH-C1-R8/",
+      "candidateCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
+      "status": "AUTHORIZED / EVIDENCE-MAKER EXECUTION IN PROGRESS / CANONICAL SOURCE UNCHANGED",
+      "canonicalSourceChanged": false
+    },
     "latestAuditAllocation": {
       "packetId": "FINISH-26",
       "path": "docs/planning/reconciliation-packets/2026-10-11-finish-26-c1-r7-audit-root-reallocation.md",
@@ -295,10 +343,10 @@
       "candidateTree": "419950200cc9705a101468d44e5b589b40f609f0",
       "auditRoot": "deliveries/completion-audits/FINISH-C1/finish-12/20261011T133844Z-c1-r7-delta-review-02/",
       "reviewer": "Local Codex independent reviewer; external GPT Plus #2 NOT RUN",
-      "status": "REALLOCATED UNDER FINISH-26 / EXACT-CANDIDATE DELTA REVIEW PENDING / EXTERNAL GPT PLUS #2 NOT RUN",
-      "reportPath": null,
-      "findingsPath": null,
-      "requirementMatrixPath": null
+      "status": "COMPLETE / LOCAL REVIEW RECOMMENDS REWORK FOR E-02 / EXTERNAL GPT PLUS #2 NOT RUN",
+      "reportPath": "deliveries/completion-audits/FINISH-C1/finish-12/20261011T133844Z-c1-r7-delta-review-02/report.md",
+      "findingsPath": "deliveries/completion-audits/FINISH-C1/finish-12/20261011T133844Z-c1-r7-delta-review-02/findings.json",
+      "requirementMatrixPath": "deliveries/completion-audits/FINISH-C1/finish-12/20261011T133844Z-c1-r7-delta-review-02/requirement-matrix.json"
     },
     "successorContractsGate": {
       "packetId": "FINISH-00-R2",
@@ -319,10 +367,11 @@
       "productionFixesIntegrated": false
     },
     "latestParentDecision": {
-      "packetId": "FINISH-16",
-      "path": "docs/planning/reviews/2026-10-11-finish-16-c1-r6-revalidation-decision.md",
-      "candidateCommit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
-      "decision": "HOLD PENDING FRESH EXACT-CANDIDATE AUDIT",
+      "packetId": "FINISH-28",
+      "path": "docs/planning/reconciliation-packets/2026-10-11-finish-28-c1-r7-verifier-correction.md",
+      "candidateCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
+      "decision": "REWORK for E-02; authorize evidence-only verifier correction; E-01 remains separate",
+      "auditReport": "deliveries/completion-audits/FINISH-C1/finish-12/20261011T133844Z-c1-r7-delta-review-02/report.md",
       "implementationAcceptance": false,
       "canonicalIntegration": false
     }
