@@ -1,0 +1,117 @@
+{
+  "status": "PASS LOCAL",
+  "command": "python scripts/verify-final-budgets.py",
+  "assets": [
+    {
+      "file": "assets/fixture.glb",
+      "bytes": 84816,
+      "sha256": "0aeb5b55b4646d8c424c5d9cb77aea864364643f0ea1a449e7319fa71af6af30",
+      "limitBytes": 524288,
+      "status": "PASS"
+    },
+    {
+      "file": "assets/group-b-props.glb",
+      "bytes": 38260,
+      "sha256": "660fcc5290d915686e4013d37e28a6c63dffd8ca48f764141e33ac3344c42c03",
+      "limitBytes": null,
+      "status": "PASS"
+    },
+    {
+      "file": "assets/on-demand-projects.glb",
+      "bytes": 12420,
+      "sha256": "ca57ceb15c4c98c1056cbac40e3335f184f365f1e5a8a7e763255012fb76ea92",
+      "limitBytes": null,
+      "status": "PASS"
+    },
+    {
+      "file": "assets/resident.glb",
+      "bytes": 579596,
+      "sha256": "bb0c6a271080890aeaccc2961cd3b3a846c41698a471ef6ba5feda62063c2de2",
+      "limitBytes": 800000,
+      "status": "PASS"
+    },
+    {
+      "file": "assets/room.glb",
+      "bytes": 699668,
+      "sha256": "d192a8154cc9e43adfef6b84beb0eaa64d40d2af464d8572fd4b0fcbf845baf5",
+      "limitBytes": 1500000,
+      "status": "PASS"
+    }
+  ],
+  "essentialGLBBytes": 1364080,
+  "allDeliveredTransferBytes": 1661542,
+  "essentialLimitsBytes": {
+    "mobile": 3145728,
+    "desktop": 6291456
+  },
+  "fullOptionalLimitsBytes": {
+    "mobile": 7340032,
+    "desktop": 14680064
+  },
+  "uniqueTextureBytes": 246782,
+  "uniqueTextureLimitBytes": 1500000,
+  "textures": {
+    "8063a7d33f555a0bf8f0194547fcce3c24539a50b161ce2f2eafb6270cca5d20": {
+      "bytes": 208470,
+      "width": 1024,
+      "height": 512,
+      "sources": [
+        "room.glb:monitor-wallpaper",
+        "textures/monitor-wallpaper.png"
+      ]
+    },
+    "7da8cd524d9409b59ccdbc3319cc755a415c9ff5cad9caf38886532b169c7a7e": {
+      "bytes": 38312,
+      "width": 1024,
+      "height": 512,
+      "sources": [
+        "textures/deskmat-topography.png"
+      ]
+    }
+  },
+  "profiles": [
+    {
+      "profile": "desktop-home",
+      "actual": {
+        "calls": 103,
+        "triangles": 15428,
+        "allDeliveredUniqueTextureAssetGPUBytesEstimate": 6375766,
+        "localMedianMs": 0.7000000029802322,
+        "localP95Ms": 1.1000000014901161
+      },
+      "limits": {
+        "calls": 120,
+        "triangles": 300000,
+        "assetGPUBytes": 167772160,
+        "medianMs": 18.2,
+        "p95Ms": 25
+      },
+      "status": "PASS LOCAL",
+      "gpuScope": "Unique loaded attribute/index buffers plus conservative RGBA8 mipmapped estimate for all delivered embedded/late textures, deduplicated by raw image hash; excludes driver overhead/framebuffers.",
+      "timingScope": "After the matched still capture: CPU wall-clock duration of animated standalone renderFrame(1/60) plus blocking WebGL finish, scheduled on RAF; local browser only, not production/device timing qualification."
+    },
+    {
+      "profile": "mobile-home",
+      "actual": {
+        "calls": 75,
+        "triangles": 14056,
+        "allDeliveredUniqueTextureAssetGPUBytesEstimate": 6375766,
+        "localMedianMs": 0.8000000007450581,
+        "localP95Ms": 1.0999999977648258
+      },
+      "limits": {
+        "calls": 80,
+        "triangles": 140000,
+        "assetGPUBytes": 83886080,
+        "medianMs": 33.3,
+        "p95Ms": 45
+      },
+      "status": "PASS LOCAL",
+      "gpuScope": "Unique loaded attribute/index buffers plus conservative RGBA8 mipmapped estimate for all delivered embedded/late textures, deduplicated by raw image hash; excludes driver overhead/framebuffers.",
+      "timingScope": "After the matched still capture: CPU wall-clock duration of animated standalone renderFrame(1/60) plus blocking WebGL finish, scheduled on RAF; local browser only, not production/device timing qualification."
+    }
+  ],
+  "coldWarmNetworkEntryDeviceThermal": "NOT RUN",
+  "productionDecodedResidencyAndG7": "NOT RUN",
+  "note": "Local isolated asset evidence does not qualify production timing, real device GPU allocation, runtime optional overlap or network entry."
+}
