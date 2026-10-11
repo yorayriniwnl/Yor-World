@@ -1,0 +1,102 @@
+{
+  "candidateCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
+  "requirements": [
+    {
+      "evidence": "evidence/candidate-binding.json",
+      "notes": "Commit e2670d4152c461005da86b392dbcea12cec740bf; raw Git blob reads; app tree 42ea29ec235225046a75959eb19eb386ac2f821d.",
+      "requirement": "R7 exact commit, parent, full tree, app tree, and raw receipt blobs bound",
+      "status": "PASS"
+    },
+    {
+      "evidence": "candidate-input-provenance.json; predecessor-output-git-blobs.json; source-binding.json; evidence/candidate-binding.json",
+      "notes": "Stable copies match their exact raw R7 Git blobs.",
+      "requirement": "R7 receipt inputs copied byte-for-byte from exact candidate",
+      "status": "PASS"
+    },
+    {
+      "evidence": "verify-input-provenance.py; evidence/negative-regression-results.json",
+      "notes": "Each contradictory field, missing field, and extra field is rejected.",
+      "requirement": "sourceManifest commit/path/blobOid/sha256/bytes checked against pinned raw R6 manifest blob",
+      "status": "PASS"
+    },
+    {
+      "evidence": "verify-input-provenance.py; evidence/negative-regression-results.json",
+      "notes": "Top-level packageName and packageVersion plus actual installed manifest identity are checked.",
+      "requirement": "Installed Three.js name/version matches actual three@0.180.0 package",
+      "status": "PASS"
+    },
+    {
+      "evidence": "verify-input-provenance.py; evidence/negative-regression-results.json",
+      "notes": "Rejects missing/extra/duplicate/unknown rows, missing/extra entry fields, wrong paths, sizes, and hashes.",
+      "requirement": "packageFiles list and all declarations are exact, unique, complete, and typed",
+      "status": "PASS"
+    },
+    {
+      "evidence": "evidence/exact-candidate-verification.json; evidence/negative-regression-results.json",
+      "notes": "603,113 bytes; SHA-256 c8211c69345d2e9949dc7a8ac969380497aa0600a5a8ac6a459c8cd02dd9cb8a.",
+      "requirement": "three.module.js authoritative installed bytes",
+      "status": "PASS"
+    },
+    {
+      "evidence": "evidence/exact-candidate-verification.json; evidence/negative-regression-results.json",
+      "notes": "1,403,455 bytes; SHA-256 eb077d2417f61d3e6d9264c317cabc4ea35769ed6b0ab533067292a550784c20.",
+      "requirement": "three.core.js authoritative installed bytes",
+      "status": "PASS"
+    },
+    {
+      "evidence": "evidence/exact-candidate-verification.json; evidence/exact-r8-positive-r7-inputs.stdout.log",
+      "notes": "Uncached CLI exit 0; 29 R6 rows, 32 predecessor rows, ten R7 output rows / 186,448 bytes.",
+      "requirement": "Exact unmodified R7 receipt positive and output manifest checks",
+      "status": "PASS"
+    },
+    {
+      "evidence": "evidence/negative-regression-results.json; evidence/regression-command.json; evidence/regression-run.stdout.log",
+      "notes": "51/51 expected negative cases reject; uncached zero-hash CLI returns FAIL / exit 1.",
+      "requirement": "Prior negative checks and targeted E-02 regressions",
+      "status": "PASS"
+    },
+    {
+      "evidence": "evidence/negative-regression-results.json",
+      "notes": "Receipt/package mutations are inside .work; no package install performed.",
+      "requirement": "Disposable corrupt-input copies; no production dependency or historical file mutation",
+      "status": "PASS"
+    },
+    {
+      "evidence": "evidence/candidate-binding.json; evidence/allocation-and-collision.json",
+      "notes": "The package diff is confined to the assigned R8 delivery in its isolated worktree.",
+      "requirement": "R7/app/history/dependency source changes",
+      "status": "PASS"
+    },
+    {
+      "evidence": "report.md",
+      "notes": "Not claimed by maker.",
+      "requirement": "External GPT Plus #2 independent review",
+      "status": "NOT RUN"
+    },
+    {
+      "evidence": "report.md",
+      "notes": "Remains a separate pending decision.",
+      "requirement": "E-01 Parent adjudication or closure",
+      "status": "NOT RUN"
+    },
+    {
+      "evidence": "report.md",
+      "notes": "Maker has not accepted its own output.",
+      "requirement": "Independent R8 delta audit / Parent acceptance",
+      "status": "NOT RUN"
+    },
+    {
+      "evidence": "report.md",
+      "notes": "Outside this evidence-verifier correction scope.",
+      "requirement": "App/runtime/build/browser/device/provider/deployment/G7 checks",
+      "status": "NOT RUN"
+    },
+    {
+      "evidence": "report.md; evidence/allocation-and-collision.json",
+      "notes": "No canonical copy or cherry-pick; Parent reported a later collision at the canonical root and will adjudicate a fresh root.",
+      "requirement": "Canonical integration",
+      "status": "NOT RUN"
+    }
+  ],
+  "schemaVersion": 1
+}
