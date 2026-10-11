@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "audit": "FINISH-11",
+  "candidateCommit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
+  "reviewer": "Local Codex independent reviewer",
+  "requirements": [
+    {
+      "id": "candidate-and-source-binding",
+      "status": "PASS",
+      "detail": "The committed R6 candidate, pinned base, current branch ancestry, and unchanged canonical app tree were verified.",
+      "evidence": ["execution-receipts.json", "source-build-identity.json", "evidence/logs/branch-binding.log", "evidence/logs/final-audit-close-binding.log"]
+    },
+    {
+      "id": "r3-r5-r6-sequential-replay-and-manifests",
+      "status": "PASS",
+      "detail": "A fresh isolated replay applied R3, R5, and R6 in order; 53/53 R3, 32/32 R5, and 35/35 R6 manifest outputs verified without extras or omissions.",
+      "evidence": ["execution-receipts.json", "evidence/logs/sequence-replay-independent.log", "evidence/logs/predecessor-manifest-verification.log"]
+    },
+    {
+      "id": "r6-exact-two-path-allowlist-and-bytes",
+      "status": "PASS",
+      "detail": "The R6 patch contains only AssetLoader.ts and completion-essential-loader.test.ts; both replacements match candidate bytes and hashes.",
+      "evidence": ["input-hashes.json", "execution-receipts.json", "source-build-identity.json", "deliveries/FINISH-C1-R6/source.patch"]
+    },
+    {
+      "id": "f01-current-attempt-retry-progress",
+      "status": "PASS",
+      "detail": "The failed R5 state was independently reproduced as a red test; the exact R6 code makes the current-attempt aggregate determinate after retry.",
+      "evidence": ["evidence/logs/red-regression-independent.log", "evidence/logs/green-regression-independent.log", "evidence/logs/focused-unit-independent.log"]
+    },
+    {
+      "id": "invalid-current-required-representation",
+      "status": "PASS",
+      "detail": "Retained regression cases keep compressed, unknown, absent, contradictory, chunked, and EOF-mismatched current representations indeterminate.",
+      "evidence": ["evidence/logs/focused-unit-independent.log", "evidence/logs/unit-independent.log"]
+    },
+    {
+      "id": "finish-06-6-required-load-browser",
+      "status": "PASS",
+      "detail": "The built candidate UI recovered from the compressed room failure; the final aggregate was 1,758,012/1,758,012 from the three current identity attempts, excluding the failed four bytes.",
+      "evidence": ["evidence/browser-rerun/required-current-attempt-progress.json", "evidence/browser-rerun/compressed-attempt-retry-ui.png", "evidence/logs/browser-timestamped.log"]
+    },
+    {
+      "id": "finish-06-6-optional-map-rollback",
+      "status": "PASS",
+      "detail": "The candidate runtime material module and real Three.js objects restore visible/shared state, registries, maps, and derivative disposal after controlled second-target failure.",
+      "evidence": ["evidence/browser-rerun/optional-map-rollback-observation.json", "evidence/logs/browser-timestamped.log"]
+    },
+    {
+      "id": "finish-06-6-world-runtime-timers",
+      "status": "PASS",
+      "detail": "The candidate WorldRuntime rejects stale callbacks after greeting replacement and rejects a captured callback after route unmount using browser timer behavior.",
+      "evidence": ["evidence/browser-rerun/world-runtime-browser-timer-evidence.json", "evidence/browser-rerun/greeting-transition.png", "evidence/logs/browser-timestamped.log"]
+    },
+    {
+      "id": "focused-and-retained-test-suites",
+      "status": "PASS",
+      "detail": "Focused suite: 56 tests; full unit: 356 tests across 26 files; integration: 290 tests across 28 files.",
+      "evidence": ["evidence/logs/focused-unit-independent.log", "evidence/logs/unit-independent.log", "evidence/logs/integration-independent.log"]
+    },
+    {
+      "id": "lint-typecheck-build-and-chromium",
+      "status": "PASS",
+      "detail": "Offline frozen-lockfile installation, lint, typecheck, independent production build, and source-bound Chromium run passed; browser run was 3/3.",
+      "evidence": ["execution-receipts.json", "evidence/logs/offline-install-independent.log", "evidence/logs/lint-timestamped.log", "evidence/logs/typecheck-timestamped.log", "evidence/logs/production-build-timestamped.log", "evidence/logs/browser-timestamped.log", "evidence/browser-rerun/browser-results.json", "evidence/logs/fin11-local-20261011-a6d2-build.log", "evidence/logs/fin11-local-20261011-a6d2-browser.log", "evidence/browser-rerun-f11-local-codex-a6d2/browser-results.json"]
+    },
+    {
+      "id": "historical-r5-red-invocation",
+      "status": "NOT RUN",
+      "detail": "The historical R5 command was not reconstructed or run, as required by FINISH-09.",
+      "evidence": ["findings.json", "docs/planning/reconciliation-packets/2026-10-11-finish-09-c1-r6.md"]
+    },
+    {
+      "id": "external-gpt-plus-2-review",
+      "status": "NOT RUN",
+      "detail": "The review was performed locally by Codex; no external GPT Plus #2 review is claimed.",
+      "evidence": ["report.md", "findings.json"]
+    },
+    {
+      "id": "provider-production-device-accessibility-recovery-g7",
+      "status": "NOT RUN",
+      "detail": "These production and G7 checks are outside FINISH-11 audit scope.",
+      "evidence": ["report.md", "findings.json"]
+    },
+    {
+      "id": "parent-acceptance-and-canonical-integration",
+      "status": "PENDING_SEPARATE_DECISION",
+      "detail": "This audit does not authorize or perform canonical integration.",
+      "evidence": ["report.md", "execution-receipts.json"]
+    }
+  ]
+}

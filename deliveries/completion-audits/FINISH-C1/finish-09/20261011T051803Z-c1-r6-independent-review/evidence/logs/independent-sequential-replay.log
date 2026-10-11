@@ -1,0 +1,88 @@
+**********************
+PowerShell transcript start
+Start time: 20261011110004
+Username: YORAYRINIWNL\yoray
+RunAs User: YORAYRINIWNL\yoray
+Configuration Name: 
+Machine: YORAYRINIWNL (Microsoft Windows NT 10.0.26300.0)
+Host Application: C:\Users\yoray\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$audit='deliveries/completion-audits/FINISH-C1/finish-09/20261011T051803Z-c1-r6-independent-review'; $a=Join-Path $audit '.work/replay-sequential'; $log=Join-Path $audit 'evidence/logs/independent-sequential-replay.log'; if(Test-Path -LiteralPath $log){throw 'Refusing to overwrite audit log'}; Start-Transcript -Path $log; "START_UTC=$([DateTime]::UtcNow.ToString('o'))"; "ASSEMBLY=$((Resolve-Path $a).Path)"; "HEAD=$(git -C $a rev-parse HEAD)"; "APP_TREE=$(git -C $a rev-parse HEAD:app)"; "CORE_AUTOCRLF=$(git -C $a config --get core.autocrlf)"; $patches=@('deliveries/FINISH-C1-R3/source.patch','deliveries/FINISH-C1-R5/source.patch','deliveries/FINISH-C1-R6/source.patch'); foreach($p in $patches){ $full=(Resolve-Path $p).Path; "PATCH=$p"; Get-FileHash -Algorithm SHA256 -LiteralPath $full; (Get-Item -LiteralPath $full).Length; git -C $a apply --check --whitespace=error $full; "APPLY_CHECK_EXIT=$LASTEXITCODE"; if($LASTEXITCODE -ne 0){Stop-Transcript; exit $LASTEXITCODE}; git -C $a apply $full; "APPLY_EXIT=$LASTEXITCODE"; if($LASTEXITCODE -ne 0){Stop-Transcript; exit $LASTEXITCODE}; if($p -like '*R3*'){ $paths=@(git -C $a diff --name-only); "AFTER_R3_CHANGED_PATHS=$($paths.Count)"; $paths }; if($p -like '*R5*'){ $paths=@(git -C $a diff --name-only); "AFTER_R5_CHANGED_PATHS=$($paths.Count)" }; if($p -like '*R6*'){ $paths=@(git -C $a diff --name-only); "FINAL_CHANGED_PATHS=$($paths.Count)"; "R6_PATCH_NUMSTAT"; git -C $a apply --numstat $full; git -C $a apply --reverse --check --whitespace=error $full; "R6_REVERSE_CHECK_EXIT=$LASTEXITCODE"; git -C $a diff --check; "DIFF_CHECK_EXIT=$LASTEXITCODE"; git -C $a rev-parse HEAD:app; "FINAL_STATUS_COUNT=$(@(git -C $a status --short --untracked-files=no).Count)" } }; "END_UTC=$([DateTime]::UtcNow.ToString('o'))"; Stop-Transcript
+Process ID: 45692
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26300
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is deliveries\completion-audits\FINISH-C1\finish-09\20261011T051803Z-c1-r6-independent-review\evidence\logs\independent-sequential-replay.log
+START_UTC=2026-10-11T05:30:04.3468109Z
+ASSEMBLY=C:\Users\yoray\Projects\Yor World\deliveries\completion-audits\FINISH-C1\finish-09\20261011T051803Z-c1-r6-independent-review\.work\replay-sequential
+HEAD=f62a43c5e71c00dcb89e28275ea81d842167db80
+APP_TREE=42ea29ec235225046a75959eb19eb386ac2f821d
+CORE_AUTOCRLF=false
+PATCH=deliveries/FINISH-C1-R3/source.patch
+
+Algorithm       Hash                                                                   Path
+---------       ----                                                                   ----
+SHA256          E1BE558F734378FE69659DCF8271C4E5E57D87FBFBDCA1582823BE103082DC5D       C:\Users\yoray\Projects\Yor Wor…
+157355
+
+APPLY_CHECK_EXIT=0
+
+APPLY_EXIT=0
+AFTER_R3_CHANGED_PATHS=22
+app/src/contracts/experience.ts
+app/src/features/experience/controller.ts
+app/src/features/experience/preferences-store.ts
+app/src/features/experience/return-snapshot.ts
+app/src/features/world/AssetLoader.ts
+app/src/features/world/CharacterDirector.ts
+app/src/features/world/LifecycleManager.ts
+app/src/features/world/LowQualityBatch.ts
+app/src/features/world/RuntimeMaterialQuality.ts
+app/src/features/world/WorldRoot.tsx
+app/src/features/world/WorldRuntime.ts
+app/src/features/world/types.ts
+app/src/features/world/world.module.css
+app/tests/fixtures/engineering-section-4.ts
+app/tests/unit/asset-loader.test.ts
+app/tests/unit/character-director.test.ts
+app/tests/unit/contracts.test.ts
+app/tests/unit/lifecycle-manager.test.ts
+app/tests/unit/low-quality-batch.test.ts
+app/tests/unit/preferences-resilience.test.ts
+app/tests/unit/project-transition.test.ts
+app/tests/unit/runtime-material-quality.test.ts
+PATCH=deliveries/FINISH-C1-R5/source.patch
+SHA256          D6AD3359FA628067AB228ECCC52F25D0604DDDDB42813D7023E6A809CF60D83D       C:\Users\yoray\Projects\Yor Wor…
+34904
+
+APPLY_CHECK_EXIT=0
+
+APPLY_EXIT=0
+AFTER_R5_CHANGED_PATHS=22
+PATCH=deliveries/FINISH-C1-R6/source.patch
+SHA256          17AE6AAAB7910546D3527FEEC26926D8D1FD604E3BC60E2AE0EB9F549F7FC2A6       C:\Users\yoray\Projects\Yor Wor…
+6475
+
+APPLY_CHECK_EXIT=0
+
+APPLY_EXIT=0
+FINAL_CHANGED_PATHS=22
+R6_PATCH_NUMSTAT
+
+
+R6_REVERSE_CHECK_EXIT=0
+
+DIFF_CHECK_EXIT=0
+
+FINAL_STATUS_COUNT=22
+END_UTC=2026-10-11T05:30:07.7873833Z
+**********************
+PowerShell transcript end
+End time: 20261011110007
+**********************

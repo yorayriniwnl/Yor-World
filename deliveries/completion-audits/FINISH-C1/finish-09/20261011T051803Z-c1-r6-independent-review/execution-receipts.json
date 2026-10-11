@@ -1,0 +1,252 @@
+{
+  "schemaVersion": 1,
+  "audit": "FINISH-11",
+  "candidateCommit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
+  "auditStartedAtUtc": "2026-10-11T05:18:03Z",
+  "timezone": "Asia/Kolkata",
+  "sequenceReplay": {
+    "worktree": ".work/assembly",
+    "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+    "operations": [
+      {
+        "command": "git worktree add --detach R:\\assembly f62a43c5e71c00dcb89e28275ea81d842167db80",
+        "exitCode": 0
+      },
+      {
+        "command": "git apply --check deliveries/FINISH-C1-R3/source.patch; git apply deliveries/FINISH-C1-R3/source.patch",
+        "exitCode": 0
+      },
+      {
+        "command": "git apply --check deliveries/FINISH-C1-R5/source.patch; git apply deliveries/FINISH-C1-R5/source.patch",
+        "exitCode": 0
+      },
+      {
+        "command": "git apply --check deliveries/FINISH-C1-R6/source.patch; git apply deliveries/FINISH-C1-R6/source.patch",
+        "exitCode": 0
+      }
+    ],
+    "patches": [
+      {
+        "id": "R3",
+        "sha256": "e1be558f734378fe69659dcf8271c4e5e57d87fbfbdca1582823be103082dc5d",
+        "patchPaths": 28,
+        "manifestAppOutputs": 29,
+        "manifestTotalOutputs": 53
+      },
+      {
+        "id": "R5",
+        "sha256": "d6ad3359fa628067ab228eccc52f25d0604ddddb42813d7023e6a809cf60d83d",
+        "patchPaths": 6,
+        "replacementOutputs": 6,
+        "retainedR3Outputs": 23
+      },
+      {
+        "id": "R6",
+        "sha256": "17ae6aaab7910546d3527feec26926d8d1fd604e3bc60e2ae0eb9f549f7fc2a6",
+        "patchPaths": 2,
+        "replacementOutputs": 2,
+        "retainedR5Outputs": 4,
+        "retainedR3Outputs": 23
+      }
+    ],
+    "verifiedR3Outputs": 29,
+    "verifiedR5Replacements": 6,
+    "verifiedRetainedR3": 23,
+    "verifiedR6Replacements": 2,
+    "verifiedRetainedR5": 4,
+    "verifiedFinalRetainedR3": 23,
+    "manifestVerification": {
+      "R3": "53/53",
+      "R5": "32/32",
+      "R6": "35/35",
+      "R6Bytes": 1415587,
+      "R6ExtraStableFiles": 0,
+      "R6MissingFiles": 0
+    },
+    "log": "evidence/logs/sequence-replay-independent.log",
+    "predecessorManifestLog": "evidence/logs/predecessor-manifest-verification.log"
+  },
+  "commands": [
+    {
+      "id": "offline-install",
+      "command": "pnpm.cmd install --offline --frozen-lockfile",
+      "startedAtUtc": "2026-10-11T05:41:53.913Z",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/logs/offline-install-independent.log"
+    },
+    {
+      "id": "red-regression",
+      "command": "pnpm exec vitest run --config vitest.config.ts tests/unit/world/completion-essential-loader.test.ts -t \"restores the required-session aggregate\" --reporter=verbose",
+      "startedAtLocal": "2026-10-11 11:01:51 Asia/Kolkata",
+      "startedAtUtc": "2026-10-11T05:31:51Z",
+      "stage": "R5 code plus the R6 test-only patch hunk; AssetLoader remains the R5 replacement",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "status": "PASS_EXPECTED_RED",
+      "failed": 1,
+      "skipped": 17,
+      "log": "evidence/logs/red-regression-independent.log"
+    },
+    {
+      "id": "green-regression",
+      "command": "pnpm.cmd exec vitest run --config vitest.config.ts tests/unit/world/completion-essential-loader.test.ts -t \"restores the required-session aggregate\" --reporter=verbose",
+      "startedAtLocal": "2026-10-11 11:02:47 Asia/Kolkata",
+      "startedAtUtc": "2026-10-11T05:32:47Z",
+      "exitCode": 0,
+      "status": "PASS",
+      "passed": 1,
+      "skipped": 17,
+      "log": "evidence/logs/green-regression-independent.log"
+    },
+    {
+      "id": "focused-unit",
+      "command": "pnpm.cmd exec vitest run --config vitest.config.ts tests/unit/world/completion-essential-loader.test.ts tests/unit/runtime-material-quality.test.ts tests/unit/project-transition.test.ts",
+      "startedAtLocal": "2026-10-11 11:03:06 Asia/Kolkata",
+      "startedAtUtc": "2026-10-11T05:33:06Z",
+      "exitCode": 0,
+      "status": "PASS",
+      "files": 3,
+      "passed": 56,
+      "log": "evidence/logs/focused-unit-independent.log"
+    },
+    {
+      "id": "unit",
+      "command": "pnpm.cmd run test:unit",
+      "startedAtLocal": "2026-10-11 11:03:19 Asia/Kolkata",
+      "startedAtUtc": "2026-10-11T05:33:19Z",
+      "exitCode": 0,
+      "status": "PASS",
+      "files": 26,
+      "passed": 356,
+      "log": "evidence/logs/unit-independent.log"
+    },
+    {
+      "id": "integration",
+      "command": "pnpm.cmd exec vitest run --config vitest.integration.config.ts --maxWorkers=1 --no-file-parallelism",
+      "startedAtLocal": "2026-10-11 11:03:45 Asia/Kolkata",
+      "startedAtUtc": "2026-10-11T05:33:45Z",
+      "exitCode": 0,
+      "status": "PASS",
+      "files": 28,
+      "passed": 290,
+      "log": "evidence/logs/integration-independent.log"
+    },
+    {
+      "id": "lint",
+      "command": "pnpm.cmd run lint",
+      "startedAtUtc": "2026-10-11T05:42:06.365Z",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/logs/lint-timestamped.log"
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm.cmd run typecheck",
+      "startedAtUtc": "2026-10-11T05:42:06.367Z",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/logs/typecheck-timestamped.log"
+    },
+    {
+      "id": "production-build",
+      "command": "pnpm.cmd run build",
+      "startedAtUtc": "2026-10-11T05:43:31.893Z",
+      "exitCode": 0,
+      "status": "PASS",
+      "buildId": "_IxUhaWnSg1IDk0OhzZOF",
+      "log": "evidence/logs/production-build-timestamped.log"
+    },
+    {
+      "id": "chromium",
+      "command": "pnpm.cmd exec playwright test tests/e2e/world/finish-09-r6-runtime.spec.ts",
+      "startedAtUtc": "2026-10-11T05:44:08.030Z",
+      "testStartAtUtc": "2026-10-11T05:44:14.270Z",
+      "exitCode": 0,
+      "status": "PASS",
+      "browser": "Chromium 153.0.8010.12",
+      "passed": 3,
+      "failed": 0,
+      "serverPort": 3137,
+      "log": "evidence/logs/browser-timestamped.log",
+      "json": "evidence/browser-rerun/browser-results.json"
+    },
+    {
+      "id": "tool-versions",
+      "command": "node.exe --version && pnpm.cmd --version && pnpm.cmd exec vitest --version && pnpm.cmd exec eslint --version && pnpm.cmd exec tsc --version && pnpm.cmd exec next --version && pnpm.cmd exec playwright --version",
+      "startedAtUtc": "2026-10-11T05:46:13.864Z",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/logs/tool-versions.log"
+    }
+  ],
+  "scopeLimitations": [
+    "Historical R5 red command remains NOT RUN and R5 was not modified.",
+    "External GPT Plus #2 audit was not run or claimed.",
+    "Provider, production deployment, device, accessibility technology, recovery and G7 verification are not run in this audit.",
+    "Canonical app/ was not changed or integrated.",
+    "Original writer provenance for the earlier R6 root remains unknown; this review binds the committed candidate only."
+  ],
+  "reviewer": {
+    "type": "Local Codex independent reviewer",
+    "externalGPTPlus2": "NOT RUN"
+  },
+  "auditClosedAtUtc": "2026-10-11T05:58:06.9047063Z",
+  "finalBranchBinding": {
+    "branch": "audit/completion-2026-10-09",
+    "candidateCommit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
+    "tipCommit": "3cc4a04b1327c49542da8ab0b381d24c4b36b4d6",
+    "originTipCommit": "3cc4a04b1327c49542da8ab0b381d24c4b36b4d6",
+    "candidateIsAncestor": true,
+    "baseAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+    "candidateAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+    "tipAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+    "candidateToTipAppPaths": [],
+    "allCandidateToTipPaths": [
+      "START_HERE.md",
+      "docs/planning/current-status.json",
+      "docs/planning/delegation-and-work-orders.md",
+      "docs/planning/production-prompts/repairs-2026-10-11/13-CODEX-A1-R5.md",
+      "docs/planning/production-prompts/repairs-2026-10-11/README.md",
+      "docs/planning/reconciliation-packets/2026-10-11-finish-11-c1-r6-audit.md",
+      "docs/planning/reconciliation-packets/2026-10-11-finish-12-a1-r5.md",
+      "docs/planning/reconciliation-packets/2026-10-11-finish-13-a1-r5-reallocation.md",
+      "docs/planning/reconciliation-packets/2026-10-11-finish-14-a1-r5-scope-clarification.md",
+      "docs/planning/reviews/2026-10-11-finish-10-a1-r4-parent-decision.md"
+    ],
+    "log": "evidence/logs/final-audit-close-binding.log"
+  },
+  "supplementaryLocalChromiumRun": {
+    "status": "PASS",
+    "command": "pnpm exec playwright test --config playwright.config.ts tests/e2e/world/finish-09-r6-runtime.spec.ts --project=chromium",
+    "commandStartedAtUtc": "2026-10-11T05:57:54.785Z",
+    "testStartAtUtc": "2026-10-11T05:57:58.567Z",
+    "exitCode": 0,
+    "passed": 3,
+    "failed": 0,
+    "durationMs": 87459.665,
+    "browser": "Chromium 153.0.8010.12",
+    "buildCommand": "pnpm run build",
+    "buildStartedAtUtc": "2026-10-11T05:56:30.379Z",
+    "buildExitCode": 0,
+    "buildId": "BkzLrkSwqkB_PCHgIfVtV",
+    "buildIdSha256": "52cf573973da023970903a767b96f3bcb2f0f6f59510f8f7dc84f3aa3a0d9847",
+    "buildIdFile": ".work/replay-sequential/app/.next/BUILD_ID",
+    "sourceHashes": {
+      "AssetLoader.ts": "68aab18db327e254736b4bbab896f8003ad504c5c2edb4ba90927be47c784045",
+      "RuntimeMaterialQuality.ts": "ca0a55f17b8e7d6c7555c8ef06375f4d4f1c1ff0d04b77e8cfa79411cc3cdb4d",
+      "LowQualityBatch.ts": "89f191c28f0e612bafe229198a8f25703de3a7e63810f40ac1fa28d690416713",
+      "WorldRuntime.ts": "089b84800f46f493335082f078d10444470c1e3ed0f02575ea63c1fcec84d515"
+    },
+    "logs": [
+      "evidence/logs/fin11-local-20261011-a6d2-build.log",
+      "evidence/logs/fin11-local-20261011-a6d2-browser.log"
+    ],
+    "results": [
+      "evidence/browser-rerun-f11-local-codex-a6d2/browser-results.json",
+      "evidence/browser-rerun-f11-local-codex-a6d2/required-current-attempt-progress.json",
+      "evidence/browser-rerun-f11-local-codex-a6d2/optional-map-rollback-observation.json",
+      "evidence/browser-rerun-f11-local-codex-a6d2/world-runtime-browser-timer-evidence.json"
+    ]
+  }
+}

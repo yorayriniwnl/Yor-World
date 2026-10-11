@@ -1,0 +1,17 @@
+COMMAND: pnpm.cmd exec vitest run --config vitest.integration.config.ts --maxWorkers=1 --no-file-parallelism
+EXIT_CODE=0
+--- STDOUT ---
+
+ RUN  v5.0.2 R:/assembly/app
+
+
+ Test Files  28 passed (28)
+      Tests  290 passed (290)
+   Start at  11:03:45
+   Duration  60.27s (tests 85%, import 12%, transform 3%)
+
+    Isolate  28 workers spawned · ~180ms startup each (spawn + environment, per file)
+             at least ~4.85s faster with isolate: false — reuses workers across files instead of one per file
+
+
+--- STDERR ---
