@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "candidateCommit": "76d679dcb98064152021830b98f16eb456b3ae19",
+  "reviewType": "Parent-local technical recheck; not an independent audit",
+  "findings": [
+    {
+      "id": "A1R5-01",
+      "status": "PASS",
+      "requirement": "Frozen DTO compatibility: exact approvalAudit {eventId,createdAt}, strict PrivateDraftReview fields, and generic project/site ReviewCheck scope and string ID.",
+      "evidence": [
+        "evidence/unit-focused.log",
+        "evidence/integration-focused.log"
+      ],
+      "basis": "Source schema uses strict objects; focused tests cover accepted and malformed DTOs."
+    },
+    {
+      "id": "A1R5-02",
+      "status": "PASS",
+      "requirement": "After healthy publish/rollback, refresh consumes activePublication and presents current publication and review identity without reload.",
+      "evidence": [
+        "evidence/browser-binding.json",
+        "evidence/browser-final/browser-results.json",
+        "evidence/browser-fixture.log"
+      ],
+      "basis": "PublishReview refetches preview and publish endpoints and installs activePublication; bound Chromium workflow observed publish then rollback."
+    },
+    {
+      "id": "A1R5-03",
+      "status": "PASS",
+      "requirement": "Requested missing private draft returns API 404 and the detail page takes the not-found path without leaking content.",
+      "evidence": [
+        "evidence/integration-focused.log",
+        "evidence/integration-full.log"
+      ],
+      "basis": "Requested draft lookup returns null; API and page handle absent draft as not found; focused and full integration suites passed."
+    },
+    {
+      "id": "A1R5-04",
+      "status": "PASS",
+      "requirement": "Authorized stale save returns current draft identity/content in 409 without writes; unauthorized callers receive no current content; the losing editor buffer remains available.",
+      "evidence": [
+        "evidence/integration-focused.log",
+        "evidence/browser-binding.json",
+        "evidence/browser-fixture.log"
+      ],
+      "basis": "Conflict carries currentDraft through the guarded API; editor retains local project state; integration and browser checks passed."
+    },
+    {
+      "id": "A1R5-05",
+      "status": "PASS",
+      "requirement": "Draft images render only at the exact canonical owner-preview URL for the encoded media ID.",
+      "evidence": [
+        "evidence/unit-focused.log"
+      ],
+      "basis": "Renderer compares against the encoded canonical relative URL; focused tests reject absolute/origin-confused, query, fragment, traversal, and wrong-ID forms."
+    },
+    {
+      "id": "A1R5-06",
+      "status": "PASS",
+      "requirement": "New content controls use empty defaults; links have no fabricated URL/check time and evidence remains unknown/null until supplied.",
+      "evidence": [
+        "evidence/unit-focused.log",
+        "evidence/browser-binding.json",
+        "evidence/browser-fixture.log"
+      ],
+      "basis": "Project/block editor defaults and unit/browser assertions agree."
+    },
+    {
+      "id": "A1-PKG-01",
+      "status": "PASS",
+      "requirement": "Candidate commit, frozen base, patch, candidate source tree, remote ref, output manifest and path scope bind exactly.",
+      "evidence": [
+        "evidence/candidate-binding.json",
+        "evidence/patch-replay.json",
+        "evidence/allowlist-check.json"
+      ]
+    },
+    {
+      "id": "A1-MATRIX-01",
+      "status": "PASS",
+      "requirement": "All candidate matrix source/evidence references resolve against the exact patched replay and committed package.",
+      "evidence": [
+        "evidence/matrix-reference-check.json"
+      ]
+    }
+  ],
+  "unresolvedLimits": [
+    {
+      "id": "A1-BUILD-EQUIVALENCE",
+      "status": "NOT RUN",
+      "detail": "The maker and local builds have different build IDs and are not byte-identical. Local build and browser run independently bind to the same exact candidate app tree; no claim of identical full build output is made."
+    },
+    {
+      "id": "A1-STATIC-CANARY",
+      "status": "NOT RUN",
+      "detail": "The maker's committed static build sentinel scan was hash-verified as package content but not independently repeated in this Parent-local recheck."
+    },
+    {
+      "id": "A1-NATIVE-PROVIDERS",
+      "status": "NOT RUN",
+      "detail": "Native PostgreSQL concurrency, hosted Auth/MFA, provider Storage approval/network semantics were not exercised."
+    },
+    {
+      "id": "A1-DEPLOYMENT",
+      "status": "NOT RUN",
+      "detail": "Deployed origin, CDN/shared cache behavior and live rollback were not exercised."
+    },
+    {
+      "id": "A1-DEVICE-RECOVERY",
+      "status": "NOT RUN",
+      "detail": "Physical devices, assistive technology, recovery/restore and manual operations were not exercised."
+    },
+    {
+      "id": "A1-INDEPENDENT-GPT2",
+      "status": "NOT RUN",
+      "detail": "FINISH-32's independent GPT Plus #2 audit has not been dispatched or performed."
+    },
+    {
+      "id": "A1-PARENT-ACCEPTANCE",
+      "status": "NOT RUN",
+      "detail": "Parent acceptance and canonical integration are separate pending gates."
+    },
+    {
+      "id": "A1-G7",
+      "status": "NOT RUN",
+      "detail": "No production G7 acceptance is claimed."
+    }
+  ]
+}

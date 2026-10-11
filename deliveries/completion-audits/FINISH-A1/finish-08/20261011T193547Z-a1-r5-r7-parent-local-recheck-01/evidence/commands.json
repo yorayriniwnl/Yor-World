@@ -1,0 +1,79 @@
+[
+  {
+    "name": "exact-base-patch-replay",
+    "command": "git worktree add --detach <scratch> f62a43c5e71c00dcb89e28275ea81d842167db80; git apply --check --whitespace=error <patch>; git apply --whitespace=error <patch>; git diff --cached --check",
+    "exit": 0,
+    "evidence": "patch-replay.log"
+  },
+  {
+    "name": "unit-focused",
+    "command": "pnpm test:unit -- tests/unit/platform/completion-authoring-blocks.test.ts",
+    "exit": 0,
+    "tests": 5,
+    "evidence": "unit-focused.log"
+  },
+  {
+    "name": "integration-focused",
+    "command": "pnpm test:integration -- tests/integration/platform/completion-authoring-preview.test.ts",
+    "exit": 0,
+    "tests": 22,
+    "evidence": "integration-focused.log"
+  },
+  {
+    "name": "unit-full",
+    "command": "pnpm test:unit",
+    "exit": 0,
+    "tests": 317,
+    "evidence": "unit-full.log"
+  },
+  {
+    "name": "integration-full",
+    "command": "pnpm test:integration",
+    "exit": 0,
+    "tests": 308,
+    "evidence": "integration-full.log"
+  },
+  {
+    "name": "lint",
+    "command": "pnpm lint",
+    "exit": 0,
+    "evidence": "lint.log"
+  },
+  {
+    "name": "typecheck",
+    "command": "pnpm typecheck",
+    "exit": 0,
+    "evidence": "typecheck.log"
+  },
+  {
+    "name": "production-build",
+    "command": "pnpm build",
+    "exit": 0,
+    "buildId": "nzP-LUzyTkxYoCjtgtV3C",
+    "evidence": "build-localdeps.log"
+  },
+  {
+    "name": "chromium",
+    "command": "pnpm exec playwright test tests/e2e/platform/admin-publish.spec.ts tests/e2e/platform/completion-authoring-workflow.spec.ts --project=chromium",
+    "exit": 0,
+    "tests": 6,
+    "buildId": "nzP-LUzyTkxYoCjtgtV3C",
+    "evidence": "browser-fixture.log",
+    "environment": "CI=1; YOR_E2E_FIXTURE=1; YOR_TEST_DATABASE_PATH=<audit-local-path>"
+  },
+  {
+    "name": "initial-chromium-diagnostic",
+    "command": "same Playwright command without synthetic fixture environment",
+    "exit": 1,
+    "tests": "3 passed / 3 redirected to owner login",
+    "evidence": "browser.log",
+    "disposition": "environment setup was corrected; final bound rerun passed"
+  },
+  {
+    "name": "initial-turbopack-diagnostic",
+    "command": "pnpm build in scratch tree borrowing node_modules through external junction",
+    "exit": 1,
+    "evidence": "build.log",
+    "disposition": "scratch-only dependency-root issue; frozen local dependency install followed by successful clean build"
+  }
+]
