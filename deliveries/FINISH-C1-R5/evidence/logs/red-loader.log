@@ -1,0 +1,73 @@
+
+ RUN  v5.0.2 C:/Users/yoray/Projects/Yor World/deliveries/FINISH-C1-R5/.work/assembly/app
+
+ ❯ tests/unit/world/completion-essential-loader.test.ts (17 tests | 4 failed) 482ms
+   ❯ Completion: Essential Loader Held Decode, Abort, and Disposal Lifecycle (17)
+     × keeps missing content encoding indeterminate 9ms
+     × keeps chunked transfer with a length indeterminate 2ms
+     × keeps the aggregate indeterminate when the final required response mismatches at EOF 3ms
+     × clears a fully downloaded parse-failed attempt before announcing its retry 62ms
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 13 passed (17)
+   Start at  05:29:02
+   Duration  974ms (tests 65%, import 17%, transform 16%, worker 1%)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/world/completion-essential-loader.test.ts > Completion: Essential Loader Held Decode, Abort, and Disposal Lifecycle > keeps missing content encoding indeterminate
+ FAIL  tests/unit/world/completion-essential-loader.test.ts > Completion: Essential Loader Held Decode, Abort, and Disposal Lifecycle > keeps chunked transfer with a length indeterminate
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/unit/world/completion-essential-loader.test.ts:188:74
+    186|       onOptionalConsumer: () => "rejected",
+    187|     });
+    188|     expect(progress.some((entry) => entry.bytes.kind === "determinate"…
+       |                                                                          ^
+    189|     abort.abort();
+    190|     result.resourceLedger?.dispose();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/unit/world/completion-essential-loader.test.ts > Completion: Essential Loader Held Decode, Abort, and Disposal Lifecycle > keeps the aggregate indeterminate when the final required response mismatches at EOF
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/unit/world/completion-essential-loader.test.ts:223:74
+    221|     });
+    222|
+    223|     expect(progress.some((entry) => entry.bytes.kind === "determinate"…
+       |                                                                          ^
+    224|     abort.abort();
+    225|     result.resourceLedger?.dispose();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/unit/world/completion-essential-loader.test.ts > Completion: Essential Loader Held Decode, Abort, and Disposal Lifecycle > clears a fully downloaded parse-failed attempt before announcing its retry
+AssertionError: expected 'determinate' to be 'indeterminate' // Object.is equality
+
+Expected: "indeterminate"
+Received: "determinate"
+
+ ❯ tests/unit/world/completion-essential-loader.test.ts:247:30
+    245|     const retry = progress.find((entry) => entry.stage.startsWith("Ret…
+    246|     expect(retry.attempt).toBe(2);
+    247|     expect(retry.bytes.kind).toBe("indeterminate");
+       |                              ^
+    248|     expect(retry.bytes.loaded).toBeUndefined();
+    249|     expect(retry.bytes.total).toBeUndefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+

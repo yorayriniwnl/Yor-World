@@ -1,0 +1,735 @@
+diff --git a/app/src/features/world/AssetLoader.ts b/app/src/features/world/AssetLoader.ts
+index 90dcdf6..9969a1d 100644
+--- a/app/src/features/world/AssetLoader.ts
++++ b/app/src/features/world/AssetLoader.ts
+@@ -73,11 +73,18 @@ async function fetchWithAbort(
+   const response = await fetch(url, signal ? { signal } : undefined);
+   if (!response.ok) throw new Error(`HTTP ${response.status} for required asset`);
+ 
+-  const encoding = (response.headers.get("content-encoding") ?? "identity").trim().toLowerCase();
+-  const isCompressed = encoding !== "" && encoding !== "identity";
++  const rawEncoding = response.headers.get("content-encoding");
++  const encoding = rawEncoding?.trim().toLowerCase();
++  const isCompressed = encoding !== undefined && encoding !== "" && encoding !== "identity";
++  const hasTransferEncoding = response.headers.get("transfer-encoding") !== null;
+   const rawLength = response.headers.get("content-length");
+-  const parsedLength = rawLength === null ? Number.NaN : Number(rawLength);
+-  const hasTrustedHeader = response.status === 200 && !isCompressed && Number.isSafeInteger(parsedLength) && parsedLength > 0;
++  const normalizedLength = rawLength?.trim();
++  const parsedLength = normalizedLength && /^[1-9]\d*$/.test(normalizedLength) ? Number(normalizedLength) : Number.NaN;
++  const hasTrustedHeader = response.status === 200
++    && encoding === "identity"
++    && !hasTransferEncoding
++    && Number.isSafeInteger(parsedLength)
++    && parsedLength > 0;
+   const contentLength = hasTrustedHeader ? parsedLength : 0;
+ 
+   if (signal?.aborted) throw new DOMException("Asset loading aborted by user", "AbortError");
+@@ -234,10 +241,12 @@ export class AssetLoader {
+         entry.trustedLength = false;
+       }
+       entry.loaded = read.loaded;
+-      if (read.trustedLength && read.total > 0) {
++      const trustedEof = read.eof && read.trustedLength && read.total > 0 && read.loaded === read.total;
++      if (trustedEof) {
+         entry.total = read.total;
+         entry.trustedLength = true;
+       } else {
++        entry.total = 0;
+         entry.trustedLength = false;
+       }
+       if (read.isCompressed || (read.eof && read.trustedLength && read.loaded !== read.total)) {
+@@ -312,6 +321,7 @@ export class AssetLoader {
+             emit(`Failed to load ${name}`, undefined, name, attempt, attempt - 1);
+             throw new AssetLoadingError(`Required asset "${name}" failed to load after ${attempt} attempts: ${(error as Error).message}`, name, attempt);
+           }
++          attemptProgress[index] = { attempt: attempt + 1, loaded: 0, total: 0, trustedLength: false };
+           const delay = attempt === 1 ? 500 : 1500;
+           emit(`Retrying ${name} (${attempt}/${retryLimit})...`, undefined, name, attempt + 1, attempt);
+           await waitForRetry(delay);
+diff --git a/app/src/features/world/RuntimeMaterialQuality.ts b/app/src/features/world/RuntimeMaterialQuality.ts
+index fa4459c..5eb7cd0 100644
+--- a/app/src/features/world/RuntimeMaterialQuality.ts
++++ b/app/src/features/world/RuntimeMaterialQuality.ts
+@@ -8,6 +8,7 @@ export class RuntimeMaterialQuality {
+   private readonly simplified = new Map<THREE.Material, THREE.MeshLambertMaterial>();
+   private readonly generatedSimplified = new Set<THREE.MeshLambertMaterial>();
+   private readonly generatedClones = new Set<THREE.Material>();
++  private readonly generatedTextures = new Set<THREE.Texture>();
+   private readonly ambientPoints = new Map<THREE.PointLight, number>();
+   private currentTier: QualityTier = "high";
+ 
+@@ -65,17 +66,66 @@ export class RuntimeMaterialQuality {
+    */
+   public installColorMap(mesh: THREE.Mesh, texture: THREE.Texture): () => void {
+     texture.colorSpace = THREE.SRGBColorSpace;
+-    const previousOriginal = this.originals.get(mesh) ?? mesh.material;
++    const hadOriginalRegistration = this.originals.has(mesh);
++    const previousOriginal = hadOriginalRegistration ? this.originals.get(mesh)! : mesh.material;
+     const previousVisible = mesh.material;
+     const previousList = Array.isArray(previousOriginal) ? previousOriginal : [previousOriginal];
+     const clones: THREE.Material[] = [];
++    const replacementMaps: THREE.Texture[] = [];
+     const newSimplified: Array<[THREE.Material, THREE.MeshLambertMaterial]> = [];
++
++    const releaseGenerated = (): void => {
++      for (const [source, derivative] of newSimplified) {
++        if (this.simplified.get(source) === derivative) this.simplified.delete(source);
++        if (this.generatedSimplified.delete(derivative)) derivative.dispose();
++      }
++      for (const clone of clones) {
++        this.generatedClones.delete(clone);
++        clone.dispose();
++      }
++      for (const replacementMap of replacementMaps) {
++        if (this.generatedTextures.delete(replacementMap)) replacementMap.dispose();
++      }
++    };
++
++    const restoreOriginalRegistration = (): void => {
++      if (hadOriginalRegistration) this.originals.set(mesh, previousOriginal);
++      else this.originals.delete(mesh);
++    };
++
+     try {
+       for (const material of previousList) {
+         const clone = material.clone();
+         clones.push(clone);
+         if (!("map" in clone)) throw new Error("Target material has no color-map slot");
+-        (clone as THREE.Material & { map: THREE.Texture | null }).map = texture;
++        const sourceMap = (clone as THREE.Material & { map: THREE.Texture | null }).map;
++        const needsTargetTextureState = sourceMap !== null && (
++          sourceMap.flipY !== texture.flipY
++          || sourceMap.channel !== texture.channel
++          || sourceMap.wrapS !== texture.wrapS
++          || sourceMap.wrapT !== texture.wrapT
++          || sourceMap.offset.equals(texture.offset) === false
++          || sourceMap.repeat.equals(texture.repeat) === false
++          || sourceMap.center.equals(texture.center) === false
++          || sourceMap.rotation !== texture.rotation
++          || sourceMap.matrixAutoUpdate !== texture.matrixAutoUpdate
++          || sourceMap.matrix.equals(texture.matrix) === false
++          || sourceMap.mapping !== texture.mapping
++          || sourceMap.magFilter !== texture.magFilter
++          || sourceMap.minFilter !== texture.minFilter
++          || sourceMap.generateMipmaps !== texture.generateMipmaps
++          || sourceMap.anisotropy !== texture.anisotropy
++        );
++        const replacementMap = needsTargetTextureState ? texture.clone() : texture;
++        if (needsTargetTextureState) {
++          replacementMaps.push(replacementMap);
++          this.generatedTextures.add(replacementMap);
++          const decodedSource = replacementMap.source;
++          replacementMap.copy(sourceMap!);
++          replacementMap.source = decodedSource;
++        }
++        replacementMap.colorSpace = THREE.SRGBColorSpace;
++        (clone as THREE.Material & { map: THREE.Texture | null }).map = replacementMap;
+         clone.needsUpdate = true;
+         const simplified = this.simplifyMaterial(clone);
+         if (simplified) newSimplified.push([clone, simplified]);
+@@ -90,25 +140,17 @@ export class RuntimeMaterialQuality {
+       return () => {
+         if (undone) return;
+         undone = true;
+-        mesh.material = previousVisible;
+-        this.originals.set(mesh, previousOriginal);
+-        for (const clone of clones) {
+-          this.generatedClones.delete(clone);
+-          clone.dispose();
+-          const derivative = this.simplified.get(clone);
+-          if (derivative) {
+-            this.simplified.delete(clone);
+-            this.generatedSimplified.delete(derivative);
+-            derivative.dispose();
+-          }
++        try {
++          mesh.material = previousVisible;
++        } finally {
++          restoreOriginalRegistration();
++          releaseGenerated();
+         }
+       };
+     } catch (error) {
+-      for (const clone of clones) clone.dispose();
+-      for (const [, derivative] of newSimplified) {
+-        this.generatedSimplified.delete(derivative);
+-        derivative.dispose();
+-      }
++      try { mesh.material = previousVisible; } catch {}
++      restoreOriginalRegistration();
++      releaseGenerated();
+       throw error;
+     }
+   }
+@@ -148,8 +190,10 @@ export class RuntimeMaterialQuality {
+     this.apply("high");
+     for (const material of this.generatedSimplified) material.dispose();
+     for (const material of this.generatedClones) material.dispose();
++    for (const texture of this.generatedTextures) texture.dispose();
+     this.generatedSimplified.clear();
+     this.generatedClones.clear();
++    this.generatedTextures.clear();
+     this.simplified.clear();
+     this.originals.clear();
+     this.ambientPoints.clear();
+diff --git a/app/src/features/world/WorldRuntime.ts b/app/src/features/world/WorldRuntime.ts
+index bb0c976..d3a719d 100644
+--- a/app/src/features/world/WorldRuntime.ts
++++ b/app/src/features/world/WorldRuntime.ts
+@@ -84,6 +84,8 @@ export class WorldRuntime {
+   private readonly loadingAbort = new AbortController();
+   private readonly optionalAbort = new AbortController();
+   private unsubscribeLifecycle: (() => void) | null = null;
++  private greetingTimer: ReturnType<typeof setTimeout> | null = null;
++  private greetingTimerGeneration = 0;
+ 
+   constructor(options: WorldRuntimeOptions) {
+     this.onFrameDuration = options.onFrameDuration;
+@@ -95,6 +97,7 @@ export class WorldRuntime {
+     this.isDecorativePaused = options.initialPaused ?? false;
+     this.lifecycleManager = options.lifecycleManager ?? new LifecycleManager();
+     this.unsubscribeLifecycle = this.lifecycleManager.subscribe((state, previousState) => {
++      if (previousState === "TRANSITION" && state !== "TRANSITION") this.clearGreetingTimer();
+       if (state === "HOME" && previousState === "ENTRANCE" && this.lifecycleManager.getEntranceDiagnostics().skipped) {
+         this.optionalAbort.abort();
+       }
+@@ -476,16 +479,28 @@ export class WorldRuntime {
+     } else if (state !== "HOME" && state !== "TRANSITION") {
+       return 0;
+     }
++    this.clearGreetingTimer();
+     this.lifecycleManager.startTransition(this.sessionToken);
+     const rev = this.characterDirector ? this.characterDirector.playGreeting() : 0;
+-    setTimeout(() => {
+-      if (this.lifecycleManager.getState() === "TRANSITION") {
+-        this.lifecycleManager.completeTransition(this.sessionToken);
++    const timerGeneration = this.greetingTimerGeneration;
++    const sessionToken = this.sessionToken;
++    this.greetingTimer = setTimeout(() => {
++      if (timerGeneration !== this.greetingTimerGeneration) return;
++      this.greetingTimer = null;
++      if (!this.isDisposed && !this.lifecycleManager.isStale(sessionToken)
++        && this.lifecycleManager.getState() === "TRANSITION") {
++        this.lifecycleManager.completeTransition(sessionToken);
+       }
+     }, 4000);
+     return rev;
+   }
+ 
++  private clearGreetingTimer(): void {
++    this.greetingTimerGeneration += 1;
++    if (this.greetingTimer !== null) clearTimeout(this.greetingTimer);
++    this.greetingTimer = null;
++  }
++
+   public cancel(): number {
+     const state = this.lifecycleManager.getState();
+     if (state === "ENTRANCE") {
+@@ -709,6 +724,7 @@ export class WorldRuntime {
+     if (this.isDisposed) return;
+     this.onSamplingPause?.();
+     this.isDisposed = true;
++    this.clearGreetingTimer();
+     this.unsubscribeLifecycle?.();
+     this.unsubscribeLifecycle = null;
+     this.interactionBinding?.dispose();
+diff --git a/app/tests/unit/project-transition.test.ts b/app/tests/unit/project-transition.test.ts
+index bf46d77..d5373a5 100644
+--- a/app/tests/unit/project-transition.test.ts
++++ b/app/tests/unit/project-transition.test.ts
+@@ -1,4 +1,9 @@
+ import { describe, it, expect, vi, beforeEach } from "vitest";
++import * as THREE from "three";
++import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
++import { AssetLoader, type LoadedAssets } from "@/features/world/AssetLoader";
++import { CLIP_DURATIONS } from "@/features/world/SceneIntegrator";
++import { WorldRuntime } from "@/features/world/WorldRuntime";
+ import {
+   startProjectTransition,
+   UnknownProjectError,
+@@ -21,6 +26,64 @@ import type { ExperienceController } from "@/features/experience/controller";
+ import { ExperienceController as ConcreteExperienceController } from "@/features/experience/controller";
+ import { PreferencesStore, resetDocumentScopedFallback } from "@/features/experience/preferences-store";
+ 
++const { runtimeRender } = vi.hoisted(() => ({ runtimeRender: vi.fn() }));
++
++vi.mock("three", async (importOriginal) => {
++  const actual = await importOriginal<typeof import("three")>();
++  return {
++    ...actual,
++    WebGLRenderer: class {
++      shadowMap = {};
++      info = { render: { calls: 1, triangles: 1 } };
++      render = runtimeRender;
++      getContext() { return { getExtension: () => null, getParameter: () => "test-renderer" }; }
++      setPixelRatio() {}
++      getPixelRatio() { return 1; }
++      setSize() {}
++      dispose() {}
++      forceContextLoss() {}
++    },
++  };
++});
++
++function runtimeCanvas() {
++  return Object.assign(new EventTarget(), { isConnected: true, dataset: {}, style: {} }) as unknown as HTMLCanvasElement;
++}
++
++function runtimeLoadedAssets(): LoadedAssets {
++  const node = (name: string) => Object.assign(new THREE.Group(), { name });
++  const room = new THREE.Group();
++  room.add(node("desk"));
++  const avatar = new THREE.Group();
++  const resident = node("resident");
++  resident.add(node("body-turn"), node("head"), new THREE.SkinnedMesh());
++  avatar.add(resident);
++  const fixture = new THREE.Group();
++  fixture.add(node("chair-root"), node("chair-base"));
++  const gltf = (scene: THREE.Group): GLTF => ({
++    scene, scenes: [scene], cameras: [], userData: {}, asset: { version: "2.0" },
++    animations: Object.entries(CLIP_DURATIONS).map(([name, duration]) => new THREE.AnimationClip(name, duration, [])),
++    parser: {} as GLTF["parser"],
++  });
++  return {
++    w1Gltf: gltf(room), avatarGltf: gltf(avatar), fixtureGltf: gltf(fixture),
++    interactionGltf: null, deskmatTexture: null, wallpaperTexture: null,
++  };
++}
++
++function delayedRuntimeLoad() {
++  let resolve!: (assets: LoadedAssets) => void;
++  const promise = new Promise<LoadedAssets>((resolveAssets) => { resolve = resolveAssets; });
++  vi.spyOn(AssetLoader.prototype, "loadSession").mockReturnValueOnce(promise);
++  return {
++    async complete() {
++      resolve(runtimeLoadedAssets());
++      await promise;
++      await Promise.resolve();
++    },
++  };
++}
++
+ describe("Milestone C2 Unit Tests: Project Transitions, Motifs, and Navigation", () => {
+   beforeEach(() => {
+     clearReturnSnapshot();
+@@ -302,4 +365,49 @@ describe("Milestone C2 Unit Tests: Project Transitions, Motifs, and Navigation",
+       expect(getReturnSnapshot()).toBeNull();
+     });
+   });
++
++  it("replaces and disposes the WorldRuntime greeting timer without allowing stale completion", async () => {
++    vi.useFakeTimers();
++    vi.stubGlobal("requestAnimationFrame", vi.fn(() => 1));
++    vi.stubGlobal("cancelAnimationFrame", vi.fn());
++    const load = delayedRuntimeLoad();
++    const runtime = new WorldRuntime({ canvas: runtimeCanvas(), reducedMotion: true });
++    try {
++      await load.complete();
++      expect(runtime.lifecycleManager.getState()).toBe("HOME");
++
++      const setTimeoutSpy = vi.spyOn(globalThis, "setTimeout");
++      const clearTimeoutSpy = vi.spyOn(globalThis, "clearTimeout");
++      const greetingTimers = () => setTimeoutSpy.mock.calls.flatMap((call, index) => call[1] === 4000
++        ? [{ callback: call[0] as () => void, id: setTimeoutSpy.mock.results[index]!.value as ReturnType<typeof setTimeout> }]
++        : []);
++
++      runtime.greet();
++      const firstTimer = greetingTimers().at(-1)!;
++      runtime.greet();
++      const replacementTimer = greetingTimers().at(-1)!;
++
++      expect(replacementTimer.id).not.toBe(firstTimer.id);
++      expect(clearTimeoutSpy).toHaveBeenCalledWith(firstTimer.id);
++      firstTimer.callback();
++      expect(runtime.lifecycleManager.getState()).toBe("TRANSITION");
++
++      await vi.advanceTimersByTimeAsync(4000);
++      expect(runtime.lifecycleManager.getState()).toBe("HOME");
++
++      runtime.greet();
++      const disposedTimer = greetingTimers().at(-1)!;
++      runtime.dispose();
++      expect(clearTimeoutSpy).toHaveBeenCalledWith(disposedTimer.id);
++      expect(runtime.lifecycleManager.getState()).toBe("STATIC");
++      disposedTimer.callback();
++      expect(runtime.lifecycleManager.getState()).toBe("STATIC");
++      await vi.runOnlyPendingTimersAsync();
++    } finally {
++      runtime.dispose();
++      vi.restoreAllMocks();
++      vi.unstubAllGlobals();
++      vi.useRealTimers();
++    }
++  });
+ });
+diff --git a/app/tests/unit/runtime-material-quality.test.ts b/app/tests/unit/runtime-material-quality.test.ts
+index 42f7cad..59ada00 100644
+--- a/app/tests/unit/runtime-material-quality.test.ts
++++ b/app/tests/unit/runtime-material-quality.test.ts
+@@ -1,6 +1,6 @@
+ import * as THREE from "three";
+ import { describe, expect, it, vi } from "vitest";
+-import { RuntimeMaterialQuality } from "../../src/features/world/RuntimeMaterialQuality";
++import { installOptionalTextureOnScene, RuntimeMaterialQuality } from "../../src/features/world/RuntimeMaterialQuality";
+ 
+ function glassMaterial() {
+   return new THREE.MeshPhysicalMaterial({
+@@ -324,15 +324,19 @@ describe("runtime material quality on frozen world meshes", () => {
+ 
+     const rollback = quality.installColorMap(target, lateTexture);
+     expect(target.material).not.toBe(unrelated.material);
+-    expect((target.material as unknown as THREE.MeshLambertMaterial).map).toBe(lateTexture);
++    const adoptedLowMap = (target.material as unknown as THREE.MeshLambertMaterial).map!;
++    expect(adoptedLowMap).toBe(lateTexture);
++    expect(adoptedLowMap.source).toBe(lateTexture.source);
+     expect((unrelated.material as unknown as THREE.MeshLambertMaterial).map).toBe(baseTexture);
+     expect(lateTexture.colorSpace).toBe(THREE.SRGBColorSpace);
+ 
+     quality.apply("high");
+-    expect((target.material as THREE.MeshStandardMaterial).map).toBe(lateTexture);
++    const adoptedHighMap = (target.material as THREE.MeshStandardMaterial).map!;
++    expect(adoptedHighMap).toBe(lateTexture);
++    expect(adoptedHighMap.source).toBe(lateTexture.source);
+     expect(unrelated.material).toBe(shared);
+     quality.apply("low");
+-    expect((target.material as unknown as THREE.MeshLambertMaterial).map).toBe(lateTexture);
++    expect((target.material as unknown as THREE.MeshLambertMaterial).map).toBe(adoptedLowMap);
+ 
+     rollback();
+     expect((target.material as unknown as THREE.MeshLambertMaterial).map).toBe(baseTexture);
+@@ -342,6 +346,156 @@ describe("runtime material quality on frozen world meshes", () => {
+     quality.dispose();
+   });
+ 
++  it("preserves each GLB map's flip, UV channel, wrap modes, and transform on isolated late textures", () => {
++    const firstBaseMap = new THREE.Texture();
++    firstBaseMap.flipY = false;
++    firstBaseMap.channel = 1;
++    firstBaseMap.offset.set(0.2, 0.4);
++    firstBaseMap.repeat.set(2, 3);
++    firstBaseMap.center.set(0.25, 0.75);
++    firstBaseMap.rotation = 0.5;
++    firstBaseMap.wrapS = THREE.RepeatWrapping;
++    firstBaseMap.wrapT = THREE.MirroredRepeatWrapping;
++
++    const secondBaseMap = new THREE.Texture();
++    secondBaseMap.flipY = false;
++    secondBaseMap.channel = 2;
++    secondBaseMap.offset.set(0.1, 0.3);
++    secondBaseMap.repeat.set(4, 5);
++    secondBaseMap.rotation = -0.25;
++    secondBaseMap.wrapS = THREE.MirroredRepeatWrapping;
++
++    const first = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ map: firstBaseMap }));
++    const second = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ map: secondBaseMap }));
++    const scene = new THREE.Group();
++    scene.add(first, second);
++    const quality = new RuntimeMaterialQuality(scene);
++    const lateTexture = new THREE.Texture();
++    const undoFirst = quality.installColorMap(first, lateTexture);
++    const undoSecond = quality.installColorMap(second, lateTexture);
++    const firstMap = (first.material as THREE.MeshStandardMaterial).map!;
++    const secondMap = (second.material as THREE.MeshStandardMaterial).map!;
++
++    expect(firstMap).not.toBe(lateTexture);
++    expect(secondMap).not.toBe(lateTexture);
++    expect(firstMap).not.toBe(secondMap);
++    expect(firstMap.source).toBe(lateTexture.source);
++    expect(secondMap.source).toBe(lateTexture.source);
++    expect(firstMap.flipY).toBe(false);
++    expect(firstMap.channel).toBe(1);
++    expect(firstMap.offset.toArray()).toEqual([0.2, 0.4]);
++    expect(firstMap.repeat.toArray()).toEqual([2, 3]);
++    expect(firstMap.center.toArray()).toEqual([0.25, 0.75]);
++    expect(firstMap.rotation).toBe(0.5);
++    expect(firstMap.wrapS).toBe(THREE.RepeatWrapping);
++    expect(firstMap.wrapT).toBe(THREE.MirroredRepeatWrapping);
++    expect(secondMap.flipY).toBe(false);
++    expect(secondMap.channel).toBe(2);
++    expect(secondMap.offset.toArray()).toEqual([0.1, 0.3]);
++    expect(secondMap.repeat.toArray()).toEqual([4, 5]);
++    expect(secondMap.rotation).toBe(-0.25);
++    expect(secondMap.wrapS).toBe(THREE.MirroredRepeatWrapping);
++    expect(firstMap.colorSpace).toBe(THREE.SRGBColorSpace);
++    expect(secondMap.colorSpace).toBe(THREE.SRGBColorSpace);
++
++    undoSecond();
++    undoFirst();
++    expect((first.material as THREE.MeshStandardMaterial).map).toBe(firstBaseMap);
++    expect((second.material as THREE.MeshStandardMaterial).map).toBe(secondBaseMap);
++    quality.dispose();
++    expect(lateTexture.source).toBeDefined();
++  });
++
++  it("atomically rolls back an optional-map failure on a second shared-material target", () => {
++    const baseMap = new THREE.Texture();
++    baseMap.flipY = false;
++    baseMap.channel = 1;
++    baseMap.offset.set(0.2, 0.4);
++    const lateTexture = new THREE.Texture();
++    const baseMapDispose = vi.spyOn(baseMap, "dispose");
++    const lateTextureDispose = vi.spyOn(lateTexture, "dispose");
++    const generatedTextureDisposals: THREE.Texture[] = [];
++    const originalTextureDispose = THREE.Texture.prototype.dispose;
++    vi.spyOn(THREE.Texture.prototype, "dispose").mockImplementation(function (this: THREE.Texture) {
++      if (this !== lateTexture && this.source === lateTexture.source) generatedTextureDisposals.push(this);
++      return originalTextureDispose.call(this);
++    });
++    const shared = new THREE.MeshStandardMaterial({ map: baseMap });
++    const originalClone = shared.clone.bind(shared);
++    const temporaryClones: THREE.Material[] = [];
++    vi.spyOn(shared, "clone").mockImplementation(() => {
++      const clone = originalClone();
++      vi.spyOn(clone, "dispose");
++      temporaryClones.push(clone);
++      return clone;
++    });
++    const first = new THREE.Mesh(new THREE.BoxGeometry(), shared);
++    first.name = "desk_mat_overlay";
++    const second = new THREE.Mesh(new THREE.BoxGeometry(), shared);
++    second.name = "topography-panel";
++    const unrelated = new THREE.Mesh(new THREE.BoxGeometry(), shared);
++    unrelated.name = "unrelated-static-surface";
++    const scene = new THREE.Group();
++    scene.add(first, second, unrelated);
++    const quality = new RuntimeMaterialQuality(scene);
++    quality.apply("low");
++    const baseLow = first.material;
++    let secondVisible: THREE.Material | THREE.Material[] = second.material;
++    let failedDerivative: THREE.Material | undefined;
++    let rejectLateAssignment = true;
++    Object.defineProperty(second, "material", {
++      configurable: true,
++      get: () => secondVisible,
++      set: (next: THREE.Material | THREE.Material[]) => {
++        const list = Array.isArray(next) ? next : [next];
++        const replacement = list.find((material) => {
++          const map = (material as THREE.MeshStandardMaterial | THREE.MeshLambertMaterial).map;
++          return map?.source === lateTexture.source;
++        });
++        if (replacement && rejectLateAssignment) {
++          rejectLateAssignment = false;
++          failedDerivative = replacement;
++          throw new Error("second target material connection failed");
++        }
++        secondVisible = next;
++      },
++    });
++    const temporaryDerivativeDisposals: THREE.Material[] = [];
++    const originalLambertDispose = THREE.MeshLambertMaterial.prototype.dispose;
++    vi.spyOn(THREE.MeshLambertMaterial.prototype, "dispose").mockImplementation(function (this: THREE.MeshLambertMaterial) {
++      if (this.map?.source === lateTexture.source) temporaryDerivativeDisposals.push(this);
++      return originalLambertDispose.call(this);
++    });
++
++    expect(() => installOptionalTextureOnScene("deskmat", scene, lateTexture, quality))
++      .toThrow("second target material connection failed");
++    expect(first.material).toBe(baseLow);
++    expect(second.material).toBe(baseLow);
++    expect(unrelated.material).toBe(baseLow);
++
++    quality.apply("high");
++    expect(first.material).toBe(shared);
++    expect(second.material).toBe(shared);
++    expect(unrelated.material).toBe(shared);
++    quality.apply("low");
++    expect(first.material).toBe(baseLow);
++    expect(second.material).toBe(baseLow);
++    expect(unrelated.material).toBe(baseLow);
++
++    quality.dispose();
++    expect(temporaryClones).toHaveLength(2);
++    for (const clone of temporaryClones) expect(clone.dispose).toHaveBeenCalledOnce();
++    expect(failedDerivative).toBeDefined();
++    expect(temporaryDerivativeDisposals.filter((material) => material === failedDerivative)).toHaveLength(1);
++    expect(new Set(temporaryDerivativeDisposals).size).toBe(2);
++    expect(temporaryDerivativeDisposals).toHaveLength(2);
++    expect(new Set(generatedTextureDisposals).size).toBe(2);
++    expect(generatedTextureDisposals).toHaveLength(2);
++    expect(baseMapDispose).not.toHaveBeenCalled();
++    expect(lateTextureDispose).not.toHaveBeenCalled();
++    vi.restoreAllMocks();
++  });
++
+   it("rejects a target without a color-map slot without changing its live material", () => {
+     const material = new THREE.ShaderMaterial();
+     const mesh = new THREE.Mesh(new THREE.BoxGeometry(), material);
+diff --git a/app/tests/unit/world/completion-essential-loader.test.ts b/app/tests/unit/world/completion-essential-loader.test.ts
+index 75e16db..c02687f 100644
+--- a/app/tests/unit/world/completion-essential-loader.test.ts
++++ b/app/tests/unit/world/completion-essential-loader.test.ts
+@@ -5,6 +5,7 @@ import { SessionResourceLedger } from "../../../src/features/world/asset-resourc
+ 
+ const harness = vi.hoisted(() => ({
+   parsed: 0,
++  failAtParse: 0,
+   releaseTexture: null as null | ((tex: THREE.Texture) => void),
+ }));
+ 
+@@ -12,6 +13,7 @@ vi.mock("three/examples/jsm/loaders/GLTFLoader.js", () => ({
+   GLTFLoader: class {
+     async parseAsync() {
+       harness.parsed++;
++      if (harness.parsed === harness.failAtParse) throw new Error("synthetic parse failure after EOF");
+       return { scene: new THREE.Group(), animations: [] };
+     }
+   },
+@@ -34,6 +36,7 @@ vi.mock("three", async (original) => {
+ afterEach(() => {
+   vi.unstubAllGlobals();
+   harness.parsed = 0;
++  harness.failAtParse = 0;
+   harness.releaseTexture = null;
+ });
+ 
+@@ -41,7 +44,7 @@ describe("Completion: Essential Loader Held Decode, Abort, and Disposal Lifecycl
+   it("resolves required readiness while optional decode is held, and cleans up on abort without late delivery", async () => {
+     vi.stubGlobal("window", {});
+     vi.stubGlobal("fetch", vi.fn(async () => new Response(new Uint8Array([1, 2, 3, 4]), {
+-      headers: { "content-length": "4" },
++      headers: { "content-length": "4", "content-encoding": "identity" },
+     })));
+ 
+     const abort = new AbortController();
+@@ -105,7 +108,7 @@ describe("Completion: Essential Loader Held Decode, Abort, and Disposal Lifecycl
+   it("does not report one completed file as the required-session byte aggregate", async () => {
+     vi.stubGlobal("window", {});
+     const fetchMock = vi.fn(async () => new Response(new Uint8Array([1, 2, 3, 4]), {
+-      headers: { "content-length": "4" },
++      headers: { "content-length": "4", "content-encoding": "identity" },
+     }));
+     vi.stubGlobal("fetch", fetchMock);
+     const abort = new AbortController();
+@@ -121,7 +124,7 @@ describe("Completion: Essential Loader Held Decode, Abort, and Disposal Lifecycl
+     const firstDeterminate = progress.find((entry) => entry.bytes.kind === "determinate");
+     expect(firstDeterminate).toMatchObject({
+       requiredLoaded: 2,
+-      bytes: { kind: "determinate", loaded: 8, total: 12 },
++      bytes: { kind: "determinate", loaded: 12, total: 12 },
+     });
+     abort.abort();
+     result.resourceLedger?.dispose();
+@@ -135,12 +138,12 @@ describe("Completion: Essential Loader Held Decode, Abort, and Disposal Lifecycl
+       if (request === 1) {
+         return {
+           ok: true,
+-          headers: new Headers({ "content-length": "99" }),
++          headers: new Headers({ "content-length": "99", "content-encoding": "identity" }),
+           body: null,
+           arrayBuffer: async () => new Uint8Array([1, 2, 3, 4]).buffer,
+         } as Response;
+       }
+-      return new Response(new Uint8Array([1, 2, 3, 4]), { headers: { "content-length": "4" } });
++      return new Response(new Uint8Array([1, 2, 3, 4]), { headers: { "content-length": "4", "content-encoding": "identity" } });
+     });
+     vi.stubGlobal("fetch", fetchMock);
+     const abort = new AbortController();
+@@ -158,16 +161,19 @@ describe("Completion: Essential Loader Held Decode, Abort, and Disposal Lifecycl
+   });
+ 
+   it.each([
+-    ["unknown content length", { headers: {} }],
++    ["unknown content length", { headers: { "content-encoding": "identity" } }],
++    ["missing content encoding", { headers: { "content-length": "4" } }],
+     ["compressed representation", { headers: { "content-length": "4", "content-encoding": "gzip" } }],
+-    ["short body at EOF", { headers: { "content-length": "5" } }],
+-    ["long body at EOF", { headers: { "content-length": "3" } }],
++    ["chunked transfer with a length", { headers: { "content-length": "4", "content-encoding": "identity", "transfer-encoding": "chunked" } }],
++    ["contradictory length values", { headers: { "content-length": "4, 5", "content-encoding": "identity" } }],
++    ["short body at EOF", { headers: { "content-length": "5", "content-encoding": "identity" } }],
++    ["long body at EOF", { headers: { "content-length": "3", "content-encoding": "identity" } }],
+   ])("keeps %s indeterminate", async (_label, init) => {
+     vi.stubGlobal("window", {});
+     let request = 0;
+     const fetchMock = vi.fn(async () => {
+       request += 1;
+-      const headers = request === 1 ? init.headers : { "content-length": "4" };
++      const headers = request === 1 ? init.headers : { "content-length": "4", "content-encoding": "identity" };
+       return new Response(new Uint8Array([1, 2, 3, 4]), { headers });
+     });
+     vi.stubGlobal("fetch", fetchMock);
+@@ -184,10 +190,73 @@ describe("Completion: Essential Loader Held Decode, Abort, and Disposal Lifecycl
+     result.resourceLedger?.dispose();
+   });
+ 
++  it("keeps the aggregate indeterminate when the final required response mismatches at EOF", async () => {
++    vi.stubGlobal("window", {});
++    let request = 0;
++    const fetchMock = vi.fn(async () => {
++      request++;
++      if (request < 3) {
++        return new Response(new Uint8Array([1, 2, 3, 4]), {
++          headers: { "content-length": "4", "content-encoding": "identity" },
++        });
++      }
++      const body = new ReadableStream<Uint8Array>({
++        start(controller) {
++          controller.enqueue(new Uint8Array([1, 2, 3, 4]));
++          controller.close();
++        },
++      });
++      return new Response(body, {
++        headers: { "content-length": "5", "content-encoding": "identity" },
++      });
++    });
++    vi.stubGlobal("fetch", fetchMock);
++    const abort = new AbortController();
++    const progress: Array<{ stage: string; bytes: { kind: string; loaded?: number; total?: number } }> = [];
++    const result = await new AssetLoader("final-body-eof-mismatch-test").loadSession({
++      sessionToken: 11,
++      signal: abort.signal,
++      onProgress: (entry) => progress.push(entry),
++      onOptionalConsumer: () => "rejected",
++    });
++
++    expect(progress.some((entry) => entry.bytes.kind === "determinate")).toBe(false);
++    abort.abort();
++    result.resourceLedger?.dispose();
++  });
++
++  it("clears a fully downloaded parse-failed attempt before announcing its retry", async () => {
++    vi.stubGlobal("window", {});
++    harness.failAtParse = 3;
++    vi.stubGlobal("fetch", vi.fn(async () => new Response(new Uint8Array([1, 2, 3, 4]), {
++      headers: { "content-length": "4", "content-encoding": "identity" },
++    })));
++
++    const abort = new AbortController();
++    const progress: Array<{ stage: string; attempt?: number | undefined; bytes: { kind: string; loaded?: number; total?: number } }> = [];
++    const resultPromise = new AssetLoader("retry-attempt-reset-test").loadSession({
++      sessionToken: 14,
++      signal: abort.signal,
++      onProgress: (entry) => progress.push(entry),
++      onOptionalConsumer: () => "rejected",
++    });
++
++    await vi.waitFor(() => expect(progress.some((entry) => entry.stage.startsWith("Retrying"))).toBe(true));
++    const retry = progress.find((entry) => entry.stage.startsWith("Retrying"))!;
++    expect(retry.attempt).toBe(2);
++    expect(retry.bytes.kind).toBe("indeterminate");
++    expect(retry.bytes.loaded).toBeUndefined();
++    expect(retry.bytes.total).toBeUndefined();
++
++    const result = await resultPromise;
++    abort.abort();
++    result.resourceLedger?.dispose();
++  });
++
+   it("disposes a decoded texture exactly once when a synchronous consumer throws", async () => {
+     vi.stubGlobal("window", {});
+     vi.stubGlobal("fetch", vi.fn(async () => new Response(new Uint8Array([1, 2, 3, 4]), {
+-      headers: { "content-length": "4" },
++      headers: { "content-length": "4", "content-encoding": "identity" },
+     })));
+     const abort = new AbortController();
+     const result = await new AssetLoader("throwing-consumer-test").loadSession({
+@@ -208,7 +277,7 @@ describe("Completion: Essential Loader Held Decode, Abort, and Disposal Lifecycl
+   it("cancels optional decoding without disposing the required session owner", async () => {
+     vi.stubGlobal("window", {});
+     vi.stubGlobal("fetch", vi.fn(async () => new Response(new Uint8Array([1, 2, 3, 4]), {
+-      headers: { "content-length": "4" },
++      headers: { "content-length": "4", "content-encoding": "identity" },
+     })));
+     const requiredAbort = new AbortController();
+     const optionalAbort = new AbortController();

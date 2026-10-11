@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 1,
+  "delivery": "FINISH-C1-R5",
+  "interpretation": "PASS means locally implemented and supported by named evidence; independent audit and Parent acceptance remain pending.",
+  "requirements": [
+    {
+      "id": "FINISH-06-1",
+      "status": "PASS",
+      "requirement": "Only explicitly confirmed Content-Encoding identity, a validated positive safe Content-Length, and exact matching EOF bytes can support determinate essential progress; compressed, unknown, chunked, contradictory, and mismatched representations remain indeterminate.",
+      "implementation": [
+        "app/src/features/world/AssetLoader.ts"
+      ],
+      "regressions": [
+        "missing Content-Encoding",
+        "unknown/compressed/chunked and contradictory representations",
+        "final required asset mismatch at EOF"
+      ],
+      "evidence": [
+        "evidence/logs/red-loader.log",
+        "evidence/logs/green-targeted.log",
+        "evidence/logs/unit.log"
+      ]
+    },
+    {
+      "id": "FINISH-06-2",
+      "status": "PASS",
+      "requirement": "Reset failed-attempt byte count and trust before emitting retry progress.",
+      "implementation": [
+        "app/src/features/world/AssetLoader.ts"
+      ],
+      "regressions": [
+        "fully downloaded parse-failed attempt reset before retry announcement"
+      ],
+      "evidence": [
+        "evidence/logs/red-loader.log",
+        "evidence/logs/green-targeted.log",
+        "evidence/logs/unit.log"
+      ]
+    },
+    {
+      "id": "FINISH-06-3",
+      "status": "PASS",
+      "requirement": "Preserve the GLB source map flip convention, UV channel, wrap modes, and transform while isolating target texture state.",
+      "implementation": [
+        "app/src/features/world/RuntimeMaterialQuality.ts"
+      ],
+      "regressions": [
+        "per-target isolated late texture copies retain source GLB sampler and transform state"
+      ],
+      "evidence": [
+        "evidence/logs/red-material.log",
+        "evidence/logs/green-material.log",
+        "evidence/logs/unit.log"
+      ]
+    },
+    {
+      "id": "FINISH-06-4",
+      "status": "PASS",
+      "requirement": "Optional-map installation rolls back visible materials and every quality registry atomically; disposes temporary derivatives exactly once; does not dispose the original base texture or change unrelated shared-material users.",
+      "implementation": [
+        "app/src/features/world/RuntimeMaterialQuality.ts"
+      ],
+      "regressions": [
+        "failure injected on second mesh sharing original material",
+        "visible material and LOW/HIGH registration restored",
+        "disposal spies/counts observe temporary derivative cleanup exactly once"
+      ],
+      "evidence": [
+        "evidence/logs/red-material.log",
+        "evidence/logs/red-mat-transition.log",
+        "evidence/logs/green-material.log",
+        "evidence/logs/unit.log"
+      ]
+    },
+    {
+      "id": "FINISH-06-5",
+      "status": "PASS",
+      "requirement": "Greeting timers are owned by their WorldRuntime; replacement clears the old timer, stale callbacks cannot complete a newer transition, and dispose clears synchronously.",
+      "implementation": [
+        "app/src/features/world/WorldRuntime.ts"
+      ],
+      "regressions": [
+        "real WorldRuntime instance",
+        "replacement timer",
+        "manual stale callback",
+        "active transition retained",
+        "synchronous disposal cleanup"
+      ],
+      "evidence": [
+        "evidence/logs/red-mat-transition.log",
+        "evidence/logs/green-targeted.log",
+        "evidence/logs/unit.log"
+      ]
+    },
+    {
+      "id": "FINISH-06-6",
+      "status": "PASS",
+      "requirement": "Re-run retained applicable suites, lint, typecheck, production build, and source-bound browser paths on the exact sequential R3+R5 candidate.",
+      "implementation": [
+        "app/src/features/world/AssetLoader.ts",
+        "app/src/features/world/RuntimeMaterialQuality.ts",
+        "app/src/features/world/WorldRuntime.ts"
+      ],
+      "regressions": [
+        "355 unit tests",
+        "290 integration tests",
+        "lint",
+        "typecheck",
+        "Next production build",
+        "three Chromium production-browser tests"
+      ],
+      "evidence": [
+        "evidence/logs/unit.log",
+        "evidence/logs/integration.log",
+        "evidence/logs/lint.log",
+        "evidence/logs/typecheck.log",
+        "evidence/logs/build.log",
+        "evidence/logs/browser.log",
+        "evidence/browser-results/browser-results.json",
+        "evidence/source-build-identity.json"
+      ]
+    },
+    {
+      "id": "FINISH-08-CLOSE-1",
+      "status": "PASS",
+      "requirement": "A malformed final required body cannot make the essential aggregate determinate before EOF; valid matching EOF is required.",
+      "implementation": [
+        "app/src/features/world/AssetLoader.ts"
+      ],
+      "regressions": [
+        "otherwise-valid first required body followed by malformed final required body; aggregate remains indeterminate"
+      ],
+      "evidence": [
+        "evidence/logs/red-loader.log",
+        "evidence/logs/green-targeted.log",
+        "evidence/logs/unit.log"
+      ]
+    },
+    {
+      "id": "FINISH-08-CLOSE-2",
+      "status": "PASS",
+      "requirement": "Inject assignment failure after optional-map registration on a second mesh sharing the base material; prove unrelated mesh and visible material unchanged, all registries restored, temporary derivatives disposed once, and original base texture preserved.",
+      "implementation": [
+        "app/src/features/world/RuntimeMaterialQuality.ts"
+      ],
+      "regressions": [
+        "second-target setter failure",
+        "unrelated shared user unchanged",
+        "visible material and quality registries restored",
+        "real disposal-count spy"
+      ],
+      "evidence": [
+        "evidence/logs/red-material.log",
+        "evidence/logs/green-material.log",
+        "evidence/logs/unit.log"
+      ]
+    },
+    {
+      "id": "FINISH-08-CLOSE-3",
+      "status": "PASS",
+      "requirement": "Behaviorally test WorldRuntime timer replacement, manually invoke stale callback, prove newer transition remains active, and prove synchronous dispose cleanup.",
+      "implementation": [
+        "app/src/features/world/WorldRuntime.ts"
+      ],
+      "regressions": [
+        "replacement, stale callback, active newer action, synchronous dispose timer clear"
+      ],
+      "evidence": [
+        "evidence/logs/red-mat-transition.log",
+        "evidence/logs/green-targeted.log",
+        "evidence/logs/unit.log"
+      ]
+    }
+  ]
+}

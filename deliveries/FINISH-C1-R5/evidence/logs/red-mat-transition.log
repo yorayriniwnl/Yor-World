@@ -1,0 +1,63 @@
+
+ RUN  v5.0.2 C:/Users/yoray/Projects/Yor World/deliveries/FINISH-C1-R5/.work/assembly/app
+
+ ❯ tests/unit/runtime-material-quality.test.ts (14 tests | 2 failed) 50ms
+   ❯ runtime material quality on frozen world meshes (14)
+     × preserves each GLB map's flip, UV channel, wrap modes, and transform on isolated late textures 14ms
+     × atomically rolls back an optional-map failure on a second shared-material target 4ms
+ ❯ tests/unit/project-transition.test.ts (24 tests | 1 failed) 1188ms
+   ❯ Milestone C2 Unit Tests: Project Transitions, Motifs, and Navigation (24)
+     × replaces and disposes the WorldRuntime greeting timer without allowing stale completion 16ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/project-transition.test.ts > Milestone C2 Unit Tests: Project Transitions, Motifs, and Navigation > replaces and disposes the WorldRuntime greeting timer without allowing stale completion
+AssertionError: expected "clearTimeout" to be called with arguments: [ { refed: true, …(4), …(1) } ]
+
+Number of calls: 0
+
+ ❯ tests/unit/project-transition.test.ts:391:31
+    389|
+    390|       expect(replacementTimer.id).not.toBe(firstTimer.id);
+    391|       expect(clearTimeoutSpy).toHaveBeenCalledWith(firstTimer.id);
+       |                               ^
+    392|       firstTimer.callback();
+    393|       expect(runtime.lifecycleManager.getState()).toBe("TRANSITION");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/unit/runtime-material-quality.test.ts > runtime material quality on frozen world meshes > preserves each GLB map's flip, UV channel, wrap modes, and transform on isolated late textures
+AssertionError: expected Texture{ isTexture: true, …(34) } not to be Texture{ isTexture: true, …(34) } // Object.is equality
+
+Compared values have no visual difference.
+
+ ❯ tests/unit/runtime-material-quality.test.ts:375:26
+    373|     const secondMap = (second.material as THREE.MeshStandardMaterial).…
+
+    374|
+    375|     expect(firstMap).not.toBe(lateTexture);
+       |                          ^
+    376|     expect(secondMap).not.toBe(lateTexture);
+    377|     expect(firstMap).not.toBe(secondMap);
+ Test Files  2 failed (2)
+      Tests  3 failed | 35 passed (38)
+   Start at  05:31:04
+   Duration  2.86s (tests 37%, import 34%, transform 29%, worker 1%)
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/unit/runtime-material-quality.test.ts > runtime material quality on frozen world meshes > atomically rolls back an optional-map failure on a second shared-material target
+Error: second target material connection failed
+ ❯ Mesh.set [as material] tests/unit/runtime-material-quality.test.ts:442:17
+    440|         if (replacement) {
+    441|           failedDerivative = replacement;
+    442|           throw new Error("second target material connection failed");
+       |                 ^
+    443|         }
+    444|         secondVisible = next;
+ ❯ RuntimeMaterialQuality.apply src/features/world/RuntimeMaterialQuality.ts:144:57
+ ❯ tests/unit/runtime-material-quality.test.ts:460:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

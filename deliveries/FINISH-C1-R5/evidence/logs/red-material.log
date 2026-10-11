@@ -1,0 +1,101 @@
+
+ RUN  v5.0.2 C:/Users/yoray/Projects/Yor World/deliveries/FINISH-C1-R5/.work/assembly/app
+
+ ❯ tests/unit/runtime-material-quality.test.ts (14 tests | 2 failed) 84ms
+   ❯ runtime material quality on frozen world meshes (14)
+     × preserves each GLB map's flip, UV channel, wrap modes, and transform on isolated late textures 17ms
+     × atomically rolls back an optional-map failure on a second shared-material target 25ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/runtime-material-quality.test.ts > runtime material quality on frozen world meshes > preserves each GLB map's flip, UV channel, wrap modes, and transform on isolated late textures
+AssertionError: expected Texture{ isTexture: true, …(34) } not to be Texture{ isTexture: true, …(34) } // Object.is equality
+
+Compared values have no visual difference.
+
+ ❯ tests/unit/runtime-material-quality.test.ts:375:26
+    373|     const secondMap = (second.material as THREE.MeshStandardMaterial).…
+    374|
+    375|     expect(firstMap).not.toBe(lateTexture);
+       |                          ^
+    376|     expect(secondMap).not.toBe(lateTexture);
+    377|     expect(firstMap).not.toBe(secondMap);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/unit/runtime-material-quality.test.ts > runtime material quality on frozen world meshes > atomically rolls back an optional-map failure on a second shared-material target
+AssertionError: expected MeshStandardMaterial{ …(83) } to be MeshStandardMaterial{ …(83) } // Object.is equality
+
+- Expected
++ Received
+
+@@ -10,14 +10,14 @@
+      "XYZ",
+    ],
+    "images": [
+      {
+        "url": "",
+-       "uuid": "512ee6e2-96d0-456b-9f44-1bf9035d4813",
++       "uuid": "b0f61f3f-5565-4a5c-b660-5d38e88fc290",
+      },
+    ],
+-   "map": "fe162152-5f26-4264-bf7e-4e095dfde5c2",
++   "map": "6a2ad5df-8b76-4c89-b27f-77afdb0d06c8",
+    "metadata": {
+      "generator": "Material.toJSON",
+      "type": "Material",
+      "version": 4.7,
+    },
+@@ -29,15 +29,15 @@
+        "center": [
+          0,
+          0,
+        ],
+        "channel": 0,
+-       "colorSpace": "",
++       "colorSpace": "srgb",
+        "flipY": true,
+        "format": 1023,
+        "generateMipmaps": true,
+-       "image": "512ee6e2-96d0-456b-9f44-1bf9035d4813",
++       "image": "b0f61f3f-5565-4a5c-b660-5d38e88fc290",
+        "internalFormat": null,
+        "magFilter": 1006,
+        "mapping": 300,
+        "minFilter": 1008,
+        "name": "",
+@@ -51,15 +51,15 @@
+          1,
+        ],
+        "rotation": 0,
+        "type": 1009,
+        "unpackAlignment": 4,
+-       "uuid": "fe162152-5f26-4264-bf7e-4e095dfde5c2",
++       "uuid": "6a2ad5df-8b76-4c89-b27f-77afdb0d06c8",
+        "wrap": [
+          1001,
+          1001,
+        ],
+      },
+    ],
+    "type": "MeshStandardMaterial",
+-   "uuid": "3cdd1b36-7e09-4e19-aa0f-04fab839163f",
++   "uuid": "6219a78a-36d6-407d-86fb-9414a5391cba",
+  }
+
+ ❯ tests/unit/runtime-material-quality.test.ts:464:29
+    462|     quality.apply("high");
+    463|     expect(first.material).toBe(shared);
+    464|     expect(second.material).toBe(shared);
+       |                             ^
+    465|     expect(unrelated.material).toBe(shared);
+    466|     quality.apply("low");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 12 passed (14)
+   Start at  05:31:23
+   Duration  2.49s (transform 64%, import 30%, tests 5%, worker 1%)
+
