@@ -33,10 +33,16 @@ No folders or files were moved, renamed, pruned, or deleted during this audit.
 - The five RC6 folders and RC5 folder are registered Git worktrees of the Yor World repository, pinned to historical commits; they share the main repository's Git database. They are not independent repositories to combine. Their untracked candidate directories are not represented by the pinned commit, so preserve them until package hashes and lineage are recorded elsewhere.
 - The Local Corrections worktree is also linked to the main Git database, but contains both a unique branch and dirty work. Its work is not superseded merely because the canonical branch is newer.
 - CandidateX and Yor Talks have separate Git remotes and product scopes. The portfolio tree has no Git identity, so its claimed relationship to the live site needs a provenance audit.
-- `git worktree list --porcelain` also reports Codex scratch/replay worktrees and 12 stale `prunable` registrations under the user Temp area. No prune was run. Verify each resolved path and preserve any uncommitted or untracked evidence before pruning registrations.
+- `git worktree list --porcelain` also reports Codex scratch/replay worktrees and 12 stale `prunable` registrations under the user Temp area. Their follow-up inventory is below; no project data was moved or deleted.
 - Public references checked during the audit: [portfolio](https://yorayriniwnl.in/), [CandidateX case study](https://yorayriniwnl.in/projects/candidatex), [CandidateX source repository](https://github.com/yorayriniwnl/CandidateX), and [CandidateX live app](https://candidatex-smoky.vercel.app/). These show CandidateX as a current public project and conflict with older Yor World evidence notes that claim no CandidateX repository or live deployment exists. That evidence register is stale on this point; resolve it in a separate content-evidence review without silently admitting CandidateX content into Yor World or changing frozen contracts.
 
 The read-only public/local reconciliation is recorded separately in the [CandidateX current-presence recheck](2026-10-11-candidatex-current-presence-recheck.md). It confirms endpoint availability and a public repository while preserving the existing unpublished/unknown content gate.
+
+## Temp worktree registration follow-up
+
+The 12 `prunable` registrations were rechecked by exact path. Four Temp directories are already absent. Eight directories remain but have no `.git` pointer: seven contain only empty directory trees; the remaining `yor-world-rc3-calibrated-final-93d8bcdbad3d477f9a98b1271dbf4c11` tree contains 10 files. Nine of those files are byte-identical to existing files under the canonical `deliveries/G6/full-stack-integration/evidence/`; the remaining file is an untracked `.next` route-cache artifact. Their branch refs and file contents were preserved.
+
+`git worktree prune --verbose` attempted to remove the 12 stale registrations, but Windows returned `Permission denied` for each `.git/worktrees/<id>` entry. The `.git/worktrees` directory has a read-only attribute and explicit deny ACLs for write/delete. No ACL change was attempted; the registrations therefore remain until an authorized owner changes access. These are orphaned Temp residues, not additional project roots to move into Yor World.
 
 ## Recommendation
 
