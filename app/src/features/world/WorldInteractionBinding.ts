@@ -86,6 +86,13 @@ export class WorldInteractionBinding {
     return true;
   }
 
+  private isVisibleInHierarchy(object: THREE.Object3D): boolean {
+    for (let node: THREE.Object3D | null = object; node; node = node.parent) {
+      if (!node.visible) return false;
+    }
+    return true;
+  }
+
   private findId(event: PointerEvent): string | null {
     const rect = this.options.canvas.getBoundingClientRect();
     if (!rect.width || !rect.height) return null;
@@ -94,8 +101,10 @@ export class WorldInteractionBinding {
     this.options.camera.updateMatrixWorld(true);
     this.raycaster.setFromCamera(this.pointer, this.options.camera);
     // Actual visible production meshes have priority; IA can only broaden a matched object's hit area.
+    let blockedByVisibleMesh = false;
     for (const hit of this.raycaster.intersectObject(this.options.scene, true)) {
       if (!(hit.object as THREE.Mesh).isMesh) continue;
+      if (!this.isVisibleInHierarchy(hit.object)) continue;
       let node: THREE.Object3D | null = hit.object;
       while (node) {
         if (!node.visible) break;
@@ -104,12 +113,14 @@ export class WorldInteractionBinding {
         node = node.parent;
       }
       // The nearest visible solid object occludes targets behind it.
-      if (hit.object.visible) break;
+      blockedByVisibleMesh = true;
+      break;
     }
+    if (blockedByVisibleMesh) return null;
     for (const hit of this.raycaster.intersectObjects(this.hitProxies, false)) {
       const id = String(hit.object.userData["assetId"]);
       const production = [...this.targets].find(([, targetId]) => targetId === id)?.[0];
-      if (!production) continue;
+      if (!production || !this.isVisibleInHierarchy(production)) continue;
       const productionBounds = new THREE.Box3().setFromObject(production).expandByScalar(0.12);
       if (productionBounds.containsPoint(hit.point)) return id;
     }
