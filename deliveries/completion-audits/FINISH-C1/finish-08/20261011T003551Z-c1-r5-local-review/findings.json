@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "audit": {
+    "reviewer": "Local Codex reviewer",
+    "externalAuditorClaimed": false,
+    "acceptanceAuthority": "Parent",
+    "advice": "REWORK",
+    "candidateCommit": "5e85e6a8a248581fe3893fd80c7da3d05079f305",
+    "candidateBranch": "audit/completion-2026-10-09",
+    "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+    "baseAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+    "r3PatchSha256": "e1be558f734378fe69659dcf8271c4e5e57d87fbfbdca1582823be103082dc5d",
+    "r5PatchSha256": "d6ad3359fa628067ab228eccc52f25d0604ddddb42813d7023e6a809cf60d83d",
+    "acceptedDesignManifestSha256": "8038db147824b0a31de1028c330383352177020b2247dd627d1674d6dc14c6af"
+  },
+  "findings": [
+    {
+      "id": "F-01",
+      "severity": "P2",
+      "status": "CONFIRMED",
+      "category": "functional contract defect",
+      "title": "A failed compressed or mismatched attempt permanently poisons the required-session byte aggregate",
+      "location": [
+        {
+          "path": "app/src/features/world/AssetLoader.ts",
+          "lines": [
+            188,
+            194,
+            195,
+            252,
+            253,
+            254,
+            324,
+            326
+          ]
+        },
+        {
+          "path": "app/tests/unit/world/completion-essential-loader.test.ts",
+          "lines": [
+            163,
+            190,
+            228,
+            254
+          ]
+        }
+      ],
+      "contract": "The runtime lifecycle contract defines byte totals over the required requests' current attempts and excludes bytes from previous failed attempts.",
+      "reproduction": {
+        "testSource": "evidence/retry-aggregation-diagnostic.test.ts",
+        "rawTranscript": "evidence/retry-aggregation-diagnostic.log",
+        "command": "pnpm exec vitest run --config vitest.config.ts --silent=false tests/unit/audit-retry-aggregation.test.ts",
+        "workingDirectory": "sequential-candidate/app",
+        "exitCode": 0,
+        "observed": {
+          "encodings": [
+            "gzip",
+            "identity",
+            "identity",
+            "identity"
+          ],
+          "fetchCalls": 4,
+          "parseCalls": 4,
+          "firstAttempt": "Compressed room response reached EOF with four bytes, then a synthetic parse failure triggered retry attempt 2.",
+          "currentAttempts": "Room retry, resident, and fixture each returned explicit identity encoding, Content-Length 4, exactly four bytes, and parsed successfully.",
+          "requiredLoaded": 3,
+          "allRequiredResultsReturned": true,
+          "finalBytes": {
+            "kind": "indeterminate",
+            "reason": "untrusted-required-representation"
+          }
+        }
+      },
+      "cause": "aggregateInvalid is set for any compressed or trusted-length-mismatched read and remains session-wide. The retry path replaces attemptProgress[index] but does not reset or derive aggregateInvalid from current attempts. currentAggregate checks the sticky flag before accepting all-known current entries.",
+      "impact": "No false determinate progress was observed. A transient invalid representation leaves progress indeterminate for the remainder of an otherwise successful load, under-reporting progress and violating the current-attempt contract.",
+      "coverageGap": "The parameterized untrusted-header test successfully parses its first untrusted response, so that response remains the current attempt. The parse-failure retry test uses a valid identity EOF, so it never sets aggregateInvalid and does not check whether a valid retry restores determinate progress.",
+      "recommendation": "Make invalid representation state attempt-scoped or derive it from current required attempts, and add a regression for invalid bytes followed by a successful identity retry."
+    }
+  ],
+  "evidenceGaps": [
+    {
+      "id": "EG-01",
+      "status": "STILL OPEN",
+      "title": "Independent full production build could not be completed in the audit assembly",
+      "detail": "The default build exited 1 before compilation because Turbopack rejected the audit-only node_modules junction for pointing outside its filesystem root. A webpack build started but was stopped before completion at Parent's request; it has no compiler result. The maker build log and source-bound identity report a successful production build.",
+      "evidence": [
+        "evidence/independent-build.log",
+        "evidence/independent-build-webpack.log",
+        "deliveries/FINISH-C1-R5/evidence/logs/build.log",
+        "deliveries/FINISH-C1-R5/evidence/source-build-identity.json"
+      ]
+    },
+    {
+      "id": "EG-02",
+      "status": "STILL OPEN",
+      "title": "Production-browser results do not directly exercise the new R5 regressions",
+      "detail": "The maker's three Chromium cases cover held requests and indeterminate ARIA, pause recovery/runtime recreation, and the transfer watchdog. They do not test retry aggregate recovery, optional-map rollback, or WorldRuntime greeting timer replacement. No separate success screenshots were captured. Independent browser rerun was not performed because the audit build did not complete.",
+      "evidence": [
+        "deliveries/FINISH-C1-R5/evidence/logs/browser.log",
+        "deliveries/FINISH-C1-R5/evidence/browser-results/browser-results.json"
+      ]
+    },
+    {
+      "id": "EG-03",
+      "status": "STILL OPEN",
+      "title": "Maker red-run shell invocation lines are not preserved",
+      "detail": "Raw red logs record the failing Vitest files and cases, but validation-results.json explicitly says the shell invocation line was not persisted. The maker report also says exact runner details are preserved, which overstates the available command evidence.",
+      "evidence": [
+        "deliveries/FINISH-C1-R5/evidence/validation-results.json",
+        "deliveries/FINISH-C1-R5/evidence/logs/red-loader.log",
+        "deliveries/FINISH-C1-R5/evidence/logs/red-material.log",
+        "deliveries/FINISH-C1-R5/evidence/logs/red-mat-transition.log",
+        "deliveries/FINISH-C1-R5/report.md"
+      ]
+    },
+    {
+      "id": "EG-04",
+      "status": "NOT RUN",
+      "title": "External provider, deployment, physical-device, and assistive-technology acceptance",
+      "detail": "These scopes were explicitly excluded from FINISH-08 and are not claimed by this local audit."
+    }
+  ],
+  "otherSourceReview": {
+    "materialOrTimerDefectsFound": 0,
+    "assessment": "No additional material source-contract defect was found in the texture-copy isolation/rollback or WorldRuntime timer paths after reviewing implementation, consumers, negative paths, and focused unit evidence."
+  },
+  "independentVerification": {
+    "focusedChangedPathUnitTests": {
+      "command": "pnpm exec vitest run --config vitest.config.ts tests/unit/world/completion-essential-loader.test.ts tests/unit/runtime-material-quality.test.ts tests/unit/project-transition.test.ts",
+      "tool": "Vitest 5.0.2",
+      "testFilesPassed": 3,
+      "testsPassed": 55,
+      "exitCode": 0,
+      "log": "evidence/focused-unit.log"
+    },
+    "retryAggregationDiagnostic": {
+      "command": "pnpm exec vitest run --config vitest.config.ts --silent=false tests/unit/audit-retry-aggregation.test.ts",
+      "tool": "Vitest 5.0.2",
+      "testFilesPassed": 1,
+      "testsPassed": 1,
+      "exitCode": 0,
+      "interpretation": "The probe passed its instrumentation and observed the confirmed defect; this is not a candidate correctness pass."
+    },
+    "independentBuild": {
+      "defaultBundler": {
+        "command": "pnpm run build",
+        "exitCode": 1,
+        "cause": "Turbopack rejected an audit-only node_modules junction outside its filesystem root; failure occurred before source compilation."
+      },
+      "webpackAttempt": {
+        "command": "pnpm run build -- --webpack",
+        "result": "Stopped by reviewer at Parent request before compiler completion; the shell process returned exit code 1 from operator interruption. No build result is claimed.",
+        "processExitCode": 1
+      },
+      "independentBrowser": "NOT RUN"
+    }
+  },
+  "scope": {
+    "candidateSourceEdited": false,
+    "makerFilesEdited": false,
+    "canonicalAppEdited": false,
+    "productionIntegrationPerformed": false,
+    "acceptanceGranted": false
+  }
+}

@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "audit": {
+    "reviewer": "Local Codex reviewer",
+    "externalAuditorClaimed": false,
+    "authority": "Parent retains acceptance authority",
+    "advice": "REWORK",
+    "candidateCommit": "5e85e6a8a248581fe3893fd80c7da3d05079f305",
+    "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+    "baseAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+    "r3PatchSha256": "e1be558f734378fe69659dcf8271c4e5e57d87fbfbdca1582823be103082dc5d",
+    "r5PatchSha256": "d6ad3359fa628067ab228eccc52f25d0604ddddb42813d7023e6a809cf60d83d"
+  },
+  "requirements": [
+    {
+      "id": "FINISH-06-1",
+      "status": "CLOSED",
+      "requirement": "Only explicit identity encoding, validated positive length, and matching EOF bytes may support determinate essential progress; invalid current representations remain indeterminate.",
+      "assessment": "Static review and focused tests confirm no determinate progress before trusted matching EOF, including malformed final required response and unsupported headers. Retry recovery of a previously failed invalid attempt is tracked separately as STILL OPEN under RUNTIME-LIFECYCLE-CURRENT-ATTEMPT-RETRY.",
+      "evidence": [
+        "evidence/focused-unit.log",
+        "sequential-candidate/app/src/features/world/AssetLoader.ts:228-255",
+        "deliveries/FINISH-C1-R5/source/app/tests/unit/world/completion-essential-loader.test.ts:163-226"
+      ]
+    },
+    {
+      "id": "FINISH-06-2",
+      "status": "CLOSED",
+      "requirement": "Reset failed-attempt byte count and trust before emitting retry progress.",
+      "assessment": "The retry replaces the active attempt entry before the retry event. The focused test verifies attempt 2 is indeterminate and has no loaded/total values. The sticky aggregate invalid flag is a distinct defect and is covered by F-01.",
+      "evidence": [
+        "evidence/focused-unit.log",
+        "sequential-candidate/app/src/features/world/AssetLoader.ts:319-326",
+        "deliveries/FINISH-C1-R5/source/app/tests/unit/world/completion-essential-loader.test.ts:228-254"
+      ]
+    },
+    {
+      "id": "FINISH-06-3",
+      "status": "CLOSED",
+      "requirement": "Preserve source GLB map flip convention, UV channel, wrap modes, transform, and isolated target state.",
+      "assessment": "Implementation and focused tests cover source sampler/transform preservation and per-target texture isolation.",
+      "evidence": [
+        "evidence/focused-unit.log",
+        "deliveries/FINISH-C1-R5/source/app/tests/unit/runtime-material-quality.test.ts:312-347"
+      ]
+    },
+    {
+      "id": "FINISH-06-4",
+      "status": "CLOSED",
+      "requirement": "Optional-map registration rolls back visible materials and every quality registry atomically, disposes temporary derivatives once, preserves the base texture, and leaves unrelated shared-material users unchanged.",
+      "assessment": "Focused test injects failure on a second target sharing the base material and checks rollback, unrelated user, registries, derivative disposal counts, and base map preservation.",
+      "evidence": [
+        "evidence/focused-unit.log",
+        "deliveries/FINISH-C1-R5/source/app/tests/unit/runtime-material-quality.test.ts:409-496"
+      ]
+    },
+    {
+      "id": "FINISH-06-5",
+      "status": "CLOSED",
+      "requirement": "WorldRuntime owns greeting timers; replacement cancels old callbacks and dispose clears synchronously.",
+      "assessment": "The focused regression instantiates WorldRuntime, replaces the greeting, manually invokes a stale callback, checks the newer transition, and verifies synchronous timer cleanup on dispose.",
+      "evidence": [
+        "evidence/focused-unit.log",
+        "deliveries/FINISH-C1-R5/source/app/tests/unit/project-transition.test.ts:369-409"
+      ]
+    },
+    {
+      "id": "FINISH-06-6",
+      "status": "STILL OPEN",
+      "requirement": "Run retained suites, lint, typecheck, production build, and source-bound browser paths that exercise these corrections.",
+      "assessment": "Maker evidence reports full unit, integration, lint, typecheck, production build, and three Chromium passes; independent focused changed-path tests passed. Independent full suites were not rerun. The production-browser paths reported by the maker exercise R3 loading/pause/watchdog behavior and do not directly cover R5 retry recovery, optional-map rollback, or greeting timer changes. Independent production build/browser execution could not be completed in this isolated audit harness.",
+      "evidence": [
+        "evidence/focused-unit.log",
+        "evidence/independent-build.log",
+        "evidence/independent-build-webpack.log",
+        "deliveries/FINISH-C1-R5/evidence/logs/unit.log",
+        "deliveries/FINISH-C1-R5/evidence/logs/integration.log",
+        "deliveries/FINISH-C1-R5/evidence/logs/lint.log",
+        "deliveries/FINISH-C1-R5/evidence/logs/typecheck.log",
+        "deliveries/FINISH-C1-R5/evidence/logs/build.log",
+        "deliveries/FINISH-C1-R5/evidence/logs/browser.log",
+        "deliveries/FINISH-C1-R5/evidence/browser-results/browser-results.json"
+      ]
+    },
+    {
+      "id": "FINISH-08-CLOSE-1",
+      "status": "CLOSED",
+      "requirement": "A malformed final required body cannot make the aggregate determinate before EOF; matching EOF is required.",
+      "assessment": "The focused final-required mismatch test passed and asserts no determinate event when the final required body mismatches at EOF.",
+      "evidence": [
+        "evidence/focused-unit.log",
+        "deliveries/FINISH-C1-R5/source/app/tests/unit/world/completion-essential-loader.test.ts:193-226"
+      ]
+    },
+    {
+      "id": "FINISH-08-CLOSE-2",
+      "status": "CLOSED",
+      "requirement": "Inject assignment failure after optional-map registration on a second mesh sharing the base material and prove rollback, cleanup, and base preservation.",
+      "assessment": "Focused regression passes with explicit disposal counts and checks visible material, quality registries, unrelated user, derivatives, and original map.",
+      "evidence": [
+        "evidence/focused-unit.log",
+        "deliveries/FINISH-C1-R5/source/app/tests/unit/runtime-material-quality.test.ts:409-496"
+      ]
+    },
+    {
+      "id": "FINISH-08-CLOSE-3",
+      "status": "CLOSED",
+      "requirement": "Behaviorally test WorldRuntime timer replacement, stale callback rejection, newer transition retention, and synchronous dispose cleanup.",
+      "assessment": "Focused WorldRuntime timer regression passed.",
+      "evidence": [
+        "evidence/focused-unit.log",
+        "deliveries/FINISH-C1-R5/source/app/tests/unit/project-transition.test.ts:369-409"
+      ]
+    },
+    {
+      "id": "RUNTIME-LIFECYCLE-CURRENT-ATTEMPT-RETRY",
+      "status": "STILL OPEN",
+      "requirement": "Required-session aggregate reflects current attempts only and excludes previous failed-attempt representation state.",
+      "assessment": "Reproduction completed all three required current attempts with explicit identity, positive Content-Length 4, exact four-byte EOF, and successful parses. The aggregate still reported indeterminate because aggregateInvalid remained set from the failed compressed first attempt.",
+      "finding": "F-01",
+      "evidence": [
+        "evidence/retry-aggregation-diagnostic.test.ts",
+        "evidence/retry-aggregation-diagnostic.log",
+        "sequential-candidate/app/src/features/world/AssetLoader.ts:188-195",
+        "sequential-candidate/app/src/features/world/AssetLoader.ts:252-254",
+        "sequential-candidate/app/src/features/world/AssetLoader.ts:324-326"
+      ]
+    },
+    {
+      "id": "CANDIDATE-BINDING-AND-SEQUENTIAL-APPLICATION",
+      "status": "CLOSED",
+      "requirement": "Bind the audit to the exact base/R3/R5 patches, all inputs and outputs, exact six-path allowlist, sequential apply, and replacement bytes.",
+      "assessment": "All declared input/output hash and length checks passed. R3 outputs were verified before R5 application. R5 changed exactly six paths; six replacement files matched byte-for-byte; non-overlapping R3 outputs remained unchanged. Warning/error whitespace apply checks and diff check exited 0.",
+      "evidence": [
+        "evidence/input-integrity.json",
+        "evidence/sequential-verification.json",
+        "evidence/sequential-verification.log",
+        "evidence/post-diagnostic-candidate-integrity.json"
+      ]
+    },
+    {
+      "id": "EXTERNAL-DEPLOYMENT-AND-PHYSICAL-ACCEPTANCE",
+      "status": "NOT RUN",
+      "requirement": "External provider, deployment/production, physical device, and assistive-technology acceptance.",
+      "reason": "Explicitly outside the FINISH-08 local audit assignment; no such acceptance is claimed."
+    }
+  ]
+}
