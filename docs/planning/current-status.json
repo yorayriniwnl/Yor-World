@@ -27,7 +27,7 @@
     "rulingDecisionPath": "docs/planning/reviews/2026-10-08-rc6-r1/decision.json"
   },
   "completionProgram": {
-    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 FINISH-24 REWORK; FINISH-27 CORRECTION ACTIVE / B1-R3 FINISH-20 REWORK / B1-R4 FINISH-25-R1 VISIBILITY AMENDMENT ACTIVE / C1-R6 FINISH-16 E-01 PENDING / C1-R7 FINISH-26 REWORK FOR E-02; FINISH-28 CORRECTION ACTIVE / NO CANONICAL COMPLETION INTEGRATION",
+    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 FINISH-24 REWORK; FINISH-29 CORRECTION REALLOCATED TO R5-07 / B1-R3 FINISH-20 REWORK; B1-R4 PACKAGE DELIVERED, EXACT PACKAGE CHECK PASS, INDEPENDENT REVIEW PENDING / C1-R6 FINISH-16 E-01 PENDING / C1-R7 FINISH-26 E-02 REWORK; C1-R8 DELIVERED, LOCAL CHECK FOUND STALE MATRIX EVIDENCE PATH; FINISH-30 R9 CORRECTION ACTIVE / NO CANONICAL COMPLETION INTEGRATION",
     "coordinationCommit": "ab369d413c7501224e3d79aa78e56172f97839ff",
     "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
     "contractsGate": {
@@ -139,7 +139,7 @@
       },
       "FINISH-B1-R4": {
         "maker": "Local Codex art-maker worker",
-        "status": "FINISH-25-R1 AMENDMENT ISSUED / MAKER ACTIVE",
+        "status": "DELIVERED / EXACT PACKAGE VERIFICATION PASS / INDEPENDENT DELTA AUDIT AND PARENT ACCEPTANCE PENDING",
         "deliveryRoot": "deliveries/FINISH-B1-R4/",
         "promptPath": "docs/planning/production-prompts/repairs-2026-10-11/16-CODEX-B1-R4-R1.md",
         "priorPromptPath": "docs/planning/production-prompts/repairs-2026-10-11/15-CODEX-B1-R4.md",
@@ -149,9 +149,12 @@
         "baseCandidateTree": "9759ac9879bcc9489770b7c5784ead2f022157b0",
         "finding": "FINISH-20 confirmed the PC_TemperedGlass transmission pass duplicates scene calls: 202/120 desktop and 146/80 mobile.",
         "scope": "FINISH-25 plus FINISH-25-R1: correct the glass representation and only the bounded PC/window visibility geometry; preserve all other geometry, door/camera path, runtime, other assets, and frozen budgets.",
-        "makerExecution": "Material-only checkpoint preserved; visibility blockers diagnosed; geometry work resumed after pushed FINISH-25-R1 amendment b33631a9",
-        "parentImplementationAcceptance": "NOT ACCEPTED",
-        "canonicalIntegration": false
+        "makerExecution": "248 stable files / 44,487,519 bytes passed raw Git blob verification on the exact pushed commit. Local export, geometry, renderer-budget, import, and browser checks are recorded in the package report. No acceptance is claimed.",
+        "parentImplementationAcceptance": "NOT ACCEPTED; FINISH-20 door/camera owner issue remains open",
+        "canonicalIntegration": false,
+        "deliveryCommit": "5c2d6ee1935b6245d0f5ef59392d856426ceac7d",
+        "deliveryBranch": "codex/finish-25-r1-b1-r4-20261011",
+        "externalGPTPlus2Audit": "NOT RUN"
       },
       "FINISH-C1-R3": {
         "maker": "Gemini #3",
@@ -234,21 +237,26 @@
         "parentImplementationAcceptance": "NOT ACCEPTED; E-01 remains separately pending; E-02 REWORK",
         "canonicalIntegration": false
       },
-    "FINISH-C1-R8": {
-      "maker": "Local Codex evidence-maker worker",
-      "status": "FINISH-28 AUTHORIZED / MAKER EXECUTION ACTIVE",
-      "deliveryRoot": "deliveries/FINISH-C1-R8/",
-      "packetPath": "docs/planning/reconciliation-packets/2026-10-11-finish-28-c1-r7-verifier-correction.md",
-      "promptPath": "docs/planning/production-prompts/repairs-2026-10-11/18-CODEX-C1-R8.md",
-      "baseCandidateCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
-      "scope": "Evidence verifier and negative regressions only; no app/runtime/dependency or historical receipt changes",
-      "parentImplementationAcceptance": "NOT ACCEPTED; E-01 remains separately pending",
-      "canonicalIntegration": false,
-      "externalGPTPlus2Audit": "NOT RUN"
-    },
+      "FINISH-C1-R8": {
+        "maker": "Local Codex evidence-maker worker",
+        "status": "DELIVERED at c398876583bc337c069414b79364e3fdea745879 / LOCAL EXACT-CANDIDATE TESTS PASS / FINISH-30 REWORK FOR STALE MATRIX EVIDENCE PATH",
+        "deliveryRoot": "deliveries/FINISH-C1-R8/",
+        "packetPath": "docs/planning/reconciliation-packets/2026-10-11-finish-28-c1-r7-verifier-correction.md",
+        "promptPath": "docs/planning/production-prompts/repairs-2026-10-11/18-CODEX-C1-R8.md",
+        "baseCandidateCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
+        "scope": "Evidence verifier and negative regressions only; no app/runtime/dependency or historical receipt changes",
+        "parentImplementationAcceptance": "NOT ACCEPTED; E-01 remains separately pending",
+        "canonicalIntegration": false,
+        "externalGPTPlus2Audit": "NOT RUN",
+        "deliveryCommit": "c398876583bc337c069414b79364e3fdea745879",
+        "deliveryBranch": "codex/finish-28-c1-r8-20261011",
+        "localRecheckReport": "deliveries/completion-audits/FINISH-C1/finish-13/20261011T144616Z-c1-r8-parent-local-recheck-01/report.md",
+        "correctionPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-30-c1-r8-matrix-evidence-reallocation.md",
+        "correctionDeliveryRoot": "deliveries/FINISH-C1-R9/"
+      },
       "FINISH-A1-R5": {
         "maker": "Local Codex platform-maker worker",
-        "status": "DELIVERED / FINISH-24 LOCAL AUDIT REWORK / FINISH-27 CORRECTION AUTHORIZED",
+        "status": "DELIVERED R5 REWORK / FINISH-24 LOCAL AUDIT REWORK / FINISH-27 ROOT OCCUPIED; FINISH-29 REALLOCATED TO R5-07",
         "deliveryRoot": "deliveries/FINISH-A1/r5-05/",
         "allocationPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-22-a1-r5-r5-04-collision.md",
         "deliveryCommit": "8f3aa566f36c92bb98658090ef91f9bfa96e8a79",
@@ -264,10 +272,10 @@
         "auditRecommendation": "REWORK; findings A1R5-01 through A1R5-06",
         "auditReport": "deliveries/completion-audits/FINISH-A1/finish-06/20261011T132805Z-a1-r5-independent-review-01/report.md",
         "auditStableOutputHashVerification": "PASS; 31 of 31 listed stable files verified by Parent",
-        "correctionPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-27-a1-r5-rework.md",
-        "correctionDeliveryRoot": "deliveries/FINISH-A1/r5-06/",
-      "correctionPromptPath": "docs/planning/production-prompts/repairs-2026-10-11/17-CODEX-A1-R5-R6.md",
-        "correctionStatus": "AUTHORIZED / MAKER EXECUTION IN PROGRESS",
+        "correctionPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-29-a1-r5-r5-06-collision.md",
+        "correctionDeliveryRoot": "deliveries/FINISH-A1/r5-07/",
+        "correctionPromptPath": "docs/planning/production-prompts/repairs-2026-10-11/19-CODEX-A1-R5-R7.md",
+        "correctionStatus": "AUTHORIZED / REALLOCATED / MAKER EXECUTION ACTIVE; r5-06 PRESERVED",
         "promptPath": "docs/planning/production-prompts/repairs-2026-10-11/13-CODEX-A1-R5.md",
         "priorReallocationPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-19-a1-r5-reallocation.md",
         "scopeClarificationPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-14-a1-r5-scope-clarification.md",
@@ -281,17 +289,49 @@
         "canonicalIntegration": false,
         "makerExecution": "Stable package returned at commit 8f3aa566f36c92bb98658090ef91f9bfa96e8a79 and pushed to origin/audit/completion-2026-10-09. Final local results: 24 unit files/316 tests, 28 integration files/306 tests, lint/typecheck/build exit 0, Chromium 6/6, exact-base replay 25/25. Canonical app/ remains unchanged. The r5-04/ root and all earlier A1 roots were preserved and not used.",
         "localReturnReadinessCheck": "docs/planning/reviews/2026-10-11-finish-15-local-return-readiness.md",
-        "preservedOccupiedRoots": ["deliveries/FINISH-A1/r5/", "deliveries/FINISH-A1/r5-02/", "deliveries/FINISH-A1/r5-03/", "deliveries/FINISH-A1/r5-04/"],
+        "preservedOccupiedRoots": [
+          "deliveries/FINISH-A1/r5/",
+          "deliveries/FINISH-A1/r5-02/",
+          "deliveries/FINISH-A1/r5-03/",
+          "deliveries/FINISH-A1/r5-04/"
+        ],
         "r5-04CollisionInventory": {
           "ownership": "UNKNOWN; assigned maker denies authoring or modifying these files",
           "files": [
-            { "path": "deliveries/FINISH-A1/r5-04/evidence/build.log", "bytes": 2722, "sha256": "907499d0b8c0b0f94c92694797ba29b2a32eb5b96e9ce327e721fbba33f2c188" },
-            { "path": "deliveries/FINISH-A1/r5-04/evidence/install-offline.log", "bytes": 6162, "sha256": "8b00b9349a708d998dee699278d156b48b8896a6ae86260cb6011b192482da1d" },
-            { "path": "deliveries/FINISH-A1/r5-04/evidence/install-offline.log.exit", "bytes": 3, "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354" }
+            {
+              "path": "deliveries/FINISH-A1/r5-04/evidence/build.log",
+              "bytes": 2722,
+              "sha256": "907499d0b8c0b0f94c92694797ba29b2a32eb5b96e9ce327e721fbba33f2c188"
+            },
+            {
+              "path": "deliveries/FINISH-A1/r5-04/evidence/install-offline.log",
+              "bytes": 6162,
+              "sha256": "8b00b9349a708d998dee699278d156b48b8896a6ae86260cb6011b192482da1d"
+            },
+            {
+              "path": "deliveries/FINISH-A1/r5-04/evidence/install-offline.log.exit",
+              "bytes": 3,
+              "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+            }
           ],
-          "emptyDirectories": ["deliveries/FINISH-A1/r5-04/source/"]
+          "emptyDirectories": [
+            "deliveries/FINISH-A1/r5-04/source/"
+          ]
         },
-        "priorSourceBindingStatus": "UNAUTHENTICATED; C:\\yw-r5b\\app is a separate dirty checkout and was not used"
+        "priorSourceBindingStatus": "UNAUTHENTICATED; C:\\yw-r5b\\app is a separate dirty checkout and was not used",
+        "preservedOccupiedCorrectionRoot": "deliveries/FINISH-A1/r5-06/"
+      },
+      "FINISH-C1-R9": {
+        "maker": "Local Codex evidence-maker worker",
+        "status": "FINISH-30 AUTHORIZED / OUTPUT ROOT REALLOCATED / MAKER EXECUTION ACTIVE",
+        "deliveryRoot": "deliveries/FINISH-C1-R9/",
+        "packetPath": "docs/planning/reconciliation-packets/2026-10-11-finish-30-c1-r8-matrix-evidence-reallocation.md",
+        "promptPath": "docs/planning/production-prompts/repairs-2026-10-11/20-CODEX-C1-R9.md",
+        "baseCandidateCommit": "c398876583bc337c069414b79364e3fdea745879",
+        "scope": "Correct only the missing E-02-05 evidence path in the R8 requirement matrix; recompute hashes",
+        "parentImplementationAcceptance": "NOT ACCEPTED; E-01 remains separately pending",
+        "externalGPTPlus2Audit": "NOT RUN",
+        "canonicalIntegration": false
       }
     },
     "latestIndependentRecheck": {
@@ -315,38 +355,36 @@
       "canonicalSourceChanged": false
     },
     "priorA1CorrectionAllocation": {
-      "packetId": "FINISH-27",
-      "path": "docs/planning/reconciliation-packets/2026-10-11-finish-27-a1-r5-rework.md",
-      "basePacketId": "FINISH-24",
-      "basePacketPath": "docs/planning/reconciliation-packets/2026-10-11-finish-24-a1-r5-independent-audit.md",
+      "packetId": "FINISH-29",
+      "path": "docs/planning/reconciliation-packets/2026-10-11-finish-29-a1-r5-r5-06-collision.md",
+      "basePacketId": "FINISH-27",
+      "basePacketPath": "docs/planning/reconciliation-packets/2026-10-11-finish-27-a1-r5-rework.md",
       "lane": "FINISH-A1-R5",
-      "deliveryRoot": "deliveries/FINISH-A1/r5-06/",
+      "deliveryRoot": "deliveries/FINISH-A1/r5-07/",
       "candidateCommit": "8f3aa566f36c92bb98658090ef91f9bfa96e8a79",
-      "status": "AUTHORIZED / MAKER EXECUTION IN PROGRESS / CANONICAL SOURCE UNCHANGED",
+      "status": "AUTHORIZED / SAME SIX FINDINGS AND 26-PATH ALLOWLIST / ROOT REALLOCATED",
+      "preservedOccupiedRoot": "deliveries/FINISH-A1/r5-06/",
       "canonicalSourceChanged": false
     },
     "latestCorrectionAllocation": {
-      "packetId": "FINISH-28",
-      "path": "docs/planning/reconciliation-packets/2026-10-11-finish-28-c1-r7-verifier-correction.md",
-      "basePacketId": "FINISH-26",
-      "basePacketPath": "docs/planning/reconciliation-packets/2026-10-11-finish-26-c1-r7-audit-root-reallocation.md",
-      "lane": "FINISH-C1-R7",
-      "deliveryRoot": "deliveries/FINISH-C1-R8/",
-      "candidateCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
-      "status": "AUTHORIZED / EVIDENCE-MAKER EXECUTION IN PROGRESS / CANONICAL SOURCE UNCHANGED",
+      "packetId": "FINISH-30",
+      "path": "docs/planning/reconciliation-packets/2026-10-11-finish-30-c1-r8-matrix-evidence-reallocation.md",
+      "basePacketId": "FINISH-28",
+      "basePacketPath": "docs/planning/reconciliation-packets/2026-10-11-finish-28-c1-r7-verifier-correction.md",
+      "lane": "FINISH-C1-R8",
+      "deliveryRoot": "deliveries/FINISH-C1-R9/",
+      "candidateCommit": "c398876583bc337c069414b79364e3fdea745879",
+      "status": "AUTHORIZED / ONE MATRIX EVIDENCE REFERENCE CORRECTION / CANONICAL SOURCE UNCHANGED",
       "canonicalSourceChanged": false
     },
     "latestAuditAllocation": {
-      "packetId": "FINISH-26",
-      "path": "docs/planning/reconciliation-packets/2026-10-11-finish-26-c1-r7-audit-root-reallocation.md",
-      "candidateCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
-      "candidateTree": "419950200cc9705a101468d44e5b589b40f609f0",
-      "auditRoot": "deliveries/completion-audits/FINISH-C1/finish-12/20261011T133844Z-c1-r7-delta-review-02/",
-      "reviewer": "Local Codex independent reviewer; external GPT Plus #2 NOT RUN",
-      "status": "COMPLETE / LOCAL REVIEW RECOMMENDS REWORK FOR E-02 / EXTERNAL GPT PLUS #2 NOT RUN",
-      "reportPath": "deliveries/completion-audits/FINISH-C1/finish-12/20261011T133844Z-c1-r7-delta-review-02/report.md",
-      "findingsPath": "deliveries/completion-audits/FINISH-C1/finish-12/20261011T133844Z-c1-r7-delta-review-02/findings.json",
-      "requirementMatrixPath": "deliveries/completion-audits/FINISH-C1/finish-12/20261011T133844Z-c1-r7-delta-review-02/requirement-matrix.json"
+      "packetId": "FINISH-30 local recheck",
+      "candidateCommit": "c398876583bc337c069414b79364e3fdea745879",
+      "reviewer": "Parent local Codex recheck; not independent GPT Plus #2",
+      "status": "COMPLETE / REWORK FOR STALE MATRIX EVIDENCE PATH / EXTERNAL GPT PLUS #2 NOT RUN",
+      "reportPath": "deliveries/completion-audits/FINISH-C1/finish-13/20261011T144616Z-c1-r8-parent-local-recheck-01/report.md",
+      "findingsPath": "deliveries/completion-audits/FINISH-C1/finish-13/20261011T144616Z-c1-r8-parent-local-recheck-01/findings.json",
+      "requirementMatrixPath": "deliveries/completion-audits/FINISH-C1/finish-13/20261011T144616Z-c1-r8-parent-local-recheck-01/requirement-matrix.json"
     },
     "successorContractsGate": {
       "packetId": "FINISH-00-R2",
@@ -367,11 +405,11 @@
       "productionFixesIntegrated": false
     },
     "latestParentDecision": {
-      "packetId": "FINISH-28",
-      "path": "docs/planning/reconciliation-packets/2026-10-11-finish-28-c1-r7-verifier-correction.md",
-      "candidateCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
-      "decision": "REWORK for E-02; authorize evidence-only verifier correction; E-01 remains separate",
-      "auditReport": "deliveries/completion-audits/FINISH-C1/finish-12/20261011T133844Z-c1-r7-delta-review-02/report.md",
+      "packetId": "FINISH-30",
+      "path": "docs/planning/reconciliation-packets/2026-10-11-finish-30-c1-r8-matrix-evidence-reallocation.md",
+      "candidateCommit": "c398876583bc337c069414b79364e3fdea745879",
+      "decision": "Rework one stale requirement-matrix evidence path; reallocate evidence-only correction to R9; E-01 remains separate",
+      "auditReport": "deliveries/completion-audits/FINISH-C1/finish-13/20261011T144616Z-c1-r8-parent-local-recheck-01/report.md",
       "implementationAcceptance": false,
       "canonicalIntegration": false
     }

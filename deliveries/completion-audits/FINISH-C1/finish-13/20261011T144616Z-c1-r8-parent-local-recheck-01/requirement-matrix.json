@@ -1,0 +1,36 @@
+{
+  "candidateCommit": "c398876583bc337c069414b79364e3fdea745879",
+  "results": [
+    {
+      "evidence": ["evidence/package-tree-check.json"],
+      "id": "PKG-01",
+      "requirement": "All 22 files listed by the candidate output-hash manifest match their exact committed bytes.",
+      "status": "PASS"
+    },
+    {
+      "evidence": ["evidence/tests.json", "evidence/tests.log"],
+      "id": "TEST-01",
+      "requirement": "The exact-candidate R8 regression suite passes.",
+      "status": "PASS"
+    },
+    {
+      "evidence": ["evidence/verifier.json", "evidence/verifier.log"],
+      "id": "LINEAGE-01",
+      "requirement": "The corrected verifier passes against the pinned C1-R7 candidate and reports its scoped Git/blob checks.",
+      "status": "PASS"
+    },
+    {
+      "evidence": ["findings.json", "evidence/package-tree-check.json"],
+      "id": "TRACE-01",
+      "requirement": "Every evidence path named by the candidate requirement matrix exists in its exact committed package.",
+      "status": "FAIL"
+    },
+    {
+      "evidence": [],
+      "id": "LIMIT-01",
+      "requirement": "Independent GPT Plus #2 review, E-01 disposition, Parent acceptance, canonical integration, application/runtime/browser/device/provider/deployment/recovery/G7 checks.",
+      "status": "NOT RUN"
+    }
+  ],
+  "schemaVersion": 1
+}

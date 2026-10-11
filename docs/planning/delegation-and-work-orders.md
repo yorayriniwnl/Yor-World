@@ -44,6 +44,14 @@ The exact-candidate [A1-R5 audit](../../deliveries/completion-audits/FINISH-A1/f
 
 The [October 11 project-folder audit](reviews/2026-10-11-project-folder-audit.md) classifies the neighboring Yor World worktrees, CandidateX and portfolio sources, Yor Talks worktrees/media, CCI research files, and unrelated Abhyodhya project. Keep separate products in separate Git roots and preserve historical candidates and bound evidence; the folder audit authorized no moves or deletions.
 
+## October 11 local correction recheck and reallocations
+
+The FINISH-B1-R4 maker package is committed and pushed at `5c2d6ee1935b6245d0f5ef59392d856426ceac7d`; its exact 248-file package verification passed. Parent acceptance and a separate exact-candidate review remain pending, and FINISH-20's door/camera owner issue remains outside the R4 correction.
+
+The C1-R8 package at `c398876583bc337c069414b79364e3fdea745879` passes its nine regressions and the pinned R7 verifier check in an isolated exact-candidate checkout. The Parent local recheck found one stale requirement-matrix evidence path; the raw command and output exist in the JSON evidence. [FINISH-30](reconciliation-packets/2026-10-11-finish-30-c1-r8-matrix-evidence-reallocation.md) reallocates only that pointer correction to `deliveries/FINISH-C1-R9/`. This local check is not external GPT Plus #2 review or acceptance, and E-01 remains open.
+
+The FINISH-27 A1 correction destination `deliveries/FINISH-A1/r5-06/` is occupied by unknown `.work/` scratch and remains preserved. [FINISH-29](reconciliation-packets/2026-10-11-finish-29-a1-r5-r5-06-collision.md) reassigns the same six findings, exact base, and 26-path allowlist to `deliveries/FINISH-A1/r5-07/`; it grants no scope expansion. Neither A1 correction nor C1-R9 is accepted or canonically integrated.
+
 Owner instruction “Complete it.” authorizes remaining corrections, production setup/publishing and complete G7 verification. [PRE-G7-01](reconciliation-packets/2026-10-06-pre-g7-01.md), [PRE-G7-02](reconciliation-packets/2026-10-06-pre-g7-02.md), [PRE-G7-03](reconciliation-packets/2026-10-06-pre-g7-03.md) and [PRE-G7-04](reconciliation-packets/2026-10-07-pre-g7-04.md) define exact ownership and regression evidence. Authorization is recorded as **G7-OWNER-AUTH-20261006**; deployment consent persists.
 
 Accepted RC5 / [G6-R1](reviews/2026-10-06-g6-r1.md) remains immutable, including the independent audit and all prior historical receipts. The new RC6 source is a separately bound successor requiring independent maker-delta review and Parent adjudication. G7 AUTHORIZED / PREPARATION is not G7 acceptance. Real Vercel/Supabase/email access is not confirmed; physical mobile/screen-reader/thermal and actual live restore/rollback checks remain NOT RUN.

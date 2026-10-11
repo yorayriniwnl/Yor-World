@@ -20,6 +20,8 @@ Send each Gemini account only its own maker prompt. Use the GPT-6.1 Sol Ultra ch
 | [16 — B1-R4 visibility amendment](16-CODEX-B1-R4-R1.md) | Local Codex art-maker worker | Continue the active R4 delivery with bounded PC chassis and window visibility geometry |
 | [17 — A1-R5 six-finding correction](17-CODEX-A1-R5-R6.md) | Local Codex platform-maker worker | Correct the audited candidate's contract, refresh, privacy, conflict, rendering and content-default defects |
 | [18 — C1-R8 verifier correction](18-CODEX-C1-R8.md) | Local Codex evidence-maker worker | Reject contradictory duplicated provenance fields without changing app/runtime source |
+| [19 — A1-R5 output-root reallocation](19-CODEX-A1-R5-R7.md) | Local Codex platform-maker worker | Continue the same six-finding A1 correction at fresh `r5-07/` after preserving occupied `r5-06/` |
+| [20 — C1-R8 evidence-matrix correction](20-CODEX-C1-R9.md) | Local Codex evidence-maker worker | Repair the one stale evidence path in a fresh R9 package without changing verifier behavior |
 
 The partial runtime R3 folder appeared during drafting without a complete report/patch/hash handoff at the recorded check. Preserve it and inspect current ownership/completeness; do not overwrite it or treat it as accepted. The other two R3 roots were absent at that check. Recheck current state when using these prompts.
 
@@ -36,7 +38,7 @@ B1-R3's hash-bound pre-batch Chromium evidence remains above its 120 desktop / 8
 | [05 — Completion and release](05-PARENT-COMPLETION-AND-RELEASE.md) | Parent coordination chat | Bind A2, C2, C3 and I1 from accepted inputs; route backend/CDN/deployment/manual/recovery work; reconcile G7 and final full-product acceptance |
 | [06 — Six separate extensions](06-EXTENSIONS.md) | Separate Gemini #2 asset / Gemini #3 runtime phases | Mug/drinking, headphones, drawers, weather/daylight, moods/greetings and five to eight total Easter eggs |
 
-ALL-PROMPTS.md contains the 11 account-facing prompts from 01–06. Revisioned local Codex handoffs 07–11, 13, and 15–18 are listed separately and intentionally are not merged into that account-facing convenience copy.
+ALL-PROMPTS.md contains the 11 account-facing prompts from 01–06. Revisioned local Codex handoffs 07–11, 13, and 15–20 are listed separately and intentionally are not merged into that account-facing convenience copy.
 
 Each immediate prompt includes its local inputs, immutable base and accepted contract identity, exact delivery ownership, reproduced findings, observable corrections, meaningful verification and actual handoff files. Makers return implementation/evidence; the auditor writes findings; Parent accepts and allocates the next dependency. Later packets bind actual accepted successor hashes and paths rather than guessed future revisions.
 

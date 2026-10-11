@@ -1,0 +1,19 @@
+{
+  "candidateCommit": "c398876583bc337c069414b79364e3fdea745879",
+  "findings": [
+    {
+      "evidence": [
+        "deliveries/FINISH-C1-R8/requirement-matrix.json",
+        "deliveries/FINISH-C1-R8/evidence/cli-negative-false-pass.json",
+        "evidence/package-tree-check.json"
+      ],
+      "id": "C1-R8-01",
+      "observation": "The E-02-05 requirement-matrix row cites evidence/cli-negative-false-pass.log, which is absent from the exact candidate tree. The referenced JSON file contains the command, raw CLI stdout/stderr, parsed FAIL result and exit code.",
+      "recommendation": "REWORK: change only the matrix evidence path to the committed JSON evidence file and recompute the R9 package hashes.",
+      "severity": "LOW",
+      "status": "OPEN"
+    }
+  ],
+  "reviewType": "Parent local exact-candidate recheck; not independent GPT Plus #2 review",
+  "schemaVersion": 1
+}
