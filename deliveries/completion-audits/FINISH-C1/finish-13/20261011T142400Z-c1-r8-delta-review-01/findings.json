@@ -1,0 +1,53 @@
+{
+  "candidateCommit": "364d8ff690d3dc814a09406873433d9cb397b574",
+  "recommendation": "REWORK",
+  "scope": "E-02 only",
+  "blockingFindingCount": 1,
+  "findings": [
+    {
+      "id": "FIN29-E02-01",
+      "severity": "HIGH",
+      "status": "FAIL",
+      "scope": "E-02 evidence verifier",
+      "recommendation": "REWORK",
+      "title": "Contradictory duplicate JSON object members are silently discarded before validation",
+      "candidateCommit": "364d8ff690d3dc814a09406873433d9cb397b574",
+      "sourceLocations": [
+        {
+          "path": "deliveries/FINISH-C1-R8/verify-input-provenance.py",
+          "line": 159
+        },
+        {
+          "path": "deliveries/FINISH-C1-R8/verify-input-provenance.py",
+          "line": 170
+        },
+        {
+          "path": "deliveries/FINISH-C1-R8/verify-input-provenance.py",
+          "line": 388
+        },
+        {
+          "path": "deliveries/FINISH-C1-R8/verify-input-provenance.py",
+          "line": 534
+        },
+        {
+          "path": "deliveries/FINISH-C1-R8/verify-input-provenance.py",
+          "line": 608
+        }
+      ],
+      "observed": "25 separate uncached CLI processes return PASS/exit 0 despite contradictory repeated members; the correct authoritative value appears last.",
+      "expected": "Reject duplicate receipt object members before parsed-field validation and return FAIL/nonzero.",
+      "mechanism": "json.loads uses last-member-wins parsing. Field-set, row-uniqueness, strict type and source-value checks operate on a dict after earlier contradictory declarations have disappeared.",
+      "minimalReproduction": "minimal-reproduction.json",
+      "primaryInventory": "independent-cli-probes.json",
+      "additionalInventory": "additional-duplicate-probes.json",
+      "completeInventory": "case-inventory.json",
+      "orderingControl": "probes/case-012.json",
+      "impact": "E-02 fail-closed receipt contract is not met. The probes preserve actual pinned Git and installed build bytes; this is acceptance of contradictory declarations, not proof of arbitrary source replacement or a runtime vulnerability.",
+      "correctionRequest": "Assigned maker should reject repeated JSON object member names at all nesting levels in receipt/parser entry points and add raw-byte uncached CLI regressions for contradictory and same-value duplicates. Apply the policy consistently to source-binding, candidate provenance, predecessor outputs, installed package identity and shared JSON loaders. Preserve exact source pins and current passing controls. Auditor makes no candidate edits.",
+      "limitations": "Finite sampled duplicate keys; shared parser inspection indicates broader exposure but no exhaustive proof for every key. logged_json_value at line 170 was inspected only; no mutation of pinned historical log blobs or manifests was attempted."
+    }
+  ],
+  "E01": "NOT RUN",
+  "externalGPTPlus2": "NOT RUN",
+  "parentAcceptance": "PENDING"
+}

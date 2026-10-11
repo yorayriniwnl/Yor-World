@@ -1,0 +1,97 @@
+{
+  "candidateCommit": "364d8ff690d3dc814a09406873433d9cb397b574",
+  "scope": "FINISH-29 E-02 delta audit",
+  "recommendation": "REWORK",
+  "requirements": [
+    {
+      "id": "FIN29-1-identity",
+      "status": "PASS",
+      "result": "Parent/full tree/R8 subtree/app tree and exactly 26 added paths match authoritative packet.",
+      "evidence": "candidate-binding.json"
+    },
+    {
+      "id": "FIN29-1-output-manifest",
+      "status": "PASS",
+      "result": "All 25 stable raw Git outputs and 237622 bytes match; manifest self-excluded.",
+      "evidence": "candidate-binding.json"
+    },
+    {
+      "id": "FIN29-2-primary-field-validation",
+      "status": "PASS",
+      "result": "Single wrong values for all five sourceManifest fields and package SHA reject; 76 target wrong-type/container probes reject.",
+      "evidence": "case-inventory.json"
+    },
+    {
+      "id": "FIN29-2-fail-closed-duplicates",
+      "status": "FAIL",
+      "result": "25 contradictory raw repeated-member cases return PASS/exit 0. E-02 requires REWORK.",
+      "evidence": "findings.json"
+    },
+    {
+      "id": "FIN29-3-independent-positive",
+      "status": "PASS",
+      "result": "Unchanged exact verifier and pinned receipt model return PASS/exit 0 with R7 output-manifest checking.",
+      "evidence": "independent-positive.json"
+    },
+    {
+      "id": "FIN29-3-maker-negative-suite",
+      "status": "PASS",
+      "result": "Independent execution in disposable exact copy rejects all 51 maker negatives. Imported-function cases reuse cached immutable Git bytes.",
+      "evidence": "maker-suite-independent-results.json"
+    },
+    {
+      "id": "FIN29-3-independent-negative-probes",
+      "status": "FAIL",
+      "result": "Reviewer designed 33 uncached CLI cases: 1 positive, 7 expected rejections confirmed, 25 contradictory duplicates falsely pass.",
+      "evidence": "case-inventory.json"
+    },
+    {
+      "id": "FIN29-3-preservation",
+      "status": "PASS",
+      "result": "Candidate 26 files exact after all probes; entire installed Three package unchanged; app Git tree unchanged.",
+      "evidence": "final-preservation.json"
+    },
+    {
+      "id": "FIN29-4-patch-replay",
+      "status": "PASS",
+      "result": "Raw supplied patch applies to exact R7 bytes and reproduces corrected verifier byte-for-byte.",
+      "evidence": "patch-replay.json"
+    },
+    {
+      "id": "FIN29-4-harness-and-gaps",
+      "status": "PASS",
+      "result": "Raw JSON duplicate edge and parsed-dict mutation/cached Git harness limits documented.",
+      "evidence": "report.md"
+    },
+    {
+      "id": "FIN29-5-audit-package",
+      "status": "PASS",
+      "result": "Report, findings, matrix, exact binding, command/version/raw logs and self-excluded hashes produced.",
+      "evidence": "output-hashes.json"
+    },
+    {
+      "id": "E-01",
+      "status": "NOT RUN",
+      "result": "Historical mismatch adjudication is outside this delta audit.",
+      "evidence": "report.md"
+    },
+    {
+      "id": "external-GPT-Plus-2",
+      "status": "NOT RUN",
+      "result": "No external browser reviewer was run.",
+      "evidence": "report.md"
+    },
+    {
+      "id": "runtime-build-browser-device-provider",
+      "status": "NOT RUN",
+      "result": "Evidence verifier audit does not execute or accept application/runtime/build/browser/device/provider behavior.",
+      "evidence": "report.md"
+    },
+    {
+      "id": "Parent-acceptance-integration-deployment-G7",
+      "status": "NOT RUN",
+      "result": "Separate Parent gates remain pending.",
+      "evidence": "report.md"
+    }
+  ]
+}

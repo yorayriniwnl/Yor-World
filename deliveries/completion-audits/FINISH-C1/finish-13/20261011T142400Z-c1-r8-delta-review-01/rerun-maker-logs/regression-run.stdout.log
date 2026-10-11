@@ -1,0 +1,575 @@
+{
+  "candidateAndHistoricalReceiptsModified": false,
+  "candidateCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
+  "cases": [
+    {
+      "actualExit": 0,
+      "cacheUsed": false,
+      "case": "exact-r8-positive-r7-inputs",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\exact-package-repo\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "cwd": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\exact-package-repo",
+      "expectedExit": 0,
+      "expectedRejection": false,
+      "expectedStatus": "PASS",
+      "outputManifest": {
+        "commit": "e2670d4152c461005da86b392dbcea12cec740bf",
+        "fileCount": 10,
+        "status": "PASS",
+        "totalBytes": 186448
+      },
+      "rejected": false,
+      "returnedStatus": "PASS",
+      "status": "PASS",
+      "stderrPath": "evidence/exact-r8-positive-r7-inputs.stderr.log",
+      "stdoutPath": "evidence/exact-r8-positive-r7-inputs.stdout.log"
+    },
+    {
+      "case": "missing receipt file",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-01",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Users\\\\yoray\\\\.codex\\\\worktrees\\\\finish-29-c1-r8-independent-20261011\\\\deliveries\\\\completion-audits\\\\FINISH-C1\\\\finish-13\\\\20261011T142400Z-c1-r8-delta-review-01\\\\.work\\\\exact-package-repo\\\\deliveries\\\\FINISH-C1-R8\\\\.work\\\\regressions-20261011T180513Z\\\\case-01\\\\candidate-input-provenance.json'",
+      "status": "PASS"
+    },
+    {
+      "case": "missing R6 input row",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-02",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: candidate input provenance count is 28; expected 29",
+      "status": "PASS"
+    },
+    {
+      "case": "duplicate R6 input alias",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-03",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: candidate input provenance count is 30; expected 29",
+      "status": "PASS"
+    },
+    {
+      "case": "wrong direct Git path",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-04",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: docs/planning/reconciliation-packets/2026-10-11-finish-09-c1-r6.md: wrong authoritative Git path",
+      "status": "PASS"
+    },
+    {
+      "case": "wrong direct Git commit",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-05",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: docs/planning/reconciliation-packets/2026-10-11-finish-09-c1-r6.md: wrong Git commit",
+      "status": "PASS"
+    },
+    {
+      "case": "wrong corrected Git hash",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-06",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: docs/planning/reconciliation-packets/2026-10-11-finish-09-c1-r6.md: corrected Git sha256 differs",
+      "status": "PASS"
+    },
+    {
+      "case": "missing corrected Git hash",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-07",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: docs/planning/reconciliation-packets/2026-10-11-finish-09-c1-r6.md: corrected Git sha256 differs",
+      "status": "PASS"
+    },
+    {
+      "case": "wrong corrected Git byte count",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-08",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: docs/planning/reconciliation-packets/2026-10-11-finish-09-c1-r6.md: corrected Git bytes differs",
+      "status": "PASS"
+    },
+    {
+      "case": "wrong input counts",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-09",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: candidate input provenance counts differ",
+      "status": "PASS"
+    },
+    {
+      "case": "original historical expected hash altered",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-10",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: docs/planning/reconciliation-packets/2026-10-11-finish-09-c1-r6.md: original receipt values were changed",
+      "status": "PASS"
+    },
+    {
+      "case": "wrong source binding tree",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-11",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: source-binding commit/tree pins differ from FINISH-21-R1",
+      "status": "PASS"
+    },
+    {
+      "case": "wrong source binding manifest hash",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-12",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: r6InputManifest sha256 does not match Git blob",
+      "status": "PASS"
+    },
+    {
+      "case": "wrong package integrity",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-13",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: source binding has wrong Three.js integrity",
+      "status": "PASS"
+    },
+    {
+      "case": "wrong corrected installed file hash",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-14",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: candidate-app/node_modules/three/build/three.module.js: corrected package receipt differs from installed bytes",
+      "status": "PASS"
+    },
+    {
+      "case": "package mislabeled as Git-backed",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-15",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: candidate-app/node_modules/three/build/three.module.js: wrong provenance kind",
+      "status": "PASS"
+    },
+    {
+      "case": "duplicate R5 output path",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-16",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: R5 predecessor outputs contains duplicate path values",
+      "status": "PASS"
+    },
+    {
+      "case": "wrong R5 manifest receipt hash",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-17",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: R5 source manifest sha256 differs",
+      "status": "PASS"
+    },
+    {
+      "case": "wrong R5 output commit",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-18",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: deliveries/FINISH-C1-R5/.gitignore: wrong commit",
+      "status": "PASS"
+    },
+    {
+      "case": "wrong R5 output hash",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-19",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: deliveries/FINISH-C1-R5/.gitignore: corrected Git sha256 differs",
+      "status": "PASS"
+    },
+    {
+      "case": "wrong R5 output count",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-20",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: R5 receipt count field is not 32",
+      "status": "PASS"
+    },
+    {
+      "case": "wrong source binding package integrity",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-21",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: source binding has wrong Three.js integrity",
+      "status": "PASS"
+    },
+    {
+      "case": "wrong package source file hash",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-22",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: source binding packageFiles candidate-app/node_modules/three/build/three.module.js sha256 differs from the pinned Three.js evidence",
+      "status": "PASS"
+    },
+    {
+      "case": "wrong package source file byte count",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-23",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: source binding packageFiles candidate-app/node_modules/three/build/three.module.js bytes differs from the pinned Three.js evidence",
+      "status": "PASS"
+    },
+    {
+      "case": "wrong package source file relative path",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-24",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: source binding packageFiles candidate-app/node_modules/three/build/three.module.js packageFile differs from the pinned Three.js evidence",
+      "status": "PASS"
+    },
+    {
+      "case": "wrong source binding package name",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-25",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: source binding packageName does not match the installed Three.js package",
+      "status": "PASS"
+    },
+    {
+      "case": "wrong source binding package version",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-26",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: source binding packageVersion does not match the installed Three.js package",
+      "status": "PASS"
+    },
+    {
+      "case": "missing installed package manifest",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-27",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Users\\\\yoray\\\\.codex\\\\worktrees\\\\finish-29-c1-r8-independent-20261011\\\\deliveries\\\\completion-audits\\\\FINISH-C1\\\\finish-13\\\\20261011T142400Z-c1-r8-delta-review-01\\\\.work\\\\exact-package-repo\\\\deliveries\\\\FINISH-C1-R8\\\\.work\\\\regressions-20261011T180513Z\\\\case-27\\\\repo\\\\app\\\\node_modules\\\\.pnpm\\\\three@0.180.0\\\\node_modules\\\\three\\\\package.json'",
+      "status": "PASS"
+    },
+    {
+      "case": "missing installed three.module.js",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-28",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: installed package file is unavailable for candidate-app/node_modules/three/build/three.module.js: [Errno 2] No such file or directory: 'C:\\\\Users\\\\yoray\\\\.codex\\\\worktrees\\\\finish-29-c1-r8-independent-20261011\\\\deliveries\\\\completion-audits\\\\FINISH-C1\\\\finish-13\\\\20261011T142400Z-c1-r8-delta-review-01\\\\.work\\\\exact-package-repo\\\\deliveries\\\\FINISH-C1-R8\\\\.work\\\\regressions-20261011T180513Z\\\\case-28\\\\repo\\\\app\\\\node_modules\\\\.pnpm\\\\three@0.180.0\\\\node_modules\\\\three\\\\build\\\\three.module.js'",
+      "status": "PASS"
+    },
+    {
+      "case": "missing installed three.core.js",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-29",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: installed package file is unavailable for candidate-app/node_modules/three/build/three.core.js: [Errno 2] No such file or directory: 'C:\\\\Users\\\\yoray\\\\.codex\\\\worktrees\\\\finish-29-c1-r8-independent-20261011\\\\deliveries\\\\completion-audits\\\\FINISH-C1\\\\finish-13\\\\20261011T142400Z-c1-r8-delta-review-01\\\\.work\\\\exact-package-repo\\\\deliveries\\\\FINISH-C1-R8\\\\.work\\\\regressions-20261011T180513Z\\\\case-29\\\\repo\\\\app\\\\node_modules\\\\.pnpm\\\\three@0.180.0\\\\node_modules\\\\three\\\\build\\\\three.core.js'",
+      "status": "PASS"
+    },
+    {
+      "case": "installed three.module.js bytes corrupted",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-30",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: installed Three.js file hash differs from pinned evidence: candidate-app/node_modules/three/build/three.module.js",
+      "status": "PASS"
+    },
+    {
+      "case": "installed three.core.js bytes corrupted",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-31",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: installed Three.js file hash differs from pinned evidence: candidate-app/node_modules/three/build/three.core.js",
+      "status": "PASS"
+    },
+    {
+      "case": "installed package version corrupted",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-32",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: installed Three.js version is not 0.180.0",
+      "status": "PASS"
+    },
+    {
+      "case": "installed package name corrupted",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-33",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: installed package is not named three",
+      "status": "PASS"
+    },
+    {
+      "case": "candidate sourceManifest commit mismatch",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-34",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: candidate receipt sourceManifest commit differs from the pinned R6 manifest blob",
+      "status": "PASS"
+    },
+    {
+      "case": "candidate sourceManifest path mismatch",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-35",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: candidate receipt sourceManifest path differs from the pinned R6 manifest blob",
+      "status": "PASS"
+    },
+    {
+      "case": "candidate sourceManifest sha256 mismatch",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-36",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: candidate receipt sourceManifest sha256 differs from the pinned R6 manifest blob",
+      "status": "PASS"
+    },
+    {
+      "case": "candidate sourceManifest bytes mismatch",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-37",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: candidate receipt sourceManifest bytes differs from the pinned R6 manifest blob",
+      "status": "PASS"
+    },
+    {
+      "case": "candidate sourceManifest blob OID mismatch",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-38",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: candidate receipt sourceManifest blobOid differs from the pinned R6 manifest blob",
+      "status": "PASS"
+    },
+    {
+      "case": "candidate sourceManifest field missing",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-39",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: candidate receipt sourceManifest fields differ",
+      "status": "PASS"
+    },
+    {
+      "case": "candidate sourceManifest extra field",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-40",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: candidate receipt sourceManifest fields differ",
+      "status": "PASS"
+    },
+    {
+      "case": "packageFiles list missing",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-41",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: source binding packageFiles must be a list",
+      "status": "PASS"
+    },
+    {
+      "case": "packageFiles list missing second file",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-42",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: source binding packageFiles has 1 entries; expected 2",
+      "status": "PASS"
+    },
+    {
+      "case": "packageFiles list has an extra entry",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-43",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: source binding packageFiles has 3 entries; expected 2",
+      "status": "PASS"
+    },
+    {
+      "case": "packageFiles list has duplicate alias",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-44",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: source binding packageFiles has duplicate alias: candidate-app/node_modules/three/build/three.module.js",
+      "status": "PASS"
+    },
+    {
+      "case": "packageFiles alias mismatch",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-45",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: source binding packageFiles has an unknown alias",
+      "status": "PASS"
+    },
+    {
+      "case": "packageFiles entry extra field",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-46",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: source binding packageFiles entry fields differ",
+      "status": "PASS"
+    },
+    {
+      "case": "packageFiles entry field missing",
+      "disposableInput": ".work/regressions-20261011T180513Z/case-47",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: source binding packageFiles entry fields differ",
+      "status": "PASS"
+    },
+    {
+      "case": "missing Git object path",
+      "disposableInput": "no receipt mutation; direct verifier guard",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: git rev-parse --verify 9188b413d37da0ec3381b5430e25dc375a45bb18:app/no-such-file.fin28 failed with exit 128: fatal: Needed a single revision",
+      "status": "PASS"
+    },
+    {
+      "case": "unpinned Git commit",
+      "disposableInput": "no receipt mutation; direct verifier guard",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: unresolved or unpinned commit: 0000000000000000000000000000000000000000",
+      "status": "PASS"
+    },
+    {
+      "case": "duplicate authoritative path",
+      "disposableInput": "no receipt mutation; direct verifier guard",
+      "expectedRejection": true,
+      "rejected": true,
+      "result": "VerificationError: audit-probe contains duplicate path values",
+      "status": "PASS"
+    },
+    {
+      "actualExit": 0,
+      "cacheUsed": false,
+      "case": "cli-positive-exact-r7-inputs",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\exact-package-repo\\deliveries\\FINISH-C1-R8\\.work\\regressions-20261011T180513Z\\cli-repo\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "cwd": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\exact-package-repo\\deliveries\\FINISH-C1-R8\\.work\\regressions-20261011T180513Z\\cli-repo",
+      "expectedExit": 0,
+      "expectedRejection": false,
+      "expectedStatus": "PASS",
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\exact-package-repo\\deliveries\\FINISH-C1-R8\\.work\\regressions-20261011T180513Z\\cli-repo"
+      },
+      "rejected": false,
+      "returnedStatus": "PASS",
+      "status": "PASS",
+      "stderrPath": "evidence/cli-positive-exact-r7-inputs.stderr.log",
+      "stdoutPath": "evidence/cli-positive-exact-r7-inputs.stdout.log"
+    },
+    {
+      "actualExit": 1,
+      "cacheUsed": false,
+      "case": "cli-negative-zero-source-manifest-sha256",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\exact-package-repo\\deliveries\\FINISH-C1-R8\\.work\\regressions-20261011T180513Z\\cli-negative-repo\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "cwd": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\exact-package-repo\\deliveries\\FINISH-C1-R8\\.work\\regressions-20261011T180513Z\\cli-negative-repo",
+      "expectedExit": 1,
+      "expectedRejection": true,
+      "expectedStatus": "FAIL",
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\exact-package-repo\\deliveries\\FINISH-C1-R8\\.work\\regressions-20261011T180513Z\\cli-negative-repo"
+      },
+      "rejected": true,
+      "returnedStatus": "FAIL",
+      "status": "PASS",
+      "stderrPath": "evidence/cli-negative-zero-source-manifest-sha256.stderr.log",
+      "stdoutPath": "evidence/cli-negative-zero-source-manifest-sha256.stdout.log"
+    }
+  ],
+  "cli": {
+    "exactPackagePositive": {
+      "actualExit": 0,
+      "cacheUsed": false,
+      "case": "exact-r8-positive-r7-inputs",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\exact-package-repo\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "cwd": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\exact-package-repo",
+      "expectedExit": 0,
+      "expectedStatus": "PASS",
+      "outputManifest": {
+        "commit": "e2670d4152c461005da86b392dbcea12cec740bf",
+        "fileCount": 10,
+        "status": "PASS",
+        "totalBytes": 186448
+      },
+      "returnedStatus": "PASS",
+      "status": "PASS",
+      "stderrPath": "evidence/exact-r8-positive-r7-inputs.stderr.log",
+      "stdoutPath": "evidence/exact-r8-positive-r7-inputs.stdout.log"
+    },
+    "positive": {
+      "actualExit": 0,
+      "cacheUsed": false,
+      "case": "cli-positive-exact-r7-inputs",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\exact-package-repo\\deliveries\\FINISH-C1-R8\\.work\\regressions-20261011T180513Z\\cli-repo\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "cwd": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\exact-package-repo\\deliveries\\FINISH-C1-R8\\.work\\regressions-20261011T180513Z\\cli-repo",
+      "expectedExit": 0,
+      "expectedStatus": "PASS",
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\exact-package-repo\\deliveries\\FINISH-C1-R8\\.work\\regressions-20261011T180513Z\\cli-repo"
+      },
+      "returnedStatus": "PASS",
+      "status": "PASS",
+      "stderrPath": "evidence/cli-positive-exact-r7-inputs.stderr.log",
+      "stdoutPath": "evidence/cli-positive-exact-r7-inputs.stdout.log"
+    },
+    "zeroHashNegative": {
+      "actualExit": 1,
+      "cacheUsed": false,
+      "case": "cli-negative-zero-source-manifest-sha256",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\exact-package-repo\\deliveries\\FINISH-C1-R8\\.work\\regressions-20261011T180513Z\\cli-negative-repo\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "cwd": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\exact-package-repo\\deliveries\\FINISH-C1-R8\\.work\\regressions-20261011T180513Z\\cli-negative-repo",
+      "expectedExit": 1,
+      "expectedStatus": "FAIL",
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\exact-package-repo\\deliveries\\FINISH-C1-R8\\.work\\regressions-20261011T180513Z\\cli-negative-repo"
+      },
+      "returnedStatus": "FAIL",
+      "status": "PASS",
+      "stderrPath": "evidence/cli-negative-zero-source-manifest-sha256.stderr.log",
+      "stdoutPath": "evidence/cli-negative-zero-source-manifest-sha256.stdout.log"
+    }
+  },
+  "failedCount": 0,
+  "method": "Imported corrected verifier probes use cached raw immutable Git reads for speed and fresh disposable receipt/package copies. The two exact CLI cases are separate Python -B processes with cacheUsed=false; the negative CLI probe enables --check-output-manifest and corrupts only a copied sourceManifest.sha256.",
+  "negativeCaseCount": 51,
+  "negativePassed": 51,
+  "productionDependenciesModified": false,
+  "schemaVersion": 1,
+  "scratchRoot": ".work/regressions-20261011T180513Z"
+}

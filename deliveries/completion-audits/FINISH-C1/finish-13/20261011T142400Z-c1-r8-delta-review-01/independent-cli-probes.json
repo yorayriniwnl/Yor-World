@@ -1,0 +1,1103 @@
+{
+  "candidateCommit": "364d8ff690d3dc814a09406873433d9cb397b574",
+  "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+  "cases": [
+    {
+      "name": "exact independent positive control",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-001\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-001"
+      },
+      "startedUTC": "2026-10-11T18:06:50.922662+00:00",
+      "endedUTC": "2026-10-11T18:07:40.904996+00:00",
+      "exit": 0,
+      "expectedExit": 0,
+      "returnedStatus": "PASS",
+      "expectedStatus": "PASS",
+      "status": "PASS",
+      "duplicateJSONMembers": false,
+      "changedReceipts": [],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "7832649104b1320998cfda4c592c0119f07816d8528e160ed9b266119dc2cd76",
+          "bytes": 4954
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "c92aca7bc06a1c8a0ded15c1d9df69332213d991d74e89c64a83f53c006c92e7",
+          "bytes": 24195
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-001.stdout.log",
+      "stderr": "logs/probe-001.stderr.log",
+      "errors": [],
+      "cacheUsed": false
+    },
+    {
+      "name": "former sourceManifest commit false-pass control",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-002\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-002"
+      },
+      "startedUTC": "2026-10-11T18:06:50.974317+00:00",
+      "endedUTC": "2026-10-11T18:06:59.956449+00:00",
+      "exit": 1,
+      "expectedExit": 1,
+      "returnedStatus": "FAIL",
+      "expectedStatus": "FAIL",
+      "status": "PASS",
+      "duplicateJSONMembers": false,
+      "changedReceipts": [
+        "candidate-input-provenance.json"
+      ],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "7832649104b1320998cfda4c592c0119f07816d8528e160ed9b266119dc2cd76",
+          "bytes": 4954
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "358f5478e2e90ba46948b2efeb605a0ef68431b933f9e1efa5d65a985e3d5402",
+          "bytes": 19171
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-002.stdout.log",
+      "stderr": "logs/probe-002.stderr.log",
+      "errors": [
+        "candidate receipt sourceManifest commit differs from the pinned R6 manifest blob"
+      ],
+      "cacheUsed": false
+    },
+    {
+      "name": "duplicate contradictory sourceManifest commit wrong then correct",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-003\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-003"
+      },
+      "startedUTC": "2026-10-11T18:06:50.990362+00:00",
+      "endedUTC": "2026-10-11T18:07:42.902217+00:00",
+      "exit": 0,
+      "expectedExit": 1,
+      "returnedStatus": "PASS",
+      "expectedStatus": "FAIL",
+      "status": "FAIL",
+      "duplicateJSONMembers": true,
+      "changedReceipts": [
+        "candidate-input-provenance.json"
+      ],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "7832649104b1320998cfda4c592c0119f07816d8528e160ed9b266119dc2cd76",
+          "bytes": 4954
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "24d22afb8e5258f6377a4e5ff58345878ecbf8e33b1902e037813d70bb995737",
+          "bytes": 19223
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-003.stdout.log",
+      "stderr": "logs/probe-003.stderr.log",
+      "errors": [],
+      "cacheUsed": false
+    },
+    {
+      "name": "former sourceManifest path false-pass control",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-004\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-004"
+      },
+      "startedUTC": "2026-10-11T18:06:50.969303+00:00",
+      "endedUTC": "2026-10-11T18:07:00.131423+00:00",
+      "exit": 1,
+      "expectedExit": 1,
+      "returnedStatus": "FAIL",
+      "expectedStatus": "FAIL",
+      "status": "PASS",
+      "duplicateJSONMembers": false,
+      "changedReceipts": [
+        "candidate-input-provenance.json"
+      ],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "7832649104b1320998cfda4c592c0119f07816d8528e160ed9b266119dc2cd76",
+          "bytes": 4954
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "c321135b8d7e17ce24c66fcb04b381aaefe82c5df98ff2679dc1c07da52abc50",
+          "bytes": 19169
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-004.stdout.log",
+      "stderr": "logs/probe-004.stderr.log",
+      "errors": [
+        "candidate receipt sourceManifest path differs from the pinned R6 manifest blob"
+      ],
+      "cacheUsed": false
+    },
+    {
+      "name": "duplicate contradictory sourceManifest path wrong then correct",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-005\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-005"
+      },
+      "startedUTC": "2026-10-11T18:07:01.054509+00:00",
+      "endedUTC": "2026-10-11T18:07:47.509222+00:00",
+      "exit": 0,
+      "expectedExit": 1,
+      "returnedStatus": "PASS",
+      "expectedStatus": "FAIL",
+      "status": "FAIL",
+      "duplicateJSONMembers": true,
+      "changedReceipts": [
+        "candidate-input-provenance.json"
+      ],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "7832649104b1320998cfda4c592c0119f07816d8528e160ed9b266119dc2cd76",
+          "bytes": 4954
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "de5ea3cc306172c23d90a13f1afa703c7642549a257aea4b09d1bf863a227d61",
+          "bytes": 19220
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-005.stdout.log",
+      "stderr": "logs/probe-005.stderr.log",
+      "errors": [],
+      "cacheUsed": false
+    },
+    {
+      "name": "former sourceManifest blobOid false-pass control",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-006\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-006"
+      },
+      "startedUTC": "2026-10-11T18:07:01.284525+00:00",
+      "endedUTC": "2026-10-11T18:07:09.761502+00:00",
+      "exit": 1,
+      "expectedExit": 1,
+      "returnedStatus": "FAIL",
+      "expectedStatus": "FAIL",
+      "status": "PASS",
+      "duplicateJSONMembers": false,
+      "changedReceipts": [
+        "candidate-input-provenance.json"
+      ],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "7832649104b1320998cfda4c592c0119f07816d8528e160ed9b266119dc2cd76",
+          "bytes": 4954
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "74bd54ff9f1c94b74945d4eb6816fa02bce205682cff28f2a6933da406c6409a",
+          "bytes": 19171
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-006.stdout.log",
+      "stderr": "logs/probe-006.stderr.log",
+      "errors": [
+        "candidate receipt sourceManifest blobOid differs from the pinned R6 manifest blob"
+      ],
+      "cacheUsed": false
+    },
+    {
+      "name": "duplicate contradictory sourceManifest blobOid wrong then correct",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-007\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-007"
+      },
+      "startedUTC": "2026-10-11T18:07:10.767345+00:00",
+      "endedUTC": "2026-10-11T18:07:55.435375+00:00",
+      "exit": 0,
+      "expectedExit": 1,
+      "returnedStatus": "PASS",
+      "expectedStatus": "FAIL",
+      "status": "FAIL",
+      "duplicateJSONMembers": true,
+      "changedReceipts": [
+        "candidate-input-provenance.json"
+      ],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "7832649104b1320998cfda4c592c0119f07816d8528e160ed9b266119dc2cd76",
+          "bytes": 4954
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "0dc7aefba8c7d57fe4fd2c7f0e6306e05120a28de8b8099f6817806217c4e04a",
+          "bytes": 19224
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-007.stdout.log",
+      "stderr": "logs/probe-007.stderr.log",
+      "errors": [],
+      "cacheUsed": false
+    },
+    {
+      "name": "former sourceManifest sha256 false-pass control",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-008\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-008"
+      },
+      "startedUTC": "2026-10-11T18:07:43.651103+00:00",
+      "endedUTC": "2026-10-11T18:07:49.680366+00:00",
+      "exit": 1,
+      "expectedExit": 1,
+      "returnedStatus": "FAIL",
+      "expectedStatus": "FAIL",
+      "status": "PASS",
+      "duplicateJSONMembers": false,
+      "changedReceipts": [
+        "candidate-input-provenance.json"
+      ],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "7832649104b1320998cfda4c592c0119f07816d8528e160ed9b266119dc2cd76",
+          "bytes": 4954
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "7246fe1bcb641c653e5aa3619e01302a39c6c02fc734965cfad16d802b606778",
+          "bytes": 19171
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-008.stdout.log",
+      "stderr": "logs/probe-008.stderr.log",
+      "errors": [
+        "candidate receipt sourceManifest sha256 differs from the pinned R6 manifest blob"
+      ],
+      "cacheUsed": false
+    },
+    {
+      "name": "duplicate contradictory sourceManifest sha256 wrong then correct",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-009\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-009"
+      },
+      "startedUTC": "2026-10-11T18:07:44.190841+00:00",
+      "endedUTC": "2026-10-11T18:08:30.890982+00:00",
+      "exit": 0,
+      "expectedExit": 1,
+      "returnedStatus": "PASS",
+      "expectedStatus": "FAIL",
+      "status": "FAIL",
+      "duplicateJSONMembers": true,
+      "changedReceipts": [
+        "candidate-input-provenance.json"
+      ],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "7832649104b1320998cfda4c592c0119f07816d8528e160ed9b266119dc2cd76",
+          "bytes": 4954
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "6afb4143aa5da681e10574690a8e838a0ced5d850164be38e35a11dc98d9f4b2",
+          "bytes": 19247
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-009.stdout.log",
+      "stderr": "logs/probe-009.stderr.log",
+      "errors": [],
+      "cacheUsed": false
+    },
+    {
+      "name": "former sourceManifest bytes false-pass control",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-010\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-010"
+      },
+      "startedUTC": "2026-10-11T18:07:48.294993+00:00",
+      "endedUTC": "2026-10-11T18:07:55.388261+00:00",
+      "exit": 1,
+      "expectedExit": 1,
+      "returnedStatus": "FAIL",
+      "expectedStatus": "FAIL",
+      "status": "PASS",
+      "duplicateJSONMembers": false,
+      "changedReceipts": [
+        "candidate-input-provenance.json"
+      ],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "7832649104b1320998cfda4c592c0119f07816d8528e160ed9b266119dc2cd76",
+          "bytes": 4954
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "8abe1f70618e1abeb9178f1b024ad057702445103241c1eba9d4dc5c01b117c7",
+          "bytes": 19168
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-010.stdout.log",
+      "stderr": "logs/probe-010.stderr.log",
+      "errors": [
+        "candidate receipt sourceManifest bytes differs from the pinned R6 manifest blob"
+      ],
+      "cacheUsed": false
+    },
+    {
+      "name": "duplicate contradictory sourceManifest bytes wrong then correct",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-011\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-011"
+      },
+      "startedUTC": "2026-10-11T18:07:50.559477+00:00",
+      "endedUTC": "2026-10-11T18:08:37.848052+00:00",
+      "exit": 0,
+      "expectedExit": 1,
+      "returnedStatus": "PASS",
+      "expectedStatus": "FAIL",
+      "status": "FAIL",
+      "duplicateJSONMembers": true,
+      "changedReceipts": [
+        "candidate-input-provenance.json"
+      ],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "7832649104b1320998cfda4c592c0119f07816d8528e160ed9b266119dc2cd76",
+          "bytes": 4954
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "4648a2a45b1a2c76739fb1d26256d3add02c181f9492fa4983d406db20ae78c7",
+          "bytes": 19182
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-011.stdout.log",
+      "stderr": "logs/probe-011.stderr.log",
+      "errors": [],
+      "cacheUsed": false
+    },
+    {
+      "name": "duplicate sourceManifest sha256 correct then wrong order control",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-012\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-012"
+      },
+      "startedUTC": "2026-10-11T18:07:56.908028+00:00",
+      "endedUTC": "2026-10-11T18:08:05.265050+00:00",
+      "exit": 1,
+      "expectedExit": 1,
+      "returnedStatus": "FAIL",
+      "expectedStatus": "FAIL",
+      "status": "PASS",
+      "duplicateJSONMembers": true,
+      "changedReceipts": [
+        "candidate-input-provenance.json"
+      ],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "7832649104b1320998cfda4c592c0119f07816d8528e160ed9b266119dc2cd76",
+          "bytes": 4954
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "e4a108747d65d0ba5e1ff45243575271062f4e5cb3836e2760c91f13d04dc801",
+          "bytes": 19247
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-012.stdout.log",
+      "stderr": "logs/probe-012.stderr.log",
+      "errors": [
+        "candidate receipt sourceManifest sha256 differs from the pinned R6 manifest blob"
+      ],
+      "cacheUsed": false
+    },
+    {
+      "name": "former duplicated installed-Three SHA false-pass control",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-013\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-013"
+      },
+      "startedUTC": "2026-10-11T18:07:56.952312+00:00",
+      "endedUTC": "2026-10-11T18:08:05.341995+00:00",
+      "exit": 1,
+      "expectedExit": 1,
+      "returnedStatus": "FAIL",
+      "expectedStatus": "FAIL",
+      "status": "PASS",
+      "duplicateJSONMembers": false,
+      "changedReceipts": [
+        "source-binding.json"
+      ],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "a35deec2581b758ff0cd31e0e28acab62f021346003182036cf0879008a688da",
+          "bytes": 4248
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "c92aca7bc06a1c8a0ded15c1d9df69332213d991d74e89c64a83f53c006c92e7",
+          "bytes": 24195
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-013.stdout.log",
+      "stderr": "logs/probe-013.stderr.log",
+      "errors": [
+        "source binding packageFiles candidate-app/node_modules/three/build/three.module.js sha256 differs from the pinned Three.js evidence"
+      ],
+      "cacheUsed": false
+    },
+    {
+      "name": "duplicate packageFiles row 0 alias wrong then correct",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-014\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-014"
+      },
+      "startedUTC": "2026-10-11T18:08:06.255172+00:00",
+      "endedUTC": "2026-10-11T18:08:51.075984+00:00",
+      "exit": 0,
+      "expectedExit": 1,
+      "returnedStatus": "PASS",
+      "expectedStatus": "FAIL",
+      "status": "FAIL",
+      "duplicateJSONMembers": true,
+      "changedReceipts": [
+        "source-binding.json"
+      ],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "59845e49944773d45041e38492fd6ebb8b15b81282ce6e1186dd96e8dd53af25",
+          "bytes": 4308
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "c92aca7bc06a1c8a0ded15c1d9df69332213d991d74e89c64a83f53c006c92e7",
+          "bytes": 24195
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-014.stdout.log",
+      "stderr": "logs/probe-014.stderr.log",
+      "errors": [],
+      "cacheUsed": false
+    },
+    {
+      "name": "duplicate packageFiles row 0 packageFile wrong then correct",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-015\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-015"
+      },
+      "startedUTC": "2026-10-11T18:08:06.491449+00:00",
+      "endedUTC": "2026-10-11T18:08:52.785844+00:00",
+      "exit": 0,
+      "expectedExit": 1,
+      "returnedStatus": "PASS",
+      "expectedStatus": "FAIL",
+      "status": "FAIL",
+      "duplicateJSONMembers": true,
+      "changedReceipts": [
+        "source-binding.json"
+      ],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "1daa848a3560cfa8f05c14a3c595ce43b92b74c8fd842475ffba5001379967ea",
+          "bytes": 4283
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "c92aca7bc06a1c8a0ded15c1d9df69332213d991d74e89c64a83f53c006c92e7",
+          "bytes": 24195
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-015.stdout.log",
+      "stderr": "logs/probe-015.stderr.log",
+      "errors": [],
+      "cacheUsed": false
+    },
+    {
+      "name": "duplicate packageFiles row 0 sha256 wrong then correct",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-016\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-016"
+      },
+      "startedUTC": "2026-10-11T18:08:32.759762+00:00",
+      "endedUTC": "2026-10-11T18:09:20.079542+00:00",
+      "exit": 0,
+      "expectedExit": 1,
+      "returnedStatus": "PASS",
+      "expectedStatus": "FAIL",
+      "status": "FAIL",
+      "duplicateJSONMembers": true,
+      "changedReceipts": [
+        "source-binding.json"
+      ],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "e4dd9f6639d3fee2b09c5a1367697b54461cf758fa0190911064ad0be2682534",
+          "bytes": 4324
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "c92aca7bc06a1c8a0ded15c1d9df69332213d991d74e89c64a83f53c006c92e7",
+          "bytes": 24195
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-016.stdout.log",
+      "stderr": "logs/probe-016.stderr.log",
+      "errors": [],
+      "cacheUsed": false
+    },
+    {
+      "name": "duplicate packageFiles row 0 bytes wrong then correct",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-017\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-017"
+      },
+      "startedUTC": "2026-10-11T18:08:40.513010+00:00",
+      "endedUTC": "2026-10-11T18:09:27.817596+00:00",
+      "exit": 0,
+      "expectedExit": 1,
+      "returnedStatus": "PASS",
+      "expectedStatus": "FAIL",
+      "status": "FAIL",
+      "duplicateJSONMembers": true,
+      "changedReceipts": [
+        "source-binding.json"
+      ],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "68465ccd1b72e5c5180bc1ad6c5a9ed547f7599b06224753b5f2aec02a63d265",
+          "bytes": 4259
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "c92aca7bc06a1c8a0ded15c1d9df69332213d991d74e89c64a83f53c006c92e7",
+          "bytes": 24195
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-017.stdout.log",
+      "stderr": "logs/probe-017.stderr.log",
+      "errors": [],
+      "cacheUsed": false
+    },
+    {
+      "name": "duplicate packageFiles row 1 alias wrong then correct",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-018\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-018"
+      },
+      "startedUTC": "2026-10-11T18:08:54.219720+00:00",
+      "endedUTC": "2026-10-11T18:09:42.596662+00:00",
+      "exit": 0,
+      "expectedExit": 1,
+      "returnedStatus": "PASS",
+      "expectedStatus": "FAIL",
+      "status": "FAIL",
+      "duplicateJSONMembers": true,
+      "changedReceipts": [
+        "source-binding.json"
+      ],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "1a8d207cd78b98198a1d3ccff237b98a42f76a151b240de29dee496a2f76c9a2",
+          "bytes": 4308
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "c92aca7bc06a1c8a0ded15c1d9df69332213d991d74e89c64a83f53c006c92e7",
+          "bytes": 24195
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-018.stdout.log",
+      "stderr": "logs/probe-018.stderr.log",
+      "errors": [],
+      "cacheUsed": false
+    },
+    {
+      "name": "duplicate packageFiles row 1 packageFile wrong then correct",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-019\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-019"
+      },
+      "startedUTC": "2026-10-11T18:08:55.653519+00:00",
+      "endedUTC": "2026-10-11T18:09:44.936460+00:00",
+      "exit": 0,
+      "expectedExit": 1,
+      "returnedStatus": "PASS",
+      "expectedStatus": "FAIL",
+      "status": "FAIL",
+      "duplicateJSONMembers": true,
+      "changedReceipts": [
+        "source-binding.json"
+      ],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "5f3d7d2a49545e9b5a6a57b51f0203017f61498d7e74b8ec6b3f9820f7b86b78",
+          "bytes": 4283
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "c92aca7bc06a1c8a0ded15c1d9df69332213d991d74e89c64a83f53c006c92e7",
+          "bytes": 24195
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-019.stdout.log",
+      "stderr": "logs/probe-019.stderr.log",
+      "errors": [],
+      "cacheUsed": false
+    },
+    {
+      "name": "duplicate packageFiles row 1 sha256 wrong then correct",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-020\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-020"
+      },
+      "startedUTC": "2026-10-11T18:09:21.524424+00:00",
+      "endedUTC": "2026-10-11T18:10:04.957488+00:00",
+      "exit": 0,
+      "expectedExit": 1,
+      "returnedStatus": "PASS",
+      "expectedStatus": "FAIL",
+      "status": "FAIL",
+      "duplicateJSONMembers": true,
+      "changedReceipts": [
+        "source-binding.json"
+      ],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "e8af085ad2c5cd9fdf0714cffe5ea857de7131e0430ff2caba5740b425a466da",
+          "bytes": 4324
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "c92aca7bc06a1c8a0ded15c1d9df69332213d991d74e89c64a83f53c006c92e7",
+          "bytes": 24195
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-020.stdout.log",
+      "stderr": "logs/probe-020.stderr.log",
+      "errors": [],
+      "cacheUsed": false
+    },
+    {
+      "name": "duplicate packageFiles row 1 bytes wrong then correct",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-021\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-021"
+      },
+      "startedUTC": "2026-10-11T18:09:29.233462+00:00",
+      "endedUTC": "2026-10-11T18:10:09.634468+00:00",
+      "exit": 0,
+      "expectedExit": 1,
+      "returnedStatus": "PASS",
+      "expectedStatus": "FAIL",
+      "status": "FAIL",
+      "duplicateJSONMembers": true,
+      "changedReceipts": [
+        "source-binding.json"
+      ],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "aaf398e0febeac69b8646e710a8abeddaec9da3376066f9b546fea8678bb7aba",
+          "bytes": 4259
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "c92aca7bc06a1c8a0ded15c1d9df69332213d991d74e89c64a83f53c006c92e7",
+          "bytes": 24195
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-021.stdout.log",
+      "stderr": "logs/probe-021.stderr.log",
+      "errors": [],
+      "cacheUsed": false
+    },
+    {
+      "name": "duplicate installed identity packageName wrong then correct",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-022\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-022"
+      },
+      "startedUTC": "2026-10-11T18:09:44.960501+00:00",
+      "endedUTC": "2026-10-11T18:10:21.263289+00:00",
+      "exit": 0,
+      "expectedExit": 1,
+      "returnedStatus": "PASS",
+      "expectedStatus": "FAIL",
+      "status": "FAIL",
+      "duplicateJSONMembers": true,
+      "changedReceipts": [
+        "source-binding.json"
+      ],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "90000c2fd91b64ac899ea01daf93e2092651fecfada575fd5ce0622956b6a480",
+          "bytes": 4275
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "c92aca7bc06a1c8a0ded15c1d9df69332213d991d74e89c64a83f53c006c92e7",
+          "bytes": 24195
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-022.stdout.log",
+      "stderr": "logs/probe-022.stderr.log",
+      "errors": [],
+      "cacheUsed": false
+    },
+    {
+      "name": "duplicate installed identity packageVersion wrong then correct",
+      "kind": "uncached independent CLI",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-023\\deliveries\\FINISH-C1-R8\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "gitEnvironment": {
+        "GIT_DIR": "C:/Users/yoray/Projects/Yor World/.git/worktrees/finish-29-c1-r8-independent-20261011",
+        "GIT_WORK_TREE": "C:\\Users\\yoray\\.codex\\worktrees\\finish-29-c1-r8-independent-20261011\\deliveries\\completion-audits\\FINISH-C1\\finish-13\\20261011T142400Z-c1-r8-delta-review-01\\.work\\independent-probes\\case-023"
+      },
+      "startedUTC": "2026-10-11T18:09:46.014329+00:00",
+      "endedUTC": "2026-10-11T18:10:21.792214+00:00",
+      "exit": 0,
+      "expectedExit": 1,
+      "returnedStatus": "PASS",
+      "expectedStatus": "FAIL",
+      "status": "FAIL",
+      "duplicateJSONMembers": true,
+      "changedReceipts": [
+        "source-binding.json"
+      ],
+      "verifierSHA256": "4ba2f9eb3538bd61a6e82d4ef0958bfa96aad6ce3e50921f8323e3a1e7d114e2",
+      "receiptHashes": {
+        "source-binding.json": {
+          "sha256": "a59766fcb7fc9707860cf03fc8c65547bfd03cfe8fcdad8d8f20fd7f3cee5803",
+          "bytes": 4273
+        },
+        "candidate-input-provenance.json": {
+          "sha256": "c92aca7bc06a1c8a0ded15c1d9df69332213d991d74e89c64a83f53c006c92e7",
+          "bytes": 24195
+        },
+        "predecessor-output-git-blobs.json": {
+          "sha256": "599eee170e85378ac7b9cddddfcca9c0d6a0165f10964b91953f463f83fe43a4",
+          "bytes": 18209
+        }
+      },
+      "stdout": "logs/probe-023.stdout.log",
+      "stderr": "logs/probe-023.stderr.log",
+      "errors": [],
+      "cacheUsed": false
+    }
+  ],
+  "failedExpectations": 15,
+  "uncachedProcesses": true,
+  "allFixturesInAuditScratch": true,
+  "minimalInstalledPackageFixture": "Exact package.json plus both pinned build files copied inside each disposable repo; positive control validates this fixture."
+}
