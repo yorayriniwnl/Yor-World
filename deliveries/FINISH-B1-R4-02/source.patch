@@ -1,0 +1,113 @@
+--- a/deliveries/FINISH-B1-R3/source/blender/scripts/build-environment.py
++++ b/deliveries/FINISH-B1-R3/source/blender/scripts/build-environment.py
+@@ -264,10 +264,15 @@
+     )
+     m["PC_TemperedGlass"] = get_or_create_pbr_mat(
+         "PC_TemperedGlass",
+-        base_color=(0.95, 0.95, 1.0, 0.35),
++        base_color=(0.95, 0.95, 1.0, 0.18),
+         roughness=0.08, metallic=0.05,
+-        transmission=0.92, ior=1.52
+-    )
++        transmission=0.0, ior=1.52
++    )
++    # FINISH-25: glossy alpha glass avoids the duplicate scene transmission pass.
++    glass = m["PC_TemperedGlass"]
++    glass.surface_render_method = "BLENDED"
++    glass.node_tree.nodes.get("Principled BSDF").inputs["Alpha"].default_value = 0.18
++    glass.node_tree.nodes.get("Principled BSDF").inputs["IOR"].default_value = 1.52
+ 
+     # 5. Emissive Lights & Reference Accents (Calibrated to resolve B1-R3 overexposure)
+     m["Hex_LilacEmissive"] = get_or_create_pbr_mat(
+@@ -363,6 +368,55 @@
+     return m
+ 
+ # Primitive Geometry Helpers
++
++# FINISH-25-R1: only the closed PC box, left-wall component and window-frame
++# are replaced. All bounds below are runtime local coordinates; old node TRS stay.
++def finish25_box_specs(kind):
++    if kind == "pc_chassis_frame":
++        return [((-0.12,-0.24,-0.24),(0.12,-0.228,0.24)),
++                ((-0.12,0.228,-0.24),(0.12,0.24,0.24)),
++                ((0.108,-0.228,-0.24),(0.12,0.228,0.24)),
++                ((-0.12,-0.228,-0.24),(0.108,0.228,-0.228)),
++                ((-0.12,-0.228,0.228),(0.108,0.228,0.24))]
++    if kind == "window_frame":
++        return [((-0.02,-0.7,-0.6),(0.02,-0.66,0.6)),
++                ((-0.02,0.66,-0.6),(0.02,0.7,0.6)),
++                ((-0.02,-0.66,-0.6),(0.02,0.66,-0.56)),
++                ((-0.02,-0.66,0.56),(0.02,0.66,0.6))]
++    if kind == "wall_left":
++        return [((-0.05,-1.4,-1.8),(0.05,-0.55,1.8)),
++                ((-0.05,0.85,-1.8),(0.05,1.4,1.8)),
++                ((-0.05,-0.55,-1.8),(0.05,0.85,-1.2)),
++                ((-0.05,-0.55,0.0),(0.05,0.85,1.8))]
++    if kind == "pc_internal_backplate":
++        return [((-0.004,-0.19,-0.19),(0.004,0.19,0.19))]
++    raise ValueError(kind)
++
++def finish25_native_box_geometry(kind):
++    vertices, faces = [], []
++    for lo, hi in finish25_box_specs(kind):
++        x,y,z=lo; X,Y,Z=hi; offset=len(vertices)
++        vertices.extend(r2b(*v) for v in [(x,y,z),(X,y,z),(X,Y,z),(x,Y,z),
++                                          (x,y,Z),(X,y,Z),(X,Y,Z),(x,Y,Z)])
++        faces.extend(tuple(offset+i for i in f) for f in [(0,3,2,1),(4,5,6,7),
++                                                          (0,4,7,3),(1,2,6,5),
++                                                          (0,1,5,4),(3,7,6,2)])
++    return vertices, faces
++
++def add_finish25_mesh(name, r_center, mat, parent, collection):
++    mesh=bpy.data.meshes.new(name+"__FINISH25R1")
++    vertices,faces=finish25_native_box_geometry(name)
++    mesh.from_pydata(vertices,[],faces);mesh.update()
++    mesh.materials.append(mat)
++    uv=mesh.uv_layers.new(name="UVMap")
++    for poly in mesh.polygons:
++        for loop,coord in zip(poly.loop_indices,[(0,0),(1,0),(1,1),(0,1)]):
++            uv.data[loop].uv=coord
++    obj=bpy.data.objects.new(name,mesh);collection.objects.link(obj)
++    obj.location=r2b(*r_center);obj.parent=parent
++    obj.matrix_parent_inverse=parent.matrix_world.inverted()
++    return obj
++
+ def add_box(name, r_center, r_dims, mat=None, parent=None, collection=None):
+     b_center = r2b(r_center[0], r_center[1], r_center[2])
+     b_dims = (r_dims[0], r_dims[2], r_dims[1])
+@@ -514,7 +568,7 @@
+ 
+     # Walls (F1 dimensions)
+     add_box("wall_rear", (0.0, 1.40, -1.85), (4.20, 2.80, 0.10), mat=mats["Wall_SoftLavender"], parent=shell_root, collection=coll)
+-    add_box("wall_left", (-2.15, 1.40, 0.0), (0.10, 2.80, 3.60), mat=mats["Wall_SoftLavender"], parent=shell_root, collection=coll)
++    add_finish25_mesh("wall_left", (-2.15, 1.40, 0.0), mats["Wall_SoftLavender"], shell_root, coll)
+     add_box("wall_right", (2.15, 1.40, 0.0), (0.10, 2.80, 3.60), mat=mats["Wall_SoftLavender"], parent=shell_root, collection=coll)
+ 
+     # Front Wall with Door Cutout
+@@ -534,7 +588,7 @@
+     add_box("baseboard_front_r", (0.675, 0.04, 1.79), (2.85, 0.08, 0.02), mat=mats["Baseboard_Charcoal"], parent=shell_root, collection=coll)
+ 
+     # Window with 12 Rotatable Blinds on Left Wall (window-blinds catalog row)
+-    add_box("window_frame", (-2.14, 1.55, -0.60), (0.04, 1.40, 1.20), mat=mats["Baseboard_Charcoal"], parent=shell_root, collection=coll)
++    add_finish25_mesh("window_frame", (-2.14, 1.55, -0.60), mats["Baseboard_Charcoal"], shell_root, coll)
+     add_box("window_glass", (-2.145, 1.55, -0.60), (0.01, 1.32, 1.12), mat=mats["PC_TemperedGlass"], parent=shell_root, collection=coll)
+     for i in range(12):
+         by = 0.95 + i * 0.10
+@@ -923,7 +977,8 @@
+     pc_root.parent = room_root
+ 
+     pc_cx, pc_cz = 1.05, -1.15
+-    add_box("pc_chassis_frame", (pc_cx, 1.00, pc_cz), (0.24, 0.48, 0.48), mat=mats["PC_ChassisWhite"], parent=pc_root, collection=coll)
++    add_finish25_mesh("pc_chassis_frame", (pc_cx, 1.00, pc_cz), mats["PC_ChassisWhite"], pc_root, coll)
++    add_finish25_mesh("pc_internal_backplate", (1.155, 1.00, pc_cz), mats["Baseboard_Charcoal"], pc_root, coll)
+     add_box("pc_glass_side_panel", (pc_cx - 0.122, 1.00, pc_cz), (0.005, 0.44, 0.44), mat=mats["PC_TemperedGlass"], parent=pc_root, collection=coll)
+     add_box("pc_front_mesh", (pc_cx, 1.00, pc_cz + 0.242), (0.22, 0.44, 0.006), mat=mats["Baseboard_Charcoal"], parent=pc_root, collection=coll)
+ 
+@@ -1039,6 +1094,7 @@
+ # Interactive targets, mutable materials, live clock/LEDs, moving pivots, and
+ # per-project effects stay individual. Room batches retain the Door_Frame owner.
+ STATIC_BATCH_EXACT_EXCLUSIONS = {
++    "pc_internal_backplate",
+     "floor_main", "desk_top", "Door_Leaf", "door_handle_plate", "door_handle_lever",
+     "desk_mat", "monitor_screen_center", "monitor_screen_left", "monitor_screen_right",
+     "keyboard_body", "keycaps_main", "mouse_body", "mouse_wheel", "painting_frame",
