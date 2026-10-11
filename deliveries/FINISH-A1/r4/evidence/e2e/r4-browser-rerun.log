@@ -1,0 +1,58 @@
+[WebServer] (node:47744) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 12 tests using 1 worker
+
+(node:22112) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [chrome] › tests\e2e\platform\admin-publish.spec.ts:48:3 › Milestone A4: Project Editor & Publication Management E2E › admin navigation includes links to Dashboard, Editor, and Publish (3.3s)
+  ok  2 [chrome] › tests\e2e\platform\admin-publish.spec.ts:63:3 › Milestone A4: Project Editor & Publication Management E2E › loads project editor with structured editing controls (2.2s)
+  ok  3 [chrome] › tests\e2e\platform\admin-publish.spec.ts:94:3 › Milestone A4: Project Editor & Publication Management E2E › loads publish review with pre-flight checklist and publication history table (2.3s)
+  ok  4 [chrome] › tests\e2e\platform\admin-publish.spec.ts:122:3 › Milestone A4: Project Editor & Publication Management E2E › edits, saves, reloads, and privately previews CandidateX without adding it to public pages (2.8s)
+  ok  5 [chrome] › tests\e2e\platform\admin-publish.spec.ts:140:3 › Milestone A4: Project Editor & Publication Management E2E › editor and publish interfaces require zero WebGL, canvas, or 3D models (2.2s)
+  ok  6 [chrome] › tests\e2e\platform\admin-publish.spec.ts:157:3 › Milestone A4: Project Editor & Publication Management E2E › public portfolio continues to serve approved snapshot with no private media leakage (1.3s)
+(node:17612) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  7 [edge] › tests\e2e\platform\admin-publish.spec.ts:48:3 › Milestone A4: Project Editor & Publication Management E2E › admin navigation includes links to Dashboard, Editor, and Publish (1.9s)
+  ok  8 [edge] › tests\e2e\platform\admin-publish.spec.ts:63:3 › Milestone A4: Project Editor & Publication Management E2E › loads project editor with structured editing controls (1.6s)
+  ok  9 [edge] › tests\e2e\platform\admin-publish.spec.ts:94:3 › Milestone A4: Project Editor & Publication Management E2E › loads publish review with pre-flight checklist and publication history table (1.2s)
+  x  10 [edge] › tests\e2e\platform\admin-publish.spec.ts:122:3 › Milestone A4: Project Editor & Publication Management E2E › edits, saves, reloads, and privately previews CandidateX without adding it to public pages (1.6s)
+(node:38008) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 11 [edge] › tests\e2e\platform\admin-publish.spec.ts:140:3 › Milestone A4: Project Editor & Publication Management E2E › editor and publish interfaces require zero WebGL, canvas, or 3D models (2.6s)
+  ok 12 [edge] › tests\e2e\platform\admin-publish.spec.ts:157:3 › Milestone A4: Project Editor & Publication Management E2E › public portfolio continues to serve approved snapshot with no private media leakage (1.5s)
+
+
+  1) [edge] › tests\e2e\platform\admin-publish.spec.ts:122:3 › Milestone A4: Project Editor & Publication Management E2E › edits, saves, reloads, and privately previews CandidateX without adding it to public pages 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('R4 browser private-preview receipt', { exact: true })
+    Expected: visible
+    Error: strict mode violation: getByText('R4 browser private-preview receipt', { exact: true }) resolved to 2 elements:
+        1) <li>R4 browser private-preview receipt</li> aka getByText('R4 browser private-preview').first()
+        2) <li>R4 browser private-preview receipt</li> aka getByText('R4 browser private-preview').nth(1)
+
+    Call log:
+      - Expect "toBeVisible" getByText('R4 browser private-preview receipt', { exact: true }) with timeout 5000ms
+      - waiting for getByText('R4 browser private-preview receipt', { exact: true })
+
+
+      131 |
+      132 |     await page.goto("/admin/preview/candidatex");
+    > 133 |     await expect(page.getByText("R4 browser private-preview receipt", { exact: true })).toBeVisible();
+          |                                                                                         ^
+      134 |     await expect(page.getByText(/Private CandidateX content is preview-only/i)).toBeVisible();
+      135 |     await page.goto("/projects");
+      136 |     await expect(page.getByRole("heading", { level: 2, name: /CandidateX/i })).toHaveCount(0);
+        at C:\Users\yoray\Projects\Yor World\deliveries\FINISH-A1\r4\verification\app\tests\e2e\platform\admin-publish.spec.ts:133:89
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\platform-admin-publish-Mil-da5ba-t-adding-it-to-public-pages-edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\platform-admin-publish-Mil-da5ba-t-adding-it-to-public-pages-edge\error-context.md
+
+  1 failed
+    [edge] › tests\e2e\platform\admin-publish.spec.ts:122:3 › Milestone A4: Project Editor & Publication Management E2E › edits, saves, reloads, and privately previews CandidateX without adding it to public pages 
+  11 passed (59.0s)

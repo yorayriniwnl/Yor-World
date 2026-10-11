@@ -1,0 +1,66 @@
+[WebServer] (node:36828) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 20 tests using 1 worker
+
+(node:16180) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [chrome] › tests\e2e\platform\admin-publish.spec.ts:48:3 › Milestone A4: Project Editor & Publication Management E2E › admin navigation includes links to Dashboard, Editor, and Publish (2.2s)
+  ok  2 [chrome] › tests\e2e\platform\admin-publish.spec.ts:63:3 › Milestone A4: Project Editor & Publication Management E2E › loads project editor with structured editing controls (1.2s)
+  ok  3 [chrome] › tests\e2e\platform\admin-publish.spec.ts:94:3 › Milestone A4: Project Editor & Publication Management E2E › loads publish review with pre-flight checklist and publication history table (1.3s)
+  ok  4 [chrome] › tests\e2e\platform\admin-publish.spec.ts:122:3 › Milestone A4: Project Editor & Publication Management E2E › edits, saves, reloads, and privately previews CandidateX without adding it to public pages (2.2s)
+  ok  5 [chrome] › tests\e2e\platform\admin-publish.spec.ts:142:3 › Milestone A4: Project Editor & Publication Management E2E › editor and publish interfaces require zero WebGL, canvas, or 3D models (1.9s)
+  ok  6 [chrome] › tests\e2e\platform\admin-publish.spec.ts:159:3 › Milestone A4: Project Editor & Publication Management E2E › public portfolio continues to serve approved snapshot with no private media leakage (792ms)
+  ok  7 [chrome] › tests\e2e\platform\completion-authoring-workflow.spec.ts:19:3 › A1 completion authoring and publication workflow › edits all block variants, ordering, picker, save/reopen/cancel, and preserves a failed buffer (3.3s)
+  ok  8 [chrome] › tests\e2e\platform\completion-authoring-workflow.spec.ts:94:3 › A1 completion authoring and publication workflow › two open editor sessions reject the stale save and retain its unsaved value (5.6s)
+  ok  9 [chrome] › tests\e2e\platform\completion-authoring-workflow.spec.ts:115:3 › A1 completion authoring and publication workflow › publishes from a fresh review, reports an unknown cache result honestly, then rolls back with a reason (1.2s)
+  ok 10 [chrome] › tests\e2e\platform\completion-authoring-workflow.spec.ts:144:3 › A1 completion authoring and publication workflow › keeps private APIs isolated for anonymous callers and never publishes the CandidateX sentinel (1.9s)
+(node:28960) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 11 [edge] › tests\e2e\platform\admin-publish.spec.ts:48:3 › Milestone A4: Project Editor & Publication Management E2E › admin navigation includes links to Dashboard, Editor, and Publish (2.7s)
+  ok 12 [edge] › tests\e2e\platform\admin-publish.spec.ts:63:3 › Milestone A4: Project Editor & Publication Management E2E › loads project editor with structured editing controls (1.6s)
+  ok 13 [edge] › tests\e2e\platform\admin-publish.spec.ts:94:3 › Milestone A4: Project Editor & Publication Management E2E › loads publish review with pre-flight checklist and publication history table (1.3s)
+  ok 14 [edge] › tests\e2e\platform\admin-publish.spec.ts:122:3 › Milestone A4: Project Editor & Publication Management E2E › edits, saves, reloads, and privately previews CandidateX without adding it to public pages (3.5s)
+  ok 15 [edge] › tests\e2e\platform\admin-publish.spec.ts:142:3 › Milestone A4: Project Editor & Publication Management E2E › editor and publish interfaces require zero WebGL, canvas, or 3D models (2.4s)
+  ok 16 [edge] › tests\e2e\platform\admin-publish.spec.ts:159:3 › Milestone A4: Project Editor & Publication Management E2E › public portfolio continues to serve approved snapshot with no private media leakage (1.7s)
+  x  17 [edge] › tests\e2e\platform\completion-authoring-workflow.spec.ts:19:3 › A1 completion authoring and publication workflow › edits all block variants, ordering, picker, save/reopen/cancel, and preserves a failed buffer (5.6s)
+(node:50868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 18 [edge] › tests\e2e\platform\completion-authoring-workflow.spec.ts:94:3 › A1 completion authoring and publication workflow › two open editor sessions reject the stale save and retain its unsaved value (18.3s)
+  ok 19 [edge] › tests\e2e\platform\completion-authoring-workflow.spec.ts:115:3 › A1 completion authoring and publication workflow › publishes from a fresh review, reports an unknown cache result honestly, then rolls back with a reason (3.0s)
+  ok 20 [edge] › tests\e2e\platform\completion-authoring-workflow.spec.ts:144:3 › A1 completion authoring and publication workflow › keeps private APIs isolated for anonymous callers and never publishes the CandidateX sentinel (2.0s)
+
+
+  1) [edge] › tests\e2e\platform\completion-authoring-workflow.spec.ts:19:3 › A1 completion authoring and publication workflow › edits all block variants, ordering, picker, save/reopen/cancel, and preserves a failed buffer 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('const marker = "✓";')
+    Expected: visible
+    Error: strict mode violation: getByText('const marker = "✓";') resolved to 2 elements:
+        1) <code class="language-typescript">const marker = "✓";↵console.log(marker);</code> aka getByRole('region', { name: 'R4 authoring workflow chrome' }).getByRole('code')
+        2) <code class="language-typescript">const marker = "✓";↵console.log(marker);</code> aka getByRole('region', { name: 'R4 authoring workflow edge' }).getByRole('code')
+
+    Call log:
+      - Expect "toBeVisible" getByText('const marker = "✓";') with timeout 5000ms
+      - waiting for getByText('const marker = "✓";')
+
+
+      79 |     await page.goto("/admin/preview/candidatex");
+      80 |     await expect(page.getByText(sentinel, { exact: false })).toBeVisible();
+    > 81 |     await expect(page.getByText("const marker = \"✓\";", { exact: false })).toBeVisible();
+         |                                                                             ^
+      82 |     await expect(page.getByText("second", { exact: true })).toBeVisible();
+      83 |     await capture(page, `r4-private-preview-${testInfo.project.name}`);
+      84 |
+        at C:\Users\yoray\Projects\Yor World\deliveries\FINISH-A1\r4\verification\app\tests\e2e\platform\completion-authoring-workflow.spec.ts:81:77
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\platform-completion-author-59a42-d-preserves-a-failed-buffer-edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\platform-completion-author-59a42-d-preserves-a-failed-buffer-edge\error-context.md
+
+  1 failed
+    [edge] › tests\e2e\platform\completion-authoring-workflow.spec.ts:19:3 › A1 completion authoring and publication workflow › edits all block variants, ordering, picker, save/reopen/cancel, and preserves a failed buffer 
+  19 passed (1.6m)

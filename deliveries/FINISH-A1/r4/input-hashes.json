@@ -1,0 +1,385 @@
+{
+  "worker": "local Codex implementation worker; no external Gemini execution claimed",
+  "sourceBase": {
+    "commit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+    "appTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+    "candidateAppTree": "ae4f54e366774969dfd202806451e7e4ec66d10b"
+  },
+  "acceptedDesign": {
+    "rulingId": "FINISH-00-R2",
+    "ruling": "ACCEPTED DESIGN",
+    "decisionPath": "docs/planning/reviews/2026-10-10-finish-00-r2/decision.json",
+    "contractRoot": "docs/planning/reconciliation-packets/finish-contracts-r2",
+    "outputManifestPath": "docs/planning/reconciliation-packets/finish-contracts-r2/output-hashes.json",
+    "outputManifestSha256": "8038db147824b0a31de1028c330383352177020b2247dd627d1674d6dc14c6af",
+    "expectedOutputManifestSha256": "8038db147824b0a31de1028c330383352177020b2247dd627d1674d6dc14c6af",
+    "inputManifestPath": "docs/planning/reconciliation-packets/finish-contracts-r2/input-hashes.json",
+    "inputManifestSha256": "516295623cb233c88d358729db0ef7ee4867bf070b61c0d37e33ed59d4883a76",
+    "implementationAcceptance": false
+  },
+  "pinnedAppInputs": {
+    "app/package.json": {
+      "bytes": 1359,
+      "rawSha256": "0867a027648bb13d677c61670e5dd1c13383e17b9fa03e02114fab750c6c71fb",
+      "baseGitBlob": "3db29078772c5a7abbaff582563014693de30ad1"
+    },
+    "app/pnpm-lock.yaml": {
+      "bytes": 153898,
+      "rawSha256": "8034f04afa8cbdb28fa028ed574117177dfa8a4903c95775ea41405bcabea791",
+      "baseGitBlob": "ad03f89e09b6346a68ccde3708b0318cae9d75b8"
+    }
+  },
+  "occupiedR3Intake": {
+    "markerPath": "deliveries/FINISH-A1/r3/.gitignore",
+    "markerSha256": "0d293c2bd62f5a3af1120f7c0ee828655ba5e1417e48ed56eac000f8b6c0f5bc",
+    "expectedMarkerSha256": "0d293c2bd62f5a3af1120f7c0ee828655ba5e1417e48ed56eac000f8b6c0f5bc",
+    "misboundManifestPath": "deliveries/FINISH-A1/r3/candidate/public/asset-manifest.json",
+    "misboundManifestSha256": "e387205a5f4faaaf65de27128c152dbbbc9320869f512e37b65f3070b8cd37d0",
+    "expectedMisboundManifestSha256": "e387205a5f4faaaf65de27128c152dbbbc9320869f512e37b65f3070b8cd37d0",
+    "allocationSnapshotPath": "deliveries/FINISH-A1/r4/evidence/r3-before.json",
+    "currentComparisonPath": "deliveries/FINISH-A1/r4/evidence/r3-preservation.json",
+    "currentExactSnapshotMatch": false,
+    "currentObservedMismatchCount": 17,
+    "latestFullInventoryEvidence": {
+      "path": "evidence/r3-after.json",
+      "capturedAtUtc": "2026-10-11T00:49:05.551Z",
+      "sha256": "318f7f0bd9de1d68ed5eb5209de8096416cdd4e0f8ff505d2efc3b892dfa4513",
+      "entryCount": 30212,
+      "fileCount": 25402,
+      "totalFileBytes": 552454229,
+      "comparisonPath": "evidence/r3-discrepancy.json",
+      "comparisonSha256": "659571b2c46133a19d78c89c914558ae7f4a56ea884d0610b02fb70b797eedef",
+      "addedEntryCount": 29854,
+      "removedEntryCount": 0,
+      "changedFileCount": 17,
+      "addedRootPaths": [],
+      "addedDirectChildrenUnderCandidate": [
+        {
+          "path": "candidate\\node_modules",
+          "kind": "directory",
+          "newSinceBaseline": true,
+          "createdAtUtc": "2026-10-10T23:56:52.711Z",
+          "modifiedAtUtc": "2026-10-10T23:57:34.596Z",
+          "fileCountIncludingDescendants": 25131,
+          "totalFileBytesIncludingDescendants": 543621411
+        }
+      ]
+    },
+    "exactPreservationSinceBaseline": false,
+    "attribution": "No causal attribution inferred; R3 remained read-only during this R4 work."
+  },
+  "inputs": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 3255,
+      "sha256": "06738f97b03662ccac542fc29f25b77e476d167600f78411f34eb4ff14f4a0c4",
+      "purpose": "worker scope and Git governance"
+    },
+    {
+      "path": "START_HERE.md",
+      "bytes": 8338,
+      "sha256": "00f9938b7ee08f6d61ccf8225a54192a34c9f5b17b456c60df5767d61da89fe8",
+      "purpose": "current handoff and allocation"
+    },
+    {
+      "path": "docs/planning/reconciliation-packets/2026-10-11-finish-07-a1-r4.md",
+      "bytes": 3438,
+      "sha256": "c26810045fb994f241bfcf1f5306f87bb8bab3beeb350e5831526a92a273d7ce",
+      "purpose": "Parent A1-R4 allocation and immutable base"
+    },
+    {
+      "path": "docs/planning/production-prompts/repairs-2026-10-11/07-GEMINI1-A1-R4.md",
+      "bytes": 3067,
+      "sha256": "2fe2f257309118749950be3d2e808ef87e0316ce3bf6bab945966734e8fbc53f",
+      "purpose": "exact R4 packet"
+    },
+    {
+      "path": "docs/planning/production-prompts/repairs-2026-10-11/01-GEMINI1-PLATFORM.md",
+      "bytes": 15634,
+      "sha256": "4671b944588441f4056e50a649cee46158188711b9587095f99a8418dd94e4fb",
+      "purpose": "full A1 platform requirements"
+    },
+    {
+      "path": "docs/planning/production-prompts/corrections-2026-10-10/01-GEMINI1-A1-R3.md",
+      "bytes": 4910,
+      "sha256": "7641a90ddc2c515b9c5db8ae93fd8abb1c39ecf2205a252acb782805d3f9eccf",
+      "purpose": "existing A1 correction contract"
+    },
+    {
+      "path": "docs/planning/reconciliation-packets/finish-contracts-r2/02-platform-schema-recovery.md",
+      "bytes": 65816,
+      "sha256": "4e683e38d5f02a38d23de1280c9ae74b37dff056c1d0a4ed4c05c3da8eeaf6ee",
+      "purpose": "accepted schemas and A1 allowlist"
+    },
+    {
+      "path": "docs/planning/reconciliation-packets/finish-contracts-r2/04-path-ownership.md",
+      "bytes": 13866,
+      "sha256": "116a9f7f4b24fc7fa40de44a02c05c22e62bd342ec0457577c596cc6ac8f496b",
+      "purpose": "exact path ownership"
+    },
+    {
+      "path": "docs/planning/reconciliation-packets/finish-contracts-r2/input-hashes.json",
+      "bytes": 58529,
+      "sha256": "516295623cb233c88d358729db0ef7ee4867bf070b61c0d37e33ed59d4883a76",
+      "purpose": "accepted contract input identity"
+    },
+    {
+      "path": "docs/planning/reconciliation-packets/finish-contracts-r2/output-hashes.json",
+      "bytes": 13402,
+      "sha256": "8038db147824b0a31de1028c330383352177020b2247dd627d1674d6dc14c6af",
+      "purpose": "accepted contract output manifest"
+    },
+    {
+      "path": "docs/planning/reconciliation-packets/2026-10-10-finish-04.md",
+      "bytes": 4915,
+      "sha256": "6a2b37e049861c6075c2c738dfa8113ae63f7c4197fac5cf7532c2f092e2e9d3",
+      "purpose": "prior correction assignment"
+    },
+    {
+      "path": "docs/planning/reconciliation-packets/2026-10-11-finish-05.md",
+      "bytes": 5239,
+      "sha256": "36d62ab8962a08e32274c9db1f6adb8b0399e96549be3e48f5a62844008ce495",
+      "purpose": "refreshed repair prompts"
+    },
+    {
+      "path": "docs/planning/reviews/2026-10-10-finish-00-r2.md",
+      "bytes": 2931,
+      "sha256": "1db61625745b3bc0f05502ca94c5b406eaee9b1448a6a53b14300a7181e49dbc",
+      "purpose": "accepted design ruling"
+    },
+    {
+      "path": "docs/planning/reviews/2026-10-10-finish-00-r2/decision.json",
+      "bytes": 3122,
+      "sha256": "91365b50ee30f7e22ba74862d34d6dd1c87e7d4868d018d11b2efa720aa3efdb",
+      "purpose": "machine-readable accepted design ruling"
+    },
+    {
+      "path": "docs/planning/reviews/2026-10-10-finish-04/readiness.md",
+      "bytes": 5300,
+      "sha256": "91d3328bdd724df4e98c38c86f33dd9d324afaa079d6475f56de285aab9fdd4f",
+      "purpose": "Parent readiness evidence"
+    },
+    {
+      "path": "docs/planning/reviews/2026-10-10-finish-04/input-hashes.json",
+      "bytes": 29021,
+      "sha256": "7ae716ebe2f8f2cf1d4165956a94f1b17462f7ede3da124c116ac97cdc2f091a",
+      "purpose": "FINISH-04 input identity"
+    },
+    {
+      "path": "docs/planning/reviews/2026-10-10-finish-04/output-hashes.json",
+      "bytes": 1739,
+      "sha256": "e23cff73303f9107e8bf71ff4c372b7d67812dd411addb9a8a9238d52102a199",
+      "purpose": "FINISH-04 output identity"
+    },
+    {
+      "path": "docs/planning/reviews/2026-10-10-finish-04/validation.json",
+      "bytes": 398,
+      "sha256": "2f7873cf06abdccbea4cfe8e2d4dc6395e43c67caa09d9a7cf9d03f629c9bf5e",
+      "purpose": "FINISH-04 validation"
+    },
+    {
+      "path": "docs/planning/reviews/2026-10-10-finish-04/candidate-identity-checks.json",
+      "bytes": 2140,
+      "sha256": "5a369f0f0a85f4fe69d530166b86e94fda6e93cd7f49db7e862e72470542a26d",
+      "purpose": "FINISH-04 candidate identity"
+    },
+    {
+      "path": "docs/planning/reviews/2026-10-11-finish-04-reaudit.md",
+      "bytes": 10136,
+      "sha256": "b586508058be00b0e6a33d8190a45b8c2d9ead02f81333dfec903c558d16ab78",
+      "purpose": "October 11 re-audit summary"
+    },
+    {
+      "path": "deliveries/completion-audits/FINISH-A1/finish-04/20261010T211756Z-reaudit/report.md",
+      "bytes": 13476,
+      "sha256": "3ae5705ae107295f3f3a3b3f7bebba247aba059dd9dbf2784c70fab895d20477",
+      "purpose": "A3-01 through A3-05 findings"
+    },
+    {
+      "path": "deliveries/completion-audits/FINISH-A1/finish-04/20261010T211756Z-reaudit/findings.json",
+      "bytes": 2788,
+      "sha256": "aeecdd16858070c4b32f054d42889dc6f0b291f42ccafbb55ddbf74681e645cd",
+      "purpose": "machine-readable audit findings"
+    },
+    {
+      "path": "deliveries/completion-audits/FINISH-A1/finish-04/20261010T211756Z-reaudit/requirement-matrix.json",
+      "bytes": 4010,
+      "sha256": "8c23edea4d0853eca963af06e80b78826d48a5af09980145328f6c8ed010d27b",
+      "purpose": "prior requirement matrix"
+    },
+    {
+      "path": "deliveries/completion-audits/FINISH-A1/finish-04/20261010T211756Z-reaudit/unique-test-summary.json",
+      "bytes": 4422,
+      "sha256": "20e548bbd41dfa7960267d3f0467e7bf5af73ecc6e502e7ab41c98f128813b21",
+      "purpose": "prior diagnostics scope"
+    },
+    {
+      "path": "deliveries/completion-audits/FINISH-A1/finish-04/20261010T211756Z-reaudit/identity-verification.json",
+      "bytes": 30444,
+      "sha256": "94da246a775e84c572474736ea08229bea585684f65cc9e76b546f334ac476b6",
+      "purpose": "prior output identity checks"
+    },
+    {
+      "path": "deliveries/completion-audits/FINISH-A1/finish-04/20261010T211756Z-reaudit/input-hashes.json",
+      "bytes": 13945,
+      "sha256": "6b17edbd2489383b851dd479e01a78852edbf2bba705934e067fdfa7b2012d85",
+      "purpose": "prior audit input bindings"
+    },
+    {
+      "path": "deliveries/FINISH-A1/r2/input-hashes.json",
+      "bytes": 8902,
+      "sha256": "d40e8812b54712a3e4b6d31df70f3d5836744263125a6167fb920f8d4dd6bdeb",
+      "purpose": "immutable A1-R2 input record"
+    },
+    {
+      "path": "deliveries/FINISH-A1/r2/output-hashes.json",
+      "bytes": 3326,
+      "sha256": "450017abb6ebaddf1e8d06f6e962753617bad1db69101328e9bc27f81b2d2d84",
+      "purpose": "immutable A1-R2 output record"
+    },
+    {
+      "path": "deliveries/FINISH-A1/r2/receipts.json",
+      "bytes": 1048,
+      "sha256": "b033ef3a05cfd35b7269b53475e93b37b34cd29ea509da233b9167c66c37d76a",
+      "purpose": "prior A1-R2 receipts"
+    },
+    {
+      "path": "deliveries/FINISH-A1/r2/report.md",
+      "bytes": 8028,
+      "sha256": "f6de3c6bb937cd71fb5293c9df2a56d8bd992a9b61b201efc9120eeb54d23292",
+      "purpose": "prior A1-R2 reference report"
+    },
+    {
+      "path": "deliveries/FINISH-A1/r2/source.patch",
+      "bytes": 218330,
+      "sha256": "16064ffb7ba1b13386dcf36594ac19c3cf0eabec27f78ee11a5b7335fea926ca",
+      "purpose": "prior A1-R2 patch; not used as base"
+    },
+    {
+      "path": "deliveries/FINISH-A1/r3/.gitignore",
+      "bytes": 34,
+      "sha256": "0d293c2bd62f5a3af1120f7c0ee828655ba5e1417e48ed56eac000f8b6c0f5bc",
+      "purpose": "occupied R3 marker"
+    },
+    {
+      "path": "deliveries/FINISH-A1/r3/candidate/public/asset-manifest.json",
+      "bytes": 5044,
+      "sha256": "e387205a5f4faaaf65de27128c152dbbbc9320869f512e37b65f3070b8cd37d0",
+      "purpose": "misbound R3 manifest; not used as base"
+    },
+    {
+      "path": "deliveries/FINISH-A1/r4/evidence/r3-before.json",
+      "bytes": 66155,
+      "sha256": "97299b0c48a155a09499b12f24963c66280c6e57f7236ff3fb907d5ab307aa7a",
+      "purpose": "allocation-time R3 snapshot"
+    },
+    {
+      "path": "deliveries/FINISH-A1/r4/evidence/r3-after.json",
+      "bytes": 8826338,
+      "sha256": "318f7f0bd9de1d68ed5eb5209de8096416cdd4e0f8ff505d2efc3b892dfa4513",
+      "purpose": "later full R3 inventory snapshot"
+    },
+    {
+      "path": "deliveries/FINISH-A1/r4/evidence/r3-discrepancy.json",
+      "bytes": 17757,
+      "sha256": "659571b2c46133a19d78c89c914558ae7f4a56ea884d0610b02fb70b797eedef",
+      "purpose": "R3 inventory delta evidence"
+    },
+    {
+      "path": "deliveries/FINISH-A1/r4/evidence/r3-integrity.json",
+      "bytes": 757,
+      "sha256": "bb736b6b858aa7d960e6f1d46fd0b4f94e86e1715a07f630c83f35602236b0cf",
+      "purpose": "R3 inventory comparison integrity record"
+    },
+    {
+      "path": "deliveries/FINISH-A1/r4/evidence/r2-reference-copy.json",
+      "bytes": 4293,
+      "sha256": "bcfd9d1e6164927db5deebd0496e861a28058a0e50b04f34e23455dd56514e4d",
+      "purpose": "R2 diagnostic reference record"
+    },
+    {
+      "path": "deliveries/FINISH-A1/r4/evidence/out-of-root-artifact-lineage.json",
+      "bytes": 1239,
+      "sha256": "f299a93948fb99b0c57dbf5b902607f776ae7d646a51c0ac1cdece4ad296feeb",
+      "purpose": "artifact lineage diagnostic"
+    },
+    {
+      "path": "deliveries/FINISH-A1/r4/evidence/a3-initial-diagnostics.log",
+      "bytes": 2435,
+      "sha256": "e010f69d44cbff6d67a620129e64a0dbc90b36c7d70049fd8d24d6a21e225909",
+      "purpose": "preserved initial A3 diagnostics"
+    },
+    {
+      "path": "deliveries/FINISH-A1/r4/evidence/a3-initial-observations.json",
+      "bytes": 207941,
+      "sha256": "a9f6653ab1ac7ca119a82889703f1395a353dca3f9c59c6d1ec76fb2459e75c0",
+      "purpose": "preserved initial A3 observations"
+    },
+    {
+      "path": "app/package.json",
+      "bytes": 1359,
+      "sha256": "0867a027648bb13d677c61670e5dd1c13383e17b9fa03e02114fab750c6c71fb",
+      "purpose": "pinned app package input"
+    },
+    {
+      "path": "app/pnpm-lock.yaml",
+      "bytes": 158580,
+      "sha256": "f1637cfe2800e9065fdbc4d2975e8180865ff52775c8213473e2d888c2a8a38d",
+      "purpose": "pinned lock input"
+    },
+    {
+      "path": "app/src/contracts/content.ts",
+      "bytes": 2217,
+      "sha256": "5e341e5a875743439b057df7ebc6c8a7d31b921af8dd7f2576af7765974ce34f",
+      "purpose": "frozen historical content contract"
+    },
+    {
+      "path": "app/src/server/media/validate-upload.ts",
+      "bytes": 11708,
+      "sha256": "027a53d10abe5f64422278d33926520f6ec92adc2755825c028a506767cb1eb0",
+      "purpose": "unchanged upload-validation contract"
+    },
+    {
+      "path": "app/supabase/migrations/20261001000000_a3_owner_auth_rls.sql",
+      "bytes": 15404,
+      "sha256": "5a55e9baa1f19b8134d3985e54aecba9415a528c3f1d942be692148abee9c21a",
+      "purpose": "embedded SQL fixture input"
+    },
+    {
+      "path": "app/supabase/migrations/20261001000001_a4_publication_media.sql",
+      "bytes": 2619,
+      "sha256": "1cc1bbb0d20eb741c2dc435e795575f7b36dbfb68f477a301ee97ebd616d0afa",
+      "purpose": "embedded SQL fixture input"
+    },
+    {
+      "path": "app/supabase/migrations/20261005000000_github_refresh_state.sql",
+      "bytes": 966,
+      "sha256": "d6b40d641bfba0fb8050114e7c88e1ffd8a4806c396acb4521386f01f87f0062",
+      "purpose": "embedded SQL fixture input"
+    },
+    {
+      "path": "app/supabase/operations/harden-publication-grants.sql",
+      "bytes": 1581,
+      "sha256": "e25af1f1bb20199fced22fc7b19983b09ee245fcb6412b6ee13fd7862ce897eb",
+      "purpose": "embedded SQL fixture input"
+    },
+    {
+      "path": "app/vitest.config.ts",
+      "bytes": 369,
+      "sha256": "a2555082edeb6ecd0e4c4322454ccb26ac96518f9d7b8fff759899e536213912",
+      "purpose": "unit test configuration"
+    },
+    {
+      "path": "app/vitest.integration.config.ts",
+      "bytes": 464,
+      "sha256": "bdd757adaa6fa3215ba77ab03159736db1978d8a849dbef2319d1b0206407830",
+      "purpose": "integration test configuration"
+    },
+    {
+      "path": "app/playwright.config.ts",
+      "bytes": 1332,
+      "sha256": "fa38ae152c8f164cfb51a668172df4a6206431e8e42420fd3ed4083ca6468b24",
+      "purpose": "browser test configuration"
+    }
+  ]
+}

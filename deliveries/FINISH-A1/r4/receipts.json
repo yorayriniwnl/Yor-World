@@ -1,0 +1,99 @@
+{
+  "worker": "local Codex implementation worker",
+  "source": {
+    "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+    "baseAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+    "candidateAppTree": "ae4f54e366774969dfd202806451e7e4ec66d10b",
+    "patchSha256": "7b2dd8ba10801dfca095191ce4b8c81a05d11a95eac4b016dd32fb433c619604"
+  },
+  "commands": [
+    {
+      "command": "pnpm run test:unit",
+      "status": "PASS",
+      "exit": 0,
+      "result": "24 files; 314 tests passed",
+      "log": "evidence/full-unit-20261011-final.log"
+    },
+    {
+      "command": "pnpm run test:integration",
+      "status": "PASS",
+      "exit": 0,
+      "result": "28 files; 313 tests passed",
+      "log": "evidence/full-integration-20261011-final.log",
+      "scope": "PGlite embedded SQL, synthetic Auth, mocked Storage"
+    },
+    {
+      "command": "pnpm exec playwright test tests/e2e/platform/admin-publish.spec.ts tests/e2e/platform/completion-authoring-workflow.spec.ts --project=chromium --workers=1 --reporter=list",
+      "status": "PASS",
+      "exit": 0,
+      "result": "10 Chromium tests passed",
+      "log": "evidence/browser-20261011-final.log",
+      "results": "evidence/browser-results.json",
+      "environment": {
+        "YOR_E2E_FIXTURE": "1",
+        "YOR_TEST_DATABASE_PATH": "verification/app/.a1-r4-final-db-20261011",
+        "G1_EVIDENCE_DIR": "evidence/",
+        "A4_EVIDENCE_DIR": "evidence/",
+        "CI": "1",
+        "PORT": "3133",
+        "NEXT_TELEMETRY_DISABLED": "1"
+      },
+      "scope": "Production Next server with local synthetic owner fixture; no native Auth/Storage"
+    },
+    {
+      "command": "pnpm run lint",
+      "status": "PASS",
+      "exit": 0,
+      "log": "evidence/lint-20261011-final.log"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "status": "PASS",
+      "exit": 0,
+      "log": "evidence/typecheck-20261011-final.log"
+    },
+    {
+      "command": "pnpm run build",
+      "status": "PASS",
+      "exit": 0,
+      "buildId": "eeCzuyP7FOlBNrLOKZ8Pu",
+      "log": "evidence/build-20261011-final.log"
+    },
+    {
+      "command": "git apply --check --whitespace=error-all source.patch; git apply --whitespace=error-all source.patch",
+      "status": "PASS",
+      "checkExit": 0,
+      "applyExit": 0,
+      "result": "25/25 replacements byte-identical to patch-applied files; patched app tree equals candidate tree",
+      "log": "evidence/patch-application.log",
+      "receipt": "patch-verification-final.json"
+    },
+    {
+      "command": "git diff --cached --check",
+      "status": "PASS",
+      "result": "No whitespace errors; Git emitted only core.autocrlf line-ending normalization warnings",
+      "log": "patch-verification-final.json"
+    },
+    {
+      "command": "Concurrent full-unit run during browser/integration load",
+      "status": "SUPERSEDED FAIL",
+      "exit": 1,
+      "result": "Two boundary tests hit 5-second timeouts under simultaneous jobs; isolated final full unit run passed 314 tests",
+      "log": "evidence/full-unit-20261011.log"
+    }
+  ],
+  "notRun": [
+    {
+      "requirement": "Browser selection/edit of a genuine provider-approved media object",
+      "reason": "No genuine approved asset/provider was available. Browser exercised the empty picker; backend media list/save/proxy/byte checks used explicitly synthetic valid PNG bytes and mocked Storage."
+    },
+    {
+      "requirement": "Native Supabase PostgreSQL/Auth/Storage, live deployment/CDN, PDF approval, physical-device, backup/recovery and G7 proof",
+      "reason": "Outside this local correction execution; no credentials or external services were accessed."
+    },
+    {
+      "requirement": "Independent complete-scope/delta audit and Parent acceptance",
+      "reason": "Required separate governance steps; maker does not self-accept."
+    }
+  ]
+}

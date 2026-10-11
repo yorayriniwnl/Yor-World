@@ -1,0 +1,72 @@
+{
+  "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+  "baseAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+  "candidateAppTree": "ae4f54e366774969dfd202806451e7e4ec66d10b",
+  "appWorktreeMatchesIndex": true,
+  "build": {
+    "command": "pnpm run build",
+    "logPath": "evidence/build-20261011-final.log",
+    "buildId": "eeCzuyP7FOlBNrLOKZ8Pu",
+    "buildIdSha256": "349e10307ef220e75762b407b87bd97172a93692cd9ef9e7eb1261c5ef1cd819",
+    "logSha256": "30b38dfab2c6c6b94d8ee46bcee0a7e28c51b5d859bab25633fd051f2c5ffc54"
+  },
+  "unit": {
+    "command": "pnpm run test:unit",
+    "logPath": "evidence/full-unit-20261011-final.log",
+    "logSha256": "29003d1da65048cebccd364937b50edd3515f770963d08df1abb11b85324163a",
+    "result": "24 files; 314 tests passed"
+  },
+  "integration": {
+    "command": "pnpm run test:integration",
+    "logPath": "evidence/full-integration-20261011-final.log",
+    "logSha256": "d91456247c59791d1b74f9c4e8d9ad3a5fea9b186a8af42d4f5fb2bb5517eb27",
+    "result": "28 files; 313 tests passed"
+  },
+  "browser": {
+    "command": "pnpm exec playwright test tests/e2e/platform/admin-publish.spec.ts tests/e2e/platform/completion-authoring-workflow.spec.ts --project=chromium --workers=1 --reporter=list",
+    "logPath": "evidence/browser-20261011-final.log",
+    "logSha256": "3c3e6f3116cf355b748f53a46150ca5e1208e6cce78fda7dd8bfe8b6ac046597",
+    "resultsPath": null,
+    "resultsSha256": null,
+    "screenshots": [
+      {
+        "path": "evidence/screenshots/a4-project-editor.png",
+        "bytes": 355131,
+        "sha256": "faf54ab9f3966058f0641d021b69c36f03756a58f7edcf37c9fac979958ee68c"
+      },
+      {
+        "path": "evidence/screenshots/a4-publish-review.png",
+        "bytes": 173558,
+        "sha256": "5e4fed56ad452267bfe6b2c29b4ce767264d53ca031c52f6046dc34cd56f38a5"
+      },
+      {
+        "path": "evidence/screenshots/r4-private-preview-chromium.png",
+        "bytes": 282890,
+        "sha256": "1abbed9a382438cd2a330f039c7475fafebf99a3d3e1043ebab07a473c1191d2"
+      },
+      {
+        "path": "evidence/screenshots/r4-publication-rollback-chromium.png",
+        "bytes": 125785,
+        "sha256": "1cef2945956105a7ad07154020d9e3a4c012fa584f25356d9b42f0c7eb938a6f"
+      },
+      {
+        "path": "evidence/screenshots/r4-stale-buffer-chromium.png",
+        "bytes": 188988,
+        "sha256": "f59a0528a6d4e4ec0add027c770115f4d15c3e0b74a3275a36b81de20f470730"
+      }
+    ]
+  },
+  "lint": {
+    "logPath": "evidence/lint-20261011-final.log",
+    "logSha256": "266ed08d53fdd2a0f42d0d90f05c5cd040b468c9e077528c044ce9054df58054"
+  },
+  "typecheck": {
+    "logPath": "evidence/typecheck-20261011-final.log",
+    "logSha256": "55eb21560c302794ebaeb351822908eeca8de405c0a44d2267d2e1dbdec80607"
+  },
+  "limitations": [
+    "Browser verifies the empty approved-media picker state; selecting genuine provider-approved media in a browser was not run.",
+    "Integration uses embedded PGlite, synthetic Auth and mocked Storage; no native-provider or multi-process race claim.",
+    "No live deployment/CDN, PDF approval, physical-device, recovery or G7 proof."
+  ]
+}
