@@ -1,0 +1,87 @@
+{
+    "format":  "YOR-WORLD-A1-R5-COMMAND-RECEIPTS-v1",
+    "worktree":  "C:\\Users\\yoray\\.codex\\worktrees\\a1-r5-impl-20261011\\Yor World",
+    "applicationDirectory":  "app/",
+    "receipts":  [
+                     {
+                         "name":  "focused-unit",
+                         "command":  "pnpm exec vitest run --config vitest.config.ts tests/unit/platform/completion-authoring-blocks.test.ts",
+                         "exitCode":  0,
+                         "result":  "1 file, 18 tests passed",
+                         "log":  "evidence/normalized-final-20261011/focused-unit.log",
+                         "exit":  "evidence/normalized-final-20261011/focused-unit.exit"
+                     },
+                     {
+                         "name":  "focused-integration",
+                         "command":  "pnpm exec vitest run --config vitest.integration.config.ts tests/integration/platform/canonical-platform.test.ts tests/integration/platform/completion-authoring-preview.test.ts tests/integration/platform/publication.test.ts",
+                         "exitCode":  0,
+                         "result":  "3 files, 34 tests passed",
+                         "log":  "evidence/normalized-final-20261011/focused-integration.log",
+                         "exit":  "evidence/normalized-final-20261011/focused-integration.exit"
+                     },
+                     {
+                         "name":  "unit-suite",
+                         "command":  "pnpm test:unit",
+                         "exitCode":  0,
+                         "result":  "24 files, 330 tests passed",
+                         "log":  "evidence/normalized-final-20261011/unit.log",
+                         "exit":  "evidence/normalized-final-20261011/unit.exit"
+                     },
+                     {
+                         "name":  "integration-suite",
+                         "command":  "pnpm test:integration",
+                         "exitCode":  0,
+                         "result":  "28 files, 294 tests passed",
+                         "log":  "evidence/normalized-final-20261011/integration.log",
+                         "exit":  "evidence/normalized-final-20261011/integration.exit"
+                     },
+                     {
+                         "name":  "lint",
+                         "command":  "pnpm lint",
+                         "exitCode":  0,
+                         "result":  "ESLint completed with --max-warnings=0",
+                         "log":  "evidence/normalized-final-20261011/lint.log",
+                         "exit":  "evidence/normalized-final-20261011/lint.exit"
+                     },
+                     {
+                         "name":  "typecheck",
+                         "command":  "pnpm typecheck",
+                         "exitCode":  0,
+                         "result":  "tsc --noEmit passed",
+                         "log":  "evidence/normalized-final-20261011/typecheck.log",
+                         "exit":  "evidence/normalized-final-20261011/typecheck.exit"
+                     },
+                     {
+                         "name":  "production-build",
+                         "command":  "pnpm build",
+                         "exitCode":  0,
+                         "result":  "Next.js 16.3.8 production build passed; build ID SfVbbqj7hUCmwkGvXTUGw; 655 .next files, 110742807 bytes",
+                         "log":  "evidence/normalized-final-20261011/build.log",
+                         "exit":  "evidence/normalized-final-20261011/build.exit",
+                         "manifest":  "evidence/normalized-final-20261011/build-output-manifest.json"
+                     },
+                     {
+                         "name":  "chromium-workflow",
+                         "command":  "pnpm exec playwright test tests/e2e/platform/admin-publish.spec.ts tests/e2e/platform/completion-authoring-workflow.spec.ts --project=chromium",
+                         "exitCode":  0,
+                         "result":  "6 tests passed, 0 skipped, 0 unexpected",
+                         "environment":  {
+                                             "CI":  "1",
+                                             "PORT":  "3133",
+                                             "YOR_E2E_FIXTURE":  "1",
+                                             "YOR_TEST_DATABASE_PATH":  "app/.work/e2e-db-normalized-final-20261011"
+                                         },
+                         "log":  "evidence/browser-r5-05-normalized-final-20261011/playwright.log",
+                         "exit":  "evidence/browser-r5-05-normalized-final-20261011/playwright.exit",
+                         "results":  "evidence/browser-r5-05-normalized-final-20261011/browser-results.json",
+                         "screenshot":  "evidence/browser-r5-05-normalized-final-20261011/screenshots/completion-authoring-private-preview.png"
+                     },
+                     {
+                         "name":  "exact-base-patch-replay",
+                         "command":  "git apply --check source.patch; git apply source.patch; byte-compare all 25 replacements; git diff --check",
+                         "exitCode":  0,
+                         "result":  "Applied from f62a43c5e71c00dcb89e28275ea81d842167db80; 25/25 replacement bytes equal",
+                         "log":  "evidence/exact-base-patch-replay-final.log"
+                     }
+                 ]
+}

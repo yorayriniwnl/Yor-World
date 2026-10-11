@@ -1,0 +1,175 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\yoray\\.codex\\worktrees\\a1-r5-impl-20261011\\Yor World\\app\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "tests/e2e/platform/completion-authoring-workflow.spec.ts",
+      "--project=chromium"
+    ],
+    "configFile": "C:\\Users\\yoray\\.codex\\worktrees\\a1-r5-impl-20261011\\Yor World\\app\\playwright.config.ts",
+    "rootDir": "C:/Users/yoray/.codex/worktrees/a1-r5-impl-20261011/Yor World/app/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/yoray/.codex/worktrees/a1-r5-impl-20261011/Yor World/app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/yoray/.codex/worktrees/a1-r5-impl-20261011/Yor World/app/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "C:\\Users\\yoray\\.codex\\worktrees\\a1-r5-exec-20261011\\Yor World\\deliveries\\FINISH-A1\\r5-05\\evidence\\browser-r5-05\\browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3133",
+      "url": "http://127.0.0.1:3133",
+      "reuseExistingServer": false,
+      "timeout": 60000,
+      "env": {
+        "NEXT_TELEMETRY_DISABLED": "1"
+      },
+      "stdout": "ignore",
+      "stderr": "pipe"
+    }
+  },
+  "suites": [
+    {
+      "title": "platform\\completion-authoring-workflow.spec.ts",
+      "file": "platform/completion-authoring-workflow.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "A1 R5 saved private authoring preview",
+          "file": "platform/completion-authoring-workflow.spec.ts",
+          "line": 8,
+          "column": 6,
+          "specs": [
+            {
+              "title": "selects a synthetic approved PNG, saves and reopens the draft, then previews through the owner route",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 3038,
+                      "error": {
+                        "message": "Error: Draft save returned 422: {\"projectId\":\"ai-vs-real\",\"expectedRevision\":1,\"project\":{\"id\":\"ai-vs-real\",\"slug\":\"ai-vs-real\",\"title\":\"AI vs. Real Image Detector\",\"summary\":\"A probability-aware image classifier built from handcrafted texture features and a calibrated support vector machine.\\nR5 local draft 2026-10-11T07:39:20.970Z\",\"contribution\":\"Sole developer. Designed and implemented the complete computer vision pipeline, including illumination-invariant preprocessing, LBP and GLCM feature extraction, RBF SVM training and probability calibration, model persistence, and the Streamlit demonstration interface.\",\"revision\":1,\"links\":[{\"label\":\"Source Repository\",\"url\":\"https://github.com/yorayriniwnl/Yor-Ai-vs-real-image\",\"checkedAt\":\"2026-10-01T12:00:00Z\"},{\"label\":\"Live Demonstration\",\"url\":\"https://yor-ai-vs-real-image.vercel.app\",\"checkedAt\":\"2026-10-01T12:00:00Z\"}],\"evidence\":[{\"id\":\"ev-air-repo\",\"kind\":\"repository\",\"url\":\"https://github.com/yorayriniwnl/Yor-Ai-vs-real-image\",\"checkedAt\":\"2026-10-01T12:00:00Z\",\"status\":\"verified\",\"note\":\"Public repository with committed Python training pipeline, OpenCV preprocessing, and Streamlit application.\"},{\"id\":\"ev-air-demo\",\"kind\":\"deployment\",\"url\":\"https://yor-ai-vs-real-image.vercel.app\",\"checkedAt\":\"2026-10-01T12:00:00Z\",\"status\":\"verified\",\"note\":\"Live Vercel demonstration running interactive image classification.\"},{\"id\":\"ev-air-accuracy\",\"kind\":\"measurement\",\"url\":null,\"checkedAt\":\"2026-10-01T12:00:00Z\",\"status\":\"verified\",\"note\":\"78.5% held-out test accuracy on deterministic 80/20 train/test evaluation split using LBP and GLCM features with calibrated RBF SVM.\"}],\"sections\":[{\"id\":\"challenge\",\"heading\":\"Forensic Challenge & Motivation\",\"blocks\":[{\"type\":\"paragraph\",\"text\":\"Generative image models frequently produce convincing macro-level compositions while leaving subtle micro-texture irregularities, pixel correlation shifts, and boundary artifacts across spatial domains.\"},{\"type\":\"paragraph\",\"text\":\"Traditional deep learning forensic detectors often overfit to specific generator architectures and require heavy GPU runtimes for inference. This project sought a transparent, lightweight, CPU-runnable classifier that operates directly on interpretable spatial texture statistics rather than opaque neural embeddings.\"},{\"type\":\"paragraph\",\"text\":\"\"}]},{\"id\":\"feature-engineering\",\"heading\":\"Texture Feature Extraction Pipeline\",\"blocks\":[{\"type\":\"paragraph\",\"text\":\"The extraction pipeline combines two complementary structural texture descriptors to capture both fine-grained roughness and broader spatial pixel relationships:\"},{\"type\":\"list\",\"items\":[\"Local Binary Patterns (LBP): Computes circular neighborhood comparisons (P=8, R=1) to capture micro-edge distributions and high-frequency noise typical of generative upscalers.\",\"Gray-Level Co-occurrence Matrix (GLCM): Evaluates second-order joint probability distributions of gray-level transitions across multiple orientations (0°, 45°, 90°, 135°), extracting contrast, dissimilarity, homogeneity, energy, and correlation.\",\"Illumination Invariance: Normalizes input images prior to matrix computation to prevent ambient lighting gradients from confounding textural feature calculation.\"]},{\"type\":\"code\",\"language\":\"python\",\"text\":\"# Illustrative feature extraction pipeline snippet\\nimport cv2\\nfrom skimage.feature import local_binary_pattern, graycomatrix, graycoprops\\n\\ndef extract_texture_vector(image_gray):\\n    lbp = local_binary_pattern(image_gray, P=8, R=1, method='uniform')\\n    lbp_hist, _ = np.histogram(lbp.ravel(), bins=10, range=(0, 10), density=True)\\n    glcm = graycomatrix(image_gray, distances=[1], angles=[0, np.pi/4, np.pi/2, 3*np.pi/4], symmetric=True, normed=True)\\n    contrast = graycoprops(glcm, 'contrast').mean()\\n    homogeneity = graycoprops(glcm, 'homogeneity').mean()\\n    energy = graycoprops(glcm, 'energy').mean()\\n    correlation = graycoprops(glcm, 'correlation').mean()\\n    return np.hstack([lbp_hist, [contrast, homogeneity, energy, correlation]])\"}]},{\"id\":\"model-architecture\",\"heading\":\"Classifier Training and Probability Calibration\",\"blocks\":[{\"type\":\"paragraph\",\"text\":\"Extracted feature vectors are standardized and passed to a Support Vector Machine with a Radial Basis Function (RBF) kernel. To provide meaningful risk scores rather than binary decisions, the classifier applies Platt scaling via probability calibration.\"},{\"type\":\"paragraph\",\"text\":\"Trained scaler and model artifacts are serialized using joblib, enabling instant local CPU inference with zero external API dependencies or network latency.\"}]},{\"id\":\"results-and-limitations\",\"heading\":\"Verified Performance and Forensic Boundaries\",\"blocks\":[{\"type\":\"paragraph\",\"text\":\"On a deterministic 80/20 train/test evaluation split, the calibrated model demonstrated 78.5% held-out test accuracy across test sets.\"},{\"type\":\"image\",\"mediaId\":\"e2e-a546f194dae161fa53cadb9f0a0b83b0\",\"alt\":\"E2E synthetic approved image\",\"caption\":\"Local browser fixture; not provider approved.\"}]}]}} :: {\"error\":\"projectId, expectedRevision, and a complete structured project are required.\"}",
+                        "stack": "Error: Draft save returned 422: {\"projectId\":\"ai-vs-real\",\"expectedRevision\":1,\"project\":{\"id\":\"ai-vs-real\",\"slug\":\"ai-vs-real\",\"title\":\"AI vs. Real Image Detector\",\"summary\":\"A probability-aware image classifier built from handcrafted texture features and a calibrated support vector machine.\\nR5 local draft 2026-10-11T07:39:20.970Z\",\"contribution\":\"Sole developer. Designed and implemented the complete computer vision pipeline, including illumination-invariant preprocessing, LBP and GLCM feature extraction, RBF SVM training and probability calibration, model persistence, and the Streamlit demonstration interface.\",\"revision\":1,\"links\":[{\"label\":\"Source Repository\",\"url\":\"https://github.com/yorayriniwnl/Yor-Ai-vs-real-image\",\"checkedAt\":\"2026-10-01T12:00:00Z\"},{\"label\":\"Live Demonstration\",\"url\":\"https://yor-ai-vs-real-image.vercel.app\",\"checkedAt\":\"2026-10-01T12:00:00Z\"}],\"evidence\":[{\"id\":\"ev-air-repo\",\"kind\":\"repository\",\"url\":\"https://github.com/yorayriniwnl/Yor-Ai-vs-real-image\",\"checkedAt\":\"2026-10-01T12:00:00Z\",\"status\":\"verified\",\"note\":\"Public repository with committed Python training pipeline, OpenCV preprocessing, and Streamlit application.\"},{\"id\":\"ev-air-demo\",\"kind\":\"deployment\",\"url\":\"https://yor-ai-vs-real-image.vercel.app\",\"checkedAt\":\"2026-10-01T12:00:00Z\",\"status\":\"verified\",\"note\":\"Live Vercel demonstration running interactive image classification.\"},{\"id\":\"ev-air-accuracy\",\"kind\":\"measurement\",\"url\":null,\"checkedAt\":\"2026-10-01T12:00:00Z\",\"status\":\"verified\",\"note\":\"78.5% held-out test accuracy on deterministic 80/20 train/test evaluation split using LBP and GLCM features with calibrated RBF SVM.\"}],\"sections\":[{\"id\":\"challenge\",\"heading\":\"Forensic Challenge & Motivation\",\"blocks\":[{\"type\":\"paragraph\",\"text\":\"Generative image models frequently produce convincing macro-level compositions while leaving subtle micro-texture irregularities, pixel correlation shifts, and boundary artifacts across spatial domains.\"},{\"type\":\"paragraph\",\"text\":\"Traditional deep learning forensic detectors often overfit to specific generator architectures and require heavy GPU runtimes for inference. This project sought a transparent, lightweight, CPU-runnable classifier that operates directly on interpretable spatial texture statistics rather than opaque neural embeddings.\"},{\"type\":\"paragraph\",\"text\":\"\"}]},{\"id\":\"feature-engineering\",\"heading\":\"Texture Feature Extraction Pipeline\",\"blocks\":[{\"type\":\"paragraph\",\"text\":\"The extraction pipeline combines two complementary structural texture descriptors to capture both fine-grained roughness and broader spatial pixel relationships:\"},{\"type\":\"list\",\"items\":[\"Local Binary Patterns (LBP): Computes circular neighborhood comparisons (P=8, R=1) to capture micro-edge distributions and high-frequency noise typical of generative upscalers.\",\"Gray-Level Co-occurrence Matrix (GLCM): Evaluates second-order joint probability distributions of gray-level transitions across multiple orientations (0°, 45°, 90°, 135°), extracting contrast, dissimilarity, homogeneity, energy, and correlation.\",\"Illumination Invariance: Normalizes input images prior to matrix computation to prevent ambient lighting gradients from confounding textural feature calculation.\"]},{\"type\":\"code\",\"language\":\"python\",\"text\":\"# Illustrative feature extraction pipeline snippet\\nimport cv2\\nfrom skimage.feature import local_binary_pattern, graycomatrix, graycoprops\\n\\ndef extract_texture_vector(image_gray):\\n    lbp = local_binary_pattern(image_gray, P=8, R=1, method='uniform')\\n    lbp_hist, _ = np.histogram(lbp.ravel(), bins=10, range=(0, 10), density=True)\\n    glcm = graycomatrix(image_gray, distances=[1], angles=[0, np.pi/4, np.pi/2, 3*np.pi/4], symmetric=True, normed=True)\\n    contrast = graycoprops(glcm, 'contrast').mean()\\n    homogeneity = graycoprops(glcm, 'homogeneity').mean()\\n    energy = graycoprops(glcm, 'energy').mean()\\n    correlation = graycoprops(glcm, 'correlation').mean()\\n    return np.hstack([lbp_hist, [contrast, homogeneity, energy, correlation]])\"}]},{\"id\":\"model-architecture\",\"heading\":\"Classifier Training and Probability Calibration\",\"blocks\":[{\"type\":\"paragraph\",\"text\":\"Extracted feature vectors are standardized and passed to a Support Vector Machine with a Radial Basis Function (RBF) kernel. To provide meaningful risk scores rather than binary decisions, the classifier applies Platt scaling via probability calibration.\"},{\"type\":\"paragraph\",\"text\":\"Trained scaler and model artifacts are serialized using joblib, enabling instant local CPU inference with zero external API dependencies or network latency.\"}]},{\"id\":\"results-and-limitations\",\"heading\":\"Verified Performance and Forensic Boundaries\",\"blocks\":[{\"type\":\"paragraph\",\"text\":\"On a deterministic 80/20 train/test evaluation split, the calibrated model demonstrated 78.5% held-out test accuracy across test sets.\"},{\"type\":\"image\",\"mediaId\":\"e2e-a546f194dae161fa53cadb9f0a0b83b0\",\"alt\":\"E2E synthetic approved image\",\"caption\":\"Local browser fixture; not provider approved.\"}]}]}} :: {\"error\":\"projectId, expectedRevision, and a complete structured project are required.\"}\n    at C:\\Users\\yoray\\.codex\\worktrees\\a1-r5-impl-20261011\\Yor World\\app\\tests\\e2e\\platform\\completion-authoring-workflow.spec.ts:42:46",
+                        "location": {
+                          "file": "C:\\Users\\yoray\\.codex\\worktrees\\a1-r5-impl-20261011\\Yor World\\app\\tests\\e2e\\platform\\completion-authoring-workflow.spec.ts",
+                          "column": 46,
+                          "line": 42
+                        },
+                        "snippet": "  40 |     await page.getByRole(\"button\", { name: \"Save draft\" }).click();\n  41 |     const saveResponse = await saveResponsePromise;\n> 42 |     if (saveResponse.status() !== 201) throw new Error(`Draft save returned ${saveResponse.status()}: ${JSON.stringify(saveResponse.request().postDataJSON())} :: ${await saveResponse.text()}`);\n     |                                              ^\n  43 |     await expect(page.getByRole(\"status\")).toContainText(/Draft revision \\d+ saved\\./);\n  44 |\n  45 |     await page.goto(\"/admin/editor\");"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\yoray\\.codex\\worktrees\\a1-r5-impl-20261011\\Yor World\\app\\tests\\e2e\\platform\\completion-authoring-workflow.spec.ts",
+                            "column": 46,
+                            "line": 42
+                          },
+                          "message": "Error: Draft save returned 422: {\"projectId\":\"ai-vs-real\",\"expectedRevision\":1,\"project\":{\"id\":\"ai-vs-real\",\"slug\":\"ai-vs-real\",\"title\":\"AI vs. Real Image Detector\",\"summary\":\"A probability-aware image classifier built from handcrafted texture features and a calibrated support vector machine.\\nR5 local draft 2026-10-11T07:39:20.970Z\",\"contribution\":\"Sole developer. Designed and implemented the complete computer vision pipeline, including illumination-invariant preprocessing, LBP and GLCM feature extraction, RBF SVM training and probability calibration, model persistence, and the Streamlit demonstration interface.\",\"revision\":1,\"links\":[{\"label\":\"Source Repository\",\"url\":\"https://github.com/yorayriniwnl/Yor-Ai-vs-real-image\",\"checkedAt\":\"2026-10-01T12:00:00Z\"},{\"label\":\"Live Demonstration\",\"url\":\"https://yor-ai-vs-real-image.vercel.app\",\"checkedAt\":\"2026-10-01T12:00:00Z\"}],\"evidence\":[{\"id\":\"ev-air-repo\",\"kind\":\"repository\",\"url\":\"https://github.com/yorayriniwnl/Yor-Ai-vs-real-image\",\"checkedAt\":\"2026-10-01T12:00:00Z\",\"status\":\"verified\",\"note\":\"Public repository with committed Python training pipeline, OpenCV preprocessing, and Streamlit application.\"},{\"id\":\"ev-air-demo\",\"kind\":\"deployment\",\"url\":\"https://yor-ai-vs-real-image.vercel.app\",\"checkedAt\":\"2026-10-01T12:00:00Z\",\"status\":\"verified\",\"note\":\"Live Vercel demonstration running interactive image classification.\"},{\"id\":\"ev-air-accuracy\",\"kind\":\"measurement\",\"url\":null,\"checkedAt\":\"2026-10-01T12:00:00Z\",\"status\":\"verified\",\"note\":\"78.5% held-out test accuracy on deterministic 80/20 train/test evaluation split using LBP and GLCM features with calibrated RBF SVM.\"}],\"sections\":[{\"id\":\"challenge\",\"heading\":\"Forensic Challenge & Motivation\",\"blocks\":[{\"type\":\"paragraph\",\"text\":\"Generative image models frequently produce convincing macro-level compositions while leaving subtle micro-texture irregularities, pixel correlation shifts, and boundary artifacts across spatial domains.\"},{\"type\":\"paragraph\",\"text\":\"Traditional deep learning forensic detectors often overfit to specific generator architectures and require heavy GPU runtimes for inference. This project sought a transparent, lightweight, CPU-runnable classifier that operates directly on interpretable spatial texture statistics rather than opaque neural embeddings.\"},{\"type\":\"paragraph\",\"text\":\"\"}]},{\"id\":\"feature-engineering\",\"heading\":\"Texture Feature Extraction Pipeline\",\"blocks\":[{\"type\":\"paragraph\",\"text\":\"The extraction pipeline combines two complementary structural texture descriptors to capture both fine-grained roughness and broader spatial pixel relationships:\"},{\"type\":\"list\",\"items\":[\"Local Binary Patterns (LBP): Computes circular neighborhood comparisons (P=8, R=1) to capture micro-edge distributions and high-frequency noise typical of generative upscalers.\",\"Gray-Level Co-occurrence Matrix (GLCM): Evaluates second-order joint probability distributions of gray-level transitions across multiple orientations (0°, 45°, 90°, 135°), extracting contrast, dissimilarity, homogeneity, energy, and correlation.\",\"Illumination Invariance: Normalizes input images prior to matrix computation to prevent ambient lighting gradients from confounding textural feature calculation.\"]},{\"type\":\"code\",\"language\":\"python\",\"text\":\"# Illustrative feature extraction pipeline snippet\\nimport cv2\\nfrom skimage.feature import local_binary_pattern, graycomatrix, graycoprops\\n\\ndef extract_texture_vector(image_gray):\\n    lbp = local_binary_pattern(image_gray, P=8, R=1, method='uniform')\\n    lbp_hist, _ = np.histogram(lbp.ravel(), bins=10, range=(0, 10), density=True)\\n    glcm = graycomatrix(image_gray, distances=[1], angles=[0, np.pi/4, np.pi/2, 3*np.pi/4], symmetric=True, normed=True)\\n    contrast = graycoprops(glcm, 'contrast').mean()\\n    homogeneity = graycoprops(glcm, 'homogeneity').mean()\\n    energy = graycoprops(glcm, 'energy').mean()\\n    correlation = graycoprops(glcm, 'correlation').mean()\\n    return np.hstack([lbp_hist, [contrast, homogeneity, energy, correlation]])\"}]},{\"id\":\"model-architecture\",\"heading\":\"Classifier Training and Probability Calibration\",\"blocks\":[{\"type\":\"paragraph\",\"text\":\"Extracted feature vectors are standardized and passed to a Support Vector Machine with a Radial Basis Function (RBF) kernel. To provide meaningful risk scores rather than binary decisions, the classifier applies Platt scaling via probability calibration.\"},{\"type\":\"paragraph\",\"text\":\"Trained scaler and model artifacts are serialized using joblib, enabling instant local CPU inference with zero external API dependencies or network latency.\"}]},{\"id\":\"results-and-limitations\",\"heading\":\"Verified Performance and Forensic Boundaries\",\"blocks\":[{\"type\":\"paragraph\",\"text\":\"On a deterministic 80/20 train/test evaluation split, the calibrated model demonstrated 78.5% held-out test accuracy across test sets.\"},{\"type\":\"image\",\"mediaId\":\"e2e-a546f194dae161fa53cadb9f0a0b83b0\",\"alt\":\"E2E synthetic approved image\",\"caption\":\"Local browser fixture; not provider approved.\"}]}]}} :: {\"error\":\"projectId, expectedRevision, and a complete structured project are required.\"}\n\n  40 |     await page.getByRole(\"button\", { name: \"Save draft\" }).click();\n  41 |     const saveResponse = await saveResponsePromise;\n> 42 |     if (saveResponse.status() !== 201) throw new Error(`Draft save returned ${saveResponse.status()}: ${JSON.stringify(saveResponse.request().postDataJSON())} :: ${await saveResponse.text()}`);\n     |                                              ^\n  43 |     await expect(page.getByRole(\"status\")).toContainText(/Draft revision \\d+ saved\\./);\n  44 |\n  45 |     await page.goto(\"/admin/editor\");\n    at C:\\Users\\yoray\\.codex\\worktrees\\a1-r5-impl-20261011\\Yor World\\app\\tests\\e2e\\platform\\completion-authoring-workflow.spec.ts:42:46"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-11T07:39:19.885Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\yoray\\.codex\\worktrees\\a1-r5-impl-20261011\\Yor World\\app\\test-results\\platform-completion-author-8b76e-ews-through-the-owner-route-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\yoray\\.codex\\worktrees\\a1-r5-impl-20261011\\Yor World\\app\\test-results\\platform-completion-author-8b76e-ews-through-the-owner-route-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\yoray\\.codex\\worktrees\\a1-r5-impl-20261011\\Yor World\\app\\tests\\e2e\\platform\\completion-authoring-workflow.spec.ts",
+                        "column": 46,
+                        "line": 42
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "873dd968999caf8e555b-7b1e8049203d1023138f",
+              "file": "platform/completion-authoring-workflow.spec.ts",
+              "line": 13,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-11T07:39:11.796Z",
+    "duration": 12476.619,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

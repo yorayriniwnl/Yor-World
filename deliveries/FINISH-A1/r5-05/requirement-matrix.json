@@ -1,0 +1,481 @@
+{
+    "format":  "YOR-WORLD-A1-R5-REQUIREMENT-MATRIX-v1",
+    "sourceBaseCommit":  "f62a43c5e71c00dcb89e28275ea81d842167db80",
+    "sourceBaseAppTree":  "42ea29ec235225046a75959eb19eb386ac2f821d",
+    "candidateAppTree":  "fe55f6202fe4471a831850cc1d93e24a9724185e",
+    "acceptedDesignOutputManifestSha256":  "8038db147824b0a31de1028c330383352177020b2247dd627d1674d6dc14c6af",
+    "allowlist":  {
+                      "authorizedPathCount":  26,
+                      "changedPathCount":  25,
+                      "unchangedAuthorizedPath":  "app/tests/integration/platform/published-media.test.ts"
+                  },
+    "statusPolicy":  "PASS, FAIL, or NOT RUN only; scope limits are row-specific",
+    "rows":  [
+                 {
+                     "clause":  "FINISH-04/A1-01",
+                     "requirement":  "Candidate identity is bound to the exact accepted source base, source patch, candidate tree, and the frozen A1 path ownership.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/src/server/content/preview.ts",
+                                         "app/src/server/media/manifest.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "changed-paths.txt",
+                                           "source.patch",
+                                           "input-hashes.json",
+                                           "evidence/exact-base-patch-replay-final.log"
+                                       ],
+                     "limits":  "The package has 25 changed paths from the 26-path frozen table. This is a maker candidate, not an accepted overlay; canonical app/ remains unchanged."
+                 },
+                 {
+                     "clause":  "FINISH-04/A1-02",
+                     "requirement":  "Structured authoring supports paragraph, image, list, and code blocks; section/list editing, ordering, keyboard controls, stable focus, and retained failed-save buffers.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/src/features/admin/project-editor.tsx",
+                                         "app/src/features/admin/structured-block-editor.tsx",
+                                         "app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "evidence/browser-r5-05-normalized-final-20261011/playwright.log",
+                                           "evidence/browser-r5-05-normalized-final-20261011/browser-results.json"
+                                       ],
+                     "limits":  "Verified in local Chromium with synthetic test auth and local storage. Physical assistive technology and devices were not tested."
+                 },
+                 {
+                     "clause":  "FINISH-04/A1-03",
+                     "requirement":  "Review identity binds full publishable project documents and preserves project, section, and block order while canonicalizing object keys; publish recomputes the identity.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/src/server/content/preview.ts",
+                                         "app/tests/unit/platform/completion-authoring-blocks.test.ts",
+                                         "app/tests/integration/platform/canonical-platform.test.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "evidence/normalized-final-20261011/unit.log",
+                                           "evidence/normalized-final-20261011/integration.log"
+                                       ],
+                     "limits":  "Hash behavior is tested locally; external independent review remains pending."
+                 },
+                 {
+                     "clause":  "FINISH-04/A1-04",
+                     "requirement":  "Private project draft preview uses the shared renderer, owner-guarded routes, guarded private media, escaped content, and a nonpublishable CandidateX path.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/src/features/admin/draft-preview.tsx",
+                                         "app/src/features/portfolio/case-study.tsx",
+                                         "app/src/app/admin/preview/page.tsx",
+                                         "app/src/app/admin/preview/[slug]/page.tsx",
+                                         "app/src/app/api/admin/preview/route.ts",
+                                         "app/src/app/api/admin/preview/media/[id]/route.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "evidence/normalized-final-20261011/integration.log",
+                                           "evidence/browser-r5-05-normalized-final-20261011/playwright.log",
+                                           "evidence/browser-r5-05-normalized-final-20261011/screenshots/completion-authoring-private-preview.png"
+                                       ],
+                     "limits":  "Local owner fixture and local media storage only; no provider-backed approval or hosted origin verification."
+                 },
+                 {
+                     "clause":  "FINISH-04/A1-05",
+                     "requirement":  "Draft saves validate content and media before writes; stale review/revision conflicts reject without partial durable publication mutations; rollback inputs and visibility are checked.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/src/app/api/admin/projects/route.ts",
+                                         "app/src/server/content/revisions.ts",
+                                         "app/src/server/content/publish.ts",
+                                         "app/src/app/api/admin/publish/route.ts",
+                                         "app/src/app/api/admin/rollback/route.ts",
+                                         "app/tests/integration/platform/publication.test.ts",
+                                         "app/tests/integration/platform/canonical-platform.test.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "evidence/normalized-final-20261011/integration.log",
+                                           "evidence/normalized-final-20261011/focused-integration.log"
+                                       ],
+                     "limits":  "Durable transaction behavior is covered with embedded PGlite. Native PostgreSQL, multiple processes, and hosted concurrency were not run."
+                 },
+                 {
+                     "clause":  "FINISH-04/A1-06",
+                     "requirement":  "Private APIs are no-store and cache/visibility states are truthful; private draft and media sentinels do not leak into public responses.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/src/app/api/admin/preview/route.ts",
+                                         "app/src/app/api/admin/preview/media/[id]/route.ts",
+                                         "app/src/app/api/admin/publish/route.ts",
+                                         "app/src/features/admin/publish-review.tsx",
+                                         "app/tests/integration/platform/completion-authoring-preview.test.ts",
+                                         "app/tests/e2e/platform/admin-publish.spec.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "evidence/normalized-final-20261011/integration.log",
+                                           "evidence/browser-r5-05-normalized-final-20261011/playwright.log"
+                                       ],
+                     "limits":  "Local API/browser responses only. Shared CDN and production cache behavior remain unverified."
+                 },
+                 {
+                     "clause":  "A3-01",
+                     "requirement":  "Candidate base/tree, exact changed-path set, canonical patch, and every replacement are reproducible from the pinned base.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/src/server/content/preview.ts",
+                                         "app/src/server/media/manifest.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "changed-paths.txt",
+                                           "source.patch",
+                                           "input-hashes.json",
+                                           "evidence/exact-base-patch-replay-final.log"
+                                       ],
+                     "limits":  "25 of 26 allowed paths are changed; the authorized published-media.test.ts remains untouched."
+                 },
+                 {
+                     "clause":  "A3-02",
+                     "requirement":  "Review DTO and API/service boundaries validate coherent complete identity, check state, and expected revision before writes.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/src/server/content/preview.ts",
+                                         "app/src/server/content/publish.ts",
+                                         "app/src/app/api/admin/publish/route.ts",
+                                         "app/src/app/api/admin/projects/route.ts",
+                                         "app/tests/integration/platform/completion-authoring-preview.test.ts",
+                                         "app/tests/integration/platform/publication.test.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "evidence/normalized-final-20261011/unit.log",
+                                           "evidence/normalized-final-20261011/integration.log"
+                                       ],
+                     "limits":  "Embedded database and local mocks only; no hosted service or native database."
+                 },
+                 {
+                     "clause":  "A3-03-HASH",
+                     "requirement":  "Review hash covers full project bodies and ordered document arrays while canonicalizing object-key order.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/src/server/content/preview.ts",
+                                         "app/tests/unit/platform/completion-authoring-blocks.test.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "evidence/normalized-final-20261011/focused-unit.log",
+                                           "evidence/normalized-final-20261011/unit.log"
+                                       ],
+                     "limits":  "Deterministic local unit tests; not an independent cryptographic review."
+                 },
+                 {
+                     "clause":  "A3-03-DURABLE",
+                     "requirement":  "Publication revision and draft/project locks are read and checked in an ordered durable transaction; stale review rejects before writes.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/src/server/content/publish.ts",
+                                         "app/tests/integration/platform/canonical-platform.test.ts",
+                                         "app/tests/integration/platform/publication.test.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "evidence/normalized-final-20261011/focused-integration.log",
+                                           "evidence/normalized-final-20261011/integration.log"
+                                       ],
+                     "limits":  "PGlite verifies one local database process. Native PostgreSQL locking and cross-process races remain NOT RUN."
+                 },
+                 {
+                     "clause":  "A3-03-MEDIA",
+                     "requirement":  "Reviewed media identity binds approval metadata and fetched bytes, MIME, dimensions, size, and SHA-256; invalid or changed media is rejected.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/src/server/media/manifest.ts",
+                                         "app/src/app/api/admin/media/route.ts",
+                                         "app/src/app/api/admin/preview/media/[id]/route.ts",
+                                         "app/tests/unit/platform/completion-authoring-blocks.test.ts",
+                                         "app/tests/integration/platform/canonical-platform.test.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "evidence/normalized-final-20261011/focused-unit.log",
+                                           "evidence/normalized-final-20261011/integration.log"
+                                       ],
+                     "limits":  "Storage is mocked/in-memory. Real provider bytes and approval records remain NOT RUN."
+                 },
+                 {
+                     "clause":  "A3-03-STREAM",
+                     "requirement":  "Private media streaming rejects oversized declared length before reading, enforces a 5 MiB cap while streaming, cancels on error/overflow, verifies EOF length, and applies a 10-second deadline.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/src/server/media/manifest.ts",
+                                         "app/tests/unit/platform/completion-authoring-blocks.test.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "evidence/normalized-final-20261011/focused-unit.log",
+                                           "evidence/normalized-final-20261011/unit.log"
+                                       ],
+                     "limits":  "Deterministic stream doubles prove local behavior; provider transport timing is not measured."
+                 },
+                 {
+                     "clause":  "A3-04-API",
+                     "requirement":  "Listing, draft save validation, and the private byte proxy enforce owner authorization and approved-media checks.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/src/app/api/admin/media/route.ts",
+                                         "app/src/app/api/admin/projects/route.ts",
+                                         "app/src/app/api/admin/preview/media/[id]/route.ts",
+                                         "app/tests/integration/platform/completion-authoring-preview.test.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "evidence/normalized-final-20261011/integration.log",
+                                           "evidence/browser-r5-05-normalized-final-20261011/playwright.log"
+                                       ],
+                     "limits":  "Synthetic auth and local fixture only."
+                 },
+                 {
+                     "clause":  "A3-04-BROWSER",
+                     "requirement":  "Chromium uses the actual editor picker with a clearly synthetic approved PNG, saves and reopens the draft, then displays it through the guarded private preview route.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/tests/e2e/platform/completion-authoring-workflow.spec.ts",
+                                         "app/src/features/admin/project-editor.tsx",
+                                         "app/src/features/admin/draft-preview.tsx"
+                                     ],
+                     "evidencePaths":  [
+                                           "evidence/browser-r5-05-normalized-final-20261011/playwright.log",
+                                           "evidence/browser-r5-05-normalized-final-20261011/browser-results.json",
+                                           "evidence/browser-r5-05-normalized-final-20261011/screenshots/completion-authoring-private-preview.png",
+                                           "evidence/normalized-final-20261011/source-build-browser-binding.json"
+                                       ],
+                     "limits":  "The PNG is synthetic, test-only, and explicitly providerApproved=false. This does not prove provider approval."
+                 },
+                 {
+                     "clause":  "A3-05-PRIVACY",
+                     "requirement":  "CandidateX preview remains nonpublishable and draft/media content is absent from anonymous public output.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/src/server/content/preview.ts",
+                                         "app/src/features/admin/draft-preview.tsx",
+                                         "app/src/app/api/admin/preview/route.ts",
+                                         "app/tests/integration/platform/completion-authoring-preview.test.ts",
+                                         "app/tests/e2e/platform/admin-publish.spec.ts",
+                                         "app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "evidence/normalized-final-20261011/integration.log",
+                                           "evidence/browser-r5-05-normalized-final-20261011/playwright.log"
+                                       ],
+                     "limits":  "Local synthetic auth/browser and local app routes only."
+                 },
+                 {
+                     "clause":  "A3-05-ROLLBACK",
+                     "requirement":  "Publish and rollback enforce reason/expected revision and record transaction/audit outcomes with truthful cache-visibility warnings.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/src/server/content/publish.ts",
+                                         "app/src/app/api/admin/rollback/route.ts",
+                                         "app/src/features/admin/publish-review.tsx",
+                                         "app/tests/integration/platform/publication.test.ts",
+                                         "app/tests/integration/platform/canonical-platform.test.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "evidence/normalized-final-20261011/focused-integration.log",
+                                           "evidence/normalized-final-20261011/integration.log"
+                                       ],
+                     "limits":  "Local PGlite/API tests only; no live rollback or CDN invalidation."
+                 },
+                 {
+                     "clause":  "A3-05-HEADERS",
+                     "requirement":  "Private preview and media responses carry no-store and content-sniff protections on exercised success, denial, validation, and missing-resource paths.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/src/app/api/admin/preview/route.ts",
+                                         "app/src/app/api/admin/preview/media/[id]/route.ts",
+                                         "app/tests/integration/platform/completion-authoring-preview.test.ts",
+                                         "app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "evidence/normalized-final-20261011/integration.log",
+                                           "evidence/browser-r5-05-normalized-final-20261011/playwright.log"
+                                       ],
+                     "limits":  "Headers were checked on the exercised local branches; production proxies and CDN headers remain unverified."
+                 },
+                 {
+                     "clause":  "A3-06-LOCAL",
+                     "requirement":  "Final candidate passes full unit/integration suites, focused authoring/publication suites, lint, typecheck, and production build.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/tests/unit/platform/completion-authoring-blocks.test.ts",
+                                         "app/tests/integration/platform/completion-authoring-preview.test.ts",
+                                         "app/tests/integration/platform/canonical-platform.test.ts",
+                                         "app/tests/integration/platform/publication.test.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "evidence/normalized-final-20261011/unit.log",
+                                           "evidence/normalized-final-20261011/integration.log",
+                                           "evidence/normalized-final-20261011/focused-unit.log",
+                                           "evidence/normalized-final-20261011/focused-integration.log",
+                                           "evidence/normalized-final-20261011/lint.log",
+                                           "evidence/normalized-final-20261011/typecheck.log",
+                                           "evidence/normalized-final-20261011/build.log"
+                                       ],
+                     "limits":  "Counts and tool versions are bound to local final-candidate logs; no CI or hosted verification is claimed."
+                 },
+                 {
+                     "clause":  "A3-06-BROWSER",
+                     "requirement":  "Required Chromium workflow runs against the final source-bound production build with machine-readable results and a screenshot.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/tests/e2e/platform/admin-publish.spec.ts",
+                                         "app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "evidence/browser-r5-05-normalized-final-20261011/playwright.log",
+                                           "evidence/browser-r5-05-normalized-final-20261011/browser-results.json",
+                                           "evidence/browser-r5-05-normalized-final-20261011/screenshots/completion-authoring-private-preview.png",
+                                           "evidence/normalized-final-20261011/build-output-manifest.json",
+                                           "evidence/normalized-final-20261011/source-build-browser-binding.json"
+                                       ],
+                     "limits":  "Local Chromium and local server only; no production domain, CDN, physical device, or real user credentials."
+                 },
+                 {
+                     "clause":  "FINISH-12-01",
+                     "requirement":  "Review hash binds every publishable project document and preserves project, section, and block array order while recursively sorting object keys.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/src/server/content/preview.ts",
+                                         "app/tests/unit/platform/completion-authoring-blocks.test.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "evidence/normalized-final-20261011/focused-unit.log",
+                                           "evidence/normalized-final-20261011/unit.log"
+                                       ],
+                     "limits":  "The approved site/asset manifest identity uses the assigned A1 site=null contract; later A2 extensions are outside this return."
+                 },
+                 {
+                     "clause":  "FINISH-12-02",
+                     "requirement":  "Private Storage reads stream within 5 MiB, reject oversized content-length before reading, cancel on overflow/error, verify EOF length, and time out signed URL creation plus stream after 10 seconds without exposing the URL.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/src/server/media/manifest.ts",
+                                         "app/tests/unit/platform/completion-authoring-blocks.test.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "evidence/normalized-final-20261011/focused-unit.log",
+                                           "evidence/normalized-final-20261011/unit.log"
+                                       ],
+                     "limits":  "Mocked signed URL and response streams only; actual provider transport is NOT RUN."
+                 },
+                 {
+                     "clause":  "FINISH-12-03",
+                     "requirement":  "Private review DTO validates full draft records, coherent IDs, unique/sorted revision vectors, timestamps/actors, known scopes/checks, reasons, and canPublish semantics.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/src/server/content/preview.ts",
+                                         "app/tests/integration/platform/completion-authoring-preview.test.ts",
+                                         "app/tests/unit/platform/completion-authoring-blocks.test.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "evidence/normalized-final-20261011/unit.log",
+                                           "evidence/normalized-final-20261011/integration.log"
+                                       ],
+                     "limits":  "Schemas are exercised in local tests; no external reviewer independently re-ran probes yet."
+                 },
+                 {
+                     "clause":  "FINISH-12-04",
+                     "requirement":  "Local Chromium performs real picker selection, save/reopen, and guarded private preview using an explicitly synthetic test-only PNG.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/tests/e2e/platform/completion-authoring-workflow.spec.ts",
+                                         "app/src/features/admin/project-editor.tsx",
+                                         "app/src/app/api/admin/preview/media/[id]/route.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "evidence/browser-r5-05-normalized-final-20261011/playwright.log",
+                                           "evidence/browser-r5-05-normalized-final-20261011/browser-results.json",
+                                           "evidence/browser-r5-05-normalized-final-20261011/screenshots/completion-authoring-private-preview.png",
+                                           "evidence/normalized-final-20261011/source-build-browser-binding.json"
+                                       ],
+                     "limits":  "Fixture response explicitly says providerApproved=false. Real Supabase-approved image remains NOT RUN."
+                 },
+                 {
+                     "clause":  "FINISH-12-05",
+                     "requirement":  "Standalone matrix maps every assigned FINISH-04/A1 clause, A3-01 through A3-05, FINISH-12 correction, and nonlocal gate to status, source paths, evidence, and scope limits.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/src/server/content/preview.ts",
+                                         "app/src/server/media/manifest.ts",
+                                         "app/src/features/admin/project-editor.tsx",
+                                         "app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "requirement-matrix.json",
+                                           "report.md",
+                                           "input-hashes.json",
+                                           "output-hashes.json"
+                                       ],
+                     "limits":  "This is the maker-authored mapping and is not independently accepted."
+                 },
+                 {
+                     "clause":  "FINISH-12-06",
+                     "requirement":  "Final source, exact-base patch replay, tree and replacement hashes, tool versions, local test commands/exits, build output, and browser results/screenshots are bound in the package.",
+                     "status":  "PASS",
+                     "sourcePaths":  [
+                                         "app/src/server/content/preview.ts",
+                                         "app/src/server/media/manifest.ts",
+                                         "app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+                                     ],
+                     "evidencePaths":  [
+                                           "source.patch",
+                                           "changed-paths.txt",
+                                           "input-hashes.json",
+                                           "output-hashes.json",
+                                           "evidence/exact-base-patch-replay-final.log",
+                                           "evidence/commands.json",
+                                           "evidence/normalized-final-20261011/tool-versions.txt",
+                                           "evidence/normalized-final-20261011/build-output-manifest.json",
+                                           "evidence/normalized-final-20261011/source-build-browser-binding.json"
+                                       ],
+                     "limits":  "Output manifest excludes itself to avoid a self-referential hash; all other package files are hashed."
+                 },
+                 {
+                     "clause":  "LIMIT-NATIVE",
+                     "requirement":  "Native PostgreSQL/Auth/Storage, true provider approval, and multi-connection/process races.",
+                     "status":  "NOT RUN",
+                     "sourcePaths":  [
+
+                                     ],
+                     "evidencePaths":  [
+
+                                       ],
+                     "limits":  "No native provider or external database credentials/configuration were exercised. Local PGlite, mocks, and synthetic auth do not replace them."
+                 },
+                 {
+                     "clause":  "LIMIT-DEPLOYMENT-CDN",
+                     "requirement":  "Deployed origin, production hosting, CDN/shared-cache visibility, live rollback, and live origin header behavior.",
+                     "status":  "NOT RUN",
+                     "sourcePaths":  [
+
+                                     ],
+                     "evidencePaths":  [
+
+                                       ],
+                     "limits":  "No deployment or CDN test was performed in this R5 maker task."
+                 },
+                 {
+                     "clause":  "LIMIT-DEVICE-RECOVERY-MANUAL",
+                     "requirement":  "Physical devices, assistive technology, backup/restore rehearsal, and manual production acceptance.",
+                     "status":  "NOT RUN",
+                     "sourcePaths":  [
+
+                                     ],
+                     "evidencePaths":  [
+
+                                       ],
+                     "limits":  "No such device, recovery, or manual exercise was performed."
+                 },
+                 {
+                     "clause":  "GATE-INDEPENDENT-PARENT",
+                     "requirement":  "Independent external audit/delta audit, Parent implementation acceptance, canonical integration, and G7 acceptance.",
+                     "status":  "NOT RUN",
+                     "sourcePaths":  [
+
+                                     ],
+                     "evidencePaths":  [
+
+                                       ],
+                     "limits":  "The maker cannot accept its own work. The exact pushed candidate must be independently reviewed and Parent adjudicated."
+                 }
+             ]
+}

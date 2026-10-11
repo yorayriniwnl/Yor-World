@@ -1,0 +1,15 @@
+
+> yor-world@1.0.0-rc6 typecheck C:\Users\yoray\.codex\worktrees\a1-r5-impl-20261011\Yor World\app
+> tsc --noEmit
+
+src/server/media/manifest.ts(119,10): error TS18047: 'response' is possibly 'null'.
+src/server/media/manifest.ts(120,23): error TS18047: 'response' is possibly 'null'.
+src/server/media/manifest.ts(127,10): error TS18047: 'response' is possibly 'null'.
+src/server/media/manifest.ts(128,14): error TS18047: 'response' is possibly 'null'.
+tests/unit/platform/completion-authoring-blocks.test.ts(67,5): error TS2322: Type '({ scope: "project"; id: string; kind: "schema" | "evidence-records" | "https-links" | "approved-media" | "publication-rules"; status: "passed"; checkedAt: string; reasons: string[]; } | { ...; })[]' is not assignable to type '{ scope: "project"; id: string; kind: "schema" | "evidence-records" | "https-links" | "approved-media" | "publication-rules"; status: "passed"; checkedAt: string; reasons: string[]; }[]'.
+  Type '{ scope: "project"; id: string; kind: "schema" | "evidence-records" | "https-links" | "approved-media" | "publication-rules"; status: "passed"; checkedAt: string; reasons: string[]; } | { ...; }' is not assignable to type '{ scope: "project"; id: string; kind: "schema" | "evidence-records" | "https-links" | "approved-media" | "publication-rules"; status: "passed"; checkedAt: string; reasons: string[]; }'.
+    Type '{ status: "failed"; reasons: string[]; scope: "project"; id: string; kind: "schema" | "evidence-records" | "https-links" | "approved-media" | "publication-rules"; checkedAt: string; }' is not assignable to type '{ scope: "project"; id: string; kind: "schema" | "evidence-records" | "https-links" | "approved-media" | "publication-rules"; status: "passed"; checkedAt: string; reasons: string[]; }'.
+      Types of property 'status' are incompatible.
+        Type '"failed"' is not assignable to type '"passed"'.
+ ELIFECYCLE  Command failed with exit code 2.
+EXIT=2
