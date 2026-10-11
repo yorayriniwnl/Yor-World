@@ -1,0 +1,454 @@
+--- f62a43c5e71c00dcb89e28275ea81d842167db80:deliveries/FINISH-B1/scripts/build-resident-fixture.py
++++ 1753b9278c4537b5377c3893172b2a0f26d13b10:deliveries/FINISH-B1-R3/source/blender/scripts/build-resident-fixture.py
+@@ -22,9 +22,9 @@
+ from mathutils.bvhtree import BVHTree
+ 
+ SCRIPT_DIR = Path(__file__).resolve().parent
+-DELIVERY_DIR = SCRIPT_DIR.parent
++DELIVERY_DIR = SCRIPT_DIR.parents[2]
+ OUT = DELIVERY_DIR / "assets"
+-SOURCE_DIR = OUT / "source"
++SOURCE_DIR = DELIVERY_DIR / "source" / "blender" / "models"
+ EVIDENCE = DELIVERY_DIR / "validator-logs"
+ OUT.mkdir(parents=True, exist_ok=True)
+ SOURCE_DIR.mkdir(parents=True, exist_ok=True)
+@@ -32,7 +32,7 @@
+ 
+ ROOT = Vector((0.30, 0.36, 0.0))
+ FPS = 30
+-TURN = math.radians(125)
++TURN = math.radians(35)
+ 
+ # All 8 V1 clips with exact nominal durations from art spec §6
+ CLIPS = {
+@@ -139,6 +139,27 @@
+         p.use_smooth = True
+     return obj
+ 
++def make_tapered_cylinder(name, a, b, radius_start, radius_end, mat, bone_weights=None, owner=None, vertices=12):
++    a, b = Vector(a), Vector(b)
++    diff = b - a
++    length = diff.length
++    center = (a + b) * 0.5
++    bpy.ops.mesh.primitive_cone_add(
++        vertices=vertices,
++        radius1=radius_start,
++        radius2=radius_end,
++        depth=length,
++        location=center,
++    )
++    obj = bpy.context.object
++    obj.rotation_mode = "QUATERNION"
++    if length > 1e-6:
++        obj.rotation_quaternion = diff.to_track_quat("Z", "Y")
++    finish_part(obj, name, mat, owner, bone_weights)
++    for p in obj.data.polygons:
++        p.use_smooth = True
++    return obj
++
+ def smoothstep(t):
+     t = min(1.0, max(0.0, t))
+     return t * t * (3.0 - 2.0 * t)
+@@ -192,6 +213,7 @@
+     glance_pitch = 0.0
+     breathe = 0.0
+     mouse_reach = 0.0
++    key_reach = 0.0
+     mouse_click = 0.0
+     typing_phase = 0.0
+     foot_angles = {"L": 0.0, "R": 0.0}
+@@ -199,14 +221,23 @@
+     
+     if clip == "coding_idle":
+         typing_phase = seconds
+-        breathe = math.sin(seconds * math.pi * 0.5) * 0.003
++        breathe = math.sin(seconds * math.tau / CLIPS[clip]) * 0.003
++        key_reach = 1.0
+     elif clip == "mouse_idle":
+         # Right hand moves to mouse position and clicks
+-        mouse_reach = 1.0 if u >= 0.25 else smoothstep(u / 0.25)
+-        mouse_click = math.sin(u * math.tau * 3.0) if u > 0.3 else 0.0
++        # Reach the measured room mouse, then return the right hand to the key-ready pose.
++        if u < 0.18:
++            mouse_reach = smoothstep(u / 0.18)
++        elif u <= 0.60:
++            mouse_reach = 1.0
++        elif u < 0.84:
++            mouse_reach = 1.0 - smoothstep((u - 0.60) / 0.24)
++        key_reach = 1.0
++        mouse_click = math.sin(u * math.tau * 3.0) if 0.18 <= u <= 0.60 else 0.0
+         breathe = math.sin(seconds * math.pi) * 0.002
+     elif clip == "notice_visitor":
+         retract = smoothstep(u)
++        key_reach = 1.0 - retract
+         breathe = math.sin(seconds * math.pi) * 0.002
+     elif clip == "turn_to_visitor":
+         yaw = TURN * smoothstep(u)
+@@ -223,6 +254,7 @@
+         swivel = min(1.0, u / 0.75)
+         yaw = TURN * (1.0 - smoothstep(swivel))
+         retract = 1.0 - smoothstep(max(0.0, (u - 0.75) / 0.25))
++        key_reach = smoothstep((u - 0.75) / 0.25)
+         for s in ("L", "R"):
+             foot_angles[s], foot_lifts[s] = step_pose(s, swivel, TURN, 0.0)
+     elif clip == "attention_glance":
+@@ -231,9 +263,11 @@
+         glance_yaw = math.radians(26.0) * glance_phase
+         glance_pitch = math.radians(3.5) * glance_phase
+         retract = 0.15 * glance_phase
++        key_reach = 1.0
+         typing_phase = seconds * 0.5
+     elif clip == "breathing_idle":
+-        breathe = math.sin(seconds * math.pi * 0.5) * 0.005
++        breathe = math.sin(seconds * math.tau / CLIPS[clip]) * 0.005
++        key_reach = 1.0
+ 
+     return {
+         "yaw": yaw,
+@@ -243,13 +277,14 @@
+         "glance_pitch": glance_pitch,
+         "breathe": breathe,
+         "mouse_reach": mouse_reach,
++        "key_reach": key_reach,
+         "mouse_click": mouse_click,
+         "typing_phase": typing_phase,
+         "foot_angles": foot_angles,
+         "foot_lifts": foot_lifts,
+     }
+ 
+-def compute_skeleton_pose(clip, seconds):
++def compute_skeleton_pose(clip, seconds, preserve_bind_rest=False):
+     m = evaluate_clip_motion(clip, seconds)
+     yaw = m["yaw"]
+     retract = m["retract"]
+@@ -257,7 +292,8 @@
+     glance_yaw = m["glance_yaw"]
+     glance_pitch = m["glance_pitch"]
+     breathe = m["breathe"]
+-    mouse_reach = m["mouse_reach"]
++    mouse_reach = 0.0 if preserve_bind_rest else m["mouse_reach"]
++    key_reach = 0.0 if preserve_bind_rest else m["key_reach"]
+     mouse_click = m["mouse_click"]
+     typing_phase = m["typing_phase"]
+     foot_angles = m["foot_angles"]
+@@ -292,12 +328,15 @@
+     for side, sign in [("L", -1), ("R", 1)]:
+         # Clavicle and shoulder
+         shoulder = Vector((sign * 0.205, 0.015, 1.005 + breathe))
++        if side == "R" and key_reach > 0:
++            key_shoulder = Vector((0.12, 0.16, 1.005 + breathe))
++            shoulder = shoulder.lerp(key_shoulder, key_reach)
+         poses[f"clavicle.{side}"] = R @ basis_matrix(Vector((0.0, 0.02, 1.055)), shoulder)
+ 
+         # Typing stroke micro-motion (subtle vertical oscillation)
+         tap = 0.0
+         if typing_phase > 0:
+-            freq = 2.4 if side == "L" else 2.8
++            freq = 2.5 if side == "L" else 3.0
+             tap = 0.0012 * (1.0 - math.cos(typing_phase * math.tau * freq))
+ 
+         # Base wrist rest in front of keyboard (high enough so fingers float/tap gracefully above keycaps)
+@@ -306,11 +345,24 @@
+         wrist_y = 0.455 - 0.380 * retract
+         wrist_z = 0.822 + 0.103 * retract + tap
+ 
++        # Blend each hand toward the measured room keyboard, preserving the root and bind pose.
++        if key_reach > 0:
++            target_x = -0.42 if side == "L" else -0.31
++            target_y = 0.500
++            target_z = 0.799 + tap
++            wrist_x = wrist_x * (1.0 - key_reach) + target_x * key_reach
++            wrist_y = wrist_y * (1.0 - key_reach) + target_y * key_reach
++            wrist_z = wrist_z * (1.0 - key_reach) + target_z * key_reach
++
+         # Mouse interaction for right hand (wrist stays well above desk surface Z=0.75m)
+         if side == "R" and mouse_reach > 0:
+-            target_mouse_x = 0.30
+-            target_mouse_y = 0.44
+-            target_mouse_z = 0.825
++            target_mouse_x = -0.06
++            target_mouse_y = 0.51
++            # Lift the index finger clear of the exported rounded mouse shell.
++            # The full-export ray-parity check found up to 3.98 mm of real
++            # interior depth at the old 0.795 m wrist target; 0.803 m preserves
++            # a sub-10 mm interaction gap while leaving a measured safety gap.
++            target_mouse_z = 0.803
+             wrist_x = wrist_x * (1.0 - mouse_reach) + target_mouse_x * mouse_reach
+             wrist_y = wrist_y * (1.0 - mouse_reach) + target_mouse_y * mouse_reach
+             wrist_z = wrist_z * (1.0 - mouse_reach) + target_mouse_z * mouse_reach
+@@ -352,7 +404,7 @@
+ 
+     return poses
+ 
+-rest_pose = compute_skeleton_pose("coding_idle", 0.0)
++rest_pose = compute_skeleton_pose("coding_idle", 0.0, preserve_bind_rest=True)
+ 
+ # Complete bone hierarchy
+ bone_hierarchy = {
+@@ -459,8 +511,10 @@
+     # Forearm
+     make_ellipsoid(f"resident-elbow-{side}", elbow_pos, (0.046, 0.046, 0.046), skin,
+                    bone_weights={f"forearm.{side}": 1.0})
+-    make_cylinder(f"resident-forearm-{side}", elbow_pos, wrist_pos, 0.038, skin,
+-                  bone_weights={f"forearm.{side}": 1.0})
++    # Taper to a 15 mm wrist radius so the arm clears the keyboard/mouse top
++    # surfaces while the hand and fingers remain close to the actual controls.
++    make_tapered_cylinder(f"resident-forearm-{side}", elbow_pos, wrist_pos, 0.038, 0.015, skin,
++                          bone_weights={f"forearm.{side}": 1.0})
+ 
+     # Palm
+     palm_pos = wrist_pos + Vector((0.0, 0.045, -0.005))
+@@ -521,12 +575,15 @@
+ desk["assetId"] = "desk"
+ for x in (-1.08, 1.08):
+     make_box("desk-pedestal", (x, 1.15, 0.345), (0.40, 0.72, 0.69), ivory, fixture_objects)
+-keyboard = make_box("keyboard-proof", (0.30, 0.94, 0.766), (0.47, 0.20, 0.032), dark, fixture_objects, bevel=0.008)
++# The proof-only desk inputs must share the measured world anchors of the
++# accepted room export after Blender's Z-up -> GLTF Y-up conversion.
++# keyboard_body: (-0.08, 0.765, -0.98); keycaps: center (-0.08, 0.778, -0.98).
++keyboard = make_box("keyboard-proof", (-0.08, 0.98, 0.765), (0.47, 0.20, 0.032), dark, fixture_objects, bevel=0.008)
+ for row in range(3):
+     for col in range(11):
+-        make_box("key", (0.095 + col * 0.041, 0.864 + row * 0.061, 0.786), (0.034, 0.046, 0.008), ivory, fixture_objects, bevel=0.003)
++        make_box("key", (-0.285 + col * 0.041, 0.919 + row * 0.061, 0.778), (0.034, 0.046, 0.008), ivory, fixture_objects, bevel=0.003)
+ # Mouse object
+-make_box("mouse-proof", (0.58, 0.95, 0.762), (0.08, 0.13, 0.035), dark, fixture_objects, bevel=0.012)
++make_box("mouse-proof", (0.24, 0.98, 0.768), (0.065, 0.11, 0.028), dark, fixture_objects, bevel=0.010)
+ 
+ make_box("monitor-proof", (0.0, 1.38, 1.08), (0.81, 0.07, 0.46), dark, fixture_objects)
+ make_box("monitor-screen-proof", (0.0, 1.335, 1.08), (0.75, 0.015, 0.4), screen_mat, fixture_objects, bevel=0.008)
+@@ -546,7 +603,7 @@
+ chair_root["assetId"] = "chair"
+ 
+ chair_parts = []
+-make_box("chair-seat", (0.0, -0.025, 0.42), (0.52, 0.40, 0.08), blue, chair_parts, bevel=0.035)
++make_box("Chair_Seat", (0.0, -0.025, 0.42), (0.52, 0.40, 0.08), blue, chair_parts, bevel=0.035)
+ make_box("chair-back", (0.0, -0.215, 0.81), (0.46, 0.08, 0.72), blue, chair_parts, bevel=0.035)
+ make_box("chair-back-insert", (0.0, -0.162, 0.85), (0.27, 0.03, 0.57), ivory, chair_parts, bevel=0.020)
+ for sign in (-1, 1):
+@@ -716,22 +773,30 @@
+             "minimumPelvisBottomM": round(pelvis_min_z, 6),
+             "desktopInteriorVertexHits": desktop_hits,
+             "minimumHandFrontGapM": round(min_hand_gap, 4) if min_hand_gap < 100.0 else None,
+-            "surfaceIntersections": {k: {"pairs": v["pairs"], "bones": sorted(v["bones"])} for k, v in surface_intersections.items()}
++            "surfaceIntersections": {
++                k: {
++                    "pairs": v["pairs"],
++                    "frames": sorted(set(v["frames"])),
++                    "bones": sorted(v["bones"]),
++                }
++                for k, v in surface_intersections.items()
++            }
+         })
+     return measurements
+ 
+-measurements = measure_all_clips()
++measurements = [] if "--r3-quick" in sys.argv else measure_all_clips()
+ (EVIDENCE / "blender-measurements.json").write_text(json.dumps({
+     "fps": FPS,
+     "samplingHz": 60,
++    "status": "NOT RUN (quick iteration build)" if "--r3-quick" in sys.argv else "MEASURED",
+     "measurements": measurements
+ }, indent=2), encoding="utf-8")
+ 
+ # Validate measurements against physical criteria
+ checks = []
+ for m in measurements:
+-    # Seat contact check: only chair-seat tangency with pelvis allowed
+-    seat_ok = all(k == "chair-seat" and v["bones"] == ["pelvis"] for k, v in m["surfaceIntersections"].items())
++    # Seat contact check: only Chair_Seat tangency with pelvis allowed
++    seat_ok = all(k in ["chair-seat", "Chair_Seat"] and v["bones"] == ["pelvis"] for k, v in m["surfaceIntersections"].items())
+     checks.append({
+         "name": f"{m['clip']} desk clearance & seat tangency",
+         "status": "PASS" if seat_ok and m["desktopInteriorVertexHits"] == 0 else "FAIL",
+@@ -752,6 +817,124 @@
+         })
+ 
+ (EVIDENCE / "blender-checks.json").write_text(json.dumps(checks, indent=2), encoding="utf-8")
++
++# FINISH-B1-R3: static fixture batches reduce the chair's many primitive draws
++# while preserving the animated chair-root and exact Chair_Seat contact mesh.
++def _fixture_inside_tree(obj, root):
++    node = obj
++    while node is not None:
++        if node == root:
++            return True
++        node = node.parent
++    return False
++
++def _fixture_bounds(objects):
++    points = [obj.matrix_world @ vertex.co for obj in objects for vertex in obj.data.vertices]
++    if not points:
++        return None
++    return {
++        "min": [min(point[i] for point in points) for i in range(3)],
++        "max": [max(point[i] for point in points) for i in range(3)],
++    }
++
++fixture_batch_results = []
++def batch_fixture_root(root, exclusions):
++    candidates = []
++    for obj in list(bpy.data.objects):
++        if obj.type != "MESH" or not _fixture_inside_tree(obj, root):
++            continue
++        if (obj.name in exclusions or obj.children or obj.animation_data is not None
++                or len(obj.data.materials) != 1 or obj.data.materials[0] is None
++                or obj.data.users != 1 or obj.data.shape_keys or obj.vertex_groups
++                or obj.modifiers or obj.hide_render):
++            continue
++        candidates.append(obj)
++
++    groups = {}
++    for obj in candidates:
++        groups.setdefault((obj.parent.name if obj.parent else root.name, obj.data.materials[0].name), []).append(obj)
++
++    results = []
++    for (parent_name, material_name), source_objects in sorted(groups.items()):
++        if len(source_objects) < 2:
++            continue
++        source_objects = sorted(source_objects, key=lambda item: item.name)
++        parent = bpy.data.objects.get(parent_name) or root
++        material = bpy.data.materials.get(material_name)
++        source_bounds = _fixture_bounds(source_objects)
++        source_vertices = sum(len(obj.data.vertices) for obj in source_objects)
++        source_faces = sum(len(obj.data.polygons) for obj in source_objects)
++        source_records = [{
++            "name": obj.name,
++            "parent": obj.parent.name if obj.parent else None,
++            "matrixBasis": [list(row) for row in obj.matrix_basis],
++            "matrixParentInverse": [list(row) for row in obj.matrix_parent_inverse],
++            "customProperties": {name: obj[name] for name in obj.keys() if name != "_RNA_UI"},
++            "collections": list(obj.users_collection),
++        } for obj in source_objects]
++
++        if bpy.context.object and bpy.context.object.mode != "OBJECT":
++            bpy.ops.object.mode_set(mode="OBJECT")
++        bpy.ops.object.select_all(action="DESELECT")
++        for obj in source_objects:
++            obj.select_set(True)
++        active = source_objects[0]
++        bpy.context.view_layer.objects.active = active
++        bpy.context.view_layer.update()
++        if "FINISHED" not in bpy.ops.object.join():
++            raise RuntimeError(f"Fixture static batch join failed for {root.name}/{parent_name}/{material_name}")
++
++        bpy.context.view_layer.update()
++        active.data.transform(parent.matrix_world.inverted_safe() @ active.matrix_world.copy())
++        batch_name = f"StaticBatch__{root.name}__{material_name}"
++        active.name = batch_name
++        active.data.name = batch_name
++        active.parent = parent
++        active.matrix_parent_inverse = Matrix.Identity(4)
++        active.matrix_basis = Matrix.Identity(4)
++        bpy.context.view_layer.update()
++
++        for record in source_records:
++            anchor = bpy.data.objects.new(record["name"], None)
++            for collection in record["collections"]:
++                collection.objects.link(anchor)
++            anchor.parent = bpy.data.objects.get(record["parent"]) if record["parent"] else None
++            anchor.matrix_parent_inverse = Matrix(record["matrixParentInverse"])
++            anchor.matrix_basis = Matrix(record["matrixBasis"])
++            anchor.empty_display_type = "PLAIN_AXES"
++            for prop, value in record["customProperties"].items():
++                anchor[prop] = value
++
++        joined_bounds = _fixture_bounds([active])
++        joined_vertices = len(active.data.vertices)
++        joined_faces = len(active.data.polygons)
++        bound_delta = max(abs(source_bounds[edge][axis] - joined_bounds[edge][axis])
++                          for edge in ("min", "max") for axis in range(3))
++        status = "PASS" if joined_vertices == source_vertices and joined_faces == source_faces and bound_delta <= 1e-5 else "FAIL"
++        result = {
++            "assetRoot": root.name,
++            "batchParent": parent.name,
++            "batchName": active.name,
++            "material": material.name,
++            "sourceMeshCount": len(source_records),
++            "sourceNames": [record["name"] for record in source_records],
++            "sourceVertices": source_vertices,
++            "joinedVertices": joined_vertices,
++            "sourceFaces": source_faces,
++            "joinedFaces": joined_faces,
++            "sourceWorldBounds": source_bounds,
++            "joinedWorldBounds": joined_bounds,
++            "maxWorldBoundsDelta": bound_delta,
++            "geometryPreservation": status,
++        }
++        fixture_batch_results.append(result)
++        results.append(result)
++        if status != "PASS":
++            raise RuntimeError(f"Fixture static batch changed geometry: {json.dumps(result)}")
++    return {"assetRoot": root.name, "candidateMeshCount": len(candidates), "batchCount": len(results)}
++
++chair_root_batch = batch_fixture_root(chair_root, {"Chair_Seat"})
++chair_base_batch = batch_fixture_root(chair_base, set())
+ 
+ # --- Export Binary glTF 2.0 and Native Blend ---
+ def export_gltf(path, objects):
+@@ -783,8 +966,21 @@
+ apply_active_action(chair_root, chair_actions["coding_idle"])
+ scene.frame_set(1)
+ 
+-export_gltf(OUT / "resident-production.glb", [rig, body])
+-export_gltf(OUT / "fixture-production.glb", fixture_objects)
++export_gltf(OUT / "resident.glb", [rig, body])
++chair_objects = [obj for obj in bpy.data.objects
++                 if _fixture_inside_tree(obj, chair_root) or _fixture_inside_tree(obj, chair_base)]
++export_gltf(OUT / "fixture.glb", chair_objects)
++
++fixture_export_bytes = (OUT / "fixture.glb").read_bytes()
++(EVIDENCE / "fixture-static-batch-report.json").write_text(json.dumps({
++    "status": "PASS" if all(row["geometryPreservation"] == "PASS" for row in fixture_batch_results) else "FAIL",
++    "policy": "Static one-material chair geometry is consolidated under its original animated/static root; Chair_Seat remains an unchanged mesh-bearing contact target. Original names/TRS remain as empty anchors.",
++    "summaries": [chair_root_batch, chair_base_batch],
++    "batches": fixture_batch_results,
++    "contactTarget": "Chair_Seat excluded from batches and remains a mesh",
++    "export": {"bytes": len(fixture_export_bytes), "sha256": hashlib.sha256(fixture_export_bytes).hexdigest()},
++}, indent=2) + "\n", encoding="utf-8")
++
+ 
+ # Setup render camera for photographic evidence
+ def create_camera(name, loc, target):
+@@ -823,8 +1019,8 @@
+ scene.render.image_settings.file_format = "PNG"
+ scene.view_settings.view_transform = "AgX"
+ 
+-bpy.ops.wm.save_as_mainfile(filepath=str(SOURCE_DIR / "resident-production.blend"))
+-bpy.ops.wm.save_as_mainfile(filepath=str(SOURCE_DIR / "fixture-production.blend"))
++bpy.ops.wm.save_as_mainfile(filepath=str(SOURCE_DIR / "resident.blend"))
++bpy.ops.wm.save_as_mainfile(filepath=str(SOURCE_DIR / "fixture.blend"))
+ 
+ if "--render" in sys.argv:
+     renders = [
+@@ -856,17 +1052,21 @@
+     },
+     "clips": {k: {"durationSec": v, "frames": round(v * FPS) + 1} for k, v in CLIPS.items()},
+     "files": {
+-        "resident-production.glb": {
+-            "bytes": (OUT / "resident-production.glb").stat().st_size,
+-            "sha256": hashlib.sha256((OUT / "resident-production.glb").read_bytes()).hexdigest(),
++        "resident.glb": {
++            "bytes": (OUT / "resident.glb").stat().st_size,
++            "sha256": hashlib.sha256((OUT / "resident.glb").read_bytes()).hexdigest(),
+         },
+-        "fixture-production.glb": {
+-            "bytes": (OUT / "fixture-production.glb").stat().st_size,
+-            "sha256": hashlib.sha256((OUT / "fixture-production.glb").read_bytes()).hexdigest(),
++        "fixture.glb": {
++            "bytes": (OUT / "fixture.glb").stat().st_size,
++            "sha256": hashlib.sha256((OUT / "fixture.glb").read_bytes()).hexdigest(),
+         },
+-        "resident-production.blend": {
+-            "bytes": (SOURCE_DIR / "resident-production.blend").stat().st_size,
+-            "sha256": hashlib.sha256((SOURCE_DIR / "resident-production.blend").read_bytes()).hexdigest(),
++        "resident.blend": {
++            "bytes": (SOURCE_DIR / "resident.blend").stat().st_size,
++            "sha256": hashlib.sha256((SOURCE_DIR / "resident.blend").read_bytes()).hexdigest(),
++        },
++        "fixture.blend": {
++            "bytes": (SOURCE_DIR / "fixture.blend").stat().st_size,
++            "sha256": hashlib.sha256((SOURCE_DIR / "fixture.blend").read_bytes()).hexdigest(),
+         },
+     },
+     "checks": checks,

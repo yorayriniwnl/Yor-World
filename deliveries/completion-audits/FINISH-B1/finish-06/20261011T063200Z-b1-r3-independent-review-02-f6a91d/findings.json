@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "candidateCommit": "1753b9278c4537b5377c3893172b2a0f26d13b10",
+  "candidateTree": "9759ac9879bcc9489770b7c5784ead2f022157b0",
+  "recommendation": "REWORK_FOR_PARENT_CONSIDERATION",
+  "acceptanceAuthority": "Parent only; reviewer does not accept or authorize canonical integration.",
+  "findings": [
+    {
+      "id": "B1-R3-F01",
+      "severity": "BLOCKER",
+      "status": "CONFIRMED_FAIL",
+      "title": "Raw renderer draw-call budgets exceed both frozen ceilings",
+      "requirement": "120 desktop / 80 mobile draw calls",
+      "evidence": ["reviewer-rerun/validator-logs/draw-call-profile-summary.csv", "reviewer-rerun/validator-logs/draw-call-attribution-callstacks.json", "reviewer-rerun/draw-budget-assertion.log"],
+      "observed": {"desktop": {"calls": 202, "limit": 120}, "mobile": {"calls": 146, "limit": 80}},
+      "cause": "The visible room mesh StaticBatch__Room_Root__PC_TemperedGlass has transmission 0.9200000167 and triggers Three r180 renderTransmissionPass plus renderScene. Each in-frustum mesh is drawn once per pass: 101 desktop objects and 73 mobile objects. renderer.info.autoReset is true and a single render invocation advances one renderer frame.",
+      "ownerCallsDesktop": {"room.glb": 156, "fixture.glb": 10, "group-b-props.glb": 14, "resident.glb": 14, "on-demand-projects.glb": 8},
+      "ownerCallsMobile": {"room.glb": 106, "fixture.glb": 10, "group-b-props.glb": 12, "resident.glb": 14, "on-demand-projects.glb": 4},
+      "rawGateRetained": true
+    },
+    {
+      "id": "B1-R3-F02",
+      "severity": "HIGH",
+      "status": "CONFIRMED_MARGIN_VIOLATION",
+      "title": "Positive-Y door sweep loses near-plane margin after the leaf is fully open",
+      "requirement": "Door/camera clearance in the contract sweep",
+      "evidence": ["reviewer-rerun/validator-logs/positive-y-door-sweep.csv", "reviewer-rerun/validator-logs/positive-y-door-sweep-summary.json"],
+      "firstNegativeMargin": {"timeSec": 6.1, "doorAngleDeg": 90, "doorOpenProgress": 1, "cameraElapsedSec": 3.6, "entranceProgress": 0.72, "cameraPositionM": [-1.5864, 1.7, 1.5276], "leafGapM": 0.0435999766, "nearPlaneM": 0.05, "marginM": -0.0064000234, "frameGapM": 0.2203354756, "leafFrameClearanceM": 0.0015171457},
+      "worstMargin": {"timeSec": 6.3, "doorAngleDeg": 90, "cameraPositionM": [-1.6696, 1.7, 1.5335428571], "leafGapM": 0.0003999757, "marginM": -0.0496000243},
+      "nearPlaneTriangleIntersections": 0,
+      "interpretation": "The leaf is fully open for 3.6 seconds before the first negative margin. This is an open-leaf/path-envelope conflict, not door timing. The data proves a negative margin, not a pixel-level visible clip, and does not alone decide whether asset dimensions or route geometry should change."
+    },
+    {
+      "id": "B1-R3-F03",
+      "severity": "GATE_UNRESOLVED",
+      "status": "UNRESOLVED",
+      "title": "No production writer for Door_Hinge is present in the accepted app source",
+      "requirement": "EntranceCoordinator is sole production door-transform owner",
+      "evidence": ["reviewer-rerun/validator-logs/production-door-owner-source-search.json", "reviewer-rerun/validator-logs/independent-glb-audit.json"],
+      "observed": "The accepted app tree matches 42ea29ec235225046a75959eb19eb386ac2f821d. EntranceCoordinator writes camera path state, but no app/src door transform writer was found. The room GLB has Door_Leaf parented under Door_Hinge and no room animation clip.",
+      "disposition": "Integration ownership remains unresolved / NOT RUN; this is not a claim that the R3 asset package edits app code."
+    },
+    {
+      "id": "B1-R3-F04",
+      "severity": "LOW",
+      "status": "REPRODUCIBILITY_CAVEAT",
+      "title": "R3 incremental source patch needs whitespace-aware application on CRLF R2 resident builder",
+      "requirement": "Reproducible source delta from exact R2 inputs",
+      "evidence": ["reviewer-rerun/validator-logs/r2-patch-eol-options.json", "reviewer-rerun/validator-logs/r2-source-delta-eol-diagnostic.json", "reviewer-rerun/validator-logs/r2-source-delta-ignore-space-apply.json"],
+      "observed": "Default git apply check fails on raw CRLF resident input; git apply --ignore-space-change succeeds. Environment builder raw bytes match final. Resident builder normalized text matches final, but raw applied bytes differ due mixed line endings. Incremental and cumulative scope contain only the two assigned builders.",
+      "disposition": "No source/export mismatch was demonstrated; disclose the apply mode and EOL limitation when reproducing."
+    },
+    {
+      "id": "B1-R3-F05",
+      "severity": "LOW",
+      "status": "GEOMETRY_COMPARISON_INCONCLUSIVE_NO_CONFIRMED_POSITION_DRIFT",
+      "title": "Triangle-key geometry comparison differs for room and fixture, while position checks show near-identical vertex locations",
+      "requirement": "Preserve exported geometry while static batching",
+      "evidence": ["reviewer-rerun/validator-logs/independent-glb-audit.json", "reviewer-rerun/validator-logs/vertex-set-comparison.json", "reviewer-rerun/validator-logs/vertex-nearest-distance-diagnostic.json"],
+      "observed": "At 1 mm triangle-key quantization, 144 fixture and 932 room triangle keys differ although total triangle counts match. At 0.1 mm position bins, fixture/group-b/on-demand/resident pass; two room materials differ. Maximum full-precision symmetric nearest-point distance is 1.8082886417e-7 m; no point exceeds 1e-5 m or 1e-4 m.",
+      "disposition": "No substantive vertex displacement is confirmed, but exact topology, shading, and visual equivalence are not proved."
+    }
+  ]
+}

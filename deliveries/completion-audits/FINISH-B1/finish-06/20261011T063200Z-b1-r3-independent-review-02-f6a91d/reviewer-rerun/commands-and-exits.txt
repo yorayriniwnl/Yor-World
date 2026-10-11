@@ -1,0 +1,18 @@
+node reviewer-rerun\scripts\run-r3-verification-inherited.mjs
+exit=0 (inherited-direction harness)
+node reviewer-rerun\scripts\run-r3-verification-positive-y.mjs
+exit=0 (positive local Y reviewer-direction harness)
+node reviewer-rerun\scripts\measure-draw-attribution-reviewer.mjs
+exit=0 (fresh draw attribution)
+node reviewer-rerun\scripts\assert-draw-budgets-reviewer.mjs
+exit=1 (frozen draw-budget assertion; nonzero expected if raw gate fails)
+node reviewer-rerun\scripts\validate-glb-reviewer.mjs
+exit=0 (fresh glTF validation)
+& "C:\Program Files\Blender Foundation\Blender 5.2\blender.exe" --background --factory-startup --python-exit-code 1 --python reviewer-rerun\scripts\verify-final-exports-blender-reviewer.py
+exit=0 (fresh Blender import)
+python reviewer-rerun/scripts/independent-glb-audit.py
+exit=0 (independent binary GLB audit)
+python reviewer-rerun/scripts/independent-glb-audit.py (contract-tolerance geometry compare and owner-correct node checks)
+exit=0 (independent binary GLB audit)
+python reviewer-rerun/scripts/independent-glb-audit.py (1mm diagnostic comparison; not contract PASS)
+exit=0 (independent binary GLB audit)

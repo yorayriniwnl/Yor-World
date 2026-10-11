@@ -1,0 +1,93 @@
+{
+  "evidence_source": "fresh reviewer rerun JSON; the positive-Y script changes only the candidate-direction yaw sign and writes outputs inside this audit root",
+  "three_revision": "180",
+  "sample_hz": 60,
+  "direction": "positive local Y; computed yawDegrees are +0..+90 (the inherited measuredDirection prose is stale and not relied upon)",
+  "sweep_duration_sec": 2.5,
+  "camera_path_duration_sec": 5,
+  "camera_start_sec": 2.5,
+  "total_sequence_duration_sec": 7.5,
+  "positive_y_sample_count": 450,
+  "previous_nonnegative_sample": {
+    "time_sec": 6.083333333333333,
+    "door_angle_deg": 90,
+    "camera_position_m": [
+      -1.5788888888888888,
+      1.7,
+      1.527063492063492
+    ],
+    "leaf_surface_gap_m": 0.05111108771628814,
+    "near_clip_m": 0.05,
+    "near_clip_margin_m": 0.0011110877162881366
+  },
+  "first_negative_near_clip_margin_sample": {
+    "time_sec": 6.1,
+    "door_angle_deg": 90,
+    "door_elapsed_sec": 2.5,
+    "door_open_progress": 1,
+    "camera_elapsed_sec": 3.5999999999999996,
+    "entrance_progress": 0.72,
+    "camera_position_m": [
+      -1.5863999999999998,
+      1.7,
+      1.5276
+    ],
+    "camera_target_m": [
+      0.12,
+      1.25,
+      -1.15
+    ],
+    "near_clip_m": 0.05,
+    "leaf_surface_gap_m": 0.043599976605177115,
+    "leaf_near_clip_margin_m": -0.006400023394822887,
+    "frame_surface_gap_m": 0.2203354756179684,
+    "near_plane_intersects_leaf_triangles": false,
+    "panel_bounds_m": {
+      "min": [
+        -1.6699999757111073,
+        0.009999990463256836,
+        0.9100000262260437
+      ],
+      "max": [
+        -1.5950000192970037,
+        2.0899999141693115,
+        1.7900000214576721
+      ]
+    },
+    "leaf_frame_clearance_m": 0.0015171457081853258,
+    "interpretation_limit": "negative near-plane margin is a measured clip-margin violation; no sampled camera point intersects leaf triangles, and no screenshot/pixel-level clip claim is made"
+  },
+  "worst_near_clip_margin_sample": {
+    "time_sec": 6.3,
+    "door_angle_deg": 90,
+    "entrance_progress": 0.76,
+    "camera_position_m": [
+      -1.6696,
+      1.7,
+      1.533542857142857
+    ],
+    "near_clip_m": 0.05,
+    "leaf_surface_gap_m": 0.00039997571110728103,
+    "leaf_near_clip_margin_m": -0.04960002428889272,
+    "panel_bounds_m": {
+      "min": [
+        -1.6699999757111073,
+        0.009999990463256836,
+        0.9100000262260437
+      ],
+      "max": [
+        -1.5950000192970037,
+        2.0899999141693115,
+        1.7900000214576721
+      ]
+    }
+  },
+  "door_contract_relevance": "the leaf reaches +90 degrees at 2.5 s; the camera begins at 2.5 s. First negative margin occurs at 6.1 s with doorOpenProgress=1, after 3.6 s of camera motion while fully open. This is a route/leaf-position conflict, not a door-not-yet-cleared timing sample.",
+  "full_sweep_minima": {
+    "leaf_frame_clearance_m": 2.5855564454142577e-06,
+    "leaf_frame_intersection_pairs": 0,
+    "camera_leaf_surface_gap_m": 0.00039997571110728103,
+    "camera_leaf_near_clip_margin_m": -0.04960002428889272,
+    "near_plane_leaf_triangle_intersections": 0
+  }
+}
