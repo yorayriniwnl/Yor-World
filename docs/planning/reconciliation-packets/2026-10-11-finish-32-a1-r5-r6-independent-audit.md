@@ -8,7 +8,8 @@ Audit only commit `77e5836c572141478b54ef6ffd928b9bcaafb10e` on branch `codex/fi
 
 - Parent: `f62a43c5e71c00dcb89e28275ea81d842167db80`.
 - Full tree: `159d0462bff2900a4ef412bda4d156d60f2871ae`.
-- App tree: `c1f4e54e6b5de23acf1a783842bedffc4b684da1`.
+- Candidate Git `app/` tree: `42ea29ec235225046a75959eb19eb386ac2f821d` (unchanged from the exact base).
+- Maker-reported packaged patch replay `app/` tree: `c1f4e54e6b5de23acf1a783842bedffc4b684da1` (this is not the candidate commit Git tree).
 - Delivery subtree: `c3644b7983ab2516ee16aaf091d567d726fc40ef`.
 - Delivery root: `deliveries/FINISH-A1/r5-06/`.
 - Package output-manifest SHA-256: `e887a75c093dcbf6f3357699d2d9d3e07316f8bdefaae580a482bf423a34d212`.
@@ -32,7 +33,7 @@ The Parent rechecked the root absent in both the canonical checkout and candidat
 
 ## Required independent checks
 
-1. **Identity and package integrity.** Recompute candidate commit, parent, full tree, app tree, delivery subtree, exact changed-path list, remote ref, package inventory, and raw Git-blob SHA-256/byte sizes. Recompute every stable output row and the manifest hash. Confirm all files are beneath `deliveries/FINISH-A1/r5-06/`, there are no unlisted package files, and all 25 source replacements are exact members of the frozen 26-path allowlist. Independently replay `source.patch` from the exact base; compare every replacement byte and verify every unpatched tracked app path remains byte-identical. Confirm the accepted design output-manifest SHA-256 is `8038db147824b0a31de1028c330383352177020b2247dd627d1674d6dc14c6af`.
+1. **Identity and package integrity.** Recompute candidate commit, parent, full tree, candidate Git `app/` tree, packaged patch-replay tree, delivery subtree, exact changed-path list, remote ref, package inventory, and raw Git-blob SHA-256/byte sizes. Recompute every stable output row and the manifest hash. Confirm all files are beneath `deliveries/FINISH-A1/r5-06/`, there are no unlisted package files, and all 25 source replacements are exact members of the frozen 26-path allowlist. Independently replay `source.patch` from the exact base; compare every replacement byte and verify every unpatched tracked app path remains byte-identical. Confirm the accepted design output-manifest SHA-256 is `8038db147824b0a31de1028c330383352177020b2247dd627d1674d6dc14c6af`.
 2. **A1R5-01 - frozen DTO compatibility.** Inspect and probe the exact accepted wire shapes: `approvalAudit` has only the accepted `eventId`/`createdAt` form; `PrivateDraftReview` has the accepted fields; `ReviewCheck` preserves generic project/site scope and the accepted ID seam. Check positive frozen DTO fixtures and rejection of malformed, legacy, contradictory, incoherent, and wrong-typed records. Verify candidate and publish semantics remain coherent.
 3. **A1R5-02 - publish and rollback refresh.** Independently trace the API response through UI refresh and verify `activePublication`, history, and review identity are consumed. Exercise successful publish and rollback and confirm the visible revision/review state updates without a full page reload; inspect error/denial paths for stale or fabricated success state.
 4. **A1R5-03 - missing draft.** Verify a requested missing draft reaches the intended page not-found path and returns the specified owner-authorized 404 with private no-store headers. Check no successful review/media DTO is built from the missing draft and owner authorization precedes private data reads.
