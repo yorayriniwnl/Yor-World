@@ -1,0 +1,199 @@
+{
+  "schemaVersion": 1,
+  "candidateCommit": "76d679dcb98064152021830b98f16eb456b3ae19",
+  "requirements": [
+    {
+      "requirement": "A1R5-01",
+      "status": "PASS",
+      "description": "Frozen DTO compatibility restored",
+      "evidencePaths": [
+        "evidence/unit-focused.stdout.log",
+        "evidence/integration-focused.stdout.log",
+        "evidence/raw-git-verification.json"
+      ],
+      "sourcePaths": [
+        "app/src/server/media/manifest.ts",
+        "app/src/server/content/preview.ts",
+        "app/tests/unit/platform/completion-authoring-blocks.test.ts",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts"
+      ],
+      "limits": [
+        "Embedded PGlite and synthetic auth only; no provider API run."
+      ]
+    },
+    {
+      "requirement": "A1R5-02",
+      "status": "PASS",
+      "description": "Publish and rollback consume activePublication on refresh",
+      "evidencePaths": [
+        "evidence/chromium.stdout.log",
+        "evidence/browser-results.json",
+        "evidence/browser-binding.json",
+        "evidence/publish-rollback-review.png"
+      ],
+      "sourcePaths": [
+        "app/src/features/admin/publish-review.tsx",
+        "app/src/app/api/admin/publish/route.ts",
+        "app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+      ],
+      "limits": [
+        "Local Chromium/PGlite fixture; CDN/edge and deployed-origin behavior were not tested."
+      ]
+    },
+    {
+      "requirement": "A1R5-03",
+      "status": "PASS",
+      "description": "Missing genuine draft follows 404/notFound paths",
+      "evidencePaths": [
+        "evidence/integration-focused.stdout.log",
+        "evidence/integration-full.stdout.log"
+      ],
+      "sourcePaths": [
+        "app/src/server/content/preview.ts",
+        "app/src/app/api/admin/preview/route.ts",
+        "app/src/app/admin/preview/[slug]/page.tsx",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts"
+      ],
+      "limits": [
+        "The page-level Next notFound branch was confirmed by source inspection; this rerun did not launch a browser request for the absent page."
+      ]
+    },
+    {
+      "requirement": "A1R5-04",
+      "status": "PASS",
+      "description": "Authorized stale-save response returns current draft without writes",
+      "evidencePaths": [
+        "evidence/integration-focused.stdout.log",
+        "evidence/chromium.stdout.log",
+        "evidence/browser-results.json"
+      ],
+      "sourcePaths": [
+        "app/src/server/content/revisions.ts",
+        "app/src/app/api/admin/projects/route.ts",
+        "app/src/features/admin/project-editor.tsx",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts",
+        "app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+      ],
+      "limits": [
+        "PGlite and owner-cookie fixture; native PostgreSQL multi-process races were not run."
+      ]
+    },
+    {
+      "requirement": "A1R5-05",
+      "status": "PASS",
+      "description": "Draft renderer accepts only the exact canonical private-media URL",
+      "evidencePaths": [
+        "evidence/unit-focused.stdout.log"
+      ],
+      "sourcePaths": [
+        "app/src/features/portfolio/case-study.tsx",
+        "app/tests/unit/platform/completion-authoring-blocks.test.ts"
+      ],
+      "limits": [
+        "The exact-string source guard also rejects fragments and alternate encodings; the unit list does not include a separate literal fragment probe."
+      ]
+    },
+    {
+      "requirement": "A1R5-06",
+      "status": "PASS",
+      "description": "New authoring defaults are empty or explicitly unknown",
+      "evidencePaths": [
+        "evidence/unit-focused.stdout.log",
+        "evidence/chromium.stdout.log",
+        "evidence/browser-results.json"
+      ],
+      "sourcePaths": [
+        "app/src/features/admin/project-editor.tsx",
+        "app/src/features/admin/structured-block-editor.tsx",
+        "app/tests/unit/platform/completion-authoring-blocks.test.ts",
+        "app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+      ],
+      "limits": [
+        "The UI run used synthetic local draft data and did not write production content."
+      ]
+    },
+    {
+      "requirement": "FINISH-36-A1-IDENTITY-MANIFEST",
+      "status": "PASS",
+      "description": "Exact candidate, remote branch, commit/tree/base, root app, package, patch, source subtree, and all 79 output rows verified from raw Git blobs.",
+      "evidencePaths": [
+        "evidence/raw-git-verification.json"
+      ]
+    },
+    {
+      "requirement": "FINISH-36-A1-PATCH-REPLAY",
+      "status": "PASS",
+      "description": "The patch applies from the exact base; 25/25 changed paths match, all packaged replacements are byte-identical, and replayed app tree is ba8f952e... .",
+      "evidencePaths": [
+        "evidence/patch-replay.json",
+        "evidence/patch-replay.stdout.log",
+        "evidence/patch-replay.stderr.log"
+      ]
+    },
+    {
+      "requirement": "FINISH-36-A1-FOCUSED-AND-FULL-TESTS",
+      "status": "PASS",
+      "description": "Focused unit 5/5; focused integration 22/22; full unit 317/317; full integration 308/308.",
+      "evidencePaths": [
+        "evidence/unit-focused.stdout.log",
+        "evidence/integration-focused.stdout.log",
+        "evidence/unit-full.stdout.log",
+        "evidence/integration-full.stdout.log"
+      ]
+    },
+    {
+      "requirement": "FINISH-36-A1-LINT-TYPECHECK-BUILD",
+      "status": "PASS",
+      "description": "Lint, typecheck and production build exited 0 in the isolated exact-base replay.",
+      "evidencePaths": [
+        "evidence/lint.exit-code.txt",
+        "evidence/typecheck.exit-code.txt",
+        "evidence/build.exit-code.txt",
+        "evidence/local-build-manifest.json"
+      ]
+    },
+    {
+      "requirement": "FINISH-36-A1-CHROMIUM",
+      "status": "PASS",
+      "description": "6/6 Chromium tests; no skipped, unexpected, or flaky tests. Browser and build bind to the exact replayed candidate tree.",
+      "evidencePaths": [
+        "evidence/chromium.stdout.log",
+        "evidence/browser-results.json",
+        "evidence/browser-binding.json",
+        "evidence/a1-evidence-summary.json"
+      ]
+    },
+    {
+      "requirement": "LIMIT-NATIVE-PROVIDERS",
+      "status": "NOT RUN",
+      "description": "Native PostgreSQL, Supabase Auth, and Storage/provider approval checks.",
+      "evidencePaths": [
+        "report.md"
+      ]
+    },
+    {
+      "requirement": "LIMIT-DEPLOYMENT-CDN",
+      "status": "NOT RUN",
+      "description": "Deployed origin, CDN/shared cache, and live rollback visibility.",
+      "evidencePaths": [
+        "report.md"
+      ]
+    },
+    {
+      "requirement": "LIMIT-DEVICE-RECOVERY-MANUAL",
+      "status": "NOT RUN",
+      "description": "Physical devices/accessibility, restore rehearsal, and manual operations.",
+      "evidencePaths": [
+        "report.md"
+      ]
+    },
+    {
+      "requirement": "GATE-GPT2-PARENT-INTEGRATION-G7",
+      "status": "NOT RUN",
+      "description": "External GPT Plus #2 audit, Parent acceptance, canonical integration, and G7 acceptance remain separate gates.",
+      "evidencePaths": [
+        "report.md"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "auditType": "FINISH-36 Parent-local A1 technical recheck",
+  "recommendation": "PASS",
+  "candidateCommit": "76d679dcb98064152021830b98f16eb456b3ae19",
+  "findings": [
+    {
+      "id": "A1R5-01",
+      "severity": "P2",
+      "status": "PASS",
+      "title": "Frozen DTO compatibility restored",
+      "result": "ReviewedMedia approvalAudit is strict {eventId,createdAt}; PrivateDraftReview exposes only identity/drafts/checks/canPublish; ReviewCheck retains generic string id and project/site scope. Positive and malformed schema probes pass.",
+      "sourcePaths": [
+        "app/src/server/media/manifest.ts",
+        "app/src/server/content/preview.ts",
+        "app/tests/unit/platform/completion-authoring-blocks.test.ts",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts"
+      ],
+      "evidencePaths": [
+        "evidence/unit-focused.stdout.log",
+        "evidence/integration-focused.stdout.log",
+        "evidence/raw-git-verification.json"
+      ],
+      "limits": [
+        "Embedded PGlite and synthetic auth only; no provider API run."
+      ]
+    },
+    {
+      "id": "A1R5-02",
+      "severity": "P2",
+      "status": "PASS",
+      "title": "Publish and rollback consume activePublication on refresh",
+      "result": "Both refresh paths require activePublication and use its revision; exact-source Chromium observed the committed publish and rollback update the review identity without a page reload.",
+      "sourcePaths": [
+        "app/src/features/admin/publish-review.tsx",
+        "app/src/app/api/admin/publish/route.ts",
+        "app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+      ],
+      "evidencePaths": [
+        "evidence/chromium.stdout.log",
+        "evidence/browser-results.json",
+        "evidence/browser-binding.json",
+        "evidence/publish-rollback-review.png"
+      ],
+      "limits": [
+        "Local Chromium/PGlite fixture; CDN/edge and deployed-origin behavior were not tested."
+      ]
+    },
+    {
+      "id": "A1R5-03",
+      "severity": "P2",
+      "status": "PASS",
+      "title": "Missing genuine draft follows 404/notFound paths",
+      "result": "Requested absent drafts return null before strict review construction; the owner API returns private 404 and the page calls notFound() for an absent review/draft. Integration verifies status, private headers, and no CandidateX content.",
+      "sourcePaths": [
+        "app/src/server/content/preview.ts",
+        "app/src/app/api/admin/preview/route.ts",
+        "app/src/app/admin/preview/[slug]/page.tsx",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts"
+      ],
+      "evidencePaths": [
+        "evidence/integration-focused.stdout.log",
+        "evidence/integration-full.stdout.log"
+      ],
+      "limits": [
+        "The page-level Next notFound branch was confirmed by source inspection; this rerun did not launch a browser request for the absent page."
+      ]
+    },
+    {
+      "id": "A1R5-04",
+      "severity": "P2",
+      "status": "PASS",
+      "title": "Authorized stale-save response returns current draft without writes",
+      "result": "A stale 409 includes projectId, current revision, and complete current project; integration verifies no publication/draft/audit writes and unauthenticated callers do not receive current content. Chromium confirms the losing rich editor buffer remains visible.",
+      "sourcePaths": [
+        "app/src/server/content/revisions.ts",
+        "app/src/app/api/admin/projects/route.ts",
+        "app/src/features/admin/project-editor.tsx",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts",
+        "app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+      ],
+      "evidencePaths": [
+        "evidence/integration-focused.stdout.log",
+        "evidence/chromium.stdout.log",
+        "evidence/browser-results.json"
+      ],
+      "limits": [
+        "PGlite and owner-cookie fixture; native PostgreSQL multi-process races were not run."
+      ]
+    },
+    {
+      "id": "A1R5-05",
+      "severity": "P2",
+      "status": "PASS",
+      "title": "Draft renderer accepts only the exact canonical private-media URL",
+      "result": "Draft rendering sets img src only when the supplied URL exactly equals /api/admin/preview/media/{encodeURIComponent(mediaId)}. Unit probes reject absolute/origin-confused, traversal, mismatched-ID, and query variants.",
+      "sourcePaths": [
+        "app/src/features/portfolio/case-study.tsx",
+        "app/tests/unit/platform/completion-authoring-blocks.test.ts"
+      ],
+      "evidencePaths": [
+        "evidence/unit-focused.stdout.log"
+      ],
+      "limits": [
+        "The exact-string source guard also rejects fragments and alternate encodings; the unit list does not include a separate literal fragment probe."
+      ]
+    },
+    {
+      "id": "A1R5-06",
+      "severity": "P2",
+      "status": "PASS",
+      "title": "New authoring defaults are empty or explicitly unknown",
+      "result": "New section, paragraph, list, code, and link text fields begin empty; link URL/check time are empty; evidence URL/check time are null and status unknown. Unit and Chromium assertions pass.",
+      "sourcePaths": [
+        "app/src/features/admin/project-editor.tsx",
+        "app/src/features/admin/structured-block-editor.tsx",
+        "app/tests/unit/platform/completion-authoring-blocks.test.ts",
+        "app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+      ],
+      "evidencePaths": [
+        "evidence/unit-focused.stdout.log",
+        "evidence/chromium.stdout.log",
+        "evidence/browser-results.json"
+      ],
+      "limits": [
+        "The UI run used synthetic local draft data and did not write production content."
+      ]
+    }
+  ],
+  "processBoundaryIncident": "FINISH-39 records that FINISH-37 output roots were opened and altered during earlier parent work despite the preceding no-open instruction. This report did not inspect or use FINISH-37 through FINISH-41 output contents as evidence.",
+  "scopeNotRun": [
+    "External GPT Plus #2 audit",
+    "Parent implementation acceptance",
+    "Canonical integration",
+    "Native PostgreSQL/Auth/Storage",
+    "Deployed origin/CDN",
+    "Physical/device/accessibility",
+    "Recovery/manual operations",
+    "G7"
+  ]
+}

@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "audit": "FINISH-36 A1 local recheck",
+  "candidateCommit": "76d679dcb98064152021830b98f16eb456b3ae19",
+  "cwd": "FINISH-42 recheck worktree root",
+  "rawGit": {
+    "argv": [
+      "python",
+      "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\completion-audits\\FINISH-A1\\finish-09\\20261011T233517Z-a1-r5-r7-parent-local-technical-recheck-07-950c2b33\\.work\\verify_raw_git.py"
+    ],
+    "exitCode": 0,
+    "evidence": "evidence/raw-git-verification.json"
+  },
+  "patchReplay": {
+    "command": "python .work/replay_a1_patch.py (fresh detached exact-base worktree); follow-up path/replacement reconciliation",
+    "forwardApplyCheckExit": 0,
+    "forwardApplyExit": 0,
+    "whitespaceCheckExit": 0,
+    "replayedPathCount": 25,
+    "replacementMismatches": [],
+    "appTree": "ba8f952edc34e94393c48b25779071daab9a9812",
+    "evidence": "evidence/patch-replay.json"
+  },
+  "reviewerReruns": {
+    "workingDirectory": ".work/a1-exact-base/app",
+    "commands": [
+      {
+        "name": "pnpm-install",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:\\Program Files\\nodejs\\node_modules\\corepack\\dist\\corepack.js",
+          "pnpm",
+          "install",
+          "--frozen-lockfile"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 34.954,
+        "stdoutBytes": 2192,
+        "stderrBytes": 301
+      },
+      {
+        "name": "unit-focused",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:\\Program Files\\nodejs\\node_modules\\corepack\\dist\\corepack.js",
+          "pnpm",
+          "exec",
+          "vitest",
+          "run",
+          "--config",
+          "vitest.config.ts",
+          "tests/unit/platform/completion-authoring-blocks.test.ts"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 3.402,
+        "stdoutBytes": 324,
+        "stderrBytes": 0
+      },
+      {
+        "name": "integration-focused",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:\\Program Files\\nodejs\\node_modules\\corepack\\dist\\corepack.js",
+          "pnpm",
+          "exec",
+          "vitest",
+          "run",
+          "--config",
+          "vitest.integration.config.ts",
+          "tests/integration/platform/completion-authoring-preview.test.ts"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 25.001,
+        "stdoutBytes": 326,
+        "stderrBytes": 0
+      },
+      {
+        "name": "unit-full",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:\\Program Files\\nodejs\\node_modules\\corepack\\dist\\corepack.js",
+          "pnpm",
+          "run",
+          "test:unit"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 3.445,
+        "stdoutBytes": 932,
+        "stderrBytes": 0
+      },
+      {
+        "name": "integration-full",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:\\Program Files\\nodejs\\node_modules\\corepack\\dist\\corepack.js",
+          "pnpm",
+          "run",
+          "test:integration"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 33.363,
+        "stdoutBytes": 598,
+        "stderrBytes": 0
+      },
+      {
+        "name": "lint",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:\\Program Files\\nodejs\\node_modules\\corepack\\dist\\corepack.js",
+          "pnpm",
+          "run",
+          "lint"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 14.552,
+        "stdoutBytes": 233,
+        "stderrBytes": 0
+      },
+      {
+        "name": "typecheck",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:\\Program Files\\nodejs\\node_modules\\corepack\\dist\\corepack.js",
+          "pnpm",
+          "run",
+          "typecheck"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 9.656,
+        "stdoutBytes": 225,
+        "stderrBytes": 0
+      },
+      {
+        "name": "build",
+        "command": [
+          "C:\\Program Files\\nodejs\\node.exe",
+          "C:\\Program Files\\nodejs\\node_modules\\corepack\\dist\\corepack.js",
+          "pnpm",
+          "run",
+          "build"
+        ],
+        "exitCode": 0,
+        "elapsedSeconds": 21.603,
+        "stdoutBytes": 1702,
+        "stderrBytes": 0
+      }
+    ]
+  },
+  "chromium": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Program Files\\nodejs\\node_modules\\corepack\\dist\\corepack.js",
+      "pnpm",
+      "exec",
+      "playwright",
+      "test",
+      "tests/e2e/platform/admin-publish.spec.ts",
+      "tests/e2e/platform/completion-authoring-workflow.spec.ts"
+    ],
+    "workingDirectory": ".work/a1-exact-base/app",
+    "environment": {
+      "CI": "1",
+      "PORT": "3159",
+      "YOR_E2E_FIXTURE": "1",
+      "YOR_TEST_DATABASE_PATH": ".work/a1-e2e-pglite",
+      "A1_EVIDENCE_DIR": "evidence/",
+      "B5_EVIDENCE_DIR": "evidence/"
+    },
+    "exitCode": 0,
+    "expected": 6,
+    "unexpected": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "buildId": "N5F-9B-D4Owa10IpgOBkn",
+    "evidence": "evidence/browser-binding.json"
+  },
+  "inputsRead": [
+    "docs/planning/reconciliation-packets/2026-10-11-finish-36-a1-c1-local-technical-rechecks.md",
+    "docs/planning/reconciliation-packets/2026-10-11-finish-24-a1-r5-independent-audit.md",
+    "docs/planning/reconciliation-packets/2026-10-11-finish-27-a1-r5-rework.md",
+    "docs/planning/reconciliation-packets/2026-10-11-finish-32-a1-r5-r7-independent-audit.md",
+    "deliveries/FINISH-A1/r5-07/ (raw Git candidate objects)"
+  ]
+}

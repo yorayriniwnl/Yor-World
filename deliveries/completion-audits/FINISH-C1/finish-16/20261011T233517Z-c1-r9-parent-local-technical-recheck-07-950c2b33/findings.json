@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "auditType": "FINISH-36 Parent-local C1 correction recheck",
+  "recommendation": "PASS for E-02-05 evidence-pointer correction only",
+  "candidateCommit": "3dda9a616033375768f3d5f60f8c653d504f7c8c",
+  "findings": [
+    {
+      "id": "C1-R9-BINDING",
+      "status": "PASS",
+      "title": "Exact R9 candidate and remote branch are bound",
+      "result": "Commit, parent R8, full tree, delivery subtree, root app tree, and remote branch match the FINISH-36 identities.",
+      "evidencePaths": [
+        "evidence/raw-git-verification.json"
+      ]
+    },
+    {
+      "id": "C1-R9-MANIFESTS",
+      "status": "PASS",
+      "title": "R9 and inherited R8 output manifests match raw Git blobs",
+      "result": "All 26 R9 rows and all 22 R8 rows match raw blob hashes and byte counts; no extra or missing package files.",
+      "evidencePaths": [
+        "evidence/raw-git-verification.json"
+      ]
+    },
+    {
+      "id": "C1-R9-DELTA",
+      "status": "PASS",
+      "title": "Only the authorized E-02-05 evidence pointer correction differs",
+      "result": "The seven-file R9/R8 delta is exact; matrix statuses and non-evidence claims are unchanged; all ten evidence references resolve; finalizer change is one E-02-05 pointer line.",
+      "evidencePaths": [
+        "evidence/raw-git-verification.json"
+      ]
+    },
+    {
+      "id": "C1-R9-NEGATIVE-RECEIPT",
+      "status": "PASS",
+      "title": "False-pass receipt records a fail-closed nonzero child result",
+      "result": "Committed disposable-copy receipt parses FAIL with child exit 1, matching stdout, empty stderr, and unchanged original receipt hash.",
+      "evidencePaths": [
+        "evidence/raw-git-verification.json"
+      ]
+    }
+  ],
+  "processBoundaryIncident": "FINISH-39 records that FINISH-37 output roots were opened and altered during earlier parent work despite the preceding no-open instruction. This report did not inspect or use FINISH-37 through FINISH-41 output contents as evidence.",
+  "scopeNotRun": [
+    "C1 finalizer",
+    "Inherited C1 behavioral tests",
+    "E-01 disposition",
+    "External GPT Plus #2 audit",
+    "Parent acceptance",
+    "Canonical integration",
+    "Provider/device/deployment/recovery/G7 gates"
+  ]
+}

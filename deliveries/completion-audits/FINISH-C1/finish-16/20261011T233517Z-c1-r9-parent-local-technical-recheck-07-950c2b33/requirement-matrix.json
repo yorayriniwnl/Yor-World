@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "candidateCommit": "3dda9a616033375768f3d5f60f8c653d504f7c8c",
+  "requirements": [
+    {
+      "requirement": "C1-R9-EXACT-BINDING",
+      "status": "PASS",
+      "description": "Exact commit/parent/tree/package and remote branch verified.",
+      "evidencePaths": [
+        "evidence/raw-git-verification.json"
+      ]
+    },
+    {
+      "requirement": "C1-R9-RAW-MANIFESTS",
+      "status": "PASS",
+      "description": "Every R9 and inherited R8 output-manifest row matches raw Git bytes.",
+      "evidencePaths": [
+        "evidence/raw-git-verification.json"
+      ]
+    },
+    {
+      "requirement": "C1-R9-EXACT-DELTA",
+      "status": "PASS",
+      "description": "Seven-path R9 delta exactly matches declared inventory and authorized E-02-05 pointer/template change.",
+      "evidencePaths": [
+        "evidence/raw-git-verification.json"
+      ]
+    },
+    {
+      "requirement": "C1-R9-MATRIX-EVIDENCE",
+      "status": "PASS",
+      "description": "All seven matrix rows preserve statuses/claims; all ten refs resolve; E-02-05 names only the JSON receipt.",
+      "evidencePaths": [
+        "evidence/raw-git-verification.json"
+      ]
+    },
+    {
+      "requirement": "C1-R9-FALSE-PASS-RECEIPT",
+      "status": "PASS",
+      "description": "Committed negative receipt returns parsed FAIL and child exit 1 without changing original input.",
+      "evidencePaths": [
+        "evidence/raw-git-verification.json"
+      ]
+    },
+    {
+      "requirement": "C1-FINALIZER-RUN",
+      "status": "NOT RUN",
+      "description": "The candidate finalizer was not run, per packet.",
+      "evidencePaths": [
+        "report.md"
+      ]
+    },
+    {
+      "requirement": "C1-INHERITED-BEHAVIORAL-TESTS",
+      "status": "NOT RUN",
+      "description": "Inherited tests were not rerun; this was a raw-Git evidence-pointer check.",
+      "evidencePaths": [
+        "report.md"
+      ]
+    },
+    {
+      "requirement": "C1-E01-EXTERNAL-ACCEPTANCE-INTEGRATION",
+      "status": "NOT RUN",
+      "description": "E-01, external GPT Plus #2, Parent acceptance, and canonical integration remain separate pending gates.",
+      "evidencePaths": [
+        "report.md"
+      ]
+    },
+    {
+      "requirement": "C1-PROVIDER-DEVICE-DEPLOYMENT-RECOVERY-G7",
+      "status": "NOT RUN",
+      "description": "Provider, device, deployment, recovery/manual operations, and G7 were not evaluated here.",
+      "evidencePaths": [
+        "report.md"
+      ]
+    }
+  ]
+}
