@@ -27,7 +27,7 @@
     "rulingDecisionPath": "docs/planning/reviews/2026-10-08-rc6-r1/decision.json"
   },
   "completionProgram": {
-    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 FINISH-24 REWORK; FINISH-27 CORRECTION ACTIVE / B1-R3 FINISH-20 REWORK / B1-R4 FINISH-25-R1 VISIBILITY AMENDMENT ACTIVE / C1-R6 FINISH-16 E-01 PENDING / C1-R7 FINISH-26 REWORK FOR E-02; FINISH-28 CORRECTION ACTIVE / NO CANONICAL COMPLETION INTEGRATION",
+    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 FINISH-24 REWORK; FINISH-27 CORRECTION ACTIVE / B1-R3 FINISH-20 REWORK / B1-R4 FINISH-25-R1 AMENDMENT ACTIVE / C1-R6 FINISH-16 E-01 PENDING / C1-R7 FINISH-26 REWORK FOR E-02; R8 CANDIDATE DELIVERED, FINISH-29 AUDIT ALLOCATED / NO CANONICAL COMPLETION INTEGRATION",
     "coordinationCommit": "ab369d413c7501224e3d79aa78e56172f97839ff",
     "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
     "contractsGate": {
@@ -212,7 +212,7 @@
       },
       "FINISH-C1-R7": {
         "maker": "Local Codex runtime evidence-maker worker",
-        "status": "DELIVERED / FINISH-26 LOCAL AUDIT REWORK FOR E-02 / FINISH-28 CORRECTION ACTIVE",
+        "status": "DELIVERED / FINISH-26 LOCAL AUDIT REWORK FOR E-02 / FINISH-28 CORRECTION DELIVERED; FINISH-29 DELTA AUDIT ACTIVE",
         "deliveryRoot": "deliveries/FINISH-C1-R7/",
         "deliveryCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
         "makerReport": "deliveries/FINISH-C1-R7/report.md",
@@ -231,16 +231,27 @@
         "auditReallocationPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-26-c1-r7-audit-root-reallocation.md",
         "correctionPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-28-c1-r7-verifier-correction.md",
         "correctionDeliveryRoot": "deliveries/FINISH-C1-R8/",
-        "parentImplementationAcceptance": "NOT ACCEPTED; E-01 remains separately pending; E-02 REWORK",
+        "parentImplementationAcceptance": "NOT ACCEPTED; E-01 remains separately pending; E-02 correction awaits FINISH-29 review",
         "canonicalIntegration": false
       },
     "FINISH-C1-R8": {
       "maker": "Local Codex evidence-maker worker",
-      "status": "FINISH-28 AUTHORIZED / MAKER EXECUTION ACTIVE",
+      "status": "DELIVERED / FINISH-29 LOCAL DELTA AUDIT ALLOCATED / PARENT ACCEPTANCE PENDING",
       "deliveryRoot": "deliveries/FINISH-C1-R8/",
       "packetPath": "docs/planning/reconciliation-packets/2026-10-11-finish-28-c1-r7-verifier-correction.md",
       "promptPath": "docs/planning/production-prompts/repairs-2026-10-11/18-CODEX-C1-R8.md",
       "baseCandidateCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
+      "deliveryBranch": "codex/finish-c1-r8-e02-verifier",
+      "deliveryCommit": "364d8ff690d3dc814a09406873433d9cb397b574",
+      "deliveryFullTree": "a29a29f7027f5d72e496c58f327d2e03058d2ad1",
+      "deliverySubtree": "b3b98efa08045f520a00abf4569145ffa3ba3ee7",
+      "deliveryOutputManifestSha256": "0f1a4fd53ca549f35b724fb548272d7b2bd068d0f8f7d41467d5a1d6dd8e1e97",
+      "deliveryStableFiles": 25,
+      "deliveryStableBytes": 237622,
+      "makerReport": "deliveries/FINISH-C1-R8/report.md",
+      "auditPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-29-c1-r8-delta-audit.md",
+      "competingUnverifiedCommit": "c398876583bc337c069414b79364e3fdea745879",
+      "collisionDisposition": "Separate candidate branch and occupied canonical R8 path preserved without using their contents; known candidate remains pinned to deliveryCommit",
       "scope": "Evidence verifier and negative regressions only; no app/runtime/dependency or historical receipt changes",
       "parentImplementationAcceptance": "NOT ACCEPTED; E-01 remains separately pending",
       "canonicalIntegration": false,
@@ -333,20 +344,30 @@
       "lane": "FINISH-C1-R7",
       "deliveryRoot": "deliveries/FINISH-C1-R8/",
       "candidateCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
-      "status": "AUTHORIZED / EVIDENCE-MAKER EXECUTION IN PROGRESS / CANONICAL SOURCE UNCHANGED",
+      "status": "DELIVERED at 364d8ff690d3dc814a09406873433d9cb397b574 / FINISH-29 AUDIT ALLOCATED / PARENT ACCEPTANCE PENDING",
       "canonicalSourceChanged": false
     },
-    "latestAuditAllocation": {
+    "priorAuditAllocation": {
       "packetId": "FINISH-26",
       "path": "docs/planning/reconciliation-packets/2026-10-11-finish-26-c1-r7-audit-root-reallocation.md",
       "candidateCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
       "candidateTree": "419950200cc9705a101468d44e5b589b40f609f0",
       "auditRoot": "deliveries/completion-audits/FINISH-C1/finish-12/20261011T133844Z-c1-r7-delta-review-02/",
-      "reviewer": "Local Codex independent reviewer; external GPT Plus #2 NOT RUN",
       "status": "COMPLETE / LOCAL REVIEW RECOMMENDS REWORK FOR E-02 / EXTERNAL GPT PLUS #2 NOT RUN",
-      "reportPath": "deliveries/completion-audits/FINISH-C1/finish-12/20261011T133844Z-c1-r7-delta-review-02/report.md",
-      "findingsPath": "deliveries/completion-audits/FINISH-C1/finish-12/20261011T133844Z-c1-r7-delta-review-02/findings.json",
-      "requirementMatrixPath": "deliveries/completion-audits/FINISH-C1/finish-12/20261011T133844Z-c1-r7-delta-review-02/requirement-matrix.json"
+      "reportPath": "deliveries/completion-audits/FINISH-C1/finish-12/20261011T133844Z-c1-r7-delta-review-02/report.md"
+    },
+    "latestAuditAllocation": {
+      "packetId": "FINISH-29",
+      "path": "docs/planning/reconciliation-packets/2026-10-11-finish-29-c1-r8-delta-audit.md",
+      "candidateCommit": "364d8ff690d3dc814a09406873433d9cb397b574",
+      "candidateTree": "a29a29f7027f5d72e496c58f327d2e03058d2ad1",
+      "candidateSubtree": "b3b98efa08045f520a00abf4569145ffa3ba3ee7",
+      "auditRoot": "deliveries/completion-audits/FINISH-C1/finish-13/20261011T143500Z-c1-r8-delta-review-01/",
+      "reviewer": "Local Codex B1-R4 worker after its maker package is complete; external GPT Plus #2 NOT RUN",
+      "status": "ALLOCATED / EXACT-CANDIDATE DELTA REVIEW PENDING",
+      "reportPath": null,
+      "findingsPath": null,
+      "requirementMatrixPath": null
     },
     "successorContractsGate": {
       "packetId": "FINISH-00-R2",
