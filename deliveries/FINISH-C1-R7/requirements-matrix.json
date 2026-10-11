@@ -1,0 +1,496 @@
+{
+  "schemaVersion": 1,
+  "delivery": "FINISH-C1-R7",
+  "status": "Maker verification complete; independent delta audit and Parent acceptance pending.",
+  "requirements": [
+    {
+      "id": "FIN21R1-01",
+      "requirement": "Use only the fresh R7 receipt-correction root; preserve candidate, audit, and canonical app paths.",
+      "status": "PASS",
+      "evidence": [
+        "source-binding.json",
+        "evidence/verification.json"
+      ]
+    },
+    {
+      "id": "FIN21R1-02",
+      "requirement": "Verify 19 direct R6 input paths from raw R6 commit Git blobs.",
+      "status": "PASS",
+      "evidence": [
+        "candidate-input-provenance.json",
+        "evidence/verification.json"
+      ]
+    },
+    {
+      "id": "FIN21R1-03",
+      "requirement": "Verify the eight candidate-app aliases from the exact amended committed path/commit mappings.",
+      "status": "PASS",
+      "evidence": [
+        "candidate-input-provenance.json",
+        "source-binding.json",
+        "evidence/verification.json"
+      ]
+    },
+    {
+      "id": "FIN21R1-04",
+      "requirement": "Verify both installed three@0.180.0 files against package version, R6 package manifest, lock integrity, source-build identity, and successful frozen-install evidence.",
+      "status": "PASS",
+      "evidence": [
+        "source-binding.json",
+        "candidate-input-provenance.json",
+        "evidence/verification.json"
+      ]
+    },
+    {
+      "id": "FIN21R1-05",
+      "requirement": "Record all 32 R5 predecessor outputs from raw R5 Git blobs and bind the original R5 output manifest blob separately.",
+      "status": "PASS",
+      "evidence": [
+        "predecessor-output-git-blobs.json",
+        "evidence/verification.json"
+      ]
+    },
+    {
+      "id": "FIN21R1-06",
+      "requirement": "Explain the one-byte diagnostic-test difference against its original R6 receipt without inferring a source edit.",
+      "status": "PASS",
+      "evidence": [
+        "candidate-input-provenance.json",
+        "source-binding.json",
+        "evidence/verification.json"
+      ]
+    },
+    {
+      "id": "FIN21R1-07",
+      "requirement": "Preserve original R6/R5 manifests and distinguish corrected byte receipts from historical receipt mismatches.",
+      "status": "PASS",
+      "evidence": [
+        "source-binding.json",
+        "candidate-input-provenance.json",
+        "predecessor-output-git-blobs.json"
+      ]
+    },
+    {
+      "id": "FIN21R1-08",
+      "requirement": "Rerun source/runtime checks from FINISH-16.",
+      "status": "NOT RUN",
+      "evidence": [],
+      "reason": "FINISH-21 is evidence-only; source/runtime evidence is inherited from FINISH-16 and was not rerun."
+    },
+    {
+      "id": "FIN21R1-09",
+      "requirement": "Independent delta review and Parent acceptance.",
+      "status": "NOT RUN",
+      "evidence": [],
+      "reason": "These are subsequent governance steps; this maker cannot self-audit or accept."
+    }
+  ],
+  "counts": {
+    "r6Inputs": {
+      "total": 29,
+      "directGitBlobs": 19,
+      "mappedGitBlobs": 8,
+      "installedPackageFiles": 2,
+      "gitBacked": 27,
+      "originalReceiptMatches": 22,
+      "originalReceiptMismatches": 7
+    },
+    "r5Outputs": {
+      "total": 32,
+      "originalReceiptMatches": 9,
+      "originalReceiptMismatches": 23
+    }
+  },
+  "originalR6ReceiptMismatches": [
+    {
+      "alias": "app/pnpm-lock.yaml",
+      "expected": {
+        "sha256": "f1637cfe2800e9065fdbc4d2975e8180865ff52775c8213473e2d888c2a8a38d",
+        "bytes": 158580
+      },
+      "committedOrInstalled": {
+        "commit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
+        "path": "app/pnpm-lock.yaml",
+        "blobOid": "ad03f89e09b6346a68ccde3708b0318cae9d75b8",
+        "sha256": "8034f04afa8cbdb28fa028ed574117177dfa8a4903c95775ea41405bcabea791",
+        "bytes": 153898
+      }
+    },
+    {
+      "alias": "app/playwright.config.ts",
+      "expected": {
+        "sha256": "fa38ae152c8f164cfb51a668172df4a6206431e8e42420fd3ed4083ca6468b24",
+        "bytes": 1332
+      },
+      "committedOrInstalled": {
+        "commit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
+        "path": "app/playwright.config.ts",
+        "blobOid": "d590360291b80ce061243f5c39505d69051af54a",
+        "sha256": "0c73e012399d3c6a6e2ff20672b684725accb0ca67e0fa02428a9352a3f045fd",
+        "bytes": 1297
+      }
+    },
+    {
+      "alias": "app/vitest.config.ts",
+      "expected": {
+        "sha256": "a2555082edeb6ecd0e4c4322454ccb26ac96518f9d7b8fff759899e536213912",
+        "bytes": 369
+      },
+      "committedOrInstalled": {
+        "commit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
+        "path": "app/vitest.config.ts",
+        "blobOid": "008081ec6b606e9165d51fb55901dce19a1e0e52",
+        "sha256": "89c179b9b6d48f754dd748cd9589a70e3892d1cdf7ee1860fe037dbece842e99",
+        "bytes": 357
+      }
+    },
+    {
+      "alias": "app/vitest.integration.config.ts",
+      "expected": {
+        "sha256": "bdd757adaa6fa3215ba77ab03159736db1978d8a849dbef2319d1b0206407830",
+        "bytes": 464
+      },
+      "committedOrInstalled": {
+        "commit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
+        "path": "app/vitest.integration.config.ts",
+        "blobOid": "ae3d5f70b42ab2b98ec8923fe21a5009104ad008",
+        "sha256": "4e53d67bc88362e3163e1892e5f39f3f8170405e99d24737942cbe0493a79a51",
+        "bytes": 452
+      }
+    },
+    {
+      "alias": "deliveries/completion-audits/FINISH-C1/finish-08/20261011T003551Z-c1-r5-local-review/findings.json",
+      "expected": {
+        "sha256": "38d975f774836d57fd2b8f6afd9d15303d60367ed2ad8cd71c055ea3fe8996d2",
+        "bytes": 8481
+      },
+      "committedOrInstalled": {
+        "commit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
+        "path": "deliveries/completion-audits/FINISH-C1/finish-08/20261011T003551Z-c1-r5-local-review/findings.json",
+        "blobOid": "66d86a616ec6f931327778a432e2e2213b6ad569",
+        "sha256": "75e6588d575446e16bd9b0daae354a869f34dee6a54f6e0989e49864f5a2e13f",
+        "bytes": 8317
+      }
+    },
+    {
+      "alias": "deliveries/completion-audits/FINISH-C1/finish-08/20261011T003551Z-c1-r5-local-review/evidence/retry-aggregation-diagnostic.test.ts",
+      "expected": {
+        "sha256": "f19932723c3644d4cc25b65d919317bc28e89520c3c47c926b49e08d2fd22235",
+        "bytes": 2874
+      },
+      "committedOrInstalled": {
+        "commit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
+        "path": "deliveries/completion-audits/FINISH-C1/finish-08/20261011T003551Z-c1-r5-local-review/evidence/retry-aggregation-diagnostic.test.ts",
+        "blobOid": "b1296ac90b97f98c17b91b946dcbaf1f37a2d0af",
+        "sha256": "d952aef28ae996208471a13b5dc3aafe2a12e85a219a677463d06691cf03663a",
+        "bytes": 2873
+      }
+    },
+    {
+      "alias": "deliveries/completion-audits/FINISH-C1/finish-08/20261011T003551Z-c1-r5-local-review/evidence/retry-aggregation-diagnostic.log",
+      "expected": {
+        "sha256": "30f79980adb56c5ccd8d878414fd65a268790018e5d9742a68a5ea973e55c627",
+        "bytes": 3802
+      },
+      "committedOrInstalled": {
+        "commit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
+        "path": "deliveries/completion-audits/FINISH-C1/finish-08/20261011T003551Z-c1-r5-local-review/evidence/retry-aggregation-diagnostic.log",
+        "blobOid": "42b5c90f3600b66e82bb169f02c239961596bf12",
+        "sha256": "55392c33c7be11526beefe24b3839d3d69fc5a82953c438f4683220bf7f92441",
+        "bytes": 3787
+      }
+    }
+  ],
+  "originalR5ReceiptMismatches": [
+    {
+      "path": "deliveries/FINISH-C1-R5/.gitignore",
+      "expected": {
+        "sha256": "c2426b1f091b975d8edc2130f239e6a832a57d2e4250580c7fc5ce29cb11837f",
+        "bytes": 76
+      },
+      "committed": {
+        "blobOid": "ecf5a9a9521ff3f4c911e1d9924c7dad2264d42f",
+        "sha256": "774cd57ad51ac0e5a5caeb25d700d04940a01f0ea7fdffd92f0ffbf2f71b42b1",
+        "bytes": 72
+      }
+    },
+    {
+      "path": "deliveries/FINISH-C1-R5/changed-paths.json",
+      "expected": {
+        "sha256": "7678cedf3ecce9c515c8e23742b490fa4b78a316abaa65fd85636acf1b9da778",
+        "bytes": 3008
+      },
+      "committed": {
+        "blobOid": "3eb33438211e33372d1532db37dc2033de77df53",
+        "sha256": "a0f6f00849e18fcab354f90da703f278a710a818011c7cdc7316acd7cf2cc54a",
+        "bytes": 2921
+      }
+    },
+    {
+      "path": "deliveries/FINISH-C1-R5/input-hashes.json",
+      "expected": {
+        "sha256": "58c0877c2652abab0868a2d9cdba40dd61b3a7b01cc0c6c0d96f1ec20387f48b",
+        "bytes": 7746
+      },
+      "committed": {
+        "blobOid": "29d73b1980a7ffe8bf803c686f2bb33aba40a8ce",
+        "sha256": "c8ac3b48d3dd70dc6e2855fe666ab2ad9fbf0a132ce759d06d5242521c20d85b",
+        "bytes": 7554
+      }
+    },
+    {
+      "path": "deliveries/FINISH-C1-R5/requirements-matrix.json",
+      "expected": {
+        "sha256": "93cc638143ef5ce4886a09c3787a407cd89ab1b21fcdb6997f56a3660255b761",
+        "bytes": 6794
+      },
+      "committed": {
+        "blobOid": "16ce55ac0b6c4c69905f2d9261002fec1dcafb83",
+        "sha256": "aabb8cb8596f95653f0c3d55743eb9c6cc3f3c32180aaa4295c475b2feb55afb",
+        "bytes": 6619
+      }
+    },
+    {
+      "path": "deliveries/FINISH-C1-R5/evidence/r3-predecessor-output-verification.json",
+      "expected": {
+        "sha256": "fdf57f4323c0b8aebc1192ab4235b99f14b2861437a5221b32acb2fa3c2b3765",
+        "bytes": 9404
+      },
+      "committed": {
+        "blobOid": "5d84c269efad15d07141e4f1ce612acd15f4a423",
+        "sha256": "a8573c01aa12bd7b9b076d4ca3364f57f9e988dc05af78f616a416801b4cbf6f",
+        "bytes": 9191
+      }
+    },
+    {
+      "path": "deliveries/FINISH-C1-R5/evidence/recovery-copy-hashes.json",
+      "expected": {
+        "sha256": "4badf0899b2e4d2a832bb49b128850e3f1582dad8d24dd5c7029cebd1490d672",
+        "bytes": 2555
+      },
+      "committed": {
+        "blobOid": "33a97e8c994300c30e2ade87a55a0e0ba8423c2d",
+        "sha256": "d7b2cf987dc4ce175980d88447e553844b2bad31f12259cac6940226bd5246e7",
+        "bytes": 2497
+      }
+    },
+    {
+      "path": "deliveries/FINISH-C1-R5/evidence/sequential-apply-receipt.json",
+      "expected": {
+        "sha256": "4baf06957d4d5307394518979a3b14a8f9855812f9259c6753c0bdd5f96f6427",
+        "bytes": 7414
+      },
+      "committed": {
+        "blobOid": "41f62a07dc34af49102aef959d172289276c60a2",
+        "sha256": "d54c46edf30f6ebf334283691444dab44307cce9f5e3ffbd9514ad9a5c8d92ee",
+        "bytes": 7208
+      }
+    },
+    {
+      "path": "deliveries/FINISH-C1-R5/evidence/source-build-identity.json",
+      "expected": {
+        "sha256": "91db06789b907f400feb52f35d12c32d72579470838836994774424a3c2a9377",
+        "bytes": 3705
+      },
+      "committed": {
+        "blobOid": "8df1b30270aa4b3ed01c43de270445148277ed6c",
+        "sha256": "8d14738a72a25bbaf1d01047e6806075c620740777c37457af9215de422b4b36",
+        "bytes": 3626
+      }
+    },
+    {
+      "path": "deliveries/FINISH-C1-R5/evidence/validation-results.json",
+      "expected": {
+        "sha256": "27ab1537dd56fe13f497b4debe08eb0407aa28e9c4e26a24212df58e2b56b1d9",
+        "bytes": 5771
+      },
+      "committed": {
+        "blobOid": "f9af15a905eba95a9c08302d9a64a7fbf5be736a",
+        "sha256": "3ac63e92e6b72a0ccad9a3bbccb50aeec05f958db870a13fe991a1fb4da33536",
+        "bytes": 5635
+      }
+    },
+    {
+      "path": "deliveries/FINISH-C1-R5/evidence/logs/browser.log",
+      "expected": {
+        "sha256": "1a30d5a79a6060ec8ac1853e63d2fd71c1f87086c58c073aa9da20aed4f19aa5",
+        "bytes": 1129
+      },
+      "committed": {
+        "blobOid": "afaf8197842c297d123c5bda22a69e8a2d21bca4",
+        "sha256": "5311f6bcd0f6f32f80997f3da9f58b1045fee948dd66aba04fb2d17188425376",
+        "bytes": 1117
+      }
+    },
+    {
+      "path": "deliveries/FINISH-C1-R5/evidence/logs/build.log",
+      "expected": {
+        "sha256": "66743385478810682c493ee5d791948f280225aaf04c8183ca8579d14465c1d5",
+        "bytes": 1410
+      },
+      "committed": {
+        "blobOid": "866fd128db496571d7099c34c5fc2a6ab9cf1c83",
+        "sha256": "5f68e3e65c71f3e94526e8c5af319a5bb4840d7ac34d0348a631384a41e5f548",
+        "bytes": 1357
+      }
+    },
+    {
+      "path": "deliveries/FINISH-C1-R5/evidence/logs/green-material.log",
+      "expected": {
+        "sha256": "c745df478ace7b574648d6a73a853996844cde3b079fc090b12ea4dd5b5aebaa",
+        "bytes": 248
+      },
+      "committed": {
+        "blobOid": "1e81153a2500d2645a706c1c819215c28f16fd05",
+        "sha256": "20bd674ba4cf5bc97e79aa1783d60e87d12dbc13c7c3f057656829ec2a6cb83a",
+        "bytes": 239
+      }
+    },
+    {
+      "path": "deliveries/FINISH-C1-R5/evidence/logs/green-targeted.log",
+      "expected": {
+        "sha256": "8618d1e48cb9b67236cde7043c7437b16435c82357ba4890ac7abaa6dcea27cc",
+        "bytes": 248
+      },
+      "committed": {
+        "blobOid": "792a234964e21746892f34196a296d39b8528928",
+        "sha256": "059c13ba75d18aa47656ad8010aa7bfb91cb22f3ad3d74192920cfb07c9639d9",
+        "bytes": 239
+      }
+    },
+    {
+      "path": "deliveries/FINISH-C1-R5/evidence/logs/install.log",
+      "expected": {
+        "sha256": "6b4fb140ebe8ea3f425bfb87f0a6a9dd5df1ed6f3356682eb763cd3ddcef9fd1",
+        "bytes": 107
+      },
+      "committed": {
+        "blobOid": "6394de97be6199540e58e1ec3fd6935945650b4b",
+        "sha256": "e305d394ee33be4e1ad4227600ae060924c96b50a9db60bf403a15769a473465",
+        "bytes": 103
+      }
+    },
+    {
+      "path": "deliveries/FINISH-C1-R5/evidence/logs/integration.log",
+      "expected": {
+        "sha256": "d95e02e841ade88384011543d7eccb85d7da9fd628e0e9402706b6b29d84743c",
+        "bytes": 444
+      },
+      "committed": {
+        "blobOid": "570fc07b3b63a3e3a7c245e0801778b499bb16ff",
+        "sha256": "c6321d3086bf80adcadefe7e12be3cb60cf28dbdd6f7fae488a55c758c4c1573",
+        "bytes": 432
+      }
+    },
+    {
+      "path": "deliveries/FINISH-C1-R5/evidence/logs/lint.log",
+      "expected": {
+        "sha256": "0c58507bb7d10603cbc4b16f9888883c3d4928a53f60506527d97a4578fad087",
+        "bytes": 138
+      },
+      "committed": {
+        "blobOid": "5c277d7b33f6c81c6d17c86e2ecbb88dcbe66097",
+        "sha256": "6d2026d402e776dd7d7527c07e398fa535f60bc51c722b044c1bf26667115638",
+        "bytes": 134
+      }
+    },
+    {
+      "path": "deliveries/FINISH-C1-R5/evidence/logs/patch-normalization.log",
+      "expected": {
+        "sha256": "4845a167dbf1b5f6f834a720ef80425c96878f8e32daccae2a1015740996dd47",
+        "bytes": 1429
+      },
+      "committed": {
+        "blobOid": "1c0bbab908cd0e1d52d5ebd25317839466175f2b",
+        "sha256": "8c43d9719363f2e2aa3aa57a98d44fda853759788e0fb78787de461b71180653",
+        "bytes": 1408
+      }
+    },
+    {
+      "path": "deliveries/FINISH-C1-R5/evidence/logs/red-loader.log",
+      "expected": {
+        "sha256": "9eec8ef13547c1f4696f04e8473fadc822aded32c07991c6438c796c1c3e91b7",
+        "bytes": 3367
+      },
+      "committed": {
+        "blobOid": "dbf3f1cf2605f7da17468e9d57ae30e2e19cdeb9",
+        "sha256": "b5c96f91102bb88bb881c56d632f47f364c7d72abe007b09c65ea198355e016a",
+        "bytes": 3294
+      }
+    },
+    {
+      "path": "deliveries/FINISH-C1-R5/evidence/logs/red-mat-transition.log",
+      "expected": {
+        "sha256": "5481ce3de3a52e44a2959e4051f4cfe82d695ac55ade8dcde44dd0c1677911b5",
+        "bytes": 3326
+      },
+      "committed": {
+        "blobOid": "a901a7e6d965e29c4c2562b5c72812eb6ecc09f0",
+        "sha256": "d505c67c9d4a9edfebd458a311f3db139f242b4db9b354726d386385022c3992",
+        "bytes": 3263
+      }
+    },
+    {
+      "path": "deliveries/FINISH-C1-R5/evidence/logs/red-material.log",
+      "expected": {
+        "sha256": "d06af85acf25eb65d29696fd57803c5e01e2ab8a2834568b1ecc9993c17b7971",
+        "bytes": 3631
+      },
+      "committed": {
+        "blobOid": "d0831f2cd611192ea7740138380a288542671aa5",
+        "sha256": "836d00e30df2e0ae69b12a77881ec898b856de71b5bc43f1ff879860f62ecfc9",
+        "bytes": 3530
+      }
+    },
+    {
+      "path": "deliveries/FINISH-C1-R5/evidence/logs/sequential-apply.log",
+      "expected": {
+        "sha256": "20085c6e57f29bcbf825223b03e08148dd0b9bb2258a6b2ef7fa6ea01395cdd0",
+        "bytes": 818
+      },
+      "committed": {
+        "blobOid": "cf0977b5e1783406da24a445ad198a20773b239e",
+        "sha256": "b136b16af4e47809d8720c220f8405779ad47c7f9fe8115b50abfe8a7ccaa627",
+        "bytes": 808
+      }
+    },
+    {
+      "path": "deliveries/FINISH-C1-R5/evidence/logs/typecheck.log",
+      "expected": {
+        "sha256": "bea9687c168a491937e0f5c07022d8757a3a7d9aae931243ce63a69518c64d05",
+        "bytes": 130
+      },
+      "committed": {
+        "blobOid": "252bfc1138ef9cad7addd7361c886db322192cc5",
+        "sha256": "af7e3d492131b3641f464f629cca86d621b242da1bee0798b172e69ce15a0953",
+        "bytes": 126
+      }
+    },
+    {
+      "path": "deliveries/FINISH-C1-R5/evidence/logs/unit.log",
+      "expected": {
+        "sha256": "3d1e883951f258e062c7fd857db3cb650d748df2143cce8df14a87b2723c9b32",
+        "bytes": 666
+      },
+      "committed": {
+        "blobOid": "0f6b84dda1b4949c2afa98d4a86e216640c13264",
+        "sha256": "3a4a8d14b4689298b72e629e89beaf084f78c76d9aaf446c57feae7b69c7fa99",
+        "bytes": 649
+      }
+    }
+  ],
+  "expectedStableFiles": [
+    ".gitattributes",
+    ".gitignore",
+    "report.md",
+    "requirements-matrix.json",
+    "source-binding.json",
+    "candidate-input-provenance.json",
+    "predecessor-output-git-blobs.json",
+    "verify-input-provenance.py",
+    "evidence/verification.json",
+    "evidence/verifier.log",
+    "output-hashes.json"
+  ],
+  "missingFiles": []
+}
