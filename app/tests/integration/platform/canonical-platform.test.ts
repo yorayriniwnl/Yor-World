@@ -130,23 +130,32 @@ describe("Canonical production provider and actual platform route integration",(
     const hash = createHash("sha256").update(validPng).digest("hex");
     const bucket = "fixture-private";
     const objectKey = "drafts/approved.png";
-    const spy = vi.spyOn(authClients, "createAdminServiceRoleClient").mockReturnValue({
+    const downloadedObjects: string[] = [];
+    const spy = vi.spyOn(authClients, "createAdminServiceRoleClient").mockImplementation((_signal, observeResponse) => ({
       storage: {
-        from: () => ({
-          download: () => ({
-            asStream: async () => ({
-              data: new ReadableStream({
-                start(controller) {
-                  controller.enqueue(new Uint8Array(validPng));
-                  controller.close();
-                },
-              }),
-              error: null,
-            }),
+        from: (actualBucket: string) => ({
+          download: (actualObjectKey: string) => ({
+            asStream: async () => {
+              downloadedObjects.push(`${actualBucket}/${actualObjectKey}`);
+              if (actualBucket !== bucket || actualObjectKey !== objectKey) {
+                observeResponse?.(new Response(null, { status: 404 }));
+                return { data: null, error: { statusCode: "404", message: "Fixture object not found" } };
+              }
+              observeResponse?.(new Response(null, { headers: { "content-type": "image/png" } }));
+              return {
+                data: new ReadableStream<Uint8Array>({
+                  start(controller) {
+                    controller.enqueue(new Uint8Array(validPng));
+                    controller.close();
+                  },
+                }),
+                error: null,
+              };
+            },
           }),
         }),
       },
-    } as unknown as SupabaseClient);
+    } as unknown as SupabaseClient));
     try {
       await db.query("INSERT INTO public.media_assets(id,object_key,hash,mime,bytes,approval_status,storage_bucket,integrity_verified_at) VALUES($1,$2,$3,'image/png',$4,'approved',$5,now())",[mediaId,objectKey,hash,validPng.length,bucket]);
       const projects=approvedPublication.projects.map((project) => ({ ...project,sections: project.sections.map((section) => ({ ...section,blocks: section.blocks.map((block) => block.type === "image" ? { ...block,mediaId } : block) })) }));
@@ -164,6 +173,7 @@ describe("Canonical production provider and actual platform route integration",(
       }) };
       setPlatformDbForTests(provider);
       const next=await publishRevision({ expectedRevision: approvedPublication.revision,customProjects: projects },actor);
+      expect(downloadedObjects).toEqual([`${bucket}/${objectKey}`]);
       expect(lockedMediaChecks).toBe(1);
       expect(next.revision).toBe(2);
       await db.query("UPDATE public.media_assets SET approval_status='rejected' WHERE id=$1",[mediaId]);
