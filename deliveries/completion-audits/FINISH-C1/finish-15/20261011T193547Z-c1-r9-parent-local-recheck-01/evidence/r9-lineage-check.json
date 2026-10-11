@@ -1,0 +1,140 @@
+{
+  "status": "PASS",
+  "scope": "Parent-local raw-Git technical recheck; not the required independent GPT Plus #2 audit or Parent acceptance",
+  "checks": {
+    "r8PathCount": 23,
+    "r9TrackedPathCount": 27,
+    "candidateParent": "c398876583bc337c069414b79364e3fdea745879",
+    "candidateTree": "5a38d405499737ff40b0141a64845c244a9e4813",
+    "r9Subtree": "aa097f12adff2dbac2c88d6300c949f37bf34251",
+    "rootAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+    "remoteBranch": "codex/finish-30-c1-r9-20261011",
+    "remoteTip": "3dda9a616033375768f3d5f60f8c653d504f7c8c",
+    "commitChangedPathCount": 27,
+    "commitOutOfScopePaths": [],
+    "newPaths": [
+      "changed-paths.json",
+      "evidence/r9-correction-verification.json",
+      "r9-candidate-binding.json",
+      "r9-correction-report.md"
+    ],
+    "modifiedInheritedPaths": [
+      "output-hashes.json",
+      "requirement-matrix.json",
+      "scripts/finalize.py"
+    ],
+    "missingInheritedPaths": [],
+    "byteIdenticalInheritedCount": 20,
+    "byteIdenticalInheritedPaths": [
+      ".gitattributes",
+      ".gitignore",
+      "candidate-input-provenance.json",
+      "evidence/candidate-binding.json",
+      "evidence/cli-negative-false-pass.json",
+      "evidence/negative-runner.json",
+      "evidence/negative-runner.log",
+      "evidence/positive-cli.json",
+      "evidence/positive-cli.log",
+      "evidence/source-patch-replay.json",
+      "evidence/tests.json",
+      "evidence/tests.log",
+      "evidence/tool-versions.json",
+      "predecessor-output-git-blobs.json",
+      "report.md",
+      "scripts/verify-negative-cli.py",
+      "source-binding.json",
+      "source.patch",
+      "source/verify-input-provenance.py",
+      "tests/test_fail_closed_metadata.py"
+    ],
+    "matrixRowIds": [
+      "E-02-01",
+      "E-02-02",
+      "E-02-03",
+      "E-02-04",
+      "E-02-05",
+      "LINEAGE-01",
+      "LIMIT-01"
+    ],
+    "e0205OldEvidence": [
+      "evidence/cli-negative-false-pass.json",
+      "evidence/cli-negative-false-pass.log"
+    ],
+    "e0205NewEvidence": [
+      "evidence/cli-negative-false-pass.json"
+    ],
+    "finalizerOldPointerOccurrences": 1,
+    "finalizerNewPointerOccurrences": 0,
+    "finalizerNewJsonPointerOccurrences": 2,
+    "outputManifestSha256": "31903805363ed7d56521d334893d40d99079a716e1b374ac2a4c1895ecaff465",
+    "manifestRows": 26,
+    "verifiedRows": 26,
+    "manifestTotalBytes": 145757,
+    "matrixEvidencePaths": [
+      "evidence/candidate-binding.json",
+      "evidence/cli-negative-false-pass.json",
+      "evidence/source-patch-replay.json",
+      "evidence/tests.log",
+      "tests/test_fail_closed_metadata.py"
+    ],
+    "matrixEvidencePathCount": 5,
+    "missingMatrixEvidencePaths": [],
+    "negativeReceipt": {
+      "exitCode": 1,
+      "parsedStatus": "FAIL",
+      "stdoutParsedStatus": "FAIL",
+      "stderr": "",
+      "receiptHashBefore": "c92aca7bc06a1c8a0ded15c1d9df69332213d991d74e89c64a83f53c006c92e7",
+      "receiptHashAfter": "c92aca7bc06a1c8a0ded15c1d9df69332213d991d74e89c64a83f53c006c92e7",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\Projects\\Yor World\\.finish-c1-r8-cli\\tmp0dl3lpc8\\source\\verify-input-provenance.py",
+        "--json",
+        "--check-output-manifest",
+        "--commit",
+        "e2670d4152c461005da86b392dbcea12cec740bf"
+      ],
+      "mutation": {
+        "disposableCopyOnly": true,
+        "field": "sourceManifest.sha256",
+        "receipt": "candidate-input-provenance.json",
+        "value": "0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    "bindingSource": {
+      "branch": "codex/finish-28-c1-r8-20261011",
+      "commit": "c398876583bc337c069414b79364e3fdea745879",
+      "fullTree": "798de513703f3d7e76f8d82edb85257d32894681",
+      "deliverySubtree": "da822d0362e06e92497001583afb7405b7ccd472",
+      "outputManifestSha256": "183dcf8ae59cf4bf0ea5a44a7f9ca71ec1ddd344ea7685345dfd2ea2eb9e3bd0",
+      "r7CandidateCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
+      "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d"
+    },
+    "bindingCorrection": {
+      "requirementId": "E-02-05",
+      "oldEvidence": [
+        "evidence/cli-negative-false-pass.json",
+        "evidence/cli-negative-false-pass.log"
+      ],
+      "newEvidence": [
+        "evidence/cli-negative-false-pass.json"
+      ],
+      "matrixSha256": "a7297d2fc29a4861b9778249fb6996d99b1874d18b84ff641bda45b3db76b89c",
+      "matrixBytes": 2130,
+      "finalizerSha256": "a2704bc5976d1142d024f553b72c42318202ad5495707d308d733b60f0ab5439",
+      "finalizerBytes": 15159,
+      "verifierOrTestsChanged": false,
+      "inheritedEvidenceRerun": false
+    }
+  },
+  "errors": [],
+  "limits": {
+    "inheritedE02BehavioralTestsRerun": "NOT RUN",
+    "fullFinalizer": "NOT RUN (timestamped receipts would be rewritten)",
+    "e01Disposition": "OPEN",
+    "externalIndependentAudit": "NOT RUN",
+    "parentAcceptance": "NOT RUN",
+    "integrationDeploymentG7": "NOT RUN"
+  }
+}

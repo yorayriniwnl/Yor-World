@@ -1,0 +1,31 @@
+[
+  {
+    "name": "parent-local-raw-git-recheck",
+    "command": "python .work/verify_r9_lineage.py",
+    "exit": 0,
+    "result": "PASS",
+    "evidence": "evidence/r9-lineage-check.json",
+    "includes": [
+      "raw commit/tree/subtree binding",
+      "remote branch tip",
+      "package delta inventory",
+      "output manifest raw-byte verification",
+      "matrix evidence path resolution",
+      "negative receipt structure"
+    ]
+  },
+  {
+    "name": "inherited-E02-behavioral-tests",
+    "command": null,
+    "exit": null,
+    "result": "NOT RUN",
+    "reason": "Explicit FINISH-34 boundary; R9 changes only evidence pointers."
+  },
+  {
+    "name": "full-finalizer",
+    "command": null,
+    "exit": null,
+    "result": "NOT RUN",
+    "reason": "Would rewrite timestamped receipts; no need for the bounded pointer check."
+  }
+]

@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "candidateCommit": "3dda9a616033375768f3d5f60f8c653d504f7c8c",
+  "reviewType": "Parent-local technical recheck; not an independent audit",
+  "findings": [
+    {
+      "id": "C1-R9-01",
+      "requirement": "E-02-05 points only to the committed JSON receipt, and the generator template matches that row.",
+      "status": "PASS",
+      "evidence": [
+        "evidence/r9-lineage-check.json"
+      ],
+      "basis": "The matrix changed only in E-02-05 evidence; the finalizer changed only in its corresponding E-02-05 template line. The committed receipt records parsed FAIL on stdout, exit 1, empty stderr, and unchanged original receipt hash."
+    },
+    {
+      "id": "C1-R9-02",
+      "requirement": "R9 preserves the exact R8 package except for the declared pointer/template changes and new correction records.",
+      "status": "PASS",
+      "evidence": [
+        "evidence/r9-lineage-check.json"
+      ],
+      "basis": "Raw Git comparison found 20 inherited files byte-identical; the only modified inherited files are output-hashes.json, requirement-matrix.json, and scripts/finalize.py. Four new R9 correction files are exactly the declared additions."
+    }
+  ],
+  "unresolvedLimits": [
+    {
+      "id": "E-01",
+      "status": "NOT RUN",
+      "detail": "E-01 remains open; R9 is an evidence-pointer correction only."
+    },
+    {
+      "id": "INHERITED-E02-TESTS",
+      "status": "NOT RUN",
+      "detail": "Inherited behavioral tests were not rerun."
+    },
+    {
+      "id": "FINALIZER",
+      "status": "NOT RUN",
+      "detail": "The full timestamped finalizer was not run to avoid rewriting receipts."
+    },
+    {
+      "id": "INDEPENDENT-GPT2",
+      "status": "NOT RUN",
+      "detail": "The required GPT Plus #2 delta audit has not been dispatched or performed."
+    },
+    {
+      "id": "PARENT-ACCEPTANCE",
+      "status": "NOT RUN",
+      "detail": "Parent acceptance and integration remain separate gates."
+    },
+    {
+      "id": "DEPLOYMENT-G7",
+      "status": "NOT RUN",
+      "detail": "Deployment, recovery, device/provider checks, and G7 were not tested by this evidence correction."
+    }
+  ]
+}
