@@ -1,0 +1,105 @@
+--- a/deliveries/FINISH-C1-R7/verify-input-provenance.py
++++ b/deliveries/FINISH-C1-R7/verify-input-provenance.py
+@@ -90,0 +91,15 @@
++EXPECTED_THREE_PACKAGE_FILES = (
++    {
++        "alias": "candidate-app/node_modules/three/build/three.module.js",
++        "packageFile": "build/three.module.js",
++        "sha256": "c8211c69345d2e9949dc7a8ac969380497aa0600a5a8ac6a459c8cd02dd9cb8a",
++        "bytes": 603113,
++    },
++    {
++        "alias": "candidate-app/node_modules/three/build/three.core.js",
++        "packageFile": "build/three.core.js",
++        "sha256": "eb077d2417f61d3e6d9264c317cabc4ea35769ed6b0ab533067292a550784c20",
++        "bytes": 1403455,
++    },
++)
++EXPECTED_THREE_PACKAGE_ROOT = "app/node_modules/.pnpm/three@0.180.0/node_modules/three"
+@@ -93 +108,2 @@
+-PACKAGE_DIR = Path(__file__).resolve().parent
++SCRIPT_DIR = Path(__file__).resolve().parent
++PACKAGE_DIR = SCRIPT_DIR.parent if SCRIPT_DIR.name == "source" else SCRIPT_DIR
+@@ -144,0 +161,8 @@
++    def reject_duplicate_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
++        result: dict[str, Any] = {}
++        for key, value in pairs:
++            if key in result:
++                raise VerificationError(f"{label} contains duplicate JSON key: {key}")
++            result[key] = value
++        return result
++
+@@ -146 +170 @@
+-        value = json.loads(data.decode("utf-8"))
++        value = json.loads(data.decode("utf-8"), object_pairs_hook=reject_duplicate_keys)
+@@ -150,0 +175,37 @@
++
++
++def json_file(path: Path, label: str) -> dict[str, Any]:
++    return json_from_bytes(path.read_bytes(), label)
++
++
++def validate_installed_three_package(
++    package_root: Path, package_root_relative: str, dependency_evidence: dict[str, Any]
++) -> dict[str, Any]:
++    package_info = json_from_bytes((package_root / "package.json").read_bytes(), "installed three/package.json")
++    require(package_info.get("name") == "three", "installed package is not named three")
++    require(package_info.get("version") == EXPECTED_THREE_VERSION, "installed Three.js version is not 0.180.0")
++    require(dependency_evidence.get("packageName") == package_info["name"], "source binding package name differs from installed package")
++    require(dependency_evidence.get("packageVersion") == package_info["version"], "source binding package version differs from installed package")
++    require(dependency_evidence.get("installedPackageRoot") == package_root_relative, "source binding package root differs from installed package")
++    package_file_rows = dependency_evidence.get("packageFiles")
++    package_file_aliases = validate_unique_rows(package_file_rows, "alias", len(EXPECTED_THREE_PACKAGE_FILES), "source-binding packageFiles")
++    expected_package_aliases = {row["alias"] for row in EXPECTED_THREE_PACKAGE_FILES}
++    require(package_file_aliases == expected_package_aliases, "source-binding packageFiles aliases differ from the pinned Three.js files")
++    package_file_paths = [row.get("packageFile") for row in package_file_rows]
++    require(all(isinstance(path, str) and path for path in package_file_paths), "source-binding packageFiles contains a malformed packageFile")
++    require(len(package_file_paths) == len(set(package_file_paths)), "source-binding packageFiles contains duplicate packageFile paths")
++    package_rows_by_alias = {row["alias"]: row for row in package_file_rows}
++    for expected_row in EXPECTED_THREE_PACKAGE_FILES:
++        alias = expected_row["alias"]
++        row = package_rows_by_alias[alias]
++        require(set(row) == set(expected_row), f"source-binding {alias} fields are missing or extra")
++        require(row == expected_row, f"source-binding {alias} declaration differs from the authoritative R7 package receipt")
++        installed_path = package_root / expected_row["packageFile"]
++        try:
++            installed_data = installed_path.read_bytes()
++        except OSError as error:
++            raise VerificationError(f"installed Three.js package file is unavailable for {alias}: {error}") from error
++        installed_sha256 = hashlib.sha256(installed_data).hexdigest()
++        require(installed_sha256 == expected_row["sha256"], f"installed Three.js bytes differ for {alias}")
++        require(len(installed_data) == expected_row["bytes"], f"installed Three.js byte count differs for {alias}")
++    return package_info
+@@ -262,0 +324,5 @@
++    require(dependency.get("packageName") == "three", "source binding has wrong installed package name")
++    require(dependency.get("packageVersion") == EXPECTED_THREE_VERSION, "source binding has wrong installed package version")
++    require(dependency.get("packageManager") == "pnpm", "source binding has wrong package manager")
++    require(dependency.get("packageManagerVersion") == EXPECTED_PNPM_VERSION, "source binding has wrong package-manager version")
++    require(dependency.get("installedPackageRoot") == EXPECTED_THREE_PACKAGE_ROOT, "source binding has wrong installed package root")
+@@ -306,0 +373 @@
++    source_blobs["threeDependencyEvidence"] = dependency
+@@ -330 +397 @@
+-    receipt = json.loads((PACKAGE_DIR / "candidate-input-provenance.json").read_text(encoding="utf-8"))
++    receipt = json_file(PACKAGE_DIR / "candidate-input-provenance.json", "candidate-input-provenance.json")
+@@ -332 +399,6 @@
+-    require(receipt.get("sourceManifest", {}).get("blobOid") == manifest_blob["blobOid"], "candidate receipt binds wrong R6 manifest")
++    source_manifest = receipt.get("sourceManifest")
++    expected_source_manifest = {key: manifest_blob[key] for key in ("commit", "path", "blobOid", "sha256", "bytes")}
++    require(isinstance(source_manifest, dict), "candidate sourceManifest must be an object")
++    require(set(source_manifest) == set(expected_source_manifest), "candidate sourceManifest fields are missing or extra")
++    for key, value in expected_source_manifest.items():
++        require(source_manifest.get(key) == value, f"candidate sourceManifest {key} differs from the pinned R6 manifest blob")
+@@ -347,4 +418,0 @@
+-    package_json_path = package_root / "package.json"
+-    package_info = json_from_bytes(package_json_path.read_bytes(), "installed three/package.json")
+-    require(package_info.get("name") == "three", "installed package is not named three")
+-    require(package_info.get("version") == EXPECTED_THREE_VERSION, "installed Three.js version is not 0.180.0")
+@@ -351,0 +420,2 @@
++    dependency_evidence = source_blobs["threeDependencyEvidence"]
++    package_info = validate_installed_three_package(package_root, package_root_relative, dependency_evidence)
+@@ -465 +535 @@
+-    receipt = json.loads((PACKAGE_DIR / "predecessor-output-git-blobs.json").read_text(encoding="utf-8"))
++    receipt = json_file(PACKAGE_DIR / "predecessor-output-git-blobs.json", "predecessor-output-git-blobs.json")
+@@ -539 +609 @@
+-    binding = json.loads((PACKAGE_DIR / "source-binding.json").read_text(encoding="utf-8"))
++    binding = json_file(PACKAGE_DIR / "source-binding.json", "source-binding.json")
