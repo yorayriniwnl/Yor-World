@@ -1,0 +1,62 @@
+{
+  "baseCommit": "1753b9278c4537b5377c3893172b2a0f26d13b10",
+  "blenderVersion": "5.2.2 LTS",
+  "builderSHA256": "ea965a95d2f7aebb54e0819a1846f3b76e827f64098cfb6c784acc09696ad591",
+  "command": "python scripts/verify-reproducibility-r1.py",
+  "finalLineageReceipt": "evidence/final-lineage.json",
+  "nativeBlendContainerByteExact": false,
+  "nativeSceneReceipt": "evidence/native-reopen-r1.json",
+  "nativeSceneSemanticInventoryExact": true,
+  "productionRoomGLB": {
+    "bytes": 699668,
+    "independentMergeReceipts": [
+      {
+        "command": "python scripts/export-final-room.py",
+        "inputR3SHA256": "e3ed3cf4a868922535427eb6c9dcf8c3e20618d300c82228475772c5a3c6560c",
+        "nativeExportSHA256": "c626788da7f0fbbf72e00aae41f5d0406f9f97cc2b1587823b03a167e837c2b0",
+        "newLeftWallTriangles": 48,
+        "newMeshIndex": 84,
+        "newNodeIndex": 225,
+        "oldLeftWallTrianglesRemoved": 12,
+        "originalBinaryPrefixExact": true,
+        "outputSHA256": "ede3258e39efa6d2641f1480baaf3cfd9d44c3915b4da243fc6d4011d8c3654b",
+        "scope": "Material-only recipe plus actual Blender-exported three authorized mesh deltas and one new node. Unrelated R3 buffer bytes, accessors, nodes, transforms and mesh primitives are preserved, not regenerated.",
+        "status": "PASS",
+        "unchangedWallTrianglesExact": true
+      },
+      {
+        "command": "python scripts/export-final-room.py",
+        "inputR3SHA256": "e3ed3cf4a868922535427eb6c9dcf8c3e20618d300c82228475772c5a3c6560c",
+        "nativeExportSHA256": "e80fcc64e881724990977bea5a4dbf88fc0be32b26c63a40733388eeed177411",
+        "newLeftWallTriangles": 48,
+        "newMeshIndex": 84,
+        "newNodeIndex": 225,
+        "oldLeftWallTrianglesRemoved": 12,
+        "originalBinaryPrefixExact": true,
+        "outputSHA256": "ede3258e39efa6d2641f1480baaf3cfd9d44c3915b4da243fc6d4011d8c3654b",
+        "scope": "Material-only recipe plus actual Blender-exported three authorized mesh deltas and one new node. Unrelated R3 buffer bytes, accessors, nodes, transforms and mesh primitives are preserved, not regenerated.",
+        "status": "PASS",
+        "unchangedWallTrianglesExact": true
+      }
+    ],
+    "sha256": "ede3258e39efa6d2641f1480baaf3cfd9d44c3915b4da243fc6d4011d8c3654b"
+  },
+  "productionRoomMergeByteExact": true,
+  "rawIntermediateCaveat": "The two full-scene Blender GLB intermediates have the same byte length but different full-file hashes. The reopened .blend object/geometry/UV/material/hierarchy/transform inventories are exact; the final production merge extracts only the authorized mesh deltas and keeps the R3 binary prefix and unrelated records.",
+  "rawNativeBuilds": [
+    {
+      "blendSHA256": "f52fa020e9f22ee8694deb816348e204996da461852a2643c9c98c3edf251a65",
+      "bytes": 686636,
+      "sha256": "c626788da7f0fbbf72e00aae41f5d0406f9f97cc2b1587823b03a167e837c2b0"
+    },
+    {
+      "blendSHA256": "fc727ddab4d974e59f58406bc88ca06a8ddddbfb21e2ec55ac011e7bc009c443",
+      "bytes": 686636,
+      "sha256": "e80fcc64e881724990977bea5a4dbf88fc0be32b26c63a40733388eeed177411"
+    }
+  ],
+  "rawNativeRoomExportByteExact": false,
+  "sourcePatchReplay": true,
+  "status": "PASS WITH RAW INTERMEDIATE CAVEAT",
+  "unrelatedProductionAssetsUnchanged": true
+}

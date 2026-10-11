@@ -1,0 +1,55 @@
+{
+  "tool": "5.2.2 LTS",
+  "chassis": {
+    "object": "pc_chassis_frame",
+    "parent": "helios-pc",
+    "material": "PC_ChassisWhite",
+    "vertexCount": 8,
+    "polygonCount": 6,
+    "bounds": {
+      "min": [
+        0.9299999475479126,
+        0.7599999904632568,
+        -1.3899999856948853
+      ],
+      "max": [
+        1.1699999570846558,
+        1.2400000095367432,
+        -0.9099999666213989
+      ]
+    },
+    "closedCuboid": true
+  },
+  "glass": {
+    "object": "StaticBatch__Room_Root__PC_TemperedGlass",
+    "material": "PC_TemperedGlass",
+    "pcPanelBounds": {
+      "min": [
+        0.9254999756813049,
+        0.7799999713897705,
+        -1.3700000047683716
+      ],
+      "max": [
+        0.9304999709129333,
+        1.2200000286102295,
+        -0.9299999475479126
+      ]
+    },
+    "windowBounds": {
+      "min": [
+        -2.1500000953674316,
+        0.8899999260902405,
+        -1.1600000858306885
+      ],
+      "max": [
+        -2.1399998664855957,
+        2.2100000381469727,
+        -0.040000081062316895
+      ]
+    },
+    "pcPanelProxy": "pc_glass_side_panel",
+    "pcPanelProxyParent": "helios-pc"
+  },
+  "occlusion": "Opaque full box side x=0.93 lies immediately behind the PC panel x=[0.9255,0.9305]. The panel lies partly in the box side. Existing front mesh is opaque too.",
+  "minimalProposal": "Replace only pc_chassis_frame geometry with an open-left five-wall thin shell within exact current outer envelope; retain its name, parent, TRS, material and other nodes. Add a low-cost visible internal side detail using existing material within the shell envelope if existing front fan geometry remains unreadable. Preserve glass, window and fan/LED hooks; remove no interaction node. Re-export room only and prove unrelated geometry/UV/topology unchanged."
+}

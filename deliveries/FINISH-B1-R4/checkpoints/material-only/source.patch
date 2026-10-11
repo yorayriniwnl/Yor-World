@@ -1,0 +1,21 @@
+--- a/deliveries/FINISH-B1-R3/source/blender/scripts/build-environment.py
++++ b/deliveries/FINISH-B1-R3/source/blender/scripts/build-environment.py
+@@ -264,10 +264,15 @@
+     )
+     m["PC_TemperedGlass"] = get_or_create_pbr_mat(
+         "PC_TemperedGlass",
+-        base_color=(0.95, 0.95, 1.0, 0.35),
++        base_color=(0.95, 0.95, 1.0, 0.18),
+         roughness=0.08, metallic=0.05,
+-        transmission=0.92, ior=1.52
+-    )
++        transmission=0.0, ior=1.52
++    )
++    # FINISH-25: glossy alpha glass avoids the duplicate scene transmission pass.
++    glass = m["PC_TemperedGlass"]
++    glass.surface_render_method = "BLENDED"
++    glass.node_tree.nodes.get("Principled BSDF").inputs["Alpha"].default_value = 0.18
++    glass.node_tree.nodes.get("Principled BSDF").inputs["IOR"].default_value = 1.52
+ 
+     # 5. Emissive Lights & Reference Accents (Calibrated to resolve B1-R3 overexposure)
+     m["Hex_LilacEmissive"] = get_or_create_pbr_mat(
