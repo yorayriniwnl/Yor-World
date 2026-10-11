@@ -1,0 +1,41 @@
+# Project folder audit — October 11, 2026
+
+## Finding
+
+The folders under `C:\Users\yoray\Projects` are not all one application. They contain several separate products, Git clones/worktrees, version-pinned Yor World release candidates, research materials, and a requirements-only project. Keep each product in its own root under the shared `Projects` directory. Keep Yor World's canonical code, specifications, references, delivery packets, and accepted evidence in `C:\Users\yoray\Projects\Yor World`. Do not flatten separate repositories or delete historical worktree data: many folders contain the only local copy of unfinished changes or release evidence.
+
+No folders or files were moved, renamed, pruned, or deleted during this audit.
+
+## Inventory and action
+
+| Folder | What it contains | Current value and handling |
+| --- | --- | --- |
+| `Yor World` | Canonical Yor World Git repository, specifications, references, app, delivery packets, and audit roots. Branch `audit/completion-2026-10-09`, HEAD `d63a53f4a5d3`; local audit found 24 untracked paths at inspection. | **Primary project root.** Keep the project’s authored code and governed work here. Preserve untracked deliveries and stage only scoped work. |
+| `Yor-World-Local-Corrections` | A Git worktree sharing Yor World's common Git database, branch `fix/local-studio-check`, HEAD `56afa21a2cbf`, with 53 dirty entries and 21 branch-only commits; canonical branch is 61 commits ahead. | **Important unfinished work.** The local reconciliation packet explicitly says preserve and finish it. Do not merge wholesale or discard changes; reconcile its branch and dirty files against the canonical branch in a separate bounded packet. |
+| `Yor-World-RC5-c34e01b` | Detached historical worktree at `c34e01bb5bff`, with 13 untracked entries including RC5 G6 release-candidate proof. | **Release evidence snapshot.** Code is historical, but the package/proof remains relevant to release lineage. Preserve until its evidence is archived and verified elsewhere. |
+| `Yor-World-RC6-30240b6` | Detached ancestor snapshot `30240b672ae3`, with an untracked `rc6-candidate-r4` package. | **Historical candidate evidence.** Preserve; compare its delivery receipts with the accepted RC6 baseline before any cleanup. |
+| `Yor-World-RC6-48ee09a` | Detached ancestor snapshot `48ee09a98c9f`, with an untracked `rc6-candidate-r2` package. | **Historical candidate evidence.** Preserve. |
+| `Yor-World-RC6-6c7200a` | Detached ancestor snapshot `6c7200ae4222`, with an untracked `rc6-candidate` package. | **Historical candidate evidence.** Preserve. |
+| `Yor-World-RC6-71737a6` | Detached ancestor snapshot `71737a61c52d`, with an untracked `rc6-candidate-r3` package. | **Historical candidate evidence.** Preserve. |
+| `Yor-World-RC6-8e5b954` | Detached ancestor snapshot `8e5b954e147a`, with an untracked `rc6-candidate-r6` package. | **Historical candidate evidence.** Preserve. |
+| `CandidateX-main` | Separate clone of `yorayriniwnl/CandidateX`, local HEAD `62081eaf5a15`, 171 dirty entries including deleted tracked files. Its local tracking ref is stale; remote `main` was observed at `50e35e8c29a5ab0ed26448e9ac51a89cc213dce5`. | **Important separate product, unsafe as a clean baseline.** Preserve local edits; compare them with the remote in a dedicated CandidateX recovery review before reset or merge. |
+| `CandidateX-pnpm-override-fix` | Separate clean clone of the same CandidateX remote at older commit `f583df1cce9a`. | **Useful historic clean baseline.** It is behind the observed remote; preserve and use only after an explicit source comparison. |
+| `Portfolio-Ayush-Roy-main` | Portfolio source tree with Next.js/React/Three.js project structure and no Git metadata. Its README identifies `https://yorayriniwnl.in` as the deployed portfolio and documents CandidateX routes. | **Important live product/reference, source provenance unbound.** Preserve. Establish exact source/deployment identity and review its content separately before importing or treating it as a canonical Yor World input. |
+| `yor-talks-v3` | Separate Yor Talks repository, branch `release/unified-release-20261009`, HEAD `8000dcdb203c`, with 9 dirty tracked paths. | **Current active Yor Talks work.** Keep as a separate project; inspect and reconcile its edits within that repository. |
+| `yor-talks-release` | Clean detached snapshot at `aca6ccbf916f`; same Yor Talks remote. It is an ancestor of v3; v3 is 28 commits ahead. | **Useful release baseline**, not a duplicate to delete until v3 release evidence is complete. |
+| `yor-talks-media-final-20261007` | Separate Yor Talks clone, branch `codex/production-readiness-20261007`, HEAD `108ddef6e5b6`, with 67 dirty entries (33 tracked and 34 untracked in the original inventory). | **Important but unfinished media/release work.** Preserve and reconcile independently. |
+| `yor-talks-media-validation-20261005` | Non-Git validation data with `media-bin`, `pgdata`, PostgreSQL log and Redis configuration, dated October 5. | **Potentially valuable validation/database evidence.** Preserve as data; do not treat it as disposable build output without a backup and owner review. |
+| `Temp\cci-revision` | Non-Git paper/research revision package. It includes manuscript/source manuscript, primary-results files, DOI/reference verification, reproduction and build/QA records, targeted literature/technical checks, rendered pages, and supporting snapshots. Audit inventory: 947 files, about 65.96 MB. | **Important research evidence, not generic temporary junk.** Preserve and maintain its own provenance and backup. Review/remove only after the paper's source and final outputs are archived elsewhere. |
+| `Abhyodhya` | Separate requirements project for a hybrid intelligent network intrusion detection system. | **Unrelated project.** Keep separate; it does not belong inside Yor World. |
+
+## Cross-repository and registry observations
+
+- The five RC6 folders and RC5 folder are registered Git worktrees of the Yor World repository, pinned to historical commits; they share the main repository's Git database. They are not independent repositories to combine. Their untracked candidate directories are not represented by the pinned commit, so preserve them until package hashes and lineage are recorded elsewhere.
+- The Local Corrections worktree is also linked to the main Git database, but contains both a unique branch and dirty work. Its work is not superseded merely because the canonical branch is newer.
+- CandidateX and Yor Talks have separate Git remotes and product scopes. The portfolio tree has no Git identity, so its claimed relationship to the live site needs a provenance audit.
+- `git worktree list --porcelain` also reports Codex scratch/replay worktrees and 12 stale `prunable` registrations under the user Temp area. No prune was run. Verify each resolved path and preserve any uncommitted or untracked evidence before pruning registrations.
+- Public references checked during the audit: [portfolio](https://yorayriniwnl.in/), [CandidateX case study](https://yorayriniwnl.in/projects/candidatex), [CandidateX source repository](https://github.com/yorayriniwnl/CandidateX), and [CandidateX live app](https://candidatex-smoky.vercel.app/). These show CandidateX as a current public project and conflict with older Yor World evidence notes that claim no CandidateX repository or live deployment exists. That evidence register is stale on this point; resolve it in a separate content-evidence review without silently admitting CandidateX content into Yor World or changing frozen contracts.
+
+## Recommendation
+
+Use the parent `Projects` directory to group distinct projects. Within each product, keep one canonical repository/root and retain separate worktrees only where an active packet or reproducible historical candidate requires them. First reconcile the unfinished Local Corrections, CandidateX-main, CandidateX portfolio provenance, Yor Talks dirty work, and release candidate evidence. After their contents are hashed, backed up, and their owners confirm no active use, a separate cleanup review can identify truly redundant clones. The present evidence does not support calling these folders useless or safely deleting them.
