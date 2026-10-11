@@ -24,6 +24,7 @@ Send each Gemini account only its own maker prompt. Use the GPT-6.1 Sol Ultra ch
 | [20 — C1-R8 evidence-matrix correction](20-CODEX-C1-R9.md) | Local Codex evidence-maker worker | Repair the one stale evidence path in a fresh R9 package without changing verifier behavior |
 | [21 — A1-R5-R7 independent delta audit](21-CODEX-A1-R5-R7-AUDIT.md) | GPT Plus #2 independent auditor | Review the exact pushed A1-R5-R7 candidate against the six FINISH-24 findings; no fixing or self-acceptance |
 | [22 — C1-R9 generator-consistency correction](22-CODEX-C1-R9-R1.md) | Local Codex evidence maker | Correct the same stale E-02-05 pointer in both the R9 matrix and its generator template |
+| [23 — C1-R9 independent delta audit](23-CODEX-C1-R9-AUDIT.md) | GPT Plus #2 independent auditor | Verify exact R9 lineage, pointer/generator consistency, and package hashes; no fixes or self-acceptance |
 
 The partial runtime R3 folder appeared during drafting without a complete report/patch/hash handoff at the recorded check. Preserve it and inspect current ownership/completeness; do not overwrite it or treat it as accepted. The other two R3 roots were absent at that check. Recheck current state when using these prompts.
 
@@ -63,3 +64,7 @@ To reproduce the combined copy and documentation checks, run `python docs/planni
 ## C1-R9 evidence-pointer reproducibility
 
 - [FINISH-33](../../reconciliation-packets/2026-10-11-finish-33-c1-r9-generator-consistency.md) amends the FINISH-30 output-only correction because the pinned R8 finalizer would otherwise regenerate the stale path. [The amended maker prompt](22-CODEX-C1-R9-R1.md) keeps the verifier, tests, and runtime source unchanged.
+
+## C1-R9 independent delta audit
+
+- [FINISH-34](../../reconciliation-packets/2026-10-11-finish-34-c1-r9-independent-audit.md) binds the pushed R9 package at `3dda9a61`. The [GPT Plus #2 audit prompt](23-CODEX-C1-R9-AUDIT.md) is prepared; independent review and Parent acceptance remain pending.
