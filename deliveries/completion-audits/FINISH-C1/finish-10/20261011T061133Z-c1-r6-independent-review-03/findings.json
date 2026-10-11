@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "audit": "FINISH-16 C1-R6 independent review",
+  "reviewer": "local Codex reviewer; not GPT Plus #2",
+  "candidateCommit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
+  "candidateAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+  "overallStatus": "FAIL_EVIDENCE_INTEGRITY",
+  "recommendation": "REWORK",
+  "parentAcceptance": "PENDING",
+  "sourceContractFindings": [],
+  "findings": [
+    {
+      "id": "E-01",
+      "severity": "P2",
+      "category": "evidence-integrity",
+      "status": "CONFIRMED",
+      "title": "R6 input and R5 predecessor hashes do not bind raw committed bytes",
+      "location": "deliveries/FINISH-C1-R6/input-hashes.json; deliveries/FINISH-C1-R5/output-hashes.json",
+      "summary": "R6 declares 29 inputs but only 22 match raw committed bytes. Six mismatches become exact under LF-to-CRLF normalization. One FINISH-08 diagnostic test differs by one inserted CR byte at offset 2872. The R5 output manifest and 23 of its 32 outputs also fail raw-byte comparisons, but all those outputs are documentation/evidence and become exact after LF-to-CRLF normalization; all six R5 source replacements are exact.",
+      "evidence": {
+        "candidateInputManifest": {
+          "sha256": "5ae6775351c82c861b4748a25421ac5e67afcfc331b01aab1a64ef26543295de",
+          "bytes": 48257,
+          "declaredInputs": 29,
+          "rawExact": 22,
+          "rawMismatch": 7,
+          "crlfEquivalent": 6,
+          "singleByteException": {
+            "path": "deliveries/completion-audits/FINISH-C1/finish-08/20261011T003551Z-c1-r5-local-review/evidence/retry-aggregation-diagnostic.test.ts",
+            "expectedSha256": "f19932723c3644d4cc25b65d919317bc28e89520c3c47c926b49e08d2fd22235",
+            "expectedBytes": 2874,
+            "actualSha256": "d952aef28ae996208471a13b5dc3aafe2a12e85a219a677463d06691cf03663a",
+            "actualBytes": 2873,
+            "difference": "one inserted CR byte 0x0d at offset 2872"
+          },
+          "otherMismatchedInputPaths": [
+            "app/pnpm-lock.yaml",
+            "app/playwright.config.ts",
+            "app/vitest.config.ts",
+            "app/vitest.integration.config.ts",
+            "deliveries/completion-audits/FINISH-C1/finish-08/20261011T003551Z-c1-r5-local-review/findings.json",
+            "deliveries/completion-audits/FINISH-C1/finish-08/20261011T003551Z-c1-r5-local-review/evidence/retry-aggregation-diagnostic.log"
+          ]
+        },
+        "r5PredecessorManifest": {
+          "path": "deliveries/FINISH-C1-R5/output-hashes.json",
+          "expectedSha256": "6b758754ca70e4cf43451abc2a2f40b7e4fee801737e2100656ca161dde34e4d",
+          "expectedBytes": 6303,
+          "actualSha256": "0825971fdb19d2bd04aee8d250fe0bb58ff93857792365d432778df9ad1ccaf2",
+          "actualBytes": 6147,
+          "crlfNormalizedMatches": true,
+          "declaredOutputCount": 32,
+          "rawExactOutputs": 9,
+          "rawMismatchedOutputs": 23,
+          "mismatchedOutputScope": "documentation/evidence only; no source replacement mismatch",
+          "allSixR5SourceReplacementsRawExact": true
+        },
+        "internalIdentityConflict": {
+          "path": "app/pnpm-lock.yaml",
+          "inputManifest": {
+            "sha256": "f1637cfe2800e9065fdbc4d2975e8180865ff52775c8213473e2d888c2a8a38d",
+            "bytes": 158580
+          },
+          "sourceBuildIdentity": {
+            "sha256": "8034f04afa8cbdb28fa028ed574117177dfa8a4903c95775ea41405bcabea791",
+            "bytes": 153898
+          },
+          "relationship": "source-build identity matches the committed LF blob; input-hashes expectation matches CRLF conversion"
+        },
+        "independentSourceBinding": {
+          "r3Outputs": "53/53 exact",
+          "r5SourceReplacements": "6/6 exact",
+          "r6SourceReplacements": "2/2 exact",
+          "r6PatchSha256": "17ae6aaab7910546d3527feec26926d8d1fd604e3bc60e2ae0eb9f549f7fc2a6",
+          "candidateOutputManifest": "35/35 exact; 1415587 total bytes"
+        },
+        "logs": [
+          "evidence/candidate-hash-receipt.json",
+          "evidence/logs/fin16-local-20261011-0615-candidate-hashes-rerun3.log",
+          "evidence/logs/fin16-local-20261011-0625-input-eol-analysis.log",
+          "evidence/logs/fin16-local-20261011-0640-single-byte-diff.log",
+          "evidence/logs/fin16-local-20261011-0710-input-eol-verification-rerun.log",
+          "evidence/logs/fin16-local-20261011-0711-single-byte-verification-rerun.log"
+        ]
+      },
+      "impact": "Raw-byte provenance for inherited R5 inputs cannot be established from the candidate input/output manifests without a declared canonicalization rule. Independent assembly, tests and browser checks support the source behavior and all current source replacements are exact; this finding is about reproducibility and evidence identity, not a demonstrated runtime defect.",
+      "reproduction": "Run the pinned candidate hash verification and inspect the declared input and predecessor output comparison rows in evidence/candidate-hash-receipt.json. Run python .work/analyze-eol-fin16.py and python .work/analyze-single-byte-fin16.py; outputs are preserved under evidence/logs.",
+      "recommendation": "Regenerate or explicitly canonicalize inherited input/output hash receipts against committed Git blobs, document the byte representation being hashed, and rerun verification. Do not infer a source fix from this finding."
+    }
+  ],
+  "limitations": [
+    "Local Codex reviewer only; designated external GPT Plus #2 review is not claimed.",
+    "Parent acceptance remains pending.",
+    "Historical R5 red invocation was NOT RUN because its command was not retained and FINISH-16 says not to rewrite R5.",
+    "Provider/CDN, deployment, physical/manual-device, accessibility/assistive-technology, and G7 acceptance were NOT RUN.",
+    "The optional rollback browser fault throws at second-target assignment before that target mutates; the first target was changed and then rolled back."
+  ]
+}

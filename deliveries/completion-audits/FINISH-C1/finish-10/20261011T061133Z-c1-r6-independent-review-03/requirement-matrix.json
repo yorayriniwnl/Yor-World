@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "audit": "FINISH-16 C1-R6 independent review",
+  "candidateCommit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
+  "reviewer": "local Codex reviewer; not GPT Plus #2",
+  "recommendation": "REWORK",
+  "requirements": [
+    {
+      "id": "F-01-current-attempt-retry-progress",
+      "status": "PASS",
+      "evidence": [
+        "evidence/logs/fin16-local-20261011-0650-independent-pre-r6-red.log",
+        "evidence/logs/fin16-local-20261011-0653-independent-post-r6-green.log",
+        "evidence/browser-rerun/attachments/required-current-attempt-progress.json"
+      ],
+      "detail": "Independent red/green on the exact R3+R5 versus R3+R5+R6 assembly: pre-R6 final aggregate is indeterminate after the failed compressed parse and three parsed assets; post-R6 is determinate at exactly 12/12 from current four-byte identity responses. The production browser case excludes the failed compressed body from the final 1,758,012/1,758,012 aggregate."
+    },
+    {
+      "id": "F-01-invalid-current-representation",
+      "status": "PASS",
+      "evidence": [
+        "evidence/logs/fin16-local-20261011-0626-focused-r6-test.log",
+        "evidence/logs/fin16-local-20261011-0705-full-changed-path-suite.log",
+        "source-sequence-replay-receipt.json"
+      ],
+      "detail": "Compressed, unknown/missing encoding, chunked, contradictory length, short/long EOF, and malformed final required response cases remain indeterminate."
+    },
+    {
+      "id": "FINISH-06-6-required-load-browser",
+      "status": "PASS",
+      "evidence": [
+        "evidence/logs/fin16-local-20261011-0634-production-browser.log",
+        "evidence/browser-rerun/browser-results.json",
+        "evidence/browser-rerun/attachments/required-current-attempt-progress.json",
+        "evidence/screenshots/compressed-attempt-retry-ui.png"
+      ],
+      "detail": "Actual source-built production UI and loader; three successful current identity GLBs yield determinate exact bytes, excluding the failed four-byte compressed body."
+    },
+    {
+      "id": "FINISH-06-6-optional-map-rollback",
+      "status": "PASS",
+      "evidence": [
+        "evidence/logs/fin16-local-20261011-0634-production-browser.log",
+        "evidence/browser-rerun/attachments/optional-map-rollback-observation.json"
+      ],
+      "detail": "Real Three.js scene/material/texture objects and candidate material modules restore state, unrelated user, registries, and original maps; derivative material/texture dispose once and source/shared/incoming textures do not dispose. The second setter throws before mutating its target; rollback follows first-target mutation."
+    },
+    {
+      "id": "FINISH-06-6-world-runtime-timers",
+      "status": "PASS",
+      "evidence": [
+        "evidence/logs/fin16-local-20261011-0634-production-browser.log",
+        "evidence/browser-rerun/attachments/world-runtime-browser-timer-evidence.json",
+        "evidence/screenshots/greeting-transition.png"
+      ],
+      "detail": "Actual WorldRuntime/browser timers replace greetings, reject stale captured callbacks, and synchronously clear/disarm the outstanding timer on route-unmount disposal."
+    },
+    {
+      "id": "fresh-unit-integration-lint-typecheck-build",
+      "status": "PASS",
+      "evidence": [
+        "evidence/logs/fin16-local-20261011-0705-full-changed-path-suite.log",
+        "evidence/logs/fin16-local-20261011-0628-full-unit.log",
+        "evidence/logs/fin16-local-20261011-0629-integration.log",
+        "evidence/logs/fin16-local-20261011-0630-lint.log",
+        "evidence/logs/fin16-local-20261011-0631-typecheck.log",
+        "evidence/logs/fin16-local-20261011-0632-production-build.log"
+      ],
+      "detail": "All changed source/test paths: 63 tests / 4 files; full unit 356 / 26; integration 290 / 28; lint, typecheck and production build pass."
+    },
+    {
+      "id": "R3-R5-R6-sequence-and-allowlist",
+      "status": "PASS",
+      "evidence": [
+        "evidence/logs/fin16-local-20261011-0615-sequential-replay.log",
+        "source-sequence-replay-receipt.json"
+      ],
+      "detail": "Exact base→R3→R5→R6 replay applies cleanly and yields the precise patch union. R6 is limited to the two allowed files; whitespace check and final diff-check pass."
+    },
+    {
+      "id": "candidate-output-manifest",
+      "status": "PASS",
+      "evidence": [
+        "evidence/candidate-hash-receipt.json"
+      ],
+      "detail": "Candidate package output manifest and all 35 declared outputs are byte-exact; total 1,415,587 bytes."
+    },
+    {
+      "id": "raw-input-and-predecessor-evidence-hash-binding",
+      "status": "FAIL",
+      "finding": "E-01",
+      "evidence": [
+        "evidence/candidate-hash-receipt.json",
+        "evidence/logs/fin16-local-20261011-0625-input-eol-analysis.log",
+        "evidence/logs/fin16-local-20261011-0640-single-byte-diff.log"
+      ],
+      "detail": "Only 22/29 declared inputs are raw exact; 23 R5 predecessor outputs and its manifest are raw mismatches. Line-ending normalization explains all but one inserted CR byte in the R5 diagnostic test. Source replacements remain exact."
+    },
+    {
+      "id": "R5-historical-red-invocation",
+      "status": "NOT RUN",
+      "evidence": [
+        "deliveries/FINISH-C1-R6/evidence/validation-results.json"
+      ],
+      "detail": "The historical R5 red command was not retained. FINISH-16 directs not to rewrite R5."
+    },
+    {
+      "id": "independent-review-parent-acceptance",
+      "status": "STILL OPEN",
+      "evidence": [
+        "report.md",
+        "findings.json"
+      ],
+      "detail": "This is the requested local Codex review; it is not GPT Plus #2. Parent retains acceptance authority."
+    },
+    {
+      "id": "integration-deployment-provider-device-accessibility",
+      "status": "NOT RUN",
+      "evidence": [
+        "report.md"
+      ],
+      "detail": "External provider/CDN, deployment, manual/physical device, accessibility/assistive technology, and G7 acceptance are outside the granted audit scope and are not implied."
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "audit": "FINISH-16 C1-R6 independent local build identity",
+  "candidateCommit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
+  "candidatePackageTree": "aaaef9759b66e4f680d5ab9306775a44e596e12f",
+  "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+  "baseAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+  "orderedPatches": [
+    {
+      "label": "R3",
+      "sha256": "e1be558f734378fe69659dcf8271c4e5e57d87fbfbdca1582823be103082dc5d",
+      "bytes": 157355
+    },
+    {
+      "label": "R5",
+      "sha256": "d6ad3359fa628067ab228eccc52f25d0604ddddb42813d7023e6a809cf60d83d",
+      "bytes": 34904
+    },
+    {
+      "label": "R6",
+      "sha256": "17ae6aaab7910546d3527feec26926d8d1fd604e3bc60e2ae0eb9f549f7fc2a6",
+      "bytes": 6475
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "app/src/features/world/AssetLoader.ts",
+      "sha256": "68aab18db327e254736b4bbab896f8003ad504c5c2edb4ba90927be47c784045",
+      "bytes": 16358
+    },
+    {
+      "path": "app/tests/unit/world/completion-essential-loader.test.ts",
+      "sha256": "ffcb31fcac68314c9b5dee717abeaa36652e1d3749f7fe799ed4e12f593e25fb",
+      "bytes": 16525
+    },
+    {
+      "path": "app/src/features/world/RuntimeMaterialQuality.ts",
+      "sha256": "ca0a55f17b8e7d6c7555c8ef06375f4d4f1c1ff0d04b77e8cfa79411cc3cdb4d",
+      "bytes": 9998
+    },
+    {
+      "path": "app/src/features/world/LowQualityBatch.ts",
+      "sha256": "89f191c28f0e612bafe229198a8f25703de3a7e63810f40ac1fa28d690416713",
+      "bytes": 9395
+    },
+    {
+      "path": "app/src/features/world/WorldRuntime.ts",
+      "sha256": "089b84800f46f493335082f078d10444470c1e3ed0f02575ea63c1fcec84d515",
+      "bytes": 32542
+    }
+  ],
+  "lockfile": {
+    "path": "app/pnpm-lock.yaml",
+    "sha256": "8034f04afa8cbdb28fa028ed574117177dfa8a4903c95775ea41405bcabea791",
+    "bytes": 153898
+  },
+  "independentBuild": {
+    "command": "pnpm run build",
+    "exitCode": 0,
+    "buildId": "4nRSPdeMK4UVYFeP4JD5W",
+    "buildIdSha256": "bf3c18318ad80b1b43b9f81487d6dfadd5d88325f064564a36fdcebc13f1ed5d",
+    "log": "evidence/logs/fin16-local-20261011-0632-production-build.log"
+  },
+  "browser": {
+    "harnessSha256": "5144cd349d7115edb4d307504abe17115038ed72bc7ccfc81d6d3b025ecb483a",
+    "resultSha256": "86223e46a16e67c7719ed4059ab692cccb0f6183772f1de57c980a9bc9530424",
+    "chromium": "153.0.8010.12",
+    "passCount": 3,
+    "screenshots": [
+      {
+        "path": "evidence/screenshots/compressed-attempt-retry-ui.png",
+        "sha256": "2c59d13d0147196fbfc814e4cd125185243e00ba45c51e99156b915def735076",
+        "bytes": 250512
+      },
+      {
+        "path": "evidence/screenshots/greeting-transition.png",
+        "sha256": "d949c25bd1b49adba1e110e061d3eb7129c808adcece6443bd3402c2c78f6468",
+        "bytes": 204239
+      }
+    ],
+    "observations": [
+      {
+        "path": "evidence/browser-rerun/attachments/required-current-attempt-progress.json",
+        "sha256": "3813ce6123ae4e768a23e3db8e6e87996813d98c58c9da3a0590573c2705fac4",
+        "bytes": 3226
+      },
+      {
+        "path": "evidence/browser-rerun/attachments/optional-map-rollback-observation.json",
+        "sha256": "207219adb93b8bf1a6831ffe9318a2e067015e70dca5d4d9a797a98f27538c30",
+        "bytes": 1580
+      },
+      {
+        "path": "evidence/browser-rerun/attachments/world-runtime-browser-timer-evidence.json",
+        "sha256": "a35617e11a145c11c91bb18a9ef5f052e6e5c2e65d73c930fc2048659a6b17dd",
+        "bytes": 751
+      }
+    ]
+  },
+  "tools": {
+    "git": "2.55.0.windows.5",
+    "node": "v24.19.0",
+    "pnpm": "9.15.9",
+    "python": "3.12.10",
+    "vitest": "5.0.2",
+    "eslint": "9.39.5",
+    "typescript": "6.0.3",
+    "next": "16.3.8",
+    "playwright": "1.63.0",
+    "chromium": "153.0.8010.12"
+  },
+  "scope": "Fresh local build and browser tests against isolated base→R3→R5→R6 assembly; no source or canonical app writes."
+}

@@ -1,0 +1,1302 @@
+{
+  "schemaVersion": 1,
+  "review": "FINISH-16 fresh candidate binding",
+  "reviewer": "local Codex; not GPT Plus #2",
+  "capturedAtUtc": "2026-10-11T06:24:31.020837+00:00",
+  "candidate": {
+    "commit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
+    "parent": "fffe1f62ef122be7a77b427db529b91f2906d6a2",
+    "tree": "aaaef9759b66e4f680d5ab9306775a44e596e12f",
+    "subject": "Package FINISH-C1-R6 runtime correction",
+    "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+    "baseAppTreeExpected": "42ea29ec235225046a75959eb19eb386ac2f821d",
+    "baseAppTreeActual": "42ea29ec235225046a75959eb19eb386ac2f821d"
+  },
+  "candidateOutputManifest": {
+    "sha256": "a8dcd6700b2471b3a2d0d98d71a79ce398a33efcea5a1c48fc83d291cdeeb798",
+    "bytes": 6383,
+    "expectedSha256": "a8dcd6700b2471b3a2d0d98d71a79ce398a33efcea5a1c48fc83d291cdeeb798",
+    "declaredCount": 35,
+    "verifiedCount": 35,
+    "actualTotalBytes": 1415587,
+    "expectedTotalBytes": 1415587,
+    "outputs": [
+      {
+        "path": ".gitattributes",
+        "expectedSha256": "3a28260597cf49a9ba01a15b9aaaeef92d310ccf889c09376ec6c0cb755a520d",
+        "actualSha256": "3a28260597cf49a9ba01a15b9aaaeef92d310ccf889c09376ec6c0cb755a520d",
+        "expectedBytes": 38,
+        "actualBytes": 38,
+        "status": "PASS"
+      },
+      {
+        "path": ".gitignore",
+        "expectedSha256": "035be897b00b2e4df85234618e91ae2c91213ba53b2bf492fc890efec505f2ae",
+        "actualSha256": "035be897b00b2e4df85234618e91ae2c91213ba53b2bf492fc890efec505f2ae",
+        "expectedBytes": 7,
+        "actualBytes": 7,
+        "status": "PASS"
+      },
+      {
+        "path": "changed-paths.json",
+        "expectedSha256": "1018066f25a9a73cdbd0d68fd8e70efa26b8fcec0d26ced067c8428f887dd47f",
+        "actualSha256": "1018066f25a9a73cdbd0d68fd8e70efa26b8fcec0d26ced067c8428f887dd47f",
+        "expectedBytes": 1049,
+        "actualBytes": 1049,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/browser-harness/finish-09-r6-runtime.spec.ts",
+        "expectedSha256": "5144cd349d7115edb4d307504abe17115038ed72bc7ccfc81d6d3b025ecb483a",
+        "actualSha256": "5144cd349d7115edb4d307504abe17115038ed72bc7ccfc81d6d3b025ecb483a",
+        "expectedBytes": 21962,
+        "actualBytes": 21962,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/browser-results/browser-results.json",
+        "expectedSha256": "f4558174fecbbecbcfde643ed4170b3037c33e95bc156367fab85e7fa695a434",
+        "actualSha256": "f4558174fecbbecbcfde643ed4170b3037c33e95bc156367fab85e7fa695a434",
+        "expectedBytes": 621199,
+        "actualBytes": 621199,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/browser-results/optional-map-rollback-observation.json",
+        "expectedSha256": "65ba8a0ec0d7d4d9bba361840088099c6ae31ebd39f0a512a651b65fa5823925",
+        "actualSha256": "65ba8a0ec0d7d4d9bba361840088099c6ae31ebd39f0a512a651b65fa5823925",
+        "expectedBytes": 1580,
+        "actualBytes": 1580,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/browser-results/required-current-attempt-progress.json",
+        "expectedSha256": "630ce756e0ba73b28a2cfc56cae9e8a7b32a10bdc183470f3a572c0ca0df5087",
+        "actualSha256": "630ce756e0ba73b28a2cfc56cae9e8a7b32a10bdc183470f3a572c0ca0df5087",
+        "expectedBytes": 2928,
+        "actualBytes": 2928,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/browser-results/world-runtime-browser-timer-evidence.json",
+        "expectedSha256": "34be20ef903cb3197ab67d1420bff073db0e2560fe5a4a583292ecc03e7524a8",
+        "actualSha256": "34be20ef903cb3197ab67d1420bff073db0e2560fe5a4a583292ecc03e7524a8",
+        "expectedBytes": 751,
+        "actualBytes": 751,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/build-output-hashes.json",
+        "expectedSha256": "9795a42f6aaeac357049a48cb09f88cf37e06f425ce4d91b948fe76f3ae791eb",
+        "actualSha256": "9795a42f6aaeac357049a48cb09f88cf37e06f425ce4d91b948fe76f3ae791eb",
+        "expectedBytes": 164481,
+        "actualBytes": 164481,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/logs/browser-debug.log",
+        "expectedSha256": "c174eb15e3bbeb91a812b10ae8785b1de0ce6f0390734d234ea0a46494d5a95d",
+        "actualSha256": "c174eb15e3bbeb91a812b10ae8785b1de0ce6f0390734d234ea0a46494d5a95d",
+        "expectedBytes": 4026,
+        "actualBytes": 4026,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/logs/browser-final.log",
+        "expectedSha256": "da20e13005e6653b6413b22ed69ae761181db496886ca30c9133078599792f16",
+        "actualSha256": "da20e13005e6653b6413b22ed69ae761181db496886ca30c9133078599792f16",
+        "expectedBytes": 4994,
+        "actualBytes": 4994,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/logs/browser-loader-debug.log",
+        "expectedSha256": "5bd8522da98578da19c380d0b2e86da437b98cfb77c9cf8f9efca91af11944bd",
+        "actualSha256": "5bd8522da98578da19c380d0b2e86da437b98cfb77c9cf8f9efca91af11944bd",
+        "expectedBytes": 3288,
+        "actualBytes": 3288,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/logs/browser-loader-final.log",
+        "expectedSha256": "4e15cfa44ff23ef6df9f80aec88febf873fe0dceec4f66b2ca796c0a0c7121c3",
+        "actualSha256": "4e15cfa44ff23ef6df9f80aec88febf873fe0dceec4f66b2ca796c0a0c7121c3",
+        "expectedBytes": 1208,
+        "actualBytes": 1208,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/logs/browser.log",
+        "expectedSha256": "8bedc2afb32c59ad0bf57004244cdd1bad8633bf66826c74a1c60bcb2a6173ec",
+        "actualSha256": "8bedc2afb32c59ad0bf57004244cdd1bad8633bf66826c74a1c60bcb2a6173ec",
+        "expectedBytes": 5617,
+        "actualBytes": 5617,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/logs/build.log",
+        "expectedSha256": "0bd5a12d6712db1a279bd39a0090dd280e684c7087a309d507bf36857d138561",
+        "actualSha256": "0bd5a12d6712db1a279bd39a0090dd280e684c7087a309d507bf36857d138561",
+        "expectedBytes": 1469,
+        "actualBytes": 1469,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/logs/green-focused-unit.log",
+        "expectedSha256": "65c2a86483bf4a5a1a822680159557aaa9d52294c1cd0a2b61e68702e8f7d8ac",
+        "actualSha256": "65c2a86483bf4a5a1a822680159557aaa9d52294c1cd0a2b61e68702e8f7d8ac",
+        "expectedBytes": 450,
+        "actualBytes": 450,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/logs/green-regression.log",
+        "expectedSha256": "44b6387b6f074dd6fa93a0cdcf1aa6634c75240221b3f41242dfeb0ba8bd442a",
+        "actualSha256": "44b6387b6f074dd6fa93a0cdcf1aa6634c75240221b3f41242dfeb0ba8bd442a",
+        "expectedBytes": 4096,
+        "actualBytes": 4096,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/logs/install.log",
+        "expectedSha256": "1e7674a8872b2139018e1cf75ea9400711584c04eebc745184b580fa40e40ba4",
+        "actualSha256": "1e7674a8872b2139018e1cf75ea9400711584c04eebc745184b580fa40e40ba4",
+        "expectedBytes": 168,
+        "actualBytes": 168,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/logs/integration.log",
+        "expectedSha256": "35cc46bd7e3fdc4b0cef5e41ab9df6e057da6c4cb353534493d9cdf3c8cbb49e",
+        "actualSha256": "35cc46bd7e3fdc4b0cef5e41ab9df6e057da6c4cb353534493d9cdf3c8cbb49e",
+        "expectedBytes": 559,
+        "actualBytes": 559,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/logs/lint.log",
+        "expectedSha256": "a8e22ef86e522773367d1d5a98b04c4d17f870fe81c61f94bb80817068d38da5",
+        "actualSha256": "a8e22ef86e522773367d1d5a98b04c4d17f870fe81c61f94bb80817068d38da5",
+        "expectedBytes": 792,
+        "actualBytes": 792,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/logs/red-regression.log",
+        "expectedSha256": "279e8d8932b9ab9f97c06d3c69af6cf908b8e1de854151531a7d848d7c370d66",
+        "actualSha256": "279e8d8932b9ab9f97c06d3c69af6cf908b8e1de854151531a7d848d7c370d66",
+        "expectedBytes": 5689,
+        "actualBytes": 5689,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/logs/sequential-apply.log",
+        "expectedSha256": "8dd8939bd70ca662b02886e73aa3fd5cdd931f98432328f5126338a2a3a89526",
+        "actualSha256": "8dd8939bd70ca662b02886e73aa3fd5cdd931f98432328f5126338a2a3a89526",
+        "expectedBytes": 3223,
+        "actualBytes": 3223,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/logs/typecheck.log",
+        "expectedSha256": "5a990037154a1853a093fdb6652ad655e2e4a8df2eb1ceefb639360ee752909b",
+        "actualSha256": "5a990037154a1853a093fdb6652ad655e2e4a8df2eb1ceefb639360ee752909b",
+        "expectedBytes": 1737,
+        "actualBytes": 1737,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/logs/unit.log",
+        "expectedSha256": "09325b47c0140441c48b96b6c0d01f6669c7a4ca749f1cce207047f37182339b",
+        "actualSha256": "09325b47c0140441c48b96b6c0d01f6669c7a4ca749f1cce207047f37182339b",
+        "expectedBytes": 704,
+        "actualBytes": 704,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/screenshots/compressed-attempt-retry-ui.png",
+        "expectedSha256": "121abc11d51ce1eebcdf7325a77e96cf7244992d1ce6cb06680fe1385271c1c0",
+        "actualSha256": "121abc11d51ce1eebcdf7325a77e96cf7244992d1ce6cb06680fe1385271c1c0",
+        "expectedBytes": 250643,
+        "actualBytes": 250643,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/screenshots/greeting-transition.png",
+        "expectedSha256": "c892085e33892d978f2f4302d341a0a008127e4331bb819ba6ad69edb6fe1c5b",
+        "actualSha256": "c892085e33892d978f2f4302d341a0a008127e4331bb819ba6ad69edb6fe1c5b",
+        "expectedBytes": 204200,
+        "actualBytes": 204200,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/sequential-apply-receipt.json",
+        "expectedSha256": "876d2646999f734df9bbb4f5ce5bccd9ba7302a2384a319a8a3264ddf592ed59",
+        "actualSha256": "876d2646999f734df9bbb4f5ce5bccd9ba7302a2384a319a8a3264ddf592ed59",
+        "expectedBytes": 3089,
+        "actualBytes": 3089,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/source-build-identity.json",
+        "expectedSha256": "3c13d9dc8ccc6749c3dafc95b5de9963e2135ac1cb9e3aec9a392a28f06b92a3",
+        "actualSha256": "3c13d9dc8ccc6749c3dafc95b5de9963e2135ac1cb9e3aec9a392a28f06b92a3",
+        "expectedBytes": 4210,
+        "actualBytes": 4210,
+        "status": "PASS"
+      },
+      {
+        "path": "evidence/validation-results.json",
+        "expectedSha256": "adc84b9f1ace532bec268f232a7415ed472744b786015d62ff1dcd70b8500b09",
+        "actualSha256": "adc84b9f1ace532bec268f232a7415ed472744b786015d62ff1dcd70b8500b09",
+        "expectedBytes": 4125,
+        "actualBytes": 4125,
+        "status": "PASS"
+      },
+      {
+        "path": "input-hashes.json",
+        "expectedSha256": "5ae6775351c82c861b4748a25421ac5e67afcfc331b01aab1a64ef26543295de",
+        "actualSha256": "5ae6775351c82c861b4748a25421ac5e67afcfc331b01aab1a64ef26543295de",
+        "expectedBytes": 48257,
+        "actualBytes": 48257,
+        "status": "PASS"
+      },
+      {
+        "path": "report.md",
+        "expectedSha256": "3afb9d8e73c88c7cd1a07b666c9528824afdd8e5230254aa9a031201661d41cf",
+        "actualSha256": "3afb9d8e73c88c7cd1a07b666c9528824afdd8e5230254aa9a031201661d41cf",
+        "expectedBytes": 5304,
+        "actualBytes": 5304,
+        "status": "PASS"
+      },
+      {
+        "path": "requirements-matrix.json",
+        "expectedSha256": "0a02e67e039a2f1252fbb727f27bef4a8ba10335468c10a3108ccb49cd2220f9",
+        "actualSha256": "0a02e67e039a2f1252fbb727f27bef4a8ba10335468c10a3108ccb49cd2220f9",
+        "expectedBytes": 4386,
+        "actualBytes": 4386,
+        "status": "PASS"
+      },
+      {
+        "path": "source/app/src/features/world/AssetLoader.ts",
+        "expectedSha256": "68aab18db327e254736b4bbab896f8003ad504c5c2edb4ba90927be47c784045",
+        "actualSha256": "68aab18db327e254736b4bbab896f8003ad504c5c2edb4ba90927be47c784045",
+        "expectedBytes": 16358,
+        "actualBytes": 16358,
+        "status": "PASS"
+      },
+      {
+        "path": "source/app/tests/unit/world/completion-essential-loader.test.ts",
+        "expectedSha256": "ffcb31fcac68314c9b5dee717abeaa36652e1d3749f7fe799ed4e12f593e25fb",
+        "actualSha256": "ffcb31fcac68314c9b5dee717abeaa36652e1d3749f7fe799ed4e12f593e25fb",
+        "expectedBytes": 16525,
+        "actualBytes": 16525,
+        "status": "PASS"
+      },
+      {
+        "path": "source.patch",
+        "expectedSha256": "17ae6aaab7910546d3527feec26926d8d1fd604e3bc60e2ae0eb9f549f7fc2a6",
+        "actualSha256": "17ae6aaab7910546d3527feec26926d8d1fd604e3bc60e2ae0eb9f549f7fc2a6",
+        "expectedBytes": 6475,
+        "actualBytes": 6475,
+        "status": "PASS"
+      }
+    ]
+  },
+  "declaredInputs": {
+    "manifestSha256": "5ae6775351c82c861b4748a25421ac5e67afcfc331b01aab1a64ef26543295de",
+    "manifestBytes": 48257,
+    "declaredCount": 29,
+    "verifiedCount": 22,
+    "inputs": [
+      {
+        "path": "docs/planning/reconciliation-packets/2026-10-11-finish-09-c1-r6.md",
+        "expectedSha256": "1a8e5e145b5fe276b76ab31f755796c1671903e893df12871a9dc1f52ad98e41",
+        "actualSha256": "1a8e5e145b5fe276b76ab31f755796c1671903e893df12871a9dc1f52ad98e41",
+        "expectedBytes": 7252,
+        "actualBytes": 7252,
+        "status": "PASS"
+      },
+      {
+        "path": "docs/planning/reconciliation-packets/finish-contracts-r2/01-runtime-lifecycle.md",
+        "expectedSha256": "ef643895ba1fa6cb74bffb8242d504756e111dec7667588ed2502528b9b91683",
+        "actualSha256": "ef643895ba1fa6cb74bffb8242d504756e111dec7667588ed2502528b9b91683",
+        "expectedBytes": 15500,
+        "actualBytes": 15500,
+        "status": "PASS"
+      },
+      {
+        "path": "docs/planning/reconciliation-packets/finish-contracts-r2/output-hashes.json",
+        "expectedSha256": "8038db147824b0a31de1028c330383352177020b2247dd627d1674d6dc14c6af",
+        "actualSha256": "8038db147824b0a31de1028c330383352177020b2247dd627d1674d6dc14c6af",
+        "expectedBytes": 13402,
+        "actualBytes": 13402,
+        "status": "PASS"
+      },
+      {
+        "path": "docs/planning/reconciliation-packets/2026-10-11-finish-08-c1-r5.md",
+        "expectedSha256": "691a9abfae46b8e172cd334c1da6455a4be26b6c75caf63ccd1e3de2826d40a0",
+        "actualSha256": "691a9abfae46b8e172cd334c1da6455a4be26b6c75caf63ccd1e3de2826d40a0",
+        "expectedBytes": 4669,
+        "actualBytes": 4669,
+        "status": "PASS"
+      },
+      {
+        "path": "docs/planning/reconciliation-packets/2026-10-11-finish-05.md",
+        "expectedSha256": "36d62ab8962a08e32274c9db1f6adb8b0399e96549be3e48f5a62844008ce495",
+        "actualSha256": "36d62ab8962a08e32274c9db1f6adb8b0399e96549be3e48f5a62844008ce495",
+        "expectedBytes": 5239,
+        "actualBytes": 5239,
+        "status": "PASS"
+      },
+      {
+        "path": "docs/planning/delegation-and-work-orders.md",
+        "expectedSha256": "47cd262ceecf64ebc94cfe30c7be5f07bff0f82e96abd7a5401a3daf2cefae7f",
+        "actualSha256": "47cd262ceecf64ebc94cfe30c7be5f07bff0f82e96abd7a5401a3daf2cefae7f",
+        "expectedBytes": 35771,
+        "actualBytes": 35771,
+        "status": "PASS"
+      },
+      {
+        "path": "START_HERE.md",
+        "expectedSha256": "00f9938b7ee08f6d61ccf8225a54192a34c9f5b17b456c60df5767d61da89fe8",
+        "actualSha256": "00f9938b7ee08f6d61ccf8225a54192a34c9f5b17b456c60df5767d61da89fe8",
+        "expectedBytes": 8338,
+        "actualBytes": 8338,
+        "status": "PASS"
+      },
+      {
+        "path": "AGENTS.md",
+        "expectedSha256": "06738f97b03662ccac542fc29f25b77e476d167600f78411f34eb4ff14f4a0c4",
+        "actualSha256": "06738f97b03662ccac542fc29f25b77e476d167600f78411f34eb4ff14f4a0c4",
+        "expectedBytes": 3255,
+        "actualBytes": 3255,
+        "status": "PASS"
+      },
+      {
+        "path": "app/package.json",
+        "expectedSha256": "0867a027648bb13d677c61670e5dd1c13383e17b9fa03e02114fab750c6c71fb",
+        "actualSha256": "0867a027648bb13d677c61670e5dd1c13383e17b9fa03e02114fab750c6c71fb",
+        "expectedBytes": 1359,
+        "actualBytes": 1359,
+        "status": "PASS"
+      },
+      {
+        "path": "app/pnpm-lock.yaml",
+        "expectedSha256": "f1637cfe2800e9065fdbc4d2975e8180865ff52775c8213473e2d888c2a8a38d",
+        "actualSha256": "8034f04afa8cbdb28fa028ed574117177dfa8a4903c95775ea41405bcabea791",
+        "expectedBytes": 158580,
+        "actualBytes": 153898,
+        "status": "FAIL"
+      },
+      {
+        "path": "app/playwright.config.ts",
+        "expectedSha256": "fa38ae152c8f164cfb51a668172df4a6206431e8e42420fd3ed4083ca6468b24",
+        "actualSha256": "0c73e012399d3c6a6e2ff20672b684725accb0ca67e0fa02428a9352a3f045fd",
+        "expectedBytes": 1332,
+        "actualBytes": 1297,
+        "status": "FAIL"
+      },
+      {
+        "path": "app/vitest.config.ts",
+        "expectedSha256": "a2555082edeb6ecd0e4c4322454ccb26ac96518f9d7b8fff759899e536213912",
+        "actualSha256": "89c179b9b6d48f754dd748cd9589a70e3892d1cdf7ee1860fe037dbece842e99",
+        "expectedBytes": 369,
+        "actualBytes": 357,
+        "status": "FAIL"
+      },
+      {
+        "path": "app/vitest.integration.config.ts",
+        "expectedSha256": "bdd757adaa6fa3215ba77ab03159736db1978d8a849dbef2319d1b0206407830",
+        "actualSha256": "4e53d67bc88362e3163e1892e5f39f3f8170405e99d24737942cbe0493a79a51",
+        "expectedBytes": 464,
+        "actualBytes": 452,
+        "status": "FAIL"
+      },
+      {
+        "path": "deliveries/completion-audits/FINISH-C1/finish-08/20261011T003551Z-c1-r5-local-review/report.md",
+        "expectedSha256": "17885bb363cc9472487b1bcb3058be5704c0d9743502b654f33189d249c825c3",
+        "actualSha256": "17885bb363cc9472487b1bcb3058be5704c0d9743502b654f33189d249c825c3",
+        "expectedBytes": 7855,
+        "actualBytes": 7855,
+        "status": "PASS"
+      },
+      {
+        "path": "deliveries/completion-audits/FINISH-C1/finish-08/20261011T003551Z-c1-r5-local-review/findings.json",
+        "expectedSha256": "38d975f774836d57fd2b8f6afd9d15303d60367ed2ad8cd71c055ea3fe8996d2",
+        "actualSha256": "75e6588d575446e16bd9b0daae354a869f34dee6a54f6e0989e49864f5a2e13f",
+        "expectedBytes": 8481,
+        "actualBytes": 8317,
+        "status": "FAIL"
+      },
+      {
+        "path": "deliveries/completion-audits/FINISH-C1/finish-08/20261011T003551Z-c1-r5-local-review/requirement-matrix.json",
+        "expectedSha256": "8a9b60b784b6978908aacd5de75b62d28c4d91e83d32426699f0437ced4228fa",
+        "actualSha256": "8a9b60b784b6978908aacd5de75b62d28c4d91e83d32426699f0437ced4228fa",
+        "expectedBytes": 8775,
+        "actualBytes": 8775,
+        "status": "PASS"
+      },
+      {
+        "path": "deliveries/completion-audits/FINISH-C1/finish-08/20261011T003551Z-c1-r5-local-review/evidence/retry-aggregation-diagnostic.test.ts",
+        "expectedSha256": "f19932723c3644d4cc25b65d919317bc28e89520c3c47c926b49e08d2fd22235",
+        "actualSha256": "d952aef28ae996208471a13b5dc3aafe2a12e85a219a677463d06691cf03663a",
+        "expectedBytes": 2874,
+        "actualBytes": 2873,
+        "status": "FAIL"
+      },
+      {
+        "path": "deliveries/completion-audits/FINISH-C1/finish-08/20261011T003551Z-c1-r5-local-review/evidence/retry-aggregation-diagnostic.log",
+        "expectedSha256": "30f79980adb56c5ccd8d878414fd65a268790018e5d9742a68a5ea973e55c627",
+        "actualSha256": "55392c33c7be11526beefe24b3839d3d69fc5a82953c438f4683220bf7f92441",
+        "expectedBytes": 3802,
+        "actualBytes": 3787,
+        "status": "FAIL"
+      },
+      {
+        "path": "candidate-app/app/src/features/world/AssetLoader.ts",
+        "expectedSha256": "68aab18db327e254736b4bbab896f8003ad504c5c2edb4ba90927be47c784045",
+        "actualSha256": "68aab18db327e254736b4bbab896f8003ad504c5c2edb4ba90927be47c784045",
+        "expectedBytes": 16358,
+        "actualBytes": 16358,
+        "status": "PASS"
+      },
+      {
+        "path": "candidate-app/app/src/features/world/RuntimeMaterialQuality.ts",
+        "expectedSha256": "ca0a55f17b8e7d6c7555c8ef06375f4d4f1c1ff0d04b77e8cfa79411cc3cdb4d",
+        "actualSha256": "ca0a55f17b8e7d6c7555c8ef06375f4d4f1c1ff0d04b77e8cfa79411cc3cdb4d",
+        "expectedBytes": 9998,
+        "actualBytes": 9998,
+        "status": "PASS"
+      },
+      {
+        "path": "candidate-app/app/src/features/world/LowQualityBatch.ts",
+        "expectedSha256": "89f191c28f0e612bafe229198a8f25703de3a7e63810f40ac1fa28d690416713",
+        "actualSha256": "89f191c28f0e612bafe229198a8f25703de3a7e63810f40ac1fa28d690416713",
+        "expectedBytes": 9395,
+        "actualBytes": 9395,
+        "status": "PASS"
+      },
+      {
+        "path": "candidate-app/app/src/features/world/WorldRuntime.ts",
+        "expectedSha256": "089b84800f46f493335082f078d10444470c1e3ed0f02575ea63c1fcec84d515",
+        "actualSha256": "089b84800f46f493335082f078d10444470c1e3ed0f02575ea63c1fcec84d515",
+        "expectedBytes": 32542,
+        "actualBytes": 32542,
+        "status": "PASS"
+      },
+      {
+        "path": "candidate-app/app/tests/unit/world/completion-essential-loader.test.ts",
+        "expectedSha256": "ffcb31fcac68314c9b5dee717abeaa36652e1d3749f7fe799ed4e12f593e25fb",
+        "actualSha256": "ffcb31fcac68314c9b5dee717abeaa36652e1d3749f7fe799ed4e12f593e25fb",
+        "expectedBytes": 16525,
+        "actualBytes": 16525,
+        "status": "PASS"
+      },
+      {
+        "path": "deliveries/FINISH-C1-R6/evidence/browser-harness/finish-09-r6-runtime.spec.ts",
+        "expectedSha256": "5144cd349d7115edb4d307504abe17115038ed72bc7ccfc81d6d3b025ecb483a",
+        "actualSha256": "5144cd349d7115edb4d307504abe17115038ed72bc7ccfc81d6d3b025ecb483a",
+        "expectedBytes": 21962,
+        "actualBytes": 21962,
+        "status": "PASS"
+      },
+      {
+        "path": "candidate-app/node_modules/three/build/three.module.js",
+        "expectedSha256": "c8211c69345d2e9949dc7a8ac969380497aa0600a5a8ac6a459c8cd02dd9cb8a",
+        "actualSha256": "c8211c69345d2e9949dc7a8ac969380497aa0600a5a8ac6a459c8cd02dd9cb8a",
+        "expectedBytes": 603113,
+        "actualBytes": 603113,
+        "status": "PASS"
+      },
+      {
+        "path": "candidate-app/node_modules/three/build/three.core.js",
+        "expectedSha256": "eb077d2417f61d3e6d9264c317cabc4ea35769ed6b0ab533067292a550784c20",
+        "actualSha256": "eb077d2417f61d3e6d9264c317cabc4ea35769ed6b0ab533067292a550784c20",
+        "expectedBytes": 1403455,
+        "actualBytes": 1403455,
+        "status": "PASS"
+      },
+      {
+        "path": "candidate-app/app/public/models/production-room-full.glb",
+        "expectedSha256": "3a02647d24e474c8a2579b0d277cf02a7841212e961c1554f67b6e032e40a307",
+        "actualSha256": "3a02647d24e474c8a2579b0d277cf02a7841212e961c1554f67b6e032e40a307",
+        "expectedBytes": 861364,
+        "actualBytes": 861364,
+        "status": "PASS"
+      },
+      {
+        "path": "candidate-app/app/public/models/resident-production.glb",
+        "expectedSha256": "b15000feb4738d14aa1d41a43f01ba377f7011dbe1c95b3478c1200d12f4411d",
+        "actualSha256": "b15000feb4738d14aa1d41a43f01ba377f7011dbe1c95b3478c1200d12f4411d",
+        "expectedBytes": 575900,
+        "actualBytes": 575900,
+        "status": "PASS"
+      },
+      {
+        "path": "candidate-app/app/public/models/fixture-production.glb",
+        "expectedSha256": "8e413b1aa407841b5fd268a9c00bb66718688957c6507551f3b79104132d81d8",
+        "actualSha256": "8e413b1aa407841b5fd268a9c00bb66718688957c6507551f3b79104132d81d8",
+        "expectedBytes": 320748,
+        "actualBytes": 320748,
+        "status": "PASS"
+      }
+    ]
+  },
+  "predecessors": [
+    {
+      "delivery": "FINISH-C1-R3",
+      "manifestPath": "deliveries/FINISH-C1-R3/output-hashes.json",
+      "manifestSha256Expected": "4507bf04ad129f026556abf7d3e2099ee32f265da4bb29c3fff653d9dc17bb9e",
+      "manifestSha256Actual": "4507bf04ad129f026556abf7d3e2099ee32f265da4bb29c3fff653d9dc17bb9e",
+      "manifestBytesExpected": 9238,
+      "manifestBytesActual": 9238,
+      "declaredOutputCount": 53,
+      "verifiedOutputs": [
+        {
+          "path": "deliveries/FINISH-C1-R3/source/src/contracts/experience.ts",
+          "sha256Expected": "9d25168d9efb45e9117cc0a3ea09d1eb13a2d3eaca70c9aa92aecd2012b027cb",
+          "sha256Actual": "9d25168d9efb45e9117cc0a3ea09d1eb13a2d3eaca70c9aa92aecd2012b027cb",
+          "bytesExpected": 4224,
+          "bytesActual": 4224,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/src/features/experience/controller.ts",
+          "sha256Expected": "0aa2e57cdf2ebd1086bcb007fe7e0b20c30fb271bff565b351d8f6c0624d954b",
+          "sha256Actual": "0aa2e57cdf2ebd1086bcb007fe7e0b20c30fb271bff565b351d8f6c0624d954b",
+          "bytesExpected": 15875,
+          "bytesActual": 15875,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/src/features/experience/preferences-store.ts",
+          "sha256Expected": "4244bae6ae8a180d38810a2c627d2405751b91b3a879488b776dde9097573b28",
+          "sha256Actual": "4244bae6ae8a180d38810a2c627d2405751b91b3a879488b776dde9097573b28",
+          "bytesExpected": 4570,
+          "bytesActual": 4570,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/src/features/experience/return-snapshot.ts",
+          "sha256Expected": "2ae0835d57eb986e62262fe11e38c15a3dba115cc0e54da0491d92d6c36200f7",
+          "sha256Actual": "2ae0835d57eb986e62262fe11e38c15a3dba115cc0e54da0491d92d6c36200f7",
+          "bytesExpected": 3225,
+          "bytesActual": 3225,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/src/features/world/asset-resources.ts",
+          "sha256Expected": "28435393bf7a18618b00d47b77147cd01cdead5916610623c13c04e44d056c09",
+          "sha256Actual": "28435393bf7a18618b00d47b77147cd01cdead5916610623c13c04e44d056c09",
+          "bytesExpected": 9356,
+          "bytesActual": 9356,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/src/features/world/AssetLoader.ts",
+          "sha256Expected": "fa85b62be24e0eb0216f735a2042fdfd675f840b7065873e0d7cbfcd7b0d8b8f",
+          "sha256Actual": "fa85b62be24e0eb0216f735a2042fdfd675f840b7065873e0d7cbfcd7b0d8b8f",
+          "bytesExpected": 15442,
+          "bytesActual": 15442,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/src/features/world/CharacterDirector.ts",
+          "sha256Expected": "fe4db17408493747d462c56f325337159d9f3baa927e87ca59e6411b8e5e08f3",
+          "sha256Actual": "fe4db17408493747d462c56f325337159d9f3baa927e87ca59e6411b8e5e08f3",
+          "bytesExpected": 8006,
+          "bytesActual": 8006,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/src/features/world/LifecycleManager.ts",
+          "sha256Expected": "8d4251dd7c1c528e1ce480fe55926a016e2b6be64b24ef2c33cd0ddec561d77a",
+          "sha256Actual": "8d4251dd7c1c528e1ce480fe55926a016e2b6be64b24ef2c33cd0ddec561d77a",
+          "bytesExpected": 12190,
+          "bytesActual": 12190,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/src/features/world/LowQualityBatch.ts",
+          "sha256Expected": "89f191c28f0e612bafe229198a8f25703de3a7e63810f40ac1fa28d690416713",
+          "sha256Actual": "89f191c28f0e612bafe229198a8f25703de3a7e63810f40ac1fa28d690416713",
+          "bytesExpected": 9395,
+          "bytesActual": 9395,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/src/features/world/RuntimeMaterialQuality.ts",
+          "sha256Expected": "9af1b0bd5de16e779ca2fef61f49ad92e2235d88f879858185cac33805734be8",
+          "sha256Actual": "9af1b0bd5de16e779ca2fef61f49ad92e2235d88f879858185cac33805734be8",
+          "bytesExpected": 7868,
+          "bytesActual": 7868,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/src/features/world/SceneIntegrator.ts",
+          "sha256Expected": "b5a5941769ca9ef183492843dd6e55702102445ca5db5b8f5cff0650a3b4c63b",
+          "sha256Actual": "b5a5941769ca9ef183492843dd6e55702102445ca5db5b8f5cff0650a3b4c63b",
+          "bytesExpected": 6198,
+          "bytesActual": 6198,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/src/features/world/types.ts",
+          "sha256Expected": "e16360ffe535dd7ce95341dc5a2dca7223320414019b851de329e1f7e1baa13d",
+          "sha256Actual": "e16360ffe535dd7ce95341dc5a2dca7223320414019b851de329e1f7e1baa13d",
+          "bytesExpected": 3984,
+          "bytesActual": 3984,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/src/features/world/world.module.css",
+          "sha256Expected": "62bf52b5d789d90d1771a5511f44e60caa57447eb6e0eec5f7451b828eca61f9",
+          "sha256Actual": "62bf52b5d789d90d1771a5511f44e60caa57447eb6e0eec5f7451b828eca61f9",
+          "bytesExpected": 5105,
+          "bytesActual": 5105,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/src/features/world/WorldRoot.tsx",
+          "sha256Expected": "4739749322f392a502d6b9d451fac2e6c099fa35cc2a87e44ffda4ee23fd6e10",
+          "sha256Actual": "4739749322f392a502d6b9d451fac2e6c099fa35cc2a87e44ffda4ee23fd6e10",
+          "bytesExpected": 27505,
+          "bytesActual": 27505,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/src/features/world/WorldRuntime.ts",
+          "sha256Expected": "12db7ee436e89e2c1e6915955f5c31629c1af5d72dbeb75275b35dc48a09f9fc",
+          "sha256Actual": "12db7ee436e89e2c1e6915955f5c31629c1af5d72dbeb75275b35dc48a09f9fc",
+          "bytesExpected": 31796,
+          "bytesActual": 31796,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/tests/e2e/world/completion-loading-pause.spec.ts",
+          "sha256Expected": "04d1832825e950b57e0b666fba7bea89a1b9cfdbae8e72e48162059d7e10417a",
+          "sha256Actual": "04d1832825e950b57e0b666fba7bea89a1b9cfdbae8e72e48162059d7e10417a",
+          "bytesExpected": 11297,
+          "bytesActual": 11297,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/tests/fixtures/engineering-section-4.ts",
+          "sha256Expected": "48b80e31af6dab0d97dbfdb9ae6c65d439b7f8ff243ae68746278267bbc98dac",
+          "sha256Actual": "48b80e31af6dab0d97dbfdb9ae6c65d439b7f8ff243ae68746278267bbc98dac",
+          "bytesExpected": 3034,
+          "bytesActual": 3034,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/tests/integration/world/completion-runtime-lifecycle.test.ts",
+          "sha256Expected": "86573b1a3c8a0a7069e85b74644bf35bf11e3a54b33d306f09703d4b1e8a59c8",
+          "sha256Actual": "86573b1a3c8a0a7069e85b74644bf35bf11e3a54b33d306f09703d4b1e8a59c8",
+          "bytesExpected": 7019,
+          "bytesActual": 7019,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/tests/unit/asset-loader.test.ts",
+          "sha256Expected": "910df3ab5f7fcdb7dbdd6e0510bfb0cf9d723756dbb94084e29b7cf83d1772c7",
+          "sha256Actual": "910df3ab5f7fcdb7dbdd6e0510bfb0cf9d723756dbb94084e29b7cf83d1772c7",
+          "bytesExpected": 4645,
+          "bytesActual": 4645,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/tests/unit/character-director.test.ts",
+          "sha256Expected": "e8228c4e49daea0ff240143ad5de758b7c5f741febddaec350698b61a5a449ac",
+          "sha256Actual": "e8228c4e49daea0ff240143ad5de758b7c5f741febddaec350698b61a5a449ac",
+          "bytesExpected": 4933,
+          "bytesActual": 4933,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/tests/unit/contracts.test.ts",
+          "sha256Expected": "d8b75ca895b5131453dc9f34e4b8c1ea9c6342b1cd2899b190489819906ea4ce",
+          "sha256Actual": "d8b75ca895b5131453dc9f34e4b8c1ea9c6342b1cd2899b190489819906ea4ce",
+          "bytesExpected": 8436,
+          "bytesActual": 8436,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/tests/unit/lifecycle-manager.test.ts",
+          "sha256Expected": "5dd723cece97f6377e1e007033a36510e5bdc107341519445c4ce00a20a6d17f",
+          "sha256Actual": "5dd723cece97f6377e1e007033a36510e5bdc107341519445c4ce00a20a6d17f",
+          "bytesExpected": 9586,
+          "bytesActual": 9586,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/tests/unit/low-quality-batch.test.ts",
+          "sha256Expected": "d3861dd637545a7a344a8c52319e6dfb4f05fd7a75e6db2ee0be29abf7d79b42",
+          "sha256Actual": "d3861dd637545a7a344a8c52319e6dfb4f05fd7a75e6db2ee0be29abf7d79b42",
+          "bytesExpected": 16609,
+          "bytesActual": 16609,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/tests/unit/preferences-resilience.test.ts",
+          "sha256Expected": "0141da388efe40f0a37c1a3b9b34c32e946a4d73440c732db7d0a8bd4a99281e",
+          "sha256Actual": "0141da388efe40f0a37c1a3b9b34c32e946a4d73440c732db7d0a8bd4a99281e",
+          "bytesExpected": 4794,
+          "bytesActual": 4794,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/tests/unit/project-transition.test.ts",
+          "sha256Expected": "67f8ae106a4b7eb00343f4ae9b8861b4bb7ec6dce97680e8756cd85566810266",
+          "sha256Actual": "67f8ae106a4b7eb00343f4ae9b8861b4bb7ec6dce97680e8756cd85566810266",
+          "bytesExpected": 11130,
+          "bytesActual": 11130,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/tests/unit/runtime-material-quality.test.ts",
+          "sha256Expected": "8a0e0db57990c62987b4e2c94cd9138668b3d42daf76217dd8f5aa86bd37468f",
+          "sha256Actual": "8a0e0db57990c62987b4e2c94cd9138668b3d42daf76217dd8f5aa86bd37468f",
+          "bytesExpected": 14237,
+          "bytesActual": 14237,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/tests/unit/world/completion-character-startup.test.ts",
+          "sha256Expected": "3d5b0f2b7790858089e89ceeeb4780da69f84f22e3e5056569b183cad9b61dd5",
+          "sha256Actual": "3d5b0f2b7790858089e89ceeeb4780da69f84f22e3e5056569b183cad9b61dd5",
+          "bytesExpected": 3826,
+          "bytesActual": 3826,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/tests/unit/world/completion-decorative-pause.test.ts",
+          "sha256Expected": "5d15c0f58ee4aca4714aba311b52e035a40e9a63b0efc2a899afc02948e31aa8",
+          "sha256Actual": "5d15c0f58ee4aca4714aba311b52e035a40e9a63b0efc2a899afc02948e31aa8",
+          "bytesExpected": 2569,
+          "bytesActual": 2569,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source/tests/unit/world/completion-essential-loader.test.ts",
+          "sha256Expected": "58c4be121becfff8c0e31c9cfe90334522a6ce3bdf8089a4d9b3d24bdf89dd59",
+          "sha256Actual": "58c4be121becfff8c0e31c9cfe90334522a6ce3bdf8089a4d9b3d24bdf89dd59",
+          "bytesExpected": 11279,
+          "bytesActual": 11279,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/.gitattributes",
+          "sha256Expected": "3a28260597cf49a9ba01a15b9aaaeef92d310ccf889c09376ec6c0cb755a520d",
+          "sha256Actual": "3a28260597cf49a9ba01a15b9aaaeef92d310ccf889c09376ec6c0cb755a520d",
+          "bytesExpected": 38,
+          "bytesActual": 38,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/.gitignore",
+          "sha256Expected": "127db960aa700df3ac013fb5e400e0909a10f50a3d89b9d4414ba43f1929223a",
+          "sha256Actual": "127db960aa700df3ac013fb5e400e0909a10f50a3d89b9d4414ba43f1929223a",
+          "bytesExpected": 72,
+          "bytesActual": 72,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/source.patch",
+          "sha256Expected": "e1be558f734378fe69659dcf8271c4e5e57d87fbfbdca1582823be103082dc5d",
+          "sha256Actual": "e1be558f734378fe69659dcf8271c4e5e57d87fbfbdca1582823be103082dc5d",
+          "bytesExpected": 157355,
+          "bytesActual": 157355,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/report.md",
+          "sha256Expected": "8ef8704c5debb697df27d76ae8c4a056330a9385601f03d3f41cb3f8281af7b5",
+          "sha256Actual": "8ef8704c5debb697df27d76ae8c4a056330a9385601f03d3f41cb3f8281af7b5",
+          "bytesExpected": 4729,
+          "bytesActual": 4729,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/requirements-matrix.json",
+          "sha256Expected": "c17fb3c5f7774a01a6dd67bf72bd4bcbb49c935d3c9a3a0a7b4d1c62bb04db26",
+          "sha256Actual": "c17fb3c5f7774a01a6dd67bf72bd4bcbb49c935d3c9a3a0a7b4d1c62bb04db26",
+          "bytesExpected": 7482,
+          "bytesActual": 7482,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/input-hashes.json",
+          "sha256Expected": "3b0fe412c5cede1b367f7447733c12f0013e7b6ce00b4b6a1b1b72186469e149",
+          "sha256Actual": "3b0fe412c5cede1b367f7447733c12f0013e7b6ce00b4b6a1b1b72186469e149",
+          "bytesExpected": 3547,
+          "bytesActual": 3547,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/evidence/browser-measurements.json",
+          "sha256Expected": "0fda9525247618488a70db92eca8c10d9308b630eee7b2d58bec054457971e5f",
+          "sha256Actual": "0fda9525247618488a70db92eca8c10d9308b630eee7b2d58bec054457971e5f",
+          "bytesExpected": 1719,
+          "bytesActual": 1719,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/evidence/browser-results.json",
+          "sha256Expected": "7f677144619ff7e638c1c4780edc4bf01e3f4df8eb1bc466366d22426c87b504",
+          "sha256Actual": "7f677144619ff7e638c1c4780edc4bf01e3f4df8eb1bc466366d22426c87b504",
+          "bytesExpected": 8604,
+          "bytesActual": 8604,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/evidence/browser.log",
+          "sha256Expected": "6f8ba3166e6bc319b50d775e507a0734f876987122639b0fcf36da7a5b6f31e9",
+          "sha256Actual": "6f8ba3166e6bc319b50d775e507a0734f876987122639b0fcf36da7a5b6f31e9",
+          "bytesExpected": 1657,
+          "bytesActual": 1657,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/evidence/build-browser-exit-codes.json",
+          "sha256Expected": "27d4cb404b8c20fbb88f19492da8bd5aaff0e6e5c12099e818824feea1ad9e72",
+          "sha256Actual": "27d4cb404b8c20fbb88f19492da8bd5aaff0e6e5c12099e818824feea1ad9e72",
+          "bytesExpected": 52,
+          "bytesActual": 52,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/evidence/build.log",
+          "sha256Expected": "39c679b50be8cdf4fff58c6c9e38da4bf8077c1dceff39dc2fd72e82e7c75478",
+          "sha256Actual": "39c679b50be8cdf4fff58c6c9e38da4bf8077c1dceff39dc2fd72e82e7c75478",
+          "bytesExpected": 1356,
+          "bytesActual": 1356,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/evidence/final-typecheck-browser-exit-codes.json",
+          "sha256Expected": "6df91b56ef580ff519a722604c19dcd8f92c2b9fc114f14ca179519a5c782568",
+          "sha256Actual": "6df91b56ef580ff519a722604c19dcd8f92c2b9fc114f14ca179519a5c782568",
+          "bytesExpected": 56,
+          "bytesActual": 56,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/evidence/final-validation-summary.json",
+          "sha256Expected": "932c2b3403f36ade6baa71fd60c9060791c466bdc0267a01e5c15e1d6d2cb4e9",
+          "sha256Actual": "932c2b3403f36ade6baa71fd60c9060791c466bdc0267a01e5c15e1d6d2cb4e9",
+          "bytesExpected": 1777,
+          "bytesActual": 1777,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/evidence/integration-exit-code.json",
+          "sha256Expected": "81fbbd24a7456856a278629f1a6c2ec2491da44941523bb58f6db65b7d3f36a0",
+          "sha256Actual": "81fbbd24a7456856a278629f1a6c2ec2491da44941523bb58f6db65b7d3f36a0",
+          "bytesExpected": 82,
+          "bytesActual": 82,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/evidence/integration-parallel-oom.json",
+          "sha256Expected": "f4ade8c596d87c57b610a1c23dfd420a1b2bdfdf332d541a16300d91f9872350",
+          "sha256Actual": "f4ade8c596d87c57b610a1c23dfd420a1b2bdfdf332d541a16300d91f9872350",
+          "bytesExpected": 653,
+          "bytesActual": 653,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/evidence/integration.log",
+          "sha256Expected": "984a3c8b1c7327bccfb573c45e274bb3b988b17720c461f743b8824bb90febf7",
+          "sha256Actual": "984a3c8b1c7327bccfb573c45e274bb3b988b17720c461f743b8824bb90febf7",
+          "bytesExpected": 433,
+          "bytesActual": 433,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/evidence/lint-typecheck-exit-codes.json",
+          "sha256Expected": "0f317a46aac172bf2dd446ed76fc62a6f29c240b624cc02099a7e70886da2da5",
+          "sha256Actual": "0f317a46aac172bf2dd446ed76fc62a6f29c240b624cc02099a7e70886da2da5",
+          "bytesExpected": 43,
+          "bytesActual": 43,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/evidence/lint.log",
+          "sha256Expected": "21bcc5a508600aa098952f0a5e00762155acf1a30affdaef043a958ff6379e76",
+          "sha256Actual": "21bcc5a508600aa098952f0a5e00762155acf1a30affdaef043a958ff6379e76",
+          "bytesExpected": 135,
+          "bytesActual": 135,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/evidence/patch-check-initial-autocrlf.json",
+          "sha256Expected": "d42624ef0098e4d35dcb8de111c9d57db51a56fab0b50362bdc2bb66c92e8c43",
+          "sha256Actual": "d42624ef0098e4d35dcb8de111c9d57db51a56fab0b50362bdc2bb66c92e8c43",
+          "bytesExpected": 708,
+          "bytesActual": 708,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/evidence/patch-check-path-enumeration-attempt.json",
+          "sha256Expected": "1a2750fbaa2f04f1feec5140d01882054e9485cec3215a2c34f650a93d67dba5",
+          "sha256Actual": "1a2750fbaa2f04f1feec5140d01882054e9485cec3215a2c34f650a93d67dba5",
+          "bytesExpected": 1193,
+          "bytesActual": 1193,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/evidence/patch-check-receipt.json",
+          "sha256Expected": "a63d0c142d59865fbae2f9d48ae60ffdfa016ce0f8c56a29dbe772aa11d584ce",
+          "sha256Actual": "a63d0c142d59865fbae2f9d48ae60ffdfa016ce0f8c56a29dbe772aa11d584ce",
+          "bytesExpected": 15571,
+          "bytesActual": 15571,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/evidence/test-exit-codes.json",
+          "sha256Expected": "9cf4fdb80d5aa4b99e628953ac89449fb1bc3516be6614ee88d5e77033ee0310",
+          "sha256Actual": "9cf4fdb80d5aa4b99e628953ac89449fb1bc3516be6614ee88d5e77033ee0310",
+          "bytesExpected": 295,
+          "bytesActual": 295,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/evidence/typecheck-exit-code.json",
+          "sha256Expected": "ab5f04e72325b3f530bb09b6a75089576b60e52314edfc86843f40601178887e",
+          "sha256Actual": "ab5f04e72325b3f530bb09b6a75089576b60e52314edfc86843f40601178887e",
+          "bytesExpected": 27,
+          "bytesActual": 27,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R3/evidence/unit.log",
+          "sha256Expected": "a2fa28e37d43dc57d33cea584a373ce4e929ce1d011b0682151aeaae62727326",
+          "sha256Actual": "a2fa28e37d43dc57d33cea584a373ce4e929ce1d011b0682151aeaae62727326",
+          "bytesExpected": 650,
+          "bytesActual": 650,
+          "status": "PASS"
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "delivery": "FINISH-C1-R5",
+      "manifestPath": "deliveries/FINISH-C1-R5/output-hashes.json",
+      "manifestSha256Expected": "6b758754ca70e4cf43451abc2a2f40b7e4fee801737e2100656ca161dde34e4d",
+      "manifestSha256Actual": "0825971fdb19d2bd04aee8d250fe0bb58ff93857792365d432778df9ad1ccaf2",
+      "manifestBytesExpected": 6303,
+      "manifestBytesActual": 6147,
+      "declaredOutputCount": 32,
+      "verifiedOutputs": [
+        {
+          "path": "deliveries/FINISH-C1-R5/.gitignore",
+          "sha256Expected": "c2426b1f091b975d8edc2130f239e6a832a57d2e4250580c7fc5ce29cb11837f",
+          "sha256Actual": "774cd57ad51ac0e5a5caeb25d700d04940a01f0ea7fdffd92f0ffbf2f71b42b1",
+          "bytesExpected": 76,
+          "bytesActual": 72,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/changed-paths.json",
+          "sha256Expected": "7678cedf3ecce9c515c8e23742b490fa4b78a316abaa65fd85636acf1b9da778",
+          "sha256Actual": "a0f6f00849e18fcab354f90da703f278a710a818011c7cdc7316acd7cf2cc54a",
+          "bytesExpected": 3008,
+          "bytesActual": 2921,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/input-hashes.json",
+          "sha256Expected": "58c0877c2652abab0868a2d9cdba40dd61b3a7b01cc0c6c0d96f1ec20387f48b",
+          "sha256Actual": "c8ac3b48d3dd70dc6e2855fe666ab2ad9fbf0a132ce759d06d5242521c20d85b",
+          "bytesExpected": 7746,
+          "bytesActual": 7554,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/report.md",
+          "sha256Expected": "65cbc9dbf08da8311c3150780a7f8790b0c9a8f122f41f03ba2aea5ab4dc1083",
+          "sha256Actual": "65cbc9dbf08da8311c3150780a7f8790b0c9a8f122f41f03ba2aea5ab4dc1083",
+          "bytesExpected": 7063,
+          "bytesActual": 7063,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/requirements-matrix.json",
+          "sha256Expected": "93cc638143ef5ce4886a09c3787a407cd89ab1b21fcdb6997f56a3660255b761",
+          "sha256Actual": "aabb8cb8596f95653f0c3d55743eb9c6cc3f3c32180aaa4295c475b2feb55afb",
+          "bytesExpected": 6794,
+          "bytesActual": 6619,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/source.patch",
+          "sha256Expected": "d6ad3359fa628067ab228eccc52f25d0604ddddb42813d7023e6a809cf60d83d",
+          "sha256Actual": "d6ad3359fa628067ab228eccc52f25d0604ddddb42813d7023e6a809cf60d83d",
+          "bytesExpected": 34904,
+          "bytesActual": 34904,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/evidence/r3-predecessor-output-verification.json",
+          "sha256Expected": "fdf57f4323c0b8aebc1192ab4235b99f14b2861437a5221b32acb2fa3c2b3765",
+          "sha256Actual": "a8573c01aa12bd7b9b076d4ca3364f57f9e988dc05af78f616a416801b4cbf6f",
+          "bytesExpected": 9404,
+          "bytesActual": 9191,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/evidence/recovery-copy-hashes.json",
+          "sha256Expected": "4badf0899b2e4d2a832bb49b128850e3f1582dad8d24dd5c7029cebd1490d672",
+          "sha256Actual": "d7b2cf987dc4ce175980d88447e553844b2bad31f12259cac6940226bd5246e7",
+          "bytesExpected": 2555,
+          "bytesActual": 2497,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/evidence/sequential-apply-receipt.json",
+          "sha256Expected": "4baf06957d4d5307394518979a3b14a8f9855812f9259c6753c0bdd5f96f6427",
+          "sha256Actual": "d54c46edf30f6ebf334283691444dab44307cce9f5e3ffbd9514ad9a5c8d92ee",
+          "bytesExpected": 7414,
+          "bytesActual": 7208,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/evidence/source-build-identity.json",
+          "sha256Expected": "91db06789b907f400feb52f35d12c32d72579470838836994774424a3c2a9377",
+          "sha256Actual": "8d14738a72a25bbaf1d01047e6806075c620740777c37457af9215de422b4b36",
+          "bytesExpected": 3705,
+          "bytesActual": 3626,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/evidence/validation-results.json",
+          "sha256Expected": "27ab1537dd56fe13f497b4debe08eb0407aa28e9c4e26a24212df58e2b56b1d9",
+          "sha256Actual": "3ac63e92e6b72a0ccad9a3bbccb50aeec05f958db870a13fe991a1fb4da33536",
+          "bytesExpected": 5771,
+          "bytesActual": 5635,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/evidence/browser-results/browser-results.json",
+          "sha256Expected": "fb4311b9e4dac2cc6fd32b4140d1dee25339ac05d1c4dcde1807380c0eca655b",
+          "sha256Actual": "fb4311b9e4dac2cc6fd32b4140d1dee25339ac05d1c4dcde1807380c0eca655b",
+          "bytesExpected": 8326,
+          "bytesActual": 8326,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/evidence/logs/browser.log",
+          "sha256Expected": "1a30d5a79a6060ec8ac1853e63d2fd71c1f87086c58c073aa9da20aed4f19aa5",
+          "sha256Actual": "5311f6bcd0f6f32f80997f3da9f58b1045fee948dd66aba04fb2d17188425376",
+          "bytesExpected": 1129,
+          "bytesActual": 1117,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/evidence/logs/build.log",
+          "sha256Expected": "66743385478810682c493ee5d791948f280225aaf04c8183ca8579d14465c1d5",
+          "sha256Actual": "5f68e3e65c71f3e94526e8c5af319a5bb4840d7ac34d0348a631384a41e5f548",
+          "bytesExpected": 1410,
+          "bytesActual": 1357,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/evidence/logs/green-material.log",
+          "sha256Expected": "c745df478ace7b574648d6a73a853996844cde3b079fc090b12ea4dd5b5aebaa",
+          "sha256Actual": "20bd674ba4cf5bc97e79aa1783d60e87d12dbc13c7c3f057656829ec2a6cb83a",
+          "bytesExpected": 248,
+          "bytesActual": 239,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/evidence/logs/green-targeted.log",
+          "sha256Expected": "8618d1e48cb9b67236cde7043c7437b16435c82357ba4890ac7abaa6dcea27cc",
+          "sha256Actual": "059c13ba75d18aa47656ad8010aa7bfb91cb22f3ad3d74192920cfb07c9639d9",
+          "bytesExpected": 248,
+          "bytesActual": 239,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/evidence/logs/install.log",
+          "sha256Expected": "6b4fb140ebe8ea3f425bfb87f0a6a9dd5df1ed6f3356682eb763cd3ddcef9fd1",
+          "sha256Actual": "e305d394ee33be4e1ad4227600ae060924c96b50a9db60bf403a15769a473465",
+          "bytesExpected": 107,
+          "bytesActual": 103,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/evidence/logs/integration.log",
+          "sha256Expected": "d95e02e841ade88384011543d7eccb85d7da9fd628e0e9402706b6b29d84743c",
+          "sha256Actual": "c6321d3086bf80adcadefe7e12be3cb60cf28dbdd6f7fae488a55c758c4c1573",
+          "bytesExpected": 444,
+          "bytesActual": 432,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/evidence/logs/lint.log",
+          "sha256Expected": "0c58507bb7d10603cbc4b16f9888883c3d4928a53f60506527d97a4578fad087",
+          "sha256Actual": "6d2026d402e776dd7d7527c07e398fa535f60bc51c722b044c1bf26667115638",
+          "bytesExpected": 138,
+          "bytesActual": 134,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/evidence/logs/patch-normalization.log",
+          "sha256Expected": "4845a167dbf1b5f6f834a720ef80425c96878f8e32daccae2a1015740996dd47",
+          "sha256Actual": "8c43d9719363f2e2aa3aa57a98d44fda853759788e0fb78787de461b71180653",
+          "bytesExpected": 1429,
+          "bytesActual": 1408,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/evidence/logs/red-loader.log",
+          "sha256Expected": "9eec8ef13547c1f4696f04e8473fadc822aded32c07991c6438c796c1c3e91b7",
+          "sha256Actual": "b5c96f91102bb88bb881c56d632f47f364c7d72abe007b09c65ea198355e016a",
+          "bytesExpected": 3367,
+          "bytesActual": 3294,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/evidence/logs/red-mat-transition.log",
+          "sha256Expected": "5481ce3de3a52e44a2959e4051f4cfe82d695ac55ade8dcde44dd0c1677911b5",
+          "sha256Actual": "d505c67c9d4a9edfebd458a311f3db139f242b4db9b354726d386385022c3992",
+          "bytesExpected": 3326,
+          "bytesActual": 3263,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/evidence/logs/red-material.log",
+          "sha256Expected": "d06af85acf25eb65d29696fd57803c5e01e2ab8a2834568b1ecc9993c17b7971",
+          "sha256Actual": "836d00e30df2e0ae69b12a77881ec898b856de71b5bc43f1ff879860f62ecfc9",
+          "bytesExpected": 3631,
+          "bytesActual": 3530,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/evidence/logs/sequential-apply.log",
+          "sha256Expected": "20085c6e57f29bcbf825223b03e08148dd0b9bb2258a6b2ef7fa6ea01395cdd0",
+          "sha256Actual": "b136b16af4e47809d8720c220f8405779ad47c7f9fe8115b50abfe8a7ccaa627",
+          "bytesExpected": 818,
+          "bytesActual": 808,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/evidence/logs/typecheck.log",
+          "sha256Expected": "bea9687c168a491937e0f5c07022d8757a3a7d9aae931243ce63a69518c64d05",
+          "sha256Actual": "af7e3d492131b3641f464f629cca86d621b242da1bee0798b172e69ce15a0953",
+          "bytesExpected": 130,
+          "bytesActual": 126,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/evidence/logs/unit.log",
+          "sha256Expected": "3d1e883951f258e062c7fd857db3cb650d748df2143cce8df14a87b2723c9b32",
+          "sha256Actual": "3a4a8d14b4689298b72e629e89beaf084f78c76d9aaf446c57feae7b69c7fa99",
+          "bytesExpected": 666,
+          "bytesActual": 649,
+          "status": "FAIL"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/source/app/src/features/world/AssetLoader.ts",
+          "sha256Expected": "d92da026e694cfd64692daad4f397cdcec262d42977b4a7b78b0ccd1d793bcee",
+          "sha256Actual": "d92da026e694cfd64692daad4f397cdcec262d42977b4a7b78b0ccd1d793bcee",
+          "bytesExpected": 15918,
+          "bytesActual": 15918,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/source/app/src/features/world/RuntimeMaterialQuality.ts",
+          "sha256Expected": "ca0a55f17b8e7d6c7555c8ef06375f4d4f1c1ff0d04b77e8cfa79411cc3cdb4d",
+          "sha256Actual": "ca0a55f17b8e7d6c7555c8ef06375f4d4f1c1ff0d04b77e8cfa79411cc3cdb4d",
+          "bytesExpected": 9998,
+          "bytesActual": 9998,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/source/app/src/features/world/WorldRuntime.ts",
+          "sha256Expected": "089b84800f46f493335082f078d10444470c1e3ed0f02575ea63c1fcec84d515",
+          "sha256Actual": "089b84800f46f493335082f078d10444470c1e3ed0f02575ea63c1fcec84d515",
+          "bytesExpected": 32542,
+          "bytesActual": 32542,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/source/app/tests/unit/project-transition.test.ts",
+          "sha256Expected": "a79dbfad7aa1219a539dd78b127eaa68a49ef22eaf4e3a4f643ac57f80e28824",
+          "sha256Actual": "a79dbfad7aa1219a539dd78b127eaa68a49ef22eaf4e3a4f643ac57f80e28824",
+          "bytesExpected": 15338,
+          "bytesActual": 15338,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/source/app/tests/unit/runtime-material-quality.test.ts",
+          "sha256Expected": "9b448ed92af09c72341ad2bcfe7ec96c07afb27c6590f6cedc6c23fd75f05f86",
+          "sha256Actual": "9b448ed92af09c72341ad2bcfe7ec96c07afb27c6590f6cedc6c23fd75f05f86",
+          "bytesExpected": 21498,
+          "bytesActual": 21498,
+          "status": "PASS"
+        },
+        {
+          "path": "deliveries/FINISH-C1-R5/source/app/tests/unit/world/completion-essential-loader.test.ts",
+          "sha256Expected": "4f8237740d017201ca013abb7afe3a7ba709f6ad55f3e02a3ee47a04ac150488",
+          "sha256Actual": "4f8237740d017201ca013abb7afe3a7ba709f6ad55f3e02a3ee47a04ac150488",
+          "bytesExpected": 14614,
+          "bytesActual": 14614,
+          "status": "PASS"
+        }
+      ],
+      "status": "FAIL"
+    }
+  ],
+  "r6Replacements": [
+    {
+      "sourcePath": "source/app/src/features/world/AssetLoader.ts",
+      "targetPath": "app/src/features/world/AssetLoader.ts",
+      "expectedSha256": "68aab18db327e254736b4bbab896f8003ad504c5c2edb4ba90927be47c784045",
+      "actualSha256": "68aab18db327e254736b4bbab896f8003ad504c5c2edb4ba90927be47c784045",
+      "expectedBytes": 16358,
+      "actualBytes": 16358,
+      "status": "PASS"
+    },
+    {
+      "sourcePath": "source/app/tests/unit/world/completion-essential-loader.test.ts",
+      "targetPath": "app/tests/unit/world/completion-essential-loader.test.ts",
+      "expectedSha256": "ffcb31fcac68314c9b5dee717abeaa36652e1d3749f7fe799ed4e12f593e25fb",
+      "actualSha256": "ffcb31fcac68314c9b5dee717abeaa36652e1d3749f7fe799ed4e12f593e25fb",
+      "expectedBytes": 16525,
+      "actualBytes": 16525,
+      "status": "PASS"
+    }
+  ],
+  "patches": [
+    {
+      "label": "R3",
+      "path": "deliveries/FINISH-C1-R3/source.patch",
+      "expectedSha256": "e1be558f734378fe69659dcf8271c4e5e57d87fbfbdca1582823be103082dc5d",
+      "actualSha256": "e1be558f734378fe69659dcf8271c4e5e57d87fbfbdca1582823be103082dc5d",
+      "expectedBytes": 157355,
+      "actualBytes": 157355,
+      "status": "PASS"
+    },
+    {
+      "label": "R5",
+      "path": "deliveries/FINISH-C1-R5/source.patch",
+      "expectedSha256": "d6ad3359fa628067ab228eccc52f25d0604ddddb42813d7023e6a809cf60d83d",
+      "actualSha256": "d6ad3359fa628067ab228eccc52f25d0604ddddb42813d7023e6a809cf60d83d",
+      "expectedBytes": 34904,
+      "actualBytes": 34904,
+      "status": "PASS"
+    },
+    {
+      "label": "R6",
+      "path": "deliveries/FINISH-C1-R6/source.patch",
+      "expectedSha256": "17ae6aaab7910546d3527feec26926d8d1fd604e3bc60e2ae0eb9f549f7fc2a6",
+      "actualSha256": "17ae6aaab7910546d3527feec26926d8d1fd604e3bc60e2ae0eb9f549f7fc2a6",
+      "expectedBytes": 6475,
+      "actualBytes": 6475,
+      "status": "PASS"
+    }
+  ],
+  "status": "FAIL"
+}

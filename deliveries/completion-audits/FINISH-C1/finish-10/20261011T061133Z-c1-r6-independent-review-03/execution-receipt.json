@@ -1,0 +1,197 @@
+{
+  "schemaVersion": 1,
+  "review": "FINISH-16 independent local C1-R6 audit",
+  "reviewer": "local Codex reviewer; not GPT Plus #2",
+  "candidateCommit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
+  "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+  "build": {
+    "assembly": ".work/replay-sequential/app",
+    "command": "pnpm run build",
+    "exitCode": 0,
+    "buildId": "4nRSPdeMK4UVYFeP4JD5W",
+    "buildIdSha256": "bf3c18318ad80b1b43b9f81487d6dfadd5d88325f064564a36fdcebc13f1ed5d",
+    "log": "evidence/logs/fin16-local-20261011-0632-production-build.log"
+  },
+  "browser": {
+    "command": "pnpm exec playwright test tests/e2e/world/finish-16-r6-runtime.audit.spec.ts --config playwright.config.ts",
+    "exitCode": 0,
+    "browser": "Chromium 153.0.8010.12",
+    "passed": 3,
+    "skipped": 0,
+    "buildId": "4nRSPdeMK4UVYFeP4JD5W",
+    "results": "evidence/browser-rerun/browser-results.json",
+    "resultSha256": "86223e46a16e67c7719ed4059ab692cccb0f6183772f1de57c980a9bc9530424",
+    "log": "evidence/logs/fin16-local-20261011-0634-production-browser.log"
+  },
+  "testCounts": {
+    "changedPaths": "4 files / 63 tests",
+    "focusedR6": "1 file / 18 tests",
+    "allUnit": "26 files / 356 tests",
+    "integration": "28 files / 290 tests",
+    "browser": "3 passed / 0 skipped",
+    "redGreen": "pre-R6: 1 failed / 17 skipped; post-R6: 1 passed / 17 skipped"
+  },
+  "tools": {
+    "git": "2.55.0.windows.5",
+    "node": "v24.19.0",
+    "pnpm": "9.15.9",
+    "python": "3.12.10",
+    "vitest": "5.0.2",
+    "eslint": "9.39.5",
+    "typescript": "6.0.3",
+    "next": "16.3.8",
+    "playwright": "1.63.0",
+    "chromium": "153.0.8010.12"
+  },
+  "commands": [
+    {
+      "command": "python \"C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\completion-audits\\FINISH-C1\\finish-10\\20261011T061133Z-c1-r6-independent-review-03\\.work\\verify_candidate_fin16.py\" \"C:\\Users\\yoray\\Projects\\Yor World\" \"C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\completion-audits\\FINISH-C1\\finish-10\\20261011T061133Z-c1-r6-independent-review-03\"\r",
+      "startedUtc": "2026-10-11T06:23:52.047Z\r",
+      "exitCode": 1,
+      "log": "evidence/logs/fin16-local-20261011-0615-candidate-hashes-rerun3.log",
+      "id": "candidate-hash-verification",
+      "status": "FAIL_EXPECTED_RAW_HASH_MISMATCH",
+      "result": "Candidate output manifest 35/35 exact; inherited raw input/predecessor rows fail."
+    },
+    {
+      "command": "git -C \"C:\\Users\\yoray\\Projects\\Yor World\" worktree add --detach --no-checkout C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\completion-audits\\FINISH-C1\\finish-10\\20261011T061133Z-c1-r6-independent-review-03\\.work\\replay-sequential f62a43c5e71c00dcb89e28275ea81d842167db80\r",
+      "startedUtc": "2026-10-11T06:18:40.8202782+00:00\r",
+      "exitCode": 0,
+      "log": "evidence/logs/fin16-local-20261011-0615-sequential-replay.log",
+      "id": "sequential-patch-replay",
+      "status": "PASS",
+      "result": "Base→R3→R5→R6 exact 28-path union; diff check and R6 whitespace check pass."
+    },
+    {
+      "command": "pnpm install --frozen-lockfile\r",
+      "startedUtc": "2026-10-11T06:19:00.627Z\r",
+      "exitCode": 0,
+      "log": "evidence/logs/fin16-local-20261011-0615-install.log",
+      "id": "frozen-lockfile-install",
+      "status": "PASS",
+      "result": "Install exit 0."
+    },
+    {
+      "command": "pnpm exec vitest run --config vitest.config.ts tests/unit/world/completion-essential-loader.test.ts\r",
+      "startedUtc": "2026-10-11T06:27:41.636Z\r",
+      "exitCode": 0,
+      "log": "evidence/logs/fin16-local-20261011-0626-focused-r6-test.log",
+      "id": "focused-r6-loader",
+      "status": "PASS",
+      "result": "1 file, 18 tests."
+    },
+    {
+      "command": "pnpm run test:unit\r",
+      "startedUtc": "2026-10-11T06:27:57.607Z\r",
+      "exitCode": 0,
+      "log": "evidence/logs/fin16-local-20261011-0628-full-unit.log",
+      "id": "full-unit",
+      "status": "PASS",
+      "result": "26 files, 356 tests."
+    },
+    {
+      "command": "pnpm run test:integration\r",
+      "startedUtc": "2026-10-11T06:28:10.985Z\r",
+      "exitCode": 0,
+      "log": "evidence/logs/fin16-local-20261011-0629-integration.log",
+      "id": "integration",
+      "status": "PASS",
+      "result": "28 files, 290 tests."
+    },
+    {
+      "command": "pnpm run lint\r",
+      "startedUtc": "2026-10-11T06:28:51.327Z\r",
+      "exitCode": 0,
+      "log": "evidence/logs/fin16-local-20261011-0630-lint.log",
+      "id": "lint",
+      "status": "PASS",
+      "result": "Exit 0."
+    },
+    {
+      "command": "pnpm run typecheck\r",
+      "startedUtc": "2026-10-11T06:29:35.466Z\r",
+      "exitCode": 0,
+      "log": "evidence/logs/fin16-local-20261011-0631-typecheck.log",
+      "id": "typecheck",
+      "status": "PASS",
+      "result": "Exit 0."
+    },
+    {
+      "command": "pnpm run build\r",
+      "startedUtc": "2026-10-11T06:30:05.465Z\r",
+      "exitCode": 0,
+      "log": "evidence/logs/fin16-local-20261011-0632-production-build.log",
+      "id": "production-build",
+      "status": "PASS",
+      "result": "BUILD_ID 4nRSPdeMK4UVYFeP4JD5W."
+    },
+    {
+      "command": "pnpm exec playwright test tests/e2e/world/finish-16-r6-runtime.audit.spec.ts --config playwright.config.ts\r",
+      "startedUtc": "2026-10-11T06:33:25.369Z\r",
+      "exitCode": 0,
+      "log": "evidence/logs/fin16-local-20261011-0634-production-browser.log",
+      "id": "source-bound-chromium",
+      "status": "PASS",
+      "result": "3 tests passed on Chromium 153.0.8010.12."
+    },
+    {
+      "command": "pnpm exec vitest run --config vitest.config.ts tests/unit/asset-loader.test.ts tests/unit/runtime-material-quality.test.ts tests/unit/project-transition.test.ts tests/unit/world/completion-essential-loader.test.ts\r",
+      "startedUtc": "2026-10-11T06:42:52.7344677Z\r",
+      "exitCode": 0,
+      "log": "evidence/logs/fin16-local-20261011-0705-full-changed-path-suite.log",
+      "id": "focused-changed-path-suite",
+      "status": "PASS",
+      "result": "4 files, 63 tests."
+    },
+    {
+      "command": "pnpm exec vitest run --config vitest.config.ts tests/unit/world/completion-essential-loader.test.ts -t \"restores the required-session aggregate\" --reporter=verbose\r",
+      "startedUtc": "2026-10-11T06:38:36.990Z\r",
+      "exitCode": 1,
+      "log": "evidence/logs/fin16-local-20261011-0650-independent-pre-r6-red.log",
+      "id": "red-before-r6",
+      "status": "PASS_EXPECTED_RED",
+      "result": "Exit 1, 1 failed and 17 skipped; final aggregate indeterminate."
+    },
+    {
+      "command": "pnpm exec vitest run --config vitest.config.ts tests/unit/world/completion-essential-loader.test.ts -t \"restores the required-session aggregate\" --reporter=verbose\r",
+      "startedUtc": "2026-10-11T06:39:02.171Z\r",
+      "exitCode": 0,
+      "log": "evidence/logs/fin16-local-20261011-0653-independent-post-r6-green.log",
+      "id": "green-after-r6",
+      "status": "PASS",
+      "result": "Exit 0, 1 passed and 17 skipped; final aggregate determinate at 12/12."
+    },
+    {
+      "command": "python .work\\analyze-eol-fin16.py\r",
+      "startedUtc": "2026-10-11T06:43:45.6626541Z\r",
+      "exitCode": 0,
+      "log": "evidence/logs/fin16-local-20261011-0710-input-eol-verification-rerun.log",
+      "id": "input-eol-analysis",
+      "status": "PASS_ANALYSIS",
+      "result": "30 mismatched rows; 29 CRLF-equivalent; one one-byte exception."
+    },
+    {
+      "command": "python .work\\analyze-single-byte-fin16.py\r",
+      "startedUtc": "2026-10-11T06:43:56.7552002Z\r",
+      "exitCode": 0,
+      "log": "evidence/logs/fin16-local-20261011-0711-single-byte-verification-rerun.log",
+      "id": "single-byte-analysis",
+      "status": "PASS_ANALYSIS",
+      "result": "The expected R5 diagnostic test hash is recovered by one CR insertion at offset 2872."
+    }
+  ],
+  "notRun": [
+    {
+      "id": "historical-R5-red-invocation",
+      "reason": "Command not retained; FINISH-16 says preserve NOT RUN and do not rewrite R5."
+    },
+    {
+      "id": "external-GPT-Plus-2",
+      "reason": "This is a local Codex review."
+    },
+    {
+      "id": "provider-deployment-device-accessibility-G7",
+      "reason": "Outside assigned audit scope."
+    }
+  ]
+}

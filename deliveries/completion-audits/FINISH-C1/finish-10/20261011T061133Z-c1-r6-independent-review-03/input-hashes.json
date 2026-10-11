@@ -1,0 +1,188 @@
+{
+  "schemaVersion": 1,
+  "review": "FINISH-16 independent local C1-R6 audit",
+  "reviewer": "local Codex reviewer; not GPT Plus #2",
+  "candidate": {
+    "commit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
+    "parent": "fffe1f62ef122be7a77b427db529b91f2906d6a2",
+    "tree": "aaaef9759b66e4f680d5ab9306775a44e596e12f",
+    "subject": "Package FINISH-C1-R6 runtime correction",
+    "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+    "baseAppTreeExpected": "42ea29ec235225046a75959eb19eb386ac2f821d",
+    "baseAppTreeActual": "42ea29ec235225046a75959eb19eb386ac2f821d"
+  },
+  "candidateOutputManifest": {
+    "sha256": "a8dcd6700b2471b3a2d0d98d71a79ce398a33efcea5a1c48fc83d291cdeeb798",
+    "bytes": 6383,
+    "declaredCount": 35,
+    "verifiedCount": 35,
+    "totalOutputBytes": 1415587,
+    "rawStatus": "PASS",
+    "receipt": "evidence/candidate-hash-receipt.json"
+  },
+  "patchIdentities": [
+    {
+      "label": "R3",
+      "path": "deliveries/FINISH-C1-R3/source.patch",
+      "expectedSha256": "e1be558f734378fe69659dcf8271c4e5e57d87fbfbdca1582823be103082dc5d",
+      "actualSha256": "e1be558f734378fe69659dcf8271c4e5e57d87fbfbdca1582823be103082dc5d",
+      "expectedBytes": 157355,
+      "actualBytes": 157355,
+      "status": "PASS"
+    },
+    {
+      "label": "R5",
+      "path": "deliveries/FINISH-C1-R5/source.patch",
+      "expectedSha256": "d6ad3359fa628067ab228eccc52f25d0604ddddb42813d7023e6a809cf60d83d",
+      "actualSha256": "d6ad3359fa628067ab228eccc52f25d0604ddddb42813d7023e6a809cf60d83d",
+      "expectedBytes": 34904,
+      "actualBytes": 34904,
+      "status": "PASS"
+    },
+    {
+      "label": "R6",
+      "path": "deliveries/FINISH-C1-R6/source.patch",
+      "expectedSha256": "17ae6aaab7910546d3527feec26926d8d1fd604e3bc60e2ae0eb9f549f7fc2a6",
+      "actualSha256": "17ae6aaab7910546d3527feec26926d8d1fd604e3bc60e2ae0eb9f549f7fc2a6",
+      "expectedBytes": 6475,
+      "actualBytes": 6475,
+      "status": "PASS"
+    }
+  ],
+  "r3Predecessor": {
+    "manifestSha256": "4507bf04ad129f026556abf7d3e2099ee32f265da4bb29c3fff653d9dc17bb9e",
+    "manifestSha256Actual": "4507bf04ad129f026556abf7d3e2099ee32f265da4bb29c3fff653d9dc17bb9e",
+    "manifestBytes": 9238,
+    "outputCount": 53,
+    "verifiedOutputs": 53,
+    "status": "PASS"
+  },
+  "r5Predecessor": {
+    "commit": "5e85e6a8a248581fe3893fd80c7da3d05079f305",
+    "manifestSha256Expected": "6b758754ca70e4cf43451abc2a2f40b7e4fee801737e2100656ca161dde34e4d",
+    "manifestSha256Actual": "0825971fdb19d2bd04aee8d250fe0bb58ff93857792365d432778df9ad1ccaf2",
+    "manifestBytesExpected": 6303,
+    "manifestBytesActual": 6147,
+    "manifestCrLfNormalizedExact": true,
+    "declaredOutputCount": 32,
+    "rawExactOutputCount": 9,
+    "rawMismatchOutputCount": 23,
+    "mismatchedOutputPaths": [
+      "deliveries/FINISH-C1-R5/.gitignore",
+      "deliveries/FINISH-C1-R5/changed-paths.json",
+      "deliveries/FINISH-C1-R5/input-hashes.json",
+      "deliveries/FINISH-C1-R5/requirements-matrix.json",
+      "deliveries/FINISH-C1-R5/evidence/r3-predecessor-output-verification.json",
+      "deliveries/FINISH-C1-R5/evidence/recovery-copy-hashes.json",
+      "deliveries/FINISH-C1-R5/evidence/sequential-apply-receipt.json",
+      "deliveries/FINISH-C1-R5/evidence/source-build-identity.json",
+      "deliveries/FINISH-C1-R5/evidence/validation-results.json",
+      "deliveries/FINISH-C1-R5/evidence/logs/browser.log",
+      "deliveries/FINISH-C1-R5/evidence/logs/build.log",
+      "deliveries/FINISH-C1-R5/evidence/logs/green-material.log",
+      "deliveries/FINISH-C1-R5/evidence/logs/green-targeted.log",
+      "deliveries/FINISH-C1-R5/evidence/logs/install.log",
+      "deliveries/FINISH-C1-R5/evidence/logs/integration.log",
+      "deliveries/FINISH-C1-R5/evidence/logs/lint.log",
+      "deliveries/FINISH-C1-R5/evidence/logs/patch-normalization.log",
+      "deliveries/FINISH-C1-R5/evidence/logs/red-loader.log",
+      "deliveries/FINISH-C1-R5/evidence/logs/red-mat-transition.log",
+      "deliveries/FINISH-C1-R5/evidence/logs/red-material.log",
+      "deliveries/FINISH-C1-R5/evidence/logs/sequential-apply.log",
+      "deliveries/FINISH-C1-R5/evidence/logs/typecheck.log",
+      "deliveries/FINISH-C1-R5/evidence/logs/unit.log"
+    ],
+    "allSixSourceReplacementsRawExact": true,
+    "status": "FAIL_RAW_BYTES_LINE_ENDING_MISMATCH"
+  },
+  "r6CandidateInputs": {
+    "manifestSha256": "5ae6775351c82c861b4748a25421ac5e67afcfc331b01aab1a64ef26543295de",
+    "manifestBytes": 48257,
+    "declaredCount": 29,
+    "rawExactCount": 22,
+    "rawMismatchCount": 7,
+    "mismatches": [
+      {
+        "path": "app/pnpm-lock.yaml",
+        "expectedSha256": "f1637cfe2800e9065fdbc4d2975e8180865ff52775c8213473e2d888c2a8a38d",
+        "actualSha256": "8034f04afa8cbdb28fa028ed574117177dfa8a4903c95775ea41405bcabea791",
+        "expectedBytes": 158580,
+        "actualBytes": 153898,
+        "status": "FAIL"
+      },
+      {
+        "path": "app/playwright.config.ts",
+        "expectedSha256": "fa38ae152c8f164cfb51a668172df4a6206431e8e42420fd3ed4083ca6468b24",
+        "actualSha256": "0c73e012399d3c6a6e2ff20672b684725accb0ca67e0fa02428a9352a3f045fd",
+        "expectedBytes": 1332,
+        "actualBytes": 1297,
+        "status": "FAIL"
+      },
+      {
+        "path": "app/vitest.config.ts",
+        "expectedSha256": "a2555082edeb6ecd0e4c4322454ccb26ac96518f9d7b8fff759899e536213912",
+        "actualSha256": "89c179b9b6d48f754dd748cd9589a70e3892d1cdf7ee1860fe037dbece842e99",
+        "expectedBytes": 369,
+        "actualBytes": 357,
+        "status": "FAIL"
+      },
+      {
+        "path": "app/vitest.integration.config.ts",
+        "expectedSha256": "bdd757adaa6fa3215ba77ab03159736db1978d8a849dbef2319d1b0206407830",
+        "actualSha256": "4e53d67bc88362e3163e1892e5f39f3f8170405e99d24737942cbe0493a79a51",
+        "expectedBytes": 464,
+        "actualBytes": 452,
+        "status": "FAIL"
+      },
+      {
+        "path": "deliveries/completion-audits/FINISH-C1/finish-08/20261011T003551Z-c1-r5-local-review/findings.json",
+        "expectedSha256": "38d975f774836d57fd2b8f6afd9d15303d60367ed2ad8cd71c055ea3fe8996d2",
+        "actualSha256": "75e6588d575446e16bd9b0daae354a869f34dee6a54f6e0989e49864f5a2e13f",
+        "expectedBytes": 8481,
+        "actualBytes": 8317,
+        "status": "FAIL"
+      },
+      {
+        "path": "deliveries/completion-audits/FINISH-C1/finish-08/20261011T003551Z-c1-r5-local-review/evidence/retry-aggregation-diagnostic.test.ts",
+        "expectedSha256": "f19932723c3644d4cc25b65d919317bc28e89520c3c47c926b49e08d2fd22235",
+        "actualSha256": "d952aef28ae996208471a13b5dc3aafe2a12e85a219a677463d06691cf03663a",
+        "expectedBytes": 2874,
+        "actualBytes": 2873,
+        "status": "FAIL"
+      },
+      {
+        "path": "deliveries/completion-audits/FINISH-C1/finish-08/20261011T003551Z-c1-r5-local-review/evidence/retry-aggregation-diagnostic.log",
+        "expectedSha256": "30f79980adb56c5ccd8d878414fd65a268790018e5d9742a68a5ea973e55c627",
+        "actualSha256": "55392c33c7be11526beefe24b3839d3d69fc5a82953c438f4683220bf7f92441",
+        "expectedBytes": 3802,
+        "actualBytes": 3787,
+        "status": "FAIL"
+      }
+    ],
+    "lineEndingAnalysis": "evidence/logs/fin16-local-20261011-0710-input-eol-verification-rerun.log",
+    "singleByteAnalysis": "evidence/logs/fin16-local-20261011-0711-single-byte-verification-rerun.log",
+    "status": "FAIL_RAW_BYTES"
+  },
+  "r6Replacements": [
+    {
+      "sourcePath": "source/app/src/features/world/AssetLoader.ts",
+      "targetPath": "app/src/features/world/AssetLoader.ts",
+      "expectedSha256": "68aab18db327e254736b4bbab896f8003ad504c5c2edb4ba90927be47c784045",
+      "actualSha256": "68aab18db327e254736b4bbab896f8003ad504c5c2edb4ba90927be47c784045",
+      "expectedBytes": 16358,
+      "actualBytes": 16358,
+      "status": "PASS"
+    },
+    {
+      "sourcePath": "source/app/tests/unit/world/completion-essential-loader.test.ts",
+      "targetPath": "app/tests/unit/world/completion-essential-loader.test.ts",
+      "expectedSha256": "ffcb31fcac68314c9b5dee717abeaa36652e1d3749f7fe799ed4e12f593e25fb",
+      "actualSha256": "ffcb31fcac68314c9b5dee717abeaa36652e1d3749f7fe799ed4e12f593e25fb",
+      "expectedBytes": 16525,
+      "actualBytes": 16525,
+      "status": "PASS"
+    }
+  ],
+  "verificationReceipt": "evidence/candidate-hash-receipt.json",
+  "note": "Candidate output manifest and source replacements are exact. Input and predecessor raw-byte failures are reported as evidence defects; no candidate bytes were edited."
+}

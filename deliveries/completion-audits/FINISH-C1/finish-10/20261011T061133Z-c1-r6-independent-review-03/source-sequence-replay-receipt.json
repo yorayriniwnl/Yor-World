@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "review": "FINISH-16 independent local C1-R6 audit",
+  "candidateCommit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
+  "candidatePackageTree": "aaaef9759b66e4f680d5ab9306775a44e596e12f",
+  "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+  "baseAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+  "orderedPatches": [
+    {
+      "label": "R3",
+      "sha256": "e1be558f734378fe69659dcf8271c4e5e57d87fbfbdca1582823be103082dc5d",
+      "bytes": 157355,
+      "expectedApplicationPaths": 27,
+      "applyCheck": "PASS",
+      "apply": "PASS"
+    },
+    {
+      "label": "R5",
+      "candidateCommit": "5e85e6a8a248581fe3893fd80c7da3d05079f305",
+      "sha256": "d6ad3359fa628067ab228eccc52f25d0604ddddb42813d7023e6a809cf60d83d",
+      "bytes": 34904,
+      "expectedApplicationPaths": 6,
+      "applyCheck": "PASS",
+      "apply": "PASS"
+    },
+    {
+      "label": "R6",
+      "sha256": "17ae6aaab7910546d3527feec26926d8d1fd604e3bc60e2ae0eb9f549f7fc2a6",
+      "bytes": 6475,
+      "expectedApplicationPaths": 2,
+      "allowedPaths": [
+        "app/src/features/world/AssetLoader.ts",
+        "app/tests/unit/world/completion-essential-loader.test.ts"
+      ],
+      "applyCheck": "PASS --check --whitespace=error",
+      "apply": "PASS"
+    }
+  ],
+  "r6ReplacementHashes": [
+    {
+      "path": "app/src/features/world/AssetLoader.ts",
+      "sha256": "68aab18db327e254736b4bbab896f8003ad504c5c2edb4ba90927be47c784045",
+      "bytes": 16358,
+      "sourceMatches": true
+    },
+    {
+      "path": "app/tests/unit/world/completion-essential-loader.test.ts",
+      "sha256": "ffcb31fcac68314c9b5dee717abeaa36652e1d3749f7fe799ed4e12f593e25fb",
+      "bytes": 16525,
+      "sourceMatches": true
+    }
+  ],
+  "replayTranscriptFinalPaths": [
+    "app/src/contracts/experience.ts",
+    "app/src/features/experience/controller.ts",
+    "app/src/features/experience/preferences-store.ts",
+    "app/src/features/experience/return-snapshot.ts",
+    "app/src/features/world/asset-resources.ts",
+    "app/src/features/world/AssetLoader.ts",
+    "app/src/features/world/CharacterDirector.ts",
+    "app/src/features/world/LifecycleManager.ts",
+    "app/src/features/world/LowQualityBatch.ts",
+    "app/src/features/world/RuntimeMaterialQuality.ts",
+    "app/src/features/world/types.ts",
+    "app/src/features/world/world.module.css",
+    "app/src/features/world/WorldRoot.tsx",
+    "app/src/features/world/WorldRuntime.ts",
+    "app/tests/e2e/world/completion-loading-pause.spec.ts",
+    "app/tests/fixtures/engineering-section-4.ts",
+    "app/tests/integration/world/completion-runtime-lifecycle.test.ts",
+    "app/tests/unit/asset-loader.test.ts",
+    "app/tests/unit/character-director.test.ts",
+    "app/tests/unit/contracts.test.ts",
+    "app/tests/unit/lifecycle-manager.test.ts",
+    "app/tests/unit/low-quality-batch.test.ts",
+    "app/tests/unit/preferences-resilience.test.ts",
+    "app/tests/unit/project-transition.test.ts",
+    "app/tests/unit/runtime-material-quality.test.ts",
+    "app/tests/unit/world/completion-character-startup.test.ts",
+    "app/tests/unit/world/completion-decorative-pause.test.ts",
+    "app/tests/unit/world/completion-essential-loader.test.ts"
+  ],
+  "replayFinalChangedCount": 28,
+  "patchUnionCount": 28,
+  "finalUnionMatchesTranscript": true,
+  "currentScratchDiffPaths": [
+    "app/src/contracts/experience.ts",
+    "app/src/features/experience/controller.ts",
+    "app/src/features/experience/preferences-store.ts",
+    "app/src/features/experience/return-snapshot.ts",
+    "app/src/features/world/asset-resources.ts",
+    "app/src/features/world/AssetLoader.ts",
+    "app/src/features/world/CharacterDirector.ts",
+    "app/src/features/world/LifecycleManager.ts",
+    "app/src/features/world/LowQualityBatch.ts",
+    "app/src/features/world/RuntimeMaterialQuality.ts",
+    "app/src/features/world/types.ts",
+    "app/src/features/world/world.module.css",
+    "app/src/features/world/WorldRoot.tsx",
+    "app/src/features/world/WorldRuntime.ts",
+    "app/tests/e2e/world/completion-loading-pause.spec.ts",
+    "app/tests/e2e/world/finish-16-r6-runtime.audit.spec.ts",
+    "app/tests/fixtures/engineering-section-4.ts",
+    "app/tests/integration/world/completion-runtime-lifecycle.test.ts",
+    "app/tests/unit/asset-loader.test.ts",
+    "app/tests/unit/character-director.test.ts",
+    "app/tests/unit/contracts.test.ts",
+    "app/tests/unit/lifecycle-manager.test.ts",
+    "app/tests/unit/low-quality-batch.test.ts",
+    "app/tests/unit/preferences-resilience.test.ts",
+    "app/tests/unit/project-transition.test.ts",
+    "app/tests/unit/runtime-material-quality.test.ts",
+    "app/tests/unit/world/completion-character-startup.test.ts",
+    "app/tests/unit/world/completion-decorative-pause.test.ts",
+    "app/tests/unit/world/completion-essential-loader.test.ts"
+  ],
+  "scratchOnlyPaths": [
+    "app/tests/e2e/world/finish-16-r6-runtime.audit.spec.ts"
+  ],
+  "finalGitDiffCheck": "PASS at source replay before browser harness insertion",
+  "rawTranscript": "evidence/logs/fin16-local-20261011-0615-sequential-replay.log",
+  "note": "The browser harness finish-16-r6-runtime.audit.spec.ts was copied from the exact candidate harness into the isolated app workspace after replay, solely to run Chromium; it is not in the patch union and is listed as a scratch-only path. R4 was not applied."
+}
