@@ -1,6 +1,6 @@
 # FINISH-31 - B1-R4-02 exact-candidate independent audit
 
-Date: 2026-10-11 UTC. Status: exact-candidate cross-lane local audit allocated; implementation acceptance remains pending.
+Date: 2026-10-11 UTC. Status: exact-candidate cross-lane local audit reallocated after a root collision; implementation acceptance remains pending.
 
 ## Candidate binding
 
@@ -30,11 +30,13 @@ The preserved snapshot contained a room GLB at SHA-256 `ede3258e39efa6d2641f1480
 
 Reviewer: local Codex runtime-lane worker `/root/c1_r8_maker`, which did not author B1-R4-02. External GPT Plus #2 is NOT RUN.
 
-Use a fresh isolated worktree at the exact candidate commit. Recheck the following root immediately before writing:
+The originally assigned root `deliveries/completion-audits/FINISH-B1/finish-07/20261011T145500Z-b1-r4-independent-review-01/` became occupied by a separate Parent-local review on branch `audit/finish-31-b1-r4-02-local-20261011` at commit `b25b0bd0b30fe97d7d7173c40bad694c675f026e`. Preserve that root and branch unchanged; they are not the assigned C1-R8 reviewer return and do not satisfy FINISH-31.
 
-`deliveries/completion-audits/FINISH-B1/finish-07/20261011T145500Z-b1-r4-independent-review-01/`
+Use a fresh isolated worktree at the exact candidate commit. Recheck the reallocated root immediately before writing:
 
-Parent confirmed the root absent in both the canonical checkout and clean candidate worktree at allocation. If it becomes occupied, preserve it without inspecting and stop for Parent reallocation. Keep scratch under the root's `.work/`. Commit and push only that audit root on a scoped reviewer branch; do not modify the candidate branch.
+`deliveries/completion-audits/FINISH-B1/finish-07/20261011T175900Z-b1-r4-independent-review-02/`
+
+Parent confirmed the reallocated root absent in both the canonical checkout and clean candidate worktree, and confirmed branch `audit/finish-31-b1-r4-02-c1-review-20261011` absent at allocation. If either becomes occupied, preserve it without inspecting and stop for Parent reallocation. Keep scratch under the root's `.work/`. Commit and push only that audit root on the scoped reviewer branch; do not modify the candidate branch.
 
 ## Required independent checks
 

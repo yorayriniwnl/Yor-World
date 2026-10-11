@@ -2,7 +2,7 @@
 
 Read `AGENTS.md`, `START_HERE.md`, FINISH-25, FINISH-25-R1, FINISH-30, and the exact audit allocation [FINISH-31](../../reconciliation-packets/2026-10-11-finish-31-b1-r4-independent-audit.md). You are the independent cross-lane reviewer; you did not author B1-R4-02.
 
-Audit only candidate commit `7936fa981a24fe4af834ff250ffec8a7b02b09b3` on `codex/finish-b1-r4-02-glass-20261011`, in a fresh isolated worktree. Use the exact root assigned in FINISH-31. Do not change or accept the candidate. Preserve the prior R4 root, contaminated snapshot, and unknown R1 artifacts without reading their contents.
+Audit only candidate commit `7936fa981a24fe4af834ff250ffec8a7b02b09b3` on `codex/finish-b1-r4-02-glass-20261011`, in a fresh isolated worktree. Use the reallocated root assigned in FINISH-31: `deliveries/completion-audits/FINISH-B1/finish-07/20261011T175900Z-b1-r4-independent-review-02/` on branch `audit/finish-31-b1-r4-02-c1-review-20261011`. The original `145500Z` root belongs to a separate Parent-local review; preserve it and do not use or modify it. Do not change or accept the candidate. Preserve the prior R4 root, contaminated snapshot, and unknown R1 artifacts without reading their contents.
 
 Independently bind Git identity, all 200 paths/hashes, the 72-file checkpoint, exact R3 inputs, source-patch replay, native/GLB geometry and material changes, unchanged assets, final receipt bindings, structural validation, browser budgets, captures, and visual fidelity. Confirm only the four authorized geometry targets and `PC_TemperedGlass` change. Verify the clean candidate restores all five out-of-scope object/mesh records found in the prior snapshot. Exact checks and required outputs are in FINISH-31.
 
