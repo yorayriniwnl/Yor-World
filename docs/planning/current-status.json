@@ -27,7 +27,7 @@
     "rulingDecisionPath": "docs/planning/reviews/2026-10-08-rc6-r1/decision.json"
   },
   "completionProgram": {
-    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 FINISH-24 REWORK; FINISH-29 CORRECTION REALLOCATED TO R5-07 / B1-R3 FINISH-20 REWORK; B1-R4 PACKAGE DELIVERED, EXACT PACKAGE CHECK PASS, INDEPENDENT REVIEW PENDING / C1-R6 FINISH-16 E-01 PENDING / C1-R7 FINISH-26 E-02 REWORK; C1-R8 DELIVERED, LOCAL CHECK FOUND STALE MATRIX EVIDENCE PATH; FINISH-30 R9 CORRECTION ACTIVE / NO CANONICAL COMPLETION INTEGRATION",
+    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 FINISH-24 REWORK; FINISH-29 R5-07 PACKAGE DELIVERED, INDEPENDENT DELTA AUDIT PENDING / B1-R3 FINISH-20 REWORK; B1-R4 PACKAGE DELIVERED, EXACT PACKAGE CHECK PASS, INDEPENDENT REVIEW PENDING / C1-R6 FINISH-16 E-01 PENDING / C1-R7 FINISH-26 E-02 REWORK; C1-R8 DELIVERED, LOCAL CHECK FOUND STALE MATRIX EVIDENCE PATH; FINISH-30 R9 CORRECTION ACTIVE / NO CANONICAL COMPLETION INTEGRATION",
     "coordinationCommit": "ab369d413c7501224e3d79aa78e56172f97839ff",
     "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
     "contractsGate": {
@@ -256,7 +256,7 @@
       },
       "FINISH-A1-R5": {
         "maker": "Local Codex platform-maker worker",
-        "status": "DELIVERED R5 REWORK / FINISH-24 LOCAL AUDIT REWORK / FINISH-27 ROOT OCCUPIED; FINISH-29 REALLOCATED TO R5-07",
+        "status": "R5-05 REWORK PRESERVED / FINISH-29 R5-07 MAKER PACKAGE DELIVERED / INDEPENDENT DELTA AUDIT PENDING",
         "deliveryRoot": "deliveries/FINISH-A1/r5-05/",
         "allocationPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-22-a1-r5-r5-04-collision.md",
         "deliveryCommit": "8f3aa566f36c92bb98658090ef91f9bfa96e8a79",
@@ -275,7 +275,7 @@
         "correctionPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-29-a1-r5-r5-06-collision.md",
         "correctionDeliveryRoot": "deliveries/FINISH-A1/r5-07/",
         "correctionPromptPath": "docs/planning/production-prompts/repairs-2026-10-11/19-CODEX-A1-R5-R7.md",
-        "correctionStatus": "AUTHORIZED / REALLOCATED / MAKER EXECUTION ACTIVE; r5-06 PRESERVED",
+        "correctionStatus": "PACKAGE DELIVERED at 76d679dcb98064152021830b98f16eb456b3ae19; independent delta audit and Parent acceptance pending; occupied r5-06 preserved",
         "promptPath": "docs/planning/production-prompts/repairs-2026-10-11/13-CODEX-A1-R5.md",
         "priorReallocationPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-19-a1-r5-reallocation.md",
         "scopeClarificationPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-14-a1-r5-scope-clarification.md",
@@ -319,7 +319,24 @@
           ]
         },
         "priorSourceBindingStatus": "UNAUTHENTICATED; C:\\yw-r5b\\app is a separate dirty checkout and was not used",
-        "preservedOccupiedCorrectionRoot": "deliveries/FINISH-A1/r5-06/"
+        "preservedOccupiedCorrectionRoot": "deliveries/FINISH-A1/r5-06/",
+        "latestCorrection": {
+          "packetId": "FINISH-29",
+          "promptPath": "docs/planning/production-prompts/repairs-2026-10-11/19-CODEX-A1-R5-R7.md",
+          "deliveryRoot": "deliveries/FINISH-A1/r5-07/",
+          "branch": "codex/finish-29-a1-r5-r7-20261011",
+          "deliveryCommit": "76d679dcb98064152021830b98f16eb456b3ae19",
+          "candidateAppTree": "ba8f952edc34e94393c48b25779071daab9a9812",
+          "patchSha256": "aa9b91f613a0f1b98e6da7735ec0513d10d0e1c2e78512fff63ecc19ee717dd8",
+          "outputManifestSha256": "5c42034d1ceb9cf938d7a536a436b3b53cee8094c48e3e934c419dad0fafa420",
+          "makerReport": "deliveries/FINISH-A1/r5-07/report.md",
+          "requirementMatrix": "deliveries/FINISH-A1/r5-07/requirement-matrix.json",
+          "status": "MAKER COMPLETE / PUSHED / INDEPENDENT DELTA AUDIT PENDING",
+          "verification": "25/25 exact-base replay; focused 5 unit and 22 integration; full 317 unit and 308 integration; lint/typecheck; default Turbopack build; Chromium 6/6",
+          "parentImplementationAcceptance": "NOT ACCEPTED",
+          "canonicalIntegration": false,
+          "preservedOccupiedRoot": "deliveries/FINISH-A1/r5-06/"
+        }
       },
       "FINISH-C1-R9": {
         "maker": "Local Codex evidence-maker worker",
@@ -364,7 +381,9 @@
       "candidateCommit": "8f3aa566f36c92bb98658090ef91f9bfa96e8a79",
       "status": "AUTHORIZED / SAME SIX FINDINGS AND 26-PATH ALLOWLIST / ROOT REALLOCATED",
       "preservedOccupiedRoot": "deliveries/FINISH-A1/r5-06/",
-      "canonicalSourceChanged": false
+      "canonicalSourceChanged": false,
+      "correctionDeliveryCommit": "76d679dcb98064152021830b98f16eb456b3ae19",
+      "correctionDeliveryStatus": "DELIVERED; independent delta audit and Parent acceptance pending"
     },
     "latestCorrectionAllocation": {
       "packetId": "FINISH-30",
