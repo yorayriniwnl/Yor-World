@@ -27,7 +27,7 @@
     "rulingDecisionPath": "docs/planning/reviews/2026-10-08-rc6-r1/decision.json"
   },
   "completionProgram": {
-    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 ACTIVE IN CLEAN WORKTREE / B1-R3 FINISH-20 AUDIT REWORK, SUCCESSOR PACKET PENDING / C1-R6 FINISH-16 REWORK FOR E-01 / C1-R7 FINISH-23 DELTA AUDIT ACTIVE / NO CANONICAL COMPLETION INTEGRATION",
+    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 DELIVERED, FINISH-24 INDEPENDENT AUDIT PENDING / B1-R3 FINISH-20 AUDIT REWORK, SUCCESSOR PACKET PENDING / C1-R6 FINISH-16 REWORK FOR E-01 / C1-R7 FINISH-23 DELTA AUDIT ACTIVE / NO CANONICAL COMPLETION INTEGRATION",
     "coordinationCommit": "ab369d413c7501224e3d79aa78e56172f97839ff",
     "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
     "contractsGate": {
@@ -214,9 +214,19 @@
       },
       "FINISH-A1-R5": {
         "maker": "Local Codex platform-maker worker",
-        "status": "ACTIVE / FINISH-22 CLEAN WORKTREE / TEST-FIRST IMPLEMENTATION IN PROGRESS / CANDIDATE NOT RETURNED",
+        "status": "DELIVERED / COMMITTED AND PUSHED / FINISH-24 LOCAL INDEPENDENT AUDIT PENDING",
         "deliveryRoot": "deliveries/FINISH-A1/r5-05/",
         "allocationPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-22-a1-r5-r5-04-collision.md",
+        "deliveryCommit": "8f3aa566f36c92bb98658090ef91f9bfa96e8a79",
+        "candidateFullTree": "4b0f51f7462af578422cca05c3e30c9bfc0b4c8f",
+        "candidateAppTree": "cb42202d3be7f4f10c460d2e1b43db853910b87f",
+        "patchSha256": "945bee3ccf793d56f6ffc2319cf3d6ede52a9f8bec665ac3d568272f1a179b41",
+        "outputManifestSha256": "a54f2796bd8cee902b4b0f70266545d4130698914bede71fedd00b85f19f24f1",
+        "makerReport": "deliveries/FINISH-A1/r5-05/report.md",
+        "requirementMatrix": "deliveries/FINISH-A1/r5-05/requirement-matrix.json",
+        "auditPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-24-a1-r5-independent-audit.md",
+        "auditRoot": "deliveries/completion-audits/FINISH-A1/finish-06/20261011T132805Z-a1-r5-independent-review-01/",
+        "auditStatus": "AUTHORIZED / LOCAL INDEPENDENT REVIEW PENDING / EXTERNAL GPT PLUS #2 NOT RUN",
         "promptPath": "docs/planning/production-prompts/repairs-2026-10-11/13-CODEX-A1-R5.md",
         "priorReallocationPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-19-a1-r5-reallocation.md",
         "scopeClarificationPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-14-a1-r5-scope-clarification.md",
@@ -228,7 +238,7 @@
         "acceptedDesignManifestSha256": "8038db147824b0a31de1028c330383352177020b2247dd627d1674d6dc14c6af",
         "parentImplementationAcceptance": "NOT ACCEPTED",
         "canonicalIntegration": false,
-        "makerExecution": "Clean managed worktree remains active. Focused authoring suite is green at 20/20 after red-green private-media, DTO, hash and save-boundary checks. The previously allocated r5-04/ root appeared with three unknown-provenance evidence logs; it is preserved and not used. No stable candidate has been returned.",
+        "makerExecution": "Stable package returned at commit 8f3aa566f36c92bb98658090ef91f9bfa96e8a79 and pushed to origin/audit/completion-2026-10-09. Final local results: 24 unit files/316 tests, 28 integration files/306 tests, lint/typecheck/build exit 0, Chromium 6/6, exact-base replay 25/25. Canonical app/ remains unchanged. The r5-04/ root and all earlier A1 roots were preserved and not used.",
         "localReturnReadinessCheck": "docs/planning/reviews/2026-10-11-finish-15-local-return-readiness.md",
         "preservedOccupiedRoots": ["deliveries/FINISH-A1/r5/", "deliveries/FINISH-A1/r5-02/", "deliveries/FINISH-A1/r5-03/", "deliveries/FINISH-A1/r5-04/"],
         "r5-04CollisionInventory": {
