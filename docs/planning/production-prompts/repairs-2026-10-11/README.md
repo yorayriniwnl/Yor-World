@@ -21,6 +21,7 @@ Send each Gemini account only its own maker prompt. Use the GPT-6.1 Sol Ultra ch
 | [17 — A1-R5 six-finding correction](17-CODEX-A1-R5-R6.md) | Local Codex platform-maker worker | Correct the audited candidate's contract, refresh, privacy, conflict, rendering and content-default defects |
 | [18 — C1-R8 verifier correction](18-CODEX-C1-R8.md) | Local Codex evidence-maker worker | Reject contradictory duplicated provenance fields without changing app/runtime source |
 | [19 — B1-R4 collision reallocation](19-CODEX-B1-R4-R2.md) | Local Codex art-maker worker | Repackage only the 200 authorized files to a clean root, excluding eleven unknown R1 artifacts |
+| [20 — B1-R4-02 independent audit](20-CODEX-B1-R4-AUDIT.md) | Local Codex runtime-lane reviewer | Independently verify exact candidate hashes, authorized native/art changes, browser budgets, and visual evidence |
 
 The partial runtime R3 folder appeared during drafting without a complete report/patch/hash handoff at the recorded check. Preserve it and inspect current ownership/completeness; do not overwrite it or treat it as accepted. The other two R3 roots were absent at that check. Recheck current state when using these prompts.
 

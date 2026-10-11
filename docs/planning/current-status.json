@@ -27,7 +27,7 @@
     "rulingDecisionPath": "docs/planning/reviews/2026-10-08-rc6-r1/decision.json"
   },
   "completionProgram": {
-    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 FINISH-24 REWORK; FINISH-27 CORRECTION ACTIVE / B1-R3 FINISH-20 REWORK / B1-R4 ROOT COLLISION, FINISH-30 REALLOCATION ACTIVE / C1-R6 FINISH-16 E-01 PENDING / R8 CANDIDATE DELIVERED, FINISH-29 AUDIT ALLOCATED / NO CANONICAL COMPLETION INTEGRATION",
+    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 FINISH-24 REWORK; FINISH-27 CORRECTION ACTIVE / B1-R3 FINISH-20 REWORK / B1-R4-02 CANDIDATE DELIVERED / FINISH-31 AUDIT ACTIVE / DOOR-CAMERA OPEN / C1-R6 FINISH-16 E-01 PENDING / R8 CANDIDATE DELIVERED, FINISH-29 AUDIT ALLOCATED / NO CANONICAL COMPLETION INTEGRATION",
     "coordinationCommit": "ab369d413c7501224e3d79aa78e56172f97839ff",
     "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
     "contractsGate": {
@@ -139,7 +139,7 @@
       },
       "FINISH-B1-R4": {
         "maker": "Local Codex art-maker worker",
-        "status": "CANDIDATE SNAPSHOT 2cc4419 PRESERVED / 11 UNKNOWN R1 FILES IN ROOT / ROOM HASH RECEIPT MISMATCH / FINISH-30 REPACKAGING AND EVIDENCE REBUILD ACTIVE / PUSH HELD",
+        "status": "CANDIDATE DELIVERED / FINISH-31 CROSS-LANE AUDIT ACTIVE / FULL B1 ACCEPTANCE BLOCKED BY OPEN DOOR-CAMERA FINDINGS",
         "deliveryRoot": "deliveries/FINISH-B1-R4-02/",
         "priorDeliveryRoot": "deliveries/FINISH-B1-R4/",
         "promptPath": "docs/planning/production-prompts/repairs-2026-10-11/16-CODEX-B1-R4-R1.md",
@@ -159,7 +159,8 @@
         "snapshotRoomGlbSha256": "ede3258e39efa6d2641f1480baaf3cfd9d44c3915b4da243fc6d4011d8c3654b",
         "snapshotRoomGlbGitBlob": "a1e8c32231c4d97c5c3eee6a8907dbcdd3bd74ce",
         "staleFinalReceiptRoomSha256": "d192a8154cc9e43adfef6b84beb0eaa64d40d2af464d8572fd4b0fcbf845baf5",
-        "roomHashMismatchFinding": "Committed asset, output-hashes.json, and report bind room.glb to ede3258e…; final replay, lineage, export-reproducibility, and browser-budget receipts bind it to prior output d192a815…. Maker confirms those receipts are stale for the committed artifact. The final native export also differs from an earlier export; exact source/export lineage investigation is active.",
+        "snapshotNativeExportSha256": "e80fcc64e881724990977bea5a4dbf88fc0be32b26c63a40733388eeed177411",
+        "roomHashMismatchFinding": "The preserved 2cc snapshot bound the raw room/native export to ede3258e39efa6d2641f1480baaf3cfd9d44c3915b4da243fc6d4011d8c3654b and e80fcc64e881724990977bea5a4dbf88fc0be32b26c63a40733388eeed177411, while final replay receipts referenced d192a8154cc9e43adfef6b84beb0eaa64d40d2af464d8572fd4b0fcbf845baf5 and d421d5217c495728afb7a83815ac7b399a1516cf5edf80e2b3779cd218deb090. The new R4-02 candidate commits the replayed d192/d421 outputs; independent verification remains pending.",
         "excludedUnknownR1Paths": [
           "scripts/build-r1-room.py",
           "scripts/verify-browser-r1.mjs",
@@ -176,12 +177,33 @@
         "additionalUnknownSharedBrowserR1Files": 2,
         "finding": "FINISH-20 confirmed the PC_TemperedGlass transmission pass duplicates scene calls: 202/120 desktop and 146/80 mobile.",
         "scope": "FINISH-25 plus FINISH-25-R1: correct the glass representation and only the bounded PC/window visibility geometry; preserve all other geometry, door/camera path, runtime, other assets, and frozen budgets.",
-        "makerExecution": "Isolated candidate snapshot preserved after eleven unrelated unknown R1 files were identified in the output root. Parent and maker then confirmed its committed room GLB is ede3258e… while final replay/lineage/export/browser-budget receipts claim stale prior output d192a815…. Maker is investigating the exact native/source/export difference read-only. Repackage only 200 allowlisted paths into FINISH-B1-R4-02 and rebuild all evidence bound to the same regenerated final artifact; push remains held.",
+        "candidateCommit": "7936fa981a24fe4af834ff250ffec8a7b02b09b3",
+        "candidateBranch": "codex/finish-b1-r4-02-glass-20261011",
+        "candidateFullTree": "98f37af3f3b490a19a25677160c442fa7daef3fc",
+        "candidateSubtree": "7df14feefa5b89f02b07c0127992d15189848f7a",
+        "candidateAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+        "outputManifestSha256": "370c7c4d621b4e7a1134685f54fa374662781b2162c0ff42b05aa9feeb10d191",
+        "candidatePathCount": 200,
+        "manifestStableFileCount": 198,
+        "manifestStableBytes": 32836336,
+        "roomGlbSha256": "d192a8154cc9e43adfef6b84beb0eaa64d40d2af464d8572fd4b0fcbf845baf5",
+        "nativeExportSha256": "d421d5217c495728afb7a83815ac7b399a1516cf5edf80e2b3779cd218deb090",
+        "nativeBlendSha256": "32a55d22fa682ad0cb48905411b1d139a3065f9b9d1dc7417d3e85c56956f7f4",
+        "sourcePatchSha256": "15c1cb3740781a8234f352a0f5cf342d542eb6f47024825132ee1a9f7b45c513",
+        "patchedAuthoringSourceSha256": "ea965a95d2f7aebb54e0819a1846f3b76e827f64098cfb6c784acc09696ad591",
+        "makerReportPath": "deliveries/FINISH-B1-R4-02/report.md",
+        "makerIssueMatrixPath": "deliveries/FINISH-B1-R4-02/issue-matrix.json",
+        "makerExecution": "Committed and pushed exact-R3 rebuild. Maker reports 103 desktop / 75 mobile raw calls, zero transmission pass, zero-warning/error GLB validation, 21 matched captures, 28 input bindings, exact native/source/export replay, and a receipt-to-actual-file assertion. These are maker results pending FINISH-31 independent review.",
         "priorRootDisposition": "Preserve shared root and all unknown files byte-for-byte; do not inspect/copy/delete/stage/push them",
         "reallocationPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-30-b1-r4-root-collision.md",
-        "parentImplementationAcceptance": "NOT ACCEPTED",
-        "canonicalIntegration": false
+        "auditPacketPath": "docs/planning/reconciliation-packets/2026-10-11-finish-31-b1-r4-independent-audit.md",
+        "auditRoot": "deliveries/completion-audits/FINISH-B1/finish-07/20261011T145500Z-b1-r4-independent-review-01/",
+        "auditStatus": "ACTIVE / LOCAL CROSS-LANE REVIEW / EXTERNAL GPT PLUS #2 NOT RUN",
+        "parentImplementationAcceptance": "NOT ACCEPTED; FINISH-31 independent audit pending",
+        "canonicalIntegration": false,
+        "externalGPTPlus2Audit": "NOT RUN"
       },
+
       "FINISH-C1-R3": {
         "maker": "Gemini #3",
         "status": "RETURNED / REQUIRED PREDECESSOR FOR R5; IMPLEMENTATION NOT ACCEPTED",
@@ -386,13 +408,26 @@
       "reportPath": "deliveries/completion-audits/FINISH-C1/finish-12/20261011T133844Z-c1-r7-delta-review-02/report.md"
     },
     "latestAuditAllocation": {
+      "packetId": "FINISH-31",
+      "path": "docs/planning/reconciliation-packets/2026-10-11-finish-31-b1-r4-independent-audit.md",
+      "candidateCommit": "7936fa981a24fe4af834ff250ffec8a7b02b09b3",
+      "candidateTree": "98f37af3f3b490a19a25677160c442fa7daef3fc",
+      "candidateSubtree": "7df14feefa5b89f02b07c0127992d15189848f7a",
+      "auditRoot": "deliveries/completion-audits/FINISH-B1/finish-07/20261011T145500Z-b1-r4-independent-review-01/",
+      "reviewer": "Local Codex runtime-lane worker C1-R8 reviewer; external GPT Plus #2 NOT RUN",
+      "status": "ACTIVE / EXACT-CANDIDATE CROSS-LANE AUDIT",
+      "reportPath": null,
+      "findingsPath": null,
+      "requirementMatrixPath": null
+    },
+    "latestC1R8AuditAllocation": {
       "packetId": "FINISH-29",
       "path": "docs/planning/reconciliation-packets/2026-10-11-finish-29-c1-r8-delta-audit.md",
       "candidateCommit": "364d8ff690d3dc814a09406873433d9cb397b574",
       "candidateTree": "a29a29f7027f5d72e496c58f327d2e03058d2ad1",
       "candidateSubtree": "b3b98efa08045f520a00abf4569145ffa3ba3ee7",
       "auditRoot": "deliveries/completion-audits/FINISH-C1/finish-13/20261011T142400Z-c1-r8-delta-review-01/",
-      "reviewer": "Local Codex B1-R4 worker after its maker package is complete; external GPT Plus #2 NOT RUN",
+      "reviewer": "Local Codex B1-R4 worker after maker delivery; external GPT Plus #2 NOT RUN",
       "status": "ALLOCATED / EXACT-CANDIDATE DELTA REVIEW PENDING",
       "reportPath": null,
       "findingsPath": null,
@@ -404,8 +439,9 @@
       "lane": "FINISH-B1-R4",
       "preservedSnapshotCommit": "2cc4419aa9e0670b9b3da36cfbbcdb472231589e",
       "deliveryRoot": "deliveries/FINISH-B1-R4-02/",
-      "status": "AUTHORIZED / REPACKAGING 200 ALLOWLISTED PATHS AND REBUILDING ROOM HASH RECEIPTS / PUSH HELD UNTIL CLEAN CANDIDATE",
-      "canonicalAppChanged": false
+      "status": "COMPLETE / CANDIDATE DELIVERED AT 7936FA98 / FINISH-31 AUDIT ACTIVE / CANONICAL APP UNCHANGED",
+      "canonicalAppChanged": false,
+      "deliveryCommit": "7936fa981a24fe4af834ff250ffec8a7b02b09b3"
     },
     "successorContractsGate": {
       "packetId": "FINISH-00-R2",
