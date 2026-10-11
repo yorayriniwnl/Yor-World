@@ -18,7 +18,7 @@ The reviewer is the local Codex B1-R4 worker after it finishes and pushes its se
 
 Use a fresh isolated worktree checked out at the exact C1-R8 commit above. Recheck this audit root immediately before writing:
 
-`deliveries/completion-audits/FINISH-C1/finish-13/20261011T143500Z-c1-r8-delta-review-01/`
+`deliveries/completion-audits/FINISH-C1/finish-13/20261011T142400Z-c1-r8-delta-review-01/`
 
 This path was absent in the canonical checkout at allocation. If it is occupied in the audit worktree, preserve it without inspecting it and stop for Parent reallocation. Keep all scratch under the assigned root's `.work/`. Commit and push only this audit root on a scoped reviewer branch. Do not amend, reset, cherry-pick, or otherwise alter either R8 candidate branch.
 
