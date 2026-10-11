@@ -27,7 +27,7 @@
     "rulingDecisionPath": "docs/planning/reviews/2026-10-08-rc6-r1/decision.json"
   },
   "completionProgram": {
-    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 ACTIVE IN CLEAN WORKTREE / B1-R3 INDEPENDENT AUDIT ACTIVE WITH RAW DRAW-BUDGET FAIL / C1-R6 FINISH-16 REWORK FOR E-01 / C1-R7 RECEIPT CORRECTION AUTHORIZED / NO CANONICAL COMPLETION INTEGRATION",
+    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 ACTIVE IN CLEAN WORKTREE / B1-R3 INDEPENDENT AUDIT ACTIVE WITH RAW DRAW-BUDGET FAIL / C1-R6 FINISH-16 REWORK FOR E-01 / C1-R7 FINISH-21-R1 PROVENANCE AMENDMENT AUTHORIZED / NO CANONICAL COMPLETION INTEGRATION",
     "coordinationCommit": "ab369d413c7501224e3d79aa78e56172f97839ff",
     "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
     "contractsGate": {
@@ -195,12 +195,14 @@
       },
       "FINISH-C1-R7": {
         "maker": "Local Codex runtime evidence-maker worker",
-        "status": "AUTHORIZED / APPEND-ONLY GIT-BLOB RECEIPT CORRECTION PENDING",
+        "status": "AUTHORIZED BY FINISH-21-R1 / APPEND-ONLY PROVENANCE CORRECTION; MAKER RESUMES AFTER AMENDMENT PUSH",
         "deliveryRoot": "deliveries/FINISH-C1-R7/",
         "packetPath": "docs/planning/reconciliation-packets/2026-10-11-finish-21-c1-r6-receipt-correction.md",
+        "amendmentPath": "docs/planning/reconciliation-packets/2026-10-11-finish-21-r1-candidate-input-provenance.md",
+        "makerResumeCondition": "Resume only after FINISH-21-R1 is committed and pushed",
         "r6CandidateCommit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
         "r5CandidateCommit": "5e85e6a8a248581fe3893fd80c7da3d05079f305",
-        "finding": "FINISH-16 E-01; original R6/R5 files remain unchanged",
+        "finding": "FINISH-16 E-01; FINISH-21-R1 maps 27 repository-backed inputs and two installed Three.js files without rewriting original receipts",
         "independentDeltaAudit": "PENDING",
         "parentImplementationAcceptance": "NOT RATIFIED",
         "canonicalIntegration": false
@@ -235,12 +237,14 @@
       "advice": "REWORK before maker acceptance/integration"
     },
     "latestCorrectionAllocation": {
-      "packetId": "FINISH-21",
-      "path": "docs/planning/reconciliation-packets/2026-10-11-finish-21-c1-r6-receipt-correction.md",
+      "packetId": "FINISH-21-R1",
+      "path": "docs/planning/reconciliation-packets/2026-10-11-finish-21-r1-candidate-input-provenance.md",
+      "basePacketId": "FINISH-21",
+      "basePacketPath": "docs/planning/reconciliation-packets/2026-10-11-finish-21-c1-r6-receipt-correction.md",
       "lane": "FINISH-C1",
       "deliveryRoot": "deliveries/FINISH-C1-R7/",
       "candidateCommit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
-      "status": "AUTHORIZED / APPEND-ONLY GIT-BLOB RECEIPT CORRECTION PENDING",
+      "status": "AUTHORIZED / APPEND-ONLY INPUT PROVENANCE CORRECTION; MAKER RESUMES AFTER AMENDMENT PUSH",
       "canonicalSourceChanged": false
     },
     "latestAuditAllocation": {
