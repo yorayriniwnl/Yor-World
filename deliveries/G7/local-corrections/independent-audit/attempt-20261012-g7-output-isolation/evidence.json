@@ -1,0 +1,51 @@
+{
+  "auditHead": "dece4f1bc4b5ca784df27d5b1c2b396a27566663",
+  "auditedCommit": "608f3ade99b0e307e5a3c164cb09caa3b89642eb",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "checks": [
+    {
+      "name": "g7-evidence-tests",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "deliveries/G7/preparation/tools/test_g7_evidence.py"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "python-syntax",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "-c",
+        "import pathlib; [compile(pathlib.Path(p).read_text(encoding='utf-8'), p, 'exec') for p in ['deliveries/G7/preparation/tools/g7-evidence.py', 'deliveries/G7/preparation/tools/test_g7_evidence.py']]; print('syntax=PASS')"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "commit-check",
+      "command": [
+        "git",
+        "show",
+        "--check",
+        "--oneline",
+        "608f3ade",
+        "--",
+        "deliveries/G7/preparation/tools/g7-evidence.py",
+        "deliveries/G7/preparation/tools/test_g7_evidence.py"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "deliveries/G7/preparation/tools/g7-evidence.py",
+      "sha256": "43dd4f614c48acc6b8546e902d6358e48bf6a4f1cbe3cb17f9f5345d74e43b17"
+    },
+    {
+      "path": "deliveries/G7/preparation/tools/test_g7_evidence.py",
+      "sha256": "ce13e7cf3b38781dc494e0bf8c9136d3000b91f5805a6b5e75a671014bb05450"
+    }
+  ],
+  "logEncoding": "UTF-8 with LF line endings"
+}
