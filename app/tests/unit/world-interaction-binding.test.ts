@@ -3,8 +3,8 @@ import { describe, expect, it } from "vitest";
 import { ExperienceController } from "../../src/features/experience/controller";
 import { WorldInteractionBinding } from "../../src/features/world/WorldInteractionBinding";
 
-function pointer(type: "pointerdown" | "pointerup"): Event {
-  return Object.assign(new Event(type), { button: 0, pointerId: 7, clientX: 50, clientY: 50 });
+function pointer(type: "pointerdown" | "pointerup", x = 50, y = 50): Event {
+  return Object.assign(new Event(type), { button: 0, pointerId: 7, clientX: x, clientY: y });
 }
 
 function fixture() {
@@ -29,18 +29,18 @@ function fixture() {
   return { scene, monitor, camera, canvas, controller, binding };
 }
 
-function attachMonitorProxy(binding: WorldInteractionBinding): void {
+function attachMonitorProxy(binding: WorldInteractionBinding, width = 2.4): void {
   const interactionScene = new THREE.Group();
-  const proxy = new THREE.Mesh(new THREE.BoxGeometry(2, 1, 0.2), new THREE.MeshBasicMaterial());
+  const proxy = new THREE.Mesh(new THREE.BoxGeometry(width, 1, 0.2), new THREE.MeshBasicMaterial());
   proxy.userData["isHitProxy"] = true;
   proxy.userData["assetId"] = "main-monitor";
   interactionScene.add(proxy);
   expect(binding.attachInteractionScene(interactionScene)).toBe(true);
 }
 
-function click(canvas: HTMLCanvasElement): void {
-  canvas.dispatchEvent(pointer("pointerdown"));
-  canvas.dispatchEvent(pointer("pointerup"));
+function click(canvas: HTMLCanvasElement, x = 50, y = 50): void {
+  canvas.dispatchEvent(pointer("pointerdown", x, y));
+  canvas.dispatchEvent(pointer("pointerup", x, y));
 }
 
 describe("WorldInteractionBinding production mesh activation", () => {
@@ -57,10 +57,12 @@ describe("WorldInteractionBinding production mesh activation", () => {
     monitor.material.dispose();
   });
 
-  it("allows a valid optional proxy to broaden the visible monitor hit area", () => {
+  it("uses a valid optional proxy just outside the visible monitor geometry", () => {
     const { monitor, canvas, controller, binding } = fixture();
     attachMonitorProxy(binding);
-    click(canvas);
+    // At this point the visible 2 m monitor misses, while the 2.4 m proxy
+    // intersects and remains within the production bounds expanded by 0.12 m.
+    click(canvas, 69);
 
     expect(binding.getDiagnostics().lastActivatedId).toBe("main-monitor");
     expect(controller.getSnapshot().activePanel).toBe("launcher");
