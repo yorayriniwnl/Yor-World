@@ -27,7 +27,7 @@
     "rulingDecisionPath": "docs/planning/reviews/2026-10-08-rc6-r1/decision.json"
   },
   "completionProgram": {
-    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 RE-ALLOCATED TO CLEAN WORKTREE / B1-R3 INDEPENDENT AUDIT PENDING WITH RAW DRAW-BUDGET FAIL / C1-R6 FRESH AUDIT IN PROGRESS / NO CANONICAL COMPLETION INTEGRATION",
+    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 ACTIVE IN CLEAN WORKTREE / B1-R3 INDEPENDENT AUDIT ACTIVE WITH RAW DRAW-BUDGET FAIL / C1-R6 FINISH-16 REWORK FOR E-01 / C1-R7 RECEIPT CORRECTION AUTHORIZED / NO CANONICAL COMPLETION INTEGRATION",
     "coordinationCommit": "ab369d413c7501224e3d79aa78e56172f97839ff",
     "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
     "contractsGate": {
@@ -173,13 +173,13 @@
       },
       "FINISH-C1-R6": {
         "maker": "Original local Codex runtime-maker worker",
-        "status": "CANDIDATE PRESERVED / FINISH-11 AUDIT PROVENANCE UNRESOLVED / FINISH-16 REVALIDATION ACTIVE",
+        "status": "CANDIDATE PRESERVED / FINISH-16 LOCAL AUDIT REWORK FOR E-01 / RECEIPT CORRECTION AUTHORIZED",
         "deliveryRoot": "deliveries/FINISH-C1-R6/",
         "promptPath": "docs/planning/production-prompts/repairs-2026-10-11/09-CODEX-C1-R6.md",
         "allocationPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-09-c1-r6.md",
         "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
         "predecessorPatchSha256": "d6ad3359fa628067ab228eccc52f25d0604ddddb42813d7023e6a809cf60d83d",
-        "parentImplementationAcceptance": "NOT RATIFIED; FRESH FINISH-16 AUDIT PENDING",
+        "parentImplementationAcceptance": "NOT RATIFIED; FINISH-16 REWORK FOR E-01; FINISH-21 RECEIPT CORRECTION PENDING",
         "canonicalIntegration": false,
         "candidateCommit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
         "patchSha256": "17ae6aaab7910546d3527feec26926d8d1fd604e3bc60e2ae0eb9f549f7fc2a6",
@@ -189,13 +189,25 @@
         "priorAuditProvenance": "UNRESOLVED; assigned reviewer denies authoring the stable report, findings and matrix; preserve unchanged",
         "auditPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-16-c1-r6-audit-reallocation.md",
         "auditRoot": "deliveries/completion-audits/FINISH-C1/finish-10/20261011T061133Z-c1-r6-independent-review-03/",
-        "auditReport": null,
-        "auditVerdict": "PENDING FRESH LOCAL REVIEW; EXTERNAL GPT PLUS #2 NOT RUN",
+        "auditReport": "deliveries/completion-audits/FINISH-C1/finish-10/20261011T061133Z-c1-r6-independent-review-03/report.md",
+        "auditVerdict": "REWORK FOR E-01; LOCAL CODEX ONLY; EXTERNAL GPT PLUS #2 NOT RUN",
         "parentDecisionPath": "docs/planning/reviews/2026-10-11-finish-16-c1-r6-revalidation-decision.md"
+      },
+      "FINISH-C1-R7": {
+        "maker": "Local Codex runtime evidence-maker worker",
+        "status": "AUTHORIZED / APPEND-ONLY GIT-BLOB RECEIPT CORRECTION PENDING",
+        "deliveryRoot": "deliveries/FINISH-C1-R7/",
+        "packetPath": "docs/planning/reconciliation-packets/2026-10-11-finish-21-c1-r6-receipt-correction.md",
+        "r6CandidateCommit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
+        "r5CandidateCommit": "5e85e6a8a248581fe3893fd80c7da3d05079f305",
+        "finding": "FINISH-16 E-01; original R6/R5 files remain unchanged",
+        "independentDeltaAudit": "PENDING",
+        "parentImplementationAcceptance": "NOT RATIFIED",
+        "canonicalIntegration": false
       },
       "FINISH-A1-R5": {
         "maker": "Local Codex platform-maker worker",
-        "status": "AUTHORIZED / FINISH-19 CLEAN WORKTREE PENDING / CANDIDATE NOT YET RETURNED",
+        "status": "ACTIVE / FINISH-19 CLEAN WORKTREE / TEST-FIRST IMPLEMENTATION IN PROGRESS / CANDIDATE NOT RETURNED",
         "deliveryRoot": "deliveries/FINISH-A1/r5-04/",
         "promptPath": "docs/planning/production-prompts/repairs-2026-10-11/13-CODEX-A1-R5.md",
         "allocationPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-19-a1-r5-reallocation.md",
@@ -208,7 +220,7 @@
         "acceptedDesignManifestSha256": "8038db147824b0a31de1028c330383352177020b2247dd627d1674d6dc14c6af",
         "parentImplementationAcceptance": "NOT ACCEPTED",
         "canonicalIntegration": false,
-        "makerExecution": "FINISH-17 source identity could not be authenticated by the assigned maker; r5-03 is occupied by incomplete mixed scratch. FINISH-19 assigned a clean isolated worktree and fresh r5-04 root; maker is waiting for worktree creation and has made no new writes.",
+        "makerExecution": "Clean managed worktree is active. Focused authoring suite is green (5/5); declared-size preflight and EOF length-integrity fixes passed their tests; shared deadline tests reproduced red and the correction is in progress. No stable candidate has been returned.",
         "localReturnReadinessCheck": "docs/planning/reviews/2026-10-11-finish-15-local-return-readiness.md",
         "preservedOccupiedRoots": ["deliveries/FINISH-A1/r5/", "deliveries/FINISH-A1/r5-02/", "deliveries/FINISH-A1/r5-03/"],
         "priorSourceBindingStatus": "UNAUTHENTICATED; C:\\yw-r5b\\app is a separate dirty checkout and was not used"
@@ -223,12 +235,12 @@
       "advice": "REWORK before maker acceptance/integration"
     },
     "latestCorrectionAllocation": {
-      "packetId": "FINISH-19",
-      "path": "docs/planning/reconciliation-packets/2026-10-11-finish-19-a1-r5-reallocation.md",
-      "lane": "FINISH-A1",
-      "deliveryRoot": "deliveries/FINISH-A1/r5-04/",
-      "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
-      "status": "AUTHORIZED / NEW CLEAN WORKTREE PENDING / CANDIDATE NOT YET RETURNED",
+      "packetId": "FINISH-21",
+      "path": "docs/planning/reconciliation-packets/2026-10-11-finish-21-c1-r6-receipt-correction.md",
+      "lane": "FINISH-C1",
+      "deliveryRoot": "deliveries/FINISH-C1-R7/",
+      "candidateCommit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
+      "status": "AUTHORIZED / APPEND-ONLY GIT-BLOB RECEIPT CORRECTION PENDING",
       "canonicalSourceChanged": false
     },
     "latestAuditAllocation": {
