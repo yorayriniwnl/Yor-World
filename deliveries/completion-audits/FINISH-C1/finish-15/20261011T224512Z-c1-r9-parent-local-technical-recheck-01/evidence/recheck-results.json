@@ -1,0 +1,134 @@
+{
+  "binding": {
+    "commit": "3dda9a616033375768f3d5f60f8c653d504f7c8c",
+    "parent": "c398876583bc337c069414b79364e3fdea745879",
+    "fullTree": "5a38d405499737ff40b0141a64845c244a9e4813",
+    "remoteBranch": "codex/finish-30-c1-r9-20261011",
+    "remoteCommit": "3dda9a616033375768f3d5f60f8c653d504f7c8c",
+    "rootAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+    "r9Subtree": "aa097f12adff2dbac2c88d6300c949f37bf34251",
+    "r8Subtree": "da822d0362e06e92497001583afb7405b7ccd472"
+  },
+  "outputManifest": {
+    "rowCount": 26,
+    "uniquePaths": 26,
+    "totalBytes": 145757,
+    "manifestSha256": "31903805363ed7d56521d334893d40d99079a716e1b374ac2a4c1895ecaff465",
+    "rawBlobMismatches": []
+  },
+  "lineage": {
+    "r9FileCount": 27,
+    "r8FileCount": 23,
+    "unchangedOverlap": 20,
+    "changedInherited": [
+      "output-hashes.json",
+      "requirement-matrix.json",
+      "scripts/finalize.py"
+    ],
+    "newFiles": [
+      "changed-paths.json",
+      "evidence/r9-correction-verification.json",
+      "r9-candidate-binding.json",
+      "r9-correction-report.md"
+    ],
+    "declaredChangedPaths": [
+      "changed-paths.json",
+      "evidence/r9-correction-verification.json",
+      "output-hashes.json",
+      "r9-candidate-binding.json",
+      "r9-correction-report.md",
+      "requirement-matrix.json",
+      "scripts/finalize.py"
+    ],
+    "missingMatrixEvidencePaths": [],
+    "matrixStatusPairs": [
+      [
+        "E-02-01",
+        "PASS"
+      ],
+      [
+        "E-02-02",
+        "PASS"
+      ],
+      [
+        "E-02-03",
+        "PASS"
+      ],
+      [
+        "E-02-04",
+        "PASS"
+      ],
+      [
+        "E-02-05",
+        "PASS"
+      ],
+      [
+        "LINEAGE-01",
+        "PASS"
+      ],
+      [
+        "LIMIT-01",
+        "NOT RUN"
+      ]
+    ],
+    "finalizerDiff": [
+      "--- \n",
+      "+++ \n",
+      "@@ -270 +270 @@\n",
+      "-            {\"id\": \"E-02-05\", \"requirement\": \"Uncached CLI with zeroed sourceManifest hash and output-manifest check returns FAIL and nonzero.\", \"status\": \"PASS\", \"evidence\": [\"evidence/cli-negative-false-pass.json\", \"evidence/cli-negative-false-pass.log\"]},",
+      "+            {\"id\": \"E-02-05\", \"requirement\": \"Uncached CLI with zeroed sourceManifest hash and output-manifest check returns FAIL and nonzero.\", \"status\": \"PASS\", \"evidence\": [\"evidence/cli-negative-false-pass.json\"]},"
+    ]
+  },
+  "falsePassReceipt": {
+    "exitCode": 1,
+    "parsedStatus": "FAIL",
+    "errors": [
+      "candidate sourceManifest sha256 differs from the pinned R6 manifest blob"
+    ],
+    "stderr": "",
+    "stdout": "{\n  \"errors\": [\n    \"candidate sourceManifest sha256 differs from the pinned R6 manifest blob\"\n  ],\n  \"schemaVersion\": 1,\n  \"status\": \"FAIL\"\n}\n",
+    "command": [
+      "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "-B",
+      "C:\\Users\\yoray\\Projects\\Yor World\\.finish-c1-r8-cli\\tmp0dl3lpc8\\source\\verify-input-provenance.py",
+      "--json",
+      "--check-output-manifest",
+      "--commit",
+      "e2670d4152c461005da86b392dbcea12cec740bf"
+    ],
+    "originalReceiptSha256BeforeAndAfter": {
+      "after": "c92aca7bc06a1c8a0ded15c1d9df69332213d991d74e89c64a83f53c006c92e7",
+      "before": "c92aca7bc06a1c8a0ded15c1d9df69332213d991d74e89c64a83f53c006c92e7"
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "ls-remote",
+        "origin",
+        "refs/heads/codex/finish-30-c1-r9-20261011"
+      ],
+      "exitCode": 0,
+      "stdout": "3dda9a616033375768f3d5f60f8c653d504f7c8c\trefs/heads/codex/finish-30-c1-r9-20261011",
+      "stderr": ""
+    }
+  ],
+  "toolVersions": {
+    "git": "git version 2.55.0.windows.5",
+    "python": "3.12.10"
+  },
+  "checks": {
+    "candidate_identity": true,
+    "remote_branch": true,
+    "root_app_tree": true,
+    "delivery_subtrees": true,
+    "output_manifest": true,
+    "relative_changed_inventory": true,
+    "matrix_and_paths": true,
+    "finalizer_template": true,
+    "false_pass_receipt": true,
+    "correction_limits": true
+  },
+  "recommendation": "PASS"
+}

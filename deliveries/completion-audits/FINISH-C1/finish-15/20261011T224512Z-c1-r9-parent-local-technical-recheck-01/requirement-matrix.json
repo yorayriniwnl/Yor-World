@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "candidateCommit": "3dda9a616033375768f3d5f60f8c653d504f7c8c",
+  "results": [
+    {"id": "BIND-01", "requirement": "Rebind candidate, parent, full tree, R9 subtree, remote branch, R8 input, and root app tree.", "status": "PASS", "evidence": ["candidate-binding.json", "evidence/recheck-results.json"]},
+    {"id": "OUT-01", "requirement": "Recompute every output-manifest row from raw R9 Git blobs.", "status": "PASS", "evidence": ["evidence/recheck-results.json"]},
+    {"id": "DELTA-01", "requirement": "Compare R9 against R8 and match the declared relative changed-file inventory.", "status": "PASS", "evidence": ["evidence/recheck-results.json"]},
+    {"id": "EVID-01", "requirement": "Preserve matrix statuses, resolve all evidence paths, and limit E-02-05 to the committed JSON receipt.", "status": "PASS", "evidence": ["evidence/recheck-results.json"]},
+    {"id": "EVID-02", "requirement": "Receipt records the false-pass CLI failure, exit code 1, parsed FAIL output, and unchanged original receipt hash.", "status": "PASS", "evidence": ["evidence/recheck-results.json"]},
+    {"id": "GEN-01", "requirement": "Finalizer E-02-05 template emits the same single evidence path.", "status": "PASS", "evidence": ["evidence/recheck-results.json"]},
+    {"id": "LIMIT-01", "requirement": "Inherited tests, GPT Plus #2, E-01, provider/device, deployment, and G7 remain separate.", "status": "NOT RUN", "evidence": ["report.md", "candidate-binding.json"]}
+  ]
+}
