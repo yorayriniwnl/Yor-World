@@ -27,7 +27,7 @@
     "rulingDecisionPath": "docs/planning/reviews/2026-10-08-rc6-r1/decision.json"
   },
   "completionProgram": {
-    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 FINISH-24 REWORK; FINISH-29 R5-07 PACKAGE DELIVERED, INDEPENDENT DELTA AUDIT PENDING / B1-R3 FINISH-20 REWORK; B1-R4 PACKAGE DELIVERED, EXACT PACKAGE CHECK PASS, INDEPENDENT REVIEW PENDING / C1-R6 FINISH-16 E-01 PENDING / C1-R7 FINISH-26 E-02 REWORK; C1-R8 DELIVERED, LOCAL CHECK FOUND STALE MATRIX EVIDENCE PATH; FINISH-30 R9 CORRECTION ACTIVE / NO CANONICAL COMPLETION INTEGRATION",
+    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 FINISH-24 REWORK; FINISH-29 R5-07 PACKAGE DELIVERED, INDEPENDENT DELTA AUDIT PENDING / B1-R3 FINISH-20 REWORK; B1-R4 INITIAL PACKAGE PRESERVED / R4-02 SUCCESSOR UNDER REVIEW / C1-R6 FINISH-16 E-01 PENDING / C1-R7 FINISH-26 E-02 REWORK; C1-R8 DELIVERED, LOCAL CHECK FOUND STALE MATRIX EVIDENCE PATH; FINISH-30 R9 CORRECTION ACTIVE / NO CANONICAL COMPLETION INTEGRATION / FINISH-31 B1-R4-02 PARENT-LOCAL AUDIT RECOMMENDS PASS FOR BOUNDED CORRECTION; EXTERNAL GPT PLUS #2 AND PARENT ACCEPTANCE PENDING",
     "coordinationCommit": "ab369d413c7501224e3d79aa78e56172f97839ff",
     "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
     "contractsGate": {
@@ -139,7 +139,7 @@
       },
       "FINISH-B1-R4": {
         "maker": "Local Codex art-maker worker",
-        "status": "DELIVERED / EXACT PACKAGE VERIFICATION PASS / INDEPENDENT DELTA AUDIT AND PARENT ACCEPTANCE PENDING",
+        "status": "PRESERVED / SUPERSEDED FOR CURRENT REVIEW BY FINISH-B1-R4-02 / NOT ACCEPTED",
         "deliveryRoot": "deliveries/FINISH-B1-R4/",
         "promptPath": "docs/planning/production-prompts/repairs-2026-10-11/16-CODEX-B1-R4-R1.md",
         "priorPromptPath": "docs/planning/production-prompts/repairs-2026-10-11/15-CODEX-B1-R4.md",
@@ -150,7 +150,7 @@
         "finding": "FINISH-20 confirmed the PC_TemperedGlass transmission pass duplicates scene calls: 202/120 desktop and 146/80 mobile.",
         "scope": "FINISH-25 plus FINISH-25-R1: correct the glass representation and only the bounded PC/window visibility geometry; preserve all other geometry, door/camera path, runtime, other assets, and frozen budgets.",
         "makerExecution": "248 stable files / 44,487,519 bytes passed raw Git blob verification on the exact pushed commit. Local export, geometry, renderer-budget, import, and browser checks are recorded in the package report. No acceptance is claimed.",
-        "parentImplementationAcceptance": "NOT ACCEPTED; FINISH-20 door/camera owner issue remains open",
+        "parentImplementationAcceptance": "NOT ACCEPTED; successor R4-02 is under separate audit/acceptance",
         "canonicalIntegration": false,
         "deliveryCommit": "5c2d6ee1935b6245d0f5ef59392d856426ceac7d",
         "deliveryBranch": "codex/finish-25-r1-b1-r4-20261011",
@@ -349,6 +349,28 @@
         "parentImplementationAcceptance": "NOT ACCEPTED; E-01 remains separately pending",
         "externalGPTPlus2Audit": "NOT RUN",
         "canonicalIntegration": false
+      },
+      "FINISH-B1-R4-02": {
+        "maker": "Local Codex world-art maker worker",
+        "status": "DELIVERED / EXACT PACKAGE AND LOCAL REPLAY PASS / PARENT-LOCAL AUDIT RECOMMENDS PASS FOR BOUNDED FINISH-25/25-R1 SCOPE / EXTERNAL GPT PLUS #2 AND PARENT ACCEPTANCE PENDING",
+        "deliveryRoot": "deliveries/FINISH-B1-R4-02/",
+        "packetPath": "docs/planning/reconciliation-packets/2026-10-11-finish-30-b1-r4-root-collision.md",
+        "auditPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-31-b1-r4-independent-audit.md",
+        "baseCandidateCommit": "1753b9278c4537b5377c3893172b2a0f26d13b10",
+        "candidateCommit": "7936fa981a24fe4af834ff250ffec8a7b02b09b3",
+        "candidateBranch": "codex/finish-b1-r4-02-glass-20261011",
+        "candidateTree": "98f37af3f3b490a19a25677160c442fa7daef3fc",
+        "deliverySubtree": "7df14feefa5b89f02b07c0127992d15189848f7a",
+        "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+        "outputManifestSha256": "370c7c4d621b4e7a1134685f54fa374662781b2162c0ff42b05aa9feeb10d191",
+        "parentLocalAuditReport": "deliveries/completion-audits/FINISH-B1/finish-07/20261011T145500Z-b1-r4-independent-review-01/report.md",
+        "parentLocalAuditCommit": "b25b0bd0b30fe97d7d7173c40bad694c675f026e",
+        "auditRecommendation": "PASS FOR BOUNDED FINISH-25/25-R1 CORRECTION ONLY",
+        "externalGPTPlus2Audit": "NOT RUN",
+        "parentImplementationAcceptance": "PENDING",
+        "fullReferenceFidelity": "FAIL / OPEN",
+        "doorCameraOwner": "OPEN / OUT OF SCOPE",
+        "canonicalIntegration": false
       }
     },
     "latestIndependentRecheck": {
@@ -430,6 +452,16 @@
       "decision": "Rework one stale requirement-matrix evidence path; reallocate evidence-only correction to R9; E-01 remains separate",
       "auditReport": "deliveries/completion-audits/FINISH-C1/finish-13/20261011T144616Z-c1-r8-parent-local-recheck-01/report.md",
       "implementationAcceptance": false,
+      "canonicalIntegration": false
+    },
+    "latestB1Audit": {
+      "candidateCommit": "7936fa981a24fe4af834ff250ffec8a7b02b09b3",
+      "reviewer": "Parent-local Codex cross-lane re-audit; candidate author was separate",
+      "status": "COMPLETE / PASS RECOMMENDATION FOR BOUNDED CORRECTION / EXTERNAL GPT PLUS #2 NOT RUN / PARENT ACCEPTANCE PENDING",
+      "reportPath": "deliveries/completion-audits/FINISH-B1/finish-07/20261011T145500Z-b1-r4-independent-review-01/report.md",
+      "auditCommit": "b25b0bd0b30fe97d7d7173c40bad694c675f026e",
+      "externalGPTPlus2": "NOT RUN",
+      "parentAcceptance": "PENDING",
       "canonicalIntegration": false
     }
   },

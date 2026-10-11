@@ -47,3 +47,9 @@ Copy the text inside the selected `text` fence. A prompt file is not an account 
 Read [validation.json](validation.json) for the raw document bindings and navigation checks, and [review.md](review.md) for the bounded document review. Neither is implementation or production acceptance.
 
 To reproduce the combined copy and documentation checks, run `python docs/planning/production-prompts/repairs-2026-10-11/build-pack.py` from the project folder. The [assembler](build-pack.py) writes only ALL-PROMPTS.md and validation.json in this pack; it does not execute production work. Re-running records the inputs and Git state observed at that time.
+
+
+## B1-R4-02 reallocation and audit
+
+- [FINISH-30 B1 root-collision packet](../../reconciliation-packets/2026-10-11-finish-30-b1-r4-root-collision.md) and [R4-02 maker prompt](19-CODEX-B1-R4-R2.md) preserve the exact R3 base and exclude the contaminated snapshot.
+- [FINISH-31 exact-candidate audit packet](../../reconciliation-packets/2026-10-11-finish-31-b1-r4-independent-audit.md) and [audit prompt](20-CODEX-B1-R4-AUDIT.md) bind the completed local review.
