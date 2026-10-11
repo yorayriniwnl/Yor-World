@@ -27,7 +27,7 @@
     "rulingDecisionPath": "docs/planning/reviews/2026-10-08-rc6-r1/decision.json"
   },
   "completionProgram": {
-    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 FINISH-24 REWORK; FINISH-29 R5-07 PACKAGE DELIVERED, FINISH-32 GPT PLUS #2 DELTA AUDIT PREPARED BUT NOT DISPATCHED / B1-R3 FINISH-20 REWORK; B1-R4 INITIAL PACKAGE PRESERVED / R4-02 SUCCESSOR UNDER REVIEW / C1-R6 FINISH-16 E-01 PENDING / C1-R7 FINISH-26 E-02 REWORK; C1-R8 FINISH-30 REWORK FOR MATRIX EVIDENCE PATH; FINISH-30/33 R9 PACKAGE DELIVERED, FINISH-34 DELTA AUDIT PREPARED BUT NOT DISPATCHED / NO CANONICAL COMPLETION INTEGRATION / FINISH-31 B1-R4-02 PARENT-LOCAL AUDIT RECOMMENDS PASS FOR BOUNDED CORRECTION; EXTERNAL GPT PLUS #2 AND PARENT ACCEPTANCE PENDING",
+    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 FINISH-24 REWORK; FINISH-29 R5-07 PACKAGE DELIVERED, FINISH-32 GPT PLUS #2 AUDIT NOT DISPATCHED; FINISH-36 A1 PARENT-LOCAL TECHNICAL RECHECK PASS RECOMMENDATION / B1-R3 FINISH-20 REWORK; B1-R4-02 FULL-ROOM FIDELITY FAIL-OPEN, FINISH-35 B1 VISUAL CORRECTION ACTIVE; C1-R6 E-01 OPEN / C1-R7 FINISH-26 AUDIT ROOT COLLISION PRESERVED / C1-R8 FINISH-30 REWORK; C1-R9 FINISH-34 GPT PLUS #2 AUDIT NOT DISPATCHED; FINISH-36 C1 PARENT-LOCAL TECHNICAL RECHECK PASS RECOMMENDATION / NO CANONICAL COMPLETION INTEGRATION / EXTERNAL AUDITS AND PARENT ACCEPTANCE PENDING",
     "coordinationCommit": "ab369d413c7501224e3d79aa78e56172f97839ff",
     "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
     "contractsGate": {
@@ -475,13 +475,19 @@
       "candidatePackageSourceAppTree": "1bcaa9acde89fdb9541c3f2abde913a4ed2d2ec3",
       "makerReportedPatchedAppTree": "ba8f952edc34e94393c48b25779071daab9a9812",
       "reviewer": "GPT Plus #2 independent auditor",
-      "status": "PROMPT PREPARED / NOT DISPATCHED / REVIEW NOT RUN / PARENT ACCEPTANCE PENDING",
+      "status": "PROMPT PREPARED / GPT PLUS #2 NOT DISPATCHED; FINISH-36 PARENT-LOCAL PASS RECOMMENDATION / PARENT ACCEPTANCE PENDING",
       "packetPath": "docs/planning/reconciliation-packets/2026-10-11-finish-32-a1-r5-r7-independent-audit.md",
       "promptPath": "docs/planning/production-prompts/repairs-2026-10-11/21-CODEX-A1-R5-R7-AUDIT.md",
       "auditRoot": "deliveries/completion-audits/FINISH-A1/finish-07/20261011T155401Z-a1-r5-r7-independent-delta-review-01/",
       "externalGPTPlus2": "NOT DISPATCHED",
       "parentAcceptance": "PENDING",
-      "canonicalIntegration": false
+      "canonicalIntegration": false,
+      "parentLocalRecheck": {
+        "packetId": "FINISH-36",
+        "status": "PASS RECOMMENDATION; DOES NOT SUBSTITUTE FOR GPT PLUS #2 AUDIT",
+        "reportPath": "deliveries/completion-audits/FINISH-A1/finish-08/20261011T224512Z-a1-r5-r7-parent-local-technical-recheck-01/report.md",
+        "auditCommit": "0abed777"
+      }
     },
     "latestC1Audit": {
       "packetId": "FINISH-34",
@@ -490,13 +496,19 @@
       "deliverySubtree": "aa097f12adff2dbac2c88d6300c949f37bf34251",
       "outputManifestSha256": "31903805363ed7d56521d334893d40d99079a716e1b374ac2a4c1895ecaff465",
       "reviewer": "GPT Plus #2 independent auditor",
-      "status": "PROMPT PREPARED / NOT DISPATCHED / REVIEW NOT RUN / PARENT ACCEPTANCE PENDING / E-01 OPEN",
+      "status": "PROMPT PREPARED / GPT PLUS #2 NOT DISPATCHED; FINISH-36 PARENT-LOCAL PASS RECOMMENDATION / PARENT ACCEPTANCE PENDING / E-01 OPEN",
       "packetPath": "docs/planning/reconciliation-packets/2026-10-11-finish-34-c1-r9-independent-audit.md",
       "promptPath": "docs/planning/production-prompts/repairs-2026-10-11/23-CODEX-C1-R9-AUDIT.md",
       "auditRoot": "deliveries/completion-audits/FINISH-C1/finish-14/20261011T160732Z-c1-r9-independent-delta-review-01/",
       "externalGPTPlus2": "NOT DISPATCHED",
       "parentAcceptance": "PENDING",
-      "canonicalIntegration": false
+      "canonicalIntegration": false,
+      "parentLocalRecheck": {
+        "packetId": "FINISH-36",
+        "status": "PASS RECOMMENDATION FOR E-02-05 POINTER ONLY; DOES NOT SUBSTITUTE FOR GPT PLUS #2 AUDIT",
+        "reportPath": "deliveries/completion-audits/FINISH-C1/finish-15/20261011T224512Z-c1-r9-parent-local-technical-recheck-01/report.md",
+        "auditCommit": "a2516b30"
+      }
     },
     "latestB1Audit": {
       "candidateCommit": "7936fa981a24fe4af834ff250ffec8a7b02b09b3",
@@ -507,6 +519,28 @@
       "externalGPTPlus2": "NOT RUN",
       "parentAcceptance": "PENDING",
       "canonicalIntegration": false
+    },
+    "latestFinish36Rechecks": {
+      "packetPath": "docs/planning/reconciliation-packets/2026-10-11-finish-36-a1-c1-local-technical-rechecks.md",
+      "auditPacketCommit": "cf01e830",
+      "a1Report": "deliveries/completion-audits/FINISH-A1/finish-08/20261011T224512Z-a1-r5-r7-parent-local-technical-recheck-01/report.md",
+      "a1AuditCommit": "0abed777",
+      "a1CandidateCommit": "76d679dcb98064152021830b98f16eb456b3ae19",
+      "a1Recommendation": "PASS FOR BOUNDED TECHNICAL RECHECK; 317/317 UNIT, 308/308 INTEGRATION, LINT, TYPECHECK, BUILD, 6/6 CHROMIUM",
+      "c1Report": "deliveries/completion-audits/FINISH-C1/finish-15/20261011T224512Z-c1-r9-parent-local-technical-recheck-01/report.md",
+      "c1AuditCommit": "a2516b30",
+      "c1CandidateCommit": "3dda9a616033375768f3d5f60f8c653d504f7c8c",
+      "c1Recommendation": "PASS FOR E-02-05 EVIDENCE POINTER ONLY",
+      "externalGPTPlus2": "NOT RUN",
+      "parentAcceptance": "PENDING",
+      "canonicalIntegration": false
+    },
+    "activeB1Correction": {
+      "packetPath": "docs/planning/reconciliation-packets/2026-10-12-finish-35-b1-reference-visual-correction.md",
+      "status": "MAKER WORK IN PROGRESS",
+      "candidateBaseCommit": "7936fa981a24fe4af834ff250ffec8a7b02b09b3",
+      "deliveryRoot": "deliveries/FINISH-B1-R5/",
+      "canonicalAppChanged": false
     }
   },
   "hostingPreview": {
