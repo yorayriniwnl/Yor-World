@@ -1,0 +1,15 @@
+# Local Codex platform maker — FINISH-13 / A1-R5
+
+Read AGENTS.md, START_HERE.md, FINISH-13, FINISH-12, the FINISH-10 report/findings/matrix, FINISH-07 and its intake decision, FINISH-04/05, the accepted FINISH-00-R2 ruling and output manifest, and the frozen A1 ownership contracts. Report any inaccessible input.
+
+Implement the exact A1-R5 corrections authorized by FINISH-12. FINISH-13 rebinds the output to deliveries/FINISH-A1/r5-02/ because the original deliveries/FINISH-A1/r5/ path became occupied by an unexplained empty .work directory. Recheck r5-02 is absent immediately before creating it. Preserve the occupied r5 directory and all earlier candidate, audit, fixture and evidence bytes unchanged.
+
+Build the patch from immutable base f62a43c5e71c00dcb89e28275ea81d842167db80 and accepted app tree 42ea29ec235225046a75959eb19eb386ac2f821d. Do not use A1-R4 as the base. You may inspect R4 read-only as diagnostic evidence; report any source/file reuse precisely. Change only the exact 25 paths listed by the frozen A1 ownership table. Do not change canonical app/, contracts, dependencies, SQL/migrations, authentication helpers, public pages or another lane.
+
+Use test-first work. Prove the review hash binds all candidate project documents and preserves document/block array order while remaining deterministic across equivalent object-key insertion order. Prove private media reads enforce the 5 MiB bound during streaming, reject an oversized declared length before reading, cancel on overflow/error, check a declared length at EOF when present, and apply a 10-second deadline to signed-URL creation and streaming without exposing the URL. Make the private review DTO validate complete draft records and coherent identity/check semantics; reproduce the FINISH-10 malformed DTO probes and retain positive cases.
+
+Complete the actual local Chromium flow with a clearly synthetic test-only approved PNG: select it in the real editor picker, save and reopen the draft, then view it through the guarded private preview route. Bind screenshots and results to the final source/build identity. Do not imply that a fixture is provider-approved.
+
+Return source/, a valid UTF-8 source.patch, changed-path inventory, input/output hashes, report.md, and a standalone complete requirement-matrix.json. Run the exact-base patch replay and byte comparison, changed-path/full local suites, lint, typecheck, production build and Chromium workflow required by FINISH-12. Preserve exact commands, exit codes, real counts, tool versions, raw logs, screenshots, and source/build hashes. Mark unrun native provider/database, deployment/CDN, device, recovery and manual checks NOT RUN with reasons. Do not rewrite the R4 candidate or FINISH-10 audit.
+
+Commit and push only this stable delivery root under the repository AGENTS.md rule. Report any push failure immediately. Do not claim Gemini execution, external review, maker acceptance, Parent acceptance or canonical integration. Return the exact commit and stop for a separate independent audit.
