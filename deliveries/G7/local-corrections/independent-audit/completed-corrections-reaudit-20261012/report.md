@@ -1,0 +1,30 @@
+# Completed local corrections — Parent re-audit (2026-10-12)
+
+## Decision
+
+The implementation corrections found in the local backend, runtime/UI, and release-writer lanes are present. Their bounded code defects are closed by the available correction reports and regression checks. The art export is reproducible and structurally valid, but its visual fit remains open. **This does not make RC6 source accepted or G7 accepted.** The repository's maker records identify local Codex execution; they do not establish that a Gemini account implemented the work or that external GPT Plus #2 reviewed it.
+
+This report is the Parent's local re-audit. It is not an external auditor receipt or a substitute for the assigned audit/adjudication pipeline.
+
+## Re-audit results
+
+| Lane | Result | Evidence and exact limit |
+|---|---|---|
+| Backend correction | **PASS for the requested fixture/code delta** | The independent local delta report closes `BACKEND-NATIVE-01`: the test Storage stand-in now reports MIME for the exact mapped object and a truthful 404 otherwise. Post-correction native PostgreSQL execution is **NOT RUN**; the prior attempt could not connect to its isolated PostgreSQL cluster. Hosted Supabase Auth/PostgREST/Storage and real email remain unverified. See `deliveries/G7/local-corrections/independent-audit/attempt-20261012-backend-14c815ca-delta-01/report.md`. |
+| Runtime/UI correction | **PASS for RUI-01/RUI-02 and current browser suite** | The optional interaction delta probe closes hidden-target and solid-occlusion activation defects (6/6 actual Three.js checks). A fresh current Chrome+Edge run passed **248/248**, with zero skips, flakes or unexpected results, against build `OJPrYs4BfBEWD_ViCUPLq` and the isolated synthetic PGlite fixture. Separate performance checks passed **9/9**. These do not prove physical-device behavior, native GPU pixel equivalence or hosted services. See `deliveries/G7/local-corrections/independent-audit/runtime-ui-delta-20261011T192739Z/report.md`, `deliveries/G7/local-corrections/coordination/attempt-20261012T-playwright-final-reaudit/run-summary.json`, and `deliveries/G7/local-corrections/coordination/attempt-20261012T-performance-current/performance-results.json`. |
+| Art candidate attempt 14 | **PASS structural/reproducibility; OPEN visual review** | Six GLBs pass validator, authored transform/bounds checks and candidate LOD checks; five environment GLBs match byte-for-byte across independent same-source exports. The integrated harness ran 17 captures with zero JS errors. The visible composition remains much paler than the main reference, with the seated resident/chair dominating the foreground and accessory/pegboard grouping less legible. That is an observed fidelity gap; these captures do not isolate whether art, runtime camera/lighting, or both cause it. The public manifest remains on attempt 09 and attempt 14 is not admitted. See `deliveries/production-environment/revisions/local-corrections-r1/evidence/build-attempt-14/attempt-report.md` and `source-output-record.json`. |
+| R7 release-writer correction | **PASS for the three reproduced writer defects** | The current committed code closes the occupied bundle-receipt preflight gap, nested missing-parent reservation bug, and package/final-inventory filename collision. The current full release suite passes **121/121**. No candidate driver or actual R7 candidate package was generated. See `deliveries/G7/local-corrections/independent-audit/attempt-20261012-r7-writer-delta-03/report.md` and its `release-tests.log`. |
+
+## Fresh browser evidence
+
+The current browser attempt is `deliveries/G7/local-corrections/coordination/attempt-20261012T-playwright-final-reaudit/`. Its Playwright JSON reports 248 expected, 0 unexpected, 0 flaky and 0 skipped across Chrome and Edge. It used a fresh synthetic file-backed PGlite directory and blank Supabase/database/mail-provider variables. The run reused the candidate build; it did not rebuild. The adjacent source-binding receipt records the same build ID, HEAD `6de3e05a289e86e759d4602e9ee49f1a19f3b8da`, a 255-file app tree and zero app files newer than that build. All five directly relevant hashes match the run summary. The E2E suite used manifest-bound attempt-09 assets; attempt-14 was substituted only in its separate diagnostic art harness.
+
+## Still required before completion
+
+1. **Finish visual art review and correction.** Resolve the pale lighting and foreground framing against the main reference; then recapture all required views, obtain independent visual/provenance review, and request Parent admission. Keep attempt 14 candidate-only until that happens.
+2. **Finish backend environment proof.** Run the corrected native PostgreSQL suite against its isolated cluster, then verify actual hosted Supabase Auth/RLS/Storage behavior and real email delivery on the authorized production configuration.
+3. **Complete independent review and source adjudication.** Obtain the assigned external GPT Plus #2 delta reviews for the exact frozen backend, runtime, art and release source, then make a separate Parent ruling. The local Codex reviews in this checkout are not those external receipts.
+4. **Generate and verify the release candidate.** After source adjudication, freeze exact source, run the candidate driver, bind the actual archive/manifest/evidence, and verify the intended hosted artifact. No R7 package was run in this re-audit.
+5. **Complete G7 operations.** Production deployment/configuration, production-origin security probes, restore/rollback, physical mobile and assistive-technology checks, and final G7 evidence/acceptance remain outstanding.
+
+The current status ledger remains correct: RC6 is still R7 remediation / not source accepted; G7 is authorized / preparation / not accepted. No local synthetic fixture, passing browser suite, asset validator, or release-writer test changes that gate state.
