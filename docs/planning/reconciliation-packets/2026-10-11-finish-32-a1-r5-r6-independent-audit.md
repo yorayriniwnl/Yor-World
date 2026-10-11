@@ -1,6 +1,6 @@
 # FINISH-32 - A1-R5/R6 exact-candidate independent delta audit
 
-Date: 2026-10-11 UTC. Status: exact-candidate audit allocated and queued behind the active FINISH-29 review. Parent acceptance and canonical integration remain pending.
+Date: 2026-10-11 UTC. Status: exact-candidate audit active after FINISH-29 completed. Parent acceptance and canonical integration remain pending.
 
 ## Candidate binding
 
@@ -21,7 +21,7 @@ The maker branch is pushed. Independently verify that the remote ref resolves to
 
 ## Reviewer and audit root
 
-Reviewer: local Codex B1-R4 cross-lane reviewer, after it completes FINISH-29. It did not author FINISH-A1. Do not interrupt FINISH-29 or start this audit concurrently in its worktree. External GPT Plus #2 is NOT RUN; local results do not satisfy that external review gate. Parent makes a separate acceptance decision.
+Reviewer: local Codex B1-R4 cross-lane reviewer. FINISH-29 is complete, and this reviewer did not author FINISH-A1. External GPT Plus #2 is NOT RUN; local results do not satisfy that external review gate. Parent makes a separate acceptance decision.
 
 Use a fresh isolated worktree at the exact candidate commit and a clean audit branch:
 

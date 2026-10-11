@@ -27,7 +27,7 @@
     "rulingDecisionPath": "docs/planning/reviews/2026-10-08-rc6-r1/decision.json"
   },
   "completionProgram": {
-    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / FINISH-27 CANDIDATE DELIVERED, FINISH-32 INDEPENDENT AUDIT QUEUED / B1-R3 FINISH-20 REWORK / B1-R4-02 CANDIDATE DELIVERED, FINISH-31 CROSS-LANE AUDIT ACTIVE / DOOR-CAMERA OPEN / C1-R6 FINISH-16 E-01 PENDING / R8 CANDIDATE DELIVERED, FINISH-29 C1-R8 AUDIT ACTIVE / NO CANONICAL COMPLETION INTEGRATION",
+    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / FINISH-27 CANDIDATE DELIVERED, FINISH-32 A1 INDEPENDENT AUDIT ACTIVE / B1-R3 FINISH-20 REWORK / B1-R4-02 CANDIDATE DELIVERED, FINISH-31 CROSS-LANE AUDIT ACTIVE / DOOR-CAMERA OPEN / C1-R6 FINISH-16 E-01 PENDING / FINISH-29 REWORK FOR R8 E-02, FINISH-33 C1 CORRECTION QUEUED / NO CANONICAL COMPLETION INTEGRATION",
     "coordinationCommit": "ab369d413c7501224e3d79aa78e56172f97839ff",
     "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
     "contractsGate": {
@@ -390,15 +390,23 @@
       "status": "DELIVERED / FINISH-32 EXACT-CANDIDATE DELTA AUDIT QUEUED / CANONICAL SOURCE UNCHANGED",
       "canonicalSourceChanged": false
     },
-    "latestCorrectionAllocation": {
+    "priorC1R7CorrectionAllocation": {
       "packetId": "FINISH-28",
       "path": "docs/planning/reconciliation-packets/2026-10-11-finish-28-c1-r7-verifier-correction.md",
-      "basePacketId": "FINISH-26",
-      "basePacketPath": "docs/planning/reconciliation-packets/2026-10-11-finish-26-c1-r7-audit-root-reallocation.md",
-      "lane": "FINISH-C1-R7",
-      "deliveryRoot": "deliveries/FINISH-C1-R8/",
       "candidateCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
-      "status": "DELIVERED at 364d8ff690d3dc814a09406873433d9cb397b574 / FINISH-29 AUDIT ALLOCATED / PARENT ACCEPTANCE PENDING",
+      "deliveryCommit": "364d8ff690d3dc814a09406873433d9cb397b574",
+      "status": "DELIVERED / FINISH-29 REWORK FOR E-02",
+      "canonicalSourceChanged": false
+    },
+    "latestCorrectionAllocation": {
+      "packetId": "FINISH-33",
+      "path": "docs/planning/reconciliation-packets/2026-10-11-finish-33-c1-r8-duplicate-json-correction.md",
+      "basePacketId": "FINISH-29",
+      "basePacketPath": "docs/planning/reconciliation-packets/2026-10-11-finish-29-c1-r8-delta-audit.md",
+      "lane": "FINISH-C1-R8",
+      "deliveryRoot": "deliveries/FINISH-C1-R9/",
+      "baseCandidateCommit": "364d8ff690d3dc814a09406873433d9cb397b574",
+      "status": "AUTHORIZED / MAKER QUEUED AFTER FINISH-31 / E-02 ONLY / CANONICAL SOURCE UNCHANGED",
       "canonicalSourceChanged": false
     },
     "priorAuditAllocation": {
@@ -431,8 +439,10 @@
       "candidateAppTree": "c1f4e54e6b5de23acf1a783842bedffc4b684da1",
       "candidateSubtree": "c3644b7983ab2516ee16aaf091d567d726fc40ef",
       "auditRoot": "deliveries/completion-audits/FINISH-A1/finish-07/20261011T181100Z-a1-r5-r6-independent-delta-review-01/",
-      "reviewer": "Local Codex B1-R4 cross-lane reviewer after FINISH-29; external GPT Plus #2 NOT RUN",
-      "status": "ALLOCATED / QUEUED BEHIND FINISH-29 / EXACT-CANDIDATE REVIEW PENDING",
+      "reviewer": "Local Codex B1-R4 cross-lane reviewer; external GPT Plus #2 NOT RUN",
+      "auditBranch": "audit/finish-32-a1-r5-r6-20261011",
+      "reviewWorktree": "C:/Users/yoray/.codex/worktrees/finish-32-a1-r5-r6-audit-20261011",
+      "status": "ACTIVE / EXACT-CANDIDATE INDEPENDENT DELTA REVIEW",
       "reportPath": null,
       "findingsPath": null,
       "requirementMatrixPath": null
@@ -444,11 +454,14 @@
       "candidateTree": "a29a29f7027f5d72e496c58f327d2e03058d2ad1",
       "candidateSubtree": "b3b98efa08045f520a00abf4569145ffa3ba3ee7",
       "auditRoot": "deliveries/completion-audits/FINISH-C1/finish-13/20261011T142400Z-c1-r8-delta-review-01/",
-      "reviewer": "Local Codex B1-R4 worker after maker delivery; external GPT Plus #2 NOT RUN",
-      "status": "ACTIVE / EXACT-CANDIDATE CROSS-LANE DELTA REVIEW STARTED",
-      "reportPath": null,
-      "findingsPath": null,
-      "requirementMatrixPath": null
+      "reviewer": "Local Codex B1-R4 cross-lane reviewer; external GPT Plus #2 NOT RUN",
+      "status": "COMPLETE / INDEPENDENT REWORK FOR E-02 / EXTERNAL GPT PLUS #2 NOT RUN",
+      "auditCommit": "bc2cf3d4aef7a714a67612a8f08a76a1b1d76f54",
+      "auditTree": "f1d2e3b6368a099ca0fe6718091fab58c2858694",
+      "auditSubtree": "d2271d8184663dcbdf76e4571306076d3151249e",
+      "reportPath": "deliveries/completion-audits/FINISH-C1/finish-13/20261011T142400Z-c1-r8-delta-review-01/report.md",
+      "findingsPath": "deliveries/completion-audits/FINISH-C1/finish-13/20261011T142400Z-c1-r8-delta-review-01/findings.json",
+      "requirementMatrixPath": "deliveries/completion-audits/FINISH-C1/finish-13/20261011T142400Z-c1-r8-delta-review-01/requirement-matrix.json"
     },
     "latestReallocation": {
       "packetId": "FINISH-30",
@@ -478,12 +491,21 @@
       "canonicalSourceChanged": false,
       "productionFixesIntegrated": false
     },
-    "latestParentDecision": {
+    "priorParentDecision": {
       "packetId": "FINISH-28",
       "path": "docs/planning/reconciliation-packets/2026-10-11-finish-28-c1-r7-verifier-correction.md",
       "candidateCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
       "decision": "REWORK for E-02; authorize evidence-only verifier correction; E-01 remains separate",
       "auditReport": "deliveries/completion-audits/FINISH-C1/finish-12/20261011T133844Z-c1-r7-delta-review-02/report.md",
+      "implementationAcceptance": false,
+      "canonicalIntegration": false
+    },
+    "latestParentDecision": {
+      "packetId": "FINISH-33",
+      "path": "docs/planning/reconciliation-packets/2026-10-11-finish-33-c1-r8-duplicate-json-correction.md",
+      "candidateCommit": "364d8ff690d3dc814a09406873433d9cb397b574",
+      "decision": "REWORK for E-02 based on FINISH-29; authorize new R9 correction after FINISH-31. E-01 remains separate.",
+      "auditReport": "deliveries/completion-audits/FINISH-C1/finish-13/20261011T142400Z-c1-r8-delta-review-01/report.md",
       "implementationAcceptance": false,
       "canonicalIntegration": false
     }
