@@ -3,16 +3,18 @@ import type { CameraConfig, CameraPreset } from "./types";
 
 export const CAMERA_PRESETS: Record<CameraPreset, CameraConfig> = {
   "home-desktop": {
-    // The frozen production room's left wall occupies x=-2.20..-2.10.
-    // C3's blockout camera at -2.15 was inside that wall.
-    position: [-1.9, 1.7, 1.55],
-    target: [0.12, 1.25, -1.15],
-    fov: 60,
+    // Match the approved seated-eye-height workstation composition while staying
+    // clear of the frozen room shell.
+    position: [-1.55, 1.42, 1.05],
+    target: [0.0, 1.0, -1.1],
+    fov: 43,
   },
   "home-mobile": {
-    position: [-1.25, 1.48, 1.15],
-    target: [0.16, 1.08, -0.95],
-    fov: 52,
+    // A more frontal, right-shifted portrait view keeps the resident inside the
+    // narrow stage while retaining a legible monitor and desk interaction area.
+    position: [-0.33, 2.05, 0.35],
+    target: [0.37, 1.08, -1.25],
+    fov: 58,
   },
   monitor: {
     position: [0.0, 1.08, -0.5],
@@ -119,11 +121,20 @@ export class CameraDirector {
   private configFor(preset: CameraPreset | string): CameraConfig {
     const config = CAMERA_PRESETS[preset as CameraPreset] ?? CAMERA_PRESETS["home-desktop"];
     if (!String(preset).startsWith("home-")) return config;
-    // Preserve vertical composition on wide stages; portrait stages need enough
-    // horizontal field of view for the workstation and chair rather than clipping.
-    const minHorizontal = THREE.MathUtils.degToRad(62);
-    const fittedFov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(minHorizontal / 2) / Math.max(this.camera.aspect, 0.25)));
-    return { ...config, fov: Math.min(100, Math.max(config.fov, fittedFov)) };
+    // Keep workstation framing stable as measured stage aspect changes. Ease the
+    // horizontal target through portrait ratios, then ease the vertical context
+    // cap into landscape so neither side of a breakpoint jumps in composition.
+    const aspect = Math.max(this.camera.aspect, 0.25);
+    const portraitFit = THREE.MathUtils.smoothstep(aspect, 0.55, 0.75);
+    const horizontalDegrees = preset === "home-mobile"
+      ? 58
+      : THREE.MathUtils.lerp(46, 58, portraitFit);
+    const horizontalTarget = THREE.MathUtils.degToRad(horizontalDegrees);
+    const fittedFov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(horizontalTarget / 2) / aspect));
+    const landscapeContext = THREE.MathUtils.smoothstep(aspect, 0.75, 4 / 3);
+    const maxVerticalFov = THREE.MathUtils.lerp(100, 44, landscapeContext);
+    const verticalFov = THREE.MathUtils.clamp(fittedFov, 38, maxVerticalFov);
+    return { ...config, fov: verticalFov };
   }
 
   public setPreset(preset: CameraPreset | string, immediate: boolean = false) {
