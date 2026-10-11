@@ -59,6 +59,10 @@ describe("Milestone A3: PostgreSQL Database Grants & Row Level Security (RLS)", 
     const migrationPathA4 = join(process.cwd(), "supabase/migrations/20261001000001_a4_publication_media.sql");
     const migrationSqlA4 = readFileSync(migrationPathA4, "utf8");
     await db.exec(migrationSqlA4);
+
+    const migrationPathV3 = join(process.cwd(), "supabase/migrations/20261009000000_owner_identity_media_integrity.sql");
+    const migrationSqlV3 = readFileSync(migrationPathV3, "utf8");
+    await db.exec(migrationSqlV3);
     await db.exec(readFileSync(join(process.cwd(), "supabase/operations/harden-publication-grants.sql"), "utf8"));
 
     // 2. Seed test users in auth.users
@@ -99,7 +103,7 @@ describe("Milestone A3: PostgreSQL Database Grants & Row Level Security (RLS)", 
       const claims = JSON.stringify({ sub: config.sub, aal: config.aal });
       await db.exec(`
         SET ROLE authenticated;
-        SELECT set_config('request.jwt.claim.sub', '${config.sub}', false);
+        SELECT set_config('request.jwt.claim.sub', '', false);
         SELECT set_config('request.jwt.claims', '${claims}', false);
       `);
     }

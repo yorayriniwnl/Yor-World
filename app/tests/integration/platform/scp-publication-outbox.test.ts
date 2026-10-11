@@ -30,7 +30,11 @@ describe("SCP publication grants and lease-fenced outbox on accepted SQL", () =>
   let elapsed: number;
   beforeAll(async () => {
     db = new PGlite();
-    for (const name of ["20261001000000_a3_owner_auth_rls.sql", "20261001000001_a4_publication_media.sql"])
+    for (const name of [
+      "20261001000000_a3_owner_auth_rls.sql",
+      "20261001000001_a4_publication_media.sql",
+      "20261009000000_owner_identity_media_integrity.sql",
+    ])
       await db.exec(await readFile(`supabase/migrations/${name}`, "utf8"));
     // Exercise inherited PUBLIC rights as well as the grants in the accepted migrations.
     await db.exec("GRANT INSERT, UPDATE, DELETE ON public.published_content,public.publication_history TO PUBLIC");
@@ -53,7 +57,7 @@ describe("SCP publication grants and lease-fenced outbox on accepted SQL", () =>
     await db.query<Record<string, unknown>>("INSERT INTO public.publication_history(revision,snapshot,actor) VALUES(1,'{}',$1)", [active]);
     await db.query<Record<string, unknown>>("INSERT INTO public.projects(slug,title) VALUES('private-seed','Private draft')");
     await db.exec(`SET ROLE ${identity.role}`);
-    await db.query<Record<string, unknown>>("SELECT set_config('request.jwt.claim.sub',$1,false),set_config('request.jwt.claims',$2,false)", [identity.sub, JSON.stringify({ sub: identity.sub, aal: identity.aal })]);
+    await db.query<Record<string, unknown>>("SELECT set_config('request.jwt.claim.sub','',false),set_config('request.jwt.claims',$1,false)", [JSON.stringify({ sub: identity.sub, aal: identity.aal })]);
     expect((await db.query<Record<string, unknown>>("SELECT revision FROM public.published_content")).rows).toEqual([{ revision: 1 }]);
     if (identity.role === "authenticated") {
       expect((await db.query<Record<string, unknown>>("SELECT revision FROM public.publication_history")).rows).toHaveLength(identity.name === "active owner AAL2" ? 1 : 0);

@@ -44,7 +44,11 @@ export async function verifyStoredMedia(row: StoredMediaIdentity, parent?: Abort
     throw new MediaValidationError("Media object identity is missing or invalid.");
   }
   await boundedMediaOperation(async (signal) => {
-    const downloaded = await createAdminServiceRoleClient(signal).storage.from(bucket)
+    const providerResponse = { contentType: null as string | null };
+    const client = createAdminServiceRoleClient(signal, (response) => {
+      providerResponse.contentType = response.headers.get("content-type");
+    });
+    const downloaded = await client.storage.from(bucket)
       .download(key, {}, { signal, cache: "no-store" }).asStream();
     if (downloaded.error || !downloaded.data) {
       if (downloaded.error && "statusCode" in downloaded.error && String(downloaded.error.statusCode) === "404")
@@ -54,6 +58,11 @@ export async function verifyStoredMedia(row: StoredMediaIdentity, parent?: Abort
     if (signal.aborted) {
       void downloaded.data.cancel().catch(() => {});
       throw new MediaStorageUnavailableError();
+    }
+    const normalizedContentType = providerResponse.contentType?.split(";", 1)[0]?.trim().toLowerCase() ?? null;
+    if (normalizedContentType !== String(row.mime)) {
+      void downloaded.data.cancel().catch(() => {});
+      throw new MediaValidationError("Media object content type does not match its approved identity.");
     }
     const reader = downloaded.data.getReader();
     const retained = new Uint8Array(bytes);

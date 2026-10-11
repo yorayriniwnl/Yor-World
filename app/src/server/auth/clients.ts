@@ -20,6 +20,8 @@ export interface SupabaseEnvConfig {
   supabaseServiceRoleKey?: string | undefined;
 }
 
+export type AdminServiceResponseObserver = (response: Response) => void;
+
 export function getSupabaseEnv(): SupabaseEnvConfig {
   const supabaseUrl =
     process.env.NEXT_PUBLIC_SUPABASE_URL ||
@@ -58,7 +60,7 @@ export function createPublicServerClient(cookieStore?: { getAll: () => Array<{ n
  * Creates a privileged service-role client strictly for server-side verification and background jobs.
  * This client bypasses RLS and MUST NEVER be exposed or passed outside server domain boundaries.
  */
-export function createAdminServiceRoleClient(signal?: AbortSignal): SupabaseClient {
+export function createAdminServiceRoleClient(signal?: AbortSignal, observeResponse?: AdminServiceResponseObserver): SupabaseClient {
   const env = getSupabaseEnv();
 
   if (!env.supabaseServiceRoleKey) {
@@ -66,9 +68,14 @@ export function createAdminServiceRoleClient(signal?: AbortSignal): SupabaseClie
   }
 
   return createClient(env.supabaseUrl, env.supabaseServiceRoleKey, {
-    ...(signal ? { global: { fetch: (input, init) => fetch(input, {
-      ...init, signal: init?.signal ? AbortSignal.any([signal, init.signal]) : signal,
-    }) } } : {}),
+    ...(signal || observeResponse ? { global: { fetch: async (input, init) => {
+      const response = await fetch(input, {
+        ...init,
+        ...(signal ? { signal: init?.signal ? AbortSignal.any([signal, init.signal]) : signal } : {}),
+      });
+      observeResponse?.(response);
+      return response;
+    } } } : {}),
     auth: {
       persistSession: false,
       autoRefreshToken: false,

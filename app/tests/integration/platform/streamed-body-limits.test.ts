@@ -93,4 +93,23 @@ describe("Streaming contact/events byte limits (synthetic streams and explicit m
     await expect(pending).rejects.toThrow(/aborted/i);
     expect(canceled).toBe(true);
   });
+
+  it("handles concurrent duplicate requests with identical stream payload and rejects conflicting key reuse", async () => {
+    const key = randomUUID();
+    const payload = JSON.stringify({ name: "Fixture Visitor", email: "fixture@example.test", message: "Concurrent streamed inquiry.", idempotencyKey: key });
+    const [r1, r2] = await Promise.all([
+      contact(streamed([encoder.encode(payload)]).request),
+      contact(streamed([encoder.encode(payload)]).request),
+    ]);
+    expect(r1.status).toBe(202);
+    expect(r2.status).toBe(202);
+    const b1 = await r1.json();
+    const b2 = await r2.json();
+    expect(b1.id).toBe(b2.id);
+    expect(db.messages.size).toBe(1);
+
+    const confPayload = JSON.stringify({ name: "Fixture Visitor", email: "fixture@example.test", message: "Conflicting body payload.", idempotencyKey: key });
+    const r3 = await contact(streamed([encoder.encode(confPayload)]).request);
+    expect(r3.status).toBe(409);
+  });
 });

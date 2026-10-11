@@ -7,11 +7,10 @@
 
 import sharp from "sharp";
 import { crc32 } from "node:zlib";
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import type { OwnerContext } from "../auth/types";
 import { createAdminServiceRoleClient } from "../auth/clients";
 import { getPlatformDb } from "../database";
-import type { QueryableDb } from "../contact/quota";
 import { isDraftTestRegistryEnabled } from "../content/revisions";
 import { boundedMediaOperation, verifyStoredMedia } from "./integrity";
 
@@ -262,7 +261,7 @@ export async function registerMediaAsset(
   }
   if (!validated.buffer) throw new MediaValidationError("Validated media bytes are required.");
   const safeFilename = validated.filename.replace(/[^a-zA-Z0-9._-]/g,"_");
-  const privateKey = `drafts/${validated.hash}/${safeFilename}`;
+  const privateKey = `drafts/${randomUUID()}/${validated.hash}/${safeFilename}`;
   const bucket = process.env.MEDIA_PRIVATE_BUCKET;
   if (!bucket) throw new Error("Private media storage is not configured.");
   let cleaned = false;
@@ -282,26 +281,15 @@ export async function registerMediaAsset(
   });
   try {
     const db = await getPlatformDb();
-    const executeInsert = async (runner: QueryableDb) => {
-      try {
-        return await runner.query(`INSERT INTO public.media_assets(object_key,hash,mime,bytes,dimensions,provenance,storage_bucket,approval_status)
+    if (!db.transaction) throw new Error("Transactional schema-v3 database is required.");
+    const rows = await db.transaction((runner) => runner.query(`INSERT INTO public.media_assets(object_key,hash,mime,bytes,dimensions,provenance,storage_bucket,approval_status)
           VALUES($1,$2,$3,$4,$5,$6,$7,'pending') RETURNING *`, [privateKey,validated.hash,validated.mime,validated.bytes,
-          JSON.stringify(validated.dimensions),JSON.stringify({ uploadedBy: actor.userId,filename: safeFilename }), bucket]);
-      } catch (err: unknown) {
-        if (err && typeof err === "object" && "code" in err && (err as { code: string }).code === "42703") {
-          return await runner.query(`INSERT INTO public.media_assets(object_key,hash,mime,bytes,dimensions,provenance,approval_status)
-            VALUES($1,$2,$3,$4,$5,$6,'pending') RETURNING *`, [privateKey,validated.hash,validated.mime,validated.bytes,
-            JSON.stringify(validated.dimensions),JSON.stringify({ uploadedBy: actor.userId,filename: safeFilename })]);
-        }
-        throw err;
-      }
-    };
-    const rows = db.transaction ? await db.transaction(executeInsert) : await executeInsert(db);
+          JSON.stringify(validated.dimensions),JSON.stringify({ uploadedBy: actor.userId,filename: safeFilename }), bucket]));
     return rowToMedia(rows.rows[0]!);
   } catch (error) {
     try {
       const db = await getPlatformDb();
-      const registered = await db.query("SELECT id FROM public.media_assets WHERE object_key=$1", [privateKey]);
+      const registered = await db.query("SELECT id FROM public.media_assets WHERE storage_bucket=$1 AND object_key=$2", [bucket, privateKey]);
       if (!registered.rows.length) await cleanupOwnedObject();
     } catch { console.error("MEDIA_ORPHAN_REGISTRATION_UNKNOWN"); }
     throw error;

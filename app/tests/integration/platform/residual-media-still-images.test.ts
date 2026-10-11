@@ -110,7 +110,11 @@ describe("SCP-04 real media POST with SQL registration and mocked private Storag
 
   beforeAll(async () => {
     db = new PGlite();
-    for (const name of ["20261001000000_a3_owner_auth_rls.sql", "20261001000001_a4_publication_media.sql"]) {
+    for (const name of [
+      "20261001000000_a3_owner_auth_rls.sql",
+      "20261001000001_a4_publication_media.sql",
+      "20261009000000_owner_identity_media_integrity.sql",
+    ]) {
       await db.exec(readFileSync(resolve("supabase/migrations", name), "utf8"));
     }
     await db.exec(readFileSync(resolve("supabase/operations/harden-publication-grants.sql"), "utf8"));
@@ -127,6 +131,12 @@ describe("SCP-04 real media POST with SQL registration and mocked private Storag
         sqlCalls.push(sql);
         return db.query(sql, params);
       },
+      transaction: async (fn) => db.transaction((tx) => fn({
+        query: async (sql, params) => {
+          sqlCalls.push(sql);
+          return tx.query(sql, params);
+        },
+      })),
     };
     setPlatformDbForTests(provider);
     // The existing fixture identity still resolves its active-owner row through SQL.
@@ -189,8 +199,15 @@ describe("SCP-04 real media POST with SQL registration and mocked private Storag
   it.each(["json", "multipart"] as const)("stores exact validated still bytes privately and pending via %s", async (transport) => {
     const bytes = fixture("normal-rgb.png");
     const response = await POST(uploadRequest(bytes, "image/png", transport));
+    const mediaRows = (await db.query<{
+      object_key: string;
+      hash: string;
+      mime: string;
+      bytes: number;
+      dimensions: { width: number; height: number };
+      approval_status: string;
+    }>("SELECT object_key,hash,mime,bytes,dimensions,approval_status FROM public.media_assets")).rows;
     const body: unknown = await response.json();
-    const mediaRows = (await db.query("SELECT object_key,hash,mime,bytes,dimensions,approval_status FROM public.media_assets")).rows;
     const auditRows = (await db.query("SELECT COUNT(*)::int AS count FROM public.audit_events")).rows;
     observations.push({ name: "normal-rgb.png", transport, status: response.status, body, mediaRows, auditRows,
       storageObjects: objects.size, storageCalls: storageFetch.mock.calls.length,
@@ -198,11 +215,16 @@ describe("SCP-04 real media POST with SQL registration and mocked private Storag
     expect(response.status).toBe(201);
     expect(body).toMatchObject({ success: true, asset: { approvalStatus: "pending", dimensions: { width: 17, height: 11 } } });
     const hash = createHash("sha256").update(bytes).digest("hex");
-    const objectKey = `drafts/${hash}/private_image.png`;
-    expect(mediaRows).toEqual([{ object_key: objectKey, hash, mime: "image/png", bytes: bytes.length,
-      dimensions: { width: 17, height: 11 }, approval_status: "pending" }]);
+    expect(mediaRows).toHaveLength(1);
+    const row = mediaRows[0]!;
+    expect(row["object_key"]).toMatch(new RegExp(`^drafts/[0-9a-f-]{36}/${hash}/private_image\\.png$`));
+    expect(row["hash"]).toBe(hash);
+    expect(row["mime"]).toBe("image/png");
+    expect(row["bytes"]).toBe(bytes.length);
+    expect(row["dimensions"]).toEqual({ width: 17, height: 11 });
+    expect(row["approval_status"]).toBe("pending");
     expect(objects.size).toBe(1);
-    expect(objects.get(objectKey)).toEqual(new Uint8Array(bytes));
+    expect(objects.get(String(row["object_key"]))).toEqual(new Uint8Array(bytes));
     expect(storageFetch).toHaveBeenCalledTimes(1);
     expect(clientFactory).toHaveBeenCalledTimes(1);
     expect(auditRows).toEqual([{ count: 0 }]);

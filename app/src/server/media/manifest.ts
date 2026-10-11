@@ -53,16 +53,12 @@ export async function checkMediaApproved(mediaIds: string[], transaction?: Query
     const approvedSet = new Set<string>();
     await boundedMediaOperation(async (signal) => {
       for (const row of rows) {
-        if (row["approval_status"] !== "approved") continue;
-        if (row["storage_bucket"] && row["integrity_verified_at"]) {
-          try {
-            await verifyStoredMedia(row as unknown as Parameters<typeof verifyStoredMedia>[0], signal);
-            approvedSet.add(String(row["id"]));
-          } catch (error) {
-            if (!(error instanceof MediaValidationError)) throw error;
-          }
-        } else {
+        if (row["approval_status"] !== "approved" || !row["storage_bucket"] || !row["integrity_verified_at"]) continue;
+        try {
+          await verifyStoredMedia(row as unknown as Parameters<typeof verifyStoredMedia>[0], signal);
           approvedSet.add(String(row["id"]));
+        } catch (error) {
+          if (!(error instanceof MediaValidationError)) throw error;
         }
       }
     }, PUBLICATION_MEDIA_TIMEOUT_MS);
@@ -124,23 +120,13 @@ export async function readApprovedPublishedMediaUrls(publication: Publication): 
     const wanted=[...collect(requested)].filter((id) => currentIds.has(id) && !id.startsWith("missing"));
     if (!wanted.length) return {};
     const db=await getPlatformDb();
-    let assets;
-    try {
-      assets=await db.query("SELECT id,object_key,storage_bucket FROM public.media_assets WHERE approval_status='approved' AND id::text=ANY($1::text[])",[wanted]);
-    } catch (err: unknown) {
-      if (err && typeof err === "object" && "code" in err && (err as { code: string }).code === "42703") {
-        assets=await db.query("SELECT id,object_key FROM public.media_assets WHERE approval_status='approved' AND id::text=ANY($1::text[])",[wanted]);
-      } else {
-        throw err;
-      }
-    }
+    const assets=await db.query("SELECT id,object_key,storage_bucket FROM public.media_assets WHERE approval_status='approved' AND storage_bucket IS NOT NULL AND integrity_verified_at IS NOT NULL AND id::text=ANY($1::text[])",[wanted]);
     if (!assets.rows.length) return {};
-    const defaultBucket = process.env.MEDIA_PRIVATE_BUCKET;
     const urls: Record<string,string>={};
     await boundedMediaOperation(async (signal) => {
-      const buckets = [...new Set(assets.rows.map((row) => String(row["storage_bucket"] || defaultBucket || "")).filter(Boolean))];
+      const buckets = [...new Set(assets.rows.map((row) => String(row["storage_bucket"])).filter(Boolean))];
       for (const bucket of buckets) {
-        const bound = assets.rows.filter((row) => String(row["storage_bucket"] || defaultBucket) === bucket);
+        const bound = assets.rows.filter((row) => row["storage_bucket"] === bucket);
         const signed = await createAdminServiceRoleClient(signal).storage.from(bucket).createSignedUrls(bound.map((row) => String(row["object_key"])), 900);
         if (signal.aborted || signed.error || !signed.data) throw new MediaStorageUnavailableError();
         const byPath = new Map(bound.map((row) => [String(row["object_key"]), String(row["id"])]));

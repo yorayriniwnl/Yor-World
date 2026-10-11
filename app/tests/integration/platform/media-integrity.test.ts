@@ -28,19 +28,22 @@ const VALID_PNG_HASH = createHash("sha256").update(VALID_PNG).digest("hex");
 const BUCKET = "test-private-media";
 
 function mockStorageWithStreams(objects: Map<string, Uint8Array | { error: { statusCode?: string; message: string } }>) {
-  return vi.spyOn(authClients, "createAdminServiceRoleClient").mockImplementation((signal?: AbortSignal) => ({
+  return vi.spyOn(authClients, "createAdminServiceRoleClient").mockImplementation((signal?: AbortSignal, observeResponse?: (response: Response) => void) => ({
     storage: {
       from: () => ({
         download: (key: string) => ({
           asStream: async () => {
             const entry = objects.get(key);
             if (!entry) {
+                observeResponse?.(new Response(null, { status: 404 }));
               return { data: null, error: { statusCode: "404", message: "Object not found" } };
             }
             if ("error" in entry && entry.error) {
+                observeResponse?.(new Response(null, { status: Number(entry.error.statusCode) || 500 }));
               return { data: null, error: entry.error };
             }
             const bytes = entry as Uint8Array;
+              observeResponse?.(new Response(null, { headers: { "content-type": "image/png" } }));
             const stream = new ReadableStream<Uint8Array>({
               start(controller) {
                 if (signal?.aborted) {
@@ -89,15 +92,16 @@ describe("Media integrity and publication lifecycle verification (embedded PGlit
   beforeEach(async () => {
     await db.exec("TRUNCATE public.media_assets, public.published_content, public.publication_history, public.project_revisions, public.audit_events CASCADE");
     setPlatformDbForTests(db);
-    process.env.MEDIA_PRIVATE_BUCKET = BUCKET;
-    process.env.SUPABASE_URL = "https://fixture.supabase.test";
-    process.env.SUPABASE_SERVICE_ROLE_KEY = "synthetic-service-key";
+    vi.stubEnv("MEDIA_PRIVATE_BUCKET", BUCKET);
+    vi.stubEnv("SUPABASE_URL", "https://fixture.supabase.test");
+    vi.stubEnv("SUPABASE_SERVICE_ROLE_KEY", "synthetic-service-key");
   });
 
   afterEach(() => {
     setPlatformDbForTests(null);
     vi.restoreAllMocks();
-    delete process.env.MEDIA_PRIVATE_BUCKET;
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
   });
 
   afterAll(async () => {
@@ -225,6 +229,42 @@ describe("Media integrity and publication lifecycle verification (embedded PGlit
 
     await expect(boundedMediaOperation(slowRun, 50)).rejects.toBeInstanceOf(MediaStorageUnavailableError);
     expect(aborted).toBe(true);
+  });
+
+  it.each(["image/jpeg", null])("rejects provider content-type %s even when bytes and SHA-256 match", async (contentType) => {
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://fixture.supabase.test");
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "synthetic-anon-key");
+    vi.stubGlobal("fetch", async () => new Response(new Uint8Array(VALID_PNG), {
+      headers: contentType ? { "content-type": contentType } : {},
+    }));
+
+    await expect(verifyStoredMedia({
+      storage_bucket: BUCKET,
+      object_key: "drafts/unique/valid.png",
+      hash: VALID_PNG_HASH,
+      bytes: VALID_PNG.length,
+      mime: "image/png",
+    })).rejects.toThrow(/content type does not match/i);
+  });
+
+  it("accepts the exact MIME, bucket, key, byte length, and SHA-256 through the installed SDK", async () => {
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://fixture.supabase.test");
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "synthetic-anon-key");
+    const requested: string[] = [];
+    vi.stubGlobal("fetch", async (input: RequestInfo | URL, init?: RequestInit) => {
+      const request = new Request(input, init);
+      requested.push(new URL(request.url).pathname);
+      return new Response(new Uint8Array(VALID_PNG), { headers: { "content-type": "image/png; charset=binary" } });
+    });
+
+    await expect(verifyStoredMedia({
+      storage_bucket: BUCKET,
+      object_key: "drafts/unique/valid.png",
+      hash: VALID_PNG_HASH,
+      bytes: VALID_PNG.length,
+      mime: "image/png",
+    })).resolves.toBeUndefined();
+    expect(requested).toEqual([`/storage/v1/object/${BUCKET}/drafts/unique/valid.png`]);
   });
 
   it("6. prevents inconsistent partial publication when one of multiple media assets fails", async () => {
