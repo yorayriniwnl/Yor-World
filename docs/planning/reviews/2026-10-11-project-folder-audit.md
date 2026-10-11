@@ -44,6 +44,8 @@ The 12 `prunable` registrations were rechecked by exact path. Four Temp director
 
 `git worktree prune --verbose` attempted to remove the 12 stale registrations, but Windows returned `Permission denied` for each `.git/worktrees/<id>` entry. The `.git/worktrees` directory has a read-only attribute and explicit deny ACLs for write/delete. No ACL change was attempted; the registrations therefore remain until an authorized owner changes access. These are orphaned Temp residues, not additional project roots to move into Yor World.
 
+A separate request to recursively remove the verified orphan Temp directory trees was rejected by automatic review. No folders or files were deleted.
+
 ## Recommendation
 
 Use the parent `Projects` directory to group distinct projects. Within each product, keep one canonical repository/root and retain separate worktrees only where an active packet or reproducible historical candidate requires them. First reconcile the unfinished Local Corrections, CandidateX-main, CandidateX portfolio provenance, Yor Talks dirty work, and release candidate evidence. After their contents are hashed, backed up, and their owners confirm no active use, a separate cleanup review can identify truly redundant clones. The present evidence does not support calling these folders useless or safely deleting them.
