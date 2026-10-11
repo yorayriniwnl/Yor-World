@@ -23,6 +23,7 @@ Send each Gemini account only its own maker prompt. Use the GPT-6.1 Sol Ultra ch
 | [19 — A1-R5 output-root reallocation](19-CODEX-A1-R5-R7.md) | Local Codex platform-maker worker | Continue the same six-finding A1 correction at fresh `r5-07/` after preserving occupied `r5-06/` |
 | [20 — C1-R8 evidence-matrix correction](20-CODEX-C1-R9.md) | Local Codex evidence-maker worker | Repair the one stale evidence path in a fresh R9 package without changing verifier behavior |
 | [21 — A1-R5-R7 independent delta audit](21-CODEX-A1-R5-R7-AUDIT.md) | GPT Plus #2 independent auditor | Review the exact pushed A1-R5-R7 candidate against the six FINISH-24 findings; no fixing or self-acceptance |
+| [22 — C1-R9 generator-consistency correction](22-CODEX-C1-R9-R1.md) | Local Codex evidence maker | Correct the same stale E-02-05 pointer in both the R9 matrix and its generator template |
 
 The partial runtime R3 folder appeared during drafting without a complete report/patch/hash handoff at the recorded check. Preserve it and inspect current ownership/completeness; do not overwrite it or treat it as accepted. The other two R3 roots were absent at that check. Recheck current state when using these prompts.
 
@@ -58,3 +59,7 @@ To reproduce the combined copy and documentation checks, run `python docs/planni
 ## A1-R5-R7 independent delta audit
 
 - [FINISH-32](../../reconciliation-packets/2026-10-11-finish-32-a1-r5-r7-independent-audit.md) and [audit prompt](21-CODEX-A1-R5-R7-AUDIT.md) bind the exact pushed candidate. The prompt is prepared but not dispatched; independent review and Parent acceptance remain pending.
+
+## C1-R9 evidence-pointer reproducibility
+
+- [FINISH-33](../../reconciliation-packets/2026-10-11-finish-33-c1-r9-generator-consistency.md) amends the FINISH-30 output-only correction because the pinned R8 finalizer would otherwise regenerate the stale path. [The amended maker prompt](22-CODEX-C1-R9-R1.md) keeps the verifier, tests, and runtime source unchanged.
