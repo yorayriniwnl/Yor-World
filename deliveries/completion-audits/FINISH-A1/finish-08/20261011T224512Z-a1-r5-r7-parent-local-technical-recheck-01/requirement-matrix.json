@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "candidateCommit": "76d679dcb98064152021830b98f16eb456b3ae19",
+  "results": [
+    {"id": "BIND-01", "requirement": "Candidate, remote branch, accepted source base, root app tree, and package tree match the exact FINISH-32 binding.", "status": "PASS", "evidence": ["candidate-binding.json", "evidence/recheck-results.json"]},
+    {"id": "PKG-01", "requirement": "Every output-manifest row matches raw candidate Git bytes.", "status": "PASS", "evidence": ["evidence/recheck-results.json"]},
+    {"id": "PATCH-01", "requirement": "Exact-base source patch replays to the bound app tree and matches all packaged changed-source files.", "status": "PASS", "evidence": ["candidate-binding.json", "evidence/recheck-results.json", "evidence/a1-build.log"]},
+    {"id": "PATH-01", "requirement": "All 25 changed paths are within the frozen 26-path A1 allowlist.", "status": "PASS", "evidence": ["evidence/recheck-results.json"]},
+    {"id": "A1-R5-01", "requirement": "Frozen DTO compatibility, audit identity shape, generic review scope, valid and malformed DTO behavior.", "status": "PASS", "evidence": ["evidence/a1-unit-focused.log", "evidence/a1-integration-focused.log"]},
+    {"id": "A1-R5-02", "requirement": "Publish and rollback refresh active publication and review identity without reload.", "status": "PASS", "evidence": ["evidence/a1-chromium-fixture.log", "evidence/chromium-fixture/browser-results.json"]},
+    {"id": "A1-R5-03", "requirement": "Missing private draft returns 404 and reaches the page not-found behavior.", "status": "PASS", "evidence": ["evidence/a1-integration-full.log"]},
+    {"id": "A1-R5-04", "requirement": "Authorized stale save returns current conflict data without writes and keeps the losing editor buffer; unauthorized response remains private.", "status": "PASS", "evidence": ["evidence/a1-integration-focused.log", "evidence/a1-chromium-fixture.log"]},
+    {"id": "A1-R5-05", "requirement": "Draft image rendering permits only the exact encoded owner-preview relative URL.", "status": "PASS", "evidence": ["evidence/a1-unit-focused.log"]},
+    {"id": "A1-R5-06", "requirement": "New authoring fields are empty and unverified evidence stays unknown.", "status": "PASS", "evidence": ["evidence/a1-unit-focused.log", "evidence/a1-chromium-fixture.log"]},
+    {"id": "REGRESSION-01", "requirement": "Full unit/integration, focused regressions, lint, typecheck, production build, and targeted Chromium workflows pass.", "status": "PASS", "evidence": ["evidence/a1-unit-full.log", "evidence/a1-integration-full.log", "evidence/a1-lint.log", "evidence/a1-typecheck.log", "evidence/a1-build.log", "evidence/a1-chromium-fixture.log"]},
+    {"id": "LIMIT-01", "requirement": "External review, Parent acceptance, integration, native providers, deployment, physical devices, recovery, manual operations, and G7.", "status": "NOT RUN", "evidence": ["report.md", "candidate-binding.json"]}
+  ]
+}

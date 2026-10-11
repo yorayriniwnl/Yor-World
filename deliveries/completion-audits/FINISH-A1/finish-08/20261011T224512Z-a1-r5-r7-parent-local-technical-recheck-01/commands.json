@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "sourceReplay": [
+    {"command": "git worktree add --detach <audit-root>/.work/base-worktree f62a43c5e71c00dcb89e28275ea81d842167db80", "exitCode": 0},
+    {"command": "git -C <audit-root>/.work/base-worktree apply --check <audit-root>/.work/source.patch", "exitCode": 0},
+    {"command": "git -C <audit-root>/.work/base-worktree apply <audit-root>/.work/source.patch", "exitCode": 0},
+    {"command": "git -C <audit-root>/.work/base-worktree add app; git -C <audit-root>/.work/base-worktree write-tree", "exitCode": 0, "resultingWholeTree": "15b2287aa1a2cc73ae9c684adf724648046cee49", "appTree": "ba8f952edc34e94393c48b25779071daab9a9812"}
+  ],
+  "dependencySetup": {"command": "corepack pnpm install --frozen-lockfile --offline", "exitCode": 0, "result": "404 pinned packages reused from local cache; no downloads"},
+  "tests": [
+    {"command": "corepack pnpm test:unit", "exitCode": 0, "result": "24 files; 317 tests passed", "log": "evidence/a1-unit-full.log"},
+    {"command": "corepack pnpm test:integration", "exitCode": 0, "result": "28 files; 308 tests passed", "log": "evidence/a1-integration-full.log"},
+    {"command": "corepack pnpm exec vitest run --config vitest.config.ts tests/unit/platform/completion-authoring-blocks.test.ts", "exitCode": 0, "result": "5 tests passed", "log": "evidence/a1-unit-focused.log"},
+    {"command": "corepack pnpm exec vitest run --config vitest.integration.config.ts tests/integration/platform/completion-authoring-preview.test.ts", "exitCode": 0, "result": "22 tests passed", "log": "evidence/a1-integration-focused.log"},
+    {"command": "corepack pnpm lint", "exitCode": 0, "log": "evidence/a1-lint.log"},
+    {"command": "corepack pnpm typecheck", "exitCode": 0, "log": "evidence/a1-typecheck.log"},
+    {"command": "corepack pnpm build", "exitCode": 0, "buildId": "mfDeZk0u3Zr6fJOhIauku", "log": "evidence/a1-build.log"}
+  ],
+  "browser": {
+    "command": "corepack pnpm exec playwright test tests/e2e/platform/admin-publish.spec.ts tests/e2e/platform/completion-authoring-workflow.spec.ts --project=chromium",
+    "exitCode": 0,
+    "environment": {"CI": "1", "PORT": "3137", "YOR_E2E_FIXTURE": "1", "YOR_TEST_DATABASE_PATH": "isolated scratch under .work; synthetic local PGlite only", "A1_EVIDENCE_DIR": "evidence/a1-browser-captures"},
+    "result": "6 passed; 0 failed; 0 skipped",
+    "browser": "Chromium 153.0.8010.12",
+    "log": "evidence/a1-chromium-fixture.log",
+    "playwrightJson": "evidence/chromium-fixture/browser-results.json"
+  },
+  "diagnostics": [
+    {"command": "Same targeted Playwright files with YOR_E2E_FIXTURE and YOR_TEST_DATABASE_PATH unset", "exitCode": 1, "result": "3/6 failed at owner login; expected local fixture was absent", "log": "evidence/a1-chromium-focused.log", "disposition": "NOT A CANDIDATE FAILURE; corrected run with isolated fixture passed 6/6"},
+    {"command": "Initial pnpm test:e2e -- tests/... invocation", "exitCode": "INTERRUPTED", "result": "pnpm forwarded a literal separator and selected 110 tests; stopped after nine unrelated accessibility checks", "log": "evidence/a1-chromium.log"}
+  ],
+  "bindingCommand": {"command": "python -B evidence/recheck-a1.py", "exitCode": 0, "result": "All local integrity and rerun checks PASS", "output": "evidence/recheck-results.json"},
+  "remoteCommand": {"command": "git ls-remote origin refs/heads/codex/finish-29-a1-r5-r7-20261011", "exitCode": 0, "stdout": "76d679dcb98064152021830b98f16eb456b3ae19\trefs/heads/codex/finish-29-a1-r5-r7-20261011"},
+  "notRun": ["GPT Plus #2 independent review", "hosted providers or deployment", "physical-device or manual recovery checks", "G7"]
+}

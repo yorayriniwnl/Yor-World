@@ -1,0 +1,13 @@
+# FINISH-36 A1-R5-R7 parent-local technical recheck
+
+Status: **PASS recommendation for the six bounded A1-R5 corrections and their exact-candidate local regression evidence.** The assigned GPT Plus #2 audit was **NOT RUN**; Parent acceptance and canonical integration remain pending.
+
+The candidate is commit `76d679dcb98064152021830b98f16eb456b3ae19` on `codex/finish-29-a1-r5-r7-20261011`. Its parent is the exact accepted base `f62a43c5e71c00dcb89e28275ea81d842167db80`; the remote branch points to this commit. The candidate package subtree is `61026e89795d28aa212ee2e03c8edc05b2aea97a`. The root `app/` tree remains the accepted `42ea29ec235225046a75959eb19eb386ac2f821d`.
+
+All 79 package output rows match raw Git blobs, with 79 unique paths, 1,695,825 bytes, and manifest SHA-256 `5c42034d1ceb9cf938d7a536a436b3b53cee8094c48e3e934c419dad0fafa420`. Replaying the 236,517-byte UTF-8 patch from the exact base produces app tree `ba8f952edc34e94393c48b25779071daab9a9812`. Its 25 changed files match all 25 packaged `source/app/` files byte-for-byte and fit the frozen 26-path A1 allowlist from contract commit `d913270712e9757478a9794f5d72a12cc18a9634`; `tests/integration/platform/published-media.test.ts` remains the one unchanged allowed path.
+
+The six FINISH-27/A1-R5 matrix rows all remain PASS, their evidence and source paths resolve, and the isolated replay passes 317/317 unit tests, 308/308 integration tests, the focused 5/5 unit and 22/22 integration regressions, lint, typecheck, and a fresh production build. The fresh build ID is `mfDeZk0u3Zr6fJOhIauku` for app tree `ba8f952edc34e94393c48b25779071daab9a9812`.
+
+The first focused browser run lacked the explicit synthetic database fixture, so protected routes correctly showed the owner login and 3/6 checks failed. With `YOR_E2E_FIXTURE=1` and a disposable PGlite database under this audit root's `.work/`, the same two A1 workflows pass 6/6 in Chromium 153.0.8010.12. The passing run produced fresh preview and publish/rollback screenshots. No production credentials or provider session were used. A separate mistaken invocation briefly selected the 110-test browser suite; it was stopped after nine unrelated accessibility checks and is recorded as an interrupted attempt.
+
+These results support the local implementation and evidence for the six bounded corrections. They do not establish hosted Supabase/Auth/Storage behavior, deployed origin/CDN behavior, physical-device accessibility, recovery, manual operations, or G7. Those checks were NOT RUN. The external independent review, Parent acceptance, and integration remain pending; `app/` was not changed.

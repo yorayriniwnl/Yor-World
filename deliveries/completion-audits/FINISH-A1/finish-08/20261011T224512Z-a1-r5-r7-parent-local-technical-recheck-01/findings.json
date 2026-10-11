@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "recommendation": "PASS",
+  "scope": "FINISH-27 A1-R5-01 through A1-R5-06 and exact-candidate local evidence only",
+  "findings": [
+    {"id": "A1-P01", "status": "PASS", "finding": "The candidate commit, parent, full tree, remote ref, package subtree, accepted base app tree, and unchanged root app tree match FINISH-32."},
+    {"id": "A1-P02", "status": "PASS", "finding": "All 79 output-manifest entries match raw Git bytes; rows are unique and total 1695825 bytes."},
+    {"id": "A1-P03", "status": "PASS", "finding": "Exact-base patch replay produces the reported ba8f952e app tree; all 25 packaged changed-source files match the replay byte-for-byte."},
+    {"id": "A1-P04", "status": "PASS", "finding": "All 25 changed paths fit the frozen 26-path A1 allowlist; the published-media integration test remains unchanged."},
+    {"id": "A1-R5-01", "status": "PASS", "finding": "DTO compatibility is covered by the exact replay's focused unit/integration tests; 5 focused unit and 22 focused integration tests pass."},
+    {"id": "A1-R5-02", "status": "PASS", "finding": "Publish/rollback refresh and visible publication identity pass the exact replay's Chromium workflow."},
+    {"id": "A1-R5-03", "status": "PASS", "finding": "Absent private draft behavior passes the exact replay's full integration suite."},
+    {"id": "A1-R5-04", "status": "PASS", "finding": "Authorized stale-save conflict behavior and unsaved-buffer retention pass the exact replay's integration and Chromium workflow."},
+    {"id": "A1-R5-05", "status": "PASS", "finding": "Draft image URL allowlisting passes the exact replay's focused unit suite."},
+    {"id": "A1-R5-06", "status": "PASS", "finding": "Blank authoring defaults and truthful unknown evidence pass the exact replay's focused unit and Chromium workflow."},
+    {"id": "A1-P05", "status": "PASS", "finding": "Full unit, integration, lint, typecheck, production build, and 6-test Chromium run pass in the isolated exact-base replay."},
+    {"id": "A1-L01", "status": "NOT RUN", "finding": "The GPT Plus #2 independent audit was not run; Parent acceptance and canonical integration remain pending."},
+    {"id": "A1-L02", "status": "NOT RUN", "finding": "Native providers, live deployment/CDN, physical-device accessibility, recovery/manual operation, and G7 were not tested."}
+  ]
+}
