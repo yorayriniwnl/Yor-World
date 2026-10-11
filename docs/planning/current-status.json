@@ -27,7 +27,7 @@
     "rulingDecisionPath": "docs/planning/reviews/2026-10-08-rc6-r1/decision.json"
   },
   "completionProgram": {
-    "status": "R2 DESIGN ACCEPTED / A1-R4 AND B1-R3 ACTIVE / C1-R5 REWORK / C1-R6 ISSUED / NO IMPLEMENTATION ACCEPTED",
+    "status": "R2 DESIGN ACCEPTED / A1-R4 AUDIT PENDING / B1-R3 ACTIVE / C1-R5 REWORK / C1-R6 ISSUED / NO IMPLEMENTATION ACCEPTED",
     "coordinationCommit": "ab369d413c7501224e3d79aa78e56172f97839ff",
     "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
     "contractsGate": {
@@ -132,9 +132,13 @@
       },
       "FINISH-A1-R4": {
         "maker": "Local Codex platform-maker worker",
-        "status": "ACTIVE / UNEXPLAINED PACKAGING WRITER PROVENANCE UNDER REVIEW",
+        "status": "COMMITTED CANDIDATE / STABLE FOR INDEPENDENT AUDIT / ORIGINAL WRITER PROVENANCE OPEN",
         "deliveryRoot": "deliveries/FINISH-A1/r4/",
         "promptPath": "docs/planning/production-prompts/repairs-2026-10-11/07-GEMINI1-A1-R4.md",
+        "candidateCommit": "2e183eb3a1470427950265fc6bf4dadb8ad6411e",
+        "outputManifestSha256": "c97e0daa58ad2be10dea1477d593cc8d2bb7f42d82403876aa6e1ed8b2ef7604",
+        "intakeRuling": "docs/planning/reviews/2026-10-11-finish-07-a1-r4-intake.md",
+        "auditPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-10-a1-r4-audit.md",
         "parentImplementationAcceptance": "NOT ACCEPTED",
         "canonicalIntegration": false
       },
@@ -175,6 +179,14 @@
       "candidateCommit": "5e85e6a8a248581fe3893fd80c7da3d05079f305",
       "parentRuling": "C1-R5 NOT ACCEPTED / C1-R6 AUTHORIZED",
       "canonicalSourceChanged": false
+    },
+    "latestAuditAllocation": {
+      "packetId": "FINISH-10",
+      "path": "docs/planning/reconciliation-packets/2026-10-11-finish-10-a1-r4-audit.md",
+      "candidateCommit": "2e183eb3a1470427950265fc6bf4dadb8ad6411e",
+      "auditRoot": "deliveries/completion-audits/FINISH-A1/finish-05/20261011T011000Z-a1-r4-independent-review/",
+      "reviewer": "Local Codex independent reviewer; external GPT Plus #2 NOT RUN",
+      "acceptance": "PENDING / CANDIDATE NOT ACCEPTED"
     },
     "successorContractsGate": {
       "packetId": "FINISH-00-R2",

@@ -13,6 +13,7 @@ Send each Gemini account only its own maker prompt. Use the GPT-6.1 Sol Ultra ch
 | [07 — A1-R4 platform correction](07-GEMINI1-A1-R4.md) | Local Codex platform-maker worker | Fresh A1 revision after the occupied, incomplete R3 root; full A3-01 through A3-05 correction and evidence |
 | [08 — C1-R5 runtime correction](08-CODEX-C1-R5.md) | Local Codex runtime-maker worker | Fresh C1 revision after the occupied, incomplete R4 root; original six findings plus source-level follow-up regressions |
 | [09 — C1-R6 runtime correction](09-CODEX-C1-R6.md) | Local Codex runtime-maker worker | Correct current-attempt retry aggregation and close source-bound browser evidence for the R5 runtime changes |
+| [10 — A1-R4 independent audit](10-CODEX-A1-R4-AUDIT.md) | Local Codex independent reviewer | Full FINISH-07/A1 scope audit of the frozen R4 candidate and its recorded integrity exception |
 
 The partial runtime R3 folder appeared during drafting without a complete report/patch/hash handoff at the recorded check. Preserve it and inspect current ownership/completeness; do not overwrite it or treat it as accepted. The other two R3 roots were absent at that check. Recheck current state when using these prompts.
 
@@ -20,12 +21,14 @@ After that recorded check, the A1-R3 root was confirmed occupied by an incomplet
 
 The C1-R4 root is also occupied and incomplete. FINISH-08 allocated C1-R5 without modifying R4. Its local Codex review recommends REWORK for one reproduced current-attempt progress defect and leaves FINISH-06-6 browser evidence open. FINISH-09 allocates C1-R6 against the exact R5 candidate. The local review is not the designated external GPT Plus #2 audit; R5 remains unaccepted. The R3 art correction remains in its original FINISH-04 root.
 
+FINISH-07 returned a complete A1-R4 candidate. Parent froze the exact bytes for independent audit after read-only manifest, replacement-file, and patch checks. The original creator of the unexpected package artifacts remains unknown and is an explicit audit question; this intake is not implementation acceptance. FINISH-10 assigns a fresh local Codex review, not external GPT Plus #2.
+
 | Use at the appropriate next stage | Recipient | Purpose |
 | --- | --- | --- |
 | [05 — Completion and release](05-PARENT-COMPLETION-AND-RELEASE.md) | Parent coordination chat | Bind A2, C2, C3 and I1 from accepted inputs; route backend/CDN/deployment/manual/recovery work; reconcile G7 and final full-product acceptance |
 | [06 — Six separate extensions](06-EXTENSIONS.md) | Separate Gemini #2 asset / Gemini #3 runtime phases | Mug/drinking, headphones, drawers, weather/daylight, moods/greetings and five to eight total Easter eggs |
 
-ALL-PROMPTS.md contains the 11 account-facing prompts from 01–06. Revisioned local Codex handoffs 07–09 are listed separately and intentionally are not merged into that account-facing convenience copy.
+ALL-PROMPTS.md contains the 11 account-facing prompts from 01–06. Revisioned local Codex handoffs 07–10 are listed separately and intentionally are not merged into that account-facing convenience copy.
 
 Each immediate prompt includes its local inputs, immutable base and accepted contract identity, exact delivery ownership, reproduced findings, observable corrections, meaningful verification and actual handoff files. Makers return implementation/evidence; the auditor writes findings; Parent accepts and allocates the next dependency. Later packets bind actual accepted successor hashes and paths rather than guessed future revisions.
 
