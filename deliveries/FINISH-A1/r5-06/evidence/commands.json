@@ -1,0 +1,75 @@
+{
+  "format": "YOR-WORLD-FINISH-27-EXECUTION-RECEIPTS-v1",
+  "workingDirectory": "deliveries/FINISH-A1/r5-06/.work/assembly/app",
+  "commands": [
+    {
+      "command": "pnpm exec vitest run --config vitest.config.ts tests/unit/platform/completion-authoring-blocks.test.ts",
+      "exitCode": 0,
+      "result": "PASS; 1 file, 8 tests",
+      "evidence": "evidence/focused-unit.log"
+    },
+    {
+      "command": "pnpm exec vitest run --config vitest.integration.config.ts tests/integration/platform/completion-authoring-preview.test.ts",
+      "exitCode": 0,
+      "result": "PASS; 1 file, 23 tests",
+      "evidence": "evidence/focused-integration.log"
+    },
+    {
+      "command": "pnpm test:unit",
+      "exitCode": 1,
+      "result": "FAIL due to a single 5-second timeout in existing tests/unit/boundaries.test.ts during parallel suite execution; 23 files/319 tests passed and 1 test timed out",
+      "evidence": "evidence/unit.log"
+    },
+    {
+      "command": "pnpm exec vitest run --config vitest.config.ts --maxWorkers=1 --minWorkers=1",
+      "exitCode": 0,
+      "result": "PASS; 24 files, 320 tests",
+      "evidence": "evidence/unit-serial.log"
+    },
+    {
+      "command": "pnpm test:integration",
+      "exitCode": 0,
+      "result": "PASS; 28 files, 309 tests",
+      "evidence": "evidence/integration.log"
+    },
+    {
+      "command": "pnpm lint",
+      "exitCode": 0,
+      "result": "PASS; ESLint, zero warnings",
+      "evidence": "evidence/lint.log"
+    },
+    {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "result": "PASS; TypeScript noEmit",
+      "evidence": "evidence/typecheck.log"
+    },
+    {
+      "command": "pnpm build",
+      "exitCode": 0,
+      "result": "PASS; Next.js production build, build ID A_dMOM0unJoPSDOduTfjK",
+      "evidence": "evidence/build-final.log"
+    },
+    {
+      "command": "CI=1 YOR_E2E_FIXTURE=1 pnpm exec playwright test tests/e2e/platform/completion-authoring-workflow.spec.ts --project=chromium",
+      "exitCode": 0,
+      "result": "PASS; 1 Chromium workflow; local synthetic fixture and PGlite test runtime",
+      "evidence": "evidence/chromium-final.log",
+      "browserResults": "evidence/browser-results.json",
+      "screenshots": [
+        "evidence/chromium/candidatex-private-preview.png",
+        "evidence/chromium/publish-rollback-review.png"
+      ]
+    },
+    {
+      "command": "exact-base patch check and replay (temporary Git index/worktree; see evidence/patch-replay-final.log)",
+      "exitCode": 0,
+      "result": "PASS; patch check and application both exit 0, all 25 replacements byte-match, no unlisted tracked app bytes differ",
+      "evidence": "evidence/patch-replay-final.log"
+    }
+  ],
+  "notes": [
+    "The failed parallel unit run is retained and disclosed; the full sequential rerun passed all tests.",
+    "Chromium was source-bound to the local production build; it does not constitute provider, deployment, or external-review evidence."
+  ]
+}
