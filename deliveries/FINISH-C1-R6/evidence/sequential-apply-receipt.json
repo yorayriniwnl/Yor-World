@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "delivery": "FINISH-C1-R6",
+  "base": {
+    "commit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+    "appTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+    "verified": true
+  },
+  "sequence": [
+    {
+      "delivery": "FINISH-C1-R3",
+      "patchSha256": "e1be558f734378fe69659dcf8271c4e5e57d87fbfbdca1582823be103082dc5d",
+      "patchBytes": 157355,
+      "applyCheckExitCode": 0,
+      "applyExitCode": 0,
+      "declaredOutputsVerified": 53,
+      "applicationOutputsByteCompared": 29
+    },
+    {
+      "delivery": "FINISH-C1-R5",
+      "candidateCommit": "5e85e6a8a248581fe3893fd80c7da3d05079f305",
+      "patchSha256": "d6ad3359fa628067ab228eccc52f25d0604ddddb42813d7023e6a809cf60d83d",
+      "patchBytes": 34904,
+      "applyCheckExitCode": 0,
+      "applyExitCode": 0,
+      "replacementOutputsByteCompared": 6,
+      "retainedR3OutputsByteCompared": 23
+    },
+    {
+      "delivery": "FINISH-C1-R6",
+      "patchSha256": "17ae6aaab7910546d3527feec26926d8d1fd604e3bc60e2ae0eb9f549f7fc2a6",
+      "patchBytes": 6475,
+      "reversePatchExitCode": 0,
+      "applyCheckWhitespaceErrorExitCode": 0,
+      "applyExitCode": 0,
+      "replacementOutputsByteCompared": 2,
+      "retainedR5OutputsByteCompared": 4,
+      "retainedR3OutputsByteCompared": 23,
+      "allowedPaths": [
+        "app/src/features/world/AssetLoader.ts",
+        "app/tests/unit/world/completion-essential-loader.test.ts"
+      ]
+    }
+  ],
+  "sourceEquality": [
+    {
+      "path": "app/src/features/world/AssetLoader.ts",
+      "sourcePath": "source/app/src/features/world/AssetLoader.ts",
+      "r5Previous": {
+        "sha256": "d92da026e694cfd64692daad4f397cdcec262d42977b4a7b78b0ccd1d793bcee",
+        "bytes": 15918
+      },
+      "r6Output": {
+        "sha256": "68aab18db327e254736b4bbab896f8003ad504c5c2edb4ba90927be47c784045",
+        "bytes": 16358
+      },
+      "candidateApp": {
+        "sha256": "68aab18db327e254736b4bbab896f8003ad504c5c2edb4ba90927be47c784045",
+        "bytes": 16358
+      },
+      "byteEqual": true
+    },
+    {
+      "path": "app/tests/unit/world/completion-essential-loader.test.ts",
+      "sourcePath": "source/app/tests/unit/world/completion-essential-loader.test.ts",
+      "r5Previous": {
+        "sha256": "4f8237740d017201ca013abb7afe3a7ba709f6ad55f3e02a3ee47a04ac150488",
+        "bytes": 14614
+      },
+      "r6Output": {
+        "sha256": "ffcb31fcac68314c9b5dee717abeaa36652e1d3749f7fe799ed4e12f593e25fb",
+        "bytes": 16525
+      },
+      "candidateApp": {
+        "sha256": "ffcb31fcac68314c9b5dee717abeaa36652e1d3749f7fe799ed4e12f593e25fb",
+        "bytes": 16525
+      },
+      "byteEqual": true
+    }
+  ],
+  "patchEncoding": {
+    "utf8Valid": true,
+    "bom": false,
+    "lineEnding": "LF",
+    "pathCount": 2
+  },
+  "gitDiffCheckExitCode": 0,
+  "rawCommandTranscript": "evidence/logs/sequential-apply.log",
+  "note": "An early R3 apply-check used a patch path relative to the isolated worktree and failed to resolve it. The absolute-path check and required sequence then passed; the raw transcript keeps both attempts."
+}

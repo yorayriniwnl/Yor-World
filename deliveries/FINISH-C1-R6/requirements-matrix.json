@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "delivery": "FINISH-C1-R6",
+  "status": "IMPLEMENTATION_RETURN_PENDING_INDEPENDENT_REVIEW_AND_PARENT_ACCEPTANCE",
+  "requirements": [
+    {
+      "id": "F-01-current-attempt-retry-progress",
+      "status": "PASS",
+      "detail": "Representation invalidity is per required asset current attempt and resets on retry. Three current four-byte identity attempts restore 12/12 after a failed compressed room parse.",
+      "evidence": [
+        "source/app/src/features/world/AssetLoader.ts",
+        "source/app/tests/unit/world/completion-essential-loader.test.ts",
+        "evidence/logs/red-regression.log",
+        "evidence/logs/green-regression.log"
+      ]
+    },
+    {
+      "id": "F-01-invalid-current-representation",
+      "status": "PASS",
+      "detail": "Existing compressed, unknown, absent encoding, contradictory, chunked, and EOF mismatch coverage remains indeterminate.",
+      "evidence": [
+        "source/app/tests/unit/world/completion-essential-loader.test.ts",
+        "evidence/logs/green-focused-unit.log"
+      ]
+    },
+    {
+      "id": "FINISH-06-6-required-load-browser",
+      "status": "PASS",
+      "detail": "Actual app loader retries after a gzip malformed room response. Three current identity GLBs produce determinate 1,758,012/1,758,012 bytes; the failed four-byte response is excluded.",
+      "evidence": [
+        "evidence/browser-results/required-current-attempt-progress.json",
+        "evidence/screenshots/compressed-attempt-retry-ui.png",
+        "evidence/browser-harness/finish-09-r6-runtime.spec.ts",
+        "evidence/logs/browser-final.log"
+      ]
+    },
+    {
+      "id": "FINISH-06-6-optional-map-rollback",
+      "status": "PASS",
+      "detail": "Actual candidate material module and real Three.js objects restore visible state, unrelated shared user, registries and original maps; derivatives dispose exactly once.",
+      "evidence": [
+        "evidence/browser-results/optional-map-rollback-observation.json",
+        "evidence/browser-harness/finish-09-r6-runtime.spec.ts",
+        "evidence/logs/browser-final.log"
+      ]
+    },
+    {
+      "id": "FINISH-06-6-world-runtime-timers",
+      "status": "PASS",
+      "detail": "Actual WorldRuntime uses 4,000 ms browser timers. Replacement rejects captured stale callback; SPA unmount clears and rejects disposed callback.",
+      "evidence": [
+        "evidence/browser-results/world-runtime-browser-timer-evidence.json",
+        "evidence/screenshots/greeting-transition.png",
+        "evidence/browser-harness/finish-09-r6-runtime.spec.ts",
+        "evidence/logs/browser-final.log"
+      ]
+    },
+    {
+      "id": "fresh-unit-integration-lint-typecheck-build",
+      "status": "PASS",
+      "detail": "56 focused, 356 unit, 290 integration tests pass, and lint, typecheck and production build pass.",
+      "evidence": [
+        "evidence/logs/green-focused-unit.log",
+        "evidence/logs/unit.log",
+        "evidence/logs/integration.log",
+        "evidence/logs/lint.log",
+        "evidence/logs/typecheck.log",
+        "evidence/logs/build.log"
+      ]
+    },
+    {
+      "id": "R3-R5-R6-sequence-and-allowlist",
+      "status": "PASS",
+      "detail": "R3 53 outputs/29 app outputs, R5 6 replacements, R6 2 replacements, 4 retained R5 and 23 retained R3 outputs compare byte-for-byte.",
+      "evidence": [
+        "evidence/sequential-apply-receipt.json",
+        "evidence/logs/sequential-apply.log",
+        "source.patch",
+        "changed-paths.json"
+      ]
+    },
+    {
+      "id": "R5-historical-red-invocation",
+      "status": "NOT RUN",
+      "detail": "R5 command line is historically missing; packet says do not rewrite R5. R6 red invocation is recorded exactly.",
+      "evidence": [
+        "evidence/validation-results.json",
+        "deliveries/completion-audits/FINISH-C1/finish-08/20261011T003551Z-c1-r5-local-review/findings.json"
+      ]
+    },
+    {
+      "id": "independent-review-parent-acceptance",
+      "status": "PENDING",
+      "detail": "This is a maker return, not external GPT Plus #2 review or Parent acceptance.",
+      "evidence": [
+        "report.md",
+        "input-hashes.json"
+      ]
+    },
+    {
+      "id": "integration-deployment-provider-device-accessibility",
+      "status": "NOT RUN",
+      "detail": "Not authorized by FINISH-09.",
+      "evidence": [
+        "report.md"
+      ]
+    }
+  ]
+}

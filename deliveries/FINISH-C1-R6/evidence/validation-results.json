@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "delivery": "FINISH-C1-R6",
+  "sourceBuildIdentity": "evidence/source-build-identity.json",
+  "commands": [
+    {
+      "id": "offline-install",
+      "command": "pnpm install --offline --frozen-lockfile",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/logs/install.log"
+    },
+    {
+      "id": "red-regression",
+      "command": "pnpm exec vitest run --config vitest.config.ts tests/unit/world/completion-essential-loader.test.ts -t 'restores the required-session aggregate' --reporter=verbose",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "status": "PASS_EXPECTED_RED",
+      "tests": "Regression observed indeterminate bytes before the fix.",
+      "log": "evidence/logs/red-regression.log"
+    },
+    {
+      "id": "green-regression",
+      "command": "pnpm exec vitest run --config vitest.config.ts tests/unit/world/completion-essential-loader.test.ts -t 'restores the required-session aggregate' --reporter=verbose",
+      "exitCode": 0,
+      "status": "PASS",
+      "tests": 1,
+      "log": "evidence/logs/green-regression.log"
+    },
+    {
+      "id": "focused-unit",
+      "command": "pnpm exec vitest run --config vitest.config.ts tests/unit/world/completion-essential-loader.test.ts tests/unit/runtime-material-quality.test.ts tests/unit/project-transition.test.ts",
+      "exitCode": 0,
+      "status": "PASS",
+      "testFiles": 3,
+      "tests": 56,
+      "log": "evidence/logs/green-focused-unit.log"
+    },
+    {
+      "id": "unit",
+      "command": "pnpm run test:unit",
+      "exitCode": 0,
+      "status": "PASS",
+      "testFiles": 26,
+      "tests": 356,
+      "log": "evidence/logs/unit.log"
+    },
+    {
+      "id": "integration",
+      "command": "pnpm exec vitest run --config vitest.integration.config.ts --maxWorkers=1 --no-file-parallelism",
+      "exitCode": 0,
+      "status": "PASS",
+      "testFiles": 28,
+      "tests": 290,
+      "log": "evidence/logs/integration.log"
+    },
+    {
+      "id": "lint",
+      "command": "pnpm run lint",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/logs/lint.log"
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm run typecheck",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "evidence/logs/typecheck.log"
+    },
+    {
+      "id": "production-build",
+      "command": "pnpm run build",
+      "exitCode": 0,
+      "status": "PASS",
+      "buildId": "8aQTXILVycmubQvEgI4fB",
+      "log": "evidence/logs/build.log"
+    },
+    {
+      "id": "chromium",
+      "command": "CI=1 B5_EVIDENCE_DIR=../../../evidence/browser-results pnpm exec playwright test tests/e2e/world/finish-09-r6-runtime.spec.ts",
+      "exitCode": 0,
+      "status": "PASS",
+      "browser": {
+        "name": "chromium",
+        "version": "153.0.8010.12"
+      },
+      "tests": 3,
+      "resultJson": "evidence/browser-results/browser-results.json",
+      "log": "evidence/logs/browser-final.log"
+    }
+  ],
+  "browserCases": [
+    {
+      "id": "required-retry-ui",
+      "status": "PASS",
+      "evidence": [
+        "evidence/browser-results/required-current-attempt-progress.json",
+        "evidence/screenshots/compressed-attempt-retry-ui.png"
+      ]
+    },
+    {
+      "id": "optional-map-rollback",
+      "status": "PASS",
+      "evidence": [
+        "evidence/browser-results/optional-map-rollback-observation.json"
+      ]
+    },
+    {
+      "id": "world-runtime-timers",
+      "status": "PASS",
+      "evidence": [
+        "evidence/browser-results/world-runtime-browser-timer-evidence.json",
+        "evidence/screenshots/greeting-transition.png"
+      ]
+    }
+  ],
+  "historicalR5Limitation": {
+    "status": "NOT RUN",
+    "detail": "R5 red-run invocation lines were not preserved. R5 was not rewritten; this R6 package records its own exact red/green commands.",
+    "evidence": "deliveries/completion-audits/FINISH-C1/finish-08/20261011T003551Z-c1-r5-local-review/findings.json"
+  },
+  "acceptance": {
+    "independentExternalReview": "PENDING",
+    "parentAcceptance": "PENDING",
+    "canonicalIntegration": "NOT AUTHORIZED",
+    "deployment": "NOT AUTHORIZED"
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "sourceBinding": {
+    "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+    "baseAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+    "acceptedDesignOutputManifestSha256": "8038db147824b0a31de1028c330383352177020b2247dd627d1674d6dc14c6af",
+    "r3Patch": {
+      "path": "deliveries/FINISH-C1-R3/source.patch",
+      "sha256": "e1be558f734378fe69659dcf8271c4e5e57d87fbfbdca1582823be103082dc5d",
+      "bytes": 157355
+    },
+    "r5CandidateCommit": "5e85e6a8a248581fe3893fd80c7da3d05079f305",
+    "r5Patch": {
+      "path": "deliveries/FINISH-C1-R5/source.patch",
+      "sha256": "d6ad3359fa628067ab228eccc52f25d0604ddddb42813d7023e6a809cf60d83d",
+      "bytes": 34904
+    },
+    "r6Patch": {
+      "path": "deliveries/FINISH-C1-R6/source.patch",
+      "sha256": "17ae6aaab7910546d3527feec26926d8d1fd604e3bc60e2ae0eb9f549f7fc2a6",
+      "bytes": 6475
+    },
+    "r6ChangedPathCount": 2,
+    "r6AllowedPaths": [
+      "app/src/features/world/AssetLoader.ts",
+      "app/tests/unit/world/completion-essential-loader.test.ts"
+    ],
+    "auditCommit": "e79503a365a75f793aeebb684986ea6dd3d29b58"
+  },
+  "candidateApplicationSources": [
+    {
+      "path": "candidate-app/app/src/features/world/AssetLoader.ts",
+      "sha256": "68aab18db327e254736b4bbab896f8003ad504c5c2edb4ba90927be47c784045",
+      "bytes": 16358
+    },
+    {
+      "path": "candidate-app/app/src/features/world/RuntimeMaterialQuality.ts",
+      "sha256": "ca0a55f17b8e7d6c7555c8ef06375f4d4f1c1ff0d04b77e8cfa79411cc3cdb4d",
+      "bytes": 9998
+    },
+    {
+      "path": "candidate-app/app/src/features/world/LowQualityBatch.ts",
+      "sha256": "89f191c28f0e612bafe229198a8f25703de3a7e63810f40ac1fa28d690416713",
+      "bytes": 9395
+    },
+    {
+      "path": "candidate-app/app/src/features/world/WorldRuntime.ts",
+      "sha256": "089b84800f46f493335082f078d10444470c1e3ed0f02575ea63c1fcec84d515",
+      "bytes": 32542
+    },
+    {
+      "path": "candidate-app/app/tests/unit/world/completion-essential-loader.test.ts",
+      "sha256": "ffcb31fcac68314c9b5dee717abeaa36652e1d3749f7fe799ed4e12f593e25fb",
+      "bytes": 16525
+    }
+  ],
+  "browserHarness": {
+    "path": "deliveries/FINISH-C1-R6/evidence/browser-harness/finish-09-r6-runtime.spec.ts",
+    "sha256": "5144cd349d7115edb4d307504abe17115038ed72bc7ccfc81d6d3b025ecb483a",
+    "bytes": 21962
+  },
+  "dependencyLock": {
+    "path": "candidate-app/app/pnpm-lock.yaml",
+    "sha256": "8034f04afa8cbdb28fa028ed574117177dfa8a4903c95775ea41405bcabea791",
+    "bytes": 153898
+  },
+  "requiredModelAssets": [
+    {
+      "path": "candidate-app/app/public/models/production-room-full.glb",
+      "sha256": "3a02647d24e474c8a2579b0d277cf02a7841212e961c1554f67b6e032e40a307",
+      "bytes": 861364
+    },
+    {
+      "path": "candidate-app/app/public/models/resident-production.glb",
+      "sha256": "b15000feb4738d14aa1d41a43f01ba377f7011dbe1c95b3478c1200d12f4411d",
+      "bytes": 575900
+    },
+    {
+      "path": "candidate-app/app/public/models/fixture-production.glb",
+      "sha256": "8e413b1aa407841b5fd268a9c00bb66718688957c6507551f3b79104132d81d8",
+      "bytes": 320748
+    }
+  ],
+  "productionBuild": {
+    "command": "pnpm run build",
+    "exitCode": 0,
+    "buildId": "8aQTXILVycmubQvEgI4fB",
+    "buildIdSha256": "623e9a786617c58da3259d780cd194f1ecccfe9b3aecbf0c20ecf92927396a71",
+    "buildOutputHashesManifest": {
+      "path": "deliveries/FINISH-C1-R6/evidence/build-output-hashes.json",
+      "sha256": "9795a42f6aaeac357049a48cb09f88cf37e06f425ce4d91b948fe76f3ae791eb",
+      "bytes": 164481
+    },
+    "buildOutputFileCount": 917,
+    "buildOutputBytes": 128179830
+  },
+  "browser": {
+    "name": "chromium",
+    "version": "153.0.8010.12",
+    "testResultPath": "evidence/browser-results/browser-results.json",
+    "testCount": 3,
+    "passed": 3
+  },
+  "toolVersions": {
+    "Node": "v24.19.0",
+    "Pnpm": "9.15.9",
+    "Vitest": "vitest/5.0.2 win32-x64 node-v24.19.0",
+    "ESLint": "v9.39.5",
+    "TypeScript": "Version 6.0.3",
+    "Playwright": "Version 1.63.0",
+    "Next": "Next.js v16.3.8",
+    "Chromium": "153.0.8010.12"
+  },
+  "identityNote": "Chromium used the production server built from the above source binding."
+}

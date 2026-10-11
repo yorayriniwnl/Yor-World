@@ -1,0 +1,138 @@
+COMMAND=CI=1 B5_EVIDENCE_DIR=../../../evidence/browser-results pnpm exec playwright test tests/e2e/world/finish-09-r6-runtime.spec.ts
+node.exe : [WebServer] (node:8280) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+At C:\Users\yoray\AppData\Roaming\npm\pnpm.ps1:24 char:5
+
++     & "node$exe"  "$basedir/node_modules/pnpm/bin/pnpm.cjs" $args
+
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    + CategoryInfo          : NotSpecified: ([WebServer] (no... env being set.:String) [], RemoteException
+
+    + FullyQualifiedErrorId : NativeCommandError
+
+ 
+
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+
+Running 3 tests using 1 worker
+
+
+
+(node:35800) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+  x  1 [chromium] :  tests\e2e\world\finish-09-r6-runtime.spec.ts:126:3 :  FINISH-09 R6 source-bound Chromium runtime evidence :  real required-load UI recovers after a compressed room parse failure and reports only current identity attempts (10.1s)
+
+(node:28300) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+  x  2 [chromium] :  tests\e2e\world\finish-09-r6-runtime.spec.ts:229:3 :  FINISH-09 R6 source-bound Chromium runtime evidence :  actual RuntimeMaterialQuality and real Three.js objects roll back a second-target failure atomically (1.1s)
+
+(node:46960) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+  ok 3 [chromium] :  tests\e2e\world\finish-09-r6-runtime.spec.ts:361:3 :  FINISH-09 R6 source-bound Chromium runtime evidence :  WorldRuntime greeting replacement, stale callbacks, and disposal use browser timers (14.7s)
+
+
+
+
+
+  1) [chromium] :  tests\e2e\world\finish-09-r6-runtime.spec.ts:126:3 :  FINISH-09 R6 source-bound Chromium runtime evidence :  real required-load UI recovers after a compressed room parse failure and reports only current identity attempts 
+
+
+
+    Error: expect(received).toBeDefined()
+
+
+
+    Received: undefined
+
+
+
+      201 |       }
+
+      202 |       expect(observed.progress.some((entry) => /Retrying production-room-full\.glb/i.test(entry.stage))).toBe(true);
+
+    > 203 |       expect(finalProgress).toBeDefined();
+
+          |                             ^
+
+      204 |       expect(finalProgress?.valueText).toBe("100% of required asset bytes");
+
+      205 |       expect(observed.progress.some((entry) => /All required assets decoded/i.test(entry.stage))).toBe(true);
+
+      206 |       await testInfo.attach("required-current-attempt-progress.json", {
+
+        at C:\Users\yoray\Projects\Yor World\deliveries\FINISH-C1-R6\.work\assembly\app\tests\e2e\world\finish-09-r6-runtime.spec.ts:203:29
+
+
+
+    attachment #2: screenshot (image/png) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    test-results\world-finish-09-r6-runtime-968a6-y-current-identity-attempts-chromium\test-failed-1.png
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+    Error Context: test-results\world-finish-09-r6-runtime-968a6-y-current-identity-attempts-chromium\error-context.md
+
+
+
+  2) [chromium] :  tests\e2e\world\finish-09-r6-runtime.spec.ts:229:3 :  FINISH-09 R6 source-bound Chromium runtime evidence :  actual RuntimeMaterialQuality and real Three.js objects roll back a second-target failure atomically 
+
+
+
+    Error: page.evaluate: Error: R6 controlled second-target assignment failure
+
+        at Mesh.set [as material] (eval at evaluate (:311:30), <anonymous>:68:17)
+
+        at RuntimeMaterialQuality.installColorMap (http://127.0.0.1:3133/r6-modules/RuntimeMaterialQuality.js:142:27)
+
+        at Module.installOptionalTextureOnScene (http://127.0.0.1:3133/r6-modules/RuntimeMaterialQuality.js:234:31)
+
+        at eval (eval at evaluate (:311:30), <anonymous>:74:45)
+
+        at async <anonymous>:337:30
+
+        at Mesh.set (eval at evaluate (:311:30), <anonymous>:68:17)
+
+        at RuntimeMaterialQuality.installColorMap (http://127.0.0.1:3133/r6-modules/RuntimeMaterialQuality.js:142:27)
+
+        at Module.installOptionalTextureOnScene (http://127.0.0.1:3133/r6-modules/RuntimeMaterialQuality.js:234:31)
+
+        at eval (eval at evaluate (:311:30), <anonymous>:74:45)
+
+        at async <anonymous>:337:30
+
+        at C:\Users\yoray\Projects\Yor World\deliveries\FINISH-C1-R6\.work\assembly\app\tests\e2e\world\finish-09-r6-runtime.spec.ts:232:31
+
+
+
+    attachment #1: screenshot (image/png) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    test-results\world-finish-09-r6-runtime-f93e4-d-target-failure-atomically-chromium\test-failed-1.png
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+    Error Context: test-results\world-finish-09-r6-runtime-f93e4-d-target-failure-atomically-chromium\error-context.md
+
+
+
+  2 failed
+
+    [chromium] :  tests\e2e\world\finish-09-r6-runtime.spec.ts:126:3 :  FINISH-09 R6 source-bound Chromium runtime evidence :  real required-load UI recovers after a compressed room parse failure and reports only current identity attempts 
+
+    [chromium] :  tests\e2e\world\finish-09-r6-runtime.spec.ts:229:3 :  FINISH-09 R6 source-bound Chromium runtime evidence :  actual RuntimeMaterialQuality and real Three.js objects roll back a second-target failure atomically 
+
+  1 passed (35.9s)
+
+EXIT_CODE=1

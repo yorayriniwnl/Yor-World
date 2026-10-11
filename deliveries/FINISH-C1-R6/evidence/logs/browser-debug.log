@@ -1,0 +1,90 @@
+COMMAND=CI=1 B5_EVIDENCE_DIR=../../../evidence/browser-results pnpm exec playwright test tests/e2e/world/finish-09-r6-runtime.spec.ts --grep "real required-load UI|actual RuntimeMaterialQuality"
+node.exe : [WebServer] (node:38832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+At C:\Users\yoray\AppData\Roaming\npm\pnpm.ps1:24 char:5
+
++     & "node$exe"  "$basedir/node_modules/pnpm/bin/pnpm.cjs" $args
+
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    + CategoryInfo          : NotSpecified: ([WebServer] (no... env being set.:String) [], RemoteException
+
+    + FullyQualifiedErrorId : NativeCommandError
+
+ 
+
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+
+Running 2 tests using 1 worker
+
+
+
+(node:28988) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+R6_REQUIRED_PROGRESS={"stages":["Preparing asset session...","Preparing asset session...","Preparing asset session...","Preparing asset session...","Retrying production-room-full.glb (1/2)...","Loading production environment (2/3)...","Loading production environment (2/3)..."],"aria":[null,null,null,null,null,null,null],"fetches":[{"url":"/models/production-room-full.glb","encoding":"gzip","contentLength":"24"},{"url":"/models/production-room-full.glb","encoding":"identity","contentLength":"861364"},{"url":"/models/resident-production.glb","encoding":"identity","contentLength":"575900"},{"url":"/models/fixture-production.glb","encoding":"identity","contentLength":"320748"}]}
+
+  x  1 [chromium] :  tests\e2e\world\finish-09-r6-runtime.spec.ts:126:3 :  FINISH-09 R6 source-bound Chromium runtime evidence :  real required-load UI recovers after a compressed room parse failure and reports only current identity attempts (7.7s)
+
+(node:48236) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+  ok 2 [chromium] :  tests\e2e\world\finish-09-r6-runtime.spec.ts:238:3 :  FINISH-09 R6 source-bound Chromium runtime evidence :  actual RuntimeMaterialQuality and real Three.js objects roll back a second-target failure atomically (772ms)
+
+
+
+
+
+  1) [chromium] :  tests\e2e\world\finish-09-r6-runtime.spec.ts:126:3 :  FINISH-09 R6 source-bound Chromium runtime evidence :  real required-load UI recovers after a compressed room parse failure and reports only current identity attempts 
+
+
+
+    Error: expect(received).toBeDefined()
+
+
+
+    Received: undefined
+
+
+
+      210 |       }
+
+      211 |       expect(observed.progress.some((entry) => /Retrying production-room-full\.glb/i.test(entry.stage))).toBe(true);
+
+    > 212 |       expect(finalProgress).toBeDefined();
+
+          |                             ^
+
+      213 |       expect(finalProgress?.valueText).toBe("100% of required asset bytes");
+
+      214 |       expect(observed.progress.some((entry) => /All required assets decoded/i.test(entry.stage))).toBe(true);
+
+      215 |       await testInfo.attach("required-current-attempt-progress.json", {
+
+        at C:\Users\yoray\Projects\Yor World\deliveries\FINISH-C1-R6\.work\assembly\app\tests\e2e\world\finish-09-r6-runtime.spec.ts:212:29
+
+
+
+    attachment #3: screenshot (image/png) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    test-results\world-finish-09-r6-runtime-968a6-y-current-identity-attempts-chromium\test-failed-1.png
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+    Error Context: test-results\world-finish-09-r6-runtime-968a6-y-current-identity-attempts-chromium\error-context.md
+
+
+
+  1 failed
+
+    [chromium] :  tests\e2e\world\finish-09-r6-runtime.spec.ts:126:3 :  FINISH-09 R6 source-bound Chromium runtime evidence :  real required-load UI recovers after a compressed room parse failure and reports only current identity attempts 
+
+  1 passed (14.5s)
+
+EXIT_CODE=1

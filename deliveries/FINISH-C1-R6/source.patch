@@ -1,0 +1,144 @@
+diff --git a/app/src/features/world/AssetLoader.ts b/app/src/features/world/AssetLoader.ts
+index 9969a1d3a63ed078d3d9923c3dd5cb68ddf12f9f..7b172b3f8d67b66ffaaca8db4aaf3bf230cdf36f 100644
+--- a/app/src/features/world/AssetLoader.ts
++++ b/app/src/features/world/AssetLoader.ts
+@@ -148,6 +148,7 @@
+   loaded: number;
+   total: number;
+   trustedLength: boolean;
++  invalidRepresentation: boolean;
+ }
+ 
+ export class AssetLoader {
+@@ -184,15 +185,21 @@
+ 
+     let requiredLoaded = 0;
+     let optionalLoaded = 0;
+-    const attemptProgress: AttemptProgress[] = REQUIRED_ASSET_IDS.map(() => ({ attempt: 0, loaded: 0, total: 0, trustedLength: false }));
+-    let aggregateInvalid = false;
++    const attemptProgress: AttemptProgress[] = REQUIRED_ASSET_IDS.map(() => ({
++      attempt: 0,
++      loaded: 0,
++      total: 0,
++      trustedLength: false,
++      invalidRepresentation: false,
++    }));
+     let lastBytes: ByteProgress = { kind: "indeterminate", reason: "required-headers-unconfirmed" };
+     let lastRatio: number | undefined;
+ 
+     const currentAggregate = (): ByteProgress => {
+       const allKnown = attemptProgress.every((entry) => entry.trustedLength && entry.total > 0);
+-      if (aggregateInvalid || !allKnown) {
+-        return { kind: "indeterminate", reason: aggregateInvalid ? "untrusted-required-representation" : "required-headers-unconfirmed" };
++      const hasInvalidCurrentAttempt = attemptProgress.some((entry) => entry.invalidRepresentation);
++      if (hasInvalidCurrentAttempt || !allKnown) {
++        return { kind: "indeterminate", reason: hasInvalidCurrentAttempt ? "untrusted-required-representation" : "required-headers-unconfirmed" };
+       }
+       const total = attemptProgress.reduce((sum, entry) => sum + entry.total, 0);
+       const loaded = attemptProgress.reduce((sum, entry) => sum + entry.loaded, 0);
+@@ -239,6 +246,7 @@
+         entry.loaded = 0;
+         entry.total = 0;
+         entry.trustedLength = false;
++        entry.invalidRepresentation = false;
+       }
+       entry.loaded = read.loaded;
+       const trustedEof = read.eof && read.trustedLength && read.total > 0 && read.loaded === read.total;
+@@ -250,7 +258,7 @@
+         entry.trustedLength = false;
+       }
+       if (read.isCompressed || (read.eof && read.trustedLength && read.loaded !== read.total)) {
+-        aggregateInvalid = true;
++        entry.invalidRepresentation = true;
+       }
+       emit(
+         `Downloading ${REQUIRED_ASSET_IDS[assetIndex]} (${attempt}/${retryLimit + 1})...`,
+@@ -292,7 +300,13 @@
+       while (attempt <= retryLimit) {
+         if (signal?.aborted) throw new DOMException("Asset loading aborted by user", "AbortError");
+         if (attemptProgress[index]!.attempt !== attempt + 1) {
+-          attemptProgress[index] = { attempt: attempt + 1, loaded: 0, total: 0, trustedLength: false };
++          attemptProgress[index] = {
++            attempt: attempt + 1,
++            loaded: 0,
++            total: 0,
++            trustedLength: false,
++            invalidRepresentation: false,
++          };
+         }
+         emit(`Loading ${stage} (${attempt + 1}/${retryLimit + 1})...`, undefined, undefined, attempt + 1, attempt);
+         try {
+@@ -321,7 +335,13 @@
+             emit(`Failed to load ${name}`, undefined, name, attempt, attempt - 1);
+             throw new AssetLoadingError(`Required asset "${name}" failed to load after ${attempt} attempts: ${(error as Error).message}`, name, attempt);
+           }
+-          attemptProgress[index] = { attempt: attempt + 1, loaded: 0, total: 0, trustedLength: false };
++          attemptProgress[index] = {
++            attempt: attempt + 1,
++            loaded: 0,
++            total: 0,
++            trustedLength: false,
++            invalidRepresentation: false,
++          };
+           const delay = attempt === 1 ? 500 : 1500;
+           emit(`Retrying ${name} (${attempt}/${retryLimit})...`, undefined, name, attempt + 1, attempt);
+           await waitForRetry(delay);
+diff --git a/app/tests/unit/world/completion-essential-loader.test.ts b/app/tests/unit/world/completion-essential-loader.test.ts
+index c02687f1c06e31af25b95383af527bab64b5d540..61f9f1d4682931ad78acb142c423b61d15b0d330 100644
+--- a/app/tests/unit/world/completion-essential-loader.test.ts
++++ b/app/tests/unit/world/completion-essential-loader.test.ts
+@@ -249,6 +249,54 @@
+     expect(retry.bytes.total).toBeUndefined();
+ 
+     const result = await resultPromise;
++    abort.abort();
++    result.resourceLedger?.dispose();
++  });
++
++  it("restores the required-session aggregate when a failed compressed attempt is replaced by an identity retry", async () => {
++    vi.stubGlobal("window", {});
++    harness.failAtParse = 1;
++    let roomAttempts = 0;
++    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
++      const url = String(input);
++      if (url.endsWith("production-room-full.glb")) {
++        roomAttempts += 1;
++        const headers = roomAttempts === 1
++          ? { "content-length": "4", "content-encoding": "gzip" }
++          : { "content-length": "4", "content-encoding": "identity" };
++        return new Response(new Uint8Array([1, 2, 3, 4]), { headers });
++      }
++      return new Response(new Uint8Array([1, 2, 3, 4]), {
++        headers: { "content-length": "4", "content-encoding": "identity" },
++      });
++    });
++    vi.stubGlobal("fetch", fetchMock);
++
++    const abort = new AbortController();
++    const optionalAbort = new AbortController();
++    optionalAbort.abort();
++    const progress: Array<{
++      stage: string;
++      requiredLoaded: number;
++      bytes: { kind: string; loaded?: number; total?: number; reason?: string };
++    }> = [];
++    const result = await new AssetLoader("compressed-retry-aggregate-test").loadSession({
++      sessionToken: 15,
++      sessionGeneration: 150,
++      signal: abort.signal,
++      optionalSignal: optionalAbort.signal,
++      onProgress: (entry) => progress.push(entry),
++      onOptionalConsumer: () => "rejected",
++    });
++
++    expect(roomAttempts).toBe(2);
++    expect(harness.parsed).toBe(4);
++    expect(progress.some((entry) => entry.stage.startsWith("Retrying production-room-full.glb"))).toBe(true);
++    expect(progress.at(-1)).toMatchObject({
++      stage: "All required assets decoded",
++      requiredLoaded: 3,
++      bytes: { kind: "determinate", scope: "required-session", loaded: 12, total: 12 },
++    });
+     abort.abort();
+     result.resourceLedger?.dispose();
+   });
