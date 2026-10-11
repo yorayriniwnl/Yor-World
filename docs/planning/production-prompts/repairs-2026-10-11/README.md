@@ -22,6 +22,7 @@ Send each Gemini account only its own maker prompt. Use the GPT-6.1 Sol Ultra ch
 | [18 — C1-R8 verifier correction](18-CODEX-C1-R8.md) | Local Codex evidence-maker worker | Reject contradictory duplicated provenance fields without changing app/runtime source |
 | [19 — A1-R5 output-root reallocation](19-CODEX-A1-R5-R7.md) | Local Codex platform-maker worker | Continue the same six-finding A1 correction at fresh `r5-07/` after preserving occupied `r5-06/` |
 | [20 — C1-R8 evidence-matrix correction](20-CODEX-C1-R9.md) | Local Codex evidence-maker worker | Repair the one stale evidence path in a fresh R9 package without changing verifier behavior |
+| [21 — A1-R5-R7 independent delta audit](21-CODEX-A1-R5-R7-AUDIT.md) | GPT Plus #2 independent auditor | Review the exact pushed A1-R5-R7 candidate against the six FINISH-24 findings; no fixing or self-acceptance |
 
 The partial runtime R3 folder appeared during drafting without a complete report/patch/hash handoff at the recorded check. Preserve it and inspect current ownership/completeness; do not overwrite it or treat it as accepted. The other two R3 roots were absent at that check. Recheck current state when using these prompts.
 
@@ -53,3 +54,7 @@ To reproduce the combined copy and documentation checks, run `python docs/planni
 
 - [FINISH-30 B1 root-collision packet](../../reconciliation-packets/2026-10-11-finish-30-b1-r4-root-collision.md) and [R4-02 maker prompt](19-CODEX-B1-R4-R2.md) preserve the exact R3 base and exclude the contaminated snapshot.
 - [FINISH-31 exact-candidate audit packet](../../reconciliation-packets/2026-10-11-finish-31-b1-r4-independent-audit.md) and [audit prompt](20-CODEX-B1-R4-AUDIT.md) bind the completed local review.
+
+## A1-R5-R7 independent delta audit
+
+- [FINISH-32](../../reconciliation-packets/2026-10-11-finish-32-a1-r5-r7-independent-audit.md) and [audit prompt](21-CODEX-A1-R5-R7-AUDIT.md) bind the exact pushed candidate. The prompt is prepared but not dispatched; independent review and Parent acceptance remain pending.
