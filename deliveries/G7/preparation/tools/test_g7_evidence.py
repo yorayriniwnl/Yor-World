@@ -5,6 +5,7 @@ import copy
 import datetime as dt
 import importlib.util
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -358,6 +359,79 @@ class LedgerTests(unittest.TestCase):
         run = subprocess.run(command, capture_output=True, text=True)
         self.assertNotEqual(run.returncode, 0)
         self.assertEqual(output.read_bytes(), original)
+
+    def test_cli_rejects_input_output_collision_without_mutation(self):
+        original = self.manifest.read_bytes()
+        run = subprocess.run([sys.executable, str(TOOL), "--repository", str(self.root),
+                              "--manifest", str(self.manifest), "--output", str(self.manifest)],
+                             capture_output=True, text=True)
+        self.assertNotEqual(run.returncode, 0)
+        self.assertEqual(self.manifest.read_bytes(), original)
+
+    def test_cli_rejects_traversal_and_case_alias_outputs_without_mutation(self):
+        outside = self.root / "deliveries/G7/NOT-LIVE-traversal.json"
+        traversal = self.base / ".." / outside.name
+        run = subprocess.run([sys.executable, str(TOOL), "--repository", str(self.root), "--output", str(traversal)],
+                             capture_output=True, text=True)
+        self.assertNotEqual(run.returncode, 0)
+        self.assertFalse(outside.exists())
+
+        case_alias = self.root / "deliveries/G7" / self.base.name.upper() / "NOT-LIVE-case-alias.json"
+        run = subprocess.run([sys.executable, str(TOOL), "--repository", str(self.root), "--output", str(case_alias)],
+                             capture_output=True, text=True)
+        self.assertNotEqual(run.returncode, 0)
+        self.assertFalse((self.base / case_alias.name).exists())
+
+    def test_cli_rejects_symlink_or_junction_parent_without_writing_through_it(self):
+        alias = self.root / "deliveries/G7/NOT-LIVE-output-alias"
+        try:
+            alias.symlink_to(self.base, target_is_directory=True)
+        except OSError as symlink_error:
+            if os.name == "nt":
+                env = os.environ.copy()
+                env["YOR_LEDGER_ALIAS"] = str(alias)
+                env["YOR_LEDGER_TARGET"] = str(self.base)
+                try:
+                    junction = subprocess.run(
+                        ["powershell.exe", "-NoLogo", "-NoProfile", "-Command",
+                         "New-Item -ItemType Junction -Path $env:YOR_LEDGER_ALIAS -Target $env:YOR_LEDGER_TARGET | Out-Null"],
+                        capture_output=True, text=True, env=env)
+                except OSError as junction_error:
+                    self.skipTest(f"Directory alias creation unavailable: {symlink_error}; {junction_error}")
+                if junction.returncode != 0 or not alias.is_dir():
+                    self.skipTest(f"Symlink denied ({symlink_error}); junction unavailable: {junction.stderr.strip()}")
+            else:
+                self.skipTest(f"Directory symlink unavailable: {symlink_error}")
+
+        self.assertTrue(alias.is_symlink() or (hasattr(alias, "is_junction") and alias.is_junction()))
+        output = alias / "NOT-LIVE-aliased-output.json"
+        run = subprocess.run([sys.executable, str(TOOL), "--repository", str(self.root), "--output", str(output)],
+                             capture_output=True, text=True)
+        self.assertNotEqual(run.returncode, 0)
+        self.assertFalse((self.base / output.name).exists())
+
+    def test_cli_rejects_hard_link_output_without_changing_linked_source(self):
+        output = self.base / "NOT-LIVE-hard-link-output.json"
+        original = self.raw.read_bytes()
+        os.link(self.raw, output)
+        run = subprocess.run([sys.executable, str(TOOL), "--repository", str(self.root), "--output", str(output)],
+                             capture_output=True, text=True)
+        self.assertNotEqual(run.returncode, 0)
+        self.assertEqual(self.raw.read_bytes(), original)
+        self.assertEqual(output.read_bytes(), original)
+
+    def test_cli_output_creation_is_exclusive_under_concurrent_writers(self):
+        output = self.base / "NOT-LIVE-concurrent-output.json"
+        command = [sys.executable, str(TOOL), "--repository", str(self.root), "--output", str(output)]
+        first = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        second = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        first_stdout, first_stderr = first.communicate()
+        second_stdout, second_stderr = second.communicate()
+        self.assertCountEqual([first.returncode, second.returncode], [0, 1],
+                              f"first: {first_stdout}\n{first_stderr}\nsecond: {second_stdout}\n{second_stderr}")
+        ledger = json.loads(output.read_text(encoding="utf-8"))
+        self.assertEqual(ledger["overallStatus"], "NOT RUN")
+        self.assertFalse(ledger["acceptanceClaim"])
 
 
 if __name__ == "__main__":

@@ -7,7 +7,9 @@ import hashlib
 import json
 import ipaddress
 import math
+import os
 import re
+import stat
 from urllib.parse import urlsplit
 from pathlib import Path
 
@@ -75,8 +77,138 @@ def load_json(path):
 
 
 def write(path, value):
+    """Write fixture inputs; the CLI output uses write_ledger_exclusive below."""
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8", newline="\n")
+
+
+def path_key(path):
+    return os.path.normcase(os.path.abspath(os.fspath(path)))
+
+
+def is_junction(path):
+    return bool(hasattr(path, "is_junction") and path.is_junction())
+
+
+def validate_output_path(root, requested):
+    """Validate the lexical output identity and every existing path component."""
+    raw = os.fspath(requested)
+    require(isinstance(raw, str) and bool(raw), "Receipt output path must be a non-empty path")
+    portable = raw.replace("\\", "/")
+    require(not portable.endswith("/"), "Receipt output must name a file")
+    drive = re.match(r"^[a-zA-Z]:/", portable)
+    if re.match(r"^[a-zA-Z]:[^/]", portable):
+        raise ValueError("Drive-relative receipt output paths are forbidden")
+    parts_text = portable[3:] if drive else portable[1:] if portable.startswith("/") else portable
+    parts = parts_text.split("/")
+    require(all(parts), "Receipt output path contains an empty component")
+    for part in parts:
+        require(part not in (".", ".."), "Receipt output path cannot contain traversal components")
+        require(not re.search(r'[\x00-\x1f<>:"|?*]', part) and not part.endswith((".", " "))
+                and not re.match(r"^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)", part, re.I),
+                f"Receipt output path contains a nonportable component: {part}")
+
+    root = Path(root)
+    root_real = root.resolve(strict=True)
+    require(path_key(root) == path_key(root_real) and root.is_dir() and not root.is_symlink() and not is_junction(root),
+            "Repository root must be a real directory without filesystem aliases")
+    supplied = Path(portable)
+    candidate = supplied if supplied.is_absolute() else root / supplied
+    target = Path(os.path.abspath(candidate))
+    try:
+        relative = target.relative_to(root_real)
+    except ValueError as error:
+        raise ValueError("Receipt output must stay inside deliveries/G7") from error
+    require(len(relative.parts) >= 3 and relative.parts[:2] == ("deliveries", "G7"),
+            "Receipt output must stay inside deliveries/G7")
+    require(relative.parts[:4] != ("deliveries", "G7", "preparation", "tools"),
+            "Receipt output cannot overwrite release tool sources")
+
+    # For absolute paths, reject case-spelled aliases of the repository root.
+    if supplied.is_absolute():
+        raw_absolute = Path(os.path.abspath(supplied))
+        if len(raw_absolute.parts) >= len(root_real.parts):
+            root_spelling = raw_absolute.parts[:len(root_real.parts)]
+            canonical_root = root_real.parts
+            require(all(path_key(Path(left)) == path_key(Path(right)) and left == right
+                        for left, right in zip(root_spelling[1:], canonical_root[1:]))
+                    and path_key(Path(root_spelling[0])) == path_key(Path(canonical_root[0])),
+                    "Receipt output must use the canonical repository path spelling")
+
+    current = root_real
+    for index, part in enumerate(relative.parts):
+        if not current.exists():
+            break
+        if not current.is_dir() or current.is_symlink() or is_junction(current):
+            raise ValueError(f"Receipt output path contains a symlink, junction or non-directory component: {current}")
+        aliases = [entry.name for entry in current.iterdir() if entry.name.casefold() == part.casefold()]
+        if aliases and part not in aliases:
+            raise ValueError(f"Receipt output uses a case-alias path component: {part}")
+        current = current / part
+        try:
+            info = current.lstat()
+        except FileNotFoundError:
+            break
+        if current.is_symlink() or is_junction(current):
+            raise ValueError(f"Receipt output path contains a symlink or junction: {current}")
+        if index < len(relative.parts) - 1 and not stat.S_ISDIR(info.st_mode):
+            raise ValueError(f"Receipt output path contains a non-directory component: {current}")
+        resolved = current.resolve(strict=True)
+        require(path_key(resolved) == path_key(current), f"Receipt output path contains a filesystem alias: {current}")
+
+    parent = target.parent
+    if parent.exists():
+        aliases = [entry.name for entry in parent.iterdir() if entry.name.casefold() == target.name.casefold()]
+        if aliases and target.name not in aliases:
+            raise ValueError(f"Receipt output filename case-aliases existing evidence: {target.name}")
+    try:
+        info = target.lstat()
+    except FileNotFoundError:
+        info = None
+    if info is not None:
+        if stat.S_ISLNK(info.st_mode) or is_junction(target):
+            raise ValueError(f"Receipt output cannot be a symlink or junction: {target}")
+        if stat.S_ISREG(info.st_mode) and info.st_nlink > 1:
+            raise ValueError(f"Hard-linked receipt output is forbidden: {target}")
+        raise ValueError(f"Preserve prior evidence; receipt output already exists: {target}")
+    return target, relative
+
+
+def prepare_output_parent(root, relative):
+    """Create only missing real directories beneath the validated deliveries/G7 root."""
+    current = Path(root).resolve(strict=True)
+    for part in relative.parts[:-1]:
+        if not current.exists() or not current.is_dir() or current.is_symlink() or is_junction(current):
+            raise ValueError(f"Receipt output parent is not a real directory: {current}")
+        aliases = [entry.name for entry in current.iterdir() if entry.name.casefold() == part.casefold()]
+        if aliases and part not in aliases:
+            raise ValueError(f"Receipt output uses a case-alias parent component: {part}")
+        child = current / part
+        try:
+            child.mkdir()
+        except FileExistsError:
+            pass
+        if child.is_symlink() or is_junction(child) or not child.is_dir():
+            raise ValueError(f"Receipt output parent is a symlink, junction or non-directory: {child}")
+        if path_key(child.resolve(strict=True)) != path_key(child):
+            raise ValueError(f"Receipt output parent uses a filesystem alias: {child}")
+        current = child
+
+
+def write_ledger_exclusive(root, requested, value, inputs=()):
+    target, relative = validate_output_path(root, requested)
+    input_keys = {path_key(path.resolve(strict=True)) for path in inputs}
+    require(path_key(target) not in input_keys, "Receipt output cannot replace an input")
+    prepare_output_parent(root, relative)
+    # Recheck after parent creation; exclusive open prevents final-name replacement.
+    target, relative = validate_output_path(root, target)
+    require(path_key(target) not in input_keys, "Receipt output cannot replace an input")
+    try:
+        with target.open("x", encoding="utf-8", newline="\n") as stream:
+            stream.write(json.dumps(value, indent=2) + "\n")
+    except FileExistsError as error:
+        raise ValueError(f"Preserve prior evidence; receipt output already exists: {target}") from error
+    return target
 
 
 def hash_artifact(path, mode):
@@ -342,19 +474,23 @@ def build_ledger(root, manifest_path=None, authorization_path=None, receipt_path
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repository", type=Path, default=Path(__file__).resolve().parents[4])
-    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--output", required=True)
     parser.add_argument("--manifest", type=Path)
     parser.add_argument("--authorization", type=Path, help="Separate operational binding with hash-verified authorization/accepted-successor references")
     parser.add_argument("--receipts", type=Path, nargs="*", default=[])
     parser.add_argument("--operator", default="NOT ASSIGNED")
     args = parser.parse_args()
-    root, target = args.repository.resolve(), args.output.resolve()
-    require(target.is_relative_to(root / "deliveries/G7") and not target.is_relative_to(root / "deliveries/G7/preparation/tools"), "Receipt output must stay inside deliveries/G7 and outside source tools")
-    require(not target.exists(), "Preserve prior evidence; choose a new output path")
-    inputs = [p.resolve() for p in [args.manifest, args.authorization, *args.receipts] if p]
-    require(target not in inputs, "Output cannot replace an input")
+    root_input = args.repository.absolute()
+    root = root_input.resolve(strict=True)
+    require(path_key(root_input) == path_key(root) and root.is_dir()
+            and not root_input.is_symlink() and not is_junction(root_input),
+            "Repository root must be a real directory without filesystem aliases")
+    target, _ = validate_output_path(root, args.output)
+    inputs = [p.resolve(strict=True) for p in [args.manifest, args.authorization, *args.receipts] if p]
+    input_keys = {path_key(path) for path in inputs}
+    require(path_key(target) not in input_keys, "Receipt output cannot replace an input")
     ledger = build_ledger(root, args.manifest, args.authorization, args.receipts, args.operator)
-    write(target, ledger)
+    write_ledger_exclusive(root, args.output, ledger, inputs)
     print(f"Wrote structurally validated evidence ledger: {target}; overall {ledger['overallStatus']}; independent review NOT RUN; no acceptance claim.")
 
 
