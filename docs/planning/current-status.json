@@ -27,7 +27,7 @@
     "rulingDecisionPath": "docs/planning/reviews/2026-10-08-rc6-r1/decision.json"
   },
   "completionProgram": {
-    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 ACTIVE IN CLEAN WORKTREE / B1-R3 INDEPENDENT AUDIT ACTIVE WITH RAW DRAW-BUDGET FAIL / C1-R6 FINISH-16 REWORK FOR E-01 / C1-R7 FINISH-21-R1 PROVENANCE AMENDMENT AUTHORIZED / NO CANONICAL COMPLETION INTEGRATION",
+    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 ACTIVE IN CLEAN WORKTREE / B1-R3 INDEPENDENT AUDIT ACTIVE WITH RAW DRAW-BUDGET FAIL / C1-R6 FINISH-16 REWORK FOR E-01 / C1-R7 DELIVERY PUSHED, DELTA AUDIT PENDING / NO CANONICAL COMPLETION INTEGRATION",
     "coordinationCommit": "ab369d413c7501224e3d79aa78e56172f97839ff",
     "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
     "contractsGate": {
@@ -195,11 +195,13 @@
       },
       "FINISH-C1-R7": {
         "maker": "Local Codex runtime evidence-maker worker",
-        "status": "AUTHORIZED BY FINISH-21-R1 / APPEND-ONLY PROVENANCE CORRECTION; MAKER RESUMES AFTER AMENDMENT PUSH",
+        "status": "DELIVERED / CANDIDATE PUSHED / INDEPENDENT DELTA AUDIT PENDING",
         "deliveryRoot": "deliveries/FINISH-C1-R7/",
+        "deliveryCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
+        "makerReport": "deliveries/FINISH-C1-R7/report.md",
         "packetPath": "docs/planning/reconciliation-packets/2026-10-11-finish-21-c1-r6-receipt-correction.md",
         "amendmentPath": "docs/planning/reconciliation-packets/2026-10-11-finish-21-r1-candidate-input-provenance.md",
-        "makerResumeCondition": "Resume only after FINISH-21-R1 is committed and pushed",
+        "makerResumeCondition": "SATISFIED BY PUSHED PARENT COMMIT 1058676cb74d8239aae7fed3dfa91defcc8a30a1",
         "r6CandidateCommit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
         "r5CandidateCommit": "5e85e6a8a248581fe3893fd80c7da3d05079f305",
         "finding": "FINISH-16 E-01; FINISH-21-R1 maps 27 repository-backed inputs and two installed Three.js files without rewriting original receipts",
@@ -244,7 +246,8 @@
       "lane": "FINISH-C1",
       "deliveryRoot": "deliveries/FINISH-C1-R7/",
       "candidateCommit": "9188b413d37da0ec3381b5430e25dc375a45bb18",
-      "status": "AUTHORIZED / APPEND-ONLY INPUT PROVENANCE CORRECTION; MAKER RESUMES AFTER AMENDMENT PUSH",
+      "deliveryCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
+      "status": "DELIVERED / INDEPENDENT DELTA AUDIT PENDING; E-01 NOT YET CLOSED",
       "canonicalSourceChanged": false
     },
     "latestAuditAllocation": {
