@@ -7,7 +7,7 @@ import test from "node:test";
 import { pathToFileURL } from "node:url";
 import { ROOT, policy } from "../release-lib.mjs";
 
-const rootName = "deliveries/G7/rc6-candidate-r7";
+const rootName = "deliveries/G7/rc6-candidate-r7/attempt-20261011T1820Z-localfinal";
 const oldRoots = [
   "deliveries/G7/rc6-candidate", "deliveries/G7/rc6-candidate-r2",
   "deliveries/G7/rc6-candidate-r3", "deliveries/G7/rc6-candidate-r4", "deliveries/G7/rc6-candidate-r5",
@@ -16,7 +16,11 @@ const oldRoots = [
   "deliveries/G7/rc6-independent-delta/gate-advice/final-r6",
   "docs/planning/reviews/2026-10-08-rc6-r1",
 ];
-const oldFiles = ["docs/planning/reviews/2026-10-08-rc6-r1.md"];
+const oldFiles = [
+  "deliveries/G7/rc6-candidate-r7/release-composition.json",
+  "deliveries/G7/rc6-candidate-r7/gltf-validation-receipt.json",
+  "docs/planning/reviews/2026-10-08-rc6-r1.md",
+];
 const source = "a".repeat(40);
 
 async function fixture(t) {
@@ -63,9 +67,30 @@ async function fixture(t) {
   return { root, checkout, driver, setPolicy, lib, unchanged, run };
 }
 
-test("committed policy binds the R7 delivery and canonical archive", () => {
+test("committed policy binds a fresh R7 attempt and canonical archive", () => {
   assert.equal(policy.deliveryRoot, rootName);
   assert.equal(policy.bundle.path, `${rootName}/yor-world-${policy.releaseId}.bundle.tar.gz`);
+});
+
+test("candidate prepare rejects every preexisting partial delivery tree before creating a checkout", async (t) => {
+  const f = await fixture(t);
+  const destination = path.join(f.root, rootName);
+  for (const partial of [
+    ["release-composition.json", "prior composition without execution.jsonl\n"],
+    ["evidence/custom-interrupted-output.json", "interrupted evidence without execution.jsonl\n"],
+  ]) {
+    const file = path.join(destination, partial[0]);
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, partial[1]);
+    const result = f.run("python", ["-B", f.driver, "--repository", f.root, "--checkout", f.checkout,
+      "--source", source, "--client-date", "2026-10-11", "--phase", "prepare"]);
+    assert.equal(result.status, 1, result.stdout + result.stderr);
+    assert.match(result.stderr, /Delivery target already exists, even if incomplete/);
+    assert.equal(fs.readFileSync(file, "utf8"), partial[1]);
+    assert.equal(fs.existsSync(f.checkout), false);
+    fs.rmSync(destination, { recursive: true, force: true });
+  }
+  f.unchanged();
 });
 
 test("policy drift fails all writing entry points before creating output", async (t) => {
@@ -161,6 +186,34 @@ test("CLI override outputs cannot escape the bound delivery or overwrite inputs"
   }
   assert.equal(fs.existsSync(path.join(f.root, rootName, "source-binding.json")), false);
   f.unchanged();
+});
+
+test("bundle writer rejects occupied archive and receipt before building", async (t) => {
+  const f = await fixture(t);
+  const archiveRelative = policy.bundle.path;
+  const receiptRelative = `${rootName}/bundle-receipt.json`;
+  const outputs = [
+    ["occupied archive", archiveRelative, ["--source-commit", source], receiptRelative],
+    ["occupied receipt", receiptRelative, ["--source-commit", source], archiveRelative],
+  ];
+
+  for (const [label, occupiedRelative, args, otherRelative] of outputs) {
+    await t.test(label, () => {
+      if (label === "occupied receipt") fs.rmSync(path.join(f.root, otherRelative), { force: true });
+      const occupied = path.join(f.root, occupiedRelative);
+      fs.mkdirSync(path.dirname(occupied), { recursive: true });
+      const original = Buffer.from(`preserve ${label}\n`);
+      fs.writeFileSync(occupied, original, { flag: "wx" });
+
+      const result = f.run("node", ["scripts/release/build-release-bundle.mjs", ...args]);
+      assert.equal(result.status, 1);
+      assert.match(result.stderr, /Release output already exists; preserve the prior attempt/);
+      assert.doesNotMatch(result.stderr, /not a git repository|Working tree differs|Source identity/);
+      assert.deepEqual(fs.readFileSync(occupied), original);
+      assert.equal(fs.existsSync(path.join(f.root, otherRelative)), false);
+      f.unchanged();
+    });
+  }
 });
 
 test("validator protects every fixed input even when manifest bindings are absent", async (t) => {
@@ -282,16 +335,94 @@ for name in sentinel_names:
     assert sorted(path.name for path in delivery.iterdir()) == ["writer-output.json"]
     output.unlink()
 module.write_json(output, {"allowed": 1})
-module.write_json(output, {"allowed": 2})
-assert json.loads(output.read_text()) == {"allowed": 2}
+original = output.read_bytes()
+try: module.write_json(output, {"allowed": 2})
+except FileExistsError: pass
+else: raise AssertionError("direct Python writer replaced an existing output")
+assert output.read_bytes() == original and json.loads(output.read_text()) == {"allowed": 1}
 fresh = delivery / "new/deep/output.json"
 module.write_json(fresh, {"fresh": True})
 assert json.loads(fresh.read_text()) == {"fresh": True}
-print("PASS direct Python writer hardlink rejection, unchanged sentinels and distinct writes")
+print("PASS direct Python writer hardlink and overwrite rejection, unchanged sentinels and distinct writes")
 `;
   const result = f.run("python", ["-B", "-c", script]);
   assert.equal(result.status, 0, `${result.stdout}${result.stderr}`);
   assert.match(result.stdout, /PASS direct Python writer/);
+  f.unchanged();
+});
+
+test("primary export permits only exact copies or append-only execution-log growth", async (t) => {
+  const f = await fixture(t);
+  const script = String.raw`
+import importlib.util
+from pathlib import Path
+spec = importlib.util.spec_from_file_location("driver", ${JSON.stringify(f.driver)})
+module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+source = Path(${JSON.stringify(path.join(f.root, "source.jsonl"))})
+target = Path(${JSON.stringify(path.join(f.root, "evidence/execution.jsonl"))})
+source.write_bytes(b'{"id":"first"}' + bytes([10]))
+module.export_file(source, target, append_only=True)
+assert target.read_bytes() == b'{"id":"first"}' + bytes([10])
+module.export_file(source, target, append_only=True)
+source.write_bytes(b'{"id":"first"}' + bytes([10]) + b'{"id":"second"}' + bytes([10]))
+module.export_file(source, target, append_only=True)
+assert target.read_bytes() == source.read_bytes()
+original = target.read_bytes()
+source.write_bytes(b'{"id":"replacement"}' + bytes([10]))
+try: module.export_file(source, target, append_only=True)
+except ValueError as error: assert ("not a preserved prefix" in str(error) or "refusing to overwrite prior evidence" in str(error)), error
+else: raise AssertionError("non-prefix log replacement was accepted")
+assert target.read_bytes() == original
+source.write_bytes(b'{"id":"different"}' + bytes([10]))
+try: module.export_file(source, target)
+except ValueError as error: assert "refusing to overwrite prior evidence" in str(error), error
+else: raise AssertionError("ordinary existing export was overwritten")
+assert target.read_bytes() == original
+print("PASS primary exports are exclusive and log growth preserves an exact prefix")
+`;
+  const result = f.run("python", ["-B", "-c", script]);
+  assert.equal(result.status, 0, `${result.stdout}${result.stderr}`);
+  assert.match(result.stdout, /PASS primary exports are exclusive/);
+  f.unchanged();
+});
+
+test("interrupted candidate phases keep their start receipt and cannot be resumed in place", async (t) => {
+  const f = await fixture(t);
+  const script = String.raw`
+import importlib.util
+import json
+from pathlib import Path
+spec = importlib.util.spec_from_file_location("driver", ${JSON.stringify(f.driver)})
+module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+repo = Path(${JSON.stringify(f.root)})
+checkout = Path(${JSON.stringify(f.checkout)})
+driver = module.Driver.__new__(module.Driver)
+driver.repo = repo
+driver.checkout = checkout
+driver.delivery_relative = Path(${JSON.stringify(rootName)})
+driver.source = ${JSON.stringify(source)}
+delivery = driver.delivery_relative
+checkout_complete = checkout / delivery / "evidence/prepare-completed.json"
+primary_complete = repo / delivery / "evidence/prepare-completed.json"
+for path in [checkout_complete, primary_complete]:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({"phase":"prepare", "status":"PASS", "sourceCommit":driver.source, "deliveryRoot":delivery.as_posix()}))
+driver.export = lambda: None
+driver.begin_phase("checks", "prepare")
+started = driver.phase_path("checks", "started").read_bytes()
+try: driver.begin_phase("checks", "prepare")
+except RuntimeError as error: assert "already started or completed" in str(error), error
+else: raise AssertionError("interrupted checks phase was resumed")
+try: driver.begin_phase("package", "checks")
+except RuntimeError as error: assert "checks phase completion is absent" in str(error), error
+else: raise AssertionError("later phase advanced past incomplete checks")
+assert driver.phase_path("checks", "started").read_bytes() == started
+assert not driver.phase_path("checks", "completed").exists()
+print("PASS interrupted phases preserve start receipt and block retry/advance")
+`;
+  const result = f.run("python", ["-B", "-c", script]);
+  assert.equal(result.status, 0, `${result.stdout}${result.stderr}`);
+  assert.match(result.stdout, /PASS interrupted phases preserve start receipt/);
   f.unchanged();
 });
 
@@ -405,14 +536,18 @@ archive_path = repo / driver.policy["bundle"]["path"]
 archive_path.unlink(); rejects(driver.verify_exported_inputs)
 archive_path.write_bytes(b"wrong archive"); rejects(driver.verify_exported_inputs)
 primary.write_text(json.dumps({"overallStatus":"FAIL"})); rejects(driver.verify_primary_validation)
-driver.export(); driver.verify_exported_inputs()
+wrong_archive = archive_path.read_bytes()
+rejects(driver.export); assert archive_path.read_bytes() == wrong_archive
 required = repo / supplemental[0]["path"]
 original = required.read_bytes(); required.write_bytes(b"wrong input"); rejects(driver.verify_exported_inputs)
 required.write_bytes(original)
 missing = checkout / supplemental[-1]["path"]; original = missing.read_bytes(); missing.unlink()
 rejects(driver.verify_exported_inputs); missing.write_bytes(original)
 manifest["evidenceHashes"].append({"path":"scratch/outside.json", "sha256":"a"*64})
-write(f"{delivery}/release-manifest.json", manifest); driver.export()
+write(f"{delivery}/release-manifest.json", manifest)
+primary_manifest = repo / f"{delivery}/release-manifest.json"
+primary_manifest_bytes = primary_manifest.read_bytes()
+rejects(driver.export); assert primary_manifest.read_bytes() == primary_manifest_bytes
 rejects(driver.verify_exported_inputs)
 # Export must preflight all destinations, so no preceding ordinary file is copied on rejection.
 old = repo / "deliveries/G7/rc6-candidate-r2"
@@ -429,6 +564,8 @@ policy_path.write_text(json.dumps(changed)); rejects(driver.export); policy_path
 # The final validation phase must export/check inputs before strict primary validation.
 events = []
 driver.require_session = lambda: events.append("session")
+driver.begin_phase = lambda *args: events.append(("begin-phase", *args))
+driver.finish_phase = lambda *args: events.append(("finish-phase", *args))
 driver.record = lambda check, command, cwd, number: events.append((check, command, cwd))
 driver.export = lambda: events.append("export")
 driver.verify_exported_inputs = lambda: events.append("inputs")
@@ -437,7 +574,7 @@ driver.validate()
 primary = next(index for index, event in enumerate(events) if isinstance(event, tuple) and event[0] == "primary-release-manifest-validation")
 assert events[primary - 1] == "inputs" and "export" in events[:primary]
 assert events[primary][2] == repo and "--strict" in events[primary][1]
-assert events[-2:] == ["inputs", "primary-receipt"]
+assert events[-3:] == ["inputs", "primary-receipt", ("finish-phase", "validate")]
 print("PASS driver export completeness, input hashes, alias preflight and primary validation sequence")
 `;
   const result = f.run("python", ["-B", "-c", script]);
