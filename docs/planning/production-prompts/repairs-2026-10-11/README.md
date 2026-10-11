@@ -12,19 +12,20 @@ Send each Gemini account only its own maker prompt. Use the GPT-6.1 Sol Ultra ch
 | [04 — Independent auditor](04-SOL-INDEPENDENT-AUDITOR.md) | GPT-6.1 Sol Ultra | Complete-scope and delta checks of actual maker outputs, with findings returned to the original makers |
 | [07 — A1-R4 platform correction](07-GEMINI1-A1-R4.md) | Local Codex platform-maker worker | Fresh A1 revision after the occupied, incomplete R3 root; full A3-01 through A3-05 correction and evidence |
 | [08 — C1-R5 runtime correction](08-CODEX-C1-R5.md) | Local Codex runtime-maker worker | Fresh C1 revision after the occupied, incomplete R4 root; original six findings plus source-level follow-up regressions |
+| [09 — C1-R6 runtime correction](09-CODEX-C1-R6.md) | Local Codex runtime-maker worker | Correct current-attempt retry aggregation and close source-bound browser evidence for the R5 runtime changes |
 
 The partial runtime R3 folder appeared during drafting without a complete report/patch/hash handoff at the recorded check. Preserve it and inspect current ownership/completeness; do not overwrite it or treat it as accepted. The other two R3 roots were absent at that check. Recheck current state when using these prompts.
 
 After that recorded check, the A1-R3 root was confirmed occupied by an incomplete 268-file candidate without a valid R3 source patch/report; its only manifest identifies the W2 art lane. FINISH-07 therefore assigns A1-R4 in a new root. The prompt is a local Codex maker handoff and does not claim external account dispatch.
 
-The C1-R4 root is also occupied and incomplete. Its read-only source review is recorded in the FINISH-08 packet, which allocates C1-R5 without modifying R4. The R3 art correction remains in its original FINISH-04 root.
+The C1-R4 root is also occupied and incomplete. FINISH-08 allocated C1-R5 without modifying R4. Its local Codex review recommends REWORK for one reproduced current-attempt progress defect and leaves FINISH-06-6 browser evidence open. FINISH-09 allocates C1-R6 against the exact R5 candidate. The local review is not the designated external GPT Plus #2 audit; R5 remains unaccepted. The R3 art correction remains in its original FINISH-04 root.
 
 | Use at the appropriate next stage | Recipient | Purpose |
 | --- | --- | --- |
 | [05 — Completion and release](05-PARENT-COMPLETION-AND-RELEASE.md) | Parent coordination chat | Bind A2, C2, C3 and I1 from accepted inputs; route backend/CDN/deployment/manual/recovery work; reconcile G7 and final full-product acceptance |
 | [06 — Six separate extensions](06-EXTENSIONS.md) | Separate Gemini #2 asset / Gemini #3 runtime phases | Mug/drinking, headphones, drawers, weather/daylight, moods/greetings and five to eight total Easter eggs |
 
-There are **11 fenced prompts**: four immediate handoffs, one Parent continuation and six later feature envelopes. [ALL-PROMPTS.md](ALL-PROMPTS.md) is the exact combined convenience copy. It is for navigation/archive; send individual account prompts rather than giving one maker all roles.
+ALL-PROMPTS.md contains the 11 account-facing prompts from 01–06. Revisioned local Codex handoffs 07–09 are listed separately and intentionally are not merged into that account-facing convenience copy.
 
 Each immediate prompt includes its local inputs, immutable base and accepted contract identity, exact delivery ownership, reproduced findings, observable corrections, meaningful verification and actual handoff files. Makers return implementation/evidence; the auditor writes findings; Parent accepts and allocates the next dependency. Later packets bind actual accepted successor hashes and paths rather than guessed future revisions.
 

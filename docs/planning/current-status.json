@@ -27,7 +27,7 @@
     "rulingDecisionPath": "docs/planning/reviews/2026-10-08-rc6-r1/decision.json"
   },
   "completionProgram": {
-    "status": "R2 DESIGN ACCEPTED / THREE CORRECTIONS ISSUED / IMPLEMENTATIONS UNACCEPTED",
+    "status": "R2 DESIGN ACCEPTED / A1-R4 AND B1-R3 ACTIVE / C1-R5 REWORK / C1-R6 ISSUED / NO IMPLEMENTATION ACCEPTED",
     "coordinationCommit": "ab369d413c7501224e3d79aa78e56172f97839ff",
     "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
     "contractsGate": {
@@ -99,7 +99,7 @@
       },
       "FINISH-A1-R3": {
         "maker": "Gemini #1",
-        "status": "ISSUED / NO RETURN RECORDED",
+        "status": "OCCUPIED INCOMPLETE CANDIDATE / PRESERVED; SUPERSEDED BY FINISH-07",
         "deliveryRoot": "deliveries/FINISH-A1/r3/",
         "promptPath": "docs/planning/production-prompts/corrections-2026-10-10/01-GEMINI1-A1-R3.md",
         "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
@@ -110,7 +110,7 @@
       },
       "FINISH-B1-R3": {
         "maker": "Gemini #2",
-        "status": "ISSUED / NO RETURN RECORDED",
+        "status": "ACTIVE LOCAL CANDIDATE / NATIVE GEOMETRY 18 OF 18 PASS / DRAW-CALL BUDGET FAIL; CORRECTION IN PROGRESS",
         "deliveryRoot": "deliveries/FINISH-B1-R3/",
         "promptPath": "docs/planning/production-prompts/corrections-2026-10-10/02-GEMINI2-B1-R3.md",
         "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
@@ -121,13 +121,43 @@
       },
       "FINISH-C1-R3": {
         "maker": "Gemini #3",
-        "status": "ISSUED / NO RETURN RECORDED",
+        "status": "RETURNED / REQUIRED PREDECESSOR FOR R5; IMPLEMENTATION NOT ACCEPTED",
         "deliveryRoot": "deliveries/FINISH-C1-R3/",
         "promptPath": "docs/planning/production-prompts/corrections-2026-10-10/03-GEMINI3-C1-R3.md",
         "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
         "sourceAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
         "makerExecution": "UNCONFIRMED",
         "parentImplementationAcceptance": "NOT RECORDED",
+        "canonicalIntegration": false
+      },
+      "FINISH-A1-R4": {
+        "maker": "Local Codex platform-maker worker",
+        "status": "ACTIVE / UNEXPLAINED PACKAGING WRITER PROVENANCE UNDER REVIEW",
+        "deliveryRoot": "deliveries/FINISH-A1/r4/",
+        "promptPath": "docs/planning/production-prompts/repairs-2026-10-11/07-GEMINI1-A1-R4.md",
+        "parentImplementationAcceptance": "NOT ACCEPTED",
+        "canonicalIntegration": false
+      },
+      "FINISH-C1-R5": {
+        "maker": "Local Codex runtime-maker worker",
+        "status": "COMMITTED CANDIDATE / LOCAL INDEPENDENT REWORK ADVICE",
+        "deliveryRoot": "deliveries/FINISH-C1-R5/",
+        "candidateCommit": "5e85e6a8a248581fe3893fd80c7da3d05079f305",
+        "auditReport": "deliveries/completion-audits/FINISH-C1/finish-08/20261011T003551Z-c1-r5-local-review/report.md",
+        "independentAdvice": "REWORK; F-01 P2 and FINISH-06-6 browser evidence remain open",
+        "externalGPTPlus2Audit": "NOT RUN",
+        "parentImplementationAcceptance": "NOT ACCEPTED",
+        "canonicalIntegration": false
+      },
+      "FINISH-C1-R6": {
+        "maker": "Original local Codex runtime-maker worker",
+        "status": "AUTHORIZED / MAKER ASSIGNMENT PENDING",
+        "deliveryRoot": "deliveries/FINISH-C1-R6/",
+        "promptPath": "docs/planning/production-prompts/repairs-2026-10-11/09-CODEX-C1-R6.md",
+        "allocationPacket": "docs/planning/reconciliation-packets/2026-10-11-finish-09-c1-r6.md",
+        "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+        "predecessorPatchSha256": "d6ad3359fa628067ab228eccc52f25d0604ddddb42813d7023e6a809cf60d83d",
+        "parentImplementationAcceptance": "NOT ACCEPTED",
         "canonicalIntegration": false
       }
     },
@@ -138,6 +168,13 @@
       "canonicalSourceChanged": false,
       "productionFixesIntegrated": false,
       "advice": "REWORK before maker acceptance/integration"
+    },
+    "latestCorrectionAllocation": {
+      "packetId": "FINISH-09",
+      "path": "docs/planning/reconciliation-packets/2026-10-11-finish-09-c1-r6.md",
+      "candidateCommit": "5e85e6a8a248581fe3893fd80c7da3d05079f305",
+      "parentRuling": "C1-R5 NOT ACCEPTED / C1-R6 AUTHORIZED",
+      "canonicalSourceChanged": false
     },
     "successorContractsGate": {
       "packetId": "FINISH-00-R2",
