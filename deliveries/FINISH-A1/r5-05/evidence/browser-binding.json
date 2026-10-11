@@ -1,0 +1,82 @@
+{
+    "format":  "YOR-WORLD-A1-R5-BROWSER-BINDING-v1",
+    "sourceBaseCommit":  "f62a43c5e71c00dcb89e28275ea81d842167db80",
+    "sourceBaseAppTree":  "42ea29ec235225046a75959eb19eb386ac2f821d",
+    "candidateAppTree":  "cb42202d3be7f4f10c460d2e1b43db853910b87f",
+    "sourcePatch":  {
+                        "path":  "source.patch",
+                        "bytes":  228474,
+                        "sha256":  "945bee3ccf793d56f6ffc2319cf3d6ede52a9f8bec665ac3d568272f1a179b41"
+                    },
+    "build":  {
+                  "buildId":  "rLA3QF1UjefZlpylb6Izw",
+                  "exitCode":  0,
+                  "manifest":  {
+                                   "path":  "evidence/build-output-manifest.json",
+                                   "bytes":  169471,
+                                   "sha256":  "c47fc49d3488acca8b3aefd1a9d6a7c91559054bd0c25f3195cc339f17476947"
+                               },
+                  "log":  {
+                              "path":  "evidence/production-build-final.log",
+                              "bytes":  2722,
+                              "sha256":  "9665067df86ca52e4212f4d8c57f727a7ae803b21d6ab9ae1f745edd5c7f4133"
+                          },
+                  "exitReceipt":  {
+                                      "path":  "evidence/production-build-final.exit",
+                                      "bytes":  2,
+                                      "sha256":  "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+                                  }
+              },
+    "browser":  {
+                    "command":  "pnpm exec playwright test tests/e2e/platform/completion-authoring-workflow.spec.ts tests/e2e/platform/admin-publish.spec.ts --project=chromium",
+                    "project":  "CI=1 Chromium",
+                    "playwrightVersion":  "1.63.0",
+                    "browserVersion":  "Chromium 153.0.8010.12",
+                    "startTimeUtc":  "2026-10-11T07:47:24.686Z",
+                    "expected":  6,
+                    "unexpected":  0,
+                    "flaky":  0,
+                    "log":  {
+                                "path":  "evidence/chromium-e2e-final.log",
+                                "bytes":  4150,
+                                "sha256":  "f342b302b2ed13af105b91a9b1654e692dd66baa5e8849fed5cea1ca8601e251"
+                            },
+                    "exitReceipt":  {
+                                        "path":  "evidence/chromium-e2e-final.exit",
+                                        "bytes":  2,
+                                        "sha256":  "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+                                    },
+                    "results":  {
+                                    "path":  "evidence/browser-results.json",
+                                    "bytes":  10436,
+                                    "sha256":  "8eb700d8f299684112188f86d5ef6c7d620a7cd1f6c2894b2f53b8b9ee62662b"
+                                },
+                    "screenshots":  [
+                                        {
+                                            "path":  "evidence/candidatex-private-preview.png",
+                                            "bytes":  166853,
+                                            "sha256":  "fea6ef9a91f171213f3714466f5c5f5650cb61a644e4b86aace9f37358f5be37"
+                                        },
+                                        {
+                                            "path":  "evidence/publish-rollback-review.png",
+                                            "bytes":  209771,
+                                            "sha256":  "3ae6631688b371c82735a235eb05b882c8823dfa18b76816727d1ba99ddd4dab"
+                                        }
+                                    ]
+                },
+    "toolVersions":  {
+                         "path":  "evidence/tool-versions.txt",
+                         "bytes":  275,
+                         "sha256":  "e4cab6d9b2f0273d6b6da0cdba23dbcabf47f2099fb85b790af93d637d4a8897"
+                     },
+    "fixture":  {
+                    "environment":  "YOR_E2E_FIXTURE=1",
+                    "database":  "local PGlite fixture",
+                    "mediaId":  "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+                    "pngPath":  "app/tests/fixtures/scp-media/valid-rgba-16x12.png",
+                    "selectionAndFlowTestPath":  "app/tests/e2e/platform/completion-authoring-workflow.spec.ts",
+                    "registryAndApprovalFixturePath":  "app/tests/integration/platform/completion-authoring-preview.test.ts",
+                    "approvalLabel":  "Synthetic test registry entry only; not provider approval",
+                    "scope":  "Local synthetic PNG selected through the editor picker, saved, reopened, and fetched by the guarded private preview route; no provider credentials or production media."
+                }
+}
