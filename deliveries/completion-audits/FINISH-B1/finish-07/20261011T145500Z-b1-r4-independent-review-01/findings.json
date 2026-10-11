@@ -1,0 +1,102 @@
+{
+  "candidate": "7936fa981a24fe4af834ff250ffec8a7b02b09b3",
+  "recommendation": "PASS_BOUNDED_FINISH_25_R1_CORRECTION_ONLY",
+  "externalGPTPlus2": "NOT RUN",
+  "parentAcceptance": "PENDING",
+  "findings": [
+    {
+      "id": "B1R402-01",
+      "status": "PASS",
+      "title": "Git identity and exact package",
+      "detail": "Candidate parent/tree/subtree bind exactly; 200 changed paths are all within deliveries/FINISH-B1-R4-02; 198 stable output rows and the manifest match raw Git blobs; the old collision commit is not an ancestor.",
+      "evidence": [
+        "evidence/package-verification.json",
+        "candidate-binding.json"
+      ]
+    },
+    {
+      "id": "B1R402-02",
+      "status": "PASS",
+      "title": "Input provenance",
+      "detail": "All 28 declared commit/path/raw-byte receipts match their named Git blobs. No collision snapshot or unknown R1 file was read.",
+      "evidence": [
+        "evidence/input-hash-reverification.json"
+      ]
+    },
+    {
+      "id": "B1R402-03",
+      "status": "PASS",
+      "title": "Material and draw-pass correction",
+      "detail": "PC_TemperedGlass exports as BLEND alpha 0.18 with zero transmission; all other material records are unchanged. Desktop and mobile have no transmission calls.",
+      "evidence": [
+        "evidence/final-material-inspection.json",
+        "evidence/browser-results.json"
+      ]
+    },
+    {
+      "id": "B1R402-04",
+      "status": "PASS",
+      "title": "Amended geometry scope",
+      "detail": "Only the four authorized geometry components change, totaling +132 triangles; exact bounds, preserved records, and the 72-file sealed checkpoint pass.",
+      "evidence": [
+        "evidence/final-lineage.json",
+        "evidence/native-geometry-diff.json"
+      ]
+    },
+    {
+      "id": "B1R402-05",
+      "status": "PASS",
+      "title": "Source/native/export lineage",
+      "detail": "Exact R3 source patch replay, Blender native inventory/parity, and two deterministic production room export passes pass. Fresh room GLB hash matches the candidate. The native .blend container is not claimed byte-identical.",
+      "evidence": [
+        "evidence/final-lineage.json",
+        "evidence/final-export-reproducibility.json",
+        "evidence/native-source-export-parity.json"
+      ]
+    },
+    {
+      "id": "B1R402-06",
+      "status": "PASS",
+      "title": "GLB validation and asset budgets",
+      "detail": "Five GLBs have zero validator errors/warnings. Transfer and texture limits pass; local draw counts are 103 desktop and 75 mobile.",
+      "evidence": [
+        "evidence/gltf-validation.json",
+        "evidence/final-budgets.json"
+      ]
+    },
+    {
+      "id": "B1R402-07",
+      "status": "PASS_BOUNDED",
+      "title": "Glass/window visibility evidence",
+      "detail": "Matched supplemental views show the glass edge/tint/depth and the room through the window aperture. The default PC close capture includes the cyan effects plane; the supplemental comparison hides only Project_Effects_Root. Reference-grade reflections remain unproven.",
+      "evidence": [
+        "evidence/captures/pc-glass-outside.png",
+        "evidence/captures/pc-glass-outside-base.png",
+        "evidence/captures/window-glass-outside.png"
+      ]
+    },
+    {
+      "id": "B1R402-08",
+      "status": "FAIL_OPEN_OUT_OF_SCOPE",
+      "title": "Full-room reference fidelity",
+      "detail": "The captured full room remains substantially darker and simpler than the main reference. Broader art correction was outside this package.",
+      "evidence": [
+        "evidence/captures/desktop-home.png"
+      ]
+    },
+    {
+      "id": "B1R402-09",
+      "status": "NOT_RUN_OPEN",
+      "title": "Door/camera and production door owner",
+      "detail": "FINISH-20's door/camera sweep and production transform owner remain unresolved and were outside the authorized correction.",
+      "evidence": []
+    },
+    {
+      "id": "B1R402-10",
+      "status": "NOT_RUN",
+      "title": "External and production acceptance",
+      "detail": "External GPT Plus #2, physical devices, providers, recovery, Parent acceptance, canonical integration, and G7 were not run or accepted.",
+      "evidence": []
+    }
+  ]
+}
