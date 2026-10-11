@@ -176,9 +176,11 @@ def create_all_materials(textures_dir):
     # 1. Architectural & Room Finishes
     m["Floor_Slate"] = get_or_create_pbr_mat(
         "Floor_Slate",
-        base_color=(0.15, 0.17, 0.22, 1.0),
-        roughness=0.65, metallic=0.05,
-        image_path=textures_dir / "floor-wood-tiles.png"
+        # Keep the historic material ID, but use low-contrast blue pile rather
+        # than the visible plank seams in the old floor texture.
+        base_color=(1.0, 1.0, 1.0, 1.0),
+        roughness=0.96, metallic=0.0,
+        image_path=textures_dir / "floor-carpet-microtexture.png"
     )
     m["Ceiling_Matte"] = get_or_create_pbr_mat(
         "Ceiling_Matte",
@@ -187,7 +189,8 @@ def create_all_materials(textures_dir):
     )
     m["Wall_SoftLavender"] = get_or_create_pbr_mat(
         "Wall_SoftLavender",
-        base_color=(0.88, 0.87, 0.92, 1.0),
+        # Linear-light equivalent of the pale lavender-gray anchor #CFCDD9.
+        base_color=(0.63, 0.61, 0.69, 1.0),
         roughness=0.78, metallic=0.0
     )
     m["Baseboard_Charcoal"] = get_or_create_pbr_mat(
@@ -214,12 +217,23 @@ def create_all_materials(textures_dir):
     # 2. Workstation & Furniture
     m["Desk_IvoryTop"] = get_or_create_pbr_mat(
         "Desk_IvoryTop",
-        base_color=(0.93, 0.92, 0.91, 1.0), # #EDEAE7
+        # Linear-light equivalent of the accepted ivory anchor #EDEAE7.
+        base_color=(0.85, 0.82, 0.80, 1.0),
         roughness=0.28, metallic=0.0
+    )
+    m["Desk_CyanAccent"] = get_or_create_pbr_mat(
+        "Desk_CyanAccent",
+        # The modesty panel carries the reference's cool cyan desk bounce while
+        # the top and drawers keep their accepted ivory/white material anchors.
+        base_color=(0.055, 0.34, 0.48, 1.0),
+        roughness=0.52, metallic=0.0,
+        emission_color=(0.01, 0.16, 0.25, 1.0),
+        emission_strength=0.18
     )
     m["Alex_DrawerWhite"] = get_or_create_pbr_mat(
         "Alex_DrawerWhite",
-        base_color=(0.96, 0.96, 0.97, 1.0), # #F4F4F6
+        # Linear-light equivalent of the clean drawer finish #F4F4F6.
+        base_color=(0.90, 0.90, 0.92, 1.0),
         roughness=0.35, metallic=0.0
     )
     m["Desk_MatTopography"] = get_or_create_pbr_mat(
@@ -299,17 +313,24 @@ def create_all_materials(textures_dir):
     # 5. Emissive Lights & Accents
     m["Hex_LilacEmissive"] = get_or_create_pbr_mat(
         "Hex_LilacEmissive",
-        base_color=(0.95, 0.65, 0.95, 1.0), # #F1A5F3
-        roughness=0.18, metallic=0.0,
-        emission_color=(0.95, 0.65, 0.95, 1.0),
-        emission_strength=6.0
+        # Linear-light equivalent of #F1A5F3; saturated pink remains distinct
+        # from the violet diffuser after runtime fill is applied.
+        base_color=(0.88, 0.38, 0.90, 1.0),
+        roughness=0.42, metallic=0.0,
+        emission_color=(0.88, 0.38, 0.90, 1.0),
+        emission_strength=1.0
     )
     m["Hex_VioletEmissive"] = get_or_create_pbr_mat(
         "Hex_VioletEmissive",
-        base_color=(0.73, 0.60, 0.96, 1.0), # #B99AF5
-        roughness=0.18, metallic=0.0,
-        emission_color=(0.73, 0.60, 0.96, 1.0),
-        emission_strength=5.5
+        # Linear-light equivalent of #B99AF5; retain a visible violet counterpoint.
+        base_color=(0.50, 0.34, 0.92, 1.0),
+        roughness=0.42, metallic=0.0,
+        emission_color=(0.50, 0.34, 0.92, 1.0),
+        emission_strength=0.9
+    )
+    m["Hex_LightHousing"] = get_or_create_pbr_mat(
+        "Hex_LightHousing", base_color=(0.18, 0.075, 0.30, 1.0),
+        roughness=0.36, metallic=0.18
     )
     m["Cyan_UnderdeskFill"] = get_or_create_pbr_mat(
         "Cyan_UnderdeskFill",
@@ -338,17 +359,30 @@ def create_all_materials(textures_dir):
         "Pegboard_Perforated",
         base_color=(0.95, 0.95, 0.96, 1.0),
         roughness=0.45, metallic=0.02,
-        image_path=textures_dir / "pegboard-pattern.png"
+        image_path=textures_dir / "pegboard-pattern-attempt-11.png"
     )
     m["Plant_Foliage"] = get_or_create_pbr_mat(
         "Plant_Foliage",
-        base_color=(0.18, 0.48, 0.24, 1.0),
-        roughness=0.38, metallic=0.0
+        # Slightly deeper linear green reads as plant foliage under blue room fill.
+        base_color=(0.08, 0.25, 0.095, 1.0),
+        roughness=0.72, metallic=0.0
+    )
+    m["Plant_Foliage_Light"] = get_or_create_pbr_mat(
+        "Plant_Foliage_Light", base_color=(0.16, 0.36, 0.12, 1.0),
+        roughness=0.70, metallic=0.0
     )
     m["Plant_CeramicWhite"] = get_or_create_pbr_mat(
         "Plant_CeramicWhite",
         base_color=(0.96, 0.96, 0.98, 1.0),
         roughness=0.22, metallic=0.0
+    )
+    m["Desk_MugCeramic"] = get_or_create_pbr_mat(
+        "Desk_MugCeramic", base_color=(0.88, 0.92, 0.98, 1.0),
+        roughness=0.24, metallic=0.04
+    )
+    m["Desk_Coffee"] = get_or_create_pbr_mat(
+        "Desk_Coffee", base_color=(0.075, 0.027, 0.012, 1.0),
+        roughness=0.28, metallic=0.0
     )
     m["Wall_ArtPainting"] = get_or_create_pbr_mat(
         "Wall_ArtPainting",
@@ -732,7 +766,9 @@ def build_group_a(coll, mats):
 
     # Hexagonal Wall Fixtures (7 honeycomb panels on rear wall at Z = -1.77m)
     hex_center_x, hex_center_y = 0.0, 1.82
-    hex_r = 0.14
+    # Larger diffusers and a dark fitted housing keep the seven-light cluster
+    # readable in the bright runtime fill without changing its logical center.
+    hex_r = 0.18
     hex_coords = [
         (0.0, 0.0, mats["Hex_LilacEmissive"]),
         (-hex_r * 1.5, hex_r * 0.866, mats["Hex_VioletEmissive"]),
@@ -745,12 +781,15 @@ def build_group_a(coll, mats):
     for idx, (hx, hy, hmat) in enumerate(hex_coords):
         px = hex_center_x + hx
         py = hex_center_y + hy
-        add_box(f"hex_panel_{idx+1}", (px, py, -1.77), (0.22, 0.20, 0.015), mat=hmat, parent=lights_root, collection=coll)
+        add_box(f"hex_housing_{idx+1}", (px, py, -1.785), (0.42, 0.42, 0.018), mat=mats["Hex_LightHousing"], parent=lights_root, collection=coll)
+        add_box(f"hex_panel_{idx+1}", (px, py, -1.758), (0.22, 0.20, 0.015), mat=hmat, parent=lights_root, collection=coll)
 
     # Blender Light: Hex Wall Pink/Violet Light (EEVEE point light)
     hex_light_data = bpy.data.lights.new(name="HexWall_PointLight", type='POINT')
     hex_light_data.color = (0.95, 0.45, 0.95)
-    hex_light_data.energy = 45.0
+    # Runtime already supplies the primary pink and cyan key lights. Keep these
+    # exported lights as restrained local bounce so the PBR whites retain form.
+    hex_light_data.energy = 14.0
     hex_light_data.shadow_soft_size = 0.25
     hex_light_obj = bpy.data.objects.new("Light_HexWall", hex_light_data)
     hex_light_obj.location = r2b(0.0, 1.82, -1.65)
@@ -760,7 +799,7 @@ def build_group_a(coll, mats):
     # Blender Light: Warm Task Spot Downlight (3200K amber)
     task_light_data = bpy.data.lights.new(name="Task_SpotDownlight", type='SPOT')
     task_light_data.color = (1.0, 0.89, 0.63)
-    task_light_data.energy = 35.0
+    task_light_data.energy = 8.0
     task_light_data.spot_size = math.radians(75)
     task_light_data.spot_blend = 0.35
     task_light_obj = bpy.data.objects.new("Light_TaskDownlight", task_light_data)
@@ -772,7 +811,7 @@ def build_group_a(coll, mats):
     # Blender Light: Cyan Under-desk Fill
     cyan_fill_data = bpy.data.lights.new(name="CyanUnderdesk_PointLight", type='POINT')
     cyan_fill_data.color = (0.0, 0.90, 1.0)
-    cyan_fill_data.energy = 22.0
+    cyan_fill_data.energy = 12.0
     cyan_fill_data.shadow_soft_size = 0.30
     cyan_fill_obj = bpy.data.objects.new("Light_CyanFill", cyan_fill_data)
     cyan_fill_obj.location = r2b(0.0, 0.40, -1.15)
@@ -782,7 +821,7 @@ def build_group_a(coll, mats):
     # Blender Light: Ambient Ceiling Soft Fill
     ambient_data = bpy.data.lights.new(name="CeilingAmbient_PointLight", type='POINT')
     ambient_data.color = (0.95, 0.95, 1.0)
-    ambient_data.energy = 30.0
+    ambient_data.energy = 6.0
     ambient_data.shadow_soft_size = 0.80
     ambient_obj = bpy.data.objects.new("Light_CeilingAmbient", ambient_data)
     ambient_obj.location = r2b(0.0, 2.65, 0.0)
@@ -792,14 +831,65 @@ def build_group_a(coll, mats):
     return group_root
 
 def add_sphere(name, r_center, r_radius, mat=None, parent=None, segments=16, ring_count=12, collection=None):
-    """Add a UV sphere in Runtime coordinates."""
+    """Add a reproducible UV sphere in Runtime coordinates."""
+    if segments < 3 or ring_count < 2:
+        raise ValueError("A UV sphere needs at least three segments and two rings")
     b_center = r2b(r_center[0], r_center[1], r_center[2])
-    bpy.ops.mesh.primitive_uv_sphere_add(radius=r_radius, location=b_center, segments=segments, ring_count=ring_count)
-    obj = bpy.context.active_object
-    obj.name = name
-    bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+    vertices = [(0.0, 0.0, r_radius)]
+    for ring in range(1, ring_count):
+        theta = math.pi * ring / ring_count
+        ring_radius = r_radius * math.sin(theta)
+        z = r_radius * math.cos(theta)
+        for segment in range(segments):
+            phi = math.tau * segment / segments
+            vertices.append((ring_radius * math.cos(phi), ring_radius * math.sin(phi), z))
+    south_pole = len(vertices)
+    vertices.append((0.0, 0.0, -r_radius))
+
+    faces = []
+    face_uvs = []
+    first_ring = 1
+    for segment in range(segments):
+        next_segment = (segment + 1) % segments
+        u0 = segment / segments
+        u1 = (segment + 1) / segments
+        faces.append((0, first_ring + segment, first_ring + next_segment))
+        face_uvs.append(((u0 + u1) / 2, 1.0, u0, 1 - 1 / ring_count, u1, 1 - 1 / ring_count))
+
+    for ring in range(1, ring_count - 1):
+        upper = first_ring + (ring - 1) * segments
+        lower = upper + segments
+        v_top = 1 - ring / ring_count
+        v_bottom = 1 - (ring + 1) / ring_count
+        for segment in range(segments):
+            next_segment = (segment + 1) % segments
+            u0 = segment / segments
+            u1 = (segment + 1) / segments
+            faces.append((upper + segment, lower + segment, lower + next_segment, upper + next_segment))
+            face_uvs.append((u0, v_top, u0, v_bottom, u1, v_bottom, u1, v_top))
+
+    last_ring = first_ring + (ring_count - 2) * segments
+    v_last = 1 / ring_count
+    for segment in range(segments):
+        next_segment = (segment + 1) % segments
+        u0 = segment / segments
+        u1 = (segment + 1) / segments
+        faces.append((last_ring + segment, south_pole, last_ring + next_segment))
+        face_uvs.append((u0, v_last, (u0 + u1) / 2, 0.0, u1, v_last))
+
+    mesh = bpy.data.meshes.new(name + "_mesh")
+    mesh.from_pydata(vertices, [], faces)
+    mesh.update(calc_edges=True)
+    uv_layer = mesh.uv_layers.new(name="UVMap")
+    for polygon, coordinates in zip(mesh.polygons, face_uvs):
+        pairs = zip(coordinates[::2], coordinates[1::2])
+        for loop_index, (u, v) in zip(polygon.loop_indices, pairs):
+            uv_layer.data[loop_index].uv = (u, v)
+    obj = bpy.data.objects.new(name, mesh)
+    obj.location = b_center
+    (collection or bpy.context.collection).objects.link(obj)
     if mat:
-        obj.data.materials.append(mat)
+        mesh.materials.append(mat)
     if parent:
         set_parent_keep_world(obj, parent)
     if collection and obj.name not in collection.objects:
@@ -833,9 +923,13 @@ def build_group_b(coll, mats):
     shelves_root.parent = group_root
 
     # Upper Shelf on Rear Wall (Y=2.15m)
-    add_box("shelf_rear_upper", (0.0, 2.15, -1.68), (1.80, 0.03, 0.22), mat=mats["Desk_IvoryTop"], parent=shelves_root, collection=coll)
-    add_box("shelf_bracket_l", (-0.75, 2.05, -1.72), (0.03, 0.18, 0.16), mat=mats["Baseboard_Charcoal"], parent=shelves_root, collection=coll)
-    add_box("shelf_bracket_r", (0.75, 2.05, -1.72), (0.03, 0.18, 0.16), mat=mats["Baseboard_Charcoal"], parent=shelves_root, collection=coll)
+    # Two short shelves frame the hex cluster instead of passing through it.
+    add_box("shelf_rear_upper", (-0.72, 2.15, -1.68), (0.36, 0.03, 0.22), mat=mats["Desk_IvoryTop"], parent=shelves_root, collection=coll)
+    add_box("shelf_rear_upper_right", (0.72, 2.15, -1.68), (0.36, 0.03, 0.22), mat=mats["Desk_IvoryTop"], parent=shelves_root, collection=coll)
+    add_box("shelf_bracket_l", (-0.82, 2.05, -1.72), (0.03, 0.18, 0.16), mat=mats["Baseboard_Charcoal"], parent=shelves_root, collection=coll)
+    add_box("shelf_bracket_r", (0.82, 2.05, -1.72), (0.03, 0.18, 0.16), mat=mats["Baseboard_Charcoal"], parent=shelves_root, collection=coll)
+    add_box("shelf_bracket_l_inner", (-0.62, 2.05, -1.72), (0.03, 0.18, 0.16), mat=mats["Baseboard_Charcoal"], parent=shelves_root, collection=coll)
+    add_box("shelf_bracket_r_inner", (0.62, 2.05, -1.72), (0.03, 0.18, 0.16), mat=mats["Baseboard_Charcoal"], parent=shelves_root, collection=coll)
 
     # Lower Left Floating Shelf (Y=1.65m)
     add_box("shelf_rear_lower", (-1.45, 1.65, -1.68), (0.80, 0.03, 0.22), mat=mats["Desk_IvoryTop"], parent=shelves_root, collection=coll)
@@ -850,8 +944,13 @@ def build_group_b(coll, mats):
     ]
     for i, b_col in enumerate(book_colors):
         b_mat = get_or_create_pbr_mat(f"Book_Cover_{i+1}", base_color=b_col, roughness=0.55)
-        bx = 0.35 + i * 0.045
+        bx = 0.57 + i * 0.045
         add_box(f"book_vol_{i+1}", (bx, 2.27, -1.68), (0.038, 0.22, 0.18), mat=b_mat, parent=shelves_root, collection=coll)
+
+    # Small camera and lens fill the left shelf with a recognizable studio prop.
+    add_box("shelf_camera_body", (-0.72, 2.225, -1.64), (0.15, 0.09, 0.09), mat=mats["Baseboard_Charcoal"], parent=shelves_root, collection=coll)
+    add_cylinder("shelf_camera_lens", (-0.72, 2.225, -1.585), 0.032, 0.035, axis="Z", mat=mats["Door_HardwareBrass"], parent=shelves_root, vertices=16, collection=coll)
+    add_cylinder("shelf_camera_lens_glass", (-0.72, 2.225, -1.565), 0.021, 0.006, axis="Z", mat=mats["Project_ScannerBlue"], parent=shelves_root, vertices=16, collection=coll)
 
     # Certificate Frame on Left Wall
     cert_root = add_box("certificate_frame", (-2.08, 1.85, 0.30), (0.02, 0.32, 0.42), mat=mats["Door_HardwareBrass"], parent=shelves_root, collection=coll)
@@ -872,6 +971,27 @@ def build_group_b(coll, mats):
     add_box("peg_controller_mount", (-1.55, 1.35, -1.75), (0.04, 0.02, 0.05), mat=mats["Baseboard_Charcoal"], parent=peg_root, collection=coll)
     add_box("peg_controller_body", (-1.55, 1.30, -1.71), (0.16, 0.10, 0.04), mat=mats["Chair_WhiteNylon"], parent=peg_root, collection=coll)
     add_box("peg_controller_accent", (-1.55, 1.30, -1.69), (0.12, 0.04, 0.01), mat=mats["Neon_PinkAccent"], parent=peg_root, collection=coll)
+    # Readable face details match the close pegboard reference and stay inside
+    # the controller's existing wall-mounted footprint.
+    add_box("peg_controller_dpad_v", (-1.59, 1.30, -1.681), (0.012, 0.045, 0.008), mat=mats["Baseboard_Charcoal"], parent=peg_root, collection=coll)
+    add_box("peg_controller_dpad_h", (-1.59, 1.30, -1.681), (0.040, 0.012, 0.008), mat=mats["Baseboard_Charcoal"], parent=peg_root, collection=coll)
+    for button_idx, (bx, by) in enumerate(((-1.515, 1.315), (-1.535, 1.29), (-1.495, 1.29), (-1.515, 1.265)), 1):
+        add_cylinder(f"peg_controller_button_{button_idx}", (bx, by, -1.681), 0.007, 0.008, axis="Z", mat=mats["Door_HardwareBrass"], parent=peg_root, vertices=8, collection=coll)
+
+    # A padded, over-ear headset occupies the right side of the pegboard.
+    bpy.ops.mesh.primitive_torus_add(major_radius=0.145, minor_radius=0.014, major_segments=24, minor_segments=8,
+                                    location=r2b(-1.24, 1.25, -1.73), rotation=(math.radians(90), 0.0, 0.0))
+    headset_band = bpy.context.active_object
+    headset_band.name = "peg_headset_band"
+    headset_band.data.materials.append(mats["Baseboard_Charcoal"])
+    set_parent_keep_world(headset_band, peg_root)
+    if headset_band.name not in coll.objects:
+        coll.objects.link(headset_band)
+        if headset_band.name in bpy.context.scene.collection.objects:
+            bpy.context.scene.collection.objects.unlink(headset_band)
+    for sign in (-1, 1):
+        add_cylinder(f"peg_headset_earcup_{sign}", (-1.24 + sign*0.14, 1.25, -1.72), 0.050, 0.045, axis="Z", mat=mats["Baseboard_Charcoal"], parent=peg_root, vertices=16, collection=coll)
+        add_cylinder(f"peg_headset_cushion_{sign}", (-1.24 + sign*0.14, 1.25, -1.69), 0.035, 0.012, axis="Z", mat=mats["Chair_WhiteNylon"], parent=peg_root, vertices=16, collection=coll)
 
     # Coiled Braided Cable on Pegboard
     add_cylinder("peg_cable_coil", (-1.32, 1.15, -1.73), 0.06, 0.03, axis='Z', mat=mats["Keyboard_KeyOrange"], parent=peg_root, collection=coll)
@@ -928,10 +1048,12 @@ def build_group_b(coll, mats):
     add_cylinder("pot_monstera", (-1.65, 0.38, 0.85), 0.15, 0.32, axis='Y', mat=mats["Plant_CeramicWhite"], parent=plants_root, collection=coll)
     # Broad fan leaves
     monstera_leaves = [
-        (-1.65, 0.65, 0.85, 0.28, 0.015, 0.22),
-        (-1.52, 0.72, 0.78, 0.24, 0.015, 0.20),
-        (-1.78, 0.70, 0.92, 0.26, 0.015, 0.22),
-        (-1.62, 0.82, 0.88, 0.30, 0.015, 0.25),
+        (-1.65, 0.78, 0.85, 0.34, 0.015, 0.28),
+        (-1.48, 0.86, 0.78, 0.34, 0.015, 0.28),
+        (-1.82, 0.88, 0.92, 0.34, 0.015, 0.28),
+        (-1.62, 0.98, 0.88, 0.36, 0.015, 0.30),
+        (-1.84, 0.82, 0.72, 0.34, 0.015, 0.28),
+        (-1.48, 0.90, 1.00, 0.34, 0.015, 0.28),
     ]
     for idx, (lx, ly, lz, sx, sy, sz) in enumerate(monstera_leaves):
         add_box(f"monstera_leaf_{idx+1}", (lx, ly, lz), (sx, sy, sz), mat=mats["Plant_Foliage"], parent=plants_root, collection=coll)
@@ -966,6 +1088,15 @@ def build_group_b(coll, mats):
     # Smartphone resting on desk with notification glow
     add_box("contact_phone_body", (0.45, 0.755, -0.92), (0.075, 0.008, 0.15), mat=mats["Baseboard_Charcoal"], parent=audio_root, collection=coll)
     add_box("contact_phone_screen", (0.45, 0.760, -0.92), (0.070, 0.002, 0.142), mat=mats["Project_ScannerBlue"], parent=audio_root, collection=coll)
+
+    # A handled cup and coaster add the warm desk counterpoint visible in the
+    # main workstation reference without covering controls or interaction anchors.
+    add_box("desk_mug_coaster", (-1.10, 0.758, -0.96), (0.15, 0.016, 0.15), mat=mats["Door_OakWood"], parent=audio_root, collection=coll)
+    add_cylinder("desk_mug_body", (-1.10, 0.832, -0.96), 0.056, 0.132, axis="Y", mat=mats["Desk_MugCeramic"], parent=audio_root, vertices=24, collection=coll)
+    add_cylinder("desk_mug_coffee", (-1.10, 0.895, -0.96), 0.046, 0.006, axis="Y", mat=mats["Desk_Coffee"], parent=audio_root, vertices=24, collection=coll)
+    add_cylinder("desk_mug_handle_top", (-1.035, 0.866, -0.96), 0.009, 0.060, axis="X", mat=mats["Desk_MugCeramic"], parent=audio_root, vertices=12, collection=coll)
+    add_cylinder("desk_mug_handle_bottom", (-1.035, 0.798, -0.96), 0.009, 0.060, axis="X", mat=mats["Desk_MugCeramic"], parent=audio_root, vertices=12, collection=coll)
+    add_cylinder("desk_mug_handle_outer", (-0.992, 0.832, -0.96), 0.009, 0.080, axis="Y", mat=mats["Desk_MugCeramic"], parent=audio_root, vertices=12, collection=coll)
 
     return group_root
 
@@ -1086,9 +1217,11 @@ CAMERAS = {
         "aspect": (1920, 1080)
     },
     "camera-home-desktop": {
-        "pos": (0.25, 1.25, 0.45),
-        "target": (0.05, 0.95, -1.15),
-        "fov": 50.0,
+        # Match the proposed HOME_DESKTOP pose in the accepted art specification.
+        # This Blender authoring camera does not edit the runtime CameraDirector.
+        "pos": (-1.55, 1.42, 1.05),
+        "target": (0.0, 1.0, -1.1),
+        "fov": 43.0,
         "aspect": (1920, 1080)
     },
     "camera-monitor-detail": {
@@ -1232,33 +1365,55 @@ def export_full_scene(export_filepath):
     return file_size
 
 def create_and_export_mobile_lod(export_filepath):
-    """
-    Creates an optimized mobile LOD variant:
-    - Duplicates scene geometry
-    - Applies decimate modifier (ratio 0.55) to high-poly props
-    - Exports mobile-room-lod.glb adhering to mobile budget <= 30k tris
+    """Export a mobile tier with measured decimation on nontrivial static meshes.
+
+    The accepted room shell and object hierarchy remain intact. Meshes with at
+    least 100 authored triangles receive a conservative 0.55 COLLAPSE modifier;
+    the glTF exporter evaluates those modifiers for this lower tier. Group and
+    full-scene exports have already completed before this function is called.
     """
     print(f"\nCreating Mobile LOD Variant -> {export_filepath.name}...")
     bpy.ops.object.select_all(action='DESELECT')
+    decimated = []
     for obj in bpy.context.scene.objects:
-        if obj.type not in ['CAMERA']:
+        if obj.type != 'CAMERA':
             obj.select_set(True)
+        if obj.type != 'MESH':
+            continue
+        if (obj.name in {'desk_modesty_panel', 'monstera_leaf_1', 'monstera_leaf_2', 'monstera_leaf_3',
+                         'monstera_leaf_4', 'monstera_leaf_5', 'monstera_leaf_6'}
+                or obj.name.startswith('hex_housing_') or obj.name == 'peg_headset_band'):
+            print(f"  LOD preserve authored bounds and required silhouette: {obj.name}")
+            continue
+        if obj.modifiers:
+            raise RuntimeError(f"Unexpected pre-existing modifier on {obj.name}: {[m.name for m in obj.modifiers]}")
+        source_triangles = sum(max(0, len(poly.vertices) - 2) for poly in obj.data.polygons)
+        if source_triangles < 100:
+            continue
+        modifier = obj.modifiers.new(name="Mobile_LOD_Decimate_055", type='DECIMATE')
+        modifier.decimate_type = 'COLLAPSE'
+        modifier.ratio = 0.55
+        modifier.use_collapse_triangulate = True
+        decimated.append((obj, source_triangles))
+        print(f"  LOD {obj.name}: {source_triangles} source triangles -> ratio 0.55")
+    if not decimated:
+        raise RuntimeError("Mobile LOD produced no decimated mesh candidates")
 
     bpy.ops.export_scene.gltf(
         filepath=str(export_filepath),
         export_format='GLB',
         use_selection=True,
         export_yup=True,
-        export_apply=False,
+        export_apply=True,
         export_materials='EXPORT',
         export_lights=True,
         export_cameras=False,
         export_image_format='AUTO'
     )
     file_size = export_filepath.stat().st_size
+    print(f"Mobile LOD applied modifiers to {len(decimated)} of {sum(1 for o in bpy.context.scene.objects if o.type == 'MESH')} meshes.")
     print(f"Mobile LOD export successful: {export_filepath.name} ({file_size} bytes)")
     return file_size
-
 # ==============================================================================
 # Master Execution Routine
 # ==============================================================================

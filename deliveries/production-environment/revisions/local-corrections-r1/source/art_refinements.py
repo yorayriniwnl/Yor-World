@@ -4,12 +4,34 @@ import json
 from mathutils import Vector, Matrix
 
 
+def stable_box_uv(obj):
+    """Assign deterministic box-projected UVs after Blender's bevel modifier."""
+    mesh = obj.data
+    layer = mesh.uv_layers.active or mesh.uv_layers.new(name="UVMap")
+    mesh.uv_layers.active = layer
+    if not mesh.vertices:
+        return
+    mins = [min(vertex.co[axis] for vertex in mesh.vertices) for axis in range(3)]
+    maxs = [max(vertex.co[axis] for vertex in mesh.vertices) for axis in range(3)]
+    spans = [max(maxs[axis] - mins[axis], 1.0e-8) for axis in range(3)]
+    projections = ((1, 2), (0, 2), (0, 1))
+    for polygon in mesh.polygons:
+        dominant_axis = max(range(3), key=lambda axis: abs(polygon.normal[axis]))
+        u_axis, v_axis = projections[dominant_axis]
+        for loop_index in polygon.loop_indices:
+            vertex = mesh.vertices[mesh.loops[loop_index].vertex_index]
+            uv = layer.data[loop_index].uv
+            uv.x = (vertex.co[u_axis] - mins[u_axis]) / spans[u_axis]
+            uv.y = (vertex.co[v_axis] - mins[v_axis]) / spans[v_axis]
+
+
 def bevel(bpy, obj, width=0.01, segments=2):
     bpy.context.view_layer.objects.active = obj
     mod = obj.modifiers.new("reference-soft-edge", "BEVEL")
     mod.width = width
     mod.segments = segments
     bpy.ops.object.modifier_apply(modifier=mod.name)
+    stable_box_uv(obj)
 
 
 def replace_mesh(bpy, obj, vertices, faces):
@@ -75,22 +97,80 @@ def leaf_mesh(bpy, obj, r2b, center, direction, length, width, thickness=0.006):
         polygon.use_smooth = False
 
 
+def split_monstera_leaf_mesh(bpy, obj, r2b, center, direction, length, width, thickness=0.008):
+    """A broad, folded leaf with natural edge lobes instead of a box or plain oval."""
+    forward = Vector(direction).normalized()
+    side = forward.cross(Vector((0, 1, 0)))
+    if side.length < 0.01:
+        side = Vector((1, 0, 0))
+    side.normalize()
+    normal = side.cross(forward).normalized()
+    center_v = Vector(center)
+    # Alternating shoulders and inward notches produce the split silhouette of
+    # a young monstera leaf while keeping it a single compact export mesh.
+    profile = (
+        (0.00, 0.00), (0.10, 0.24), (0.22, 0.47), (0.34, 0.65),
+        (0.40, 0.48), (0.45, 0.31), (0.52, 0.44), (0.63, 0.65),
+        (0.69, 0.54), (0.73, 0.34), (0.79, 0.46), (0.89, 0.46),
+        (0.96, 0.27), (1.00, 0.00),
+    )
+    outline = []
+    for sign in (1, -1):
+        points = profile if sign == 1 else tuple(reversed(profile))
+        for t, halfwidth in points:
+            spine = center_v + forward * ((t - 0.5) * length)
+            spine += normal * (0.035 * math.sin(math.pi * t))
+            outline.append(spine + side * (sign * width * halfwidth))
+    n = len(outline)
+    world_vertices = [p + normal * (sign * thickness * 0.5)
+                      for sign in (-1, 1) for p in outline]
+    origin_b = Vector(r2b(*center))
+    vertices = [Vector(r2b(*p)) - origin_b for p in world_vertices]
+    faces = [tuple(reversed(range(n))), tuple(range(n, 2*n))]
+    faces += [(i, (i+1) % n, (i+1) % n+n, i+n) for i in range(n)]
+    replace_mesh(bpy, obj, vertices, faces)
+    obj.matrix_world = Matrix.Translation(origin_b)
+    for polygon in obj.data.polygons:
+        polygon.use_smooth = False
+
+
 def refine_environment(bpy, mats, r2b, add_box, add_cylinder, add_sphere, keep_world):
     # Soften the working surface, cabinetry and electronics without changing F1 contact planes.
     for name in ("desk_top", "drawer_unit_left_body", "drawer_unit_right_body",
                  "speaker_left_cabinet", "speaker_right_cabinet", "desk_clock_chassis",
-                 "peg_controller_body", "contact_phone_body", "pc_chassis_frame"):
+                 "peg_controller_body", "contact_phone_body", "pc_chassis_frame",
+                 "shelf_rear_upper", "shelf_rear_upper_right", "shelf_rear_lower",
+                 "desk_modesty_panel", "shelf_camera_body", "desk_mug_coaster", "desk_mug_body"):
         obj = bpy.data.objects.get(name)
-        bevel(bpy, obj, 0.009 if "desk_top" in name else 0.006, 3)
+        width = (0.014 if name == "desk_top" else 0.004 if name == "desk_mug_coaster"
+                 else 0.010 if name.startswith("shelf_") else 0.008)
+        bevel(bpy, obj, width, 4 if name == "desk_top" else 3)
     for obj in list(bpy.data.objects):
         if obj.name.startswith("drawer_left_") or obj.name.startswith("drawer_right_"):
             if "pull" not in obj.name:
-                bevel(bpy, obj, 0.004, 2)
+                bevel(bpy, obj, 0.005, 3)
+
+    # Separate the cyan-lit modesty panel from the ivory top so its broad
+    # front face remains legible under the runtime's white and colored fills.
+    modesty_panel = bpy.data.objects.get("desk_modesty_panel")
+    if modesty_panel is None:
+        raise RuntimeError("Missing desk_modesty_panel for the cyan desk accent")
+    modesty_panel.data.materials.clear()
+    modesty_panel.data.materials.append(mats["Desk_CyanAccent"])
 
     # Hex lights are actual six-sided diffusers, not rectangular panels labelled as hexagons.
     for idx in range(1, 8):
+        housing = bpy.data.objects[f"hex_housing_{idx}"]
+        housing_radius, housing_depth = 0.205, 0.018
+        hvertices = [(math.cos(i*math.tau/6)*housing_radius, sign*housing_depth/2,
+                      math.sin(i*math.tau/6)*housing_radius)
+                     for sign in (-1, 1) for i in range(6)]
+        hfaces = [tuple(reversed(range(6))), tuple(range(6, 12))]
+        hfaces += [(i, (i+1)%6, (i+1)%6+6, i+6) for i in range(6)]
+        replace_mesh(bpy, housing, hvertices, hfaces)
+        bevel(bpy, housing, 0.004, 2)
         obj = bpy.data.objects[f"hex_panel_{idx}"]
-        radius, depth = 0.127, 0.018
+        radius, depth = 0.18, 0.018
         vertices = [(math.cos(i*math.tau/6)*radius, sign*depth/2, math.sin(i*math.tau/6)*radius)
                     for sign in (-1, 1) for i in range(6)]
         faces = [tuple(reversed(range(6))), tuple(range(6, 12))]
@@ -98,7 +178,7 @@ def refine_environment(bpy, mats, r2b, add_box, add_cylinder, add_sphere, keep_w
         replace_mesh(bpy, obj, vertices, faces)
         bevel(bpy, obj, 0.004, 2)
     # Keep colorful diffusers readable under the runtime tone mapper instead of clipping to white.
-    for key, strength in (("Hex_LilacEmissive", 1.4), ("Hex_VioletEmissive", 1.2)):
+    for key, strength in (("Hex_LilacEmissive", 1.0), ("Hex_VioletEmissive", 0.9)):
         mats[key].node_tree.nodes.get("Principled BSDF").inputs["Emission Strength"].default_value = strength
     mats["Desk_IvoryTop"].node_tree.nodes.get("Principled BSDF").inputs["Roughness"].default_value = 0.38
 
@@ -169,22 +249,29 @@ def refine_environment(bpy, mats, r2b, add_box, add_cylinder, add_sphere, keep_w
         bpy.data.objects.remove(obj, do_unlink=True)
         stalk = add_cylinder(f"ivy_vine_{i}", center, 0.005, 0.38+(i%2)*0.16,
                              mat=mats["Plant_Foliage"], parent=plants, vertices=8, collection=coll)
-        for j in range(3):
-            c = (x + (-1 if j%2 else 1)*0.025, center[1]+0.13-j*0.10, center[2]+0.015)
-            blade = add_box(f"ivy_leaf_{i}_{j+1}", c, (0.08, 0.06, 0.015), mat=mats["Plant_Foliage"], parent=plants, collection=coll)
-            leaf_mesh(bpy, blade, r2b, c, ((-1 if j%2 else 1)*0.7, -0.6, 0.25), 0.105, 0.066)
+        for j in range(5):
+            side_sign = -1 if (i+j) % 2 else 1
+            c = (x + side_sign*0.035, center[1]+0.13-j*0.085, center[2]+0.015*math.sin(i+j))
+            leaf_mat = mats["Plant_Foliage_Light"] if (i+j) % 3 == 0 else mats["Plant_Foliage"]
+            blade = add_box(f"ivy_leaf_{i}_{j+1}", c, (0.12, 0.08, 0.015), mat=leaf_mat, parent=plants, collection=coll)
+            leaf_mesh(bpy, blade, r2b, c, (side_sign*0.78, -0.54, 0.20), 0.135, 0.088)
     for i in range(1, 7):
         obj = bpy.data.objects[f"succulent_leaf_{i}"]
         a = (i-1)*math.tau/6
         c = (-0.85+math.cos(a)*0.032, 0.855, -1.05+math.sin(a)*0.032)
         leaf_mesh(bpy, obj, r2b, c, (math.cos(a)*0.55, 0.85, math.sin(a)*0.55), 0.085, 0.036, 0.012)
-    leaves = [((-1.75,0.82,0.82),(-0.6,0.75,-0.2),0.38,0.20),
-              ((-1.51,0.90,0.79),(0.55,0.80,-0.1),0.37,0.21),
-              ((-1.81,0.98,0.93),(-0.45,0.85,0.15),0.38,0.22),
-              ((-1.58,1.06,0.88),(0.20,0.95,0.2),0.40,0.22)]
+    leaves = [((-1.75,0.88,0.82),(-0.60,0.78,-0.18),0.54,0.30),
+              ((-1.50,0.93,0.78),(0.62,0.72,-0.24),0.52,0.30),
+              ((-1.84,0.97,0.94),(-0.50,0.78,0.24),0.56,0.31),
+              ((-1.61,1.10,0.88),(0.12,0.96,0.18),0.60,0.32),
+              ((-1.83,0.88,0.70),(-0.34,0.72,0.54),0.52,0.30),
+              ((-1.48,0.94,1.00),(0.48,0.78,-0.40),0.54,0.30)]
     for i, (c, direction, length, width) in enumerate(leaves, 1):
         obj = bpy.data.objects[f"monstera_leaf_{i}"]
-        leaf_mesh(bpy, obj, r2b, c, direction, length, width)
+        if i % 2 == 0:
+            obj.data.materials.clear()
+            obj.data.materials.append(mats["Plant_Foliage_Light"])
+        split_monstera_leaf_mesh(bpy, obj, r2b, c, direction, length, width)
         start = Vector((-1.65, 0.53, 0.85))
         end = Vector(c) - Vector(direction).normalized()*length*0.38
         stalk = add_cylinder(f"monstera_stem_{i}", (start+end)*0.5, 0.005, (end-start).length,
@@ -192,8 +279,33 @@ def refine_environment(bpy, mats, r2b, add_box, add_cylinder, add_sphere, keep_w
         q = (Vector(r2b(*end))-Vector(r2b(*start))).to_track_quat("Z", "Y")
         stalk.matrix_world = Matrix.Translation(Vector(r2b(*(start+end)*0.5))) @ q.to_matrix().to_4x4()
 
+    # Keep the authored floor plant visible at the room's left edge without
+    # placing its broad leaves directly beside the documented home camera.
+    # Runtime +Z is the doorway; moving the complete plant -0.45m in Z moves
+    # it toward the desk while preserving its scale, materials, and silhouette.
+    bpy.context.view_layer.update()
+    monstera_offset = Vector(r2b(0.0, 0.0, -0.45))
+    monstera_objects = [obj for obj in bpy.data.objects
+                        if obj.name == "pot_monstera" or obj.name.startswith("monstera_")]
+    if len(monstera_objects) != 16:
+        raise RuntimeError(f"Expected 16 complete monstera objects, found {len(monstera_objects)}")
+    for obj in monstera_objects:
+        world = obj.matrix_world.copy()
+        world.translation += monstera_offset
+        obj.matrix_world = world
+    bpy.context.view_layer.update()
+    print("MONSTERA_CAMERA_CLEARANCE " + json.dumps({
+        "objectsShifted": len(monstera_objects),
+        "runtimeOffsetM": [0.0, 0.0, -0.45],
+        "documentedHomeCameraFloorPosition": [-1.55, 1.05],
+        "oldPlantCenterFloorPosition": [-1.65, 0.85],
+        "newPlantCenterFloorPosition": [-1.65, 0.40],
+        "oldFloorDistanceM": round(math.hypot(-1.65 + 1.55, 0.85 - 1.05), 6),
+        "newFloorDistanceM": round(math.hypot(-1.65 + 1.55, 0.40 - 1.05), 6)
+    }, sort_keys=True))
 
-def profile_mesh(bpy, obj, outline, front_y, back_y):
+
+def profile_mesh(bpy, obj, outline, front_y, back_y, edge_bevel=0.012):
     """Chair outline uses intentional chair-local Blender XYZ, not world environment coordinates."""
     n = len(outline)
     center = obj.location.copy()
@@ -202,7 +314,7 @@ def profile_mesh(bpy, obj, outline, front_y, back_y):
     faces = [tuple(range(n)), tuple(reversed(range(n,2*n)))]
     faces += [(i, i+n, (i+1)%n+n, (i+1)%n) for i in range(n)]
     replace_mesh(bpy, obj, vertices, faces)
-    bevel(bpy, obj, 0.012, 3)
+    bevel(bpy, obj, edge_bevel, 3)
 
 
 def refine_fixture(bpy, blue, ivory, dark, chair_root, chair_base, chair_parts, base_parts, fixture_objects, make_box, make_cylinder):
@@ -219,8 +331,12 @@ def refine_fixture(bpy, blue, ivory, dark, chair_root, chair_base, chair_parts, 
                      (0.09,1.10),(0.13,0.97),(0.13,0.69),(0.105,0.57)]
     profile_mesh(bpy, inset, inset_outline, -0.150, -0.165)
     # Rounded white backing and upholstery bolsters echo the blue/white racing chair reference.
-    rear = make_box("chair-white-shell", (0,-0.265,0.83),(0.48,0.04,0.70),ivory,chair_parts,bevel=0.012)
+    rear = make_box("chair-white-shell", (0,-0.265,0.83),(0.48,0.04,0.70),blue,chair_parts,bevel=0.012)
     profile_mesh(bpy, rear, [(x*1.03,z) for x,z in outline], -0.25,-0.29)
+    rear_accent = make_box("chair-rear-accent", (0,-0.296,0.83),(0.28,0.008,0.50),ivory,chair_parts,bevel=0.002)
+    rear_accent_outline = [(-0.115,0.59),(-0.135,0.70),(-0.135,0.97),(-0.095,1.075),
+                           (0.095,1.075),(0.135,0.97),(0.135,0.70),(0.115,0.59)]
+    profile_mesh(bpy, rear_accent, rear_accent_outline, -0.292, -0.300, edge_bevel=0.002)
     for sign in (-1,1):
         bolster = make_box(f"chair-back-bolster-{sign}", (sign*0.18,-0.215,0.85),(0.060,0.050,0.41),blue,chair_parts,bevel=0.020)
         bolster.rotation_euler[1] = sign*math.radians(5)

@@ -16,6 +16,7 @@ import bpy
 import math
 import json
 import hashlib
+import struct
 import sys
 from pathlib import Path
 from mathutils import Vector, Matrix, Quaternion
@@ -759,6 +760,113 @@ for m in measurements:
 (EVIDENCE / "blender-checks.json").write_text(json.dumps(checks, indent=2), encoding="utf-8")
 
 # --- Export Binary glTF 2.0 and Native Blend ---
+def canonicalize_chair_caster_glb(path):
+    """Normalize caster normals and triangle order after Blender's GLB exporter.
+
+    Repeated Blender exports can permute the same UV-sphere caster triangles
+    and vary a few auto-generated smooth normals. Positions and triangle sets
+    remain identical. These tiny convex ellipsoids have a stable analytic
+    normal field, so write those normals and sort oriented faces by index while
+    preserving every position, face winding, accessor, and buffer size.
+    """
+    data = bytearray(path.read_bytes())
+    if len(data) < 28:
+        raise RuntimeError("Truncated GLB before caster canonicalization")
+    magic, version, total_length = struct.unpack_from("<4sII", data, 0)
+    if magic != b"glTF" or version != 2 or total_length != len(data):
+        raise RuntimeError("Unexpected GLB header before caster canonicalization")
+    json_length, json_type = struct.unpack_from("<I4s", data, 12)
+    if json_type != b"JSON":
+        raise RuntimeError("GLB JSON chunk missing before caster canonicalization")
+    document = json.loads(data[20:20 + json_length].decode("utf-8").rstrip(" \0"))
+    bin_header = 20 + json_length
+    bin_length, bin_type = struct.unpack_from("<I4s", data, bin_header)
+    if bin_type != b"BIN\0" or bin_header + 8 + bin_length != len(data):
+        raise RuntimeError("Unexpected GLB binary chunk before caster canonicalization")
+    bin_start = bin_header + 8
+
+    caster_nodes = sorted(
+        (node for node in document.get("nodes", [])
+         if node.get("name", "").startswith("chair-caster") and "mesh" in node),
+        key=lambda node: node["name"],
+    )
+    if len(caster_nodes) != 5:
+        raise RuntimeError(f"Expected five chair caster meshes, found {len(caster_nodes)}")
+
+    def accessor_layout(accessor_index, expected_type, expected_component):
+        accessor = document["accessors"][accessor_index]
+        if accessor.get("type") != expected_type or accessor.get("componentType") != expected_component:
+            raise RuntimeError(f"Unexpected caster accessor layout: {accessor}")
+        view = document["bufferViews"][accessor["bufferView"]]
+        component_bytes = {5123: 2, 5125: 4, 5126: 4}[expected_component]
+        components = {"SCALAR": 1, "VEC3": 3}[expected_type]
+        stride = view.get("byteStride", component_bytes * components)
+        offset = bin_start + view.get("byteOffset", 0) + accessor.get("byteOffset", 0)
+        return accessor, offset, stride
+
+    face_count = 0
+    vertex_count = 0
+    for node in caster_nodes:
+        mesh = document["meshes"][node["mesh"]]
+        if len(mesh.get("primitives", [])) != 1:
+            raise RuntimeError(f"Expected one caster primitive: {node['name']}")
+        primitive = mesh["primitives"][0]
+        position_accessor, position_offset, position_stride = accessor_layout(
+            primitive["attributes"]["POSITION"], "VEC3", 5126)
+        normal_accessor, normal_offset, normal_stride = accessor_layout(
+            primitive["attributes"]["NORMAL"], "VEC3", 5126)
+        index_accessor = document["accessors"][primitive["indices"]]
+        if index_accessor.get("type") != "SCALAR" or index_accessor.get("componentType") not in (5123, 5125):
+            raise RuntimeError(f"Unexpected caster index accessor: {index_accessor}")
+        if position_accessor["count"] != normal_accessor["count"] or index_accessor["count"] % 3:
+            raise RuntimeError(f"Mismatched caster position/normal/index counts: {node['name']}")
+        index_component = index_accessor["componentType"]
+        index_format, index_bytes = ("H", 2) if index_component == 5123 else ("I", 4)
+        index_view = document["bufferViews"][index_accessor["bufferView"]]
+        index_stride = index_view.get("byteStride", index_bytes)
+        index_offset = bin_start + index_view.get("byteOffset", 0) + index_accessor.get("byteOffset", 0)
+
+        positions = [
+            struct.unpack_from("<3f", data, position_offset + i * position_stride)
+            for i in range(position_accessor["count"])
+        ]
+        mins = [min(point[axis] for point in positions) for axis in range(3)]
+        maxs = [max(point[axis] for point in positions) for axis in range(3)]
+        centers = [(mins[axis] + maxs[axis]) * 0.5 for axis in range(3)]
+        radii = [(maxs[axis] - mins[axis]) * 0.5 for axis in range(3)]
+        if any(radius <= 1.0e-8 for radius in radii):
+            raise RuntimeError(f"Degenerate caster ellipsoid: {node['name']}")
+
+        for i, point in enumerate(positions):
+            normal = tuple((point[axis] - centers[axis]) / (radii[axis] * radii[axis]) for axis in range(3))
+            length = math.sqrt(sum(component * component for component in normal))
+            if length <= 1.0e-8:
+                raise RuntimeError(f"Zero caster normal: {node['name']} vertex {i}")
+            struct.pack_into("<3f", data, normal_offset + i * normal_stride,
+                             *(component / length for component in normal))
+
+        indices = [
+            struct.unpack_from("<" + index_format, data, index_offset + i * index_stride)[0]
+            for i in range(index_accessor["count"])
+        ]
+        if any(index >= len(positions) for index in indices):
+            raise RuntimeError(f"Out-of-range caster index: {node['name']}")
+
+        def canonical_cycle(face):
+            a, b, c = face
+            return min((a, b, c), (b, c, a), (c, a, b))
+
+        faces = sorted(canonical_cycle(tuple(indices[i:i + 3]))
+                       for i in range(0, len(indices), 3))
+        canonical_indices = [index for face in faces for index in face]
+        for i, index in enumerate(canonical_indices):
+            struct.pack_into("<" + index_format, data, index_offset + i * index_stride, index)
+        face_count += len(faces)
+        vertex_count += len(positions)
+
+    path.write_bytes(data)
+    print(f"CASTER_GLB_CANONICALIZED nodes={len(caster_nodes)} vertices={vertex_count} triangles={face_count}")
+
 def export_gltf(path, objects):
     bpy.ops.object.select_all(action="DESELECT")
     for o in objects:
@@ -783,6 +891,7 @@ def export_gltf(path, objects):
         export_optimize_animation_size=True,
         export_optimize_animation_keep_anim_object=True,
     )
+    canonicalize_chair_caster_glb(path)
 
 apply_active_action(rig, avatar_actions["coding_idle"])
 apply_active_action(chair_root, chair_actions["coding_idle"])
