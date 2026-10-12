@@ -12,6 +12,9 @@ import { createDatabaseBackup,restoreDatabaseFromBackup } from "@/server/operati
 import { createConfiguredEmailAdapter } from "@/server/contact/email-adapter";
 import { processOutbox } from "@/server/jobs/outbox-worker";
 import { verifyJobAuth } from "@/server/jobs/runner";
+import { generateDraftReview } from "@/server/content/preview";
+import { setReviewedMediaStorageForTests } from "@/server/media/manifest";
+import { validateUpload } from "@/server/media/validate-upload";
 import type { QueryableDb } from "@/server/contact/quota";
 import type { OwnerContext } from "@/server/auth/types";
 
@@ -30,8 +33,20 @@ describe("Canonical production provider and actual platform route integration",(
     await db.exec("TRUNCATE public.audit_events,public.projects,public.project_revisions,public.published_content,public.publication_history,public.media_assets,public.contact_messages,public.contact_idempotency,public.email_outbox,public.request_quotas,public.github_snapshots,public.aggregate_events CASCADE");
     setPlatformDbForTests(db);
   });
-  afterEach(() => setPlatformDbForTests(null));
+  afterEach(() => { setPlatformDbForTests(null); setReviewedMediaStorageForTests(null); });
   afterAll(async () => { await db.close(); });
+
+  async function currentPublishInput() {
+    const review = await generateDraftReview(actor);
+    return { expectedRevision: review.identity.expectedPublicationRevision, review: review.identity };
+  }
+
+  function setSyntheticMediaStorage(bytes: Uint8Array) {
+    setReviewedMediaStorageForTests({
+      createSignedUrl: async () => "https://storage.test/private-media",
+      fetch: async () => new Response(bytes.slice().buffer as ArrayBuffer, { headers: { "Content-Type": "image/png", "Content-Length": String(bytes.byteLength) } }),
+    });
+  }
 
   function request(key: string,message="An inquiry through the canonical application contact API.") {
     return new NextRequest("http://localhost/api/contact",{ method: "POST",headers: { "Content-Type": "application/json","x-forwarded-for": "192.0.2.90" },
@@ -82,17 +97,18 @@ describe("Canonical production provider and actual platform route integration",(
     const saved=await saveProjectDraft({ projectId: "helios",expectedRevision: project.revision,project: changed },actor);
     expect(saved.draftRevision).toBe(project.revision+1);
     expect((await readPublicPublication())?.projects.find((item) => item.id === "helios")?.title).toBe(project.title);
-    const next=await publishRevision({ expectedRevision: approvedPublication.revision },actor);
+    const firstInput=await currentPublishInput();
+    const next=await publishRevision(firstInput,actor);
     expect(next.projects.find((item) => item.id === "helios")?.title).toBe(changed.title);
     expect((await readPublicPublication())?.revision).toBe(next.revision);
     expect(next.assetManifestRevision).toBe(approvedPublication.assetManifestRevision);
-    await expect(publishRevision({ expectedRevision: approvedPublication.revision },actor)).rejects.toBeInstanceOf(RevisionConflictError);
+    await expect(publishRevision(firstInput,actor)).rejects.toBeInstanceOf(RevisionConflictError);
     expect((await readPublicationHistory()).map((entry) => entry.revision)).toEqual([1,2]);
     const drafts=await listProjectDrafts(actor);
     expect(drafts.find((draft) => draft.projectId === "helios")?.draftRevision).toBe(saved.draftRevision);
     // A second approved snapshot provides a target whose image dependencies exist in this fixture.
-    const third=await publishRevision({ expectedRevision: next.revision },actor);
-    expect((await rollbackPublication(next.revision,actor)).revision).toBe(third.revision+1);
+    const third=await publishRevision(await currentPublishInput(),actor);
+    expect((await rollbackPublication(next.revision,third.revision,"Restore the reviewed snapshot",actor)).revision).toBe(third.revision+1);
   });
 
   it("backs up and restores all fifteen accepted public tables including outbox/idempotency",async () => {
@@ -109,18 +125,22 @@ describe("Canonical production provider and actual platform route integration",(
   });
 
   it("retains only the exact accepted unavailable-figure placeholder when publishing and rolling back",async () => {
-    const next=await publishRevision({ expectedRevision: approvedPublication.revision },actor);
+    const next=await publishRevision(await currentPublishInput(),actor);
     expect(next.projects.find((project) => project.id === "helios")?.sections.flatMap((section) => section.blocks)
       .find((block) => block.type === "image")?.mediaId).toBe("missing-helios-diagram");
-    expect((await rollbackPublication(approvedPublication.revision,actor)).revision).toBe(next.revision+1);
-    const forged={ ...approvedPublication,projects: approvedPublication.projects.map((project) => ({ ...project,sections: project.sections.map((section) => ({ ...section,blocks: section.blocks.map((block) => block.type === "image" ? { ...block,mediaId: "missing-invented-asset" } : block) })) })) };
-    await expect(publishRevision({ expectedRevision: next.revision+1,customProjects: forged.projects },actor)).rejects.toThrow(/unapproved or missing media/);
+    expect((await rollbackPublication(approvedPublication.revision,next.revision,"Restore the accepted baseline",actor)).revision).toBe(next.revision+1);
+    const helios=await listProjectDrafts(actor).then((drafts) => drafts.find((draft) => draft.projectId === "helios")!);
+    const altered={ ...helios.project,sections: helios.project.sections.map((section) => ({ ...section,blocks: section.blocks.map((block) => block.type === "image" ? { ...block,alt: `${block.alt} changed` } : block) })) };
+    await expect(saveProjectDraft({ projectId: "helios",expectedRevision: helios.draftRevision,project: altered },actor)).rejects.toThrow(/approved, verified still images/);
   });
 
   it("validates and locks approved image records on the publication transaction connection",async () => {
-    const mediaId="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa";
-    await db.query("INSERT INTO public.media_assets(id,object_key,hash,mime,bytes,approval_status) VALUES($1,'approved.png','synthetic','image/png',1,'approved')",[mediaId]);
-    const projects=approvedPublication.projects.map((project) => ({ ...project,sections: project.sections.map((section) => ({ ...section,blocks: section.blocks.map((block) => block.type === "image" ? { ...block,mediaId } : block) })) }));
+    const mediaId="aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+    const png=new Uint8Array(await readFile("tests/fixtures/scp-media/valid-rgba-16x12.png"));
+    const validated=await validateUpload({ buffer: png,mime: "image/png",filename: "approved.png" });
+    setSyntheticMediaStorage(png);
+    await db.query("INSERT INTO public.media_assets(id,object_key,hash,mime,bytes,dimensions,provenance,approval_status) VALUES($1,'approved.png',$2,$3,$4,$5,$6,'approved')",[mediaId,validated.hash,validated.mime,validated.bytes,JSON.stringify(validated.dimensions),JSON.stringify({ source: "synthetic test" })]);
+    await db.query("INSERT INTO public.audit_events(actor,action,entity_type,entity_id,payload) VALUES($1,'media_approved','media',$2,'{}')",[actor.userId,mediaId]);
     let inTransaction=false;
     let lockedMediaChecks=0;
     const provider: QueryableDb={ query: async (sql,params) => {
@@ -134,11 +154,15 @@ describe("Canonical production provider and actual platform route integration",(
       } }); } finally { inTransaction=false; }
     }) };
     setPlatformDbForTests(provider);
-    const next=await publishRevision({ expectedRevision: approvedPublication.revision,customProjects: projects },actor);
-    expect(lockedMediaChecks).toBe(1);
+    const helios=approvedPublication.projects.find((project) => project.id === "helios")!;
+    const changed={ ...helios,sections: helios.sections.map((section,index) => index === 0 ? { ...section,blocks: [...section.blocks,{ type: "image" as const,mediaId,alt: "Approved synthetic diagram",caption: "Database verified" }] } : section) };
+    await saveProjectDraft({ projectId: "helios",expectedRevision: helios.revision,project: changed },actor);
+    lockedMediaChecks=0;
+    const next=await publishRevision(await currentPublishInput(),actor);
+    expect(lockedMediaChecks).toBe(3);
     expect(next.revision).toBe(2);
     await db.query("UPDATE public.media_assets SET approval_status='rejected' WHERE id=$1",[mediaId]);
-    await expect(rollbackPublication(next.revision,actor)).rejects.toThrow(/unapproved or missing media/);
+    await expect(rollbackPublication(next.revision,next.revision,"The asset was revoked",actor)).rejects.toThrow(/unapproved or missing media/);
     expect((await readPublicPublication())?.revision).toBe(next.revision);
   });
 
