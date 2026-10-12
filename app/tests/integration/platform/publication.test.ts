@@ -30,6 +30,7 @@ import {
 import {
   saveProjectDraft,
   getProjectDraft,
+  setTestDraftRegistry,
   RevisionConflictError,
   ContentValidationError,
 } from "@/server/content/revisions";
@@ -45,6 +46,8 @@ import {
   approveMediaAsset,
   MediaValidationError,
 } from "@/server/media/validate-upload";
+import { generateDraftReview } from "@/server/content/preview";
+import { setTestMediaBytesForTests, clearTestMediaBytesForTests } from "@/server/media/manifest";
 import { readPublication, findPublishedProject } from "@/content/publication-reader";
 import type { OwnerContext } from "@/server/auth/types";
 import type { PublishedProject } from "@/contracts/content";
@@ -94,7 +97,15 @@ describe("Milestone A4: Structured Editing, Publishing & Rollback", () => {
       ])
     );
     setTestMediaRegistry(null);
+    setTestDraftRegistry(null);
+    clearTestMediaBytesForTests();
   });
+
+  async function publishCurrent(expectedRevision?: number) {
+    const review = await generateDraftReview(ACTIVE_OWNER);
+    const expected = expectedRevision ?? review.identity.expectedPublicationRevision;
+    return publishRevision({ expectedRevision: expected, review: { ...review.identity, expectedPublicationRevision: expected } }, ACTIVE_OWNER);
+  }
 
   describe("Access Control & Authorization Guards", () => {
     it("non-owner draft access: unauthenticated returns 401 UNAUTHENTICATED", async () => {
@@ -205,10 +216,12 @@ describe("Milestone A4: Structured Editing, Publishing & Rollback", () => {
   describe("Publication Semantics: Concurrency & Validation Gates", () => {
     it("stale expectedRevision on publication throws 409 RevisionConflictError", async () => {
       const current = getActivePublication().revision;
+      const review = await generateDraftReview(ACTIVE_OWNER);
       await expect(
         publishRevision(
           {
             expectedRevision: current + 10,
+            review: { ...review.identity, expectedPublicationRevision: current + 10 },
           },
           ACTIVE_OWNER
         )
@@ -219,26 +232,17 @@ describe("Milestone A4: Structured Editing, Publishing & Rollback", () => {
       const initialRev = getActivePublication().revision;
 
       // First publication succeeds
-      const pub1 = await publishRevision(
-        {
-          expectedRevision: initialRev,
-        },
-        ACTIVE_OWNER
-      );
+      const review = await generateDraftReview(ACTIVE_OWNER);
+      const pub1 = await publishRevision({ expectedRevision: initialRev, review: review.identity }, ACTIVE_OWNER);
       expect(pub1.revision).toBe(initialRev + 1);
 
       // Second concurrent publisher attempts with initialRev (now stale) -> 409 Conflict
       await expect(
-        publishRevision(
-          {
-            expectedRevision: initialRev,
-          },
-          ACTIVE_OWNER
-        )
+        publishRevision({ expectedRevision: initialRev, review: review.identity }, ACTIVE_OWNER)
       ).rejects.toThrowError(RevisionConflictError);
     });
 
-    it("invalid URL (non-https) throws 422 ContentValidationError", async () => {
+    it("rejects a caller-supplied publication snapshot outside the reviewed draft set", async () => {
       const current = getActivePublication();
       const corruptedProjects: PublishedProject[] = JSON.parse(JSON.stringify(current.projects));
       const targetProj = corruptedProjects[0];
@@ -256,7 +260,7 @@ describe("Milestone A4: Structured Editing, Publishing & Rollback", () => {
       ).rejects.toThrowError(ContentValidationError);
     });
 
-    it("invalid content block (empty heading) throws 422 ContentValidationError", async () => {
+    it("rejects arbitrary content blocks supplied outside the draft editor", async () => {
       const current = getActivePublication();
       const corruptedProjects: PublishedProject[] = JSON.parse(JSON.stringify(current.projects));
       const targetProj = corruptedProjects[0];
@@ -274,14 +278,11 @@ describe("Milestone A4: Structured Editing, Publishing & Rollback", () => {
       ).rejects.toThrowError(ContentValidationError);
     });
 
-    it("unapproved media throws 422 MediaValidationError", async () => {
-      const current = getActivePublication();
-      const corruptedProjects: PublishedProject[] = JSON.parse(JSON.stringify(current.projects));
-      const targetProj = corruptedProjects[0];
-      expect(targetProj).toBeDefined();
-
-      // Insert image block with unapproved / unregistered media ID
-      targetProj!.sections[0]!.blocks.push({
+    it("unapproved media cannot be attached to a saved draft", async () => {
+      const draft = await getProjectDraft("ai-vs-real", ACTIVE_OWNER);
+      expect(draft).toBeDefined();
+      const project = JSON.parse(JSON.stringify(draft!.project)) as PublishedProject;
+      project.sections[0]!.blocks.push({
         type: "image",
         mediaId: "med-unapproved-uuid-9999",
         alt: "Unapproved chart",
@@ -289,13 +290,7 @@ describe("Milestone A4: Structured Editing, Publishing & Rollback", () => {
       });
 
       await expect(
-        publishRevision(
-          {
-            expectedRevision: current.revision,
-            customProjects: corruptedProjects,
-          },
-          ACTIVE_OWNER
-        )
+        saveProjectDraft({ projectId: "ai-vs-real", expectedRevision: draft!.draftRevision, project }, ACTIVE_OWNER)
       ).rejects.toThrowError(MediaValidationError);
     });
 
@@ -305,29 +300,25 @@ describe("Milestone A4: Structured Editing, Publishing & Rollback", () => {
       const validated = await validateUpload({ buffer: pngHeader, mime: "image/png", filename: "approved-chart.png" });
       const asset = await registerMediaAsset(validated, ACTIVE_OWNER);
       expect(asset.approvalStatus).toBe("pending");
+      setTestMediaBytesForTests(asset.id, pngHeader);
 
       // 2. Owner approves media
       await approveMediaAsset(asset.id, ACTIVE_OWNER);
 
       // 3. Include in project section
       const current = getActivePublication();
-      const validProjects: PublishedProject[] = JSON.parse(JSON.stringify(current.projects));
-      const targetProj = validProjects[0];
-      expect(targetProj).toBeDefined();
-      targetProj!.sections[0]!.blocks.push({
+      const draft = await getProjectDraft(current.projects[0]!.id, ACTIVE_OWNER);
+      expect(draft).toBeDefined();
+      const project: PublishedProject = JSON.parse(JSON.stringify(draft!.project));
+      project.sections[0]!.blocks.push({
         type: "image",
         mediaId: asset.id,
         alt: "Approved system diagram",
         caption: "Approved diagram caption",
       });
 
-      const pub = await publishRevision(
-        {
-          expectedRevision: current.revision,
-          customProjects: validProjects,
-        },
-        ACTIVE_OWNER
-      );
+      await saveProjectDraft({ projectId: draft!.projectId, expectedRevision: draft!.draftRevision, project }, ACTIVE_OWNER);
+      const pub = await publishCurrent(current.revision);
 
       expect(pub.revision).toBe(current.revision + 1);
     });
@@ -338,16 +329,12 @@ describe("Milestone A4: Structured Editing, Publishing & Rollback", () => {
       setSimulateCacheRefreshFailure(true);
 
       const current = getActivePublication();
-      const pub = await publishRevision(
-        {
-          expectedRevision: current.revision,
-        },
-        ACTIVE_OWNER
-      );
+      const pub = await publishCurrent(current.revision);
 
       // Durable revision incremented
       expect(pub.revision).toBe(current.revision + 1);
-      expect(pub.cacheRefreshed).toBe(false);
+      expect(pub.applicationSnapshotUpdated).toBe(false);
+      expect(pub.visibility).toEqual({ committedRevision: pub.revision, observedOriginRevision: null, edgeCache: "not-observed" });
       expect(pub.cacheRefreshWarning).toContain("Simulated cache-refresh service timeout");
 
       // Publication history recorded the entry durably
@@ -379,49 +366,41 @@ describe("Milestone A4: Structured Editing, Publishing & Rollback", () => {
       const pngHeader = readFileSync(resolve("tests/fixtures/scp-media/valid-rgba-16x12.png"));
       const validated = await validateUpload({ buffer: pngHeader, mime: "image/png", filename: "temp.png" });
       const asset = await registerMediaAsset(validated, ACTIVE_OWNER);
+      setTestMediaBytesForTests(asset.id, pngHeader);
       await approveMediaAsset(asset.id, ACTIVE_OWNER);
 
       const current = getActivePublication();
-      const pCopy: PublishedProject[] = JSON.parse(JSON.stringify(current.projects));
-      const targetProj = pCopy[0];
-      expect(targetProj).toBeDefined();
-      targetProj!.sections[0]!.blocks.push({
+      const draft = await getProjectDraft(current.projects[0]!.id, ACTIVE_OWNER);
+      expect(draft).toBeDefined();
+      const project: PublishedProject = JSON.parse(JSON.stringify(draft!.project));
+      project.sections[0]!.blocks.push({
         type: "image",
         mediaId: asset.id,
         alt: "Test",
         caption: "Test",
       });
 
-      const pub2 = await publishRevision(
-        {
-          expectedRevision: current.revision,
-          customProjects: pCopy,
-        },
-        ACTIVE_OWNER
-      );
+      await saveProjectDraft({ projectId: draft!.projectId, expectedRevision: draft!.draftRevision, project }, ACTIVE_OWNER);
+      const pub2 = await publishCurrent(current.revision);
       expect(pub2.revision).toBe(2);
 
       // Now, simulate the asset being deleted or marked unapproved
       getTestMediaRegistry().delete(asset.id);
+      setTestMediaBytesForTests(asset.id, null);
 
       // Attempting rollback to revision 2 must fail because referenced asset is missing!
       await expect(
-        rollbackPublication(2, ACTIVE_OWNER)
+        rollbackPublication(2, pub2.revision, "Restore after media removal", ACTIVE_OWNER)
       ).rejects.toThrowError(MediaValidationError);
     });
 
     it("successful rollback restores prior approved snapshot as a new revision", async () => {
       // Current is revision 1. Publish revision 2.
-      const pub2 = await publishRevision(
-        {
-          expectedRevision: 1,
-        },
-        ACTIVE_OWNER
-      );
+      const pub2 = await publishCurrent(1);
       expect(pub2.revision).toBe(2);
 
       // Now rollback to revision 1
-      const rolledBack = await rollbackPublication(1, ACTIVE_OWNER);
+      const rolledBack = await rollbackPublication(1, pub2.revision, "Restore accepted baseline", ACTIVE_OWNER);
 
       // Rollback creates a NEW incremented revision (r3) restoring r1 snapshot content
       expect(rolledBack.revision).toBe(3);

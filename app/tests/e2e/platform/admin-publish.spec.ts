@@ -87,7 +87,7 @@ test.describe("Milestone A4: Project Editor & Publication Management E2E", () =>
     await expect(addSectionBtn).toBeVisible();
 
     // Save draft button
-    const saveBtn = page.getByRole("button", { name: /Save Draft Revision/i });
+    const saveBtn = page.getByRole("button", { name: /Save Draft/i });
     await expect(saveBtn).toBeVisible();
   });
 
@@ -101,12 +101,16 @@ test.describe("Milestone A4: Project Editor & Publication Management E2E", () =>
     // Pre-flight checklist card
     const checklist = page.getByText(/Pre-Flight Checklist/i);
     await expect(checklist).toBeVisible();
-    await expect(page.getByText(/100% verified evidence/i)).toBeVisible();
-    await expect(page.getByText(/Approved media assets verification/i)).toBeVisible();
+    await expect(page.getByText(/project ai-vs-real: schema/i)).toBeVisible();
+    await expect(page.getByText(/project helios: approved-media/i)).toBeVisible();
+    await expect(page.getByText(/^Checked /).first()).toBeVisible();
+    await expect(page.getByText(/Candidate SHA:/).first()).toBeVisible();
+    await expect(page.getByText(/100% verified evidence/i)).toHaveCount(0);
 
     // Publish execution button
     const publishBtn = page.getByRole("button", { name: /Publish Revision/i });
     await expect(publishBtn).toBeVisible();
+    await expect(publishBtn).toBeEnabled();
 
     // Publication history table
     const historyHeading = page.getByRole("heading", { level: 3, name: /Publication History & Rollback/i });
@@ -117,6 +121,26 @@ test.describe("Milestone A4: Project Editor & Publication Management E2E", () =>
     await expect(table.getByText(/Revision/i).first()).toBeVisible();
     await expect(table.getByText(/r1/i).first()).toBeVisible();
     await captureScreenshot(page, "a4-publish-review");
+  });
+
+  test("edits, saves, reloads, and privately previews CandidateX without adding it to public pages", async ({ page }, testInfo) => {
+    const previewReceipt = `R4 browser private-preview receipt ${testInfo.project.name}`;
+    await page.goto("/admin/editor");
+    await page.getByLabel(/Select Project:/i).selectOption("candidatex");
+    const firstSection = page.locator('[data-section-index="0"]');
+    const existingBlockCount = await firstSection.locator('[data-testid^="section-0-block-"]').count();
+    await firstSection.getByRole("button", { name: /^\+ List$/ }).click();
+    const privateItem = page.getByRole("textbox", { name: `Section 1 Block ${existingBlockCount + 1} Item 1` });
+    await privateItem.fill(previewReceipt);
+    await page.getByRole("button", { name: /Save Draft/i }).click();
+    await expect(page.getByText(/Draft saved successfully/i)).toBeVisible();
+
+    await page.goto("/admin/preview/candidatex");
+    await expect(page.getByText(previewReceipt, { exact: true })).toBeVisible();
+    await expect(page.getByText(/Private CandidateX content is preview-only/i)).toBeVisible();
+    await page.goto("/projects");
+    await expect(page.getByRole("heading", { level: 2, name: /CandidateX/i })).toHaveCount(0);
+    expect((await page.goto("/projects/candidatex"))?.status()).toBe(404);
   });
 
   test("editor and publish interfaces require zero WebGL, canvas, or 3D models", async ({ page }) => {

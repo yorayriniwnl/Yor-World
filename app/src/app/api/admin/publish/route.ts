@@ -6,18 +6,31 @@ import {
 } from "@/server/content/publish";
 import { RevisionConflictError, ContentValidationError } from "@/server/content/revisions";
 import { MediaValidationError } from "@/server/media/validate-upload";
+import { ReviewIdentitySchema } from "@/server/content/preview";
+import { z } from "zod";
 
 export const dynamic = "force-dynamic";
+const privateHeaders = { "Cache-Control": "private, no-store, no-cache, must-revalidate", Pragma: "no-cache", Expires: "0", Vary: "Authorization, Cookie" };
+const publishBody = z.strictObject({
+  expectedRevision: z.number().int().positive(),
+  review: ReviewIdentitySchema,
+});
+
+function privateAuthFailure(result: Exclude<Awaited<ReturnType<typeof verifyOwner>>, { ok: true }>) {
+  const response = createAuthErrorResponse(result);
+  for (const [name, value] of Object.entries(privateHeaders)) response.headers.set(name, value);
+  return response;
+}
 
 export async function GET(request: Request) {
   const result = await verifyOwner(request);
   if (!result.ok) {
-    return createAuthErrorResponse(result);
+    return privateAuthFailure(result);
   }
 
   try {
   const active = await readPublicPublication();
-  if (!active) return Response.json({ error: "Publication storage is unavailable." },{ status: 503 });
+  if (!active) return Response.json({ error: "Publication storage is unavailable." },{ status: 503, headers: privateHeaders });
   const history = await readPublicationHistory();
 
   return Response.json(
@@ -29,13 +42,12 @@ export async function GET(request: Request) {
     },
     {
       headers: {
-        "Cache-Control": "no-store",
-        Vary: "Authorization, Cookie",
+        ...privateHeaders,
       },
     }
   );
   } catch {
-    return Response.json({ error: "Private storage is temporarily unavailable." },{ status: 503,headers: { "Cache-Control": "no-store, private",Vary: "Authorization, Cookie" } });
+    return Response.json({ error: "Private storage is temporarily unavailable." },{ status: 503,headers: privateHeaders });
   }
 
 }
@@ -43,23 +55,24 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const result = await verifyOwner(request);
   if (!result.ok) {
-    return createAuthErrorResponse(result);
+    return privateAuthFailure(result);
   }
 
   try {
-    const body = await request.json();
-
-    if (typeof body.expectedRevision !== "number") {
+    const body: unknown = await request.json().catch(() => null);
+    const parsed = publishBody.safeParse(body);
+    if (!parsed.success) {
       return Response.json(
-        { error: "expectedRevision (number) is required" },
-        { status: 422 }
+        { error: "expectedRevision and the complete current review identity are required." },
+        { status: 422, headers: privateHeaders }
       );
     }
+    const input = parsed.data;
 
     const publication = await publishRevision(
       {
-        expectedRevision: body.expectedRevision,
-        projectId: body.projectId,
+        expectedRevision: input.expectedRevision,
+        review: input.review,
       },
       result.context
     );
@@ -71,24 +84,24 @@ export async function POST(request: Request) {
         publication,
         actor: result.context.userId,
       },
-      { status: 200 }
+      { status: 200, headers: privateHeaders }
     );
   } catch (err) {
     if (err instanceof RevisionConflictError) {
       return Response.json(
         { error: err.message, code: err.code },
-        { status: 409 }
+        { status: 409, headers: privateHeaders }
       );
     }
     if (err instanceof ContentValidationError || err instanceof MediaValidationError) {
       return Response.json(
         { error: err.message, code: "UNPROCESSABLE_ENTITY" },
-        { status: 422 }
+        { status: 422, headers: privateHeaders }
       );
     }
     return Response.json(
       { error: "Private storage is temporarily unavailable." },
-      { status: 503 }
+      { status: 503, headers: privateHeaders }
     );
   }
 }
