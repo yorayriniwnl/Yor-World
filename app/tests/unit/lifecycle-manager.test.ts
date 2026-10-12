@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { LifecycleManager } from "../../src/features/world/LifecycleManager";
 import type { WorldLifecycleState } from "../../src/features/world/types";
 
@@ -76,8 +76,9 @@ describe("LifecycleManager - 8 Explicit States and Adversarial Guarantees", () =
     expect(lateComplete).toBe(false);
 
     const lateProgress = lm.updateLoadingProgress(token1, {
+      session: { generation: lm.getSessionGeneration(), token: token1 },
       stage: "stale-stage",
-      progress: 0.99,
+      bytes: { kind: "indeterminate", reason: "stale" },
       requiredLoaded: 3,
       requiredTotal: 3,
       optionalLoaded: 2,
@@ -199,4 +200,92 @@ describe("LifecycleManager - 8 Explicit States and Adversarial Guarantees", () =
     // Late operations after disposal fail completely
     expect(lm.requestEntry()).toBe(token + 1); // Disposed manager rejects or leaves stale
   });
+
+  it("times out loading session after 15s watchdog limit", () => {
+    vi.useFakeTimers();
+    const lm = new LifecycleManager();
+    const token = lm.requestEntry();
+    lm.startLoading(token);
+    expect(lm.getState()).toBe("LOADING");
+
+    vi.advanceTimersByTime(15500);
+    expect(lm.getState()).toBe("FAILURE");
+    expect(lm.getFailureReason()).toMatch(/timed out/i);
+    vi.useRealTimers();
+  });
+
+  it("resets the watchdog only for a new required-byte high-water or unique completed stage", () => {
+    vi.useFakeTimers();
+    const lm = new LifecycleManager();
+    const token = lm.requestEntry();
+    lm.startLoading(token);
+    const session = lm.getSessionId();
+
+    vi.advanceTimersByTime(10_000);
+    expect(lm.updateLoadingProgress(token, {
+      session,
+      stage: "Download bytes",
+      bytes: { kind: "indeterminate", reason: "chunked" },
+      requiredLoaded: 0,
+      requiredTotal: 3,
+      optionalLoaded: 0,
+      optionalTotal: 2,
+      retryCount: 0,
+      maxRetries: 2,
+      attempt: 1,
+      activity: { kind: "required-bytes", assetId: "room", loaded: 128 },
+    })).toBe(true);
+
+    vi.advanceTimersByTime(14_999);
+    expect(lm.getState()).toBe("LOADING");
+    // A replayed byte high-water cannot push the deadline out again.
+    lm.updateLoadingProgress(token, {
+      session,
+      stage: "Retry received old bytes",
+      bytes: { kind: "indeterminate", reason: "retry" },
+      requiredLoaded: 0,
+      requiredTotal: 3,
+      optionalLoaded: 0,
+      optionalTotal: 2,
+      retryCount: 1,
+      maxRetries: 2,
+      attempt: 2,
+      activity: { kind: "required-bytes", assetId: "room", loaded: 128 },
+    });
+    vi.advanceTimersByTime(1);
+    expect(lm.getState()).toBe("FAILURE");
+    vi.useRealTimers();
+  });
+
+  it("fences stale generations and stale entrance callbacks cannot clear the current watchdog", () => {
+    vi.useFakeTimers();
+    const lm = new LifecycleManager();
+    const oldToken = lm.requestEntry();
+    const oldSession = lm.getSessionId();
+    lm.startLoading(oldToken);
+    lm.continueWithPortfolio();
+    const currentToken = lm.requestEntry();
+    const currentSession = lm.getSessionId();
+    expect(currentSession.generation).not.toBe(oldSession.generation);
+    lm.startLoading(currentToken);
+
+    expect(lm.startEntrance(oldToken)).toBe(false);
+    expect(lm.updateLoadingProgress(oldToken, {
+      session: oldSession,
+      stage: "stale",
+      bytes: { kind: "determinate", scope: "required-session", loaded: 1, total: 2 },
+      requiredLoaded: 0,
+      requiredTotal: 3,
+      optionalLoaded: 0,
+      optionalTotal: 2,
+      retryCount: 0,
+      maxRetries: 2,
+      attempt: 1,
+      activity: { kind: "required-bytes", assetId: "room", loaded: 999 },
+    })).toBe(false);
+    vi.advanceTimersByTime(15_000);
+    expect(lm.getState()).toBe("FAILURE");
+    vi.useRealTimers();
+  });
+
 });
