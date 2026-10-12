@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "commands": [
+    {
+      "argv": ["python", "scripts/build-output-hashes.py"],
+      "exitCode": 0
+    },
+    {
+      "argv": ["python", "scripts/verify-package.py"],
+      "exitCode": 0
+    }
+  ],
+  "note": "The manifest build ran after this command record was written; package verification then checked the exact manifested file set and hashes. output-hashes.json and this verifier's receipt are explicitly self-excluded to avoid recursive hashing."
+}

@@ -1,0 +1,68 @@
+{
+  "status": "PASS",
+  "commands": [
+    {
+      "command": "python deliveries/FINISH-B1-R6/scripts/verify-input-bindings.py",
+      "exitCode": 0,
+      "result": "PASS",
+      "log": "evidence/input-bindings.json"
+    },
+    {
+      "command": "blender.exe --background --python-exit-code 1 --python deliveries/FINISH-B1-R6/scripts/build-static-details.py",
+      "exitCode": 0,
+      "result": "PASS",
+      "log": "evidence/blender-build.stdout.log"
+    },
+    {
+      "command": "python deliveries/FINISH-B1-R6/scripts/merge-static-geometry.py",
+      "exitCode": 0,
+      "result": "PASS",
+      "log": "evidence/static-geometry-merge.json"
+    },
+    {
+      "command": "node deliveries/FINISH-B1-R6/scripts/verify-browser.mjs",
+      "exitCode": 0,
+      "result": "PASS",
+      "log": "evidence/browser.stdout.log",
+      "environment": {
+        "FINISH_B1_DEPENDENCY_ROOT": "F:/Yor-World-B1-R6-Scratch/harness-deps",
+        "PLAYWRIGHT_BROWSERS_PATH": "F:/Yor-World-B1-R6-Scratch/playwright-browsers",
+        "TMP": "F:/Yor-World-B1-R6-Scratch/system-temp",
+        "TEMP": "F:/Yor-World-B1-R6-Scratch/system-temp"
+      }
+    },
+    {
+      "command": "node deliveries/FINISH-B1-R6/scripts/validate-glb.mjs",
+      "exitCode": 0,
+      "result": "PASS",
+      "log": "evidence/gltf-validation.log",
+      "environment": {
+        "FINISH_B1_DEPENDENCY_ROOT": "F:/Yor-World-B1-R6-Scratch/harness-deps"
+      }
+    },
+    {
+      "command": "blender.exe --background --python-exit-code 1 --python deliveries/FINISH-B1-R6/scripts/verify-blender-imports.py",
+      "exitCode": 0,
+      "result": "PASS",
+      "log": "evidence/blender-imports.log"
+    },
+    {
+      "command": "python deliveries/FINISH-B1-R6/scripts/verify-invariants.py",
+      "exitCode": 0,
+      "result": "PASS",
+      "log": "evidence/final-invariants.json"
+    },
+    {
+      "command": "python deliveries/FINISH-B1-R6/scripts/build-comparison.py",
+      "exitCode": 0,
+      "result": "PASS",
+      "log": "evidence/comparisons/index.html"
+    },
+    {
+      "command": "python deliveries/FINISH-B1-R6/scripts/write-delivery-report.py",
+      "exitCode": 0,
+      "result": "PASS",
+      "log": "candidate-asset-manifest.json, evidence/final-budgets.json, evidence/requirement-matrix.json, evidence/tool-versions.json, report.md"
+    }
+  ]
+}

@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "status": "PASS LOCAL",
+  "candidate": "FINISH-B1-R5",
+  "baseCommit": "7936fa981a24fe4af834ff250ffec8a7b02b09b3",
+  "commands": [
+    {
+      "name": "create-source-patch",
+      "argv": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "deliveries/FINISH-B1-R5/scripts/create-source-patch.py"
+      ],
+      "startedUTC": "2026-10-11T23:07:37.985896+00:00",
+      "durationSeconds": 0.144,
+      "exitCode": 0,
+      "stdoutLog": "deliveries/FINISH-B1-R5/evidence/checks/create-source-patch.stdout.log",
+      "stderrLog": "deliveries/FINISH-B1-R5/evidence/checks/create-source-patch.stderr.log"
+    },
+    {
+      "name": "source-patch-replay",
+      "argv": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "deliveries/FINISH-B1-R5/scripts/replay-source-patch.py"
+      ],
+      "startedUTC": "2026-10-11T23:07:38.130973+00:00",
+      "durationSeconds": 0.437,
+      "exitCode": 0,
+      "stdoutLog": "deliveries/FINISH-B1-R5/evidence/checks/source-patch-replay.stdout.log",
+      "stderrLog": "deliveries/FINISH-B1-R5/evidence/checks/source-patch-replay.stderr.log"
+    },
+    {
+      "name": "blender-room-palette",
+      "argv": [
+        "C:\\Program Files\\Blender Foundation\\Blender 5.2\\blender.exe",
+        "--background",
+        "--python-exit-code",
+        "1",
+        "--python",
+        "deliveries/FINISH-B1-R5/scripts/apply-room-palette.py"
+      ],
+      "startedUTC": "2026-10-11T23:07:38.568894+00:00",
+      "durationSeconds": 1.923,
+      "exitCode": 0,
+      "stdoutLog": "deliveries/FINISH-B1-R5/evidence/checks/blender-room-palette.stdout.log",
+      "stderrLog": "deliveries/FINISH-B1-R5/evidence/checks/blender-room-palette.stderr.log"
+    },
+    {
+      "name": "blender-fixture-palette",
+      "argv": [
+        "C:\\Program Files\\Blender Foundation\\Blender 5.2\\blender.exe",
+        "--background",
+        "--python-exit-code",
+        "1",
+        "--python",
+        "deliveries/FINISH-B1-R5/scripts/apply-fixture-palette.py"
+      ],
+      "startedUTC": "2026-10-11T23:07:40.493657+00:00",
+      "durationSeconds": 1.332,
+      "exitCode": 0,
+      "stdoutLog": "deliveries/FINISH-B1-R5/evidence/checks/blender-fixture-palette.stdout.log",
+      "stderrLog": "deliveries/FINISH-B1-R5/evidence/checks/blender-fixture-palette.stderr.log"
+    },
+    {
+      "name": "native-material-merge",
+      "argv": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "deliveries/FINISH-B1-R5/scripts/merge-native-materials.py"
+      ],
+      "startedUTC": "2026-10-11T23:07:41.827490+00:00",
+      "durationSeconds": 0.082,
+      "exitCode": 0,
+      "stdoutLog": "deliveries/FINISH-B1-R5/evidence/checks/native-material-merge.stdout.log",
+      "stderrLog": "deliveries/FINISH-B1-R5/evidence/checks/native-material-merge.stderr.log"
+    },
+    {
+      "name": "matched-browser",
+      "argv": [
+        "node",
+        "deliveries/FINISH-B1-R5/scripts/verify-browser.mjs"
+      ],
+      "startedUTC": "2026-10-11T23:07:41.909920+00:00",
+      "durationSeconds": 10.153,
+      "exitCode": 0,
+      "stdoutLog": "deliveries/FINISH-B1-R5/evidence/checks/matched-browser.stdout.log",
+      "stderrLog": "deliveries/FINISH-B1-R5/evidence/checks/matched-browser.stderr.log"
+    },
+    {
+      "name": "gltf-validator",
+      "argv": [
+        "node",
+        "deliveries/FINISH-B1-R5/scripts/validate-glb.mjs"
+      ],
+      "startedUTC": "2026-10-11T23:07:52.064666+00:00",
+      "durationSeconds": 0.265,
+      "exitCode": 0,
+      "stdoutLog": "deliveries/FINISH-B1-R5/evidence/checks/gltf-validator.stdout.log",
+      "stderrLog": "deliveries/FINISH-B1-R5/evidence/checks/gltf-validator.stderr.log"
+    },
+    {
+      "name": "blender-final-imports",
+      "argv": [
+        "C:\\Program Files\\Blender Foundation\\Blender 5.2\\blender.exe",
+        "--background",
+        "--python-exit-code",
+        "1",
+        "--python",
+        "deliveries/FINISH-B1-R5/scripts/verify-blender-imports.py"
+      ],
+      "startedUTC": "2026-10-11T23:07:52.332043+00:00",
+      "durationSeconds": 1.601,
+      "exitCode": 0,
+      "stdoutLog": "deliveries/FINISH-B1-R5/evidence/checks/blender-final-imports.stdout.log",
+      "stderrLog": "deliveries/FINISH-B1-R5/evidence/checks/blender-final-imports.stderr.log"
+    },
+    {
+      "name": "final-budgets",
+      "argv": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "deliveries/FINISH-B1-R5/scripts/verify-final-budgets.py"
+      ],
+      "startedUTC": "2026-10-11T23:07:53.934806+00:00",
+      "durationSeconds": 0.072,
+      "exitCode": 0,
+      "stdoutLog": "deliveries/FINISH-B1-R5/evidence/checks/final-budgets.stdout.log",
+      "stderrLog": "deliveries/FINISH-B1-R5/evidence/checks/final-budgets.stderr.log"
+    },
+    {
+      "name": "correction-scope",
+      "argv": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "deliveries/FINISH-B1-R5/scripts/verify-correction-scope.py"
+      ],
+      "startedUTC": "2026-10-11T23:07:54.008735+00:00",
+      "durationSeconds": 0.091,
+      "exitCode": 0,
+      "stdoutLog": "deliveries/FINISH-B1-R5/evidence/checks/correction-scope.stdout.log",
+      "stderrLog": "deliveries/FINISH-B1-R5/evidence/checks/correction-scope.stderr.log"
+    },
+    {
+      "name": "capture-integrity",
+      "argv": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "deliveries/FINISH-B1-R5/scripts/verify-captures.py"
+      ],
+      "startedUTC": "2026-10-11T23:07:54.100941+00:00",
+      "durationSeconds": 0.326,
+      "exitCode": 0,
+      "stdoutLog": "deliveries/FINISH-B1-R5/evidence/checks/capture-integrity.stdout.log",
+      "stderrLog": "deliveries/FINISH-B1-R5/evidence/checks/capture-integrity.stderr.log"
+    }
+  ],
+  "scope": "Rebuilt only the room native source, room GLB and chair-fixture GLB from the packet-bound R4 inputs, then replayed the palette patch and reran native, browser, validator, import, budget, scope and capture checks. Other delivery assets were not rewritten."
+}

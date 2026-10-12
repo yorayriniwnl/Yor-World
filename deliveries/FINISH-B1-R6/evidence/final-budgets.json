@@ -1,0 +1,138 @@
+{
+  "status": "PASS_WITH_OPEN_VISUALS",
+  "units": "MiB uses 1,048,576 bytes.",
+  "profiles": [
+    {
+      "profile": "desktop-home",
+      "status": "PASS",
+      "camera": {
+        "position": [
+          -1.9,
+          1.7,
+          1.55
+        ],
+        "target": [
+          0.12,
+          1.25,
+          -1.15
+        ],
+        "fov": 60,
+        "aspect": 1.7777777777777777,
+        "near": 0.05,
+        "far": 30
+      },
+      "observedGLBTransfer": {
+        "status": "PASS",
+        "requestCount": 5,
+        "bytes": 2185924,
+        "MiB": 2.0847,
+        "allHTTP200": true,
+        "limitMiB": 6,
+        "evidence": "evidence/browser-results.json"
+      },
+      "visibleTriangles": {
+        "status": "PASS",
+        "count": 35996,
+        "limit": 300000
+      },
+      "drawCalls": {
+        "status": "PASS",
+        "count": 103,
+        "limit": 120
+      },
+      "assetDerivedResidency": {
+        "status": "PASS",
+        "bytes": 4192491,
+        "MiB": 3.9983,
+        "limitMiB": 160,
+        "evidence": "evidence/browser-results.json"
+      },
+      "frameSamples": {
+        "status": "PASS_LOCAL_SAMPLE_ONLY",
+        "medianMs": 0.8999999910593033,
+        "p95Ms": 1,
+        "sampleCount": 180,
+        "productionDeviceQualification": "NOT RUN"
+      }
+    },
+    {
+      "profile": "mobile-home",
+      "status": "PASS",
+      "camera": {
+        "position": [
+          -1.25,
+          1.48,
+          1.15
+        ],
+        "target": [
+          0.16,
+          1.08,
+          -0.95
+        ],
+        "fov": 52,
+        "aspect": 0.5625,
+        "near": 0.05,
+        "far": 30
+      },
+      "observedGLBTransfer": {
+        "status": "PASS",
+        "requestCount": 5,
+        "bytes": 2185924,
+        "MiB": 2.0847,
+        "allHTTP200": true,
+        "limitMiB": 3,
+        "evidence": "evidence/browser-results.json"
+      },
+      "visibleTriangles": {
+        "status": "PASS",
+        "count": 34624,
+        "limit": 140000
+      },
+      "drawCalls": {
+        "status": "PASS",
+        "count": 75,
+        "limit": 80
+      },
+      "assetDerivedResidency": {
+        "status": "PASS",
+        "bytes": 4192491,
+        "MiB": 3.9983,
+        "limitMiB": 80,
+        "evidence": "evidence/browser-results.json"
+      },
+      "frameSamples": {
+        "status": "PASS_LOCAL_SAMPLE_ONLY",
+        "medianMs": 0.7000000029802322,
+        "p95Ms": 1,
+        "sampleCount": 180,
+        "productionDeviceQualification": "NOT RUN"
+      }
+    }
+  ],
+  "frozenLimits": {
+    "desktopHome": {
+      "essentialTransferMiB": 6,
+      "optionalV1MiB": 14,
+      "visibleTriangles": 300000,
+      "drawCalls": 120,
+      "residencyMiB": 160
+    },
+    "mobileHome": {
+      "essentialTransferMiB": 3,
+      "optionalV1MiB": 7,
+      "visibleTriangles": 140000,
+      "drawCalls": 80,
+      "residencyMiB": 80
+    }
+  },
+  "fullOptionalV1": {
+    "status": "PASS_BOUNDED_PACKAGE_BYTES",
+    "bytes": 2432706,
+    "MiB": 2.32,
+    "limitsMiB": {
+      "desktop": 14,
+      "mobile": 7
+    },
+    "scope": "Conservative sum of all seven delivered runtime GLB/texture files. Additional provider-delivered V1 media are outside this static candidate and NOT RUN."
+  }
+}
