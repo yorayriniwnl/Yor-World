@@ -1,4 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import * as THREE from "three";
+import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { AssetLoader, type LoadedAssets } from "@/features/world/AssetLoader";
+import { CLIP_DURATIONS } from "@/features/world/SceneIntegrator";
+import { WorldRuntime } from "@/features/world/WorldRuntime";
 import {
   startProjectTransition,
   UnknownProjectError,
@@ -18,11 +23,86 @@ import {
 } from "@/features/experience/return-snapshot";
 import type { ProjectId } from "@/contracts/content";
 import type { ExperienceController } from "@/features/experience/controller";
+import { ExperienceController as ConcreteExperienceController } from "@/features/experience/controller";
+import { PreferencesStore, resetDocumentScopedFallback } from "@/features/experience/preferences-store";
+
+const { runtimeRender } = vi.hoisted(() => ({ runtimeRender: vi.fn() }));
+
+vi.mock("three", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("three")>();
+  return {
+    ...actual,
+    WebGLRenderer: class {
+      shadowMap = {};
+      info = { render: { calls: 1, triangles: 1 } };
+      render = runtimeRender;
+      getContext() { return { getExtension: () => null, getParameter: () => "test-renderer" }; }
+      setPixelRatio() {}
+      getPixelRatio() { return 1; }
+      setSize() {}
+      dispose() {}
+      forceContextLoss() {}
+    },
+  };
+});
+
+function runtimeCanvas() {
+  return Object.assign(new EventTarget(), { isConnected: true, dataset: {}, style: {} }) as unknown as HTMLCanvasElement;
+}
+
+function runtimeLoadedAssets(): LoadedAssets {
+  const node = (name: string) => Object.assign(new THREE.Group(), { name });
+  const room = new THREE.Group();
+  room.add(node("desk"));
+  const avatar = new THREE.Group();
+  const resident = node("resident");
+  resident.add(node("body-turn"), node("head"), new THREE.SkinnedMesh());
+  avatar.add(resident);
+  const fixture = new THREE.Group();
+  fixture.add(node("chair-root"), node("chair-base"));
+  const gltf = (scene: THREE.Group): GLTF => ({
+    scene, scenes: [scene], cameras: [], userData: {}, asset: { version: "2.0" },
+    animations: Object.entries(CLIP_DURATIONS).map(([name, duration]) => new THREE.AnimationClip(name, duration, [])),
+    parser: {} as GLTF["parser"],
+  });
+  return {
+    w1Gltf: gltf(room), avatarGltf: gltf(avatar), fixtureGltf: gltf(fixture),
+    interactionGltf: null, deskmatTexture: null, wallpaperTexture: null,
+  };
+}
+
+function delayedRuntimeLoad() {
+  let resolve!: (assets: LoadedAssets) => void;
+  const promise = new Promise<LoadedAssets>((resolveAssets) => { resolve = resolveAssets; });
+  vi.spyOn(AssetLoader.prototype, "loadSession").mockReturnValueOnce(promise);
+  return {
+    async complete() {
+      resolve(runtimeLoadedAssets());
+      await promise;
+      await Promise.resolve();
+    },
+  };
+}
 
 describe("Milestone C2 Unit Tests: Project Transitions, Motifs, and Navigation", () => {
   beforeEach(() => {
     clearReturnSnapshot();
     vi.restoreAllMocks();
+  });
+
+  it("finishes an explicit painting spring while paused without clearing the saved pause", () => {
+    const store = new PreferencesStore();
+    store.setPaused(true);
+    const controller = new ConcreteExperienceController({ preferencesStore: store });
+    controller.painting.triggerPresetTilt();
+
+    for (let frame = 0; frame < 180; frame++) controller.advance(1 / 60);
+
+    expect(controller.painting.getState().isSettled).toBe(true);
+    expect(controller.painting.getState().angleDeg).toBe(0);
+    expect(controller.getSnapshot().paused).toBe(true);
+    controller.stop();
+    resetDocumentScopedFallback();
   });
 
   describe("1. Bounded Project Transitions & Motifs", () => {
@@ -284,5 +364,50 @@ describe("Milestone C2 Unit Tests: Project Transitions, Motifs, and Navigation",
       expect(hasReturnSnapshot()).toBe(false);
       expect(getReturnSnapshot()).toBeNull();
     });
+  });
+
+  it("replaces and disposes the WorldRuntime greeting timer without allowing stale completion", async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal("requestAnimationFrame", vi.fn(() => 1));
+    vi.stubGlobal("cancelAnimationFrame", vi.fn());
+    const load = delayedRuntimeLoad();
+    const runtime = new WorldRuntime({ canvas: runtimeCanvas(), reducedMotion: true });
+    try {
+      await load.complete();
+      expect(runtime.lifecycleManager.getState()).toBe("HOME");
+
+      const setTimeoutSpy = vi.spyOn(globalThis, "setTimeout");
+      const clearTimeoutSpy = vi.spyOn(globalThis, "clearTimeout");
+      const greetingTimers = () => setTimeoutSpy.mock.calls.flatMap((call, index) => call[1] === 4000
+        ? [{ callback: call[0] as () => void, id: setTimeoutSpy.mock.results[index]!.value as ReturnType<typeof setTimeout> }]
+        : []);
+
+      runtime.greet();
+      const firstTimer = greetingTimers().at(-1)!;
+      runtime.greet();
+      const replacementTimer = greetingTimers().at(-1)!;
+
+      expect(replacementTimer.id).not.toBe(firstTimer.id);
+      expect(clearTimeoutSpy).toHaveBeenCalledWith(firstTimer.id);
+      firstTimer.callback();
+      expect(runtime.lifecycleManager.getState()).toBe("TRANSITION");
+
+      await vi.advanceTimersByTimeAsync(4000);
+      expect(runtime.lifecycleManager.getState()).toBe("HOME");
+
+      runtime.greet();
+      const disposedTimer = greetingTimers().at(-1)!;
+      runtime.dispose();
+      expect(clearTimeoutSpy).toHaveBeenCalledWith(disposedTimer.id);
+      expect(runtime.lifecycleManager.getState()).toBe("STATIC");
+      disposedTimer.callback();
+      expect(runtime.lifecycleManager.getState()).toBe("STATIC");
+      await vi.runOnlyPendingTimersAsync();
+    } finally {
+      runtime.dispose();
+      vi.restoreAllMocks();
+      vi.unstubAllGlobals();
+      vi.useRealTimers();
+    }
   });
 });

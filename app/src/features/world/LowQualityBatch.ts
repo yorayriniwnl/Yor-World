@@ -4,8 +4,13 @@ import type { QualityTier } from "../../contracts/experience";
 /** Reserved for the original meshes, which remain the interaction geometry. */
 export const LOW_BATCH_ORIGINAL_LAYER = 1;
 
-const dynamicNames = /^(resident|chair-root|chair-base|body-turn|door-hinge|painting-pivot|blind_slat_\d+|hidden-yor-mark)$/;
+const dynamicNames = /^(resident|chair-root|chair-base|body-turn|door-hinge|painting-pivot|blind_slat_\d+|hidden-yor-mark)$/i;
+const lateMaterialTargetNames = /(desk[_\s-]?mat|topography|monitor[_\s-]?screen[_\s-]?center|wallpaper)/i;
 const epsilon = 1e-6;
+
+export function isLateMaterialTargetName(name: string): boolean {
+  return lateMaterialTargetNames.test(name);
+}
 
 interface BatchEntry {
   batch: THREE.BatchedMesh;
@@ -95,7 +100,7 @@ function eligible(mesh: THREE.Mesh, animationTargets: Set<THREE.Object3D>): bool
   if (!count || mesh.geometry.drawRange.start !== 0
     || (mesh.geometry.drawRange.count !== Infinity && mesh.geometry.drawRange.count !== count)) return false;
   for (let node: THREE.Object3D | null = mesh; node; node = node.parent) {
-    if (!node.visible || node.renderOrder !== 0 || dynamicNames.test(node.name) || animationTargets.has(node)
+    if (!node.visible || node.renderOrder !== 0 || dynamicNames.test(node.name) || isLateMaterialTargetName(node.name) || animationTargets.has(node)
       || node.scale.x <= 0 || node.scale.y <= 0 || node.scale.z <= 0
       || !positiveOrthogonalTransform(node.matrixWorld)) return false;
   }

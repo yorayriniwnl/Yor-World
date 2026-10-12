@@ -58,6 +58,7 @@ export const PreferencesSchema = z.strictObject({
   soundEnabled: z.boolean(),
   quality: z.union([QualityTierSchema, z.literal("auto")]),
   clock24h: z.boolean(),
+  paused: z.boolean().default(false),
 });
 export type Preferences = z.infer<typeof PreferencesSchema>;
 
@@ -68,6 +69,7 @@ export const defaultPreferences: Readonly<Preferences> = Object.freeze(
     soundEnabled: false,
     quality: "auto",
     clock24h: true,
+    paused: false,
   })
 );
 
