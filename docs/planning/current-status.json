@@ -27,7 +27,7 @@
     "rulingDecisionPath": "docs/planning/reviews/2026-10-08-rc6-r1/decision.json"
   },
   "completionProgram": {
-    "status": "R2 DESIGN ACCEPTED / A1-R8 FINISH-45 DELIVERED, PARENT-LOCAL TARGETED RECHECK PASS, EXTERNAL AUDIT AND ACCEPTANCE PENDING; B1-R6 FINISH-44 DELIVERED, MOBILE PEGBOARD FAIL-OPEN, OWNER VISUAL REVIEW / EXTERNAL AUDIT / ACCEPTANCE PENDING; C1-R9 FINISH-30/33 DELIVERED, FINISH-46 E-01 RECEIPT-INTEGRITY PASS ONLY, C1 IMPLEMENTATION ACCEPTANCE PENDING; NO CANONICAL COMPLETION INTEGRATION / G7 PRODUCTION GATES OPEN",
+    "status": "R2 DESIGN ACCEPTED / A1-R8 FINISH-45 DELIVERED, PARENT-LOCAL TARGETED RECHECK PASS, EXTERNAL AUDIT AND ACCEPTANCE PENDING; B1-R6 FINISH-44 DELIVERED WITH MOBILE PEGBOARD FAIL, FINISH-47 B1-R7 CORRECTION ISSUED; C1-R9 FINISH-30/33 DELIVERED, FINISH-46 E-01 RECEIPT-INTEGRITY PASS ONLY, C1 IMPLEMENTATION ACCEPTANCE PENDING; NO CANONICAL COMPLETION INTEGRATION / G7 PRODUCTION GATES OPEN",
     "coordinationCommit": "ab369d413c7501224e3d79aa78e56172f97839ff",
     "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
     "contractsGate": {
@@ -619,6 +619,20 @@
       "outputManifestSha256": "80d6cb214cf9f1f74334268193365b9f9115c86b884c6762072d777d65c30525",
       "blockingFinding": "Right-wall controller pegboard is outside the unchanged mobile camera frame",
       "parentLocalReaudit": "docs/planning/reviews/2026-10-12-completion-reaudit/report.md"
+    },
+    "activeB1MobileCorrection": {
+      "packetId": "FINISH-47",
+      "packetPath": "docs/planning/reconciliation-packets/2026-10-12-finish-47-b1-mobile-pegboard-correction.md",
+      "promptPath": "docs/planning/production-prompts/repairs-2026-10-12/25-CODEX-B1-R7.md",
+      "status": "AUTHORIZED / ISSUED TO EXISTING B1 VISUAL MAKER; DELIVERY PENDING",
+      "candidateBaseCommit": "e8ea9187c1b6cd47b66ce7de9ad520daf9bd6baf",
+      "deliveryRoot": "deliveries/FINISH-B1-R7/",
+      "candidateBranch": "codex/finish-47-b1-mobile-pegboard-correction-20261012",
+      "scope": "Static pegboard and mounted controllers only; fixed desktop/mobile camera profiles",
+      "blockingFinding": "Full right-side controller pegboard is outside the FINISH-44 mobile-home frame",
+      "canonicalAppChanged": false,
+      "parentAcceptance": "NOT ACCEPTED",
+      "independentAudit": "PENDING"
     },
     "activeB1Correction": {
       "packetPath": "docs/planning/reconciliation-packets/2026-10-12-finish-35-b1-reference-visual-correction.md",
