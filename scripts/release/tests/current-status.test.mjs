@@ -47,6 +47,22 @@ test("current-status CLI rejects fabricated, rejected and changed source accepta
   const cases = [
     ["legitimate pending source", () => {}, true],
     ["original false current accepted claim", () => write("docs/planning/current-status.json", { ...status, currentCandidate: { ...status.currentCandidate, acceptance: "ACCEPTED" } }), false],
+    ["pending current label falsely claims acceptance", () => write("docs/planning/current-status.json", { ...status, currentCandidate: { ...status.currentCandidate, status: "ACCEPTED", rulingDecisionPath: null } }), false],
+    ["pending current label cannot mix rejected and accepted claims", () => write("docs/planning/current-status.json", { ...status, currentCandidate: { ...status.currentCandidate, status: "NOT ACCEPTED / ACCEPTED", rulingDecisionPath: null } }), false],
+    ["explicit negative G7 label agrees with pending disposition", () => {
+      const label = "G7 NOT ACCEPTED";
+      write("docs/planning/current-status.json", { ...status, g7: { ...status.g7, status: label } });
+      for (const name of ["README.md", "START_HERE.md", "docs/planning/delegation-and-work-orders.md"])
+        fs.appendFileSync(path.join(root, name), `\n${label}\n`, "utf8");
+    }, true],
+    ["mixed G7 negative and positive acceptance claims are rejected", () => {
+      const label = "G7 NOT ACCEPTED / ACCEPTED";
+      write("docs/planning/current-status.json", { ...status, g7: { ...status.g7, status: label } });
+      for (const name of ["README.md", "START_HERE.md", "docs/planning/delegation-and-work-orders.md"])
+        fs.appendFileSync(path.join(root, name), `\n${label}\n`, "utf8");
+    }, false],
+    ["accepted predecessor label cannot be demoted", () => write("docs/planning/current-status.json", { ...status, acceptedSourcePredecessor: { ...pred, status: "NOT SOURCE ACCEPTED", acceptance: "NOT ACCEPTED" } }), false],
+    ["pending G7 label falsely claims acceptance", () => write("docs/planning/current-status.json", { ...status, g7: { ...status.g7, status: "G7 ACCEPTED", acceptance: "NOT ACCEPTED" } }), false],
     ["original false predecessor accepted claim", () => write("docs/planning/current-status.json", { ...status, acceptedSourcePredecessor: { ...pred, sourceCommit: "f".repeat(40) } }), false],
     ["NOT ACCEPTED ruling string", () => write(pred.rulingDecisionPath, { ...ruling, ruling: "RC6 SOURCE NOT ACCEPTED" }), false],
     ["rejected acceptance disposition", () => write(pred.rulingDecisionPath, { ...ruling, acceptance: "REJECTED" }), false],
@@ -87,7 +103,7 @@ test("current-status CLI rejects fabricated, rejected and changed source accepta
     fs.copyFileSync(path.join(ROOT, ruling.releaseBundlePath), path.join(root, decision.releaseBundlePath));
     write(decisionPath, decision);
     write("scripts/release/rc6-policy.json", { ...policy, assetRevision: decision.assetRevision, schemaRevision: decision.schemaRevision });
-    write("docs/planning/current-status.json", { ...status, currentCandidate: { ...pred, rulingId: "RC6-R2", rulingDecisionPath: decisionPath, evidenceRoot, manifestSha256: decision.manifestSha256 } });
+    write("docs/planning/current-status.json", { ...status, currentCandidate: { ...pred, status: "RC6-R2 SOURCE ACCEPTED", rulingId: "RC6-R2", rulingDecisionPath: decisionPath, evidenceRoot, manifestSha256: decision.manifestSha256 } });
     let result = run();
     assert.equal(result.status, 0, `${result.stdout}${result.stderr}`);
     write("scripts/release/rc6-policy.json", policy);
