@@ -1,0 +1,148 @@
+{
+  "format": "YOR-WORLD-FINISH-50-B1-R8-SOURCE-PATCH-REPLAY-v1",
+  "status": "PASS",
+  "baseCommit": "e8ea9187c1b6cd47b66ce7de9ad520daf9bd6baf",
+  "baseTree": "60da77df9e600670a416635101558203872bde7b",
+  "targetCommit": "876e119d100936fc821b8618c5aa0e057584b338",
+  "targetTree": "c88be58f85cd46914b271b86d2f5ecda90cc1cce",
+  "sourcePatch": {
+    "patchSha256": "5c14becdb62a4a56ba183631ef7f80035a23dc0f529a1c4a4c5a48d94c3f5bfc",
+    "patchBytes": 762288,
+    "patchPaths": [
+      "assets/room.glb",
+      "assets/source/room.blend"
+    ],
+    "binaryPatchBlocks": 2,
+    "commands": [
+      {
+        "argv": [
+          "git",
+          "init",
+          "--quiet"
+        ],
+        "exitCode": 0
+      },
+      {
+        "argv": [
+          "git",
+          "config",
+          "core.autocrlf",
+          "false"
+        ],
+        "exitCode": 0
+      },
+      {
+        "argv": [
+          "git",
+          "config",
+          "core.filemode",
+          "false"
+        ],
+        "exitCode": 0
+      },
+      {
+        "argv": [
+          "git",
+          "config",
+          "user.name",
+          "FINISH-50 replay verifier"
+        ],
+        "exitCode": 0
+      },
+      {
+        "argv": [
+          "git",
+          "config",
+          "user.email",
+          "finish50-replay@invalid.local"
+        ],
+        "exitCode": 0
+      },
+      {
+        "argv": [
+          "git",
+          "add",
+          "--",
+          ".gitattributes",
+          "assets/room.glb",
+          "assets/source/room.blend"
+        ],
+        "exitCode": 0
+      },
+      {
+        "argv": [
+          "git",
+          "commit",
+          "--quiet",
+          "-m",
+          "FINISH-50 exact R6 replay base"
+        ],
+        "exitCode": 0
+      },
+      {
+        "argv": [
+          "git",
+          "apply",
+          "--binary",
+          "--check",
+          "F:\\Yor-World-B1-R8-20261012\\deliveries\\FINISH-B1-R8\\source.patch"
+        ],
+        "exitCode": 0
+      },
+      {
+        "argv": [
+          "git",
+          "apply",
+          "--binary",
+          "F:\\Yor-World-B1-R8-20261012\\deliveries\\FINISH-B1-R8\\source.patch"
+        ],
+        "exitCode": 0
+      }
+    ],
+    "changedPaths": [
+      "assets/room.glb",
+      "assets/source/room.blend"
+    ],
+    "outputs": {
+      "assets/room.glb": {
+        "bytes": 2059280,
+        "sha256": "7d1c11e3d67f84fddbbaac609c2ca88a025cec400fe2cddb15ab1a92cf29bb67",
+        "expectedBytes": 2059280,
+        "expectedSha256": "7d1c11e3d67f84fddbbaac609c2ca88a025cec400fe2cddb15ab1a92cf29bb67",
+        "matchesR7RawGitOutput": true
+      },
+      "assets/source/room.blend": {
+        "bytes": 445694,
+        "sha256": "1820982983ce8bc785ddfcc97c2a0abec738c0d311aaf1fe632aca5c0fad5600",
+        "expectedBytes": 445694,
+        "expectedSha256": "1820982983ce8bc785ddfcc97c2a0abec738c0d311aaf1fe632aca5c0fad5600",
+        "matchesR7RawGitOutput": true
+      }
+    },
+    "scratchCleaned": true,
+    "exitCode": 0
+  },
+  "verifierCommand": [
+    "python",
+    "scripts/replay-source-patch.py",
+    "--repo",
+    "."
+  ],
+  "invocation": [
+    "python",
+    "scripts/replay-source-patch.py",
+    "--repo",
+    "F:\\Yor-World-B1-R8-20261012"
+  ],
+  "workingDirectory": "F:\\Yor-World-B1-R8-20261012",
+  "toolVersions": {
+    "python": "3.12.10",
+    "git": "git version 2.55.0.windows.5"
+  },
+  "r7ManifestRawGitStatus": "PASS",
+  "scopeStatus": "PASS",
+  "exitCode": 0,
+  "limits": [
+    "Artifact-only supplement; no new visual review, device proof, or art acceptance."
+  ]
+}
