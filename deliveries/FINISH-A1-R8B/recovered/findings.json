@@ -1,0 +1,153 @@
+{
+  "format": "YOR-WORLD-FINISH-24-INDEPENDENT-FINDINGS-v1",
+  "advice": "REWORK",
+  "overallStatus": "FAIL",
+  "reviewer": "local Codex independent reviewer; external GPT Plus #2 NOT RUN",
+  "candidateCommit": "8f3aa566f36c92bb98658090ef91f9bfa96e8a79",
+  "implementationAcceptance": false,
+  "canonicalIntegrationAuthorized": false,
+  "findings": [
+    {
+      "id": "A1R5-01",
+      "severity": "P2",
+      "status": "FAIL",
+      "title": "Strict DTO shapes diverge from the frozen accepted API contract",
+      "locations": [
+        "deliveries/FINISH-A1/r5-05/source/app/src/server/media/manifest.ts:34",
+        "deliveries/FINISH-A1/r5-05/source/app/src/server/content/preview.ts:42",
+        "deliveries/FINISH-A1/r5-05/source/app/src/server/content/preview.ts:72"
+      ],
+      "contract": [
+        "docs/planning/reconciliation-packets/finish-contracts-r2/02-platform-schema-recovery.md:81",
+        "docs/planning/production-prompts/repairs-2026-10-11/01-GEMINI1-PLATFORM.md:46"
+      ],
+      "reproduction": "The first three independent probes reject valid frozen objects: approvalAudit {eventId,createdAt} is replaced by {id,action,createdAt}; PrivateDraftReview requires an unallocated previewProjectId; ReviewCheck rejects the explicitly allocated site scope/generic id. The current schema is internally coherent for its own output, but that does not satisfy exact DTO ownership.",
+      "impact": "Downstream consumers of the accepted DTO cannot parse/submit the prescribed shapes. No publish authorization bypass is claimed.",
+      "evidence": [
+        "audit-contract-probes.test.ts",
+        "independent-contract-probes-final.log"
+      ],
+      "clauses": [
+        "A3-02",
+        "FINISH-12-03"
+      ]
+    },
+    {
+      "id": "A1R5-02",
+      "severity": "P2",
+      "status": "FAIL",
+      "title": "Healthy publication refresh always fails because client and API response keys disagree",
+      "locations": [
+        "deliveries/FINISH-A1/r5-05/source/app/src/features/admin/publish-review.tsx:74",
+        "deliveries/FINISH-A1/r5-05/source/app/src/features/admin/publish-review.tsx:91",
+        "deliveries/FINISH-A1/r5-05/source/app/src/app/api/admin/publish/route.ts:32"
+      ],
+      "contract": [
+        "docs/planning/production-prompts/repairs-2026-10-11/01-GEMINI1-PLATFORM.md:90"
+      ],
+      "reproduction": "Actual owner GET /api/admin/publish returns200 with currentRevision,activePublication,history,authorizedActor. Both refreshReview and refreshAfterCommit require publicationResponse.publication, which is absent. The corresponding independent API probe fails. The supplied rollback screenshot already shows active r3, reviewed expected r1, incomplete refresh feedback, and a stale-review prompt.",
+      "impact": "Refresh review cannot recover stale publication identity. After successful publish/rollback the in-page review remains stale and publishing is disabled until page reload. The browser test forces one failed refresh and checks only committed feedback thereafter, allowing this real failure to pass.",
+      "evidence": [
+        "audit-contract-probes.test.ts",
+        "independent-contract-probes-final.log",
+        "deliveries/FINISH-A1/r5-05/evidence/publish-rollback-review.png",
+        "deliveries/FINISH-A1/r5-05/source/app/tests/e2e/platform/completion-authoring-workflow.spec.ts:177"
+      ],
+      "clauses": [
+        "A3-05-REFRESH",
+        "A3-06-BROWSER"
+      ]
+    },
+    {
+      "id": "A1R5-03",
+      "severity": "P2",
+      "status": "FAIL",
+      "title": "Missing genuine private draft throws before the intended not-found branches",
+      "locations": [
+        "deliveries/FINISH-A1/r5-05/source/app/src/server/content/preview.ts:88",
+        "deliveries/FINISH-A1/r5-05/source/app/src/app/api/admin/preview/route.ts:20",
+        "deliveries/FINISH-A1/r5-05/source/app/src/app/admin/preview/[slug]/page.tsx:16"
+      ],
+      "contract": [
+        "docs/planning/reconciliation-packets/finish-contracts-r2/02-platform-schema-recovery.md:108"
+      ],
+      "reproduction": "An authenticated owner requesting the known CandidateX ID with an empty explicit draft registry receives503. A requested-project review requires exactly one draft; with none it throws before the API404 check and before page notFound(). The API result is directly reproduced; the page exception path is source inspection, not an independent browser run.",
+      "impact": "Ordinary absence is reported as temporary backend failure; the page cannot reach its not-found path. Denial and privacy headers still pass.",
+      "evidence": [
+        "audit-contract-probes.test.ts",
+        "independent-contract-probes-final.log"
+      ],
+      "clauses": [
+        "A3-04-NOTFOUND"
+      ]
+    },
+    {
+      "id": "A1R5-04",
+      "severity": "P2",
+      "status": "FAIL",
+      "title": "Authorized stale-save conflicts omit the required current draft identity and content",
+      "locations": [
+        "deliveries/FINISH-A1/r5-05/source/app/src/app/api/admin/projects/route.ts:74",
+        "deliveries/FINISH-A1/r5-05/source/app/src/server/content/revisions.ts:18"
+      ],
+      "contract": [
+        "docs/planning/reconciliation-packets/finish-contracts-r2/02-platform-schema-recovery.md:114"
+      ],
+      "reproduction": "Save a fixture with current revision2 using expectedRevision1. The owner receives409 with only error and code; no current project/title or current draft/review identity is returned. The independent test logs the entire response and fails the current-content assertion.",
+      "impact": "The documented authorized conflict handoff is missing even though the unsaved buffer remains intact and durable writes reject. No unauthorized content exposure is claimed.",
+      "evidence": [
+        "audit-contract-probes.test.ts",
+        "independent-contract-probes-final.log"
+      ],
+      "clauses": [
+        "A3-04-CONFLICT"
+      ]
+    },
+    {
+      "id": "A1R5-05",
+      "severity": "P2",
+      "status": "FAIL",
+      "title": "Draft image renderer accepts absolute and traversal-containing URLs",
+      "locations": [
+        "deliveries/FINISH-A1/r5-05/source/app/src/features/portfolio/case-study.tsx:31"
+      ],
+      "contract": [
+        "docs/planning/reconciliation-packets/finish-contracts-r2/02-platform-schema-recovery.md:110"
+      ],
+      "reproduction": "Independent React server rendering emits img for both http://yor-world.local/api/admin/preview/media/fixture and /discard/../api/admin/preview/media/fixture. The helper validates normalized origin/path but renders the original string; neither is the exact allowed relative URL.",
+      "impact": "The required narrow renderer boundary is not enforced. Current server media resolver supplies the safe relative path, so no route-auth bypass, XSS or attacker-controlled production URL exploit was reproduced.",
+      "evidence": [
+        "audit-contract-probes.test.ts",
+        "independent-contract-probes-final.log"
+      ],
+      "clauses": [
+        "A3-04-RENDERER"
+      ]
+    },
+    {
+      "id": "A1R5-06",
+      "severity": "P2",
+      "status": "FAIL",
+      "title": "New authoring inputs still invent valid nonempty content and link check dates",
+      "locations": [
+        "deliveries/FINISH-A1/r5-05/source/app/src/features/admin/project-editor.tsx:57",
+        "deliveries/FINISH-A1/r5-05/source/app/src/features/admin/project-editor.tsx:94",
+        "deliveries/FINISH-A1/r5-05/source/app/src/features/admin/structured-block-editor.tsx:43",
+        "deliveries/FINISH-A1/r5-05/source/app/src/features/admin/structured-block-editor.tsx:44"
+      ],
+      "contract": [
+        "docs/planning/reconciliation-packets/finish-contracts-r2/02-platform-schema-recovery.md:114",
+        "docs/planning/production-prompts/corrections-2026-10-10/01-GEMINI1-A1-R3.md:25"
+      ],
+      "reproduction": "Source directly inserts New Section/New section content., New paragraph., and New list item as valid nonempty project content. Add link also inserts Documentation + https://example.com/docs + checkedAt=now without asking for a real record. New evidence correctly uses unknown/null, but the other defaults do not follow the accepted instruction to request real content.",
+      "impact": "These invented values can be saved and reviewed as ordinary authored content without being replaced; existing checks validate structure/record syntax and do not distinguish these generated values. This is a source finding; no independent additional browser execution is claimed.",
+      "evidence": [
+        "deliveries/FINISH-A1/r5-05/source/app/src/features/admin/project-editor.tsx",
+        "deliveries/FINISH-A1/r5-05/source/app/src/features/admin/structured-block-editor.tsx"
+      ],
+      "clauses": [
+        "A3-04-REAL-INPUTS"
+      ]
+    }
+  ]
+}
