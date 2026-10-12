@@ -46,6 +46,27 @@ The 12 `prunable` registrations were rechecked by exact path. Four Temp director
 
 A separate request to recursively remove the verified orphan Temp directory trees was rejected by automatic review. No folders or files were deleted.
 
+## 2026-10-12 current-state recheck
+
+The shared parent remains `C:\Users\yoray\Projects`. Its children are separate product roots and Yor World worktrees/snapshots. Keep them under this shared parent, each in its own folder; flattening them into `Yor World` would mix distinct products and break the intended worktree boundaries.
+
+| Root | Rechecked state | Handling |
+| --- | --- | --- |
+| `Yor World` | Canonical branch `audit/completion-2026-10-09`, HEAD `23206d0c694128f51e93a0690a01dce7a15fac37`, equal to its origin tracking branch. No tracked edits; 12,949 untracked files, primarily retained delivery and audit material. | Keep as canonical. Preserve untracked evidence; stage only a named, scoped change. |
+| `Yor-World-Local-Corrections` | Branch `fix/local-studio-check`, HEAD `f945832203b18e296021c882ccb06f16f4063f49`; 90 main-only and 35 branch-only commits from merge base `f6a8df58095807b09004c2f0ab8a2382c3971e80`. It has 63 tracked dirty paths and 5,820 untracked files. | Important unfinished work, not a stale duplicate. Keep separate and reconcile by its packet; do not merge wholesale or clean it. |
+| `Yor-World-FINISH-B1-R5-work` | Clean worktree at `a5ebcc88170703751a5f504f67aed637d2f7d8e9`, exact B1-R5 candidate branch. | Preserve as a reviewable candidate; owner visual review, full reference fidelity, and independent audit remain open. |
+| `Yor-World-finish30-c1-r9` | Clean worktree at `3dda9a61`, C1-R9 candidate branch. | Preserve with its exact delivery and audit lineage; external audit and Parent acceptance remain open. |
+| `Yor-World-RC5-c34e01b` and five `Yor-World-RC6-*` roots | Detached snapshots; each still has 2,254 to 2,267 untracked package files. RC6 source `8e5b954e147a87e36a6869d9940c40f3d4c123f0` remains accepted for G7 preparation. Production, manual/physical checks, deployment, and G7 acceptance are still not complete. | These are release lineage and candidate evidence, not disposable copies. Keep until package hashes and evidence are archived and verified. |
+| CandidateX, Portfolio, Yor Talks, Abhyodhya, CCI and media-validation roots | Separate products or research/data roots. CandidateX-main has 171 tracked dirty paths; Yor Talks v3 has 9 and media-final has 33 tracked plus 34 untracked. The CandidateX clean clone and Yor Talks release snapshot remain useful comparison baselines. | Keep each product/data set in its own root and reconcile within that product. Do not import them into Yor World or delete them as generic temporary material. |
+
+### Local-Corrections art candidate status
+
+The exact art candidate commit `5cfe3c4783f95ca6df8571f9126adc46afa206e` preserves the attempt-19 output GLBs and their report in `deliveries/production-environment/revisions/local-corrections-r1/`. Integrated art review attempt 04 used those exact candidate outputs and recorded a HOME-composition visual pass with limits: two multi-view `net::ERR_ABORTED` diagnostics, a late greeting capture, and a tight reverse-doorway view. The review explicitly did not accept or publish the assets.
+
+The current `app/public/asset-manifest.json` still identifies `g6-world-art-freeze-20261002`; the app manifest and public model files were unchanged by the attempt-19 candidate or integrated review. Attempt 19 is preserved review work, not an active app asset revision. Keep its source, outputs, captures, and reports. Any later candidate binding must use the exact attempt-19 bytes and a versioned candidate path, preserve existing assets, and remain subject to independent review and Parent admission.
+
+No project roots, files, or evidence packages were moved, renamed, or deleted during this recheck. The evidence still does not justify treating any audited root as useless or safely removable.
+
 ## Recommendation
 
 Use the parent `Projects` directory to group distinct projects. Within each product, keep one canonical repository/root and retain separate worktrees only where an active packet or reproducible historical candidate requires them. First reconcile the unfinished Local Corrections, CandidateX-main, CandidateX portfolio provenance, Yor Talks dirty work, and release candidate evidence. After their contents are hashed, backed up, and their owners confirm no active use, a separate cleanup review can identify truly redundant clones. The present evidence does not support calling these folders useless or safely deleting them.
