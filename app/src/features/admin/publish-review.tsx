@@ -8,7 +8,11 @@
  */
 
 import { useState } from "react";
-import type { Publication } from "@/contracts/content";
+import type {
+  Publication,
+} from "@/contracts/content";
+type ReviewIdentity = { expectedPublicationRevision: number; projects: Array<{ projectId: string; draftRevision: number }>; siteDraftRevision: null; media: unknown[]; candidateSha256: string };
+type ReviewCheck = { scope: "project" | "site"; id: string; kind: "schema" | "evidence-records" | "https-links" | "approved-media" | "publication-rules"; status: "passed" | "failed"; checkedAt: string; reasons: string[] };
 import styles from "@/app/admin/admin.module.css";
 
 export interface HistoryItem {
@@ -17,19 +21,26 @@ export interface HistoryItem {
   publishedAt: string;
   action: "publish" | "rollback";
   targetRevision?: number;
+  rollbackReason?: string;
 }
 
 interface PublishReviewProps {
   initialPublication: Publication;
   initialHistory: HistoryItem[];
+  initialReview?: ReviewIdentity;
+  initialChecks?: ReviewCheck[];
 }
 
 export function PublishReview({
   initialPublication,
   initialHistory,
+  initialReview,
+  initialChecks = [],
 }: PublishReviewProps) {
   const [publication, setPublication] = useState<Publication>(initialPublication);
   const [history, setHistory] = useState<HistoryItem[]>(initialHistory);
+  const [review, setReview] = useState<ReviewIdentity | undefined>(initialReview);
+  const [checks, setChecks] = useState<ReviewCheck[]>(initialChecks);
   const [expectedRevision, setExpectedRevision] = useState<number>(
     initialPublication.revision
   );
@@ -38,21 +49,40 @@ export function PublishReview({
     message: string;
   } | null>(null);
   const [busy, setBusy] = useState(false);
+  const [rollbackReason, setRollbackReason] = useState("");
+
+  async function refreshReview() {
+    setReview(undefined);
+    setChecks([]);
+    try {
+      const res = await fetch("/api/admin/preview");
+      if (!res.ok) throw new Error("A fresh owner review could not be loaded.");
+      const data = await res.json();
+      if (!data.identity || !Array.isArray(data.checks)) throw new Error("The review response is incomplete.");
+      setReview(data.identity);
+      setChecks(data.checks);
+    } catch {
+      setFeedback({ type: "error", message: "A fresh review could not be loaded. Publication is disabled until the review is refreshed." });
+    }
+  }
 
   async function handlePublish() {
     setBusy(true);
     setFeedback(null);
 
+    const reviewPayload = review;
+
     try {
       const response = await fetch("/api/admin/publish", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ expectedRevision }),
+        body: JSON.stringify({ expectedRevision, review: reviewPayload }),
       });
 
       const data = await response.json();
 
       if (response.status === 409) {
+        setReview(undefined);
         setFeedback({
           type: "error",
           message: `Stale Revision Conflict (409): ${data.error || "The expected publication revision does not match current state. Refresh before publishing."}`,
@@ -68,7 +98,11 @@ export function PublishReview({
           message: `Publication failed (${response.status}): ${data.error || "Unknown server error"}`,
         });
       } else {
-        const nextPub: Publication = data.publication;
+        const nextPub = data.publication as Publication & {
+          visibility?: { committedRevision: number; observedOriginRevision: number | null; edgeCache: "not-observed" };
+          applicationSnapshotUpdated?: boolean;
+          cacheRefreshWarning?: string;
+        };
         setPublication(nextPub);
         setExpectedRevision(nextPub.revision);
         setHistory((prev) => [
@@ -80,10 +114,12 @@ export function PublishReview({
             action: "publish",
           },
         ]);
+        const observed = nextPub.visibility?.observedOriginRevision;
         setFeedback({
-          type: "success",
-          message: `Publication Revision ${nextPub.revision} successfully published! Public snapshot updated.`,
+          type: nextPub.applicationSnapshotUpdated === false ? "warning" : "success",
+          message: `Publication r${nextPub.revision} committed. ${observed === nextPub.revision ? `Origin read observed r${observed}.` : "Origin readback is unknown."} CDN/edge cache visibility was not observed.${nextPub.cacheRefreshWarning ? ` ${nextPub.cacheRefreshWarning}` : ""}`,
         });
+        await refreshReview();
       }
     } catch (err) {
       setFeedback({
@@ -96,6 +132,10 @@ export function PublishReview({
   }
 
   async function handleRollback(targetRev: number) {
+    if (!rollbackReason.trim()) {
+      setFeedback({ type: "error", message: "Enter a rollback reason before restoring a publication." });
+      return;
+    }
     if (
       !confirm(
         `Are you sure you want to rollback to publication revision ${targetRev}? All assets referenced in revision ${targetRev} will be validated before publication.`
@@ -111,7 +151,7 @@ export function PublishReview({
       const response = await fetch("/api/admin/rollback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ targetRevision: targetRev }),
+      body: JSON.stringify({ targetRevision: targetRev, expectedRevision, reason: rollbackReason.trim() }),
       });
 
       const data = await response.json();
@@ -121,13 +161,18 @@ export function PublishReview({
           type: "error",
           message: `Rollback Rejected (422): ${data.error || "Missing or unapproved assets detected for target revision."}`,
         });
+      } else if (response.status === 409) {
+        setFeedback({ type: "error", message: `Rollback conflict (409): ${data.error || "The active publication changed. Refresh and retry."}` });
       } else if (!response.ok) {
         setFeedback({
           type: "error",
           message: `Rollback failed (${response.status}): ${data.error || "Unknown server error"}`,
         });
       } else {
-        const nextPub: Publication = data.publication;
+        const nextPub = data.publication as Publication & {
+          visibility?: { committedRevision: number; observedOriginRevision: number | null; edgeCache: "not-observed" };
+          applicationSnapshotUpdated?: boolean;
+        };
         setPublication(nextPub);
         setExpectedRevision(nextPub.revision);
         setHistory((prev) => [
@@ -138,12 +183,15 @@ export function PublishReview({
             publishedAt: nextPub.publishedAt,
             action: "rollback",
             targetRevision: targetRev,
+            rollbackReason: rollbackReason.trim(),
           },
         ]);
-        setFeedback({
-          type: "success",
-          message: `Rollback successful! Restored revision ${targetRev} as new publication revision ${nextPub.revision}.`,
-        });
+        const visibility = data.visibility as { committedRevision?: number; observedOriginRevision?: number | null; edgeCache?: "not-observed" } | undefined;
+        const observed = visibility?.observedOriginRevision;
+        setFeedback({ type: nextPub.applicationSnapshotUpdated === false ? "warning" : "success",
+          message: `Rollback committed as r${nextPub.revision}, restoring r${targetRev}. ${observed === nextPub.revision ? `Origin read observed r${observed}.` : "Origin readback is unknown."} CDN/edge cache visibility was not observed.` });
+        setRollbackReason("");
+        await refreshReview();
       }
     } catch (err) {
       setFeedback({
@@ -180,13 +228,37 @@ export function PublishReview({
         </div>
 
         <div className={styles.card}>
-          <h3>Pre-Flight Checklist</h3>
-          <ul style={{ paddingLeft: "1.2rem", fontSize: "0.85rem", color: "var(--color-muted)", margin: "0.5rem 0" }}>
-            <li>✓ Strict schema validation</li>
-            <li>✓ 100% verified evidence (zero unknown)</li>
-            <li>✓ Invariant HTTPS URLs</li>
-            <li>✓ Approved media assets verification</li>
-          </ul>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <h3>Pre-Flight Checklist</h3>
+            <button
+              type="button"
+              onClick={refreshReview}
+              className={styles.buttonSecondary}
+              style={{ padding: "0.2rem 0.5rem", fontSize: "0.8rem", width: "auto" }}
+            >
+              Refresh
+            </button>
+          </div>
+          {checks.length > 0 ? (
+            <ul style={{ paddingLeft: "1.2rem", fontSize: "0.85rem", color: "var(--color-muted)", margin: "0.5rem 0" }}>
+              {checks.map((c) => (
+                  <li key={`${c.scope}:${c.id}:${c.kind}`} style={{ color: c.status === "failed" ? "var(--color-danger, #ff4444)" : "inherit", marginBottom: "0.75rem" }}>
+                    <strong>{c.scope} {c.id}: {c.kind} ({c.status.toUpperCase()})</strong>
+                    <div>Checked {new Date(c.checkedAt).toLocaleString()}</div>
+                    {c.reasons.length > 0 && <div>{c.reasons.join(" ")}</div>}
+                  </li>
+              ))}
+            </ul>
+          ) : (
+            <p role="status" style={{ fontSize: "0.85rem", color: "var(--color-muted)", margin: "0.5rem 0" }}>
+              No executed review is available. Refresh to run the current checks.
+            </p>
+          )}
+          {review && (
+            <p className={styles.subtitle} style={{ fontSize: "0.75rem", wordBreak: "break-all", margin: "0.5rem 0 0" }}>
+              Candidate SHA: <code>{review.candidateSha256.slice(0, 16)}...</code>
+            </p>
+          )}
         </div>
       </div>
 
@@ -210,7 +282,7 @@ export function PublishReview({
         <h3 style={{ marginBottom: "0.75rem" }}>Execute Transactional Publication</h3>
         <p className={styles.subtitle} style={{ marginBottom: "1rem" }}>
           Publishing creates an immutable snapshot in <code>publication_history</code>, updates the public{" "}
-          <code>published_content</code> table, and triggers edge cache invalidation.
+          <code>published_content</code> table. The origin is read back after commit; CDN or edge-cache visibility is not measured here.
         </p>
 
         <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
@@ -231,7 +303,7 @@ export function PublishReview({
           <button
             type="button"
             onClick={handlePublish}
-            disabled={busy}
+            disabled={busy || !review || review.expectedPublicationRevision !== expectedRevision || checks.length === 0 || checks.some((check) => check.status !== "passed")}
             className={styles.button}
             style={{ width: "auto", minWidth: "220px", marginTop: 0 }}
           >
@@ -246,6 +318,11 @@ export function PublishReview({
         <p className={styles.subtitle} style={{ marginBottom: "1rem" }}>
           Immutable historical snapshots. Select an earlier revision to verify assets and execute an authoritative rollback.
         </p>
+        <div className={styles.field}>
+          <label className={styles.label} htmlFor="rollback-reason">Rollback reason</label>
+          <textarea id="rollback-reason" value={rollbackReason} onChange={(event) => setRollbackReason(event.target.value)}
+            className={styles.input} rows={2} maxLength={500} placeholder="Record why this snapshot is being restored." />
+        </div>
 
         <table className={styles.table}>
           <thead>
@@ -277,6 +354,7 @@ export function PublishReview({
                         ? `Rollback to r${item.targetRevision}`
                         : "Publish"}
                     </span>
+                    {item.rollbackReason && <p className={styles.subtitle}>{item.rollbackReason}</p>}
                   </td>
                   <td>{new Date(item.publishedAt).toLocaleString()}</td>
                   <td>
@@ -287,7 +365,7 @@ export function PublishReview({
                       <button
                         type="button"
                         onClick={() => handleRollback(item.revision)}
-                        disabled={busy}
+                        disabled={busy || !rollbackReason.trim()}
                         className={styles.buttonSecondary}
                         style={{ padding: "0.35rem 0.75rem", fontSize: "0.85rem" }}
                       >
