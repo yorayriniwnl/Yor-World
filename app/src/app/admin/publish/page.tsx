@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { PublishReview } from "@/features/admin/publish-review";
 import { approvedPublication } from "@/content/approved-publication";
 import { readPublicPublication, readPublicationHistory } from "@/server/content/publish";
+import { generateDraftReview } from "@/server/content/preview";
 import styles from "@/app/admin/admin.module.css";
 
 export const metadata: Metadata = {
@@ -12,9 +13,10 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminPublishPage() {
-  await requirePageOwner();
+  const actor = await requirePageOwner();
   const publication = await readPublicPublication() ?? approvedPublication;
-  const initialHistory = await readPublicationHistory();
+  const initialHistory = (await readPublicationHistory()).map(({ revision, actor, publishedAt, action, targetRevision, rollbackReason }) => ({ revision, actor, publishedAt, action, ...(targetRevision === undefined ? {} : { targetRevision }), ...(rollbackReason === undefined ? {} : { rollbackReason }) }));
+  const initialReview = await generateDraftReview(actor);
 
   return (
     <div>
@@ -28,6 +30,7 @@ export default async function AdminPublishPage() {
       <PublishReview
         initialPublication={publication}
         initialHistory={initialHistory}
+        initialReview={initialReview}
       />
     </div>
   );
