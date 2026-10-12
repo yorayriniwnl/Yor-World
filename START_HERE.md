@@ -38,6 +38,8 @@ Current local correction update (October 12): A1-R5-R7 at 76d679dc has a Parent-
 
 Latest completion re-audit (October 12): FINISH-A1-R8 at `e377e06c` passed Parent-local exact-package checks and targeted browser/unit/integration reruns; its independent audit and Parent acceptance remain pending. FINISH-B1-R6 at `e8ea9187` has a failed mobile pegboard anchor, so [FINISH-47](docs/planning/reconciliation-packets/2026-10-12-finish-47-b1-mobile-pegboard-correction.md) assigns R7 to correct the static geometry with both camera profiles frozen. FINISH-C1-R9 at `3dda9a61` is still an evidence correction; [FINISH-46](docs/planning/reconciliation-packets/2026-10-12-finish-46-c1-r7-e01-audit-reallocation.md) closes only E-01 receipt integrity, while C1 implementation acceptance remains pending. No completion candidate is integrated. Sites currently lists no project, and production Vercel/Supabase checks remain unverified; the owner is reconnecting those accounts.
 
+FINISH-48 now assigns A1-R9 to rerun the two exact R8 browser cases with separate temporary PGlite paths recorded in each environment binding. It is evidence-only; R8 stays immutable and A1 acceptance remains pending.
+
 ### Default Account Operating Model
 
 Never run all five accounts on the same problem:
