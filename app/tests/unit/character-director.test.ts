@@ -101,4 +101,43 @@ describe("CharacterDirector", () => {
     expect(director.currentClip).toBe("coding_idle");
     expect(director.currentTime).toBe(0);
   });
+
+  it("freezes ambient animation advances when decorative paused is active", () => {
+    const { director } = createMockMixerAndActions();
+    director.setDecorativePaused(true);
+    expect(director.isDecorativePaused).toBe(true);
+    director.advance(0.5);
+    expect(director.currentTime).toBe(0);
+    expect(director.currentClip).toBe("coding_idle");
+
+    director.setDecorativePaused(false);
+    director.advance(0.5);
+    expect(director.currentTime).toBeCloseTo(0.5);
+  });
+
+  it("permits finite greeting sequence to execute and return safely even when decorative paused", () => {
+    const { director } = createMockMixerAndActions();
+    director.setDecorativePaused(true);
+    director.playGreeting();
+    expect(director.mode).toBe("sequence");
+    expect(director.currentClip).toBe("notice_visitor");
+
+    // Advance through notice_visitor (0.6s)
+    director.advance(0.6);
+    expect(director.currentClip).toBe("turn_to_visitor");
+
+    // Advance through turn_to_visitor (0.8s)
+    director.advance(1.2);
+    expect(director.currentClip).toBe("greeting_nod");
+
+    // Advance through greeting_nod (1.0s)
+    director.advance(0.9);
+    expect(director.currentClip).toBe("return_to_work");
+
+    // Advance through return_to_work (0.8s) -> returns to coding
+    director.advance(1.3);
+    expect(director.mode).toBe("coding");
+    expect(director.currentClip).toBe("coding_idle");
+  });
+
 });

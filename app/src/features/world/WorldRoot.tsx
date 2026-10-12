@@ -14,6 +14,7 @@ import { AudioController } from "../experience/audio";
 import { AdaptiveQualityController, chooseInitialTier } from "../room/quality-policy";
 import type { QualityTier } from "../../contracts/experience";
 import type { ExperienceController } from "../experience/controller";
+import { preferencesStore } from "../experience/preferences-store";
 import type { PublishedProject } from "@/contracts/content";
 import { publishedProjects } from "@/features/portfolio/public-content";
 import { useRouter } from "next/navigation";
@@ -50,11 +51,11 @@ export default function WorldRoot({
   const [lifecycleState, setLifecycleState] = useState<WorldLifecycleState>("ENTRY_REQUESTED");
   const [diagnostics, setDiagnostics] = useState<Diagnostics | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [soundEnabled, setSoundEnabled] = useState<boolean>(false);
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => preferencesStore.getPreferences().soundEnabled);
   const [qualityPreference, setQualityPreference] = useState<QualityTier | "auto">("auto");
   const qualityPreferenceRef = useRef(qualityPreference);
   const [effectiveTier, setEffectiveTier] = useState<QualityTier>("high");
-  const [decorativePaused, setDecorativePaused] = useState<boolean>(false);
+  const [decorativePaused, setDecorativePaused] = useState<boolean>(() => preferencesStore.getPreferences().paused);
   const [showRoomControls, setShowRoomControls] = useState<boolean>(false);
   const [showLauncher, setShowLauncher] = useState<boolean>(false);
   const [showReplay, setShowReplay] = useState(false);
@@ -67,6 +68,16 @@ export default function WorldRoot({
   });
   const [activeCamera, setActiveCamera] = useState<CameraPreset>("home-desktop");
   const [showDiagnostics, setShowDiagnostics] = useState<boolean>(false);
+
+  useEffect(() => {
+    const unsub = preferencesStore.subscribe((prefs) => {
+      setDecorativePaused(prefs.paused);
+      if (runtimeRef.current) {
+        runtimeRef.current.setDecorativePaused(prefs.paused);
+      }
+    });
+    return unsub;
+  }, []);
 
   const initialReducedMotionRef = useRef(reducedMotion);
   const runtimeUnavailable = effectiveTier === "static" || lifecycleState === "FAILURE" || error !== null;
@@ -131,7 +142,8 @@ export default function WorldRoot({
       onToggleSound: () => soundToggleRef.current(),
       canvas: canvasRef.current,
       lifecycleManager: lm,
-      soundEnabled: false,
+      initialPaused: preferencesStore.getPreferences().paused,
+      soundEnabled: preferencesStore.getPreferences().soundEnabled,
       reducedMotion: initialReducedMotionRef.current,
       initialTier,
       simulateAssetError,
@@ -177,6 +189,7 @@ export default function WorldRoot({
           setShowRoomControls(false);
           setShowLauncher(false);
         } else if (state === "LOADING") {
+          runtime.cancelLoading();
           lm.continueWithPortfolio();
           if (onClose) onClose();
         } else if (state === "FAILURE") {
@@ -294,6 +307,7 @@ export default function WorldRoot({
   const handleDecorativePauseToggle = useCallback(() => {
     setDecorativePaused((prev) => {
       const next = !prev;
+      preferencesStore.setPaused(next);
       if (runtimeRef.current) {
         runtimeRef.current.setDecorativePaused(next);
       }
@@ -310,6 +324,7 @@ export default function WorldRoot({
   }, []);
 
   const handleContinueWithPortfolio = useCallback(() => {
+    runtimeRef.current?.cancelLoading();
     if (lifecycleManagerRef.current) {
       lifecycleManagerRef.current.continueWithPortfolio();
     }
@@ -334,8 +349,6 @@ export default function WorldRoot({
     setError(null);
     setDiagnostics(null);
     setLifecycleState("ENTRY_REQUESTED");
-    setSoundEnabled(false);
-    setDecorativePaused(false);
     setShowRoomControls(false);
     setShowLauncher(false);
     setShowReplay(false);
@@ -425,7 +438,14 @@ export default function WorldRoot({
   const isEntrance = lifecycleState === "ENTRANCE";
   const isTransition = lifecycleState === "TRANSITION";
   const loadingProgress = diagnostics?.loadingProgress;
-  const progressPercent = Math.round((loadingProgress?.progress ?? 0) * 100);
+  const byteShape = loadingProgress?.bytes;
+  const isDeterminate = byteShape?.kind === "determinate"
+    && Number.isSafeInteger(byteShape.loaded)
+    && Number.isSafeInteger(byteShape.total)
+    && byteShape.total > 0
+    && byteShape.loaded >= 0
+    && byteShape.loaded <= byteShape.total;
+  const progressPercent = isDeterminate ? Math.round((byteShape.loaded / byteShape.total) * 100) : undefined;
 
   return (
     <div
@@ -436,6 +456,7 @@ export default function WorldRoot({
       aria-label="Interactive 3D Studio"
     >
       <canvas
+        key={runtimeGeneration}
         ref={canvasRef}
         className={styles.canvas}
         data-testid="world-canvas"
@@ -446,26 +467,27 @@ export default function WorldRoot({
       {isLoading && (
         <div className={styles.loadingOverlay} data-testid="world-loading-overlay">
           <h3 className={styles.loadingHeading}>Loading 3D Studio</h3>
-          <p className={styles.loadingStageText} data-testid="world-loading-stage">
+          <p className={styles.loadingStageText} data-testid="world-loading-stage" aria-live="polite" aria-atomic="true">
             {loadingProgress?.stage || "Preparing asset session..."}
           </p>
           <div
-            className={styles.progressBarTrack}
+            className={`${styles.progressBarTrack} ${isDeterminate ? "" : styles.progressBarIndeterminate}`}
             role="progressbar"
             aria-valuenow={progressPercent}
+            aria-valuetext={isDeterminate ? `${progressPercent}% of required asset bytes` : "Loading required assets"}
             aria-valuemin={0}
             aria-valuemax={100}
             data-testid="world-loading-progress-bar"
           >
             <div
-              className={styles.progressBarFill}
-              style={{ width: `${progressPercent}%` }}
+              className={`${styles.progressBarFill} ${isDeterminate ? "" : styles.progressBarFillIndeterminate}`}
+              style={isDeterminate ? { width: `${progressPercent}%` } : undefined}
             />
           </div>
           <div className={styles.loadingStats} data-testid="world-loading-percentage">
-            {progressPercent}% · Required: {loadingProgress?.requiredLoaded ?? 0}/
-            {loadingProgress?.requiredTotal ?? 3} · Optional: {loadingProgress?.optionalLoaded ?? 0}/
-            {loadingProgress?.optionalTotal ?? 3}
+            {isDeterminate ? `${progressPercent}% of required bytes` : "Required asset bytes: measuring"}
+            {` · Decoded: ${loadingProgress?.requiredLoaded ?? 0}/${loadingProgress?.requiredTotal ?? 3}`}
+            {` · Optional: ${loadingProgress?.optionalLoaded ?? 0}/${loadingProgress?.optionalTotal ?? 2}`}
           </div>
           <button
             type="button"

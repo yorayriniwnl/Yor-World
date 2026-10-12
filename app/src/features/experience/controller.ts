@@ -68,6 +68,7 @@ export class ExperienceController {
   private characterDirector?: CharacterDirectorAdapter | undefined;
 
   private listeners = new Set<(snapshot: ExperienceSnapshot) => void>();
+  private unsubscribePreferences: (() => void) | null = null;
   private isDisposed = false;
 
   public readonly singleOwners: SingleOwners = Object.freeze({
@@ -82,6 +83,12 @@ export class ExperienceController {
     this.cancellation = new CancellationCoordinator();
     this.arbitrator = new IntentArbitrator();
     this.preferencesStore = deps.preferencesStore ?? new PreferencesStore();
+    this.paused = this.preferencesStore.get().paused ?? false;
+    this.unsubscribePreferences = this.preferencesStore.subscribe((preferences) => {
+      if (this.paused === preferences.paused) return;
+      this.paused = preferences.paused;
+      this.notify();
+    });
     this.painting = deps.paintingController ?? new PaintingController();
     this.environment = deps.environmentController ?? new EnvironmentController();
     this.greeting = deps.greetingController ?? new GreetingController();
@@ -273,6 +280,7 @@ export class ExperienceController {
 
       case "SET_PAUSED":
         this.paused = intent.paused;
+        this.preferencesStore.update({ paused: intent.paused });
         this.notify();
         break;
 
@@ -483,7 +491,17 @@ export class ExperienceController {
   }
 
   public advance(dt: number): void {
-    if (this.suspended || this.paused) return;
+    if (this.suspended) return;
+    if (this.paused) {
+      // Explicitly requested finite actions continue to their safe endpoint;
+      // ambient loops remain frozen while pause is active.
+      this.painting.advance(dt);
+      this.environment.advance(dt);
+      if (this.greeting.isBusy()) {
+        this.greeting.update();
+      }
+      return;
+    }
     this.painting.advance(dt);
     this.environment.advance(dt);
     this.greeting.update();
@@ -491,6 +509,8 @@ export class ExperienceController {
 
   public stop(): void {
     this.isDisposed = true;
+    this.unsubscribePreferences?.();
+    this.unsubscribePreferences = null;
     this.cancellation.dispose();
     this.greeting.settle();
     this.listeners.clear();

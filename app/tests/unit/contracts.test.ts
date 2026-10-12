@@ -54,6 +54,7 @@ describe("engineering section 4 boundaries", () => {
     expect(schema.parse(value)).toEqual(value);
     expect(schema.safeParse({ ...value, executable: "alert(1)" }).success).toBe(false);
     for (const key of Object.keys(value)) {
+      if (schema === PreferencesSchema && key === "paused") continue;
       const incomplete = { ...value } as Record<string, unknown>;
       delete incomplete[key];
       expect(schema.safeParse(incomplete).success, `missing ${key}`).toBe(false);
@@ -124,4 +125,21 @@ describe("engineering section 4 boundaries", () => {
     expect(defaultPreferences).toMatchObject({ soundEnabled: false, introCompleted: false, quality: "auto" });
     expect(Object.isFrozen(defaultPreferences)).toBe(true);
   });
+
+  it("validates preferences with paused field and rejects invalid types", () => {
+    expect(PreferencesSchema.parse({ ...defaultPreferences, paused: true }).paused).toBe(true);
+    expect(PreferencesSchema.safeParse({ ...defaultPreferences, paused: "true" }).success).toBe(false);
+  });
+
+  it("defaults paused to false when parsing the historical version-1 preference shape", () => {
+    const legacy = {
+      version: 1 as const,
+      introCompleted: true,
+      soundEnabled: false,
+      quality: "auto" as const,
+      clock24h: true,
+    };
+    expect(PreferencesSchema.parse(legacy)).toEqual({ ...legacy, paused: false });
+  });
+
 });
