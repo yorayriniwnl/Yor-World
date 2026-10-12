@@ -1,0 +1,230 @@
+{
+  "format": "YOR-WORLD-A1-R9-BROWSER-BINDING-v1",
+  "sourceCandidateCommit": "76d679dcb98064152021830b98f16eb456b3ae19",
+  "sourceBaseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+  "candidateDeliveryCommit": "e377e06c514819ee6dbd82da2216c95813bedd2f",
+  "candidateDeliveryTree": "552cb2618c31fe000ab4fae0a9e5997c6442d084",
+  "replayedCandidateTree": "5dc26a201e715ca15757ae661639589948ab4800",
+  "candidateAppTree": "0fdc8972f303cd5304f812f89ece493fef170ea1",
+  "sourcePatchSha256": "6241ab27996cea9518d0d202e6cf3c9a362c63e283a91e2180158814e871f061",
+  "lockfileSha256": "8034f04afa8cbdb28fa028ed574117177dfa8a4903c95775ea41405bcabea791",
+  "buildId": "pp5xdSckVjwwIzU_SnOxQ",
+  "buildOutputManifestSha256": "1ef93140605687249d74730293fb5ef6ba66176e22f6d714106d2c4fcefdf1d5",
+  "browserPreflight": {
+    "playwrightVersion": "1.63.0",
+    "browserVersion": "153.0.8010.12",
+    "executablePath": "F:\\A1-R9-Temp-20261012\\browsers\\chromium-1243\\chrome-win64\\chrome.exe"
+  },
+  "runs": [
+    {
+      "format": "YOR-WORLD-A1-R9-BROWSER-RUN-v1",
+      "label": "browser-absent-draft",
+      "mode": "absent-draft",
+      "command": [
+        "node",
+        "node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/cli.js",
+        "test",
+        "tests/e2e/platform/completion-authoring-workflow.spec.ts",
+        "--project=chromium",
+        "--grep",
+        "owner request for an absent private draft"
+      ],
+      "cwd": "F:\\A1-R9-Replay-e377e06c\\app",
+      "exit_code": 0,
+      "started_utc": "2026-10-12T05:37:50.788478+00:00",
+      "duration_seconds": 13.406,
+      "playwrightVersion": "1.63.0",
+      "browserVersion": "153.0.8010.12",
+      "resultPath": "captures/absent-draft/browser-results.json",
+      "resultSha256": "977063b954ed8765ba41f7667ab9d3740e6c321db107c3584833ae3b4ee9f746",
+      "stdout": "logs/browser-absent-draft.stdout.log",
+      "stdoutSha256": "2cf99a2c8773765807c53b51632ff243ef1ece51ba21efb2f55fd362cf90643b",
+      "stderr": "logs/browser-absent-draft.stderr.log",
+      "stderrSha256": "6d48903a21efef8b329416b1c4cb704da3952c6f7bc06e97cb218e8b3f0a63c2",
+      "database": {
+        "YOR_TEST_DATABASE_PATH": "F:\\A1-R9-Temp-20261012\\pglite\\20261012T053750787479Z-absent-draft",
+        "pathSha256": "3520f7bac14f870c0361c36039541e5e6560bcd211b777366b808e88990f9c21",
+        "fresh": true,
+        "existedBeforeRun": false,
+        "existsAfterRun": true,
+        "fixture": "PGlite",
+        "productionDatabaseVariables": "unset"
+      },
+      "environment": {
+        "YOR_TEST_DATABASE_PATH": "F:\\A1-R9-Temp-20261012\\pglite\\20261012T053750787479Z-absent-draft",
+        "YOR_E2E_FIXTURE": "1",
+        "YOR_E2E_OMIT_CANDIDATEX_DRAFT": "1",
+        "CI": "1",
+        "PORT": "4331",
+        "TEMP": "F:\\A1-R9-Temp-20261012\\tmp",
+        "TMP": "F:\\A1-R9-Temp-20261012\\tmp",
+        "PLAYWRIGHT_BROWSERS_PATH": "F:\\A1-R9-Temp-20261012\\browsers",
+        "NEXT_TELEMETRY_DISABLED": "1",
+        "A1_EVIDENCE_DIR": "F:\\Yor-World-A1-R9\\deliveries\\FINISH-A1-R9\\evidence\\captures\\absent-draft",
+        "B5_EVIDENCE_DIR": "F:\\Yor-World-A1-R9\\deliveries\\FINISH-A1-R9\\evidence\\captures\\absent-draft",
+        "DATABASE_URL": "unset",
+        "SUPABASE_URL": "unset",
+        "SUPABASE_ANON_KEY": "unset",
+        "SUPABASE_SERVICE_ROLE_KEY": "unset",
+        "SUPABASE_SERVICE_KEY": "unset",
+        "NEXT_PUBLIC_SUPABASE_URL": "unset",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY": "unset"
+      },
+      "captures": [
+        {
+          "path": "captures/absent-draft/absent-private-draft-not-found.png",
+          "bytes": 31781,
+          "sha256": "460b5f6e20450cd9e494bd55036ea19d4e288c78dc1f56dfc79d256a6100f3d3"
+        }
+      ],
+      "resultStats": {
+        "startTime": "2026-10-12T05:37:51.519Z",
+        "duration": 12653.431,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "testCases": [
+        {
+          "title": "owner request for an absent private draft reaches the not-found page",
+          "project": "chromium",
+          "statuses": [
+            "passed"
+          ]
+        }
+      ]
+    },
+    {
+      "format": "YOR-WORLD-A1-R9-BROWSER-RUN-v1",
+      "label": "browser-normal-fixture",
+      "mode": "normal-fixture",
+      "command": [
+        "node",
+        "node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/cli.js",
+        "test",
+        "tests/e2e/platform/admin-publish.spec.ts",
+        "tests/e2e/platform/completion-authoring-workflow.spec.ts",
+        "--project=chromium",
+        "--grep-invert",
+        "owner request for an absent private draft"
+      ],
+      "cwd": "F:\\A1-R9-Replay-e377e06c\\app",
+      "exit_code": 0,
+      "started_utc": "2026-10-12T05:38:20.640625+00:00",
+      "duration_seconds": 16.516,
+      "playwrightVersion": "1.63.0",
+      "browserVersion": "153.0.8010.12",
+      "resultPath": "captures/normal-fixture/browser-results.json",
+      "resultSha256": "d51d5a68938d65ef2cd1bc3de1b831d748fa56d26131f55f227fbe6ea7946be2",
+      "stdout": "logs/browser-normal-fixture.stdout.log",
+      "stdoutSha256": "475a5b00501eed024649060b649b4b3b6a8d5570f8d27bdf6189d66e0c5b7a77",
+      "stderr": "logs/browser-normal-fixture.stderr.log",
+      "stderrSha256": "f85bb83c88ce17372b747f51ea33c5032bb2c7528556cc5bb4bc834e546b87e0",
+      "database": {
+        "YOR_TEST_DATABASE_PATH": "F:\\A1-R9-Temp-20261012\\pglite\\20261012T053820640625Z-normal-fixture",
+        "pathSha256": "6ff9d2b6b0259e06fa73c101032b0e1237b851f9901742e37bd476eae0431b5a",
+        "fresh": true,
+        "existedBeforeRun": false,
+        "existsAfterRun": true,
+        "fixture": "PGlite",
+        "productionDatabaseVariables": "unset"
+      },
+      "environment": {
+        "YOR_TEST_DATABASE_PATH": "F:\\A1-R9-Temp-20261012\\pglite\\20261012T053820640625Z-normal-fixture",
+        "YOR_E2E_FIXTURE": "1",
+        "YOR_E2E_OMIT_CANDIDATEX_DRAFT": "unset",
+        "CI": "1",
+        "PORT": "4332",
+        "TEMP": "F:\\A1-R9-Temp-20261012\\tmp",
+        "TMP": "F:\\A1-R9-Temp-20261012\\tmp",
+        "PLAYWRIGHT_BROWSERS_PATH": "F:\\A1-R9-Temp-20261012\\browsers",
+        "NEXT_TELEMETRY_DISABLED": "1",
+        "A1_EVIDENCE_DIR": "F:\\Yor-World-A1-R9\\deliveries\\FINISH-A1-R9\\evidence\\captures\\normal-fixture",
+        "B5_EVIDENCE_DIR": "F:\\Yor-World-A1-R9\\deliveries\\FINISH-A1-R9\\evidence\\captures\\normal-fixture",
+        "DATABASE_URL": "unset",
+        "SUPABASE_URL": "unset",
+        "SUPABASE_ANON_KEY": "unset",
+        "SUPABASE_SERVICE_ROLE_KEY": "unset",
+        "SUPABASE_SERVICE_KEY": "unset",
+        "NEXT_PUBLIC_SUPABASE_URL": "unset",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY": "unset"
+      },
+      "captures": [
+        {
+          "path": "captures/normal-fixture/candidatex-private-preview.png",
+          "bytes": 167023,
+          "sha256": "9285130a5cd87d5f8bcbf8df2ae445641458765db5439de3a886061bf6943f6f"
+        },
+        {
+          "path": "captures/normal-fixture/publish-rollback-review.png",
+          "bytes": 206868,
+          "sha256": "0f8aac32affa314962c75393b3b6605bd1bad37a58a0fd9a058559c22f5b25cd"
+        }
+      ],
+      "resultStats": {
+        "startTime": "2026-10-12T05:38:21.199Z",
+        "duration": 15941.197999999999,
+        "expected": 6,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "testCases": [
+        {
+          "title": "admin navigation includes links to Dashboard, Editor, and Publish",
+          "project": "chromium",
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "title": "loads project editor with structured editing controls",
+          "project": "chromium",
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "title": "loads publish review with pre-flight checklist and publication history table",
+          "project": "chromium",
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "title": "editor and publish interfaces require zero WebGL, canvas, or 3D models",
+          "project": "chromium",
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "title": "public portfolio continues to serve approved snapshot with no private media leakage",
+          "project": "chromium",
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "title": "edits, cancels, preserves a rich buffer on 409, previews private media, and publishes then rolls back",
+          "project": "chromium",
+          "statuses": [
+            "passed"
+          ]
+        }
+      ]
+    }
+  ],
+  "databasePathsAreDifferent": true,
+  "localSyntheticFixtureOnly": true,
+  "limits": "Local Chromium, synthetic owner-cookie fixture, and isolated PGlite only. No provider Auth/Storage, production database, deployed route, CDN/shared cache, physical device or assistive-technology session was tested.",
+  "browserInstaller": {
+    "receipt": "evidence/logs/chromium-install.json",
+    "exitCode": 0,
+    "installerStdout": "evidence/logs/chromium-install.stdout.log",
+    "installerStderr": "evidence/logs/chromium-install.stderr.log",
+    "tlsVerificationOverride": "unset",
+    "note": "Installer stderr reported a self-signed certificate chain error for an ancillary download. Required Chromium and headless-shell binaries were installed; browser preflight and both scoped tests passed."
+  }
+}

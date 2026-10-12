@@ -1,0 +1,76 @@
+{
+  "format": "YOR-WORLD-A1-R9-REQUIREMENT-MATRIX-v1",
+  "candidateCommit": "e377e06c514819ee6dbd82da2216c95813bedd2f",
+  "rows": [
+    {
+      "requirement": "Exact R8 input identity and output manifest",
+      "status": "PASS",
+      "evidence": "candidate-binding.json; evidence/logs/replay-verification.log; 140/140 raw Git package blobs verified."
+    },
+    {
+      "requirement": "All R8 input-hashes entries available as raw Git objects",
+      "status": "PARTIAL",
+      "evidence": "input-hashes.json; evidence/logs/input-provenance.log; 13/15 raw Git matches. Parent reported read-only local-copy hashes match for the other two R5 audit files, but no raw Git object exists in pinned histories."
+    },
+    {
+      "requirement": "Exact source patch replay from pinned base",
+      "status": "PASS",
+      "evidence": "source.patch; evidence/logs/replay-verification.log; replay tree 5dc26a201e715ca15757ae661639589948ab4800; app tree 0fdc8972f303cd5304f812f89ece493fef170ea1."
+    },
+    {
+      "requirement": "Frozen lockfile install",
+      "status": "PASS",
+      "evidence": "evidence/logs/install.json and raw stdout/stderr; `pnpm install --frozen-lockfile --offline`, 404 packages reused, zero downloads, exit 0."
+    },
+    {
+      "requirement": "Production build bound to replay source and lock",
+      "status": "PASS",
+      "evidence": "evidence/build-binding.json; evidence/build-output-manifest.json; evidence/logs/build.json and raw logs; build ID pp5xdSckVjwwIzU_SnOxQ."
+    },
+    {
+      "requirement": "Playwright and Chromium versions",
+      "status": "PASS",
+      "evidence": "evidence/browser-version.json; Playwright 1.63.0, Chromium 153.0.8010.12; preflight exit 0."
+    },
+    {
+      "requirement": "Absent valid private draft owner page",
+      "status": "PASS",
+      "evidence": "evidence/browser-absent-draft.json; captures/absent-draft/browser-results.json; logs/browser-absent-draft.stdout.log; 1 passed, 0 unexpected, omission flag=1, fresh isolated PGlite path recorded."
+    },
+    {
+      "requirement": "Normal-fixture authoring and publishing Chromium suite",
+      "status": "PASS",
+      "evidence": "evidence/browser-normal-fixture.json; captures/normal-fixture/browser-results.json; logs/browser-normal-fixture.stdout.log; 6 passed, 0 unexpected, omission flag unset, distinct fresh PGlite path recorded."
+    },
+    {
+      "requirement": "R9 result/log/capture integrity and manifest",
+      "status": "PASS",
+      "evidence": "output-hashes.json; raw-Git verification performed after staging before commit."
+    },
+    {
+      "requirement": "Broader unit/integration/lint/typecheck checks",
+      "status": "INHERITED — NOT RERUN",
+      "evidence": "Prior R8 maker report and Parent re-audit; FINISH-48 limits R9 to install/build and two scoped browser cases."
+    },
+    {
+      "requirement": "Provider Auth/MFA and Storage/media approval",
+      "status": "NOT RUN",
+      "evidence": "Outside local synthetic fixture scope."
+    },
+    {
+      "requirement": "Production PostgreSQL race tests; deployed routes/CDN/shared cache",
+      "status": "NOT RUN",
+      "evidence": "No provider database or deployed origin exercised."
+    },
+    {
+      "requirement": "Physical-device, mobile, accessibility or assistive-technology checks",
+      "status": "NOT RUN",
+      "evidence": "No device or assistive-technology session performed."
+    },
+    {
+      "requirement": "Independent audit, Parent acceptance, integration or deployment",
+      "status": "PENDING — NOT CLAIMED",
+      "evidence": "R9 maker delivery only; stop for independent exact-candidate audit and Parent ruling."
+    }
+  ]
+}

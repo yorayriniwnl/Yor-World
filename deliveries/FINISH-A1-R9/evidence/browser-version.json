@@ -1,0 +1,24 @@
+{
+  "label": "browser-preflight",
+  "command": [
+    "node",
+    "-e",
+    "const { chromium } = require('@playwright/test'); const p=require('@playwright/test/package.json').version; (async()=>{const b=await chromium.launch({headless:true}); console.log(JSON.stringify({playwrightVersion:p,browserVersion:b.version(),executablePath:chromium.executablePath()})); await b.close()})().catch(e=>{console.error(e);process.exit(1)})"
+  ],
+  "cwd": "F:\\A1-R9-Replay-e377e06c\\app",
+  "exit_code": 0,
+  "started_utc": "2026-10-12T05:36:46.270445+00:00",
+  "duration_seconds": 6.047,
+  "stdout": "evidence/logs/browser-preflight.stdout.log",
+  "stderr": "evidence/logs/browser-preflight.stderr.log",
+  "result": {
+    "playwrightVersion": "1.63.0",
+    "browserVersion": "153.0.8010.12",
+    "executablePath": "F:\\A1-R9-Temp-20261012\\browsers\\chromium-1243\\chrome-win64\\chrome.exe"
+  },
+  "environment": {
+    "PLAYWRIGHT_BROWSERS_PATH": "F:\\A1-R9-Temp-20261012\\browsers",
+    "TEMP": "F:\\A1-R9-Temp-20261012\\tmp",
+    "TMP": "F:\\A1-R9-Temp-20261012\\tmp"
+  }
+}
