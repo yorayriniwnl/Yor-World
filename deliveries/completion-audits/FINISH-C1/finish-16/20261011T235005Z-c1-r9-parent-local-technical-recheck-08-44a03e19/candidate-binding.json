@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "packet": "FINISH-43 / FINISH-36",
+  "lane": "C1",
+  "candidate": {
+    "branch": "codex/finish-30-c1-r9-20261011",
+    "commit": "3dda9a616033375768f3d5f60f8c653d504f7c8c",
+    "remoteCommit": "3dda9a616033375768f3d5f60f8c653d504f7c8c",
+    "parent": "c398876583bc337c069414b79364e3fdea745879",
+    "tree": "5a38d405499737ff40b0141a64845c244a9e4813",
+    "packageSubtree": "aa097f12adff2dbac2c88d6300c949f37bf34251",
+    "rootAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+    "r8Input": {
+      "branch": "codex/finish-28-c1-r8-20261011",
+      "commit": "c398876583bc337c069414b79364e3fdea745879",
+      "remoteCommit": "c398876583bc337c069414b79364e3fdea745879",
+      "tree": "798de513703f3d7e76f8d82edb85257d32894681",
+      "packageSubtree": "da822d0362e06e92497001583afb7405b7ccd472"
+    }
+  },
+  "r9OutputManifest": {
+    "sha256": "31903805363ed7d56521d334893d40d99079a716e1b374ac2a4c1895ecaff465",
+    "rowCount": 26,
+    "rowBytes": 145757,
+    "allRowsMatch": true,
+    "rowErrors": [],
+    "inventoryExact": true,
+    "inventoryCountIncludingManifest": 27,
+    "selfHashExcluded": true
+  },
+  "r8OutputManifest": {
+    "rowCount": 22,
+    "rowBytes": 140981,
+    "allRowsMatch": true,
+    "rowErrors": [],
+    "inventoryExact": true,
+    "inventoryCountIncludingManifest": 23,
+    "selfHashExcluded": true
+  },
+  "r8ToR9Delta": {
+    "unchangedInheritedCount": 20,
+    "changedInherited": [
+      "output-hashes.json",
+      "requirement-matrix.json",
+      "scripts/finalize.py"
+    ],
+    "added": [
+      "changed-paths.json",
+      "evidence/r9-correction-verification.json",
+      "r9-candidate-binding.json",
+      "r9-correction-report.md"
+    ],
+    "removed": [],
+    "declaredChangedPaths": [
+      "changed-paths.json",
+      "evidence/r9-correction-verification.json",
+      "output-hashes.json",
+      "r9-candidate-binding.json",
+      "r9-correction-report.md",
+      "requirement-matrix.json",
+      "scripts/finalize.py"
+    ],
+    "matrixStatuses": {
+      "E-02-01": "PASS",
+      "E-02-02": "PASS",
+      "E-02-03": "PASS",
+      "E-02-04": "PASS",
+      "E-02-05": "PASS",
+      "LINEAGE-01": "PASS",
+      "LIMIT-01": "NOT RUN"
+    },
+    "matrixEvidenceReferences": [
+      {
+        "id": "E-02-01",
+        "path": "tests/test_fail_closed_metadata.py",
+        "resolves": true
+      },
+      {
+        "id": "E-02-01",
+        "path": "evidence/candidate-binding.json",
+        "resolves": true
+      },
+      {
+        "id": "E-02-01",
+        "path": "evidence/tests.log",
+        "resolves": true
+      },
+      {
+        "id": "E-02-02",
+        "path": "evidence/candidate-binding.json",
+        "resolves": true
+      },
+      {
+        "id": "E-02-02",
+        "path": "evidence/tests.log",
+        "resolves": true
+      },
+      {
+        "id": "E-02-03",
+        "path": "evidence/tests.log",
+        "resolves": true
+      },
+      {
+        "id": "E-02-04",
+        "path": "evidence/tests.log",
+        "resolves": true
+      },
+      {
+        "id": "E-02-05",
+        "path": "evidence/cli-negative-false-pass.json",
+        "resolves": true
+      },
+      {
+        "id": "LINEAGE-01",
+        "path": "evidence/candidate-binding.json",
+        "resolves": true
+      },
+      {
+        "id": "LINEAGE-01",
+        "path": "evidence/source-patch-replay.json",
+        "resolves": true
+      }
+    ],
+    "falsePassReceipt": {
+      "status": "PASS",
+      "childExitCode": 1,
+      "parsedStatus": "FAIL",
+      "stderr": "",
+      "uncached": "new Python process; verifier Git reads are uncached",
+      "sourceManifestHashZeroed": true,
+      "originalReceiptUnchanged": true
+    }
+  }
+}

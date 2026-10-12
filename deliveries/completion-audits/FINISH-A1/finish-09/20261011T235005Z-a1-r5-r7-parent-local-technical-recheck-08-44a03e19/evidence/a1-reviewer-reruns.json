@@ -1,0 +1,57 @@
+{
+  "format": "YOR-WORLD-FINISH-43-A1-REVIEWER-RERUNS-v1",
+  "runs": [
+    {
+      "name": "focused-unit",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.config.ts",
+        "tests/unit/platform/completion-authoring-blocks.test.ts"
+      ],
+      "workingDirectory": ".work/a1-replay/app",
+      "exitCode": 0,
+      "durationSeconds": 1.31,
+      "stdout": "evidence/a1-focused-unit.stdout.log",
+      "stderr": "evidence/a1-focused-unit.stderr.log",
+      "candidateSourceChanged": false
+    },
+    {
+      "name": "focused-integration",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "tests/integration/platform/completion-authoring-preview.test.ts"
+      ],
+      "workingDirectory": ".work/a1-replay/app",
+      "exitCode": 0,
+      "durationSeconds": 23.54,
+      "stdout": "evidence/a1-focused-integration.stdout.log",
+      "stderr": "evidence/a1-focused-integration.stderr.log",
+      "candidateSourceChanged": false
+    },
+    {
+      "name": "independent-boundary-probes",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.config.ts",
+        "tests/unit/platform/finish43-parent-boundaries.test.ts"
+      ],
+      "workingDirectory": ".work/a1-replay/app",
+      "exitCode": 0,
+      "durationSeconds": 1.21,
+      "stdout": "evidence/a1-boundary-probes.stdout.log",
+      "stderr": "evidence/a1-boundary-probes.stderr.log",
+      "candidateSourceChanged": false
+    }
+  ],
+  "allPassed": true
+}

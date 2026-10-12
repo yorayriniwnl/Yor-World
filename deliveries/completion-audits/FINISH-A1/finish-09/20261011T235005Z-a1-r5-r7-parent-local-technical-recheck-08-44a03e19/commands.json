@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "packet": "FINISH-43",
+  "runs": [
+    {
+      "name": "A1-C1 raw Git lineage and output-manifest recheck",
+      "command": "python <A1 output>/evidence/raw_git_reverify.py",
+      "status": "PASS",
+      "exitCode": 0,
+      "evidence": "evidence/a1-raw-git-verification.json; evidence/a1-c1-raw-git-reverify.stdout.json"
+    },
+    {
+      "name": "A1 exact-base sparse replay",
+      "command": "python <A1 output>/.work/prepare_a1_replay.py",
+      "status": "PASS",
+      "exitCode": 0,
+      "evidence": "evidence/a1-replay-verification.json"
+    },
+    {
+      "name": "A1 focused unit",
+      "command": "node node_modules/vitest/vitest.mjs run --config vitest.config.ts tests/unit/platform/completion-authoring-blocks.test.ts",
+      "status": "PASS",
+      "exitCode": 0,
+      "tests": "5 passed",
+      "evidence": "evidence/a1-reviewer-reruns.json; evidence/a1-focused-unit.stdout.log"
+    },
+    {
+      "name": "A1 focused integration",
+      "command": "node node_modules/vitest/vitest.mjs run --config vitest.integration.config.ts tests/integration/platform/completion-authoring-preview.test.ts",
+      "status": "PASS",
+      "exitCode": 0,
+      "tests": "22 passed",
+      "evidence": "evidence/a1-reviewer-reruns.json; evidence/a1-focused-integration.stdout.log"
+    },
+    {
+      "name": "A1 independent boundary probes",
+      "command": "node node_modules/vitest/vitest.mjs run --config vitest.config.ts tests/unit/platform/finish43-parent-boundaries.test.ts",
+      "status": "PASS",
+      "exitCode": 0,
+      "tests": "3 passed",
+      "evidence": "evidence/a1-reviewer-reruns.json; evidence/a1-boundary-probes.stdout.log"
+    },
+    {
+      "name": "Initial full worktree setup",
+      "command": "Exact-base full Git worktree setup stopped before tests",
+      "status": "FAIL",
+      "exitCode": null,
+      "detail": "No space left on device; no full worktree created. Sparse app-only replay succeeded afterward.",
+      "evidence": "evidence/a1-full-checkout-setup-failure.txt"
+    },
+    {
+      "name": "Physical build files and fresh browser",
+      "command": "Not run",
+      "status": "NOT RUN",
+      "exitCode": null,
+      "evidence": "evidence/a1-maker-binding-verification.json"
+    }
+  ]
+}

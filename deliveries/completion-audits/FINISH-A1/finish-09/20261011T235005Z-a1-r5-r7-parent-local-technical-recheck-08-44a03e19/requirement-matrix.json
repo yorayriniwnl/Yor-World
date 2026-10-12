@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 1,
+  "packet": "FINISH-43",
+  "candidate": {
+    "branch": "codex/finish-29-a1-r5-r7-20261011",
+    "commit": "76d679dcb98064152021830b98f16eb456b3ae19",
+    "remoteCommit": "76d679dcb98064152021830b98f16eb456b3ae19",
+    "parent": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+    "tree": "6bb0a24c3ec9b716a4728b88fc0e07d5df440cd6",
+    "packageSubtree": "61026e89795d28aa212ee2e03c8edc05b2aea97a",
+    "base": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+    "rootAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+    "baseAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d"
+  },
+  "results": [
+    {
+      "id": "A1-BIND-01",
+      "requirement": "Remote candidate branch, exact commit, parent, full tree, package subtree and unchanged root app match FINISH-36.",
+      "status": "PASS",
+      "evidence": [
+        "evidence/a1-raw-git-verification.json"
+      ],
+      "result": "All pinned raw Git identities and remote branch match."
+    },
+    {
+      "id": "A1-PACKAGE-01",
+      "requirement": "Every package output hash and inventory row recomputes from raw Git blobs.",
+      "status": "PASS",
+      "evidence": [
+        "evidence/a1-raw-git-verification.json"
+      ],
+      "result": "79 rows / 1,695,825 bytes verified; inventory exact."
+    },
+    {
+      "id": "A1-PATCH-01",
+      "requirement": "Exact-base patch applies cleanly, matches declared paths and packaged source bytes, stays within frozen allowlist, and reproduces candidate app tree.",
+      "status": "PASS",
+      "evidence": [
+        "evidence/a1-replay-verification.json",
+        "evidence/a1-raw-git-verification.json"
+      ],
+      "result": "25/25 changed sources match; 26-path allowlist contains all; app tree matches."
+    },
+    {
+      "id": "A1-F24-01",
+      "requirement": "Frozen review/media DTOs and generic site ReviewCheck contract are preserved.",
+      "status": "PASS",
+      "evidence": [
+        "evidence/a1-source-review.md",
+        "evidence/a1-boundary-probes.test.ts",
+        "evidence/a1-boundary-probes.stdout.log"
+      ],
+      "result": "Fresh probes accept frozen DTOs and reject substituted shapes."
+    },
+    {
+      "id": "A1-F24-02",
+      "requirement": "Publication and rollback refresh use activePublication.",
+      "status": "PASS",
+      "evidence": [
+        "evidence/a1-source-review.md",
+        "evidence/a1-focused-integration.stdout.log"
+      ],
+      "result": "Both refresh paths match the API response and focused integration rerun passed."
+    },
+    {
+      "id": "A1-F24-03",
+      "requirement": "Absent requested draft maps to private not-found handling.",
+      "status": "PASS",
+      "evidence": [
+        "evidence/a1-source-review.md",
+        "evidence/a1-focused-integration.stdout.log"
+      ],
+      "result": "Null draft review maps to 404/not-found; focused integration rerun passed."
+    },
+    {
+      "id": "A1-F24-04",
+      "requirement": "Stale save conflict returns currentDraft without writes and preserves the losing editor buffer.",
+      "status": "PASS",
+      "evidence": [
+        "evidence/a1-source-review.md",
+        "evidence/a1-focused-integration.stdout.log"
+      ],
+      "result": "Conflict payload and isolation covered; workflow retains the buffer."
+    },
+    {
+      "id": "A1-F24-05",
+      "requirement": "Draft media renders only through the exact canonical private preview URL.",
+      "status": "PASS",
+      "evidence": [
+        "evidence/a1-source-review.md",
+        "evidence/a1-boundary-probes.test.ts",
+        "evidence/a1-boundary-probes.stdout.log"
+      ],
+      "result": "URL variants outside the canonical value are rejected."
+    },
+    {
+      "id": "A1-F24-06",
+      "requirement": "New sections, blocks, list entries and links use neutral blank defaults; unknown evidence stays null.",
+      "status": "PASS",
+      "evidence": [
+        "evidence/a1-source-review.md",
+        "evidence/a1-focused-unit.stdout.log",
+        "evidence/a1-focused-integration.stdout.log"
+      ],
+      "result": "Source defaults and focused authoring tests pass."
+    },
+    {
+      "id": "A1-LOCAL-UNIT",
+      "requirement": "Fresh focused authoring unit suite passes on isolated replay.",
+      "status": "PASS",
+      "evidence": [
+        "evidence/a1-reviewer-reruns.json",
+        "evidence/a1-focused-unit.stdout.log"
+      ],
+      "result": "5/5 passed; replay candidate source unchanged."
+    },
+    {
+      "id": "A1-LOCAL-INTEGRATION",
+      "requirement": "Fresh focused authoring integration suite passes on isolated replay.",
+      "status": "PASS",
+      "evidence": [
+        "evidence/a1-reviewer-reruns.json",
+        "evidence/a1-focused-integration.stdout.log"
+      ],
+      "result": "22/22 passed; replay candidate source unchanged."
+    },
+    {
+      "id": "A1-LOCAL-BOUNDARY",
+      "requirement": "Fresh independent DTO/media boundary probes pass on isolated replay.",
+      "status": "PASS",
+      "evidence": [
+        "evidence/a1-reviewer-reruns.json",
+        "evidence/a1-boundary-probes.stdout.log",
+        "evidence/a1-boundary-probes.test.ts"
+      ],
+      "result": "3/3 passed; probe file stayed outside candidate commit."
+    },
+    {
+      "id": "A1-MAKER-SUITES",
+      "requirement": "Maker full unit/integration, lint and typecheck receipts are bound and show exit zero.",
+      "status": "PASS",
+      "evidence": [
+        "evidence/a1-maker-verification-results.json",
+        "evidence/a1-raw-git-verification.json"
+      ],
+      "result": "Candidate receipts are byte-bound maker evidence, not Parent reruns."
+    },
+    {
+      "id": "A1-MAKER-BROWSER",
+      "requirement": "Maker Chromium receipt and result hashes match candidate tree/build identity.",
+      "status": "PASS",
+      "evidence": [
+        "evidence/a1-maker-binding-verification.json",
+        "evidence/a1-maker-browser-binding.json",
+        "evidence/a1-maker-browser-results.json"
+      ],
+      "result": "6 expected; zero unexpected, skipped or flaky."
+    },
+    {
+      "id": "A1-PHYSICAL-BUILD",
+      "requirement": "Independently rehash physical build output files.",
+      "status": "NOT RUN",
+      "evidence": [
+        "evidence/a1-maker-binding-verification.json"
+      ],
+      "result": "Maker manifest/binding checked; physical files not independently rehashed."
+    },
+    {
+      "id": "A1-PARENT-BROWSER",
+      "requirement": "Run a new Parent-owned browser session.",
+      "status": "NOT RUN",
+      "evidence": [
+        "evidence/a1-maker-binding-verification.json"
+      ],
+      "result": "No fresh Parent browser session launched."
+    },
+    {
+      "id": "A1-EXTERNAL-GATES",
+      "requirement": "GPT Plus #2, Parent acceptance, canonical integration, native providers, physical/device checks, deployment, recovery/manual operations and G7.",
+      "status": "NOT RUN",
+      "evidence": [
+        "evidence/a1-source-review.md"
+      ],
+      "result": "Outside this local recheck; remain open."
+    }
+  ]
+}
