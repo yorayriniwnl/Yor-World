@@ -200,7 +200,7 @@ describe("reversible LOW batching of original frozen meshes", () => {
     quality.dispose();
   });
 
-  it.each(["resident", "chair-root", "chair-base", "body-turn", "door-hinge", "painting-pivot", "blind_slat_1", "blind_slat_12", "hidden-yor-mark"])("excludes all descendants of dynamic %s", (name) => {
+  it.each(["resident", "chair-root", "chair-base", "body-turn", "door-hinge", "painting-pivot", "blind_slat_1", "blind_slat_12", "hidden-yor-mark", "desk_mat", "monitor_screen_center"])("excludes all descendants of dynamic %s", (name) => {
     const scene = new THREE.Group();
     const dynamic = new THREE.Group();
     dynamic.name = name;

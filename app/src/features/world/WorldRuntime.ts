@@ -14,10 +14,13 @@ import type { PublishedProject } from "../../contracts/content";
 import { publishedProjects } from "../portfolio/public-content";
 import { WorldInteractionBinding } from "./WorldInteractionBinding";
 import { saveReturnSnapshot } from "../experience/return-snapshot";
-import { RuntimeMaterialQuality } from "./RuntimeMaterialQuality";
+import { RuntimeMaterialQuality, installOptionalTextureOnScene } from "./RuntimeMaterialQuality";
 import { LowQualityBatch } from "./LowQualityBatch";
 import { isSoftwareRenderer } from "./device-capabilities";
 import { configureProductionLighting } from "./ProductionLighting";
+import { preferencesStore } from "../experience/preferences-store";
+import { SessionResourceLedger } from "./asset-resources";
+import type { AssetSessionId, OptionalAssetResult } from "./asset-resources";
 
 export interface WorldRuntimeOptions {
   onFrameDuration?: ((durationMs: number, timestamp: number) => void) | undefined;
@@ -31,6 +34,7 @@ export interface WorldRuntimeOptions {
   soundEnabled?: boolean | undefined;
   reducedMotion?: boolean | undefined;
   initialTier?: QualityTier | undefined;
+  initialPaused?: boolean | undefined;
   simulateAssetError?: boolean | undefined;
   simulateRendererError?: boolean | undefined;
   onReady?: ((diagnostics: Diagnostics) => void) | undefined;
@@ -65,6 +69,9 @@ export class WorldRuntime {
   public reducedMotion: boolean;
   public qualityTier: QualityTier = "high";
   public isDecorativePaused: boolean = false;
+  private resourceLedger: SessionResourceLedger | null = null;
+  private readonly pendingOptionalTextures = new Map<"deskmat" | "wallpaper", THREE.Texture>();
+  private optionalTextureTargets: Partial<Record<"deskmat" | "wallpaper", readonly string[]>> = {};
   private isDisposed: boolean = false;
   private isPaused: boolean = false;
   private animationFrameId: number | null = null;
@@ -75,15 +82,33 @@ export class WorldRuntime {
   private renderedFrames = 0;
   private lastRenderedAt = 0;
   private readonly loadingAbort = new AbortController();
+  private readonly optionalAbort = new AbortController();
+  private unsubscribeLifecycle: (() => void) | null = null;
+  private greetingTimer: ReturnType<typeof setTimeout> | null = null;
+  private greetingTimerGeneration = 0;
 
   constructor(options: WorldRuntimeOptions) {
     this.onFrameDuration = options.onFrameDuration;
     this.onSamplingPause = options.onSamplingPause;
     this.canvas = options.canvas;
-    this.soundEnabled = options.soundEnabled ?? false;
+    this.soundEnabled = options.soundEnabled ?? preferencesStore.getPreferences().soundEnabled;
     this.reducedMotion = options.reducedMotion ?? false;
     this.qualityTier = options.initialTier ?? "high";
+    this.isDecorativePaused = options.initialPaused ?? false;
     this.lifecycleManager = options.lifecycleManager ?? new LifecycleManager();
+    this.unsubscribeLifecycle = this.lifecycleManager.subscribe((state, previousState) => {
+      if (previousState === "TRANSITION" && state !== "TRANSITION") this.clearGreetingTimer();
+      if (state === "HOME" && previousState === "ENTRANCE" && this.lifecycleManager.getEntranceDiagnostics().skipped) {
+        this.optionalAbort.abort();
+      }
+      if (state === "FAILURE" || state === "STATIC") {
+        this.loadingAbort.abort();
+        this.optionalAbort.abort();
+        this.resourceLedger?.disposeSoon();
+        this.resourceLedger = null;
+        this.pendingOptionalTextures.clear();
+      }
+    });
     this.assetLoader = new AssetLoader("primary-asset-loader");
 
     this.scene = new THREE.Scene();
@@ -96,6 +121,7 @@ export class WorldRuntime {
     this.experienceController =
       options.experienceController ??
       new ExperienceController({
+        preferencesStore,
         cameraDirector: this.cameraDirector,
         reducedMotion: this.reducedMotion,
         navigation: {
@@ -112,6 +138,10 @@ export class WorldRuntime {
         },
       });
 
+    if (options.initialPaused === undefined) {
+      this.isDecorativePaused = this.experienceController.getSnapshot().preferences.paused;
+    }
+
     // Attach canvas context loss listeners
     this.canvas.addEventListener("webglcontextlost", this.handleContextLost);
     this.canvas.addEventListener("webglcontextrestored", this.handleContextRestored);
@@ -123,6 +153,9 @@ export class WorldRuntime {
 
     this.init(options).catch((err) => {
       if (this.isDisposed || this.lifecycleManager.isStale(this.sessionToken)) return;
+      this.resourceLedger?.disposeSoon();
+      this.resourceLedger = null;
+      this.pendingOptionalTextures.clear();
       console.error("[WorldRuntime] Initialization error:", err);
       this.lifecycleManager.fail(err.message, this.sessionToken);
       if (options.onError) {
@@ -195,6 +228,8 @@ export class WorldRuntime {
   private async init(options: WorldRuntimeOptions) {
     const token = this.lifecycleManager.requestEntry();
     this.sessionToken = token;
+    const sessionId = this.lifecycleManager.getSessionId();
+    this.lifecycleManager.startLoading(token);
 
     // 1. Renderer initialization with fault simulation support
     if (options.simulateRendererError) {
@@ -235,26 +270,41 @@ export class WorldRuntime {
     this.setupLighting();
 
     // 3. Asset Loading via single AssetLoader owner
-    this.lifecycleManager.startLoading(token);
-
     let loadedAssets;
     try {
       loadedAssets = await this.assetLoader.loadSession({
         sessionToken: token,
+        sessionGeneration: sessionId.generation,
         signal: this.loadingAbort.signal,
+        optionalSignal: this.optionalAbort.signal,
         simulateAssetError: options.simulateAssetError,
         mobile: typeof window !== "undefined" && window.innerWidth < 640,
         onProgress: (prog) => {
-          this.lifecycleManager.updateLoadingProgress(token, prog);
+          this.lifecycleManager.updateLoadingProgress(prog.session.token, prog);
         },
+        onOptionalConsumer: (result) => this.consumeOptionalAsset(result, sessionId),
       });
     } catch (err) {
       if (this.lifecycleManager.isStale(token)) return;
+      // Lifecycle failure/portfolio exit owns the user-facing reason. Its abort is
+      // a consequence of that terminal transition, not a new loader failure.
+      if (["FAILURE", "STATIC"].includes(this.lifecycleManager.getState())) return;
       this.lifecycleManager.fail((err as Error).message, token);
       throw err;
     }
 
-    if (this.lifecycleManager.isStale(token)) return;
+    this.resourceLedger = loadedAssets.resourceLedger ?? new SessionResourceLedger(sessionId);
+    if (!loadedAssets.resourceLedger) {
+      this.resourceLedger.registerGltf(loadedAssets.w1Gltf);
+      this.resourceLedger.registerGltf(loadedAssets.avatarGltf);
+      this.resourceLedger.registerGltf(loadedAssets.fixtureGltf);
+    }
+    if (!this.lifecycleManager.isCurrentSession(sessionId) || this.isDisposed) {
+      this.resourceLedger.disposeSoon();
+      this.resourceLedger = null;
+      this.pendingOptionalTextures.clear();
+      return;
+    }
 
     // 4. Integrate Scene Graph per G1 invariants
     this.integratedResult = integrateScene(
@@ -262,6 +312,7 @@ export class WorldRuntime {
       loadedAssets.avatarGltf,
       loadedAssets.fixtureGltf
     );
+    this.lifecycleManager.recordRequiredStage(sessionId, "integration", "Integrating required scene assets...");
     this.scene.add(this.integratedResult.scene);
     configureProductionLighting(this.integratedResult.scene);
     // Preserve loader clip provenance for conservative static-batch exclusions.
@@ -279,6 +330,7 @@ export class WorldRuntime {
       this.integratedResult.chairRoot,
       "primary-character-director"
     );
+    this.characterDirector.setDecorativePaused(this.isDecorativePaused);
 
     this.entranceCoordinator = new EntranceCoordinator(
       this.cameraDirector!,
@@ -306,6 +358,7 @@ export class WorldRuntime {
     if (loadedAssets.interactionGltf) this.scene.add(loadedAssets.interactionGltf.scene);
     this.materialQuality = new RuntimeMaterialQuality(this.scene);
     this.applySceneQuality(this.qualityTier);
+    this.installBufferedOptionalTextures();
 
     // 6. Viewport Sizing
     this.resize();
@@ -395,8 +448,10 @@ export class WorldRuntime {
       this.canvas.dataset.renderedFrames = String(this.renderedFrames);
       const frame: RenderedWorldFrame = {
         frame: this.renderedFrames, timestamp: currentTime, durationMs, qualityTier: this.qualityTier,
-        activeClip: this.characterDirector?.currentClip ?? "none", characterMode: this.characterDirector?.mode ?? "unmounted",
+        activeClip: this.characterDirector?.currentClip ?? "none", activeClipTimeSec: this.characterDirector?.currentTime ?? 0,
+        characterMode: this.characterDirector?.mode ?? "unmounted",
         cameraPreset: this.cameraDirector?.getCurrentPreset() ?? "home-desktop", lifecycleState: this.lifecycleManager.getState(),
+        optionalTextureTargets: this.optionalTextureTargets,
         renderCalls: this.renderer.info.render.calls, renderedTriangles: this.renderer.info.render.triangles,
       };
       this.canvas.dispatchEvent(new CustomEvent(WORLD_RENDERED_FRAME_EVENT, { detail: frame }));
@@ -424,14 +479,26 @@ export class WorldRuntime {
     } else if (state !== "HOME" && state !== "TRANSITION") {
       return 0;
     }
+    this.clearGreetingTimer();
     this.lifecycleManager.startTransition(this.sessionToken);
     const rev = this.characterDirector ? this.characterDirector.playGreeting() : 0;
-    setTimeout(() => {
-      if (this.lifecycleManager.getState() === "TRANSITION") {
-        this.lifecycleManager.completeTransition(this.sessionToken);
+    const timerGeneration = this.greetingTimerGeneration;
+    const sessionToken = this.sessionToken;
+    this.greetingTimer = setTimeout(() => {
+      if (timerGeneration !== this.greetingTimerGeneration) return;
+      this.greetingTimer = null;
+      if (!this.isDisposed && !this.lifecycleManager.isStale(sessionToken)
+        && this.lifecycleManager.getState() === "TRANSITION") {
+        this.lifecycleManager.completeTransition(sessionToken);
       }
     }, 4000);
     return rev;
+  }
+
+  private clearGreetingTimer(): void {
+    this.greetingTimerGeneration += 1;
+    if (this.greetingTimer !== null) clearTimeout(this.greetingTimer);
+    this.greetingTimer = null;
   }
 
   public cancel(): number {
@@ -443,6 +510,7 @@ export class WorldRuntime {
   }
 
   public skip(): number {
+    if (this.lifecycleManager.getState() === "LOADING") this.cancelLoading();
     const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
     if (this.entranceCoordinator) {
       this.entranceCoordinator.skip(isMobile);
@@ -455,6 +523,7 @@ export class WorldRuntime {
   }
 
   public escape(): number {
+    if (this.lifecycleManager.getState() === "LOADING") this.cancelLoading();
     const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
     if (this.entranceCoordinator) {
       this.entranceCoordinator.skip(isMobile);
@@ -470,6 +539,14 @@ export class WorldRuntime {
     }
     this.lifecycleManager.escape(this.sessionToken);
     return this.characterDirector ? this.characterDirector.settle() : 0;
+  }
+
+  /** Abort loading immediately; the caller then changes lifecycle state and presents the portfolio. */
+  public cancelLoading(): boolean {
+    if (this.lifecycleManager.getState() !== "LOADING" || this.loadingAbort.signal.aborted) return false;
+    this.loadingAbort.abort();
+    this.optionalAbort.abort();
+    return true;
   }
 
   public async setCamera(preset: CameraPreset) {
@@ -531,8 +608,45 @@ export class WorldRuntime {
     this.lowQualityBatch?.apply(tier);
   }
 
+  private consumeOptionalAsset(result: OptionalAssetResult, expectedSession: AssetSessionId): "adopted" | "rejected" {
+    if (this.isDisposed || !this.lifecycleManager.isCurrentSession(expectedSession)
+      || result.session.generation !== expectedSession.generation || result.session.token !== expectedSession.token
+      || result.kind !== "texture" || (result.id !== "deskmat" && result.id !== "wallpaper")) return "rejected";
+
+    const texture = result.resource;
+    texture.colorSpace = THREE.SRGBColorSpace;
+    if (!this.integratedResult || !this.materialQuality) {
+      const previous = this.pendingOptionalTextures.get(result.id);
+      if (previous && previous !== texture) this.resourceLedger?.disposeTexture(previous);
+      this.pendingOptionalTextures.set(result.id, texture);
+      return "adopted";
+    }
+    return this.installOptionalTexture(result.id, texture) ? "adopted" : "rejected";
+  }
+
+  private installOptionalTexture(id: "deskmat" | "wallpaper", texture: THREE.Texture): boolean {
+    if (!this.integratedResult || !this.materialQuality) return false;
+    const targets = installOptionalTextureOnScene(id, this.integratedResult.scene, texture, this.materialQuality);
+    if (!targets) return false;
+    this.optionalTextureTargets = { ...this.optionalTextureTargets, [id]: targets };
+    return true;
+  }
+
+  private installBufferedOptionalTextures(): void {
+    for (const [id, texture] of this.pendingOptionalTextures) {
+      try {
+        if (!this.installOptionalTexture(id, texture)) this.resourceLedger?.disposeTexture(texture);
+      } catch {
+        this.resourceLedger?.disposeTexture(texture);
+        console.warn(`[WorldRuntime] Optional ${id} texture was rejected; retaining the base material.`);
+      }
+    }
+    this.pendingOptionalTextures.clear();
+  }
+
   public setDecorativePaused(paused: boolean) {
     this.isDecorativePaused = paused;
+    this.characterDirector?.setDecorativePaused(paused);
   }
 
   public getDiagnostics(): Diagnostics {
@@ -610,13 +724,20 @@ export class WorldRuntime {
     if (this.isDisposed) return;
     this.onSamplingPause?.();
     this.isDisposed = true;
-    this.loadingAbort.abort();
+    this.clearGreetingTimer();
+    this.unsubscribeLifecycle?.();
+    this.unsubscribeLifecycle = null;
     this.interactionBinding?.dispose();
     this.interactionBinding = null;
-    this.lowQualityBatch?.dispose();
+    const lowQualityBatch = this.lowQualityBatch;
     this.lowQualityBatch = null;
-    this.materialQuality?.dispose();
+    const materialQuality = this.materialQuality;
     this.materialQuality = null;
+    this.loadingAbort.abort();
+    this.optionalAbort.abort();
+    const resourceLedger = this.resourceLedger;
+    this.resourceLedger = null;
+    this.pendingOptionalTextures.clear();
     this.sessionToken++; // Invalidate stale async operations
     this.lifecycleManager.dispose();
 
@@ -658,51 +779,22 @@ export class WorldRuntime {
       this.transitionCoordinator = null;
     }
 
-    // Traverse scene and recursively dispose GPU resources (ASTRA-G1-01)
-    this.scene.traverse((obj) => {
-      if (obj instanceof THREE.Mesh || obj instanceof THREE.SkinnedMesh) {
-        if (obj.geometry) {
-          obj.geometry.dispose();
-        }
-        if (obj.material) {
-          if (Array.isArray(obj.material)) {
-            for (const mat of obj.material) {
-              this.disposeMaterial(mat);
-            }
-          } else {
-            this.disposeMaterial(obj.material);
-          }
-        }
+    const scene = this.scene;
+    const renderer = this.renderer;
+    this.renderer = null;
+    // Bulk GPU release happens after the caller has rendered its immediate response.
+    setTimeout(() => {
+      lowQualityBatch?.dispose();
+      materialQuality?.dispose();
+      resourceLedger?.dispose();
+      scene.traverse((obj) => {
+        if (obj instanceof THREE.Light && obj.shadow?.map) obj.shadow.map.dispose();
+      });
+      scene.clear();
+      if (renderer) {
+        renderer.dispose();
+        try { renderer.forceContextLoss(); } catch {}
       }
-      if (obj instanceof THREE.Light) {
-        if (obj.shadow && obj.shadow.map) {
-          obj.shadow.map.dispose();
-        }
-      }
-    });
-
-    this.scene.clear();
-
-    if (this.renderer) {
-      this.renderer.dispose();
-      this.renderer.forceContextLoss();
-      this.renderer = null;
-    }
-  }
-
-  private disposeMaterial(material: THREE.Material) {
-    const mat = material as unknown as Record<string, unknown>;
-    const textureKeys = [
-      "map", "alphaMap", "aoMap", "bumpMap", "displacementMap",
-      "emissiveMap", "envMap", "lightMap", "metalnessMap",
-      "normalMap", "roughnessMap", "clearcoatMap", "clearcoatRoughnessMap"
-    ];
-    for (const key of textureKeys) {
-      const val = mat[key];
-      if (val && typeof (val as { dispose?: () => void }).dispose === "function") {
-        (val as { dispose: () => void }).dispose();
-      }
-    }
-    material.dispose();
+    }, 0);
   }
 }
