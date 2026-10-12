@@ -27,7 +27,7 @@
     "rulingDecisionPath": "docs/planning/reviews/2026-10-08-rc6-r1/decision.json"
   },
   "completionProgram": {
-    "status": "R2 DESIGN ACCEPTED / A1-R8 SOURCE CANDIDATE WITH FINISH-48 R9 EVIDENCE CORRECTION DELIVERED AND PARENT-LOCAL RECHECK PASS; B1-R7 FINISH-47 PEGBOARD CORRECTION DELIVERED AND PARENT-LOCAL FRAME CHECK PASS; C1-R9 FINISH-46 RECEIPT-INTEGRITY CHECKS PASS ONLY, C1 IMPLEMENTATION ACCEPTANCE PENDING; NO CANONICAL COMPLETION INTEGRATION / G7 PRODUCTION GATES OPEN",
+    "status": "R2 DESIGN ACCEPTED / A1-R10 CANDIDATE PARENT-LOCAL BOUNDED RECHECK PASS; B1-R7 OWNER VISUAL REWORK FOR CONTROLLER LEGIBILITY AND FINISH-54 B1-R9 CORRECTION AUTHORIZED; C1-R9 FINISH-46 RECEIPT-INTEGRITY CHECKS PASS ONLY, C1 IMPLEMENTATION ACCEPTANCE PENDING; NO CANONICAL COMPLETION INTEGRATION / G7 PRODUCTION GATES OPEN",
     "coordinationCommit": "ab369d413c7501224e3d79aa78e56172f97839ff",
     "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
     "contractsGate": {
@@ -643,7 +643,7 @@
       "packetId": "FINISH-47",
       "packetPath": "docs/planning/reconciliation-packets/2026-10-12-finish-47-b1-mobile-pegboard-correction.md",
       "promptPath": "docs/planning/production-prompts/repairs-2026-10-12/25-CODEX-B1-R7.md",
-      "status": "DELIVERED / PARENT-LOCAL PACKAGE, INPUT, CAMERA AND PEGBOARD-FRAME RECHECK PASS; GPT PLUS #2 AUDIT, OWNER VISUAL REVIEW AND PARENT ACCEPTANCE PENDING",
+      "status": "DELIVERED / PARENT-LOCAL PACKAGE, INPUT, CAMERA AND PEGBOARD-FRAME RECHECK PASS; OWNER VISUAL REVIEW: NEEDS CORRECTION FOR CONTROLLER LEGIBILITY; FINISH-54 R9 AUTHORIZED",
       "candidateBaseCommit": "e8ea9187c1b6cd47b66ce7de9ad520daf9bd6baf",
       "deliveryRoot": "deliveries/FINISH-B1-R7/",
       "candidateBranch": "codex/finish-47-b1-mobile-pegboard-correction-20261012",
@@ -655,8 +655,26 @@
       "canonicalAppChanged": false,
       "parentAcceptance": "NOT ACCEPTED",
       "independentAudit": "PENDING",
-      "ownerVisualReview": "PENDING",
+      "ownerVisualReview": "REWORK REQUESTED: full panel fits, but the two mounted controller silhouettes are too small and indistinct in the fixed mobile frame",
       "parentLocalRecheck": "docs/planning/reviews/2026-10-12-completion-reaudit/r9-r7-parent-recheck.json"
+    },
+    "activeB1ControllerLegibilityCorrection": {
+      "packetId": "FINISH-54",
+      "packetPath": "docs/planning/reconciliation-packets/2026-10-12-finish-54-b1-r9-controller-legibility.md",
+      "promptPath": "docs/planning/production-prompts/repairs-2026-10-12/32-CODEX-B1-R9.md",
+      "status": "AUTHORIZED / LOCAL MAKER WORK NOT YET DELIVERED",
+      "candidateBaseCommit": "cb0af1174dcbd2cd714e6cd55de447ae3e8a15a6",
+      "candidateBaseTree": "6a779b74b6e2073b5d7f91e7ecb365fdabad6ddd",
+      "priorArtCommit": "876e119d100936fc821b8618c5aa0e057584b338",
+      "sourceBaselineCommit": "e8ea9187c1b6cd47b66ce7de9ad520daf9bd6baf",
+      "deliveryRoot": "deliveries/FINISH-B1-R9/",
+      "candidateBranch": "codex/finish-54-b1-r9-controller-legibility-20261012",
+      "scope": "Static geometry-only enlargement/clarification of the two mounted controller silhouettes in existing batches; retain R7 panel, all 48 perforations, and unchanged camera profiles",
+      "ownerFinding": "NEEDS CORRECTION: R7's full panel fits, but the two controller silhouettes are too small and indistinct in the fixed mobile frame",
+      "independentAudit": "PENDING AFTER DELIVERY",
+      "ownerReReview": "PENDING AFTER DELIVERY",
+      "parentAcceptance": "NOT ACCEPTED",
+      "canonicalAppChanged": false
     },
     "activeB1Correction": {
       "packetPath": "docs/planning/reconciliation-packets/2026-10-12-finish-35-b1-reference-visual-correction.md",
@@ -675,7 +693,7 @@
     },
     "latestCompletionReaudit": {
       "date": "2026-10-12",
-      "status": "PARENT-LOCAL REAUDIT UPDATED / A1-R10 PROVENANCE+RERUN PASS / B1-R8 PATCH REPLAY PASS / C1-R9 POINTER CHECK PASS / EXTERNAL REVIEWS PENDING",
+      "status": "PARENT-LOCAL REAUDIT UPDATED / A1-R10 PROVENANCE+RERUN PASS / B1-R8 PATCH REPLAY PASS / B1-R7 OWNER VISUAL REWORK RECORDED AND FINISH-54 R9 AUTHORIZED / C1-R9 POINTER CHECK PASS / EXTERNAL REVIEWS PENDING",
       "reviewer": "Parent-local Codex; not GPT Plus #2",
       "reportPath": "docs/planning/reviews/2026-10-12-completion-reaudit/report.md",
       "evidenceRoot": "docs/planning/reviews/2026-10-12-completion-reaudit/",
@@ -689,10 +707,10 @@
       "a1RerunReceiptPath": "docs/planning/reviews/2026-10-12-completion-reaudit/a1-browser-rerun-receipts.json",
       "a1TargetedReruns": "FINISH-49 R10: 1/1 absent-private-draft + 6/6 normal authoring/publish Chromium with separate fresh PGlite paths; broader R8 suites inherited, not rerun",
       "a1B1ParentRecheckReceiptPath": "docs/planning/reviews/2026-10-12-completion-reaudit/r9-r7-parent-recheck.json",
-      "b1VisualFinding": "FINISH-47 R7 places the full right pegboard and two controllers inside both frozen home-camera frames; FINISH-50 R8 patch replay passes; owner visual review and broader reference acceptance remain pending",
+      "b1VisualFinding": "FINISH-47 R7 places the full panel inside both frozen home-camera frames, but the owner judged the two fixed-mobile-frame controller silhouettes too small and indistinct; FINISH-54 R9 geometry correction is authorized; FINISH-50 R8 patch replay remains a bounded PASS",
       "c1Scope": "FINISH-46 E-01 receipt-integrity PASS only; C1 implementation acceptance pending",
       "externalGptPlus2": "FINISH-51/52/53 handoffs prepared; NOT DISPATCHED",
-      "ownerVisualReview": "PENDING for FINISH-47 B1-R7 fixed-frame pegboard correction",
+      "ownerVisualReview": "FINISH-47 B1-R7: NEEDS CORRECTION; FINISH-54 R9 owner re-review pending",
       "parentAcceptance": "PENDING",
       "canonicalIntegration": false,
       "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
@@ -701,6 +719,7 @@
       "activeCorrectionPackets": {
         "FINISH-49": "A1 R8B recovered-input source supplement and R10 evidence candidate delivered; Parent-local bounded PASS; GPT Plus #2 and Parent acceptance pending",
         "FINISH-50": "B1 R8 replayable source-patch supplement delivered; Parent-local bounded PASS; GPT Plus #2 and Parent acceptance pending",
+        "FINISH-54": "B1 R9 controller-legibility geometry correction authorized from exact R8; maker work not yet delivered",
         "FINISH-51/52/53": "Exact-candidate GPT Plus #2 handoffs prepared; not dispatched"
       },
       "productionProviderChecks": "NOT RUN; Sites owner listing remains empty after reconnect intent; Vercel and Supabase tools are not available in this session"

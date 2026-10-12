@@ -73,7 +73,13 @@ All three candidate root `app/` trees match the accepted RC6 source tree. No can
 ## Remaining work
 
 1. Dispatch FINISH-51/52/53 to GPT Plus #2 and review its separate exact-candidate findings. Do not treat prepared prompts or Parent-local checks as external audit.
-2. Obtain owner visual review for B1-R7's fixed-frame pegboard correction and keep the remaining full-reference fidelity limits in its ruling.
+2. Deliver FINISH-54 B1-R9, obtain the owner's visual re-review of the corrected fixed-frame controllers, and keep overall reference fidelity as a separate gate.
 3. Record Parent acceptance only after each lane's independent audit passes. Then issue a separate integration packet and rerun integration checks; keep the accepted canonical source unchanged until that gate.
 4. Finish reconnecting Sites, Vercel, and Supabase before checking deployment, database, authentication, private media, or live rollback. The post-intent Sites listing remains empty; the stored ID previously returned `project_not_found`. Vercel/Supabase tools remain unavailable in this session.
 5. Complete the separate G7 production gates, including provider, device/accessibility, recovery, and live-origin evidence. Local candidate tests and a private preview do not close those gates.
+
+## Owner visual update after this re-audit
+
+The owner separately reviewed FINISH-47's targeted mobile criterion: the full perforated panel and at least two recognizable controllers in the unchanged frame. The owner replied **“Needs correction.”** This resolves the previously pending owner-review state for R7 as a rework request; it does not accept or reject the overall room artwork. The panel's frame placement remains verified, while the controller silhouettes need more size and shape legibility.
+
+[FINISH-54](../../reconciliation-packets/2026-10-12-finish-54-b1-r9-controller-legibility.md) now authorizes a separate B1-R9 geometry correction from exact R8 `cb0af1174dcbd2cd714e6cd55de447ae3e8a15a6`, preserving R6-R8 and the frozen cameras. R9 is not yet delivered. Owner re-review, GPT Plus #2 audit, and Parent acceptance remain pending; the R7 frame-fit and R8 patch-replay results above remain bounded technical checks only.
