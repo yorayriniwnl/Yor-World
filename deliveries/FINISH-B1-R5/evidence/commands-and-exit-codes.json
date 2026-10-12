@@ -1,0 +1,164 @@
+{
+  "status": "PASS",
+  "command": "python scripts/run-finish35-checks.py",
+  "records": [
+    {
+      "name": "source-patch-replay",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\FINISH-B1-R5\\scripts\\verify-source-patch.py"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.215,
+      "stdoutLog": "evidence/logs/source-patch-replay.stdout.log",
+      "stderrLog": "evidence/logs/source-patch-replay.stderr.log"
+    },
+    {
+      "name": "native-palette-replay",
+      "command": [
+        "C:\\Program Files\\Blender Foundation\\Blender 5.2\\blender.exe",
+        "--background",
+        "--python-exit-code",
+        "1",
+        "--python",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\FINISH-B1-R5\\scripts\\apply-native-palette.py",
+        "--",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\FINISH-B1-R5\\inputs\\r4\\assets\\source\\room.blend",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\FINISH-B1-R5\\assets\\source\\room.blend"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.954,
+      "stdoutLog": "evidence/logs/native-palette-replay.stdout.log",
+      "stderrLog": "evidence/logs/native-palette-replay.stderr.log"
+    },
+    {
+      "name": "gltf-palette-replay",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\FINISH-B1-R5\\scripts\\apply-gltf-palette.py"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.076,
+      "stdoutLog": "evidence/logs/gltf-palette-replay.stdout.log",
+      "stderrLog": "evidence/logs/gltf-palette-replay.stderr.log"
+    },
+    {
+      "name": "native-inventory-r4",
+      "command": [
+        "C:\\Program Files\\Blender Foundation\\Blender 5.2\\blender.exe",
+        "--background",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\FINISH-B1-R5\\inputs\\r4\\assets\\source\\room.blend",
+        "--python-exit-code",
+        "1",
+        "--python",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\FINISH-B1-R5\\scripts\\dump-native-inventory.py",
+        "--",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\FINISH-B1-R5\\evidence\\native-inventory-r4.json"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 1.481,
+      "stdoutLog": "evidence/logs/native-inventory-r4.stdout.log",
+      "stderrLog": "evidence/logs/native-inventory-r4.stderr.log"
+    },
+    {
+      "name": "native-inventory-r5",
+      "command": [
+        "C:\\Program Files\\Blender Foundation\\Blender 5.2\\blender.exe",
+        "--background",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\FINISH-B1-R5\\assets\\source\\room.blend",
+        "--python-exit-code",
+        "1",
+        "--python",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\FINISH-B1-R5\\scripts\\dump-native-inventory.py",
+        "--",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\FINISH-B1-R5\\evidence\\native-inventory-r5.json"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 1.499,
+      "stdoutLog": "evidence/logs/native-inventory-r5.stdout.log",
+      "stderrLog": "evidence/logs/native-inventory-r5.stderr.log"
+    },
+    {
+      "name": "palette-invariants",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\FINISH-B1-R5\\scripts\\verify-palette-invariants.py"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.109,
+      "stdoutLog": "evidence/logs/palette-invariants.stdout.log",
+      "stderrLog": "evidence/logs/palette-invariants.stderr.log"
+    },
+    {
+      "name": "browser-matched-profiles",
+      "command": [
+        "node",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\FINISH-B1-R5\\scripts\\verify-browser.mjs"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 11.471,
+      "stdoutLog": "evidence/logs/browser-matched-profiles.stdout.log",
+      "stderrLog": "evidence/logs/browser-matched-profiles.stderr.log"
+    },
+    {
+      "name": "normalize-browser-results",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\FINISH-B1-R5\\scripts\\normalize-browser-results.py"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.227,
+      "stdoutLog": "evidence/logs/normalize-browser-results.stdout.log",
+      "stderrLog": "evidence/logs/normalize-browser-results.stderr.log"
+    },
+    {
+      "name": "gltf-validator",
+      "command": [
+        "node",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\FINISH-B1-R5\\scripts\\validate-glb.mjs"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.315,
+      "stdoutLog": "evidence/logs/gltf-validator.stdout.log",
+      "stderrLog": "evidence/logs/gltf-validator.stderr.log"
+    },
+    {
+      "name": "blender-glb-imports",
+      "command": [
+        "C:\\Program Files\\Blender Foundation\\Blender 5.2\\blender.exe",
+        "--background",
+        "--python-exit-code",
+        "1",
+        "--python",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\FINISH-B1-R5\\scripts\\verify-blender-imports.py"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 1.762,
+      "stdoutLog": "evidence/logs/blender-glb-imports.stdout.log",
+      "stderrLog": "evidence/logs/blender-glb-imports.stderr.log"
+    },
+    {
+      "name": "draw-triangle-transfer-budgets",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\FINISH-B1-R5\\scripts\\verify-final-budgets.py"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.078,
+      "stdoutLog": "evidence/logs/draw-triangle-transfer-budgets.stdout.log",
+      "stderrLog": "evidence/logs/draw-triangle-transfer-budgets.stderr.log"
+    },
+    {
+      "name": "visual-comparisons",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "C:\\Users\\yoray\\Projects\\Yor World\\deliveries\\FINISH-B1-R5\\scripts\\build-comparison-sheets.py"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 1.179,
+      "stdoutLog": "evidence/logs/visual-comparisons.stdout.log",
+      "stderrLog": "evidence/logs/visual-comparisons.stderr.log"
+    }
+  ],
+  "scope": "Repeatable local FINISH-35 package checks. No visual owner review, independent GPT#2 acceptance, production, provider, device, or G7 claim."
+}
