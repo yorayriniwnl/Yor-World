@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { describe, expect, it, vi } from "vitest";
-import { RuntimeMaterialQuality } from "../../src/features/world/RuntimeMaterialQuality";
+import { installOptionalTextureOnScene, RuntimeMaterialQuality } from "../../src/features/world/RuntimeMaterialQuality";
 
 function glassMaterial() {
   return new THREE.MeshPhysicalMaterial({
@@ -281,4 +281,228 @@ describe("runtime material quality on frozen world meshes", () => {
     expect(geometryDispose).not.toHaveBeenCalled();
     vi.restoreAllMocks();
   });
+
+  it("refreshes late texture map onto simplified low quality material via refreshMesh", () => {
+    const original = glassMaterial();
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(), original);
+    const scene = new THREE.Group();
+    scene.add(mesh);
+    const quality = new RuntimeMaterialQuality(scene);
+
+    quality.apply("low");
+    expect(mesh.material).not.toBe(original);
+    const lowMat = mesh.material as unknown as THREE.MeshLambertMaterial;
+    expect(lowMat.map).toBeNull();
+
+    // Late texture arrives
+    const lateTexture = new THREE.Texture();
+    original.map = lateTexture;
+    quality.refreshMesh(mesh);
+
+    expect(mesh.material).not.toBe(original);
+    expect((mesh.material as unknown as THREE.MeshLambertMaterial).map).toBe(lateTexture);
+
+    quality.apply("high");
+    expect(mesh.material).toBe(original);
+    expect(original.map).toBe(lateTexture);
+
+    quality.dispose();
+  });
+
+  it("isolates a late map on shared materials and keeps LOW/HIGH map state consistent", () => {
+    const baseTexture = new THREE.Texture();
+    const lateTexture = new THREE.Texture();
+    const shared = new THREE.MeshStandardMaterial({ map: baseTexture });
+    const target = new THREE.Mesh(new THREE.BoxGeometry(), shared);
+    target.name = "desk_mat_overlay";
+    const unrelated = new THREE.Mesh(new THREE.BoxGeometry(), shared);
+    unrelated.name = "unrelated-static-surface";
+    const scene = new THREE.Group();
+    scene.add(target, unrelated);
+    const quality = new RuntimeMaterialQuality(scene);
+    quality.apply("low");
+
+    const rollback = quality.installColorMap(target, lateTexture);
+    expect(target.material).not.toBe(unrelated.material);
+    const adoptedLowMap = (target.material as unknown as THREE.MeshLambertMaterial).map!;
+    expect(adoptedLowMap).toBe(lateTexture);
+    expect(adoptedLowMap.source).toBe(lateTexture.source);
+    expect((unrelated.material as unknown as THREE.MeshLambertMaterial).map).toBe(baseTexture);
+    expect(lateTexture.colorSpace).toBe(THREE.SRGBColorSpace);
+
+    quality.apply("high");
+    const adoptedHighMap = (target.material as THREE.MeshStandardMaterial).map!;
+    expect(adoptedHighMap).toBe(lateTexture);
+    expect(adoptedHighMap.source).toBe(lateTexture.source);
+    expect(unrelated.material).toBe(shared);
+    quality.apply("low");
+    expect((target.material as unknown as THREE.MeshLambertMaterial).map).toBe(adoptedLowMap);
+
+    rollback();
+    expect((target.material as unknown as THREE.MeshLambertMaterial).map).toBe(baseTexture);
+    quality.apply("high");
+    expect(target.material).toBe(shared);
+    expect(unrelated.material).toBe(shared);
+    quality.dispose();
+  });
+
+  it("preserves each GLB map's flip, UV channel, wrap modes, and transform on isolated late textures", () => {
+    const firstBaseMap = new THREE.Texture();
+    firstBaseMap.flipY = false;
+    firstBaseMap.channel = 1;
+    firstBaseMap.offset.set(0.2, 0.4);
+    firstBaseMap.repeat.set(2, 3);
+    firstBaseMap.center.set(0.25, 0.75);
+    firstBaseMap.rotation = 0.5;
+    firstBaseMap.wrapS = THREE.RepeatWrapping;
+    firstBaseMap.wrapT = THREE.MirroredRepeatWrapping;
+
+    const secondBaseMap = new THREE.Texture();
+    secondBaseMap.flipY = false;
+    secondBaseMap.channel = 2;
+    secondBaseMap.offset.set(0.1, 0.3);
+    secondBaseMap.repeat.set(4, 5);
+    secondBaseMap.rotation = -0.25;
+    secondBaseMap.wrapS = THREE.MirroredRepeatWrapping;
+
+    const first = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ map: firstBaseMap }));
+    const second = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial({ map: secondBaseMap }));
+    const scene = new THREE.Group();
+    scene.add(first, second);
+    const quality = new RuntimeMaterialQuality(scene);
+    const lateTexture = new THREE.Texture();
+    const undoFirst = quality.installColorMap(first, lateTexture);
+    const undoSecond = quality.installColorMap(second, lateTexture);
+    const firstMap = (first.material as THREE.MeshStandardMaterial).map!;
+    const secondMap = (second.material as THREE.MeshStandardMaterial).map!;
+
+    expect(firstMap).not.toBe(lateTexture);
+    expect(secondMap).not.toBe(lateTexture);
+    expect(firstMap).not.toBe(secondMap);
+    expect(firstMap.source).toBe(lateTexture.source);
+    expect(secondMap.source).toBe(lateTexture.source);
+    expect(firstMap.flipY).toBe(false);
+    expect(firstMap.channel).toBe(1);
+    expect(firstMap.offset.toArray()).toEqual([0.2, 0.4]);
+    expect(firstMap.repeat.toArray()).toEqual([2, 3]);
+    expect(firstMap.center.toArray()).toEqual([0.25, 0.75]);
+    expect(firstMap.rotation).toBe(0.5);
+    expect(firstMap.wrapS).toBe(THREE.RepeatWrapping);
+    expect(firstMap.wrapT).toBe(THREE.MirroredRepeatWrapping);
+    expect(secondMap.flipY).toBe(false);
+    expect(secondMap.channel).toBe(2);
+    expect(secondMap.offset.toArray()).toEqual([0.1, 0.3]);
+    expect(secondMap.repeat.toArray()).toEqual([4, 5]);
+    expect(secondMap.rotation).toBe(-0.25);
+    expect(secondMap.wrapS).toBe(THREE.MirroredRepeatWrapping);
+    expect(firstMap.colorSpace).toBe(THREE.SRGBColorSpace);
+    expect(secondMap.colorSpace).toBe(THREE.SRGBColorSpace);
+
+    undoSecond();
+    undoFirst();
+    expect((first.material as THREE.MeshStandardMaterial).map).toBe(firstBaseMap);
+    expect((second.material as THREE.MeshStandardMaterial).map).toBe(secondBaseMap);
+    quality.dispose();
+    expect(lateTexture.source).toBeDefined();
+  });
+
+  it("atomically rolls back an optional-map failure on a second shared-material target", () => {
+    const baseMap = new THREE.Texture();
+    baseMap.flipY = false;
+    baseMap.channel = 1;
+    baseMap.offset.set(0.2, 0.4);
+    const lateTexture = new THREE.Texture();
+    const baseMapDispose = vi.spyOn(baseMap, "dispose");
+    const lateTextureDispose = vi.spyOn(lateTexture, "dispose");
+    const generatedTextureDisposals: THREE.Texture[] = [];
+    const originalTextureDispose = THREE.Texture.prototype.dispose;
+    vi.spyOn(THREE.Texture.prototype, "dispose").mockImplementation(function (this: THREE.Texture) {
+      if (this !== lateTexture && this.source === lateTexture.source) generatedTextureDisposals.push(this);
+      return originalTextureDispose.call(this);
+    });
+    const shared = new THREE.MeshStandardMaterial({ map: baseMap });
+    const originalClone = shared.clone.bind(shared);
+    const temporaryClones: THREE.Material[] = [];
+    vi.spyOn(shared, "clone").mockImplementation(() => {
+      const clone = originalClone();
+      vi.spyOn(clone, "dispose");
+      temporaryClones.push(clone);
+      return clone;
+    });
+    const first = new THREE.Mesh(new THREE.BoxGeometry(), shared);
+    first.name = "desk_mat_overlay";
+    const second = new THREE.Mesh(new THREE.BoxGeometry(), shared);
+    second.name = "topography-panel";
+    const unrelated = new THREE.Mesh(new THREE.BoxGeometry(), shared);
+    unrelated.name = "unrelated-static-surface";
+    const scene = new THREE.Group();
+    scene.add(first, second, unrelated);
+    const quality = new RuntimeMaterialQuality(scene);
+    quality.apply("low");
+    const baseLow = first.material;
+    let secondVisible: THREE.Material | THREE.Material[] = second.material;
+    let failedDerivative: THREE.Material | undefined;
+    let rejectLateAssignment = true;
+    Object.defineProperty(second, "material", {
+      configurable: true,
+      get: () => secondVisible,
+      set: (next: THREE.Material | THREE.Material[]) => {
+        const list = Array.isArray(next) ? next : [next];
+        const replacement = list.find((material) => {
+          const map = (material as THREE.MeshStandardMaterial | THREE.MeshLambertMaterial).map;
+          return map?.source === lateTexture.source;
+        });
+        if (replacement && rejectLateAssignment) {
+          rejectLateAssignment = false;
+          failedDerivative = replacement;
+          throw new Error("second target material connection failed");
+        }
+        secondVisible = next;
+      },
+    });
+    const temporaryDerivativeDisposals: THREE.Material[] = [];
+    const originalLambertDispose = THREE.MeshLambertMaterial.prototype.dispose;
+    vi.spyOn(THREE.MeshLambertMaterial.prototype, "dispose").mockImplementation(function (this: THREE.MeshLambertMaterial) {
+      if (this.map?.source === lateTexture.source) temporaryDerivativeDisposals.push(this);
+      return originalLambertDispose.call(this);
+    });
+
+    expect(() => installOptionalTextureOnScene("deskmat", scene, lateTexture, quality))
+      .toThrow("second target material connection failed");
+    expect(first.material).toBe(baseLow);
+    expect(second.material).toBe(baseLow);
+    expect(unrelated.material).toBe(baseLow);
+
+    quality.apply("high");
+    expect(first.material).toBe(shared);
+    expect(second.material).toBe(shared);
+    expect(unrelated.material).toBe(shared);
+    quality.apply("low");
+    expect(first.material).toBe(baseLow);
+    expect(second.material).toBe(baseLow);
+    expect(unrelated.material).toBe(baseLow);
+
+    quality.dispose();
+    expect(temporaryClones).toHaveLength(2);
+    for (const clone of temporaryClones) expect(clone.dispose).toHaveBeenCalledOnce();
+    expect(failedDerivative).toBeDefined();
+    expect(temporaryDerivativeDisposals.filter((material) => material === failedDerivative)).toHaveLength(1);
+    expect(new Set(temporaryDerivativeDisposals).size).toBe(2);
+    expect(temporaryDerivativeDisposals).toHaveLength(2);
+    expect(new Set(generatedTextureDisposals).size).toBe(2);
+    expect(generatedTextureDisposals).toHaveLength(2);
+    expect(baseMapDispose).not.toHaveBeenCalled();
+    expect(lateTextureDispose).not.toHaveBeenCalled();
+    vi.restoreAllMocks();
+  });
+
+  it("rejects a target without a color-map slot without changing its live material", () => {
+    const material = new THREE.ShaderMaterial();
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(), material);
+    const quality = new RuntimeMaterialQuality(mesh);
+    expect(() => quality.installColorMap(mesh, new THREE.Texture())).toThrow(/color-map slot/i);
+    expect(mesh.material).toBe(material);
+    quality.dispose();
+  });
+
 });
