@@ -27,7 +27,7 @@
     "rulingDecisionPath": "docs/planning/reviews/2026-10-08-rc6-r1/decision.json"
   },
   "completionProgram": {
-    "status": "R2 DESIGN ACCEPTED / A1-R8 FINISH-45 DELIVERED WITH FINISH-48 A1-R9 EVIDENCE CORRECTION ISSUED; B1-R6 FINISH-44 DELIVERED WITH MOBILE PEGBOARD FAIL, FINISH-47 B1-R7 CORRECTION ISSUED; C1-R9 FINISH-30/33 DELIVERED, FINISH-46 E-01 RECEIPT-INTEGRITY PASS ONLY, C1 IMPLEMENTATION ACCEPTANCE PENDING; NO CANONICAL COMPLETION INTEGRATION / G7 PRODUCTION GATES OPEN",
+    "status": "R2 DESIGN ACCEPTED / A1-R8 SOURCE CANDIDATE WITH FINISH-48 R9 EVIDENCE CORRECTION DELIVERED AND PARENT-LOCAL RECHECK PASS; B1-R7 FINISH-47 PEGBOARD CORRECTION DELIVERED AND PARENT-LOCAL FRAME CHECK PASS; C1-R9 FINISH-46 RECEIPT-INTEGRITY CHECKS PASS ONLY, C1 IMPLEMENTATION ACCEPTANCE PENDING; NO CANONICAL COMPLETION INTEGRATION / G7 PRODUCTION GATES OPEN",
     "coordinationCommit": "ab369d413c7501224e3d79aa78e56172f97839ff",
     "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
     "contractsGate": {
@@ -572,27 +572,33 @@
       "candidateTree": "552cb2618c31fe000ab4fae0a9e5997c6442d084",
       "outputManifestSha256": "db6957ef40d2552772dcbf0ab66acffc75222a42f8bad2ec64192cb3266abc1f",
       "parentLocalReaudit": "docs/planning/reviews/2026-10-12-completion-reaudit/report.md",
-      "browserEvidenceNote": "Parent reruns pass with YOR_TEST_DATABASE_PATH; maker browser binding does not record this required isolated PGlite path"
+      "browserEvidenceNote": "FINISH-48 R9 records and passes both scoped browser runs with distinct isolated PGlite paths; broader review and acceptance remain pending"
     },
     "activeA1BrowserEvidenceCorrection": {
       "packetId": "FINISH-48",
       "packetPath": "docs/planning/reconciliation-packets/2026-10-12-finish-48-a1-browser-environment-binding-correction.md",
       "promptPath": "docs/planning/production-prompts/repairs-2026-10-12/26-CODEX-A1-R9.md",
-      "status": "AUTHORIZED / ISSUED TO EXISTING A1 PLATFORM MAKER; DELIVERY PENDING",
+      "status": "DELIVERED / PARENT-LOCAL BROWSER-ENVIRONMENT AND PACKAGE RECHECK PASS; GPT PLUS #2 AUDIT AND PARENT ACCEPTANCE PENDING",
       "candidateBaseCommit": "e377e06c514819ee6dbd82da2216c95813bedd2f",
       "deliveryRoot": "deliveries/FINISH-A1-R9/",
       "candidateBranch": "codex/finish-48-a1-browser-environment-binding-20261012",
+      "candidateCommit": "a2f0e218f8153ceec311616f49b7b654c9892bb2",
+      "candidateTree": "66a5b55218f7627614a3449e397b9fac29ce14ad",
+      "outputManifestSha256": "c74e108e0d168cd5af92326d6c779703356d122e9f149d945d0e58c17fec76f0",
       "scope": "Evidence-only exact-candidate browser environment and PGlite binding; no app/test/dependency changes",
       "canonicalAppChanged": false,
       "parentAcceptance": "NOT ACCEPTED",
-      "independentAudit": "PENDING"
+      "independentAudit": "PENDING",
+      "parentLocalRecheck": "docs/planning/reviews/2026-10-12-completion-reaudit/r9-r7-parent-recheck.json",
+      "boundedBrowserResult": "Absent-draft 1/1; normal authoring/publish 6/6; distinct fresh PGlite paths",
+      "upstreamInputProvenance": "13/15 raw Git inputs; two local C: copies independently hash-match but lack pinned raw Git objects"
     },
     "latestInternalPreaudits": {
       "reviewer": "Parent-local Codex with read-only internal reviewers; not GPT Plus #2",
       "reportPath": "deliveries/completion-audits/internal-preaudit/2026-10-12/report.md",
       "manifestPath": "deliveries/completion-audits/internal-preaudit/2026-10-12/output-hashes.json",
       "manifestSha256": "acdc552ef8c1044024425591d1588642f49140001dc7c887292359c528366a95",
-      "status": "A1 FINISH-32 PASS FOR BINDING/SOURCE/PATCH REPLAY WITH TESTS NOT RERUN AND MATRIX COVERAGE GAPS; C1 FINISH-34 PASS FOR E-02-05 POINTER ONLY, E-01 OPEN; B1 FINISH-43 PASS FOR PACKAGE BINDING/BOUNDED SCOPE, FULL REFERENCE FIDELITY OPEN",
+      "status": "A1 FINISH-48 PASS FOR BOUNDED R9 PACKAGE/BUILD/BROWSER ENVIRONMENT RECHECK (13/15 UPSTREAM RAW-GIT INPUTS); B1 FINISH-47 PASS FOR BOUNDED R7 PACKAGE/CAMERA-FROZEN PEGBOARD FRAME CHECK; C1 FINISH-34 PASS FOR E-02-05 POINTER AND FINISH-46 E-01 RECEIPT INTEGRITY ONLY; GPT PLUS #2, OWNER REVIEW, PARENT ACCEPTANCE AND INTEGRATION PENDING",
       "externalGptPlus2": "NOT RUN",
       "parentAcceptance": "PENDING",
       "canonicalIntegration": false
@@ -637,15 +643,20 @@
       "packetId": "FINISH-47",
       "packetPath": "docs/planning/reconciliation-packets/2026-10-12-finish-47-b1-mobile-pegboard-correction.md",
       "promptPath": "docs/planning/production-prompts/repairs-2026-10-12/25-CODEX-B1-R7.md",
-      "status": "AUTHORIZED / ISSUED TO EXISTING B1 VISUAL MAKER; DELIVERY PENDING",
+      "status": "DELIVERED / PARENT-LOCAL PACKAGE, INPUT, CAMERA AND PEGBOARD-FRAME RECHECK PASS; GPT PLUS #2 AUDIT, OWNER VISUAL REVIEW AND PARENT ACCEPTANCE PENDING",
       "candidateBaseCommit": "e8ea9187c1b6cd47b66ce7de9ad520daf9bd6baf",
       "deliveryRoot": "deliveries/FINISH-B1-R7/",
       "candidateBranch": "codex/finish-47-b1-mobile-pegboard-correction-20261012",
+      "candidateCommit": "876e119d100936fc821b8618c5aa0e057584b338",
+      "candidateTree": "c88be58f85cd46914b271b86d2f5ecda90cc1cce",
+      "outputManifestSha256": "2a56fb6bf39ffe742bb75a16fa5cb4ab89f155319b6cf1f4918ca43419f8941a",
       "scope": "Static pegboard and mounted controllers only; fixed desktop/mobile camera profiles",
-      "blockingFinding": "Full right-side controller pegboard is outside the FINISH-44 mobile-home frame",
+      "priorBlockingFinding": "R6 full right-side controller pegboard was outside the FINISH-44 mobile-home frame; R7 local captures place the complete panel and two controllers in-frame",
       "canonicalAppChanged": false,
       "parentAcceptance": "NOT ACCEPTED",
-      "independentAudit": "PENDING"
+      "independentAudit": "PENDING",
+      "ownerVisualReview": "PENDING",
+      "parentLocalRecheck": "docs/planning/reviews/2026-10-12-completion-reaudit/r9-r7-parent-recheck.json"
     },
     "activeB1Correction": {
       "packetPath": "docs/planning/reconciliation-packets/2026-10-12-finish-35-b1-reference-visual-correction.md",
@@ -664,26 +675,27 @@
     },
     "latestCompletionReaudit": {
       "date": "2026-10-12",
-      "status": "PARENT-LOCAL REAUDIT COMPLETE / A1 TARGETED CHECKS PASS / B1 MOBILE VISUAL GAP FAIL-OPEN / C1 IMPLEMENTATION PENDING",
+      "status": "PARENT-LOCAL REAUDIT UPDATED / A1-R9 BROWSER EVIDENCE PASS / B1-R7 PEGBOARD FRAME CHECK PASS / C1 IMPLEMENTATION PENDING",
       "reviewer": "Parent-local Codex; not GPT Plus #2",
       "reportPath": "docs/planning/reviews/2026-10-12-completion-reaudit/report.md",
       "evidenceRoot": "docs/planning/reviews/2026-10-12-completion-reaudit/",
       "candidateIntegrityPath": "docs/planning/reviews/2026-10-12-completion-reaudit/candidate-integrity.json",
       "a1RerunReceiptPath": "docs/planning/reviews/2026-10-12-completion-reaudit/a1-browser-rerun-receipts.json",
-      "a1TargetedReruns": "5 unit + 22 integration + 1 absent-draft Chromium + 1 normal authoring Chromium; all PASS",
-      "b1VisualFinding": "Required mobile right-wall controller pegboard is absent from the frozen crop",
+      "a1TargetedReruns": "Prior R8 reruns: 5 unit + 22 integration + 1/1 + 1/1 Chromium; FINISH-48 R9: 1/1 absent-draft + 6/6 normal authoring/publish with separate fresh PGlite paths",
+      "a1B1ParentRecheckReceiptPath": "docs/planning/reviews/2026-10-12-completion-reaudit/r9-r7-parent-recheck.json",
+      "b1VisualFinding": "FINISH-47 R7 places the full right pegboard and two controllers inside both frozen home-camera frames; visual owner review and broader reference acceptance remain pending",
       "c1Scope": "FINISH-46 E-01 receipt-integrity PASS only; C1 implementation acceptance pending",
       "externalGptPlus2": "NOT RUN",
       "ownerVisualReview": "PENDING",
       "parentAcceptance": "PENDING",
       "canonicalIntegration": false,
       "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
-      "sitesProjectListing": "EMPTY; hosting state not reverified",
-      "productionProviderChecks": "NOT RUN"
+      "sitesProjectListing": "EMPTY ON 2026-10-12 RETRY; RECORDED PROJECT ID RETURNED project_not_found; this does not establish that the old URL is offline",
+      "productionProviderChecks": "NOT RUN; no Vercel/Supabase tools were available in this session"
     }
   },
   "hostingPreview": {
-    "status": "DEPLOYED / OWNER-PRIVATE STATIC PREVIEW",
+    "status": "LAST VERIFIED 2026-10-11 DEPLOYED / CURRENT SITE STATE UNVERIFIED",
     "url": "https://yor-world.deadlygamerayush5.chatgpt.site",
     "projectId": "appgprj_6acaa28a4d6c8191819d713b6e1baadb",
     "versionNumber": 1,
@@ -693,6 +705,13 @@
     "sourceAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
     "sitesPreviewCommit": "fa6e922f91e076be80620bf907b6c107817ff6d2",
     "evidenceRoot": "deliveries/hosting/2026-10-11-preview",
+    "lastAccessRecheck": {
+      "date": "2026-10-12",
+      "sitesList": "EMPTY",
+      "getSite": "project_not_found for the recorded project ID",
+      "vercelSupabase": "No provider tools available in this session",
+      "interpretation": "Prior successful deployment remains historical evidence; current deployment/provider state is unverified, not presumed offline."
+    },
     "backendDeployed": false,
     "canonicalAppChanged": false,
     "completionImplementationAcceptance": false,
@@ -704,7 +723,7 @@
     "productionOrigin": null,
     "deployment": "NOT RUN",
     "acceptance": "NOT ACCEPTED",
-    "providerConnections": "NOT CONFIRMED: Vercel scope yorayriniwnl-1218s-projects returns 403 for the yor-world project; Supabase exposes no YOR WORLD project. User-approved reconnection requires account authorization through app settings, which is unavailable to these tools.",
+    "providerConnections": "NOT CONFIRMED: no Vercel or Supabase tools were available on the 2026-10-12 retry; earlier Vercel 403 and absent Supabase project remain historical. Sites listed no projects and the recorded Site ID returned 404.",
     "physicalAndManualChecks": "NOT RUN",
     "branchProtection": {
       "status": "APPLIED AND READBACK VERIFIED",
