@@ -27,17 +27,27 @@ function isStorageAvailable(): boolean {
   }
 }
 
-export function saveReturnSnapshot(data: Partial<ReturnSnapshot>): void {
+export function saveReturnSnapshot(data: Partial<Omit<ReturnSnapshot, "preferences">> & { preferences?: Partial<Preferences> | undefined }): void {
   const current = getReturnSnapshot();
   const snapshot: ReturnSnapshot = {
     returnToStudio: true,
-    preferences: data.preferences ?? current?.preferences ?? {
+    preferences: data.preferences ? {
+      version: 1 as const,
+      introCompleted: true,
+      soundEnabled: false,
+      quality: "auto" as const,
+      clock24h: true,
+      paused: false,
+      ...current?.preferences,
+      ...data.preferences,
+    } : (current?.preferences ?? {
       version: 1,
       introCompleted: true,
       soundEnabled: false,
       quality: "auto",
       clock24h: true,
-    },
+      paused: false,
+    }),
     world: data.world ?? current?.world ?? {
       version: 1,
       lampOn: true,
@@ -67,6 +77,9 @@ export function getReturnSnapshot(): ReturnSnapshot | null {
       if (raw) {
         const parsed = JSON.parse(raw) as ReturnSnapshot;
         if (parsed && typeof parsed.timestamp === "number") {
+          if (parsed.preferences && typeof parsed.preferences.paused === "undefined") {
+            parsed.preferences.paused = false;
+          }
           return parsed;
         }
       }

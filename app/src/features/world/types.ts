@@ -1,3 +1,5 @@
+import type { AssetSessionId } from "./asset-resources";
+
 export type WorldLifecycleState =
   | "STATIC"
   | "ENTRY_REQUESTED"
@@ -31,16 +33,31 @@ export type CharacterState =
   | "canceled"
   | "settled";
 
+export type ByteProgress =
+  | { kind: "indeterminate"; reason: string }
+  | { kind: "determinate"; scope: "required-session"; loaded: number; total: number };
+
+export type RequiredProgressActivity =
+  | { kind: "required-bytes"; assetId: "room" | "resident" | "fixture"; loaded: number }
+  | { kind: "required-stage"; id: "decode:room" | "decode:resident" | "decode:fixture" | "integration" };
+
 export interface LoadingProgress {
+  session: AssetSessionId;
   stage: string;
-  progress: number; // 0.0 to 1.0
+  /** Present only when the complete required-session representation is trusted. */
+  progress?: number | undefined;
+  bytes: ByteProgress;
   requiredLoaded: number;
   requiredTotal: number;
   optionalLoaded: number;
   optionalTotal: number;
   retryCount: number;
   maxRetries: number;
+  attempt?: 1 | 2 | 3 | undefined;
   failedAsset?: string | undefined;
+  activity?: RequiredProgressActivity | undefined;
+  bytesLoaded?: number | undefined;
+  bytesTotal?: number | undefined;
 }
 
 export interface EntranceDiagnostics {
@@ -59,6 +76,7 @@ export interface SingleOwnersDiagnostics {
   characterActionOwner: string;
   assetLoadingSessionOwner: string;
   activeSessionToken: number;
+  activeSessionGeneration?: number | undefined;
 }
 
 export interface Diagnostics {
@@ -104,9 +122,11 @@ export interface RenderedWorldFrame {
   durationMs: number;
   qualityTier: import("../../contracts/experience").QualityTier;
   activeClip: string;
+  activeClipTimeSec: number;
   characterMode: string;
   cameraPreset: CameraPreset;
   lifecycleState: WorldLifecycleState;
+  optionalTextureTargets: Readonly<Partial<Record<"deskmat" | "wallpaper", readonly string[]>>>;
   renderCalls: number;
   renderedTriangles: number;
 }

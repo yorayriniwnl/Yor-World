@@ -22,8 +22,9 @@ export class CharacterDirector {
 
   public readonly ownerId: string;
   public mode: DirectorMode = "coding";
-  public currentClip: string = "coding_idle";
+  public currentClip: string = "";
   public currentTime: number = 0;
+  public isDecorativePaused: boolean = false;
   private queue: QueueSegment[] = [];
   public revision: number = 0;
   private isDisposed: boolean = false;
@@ -52,7 +53,15 @@ export class CharacterDirector {
   }
 
   private applyClip(clip: string, time: number) {
-    const duration = CLIP_DURATIONS[clip];
+    const duration =
+      CLIP_DURATIONS[clip] ??
+      (clip === "mouse_idle"
+        ? 2.0
+        : clip === "attention_glance"
+        ? 1.2
+        : clip === "breathing_idle"
+        ? 4.0
+        : undefined);
     if (duration === undefined) {
       throw new Error(`Unknown animation clip: ${clip}`);
     }
@@ -154,6 +163,7 @@ export class CharacterDirector {
 
   public advance(dt: number) {
     if (!Number.isFinite(dt) || dt < 0) return;
+    if (this.mode === "coding" && this.isDecorativePaused) return;
     let remaining = dt;
 
     while (this.queue.length > 0) {
@@ -187,6 +197,7 @@ export class CharacterDirector {
     }
 
     if (this.mode === "coding") {
+      if (this.isDecorativePaused) return;
       const codingDuration = CLIP_DURATIONS["coding_idle"] || 6.0;
       this.applyClip("coding_idle", (this.currentTime + remaining) % codingDuration);
     }
@@ -213,6 +224,10 @@ export class CharacterDirector {
     this.settle();
   }
 
+  public setDecorativePaused(paused: boolean): void {
+    this.isDecorativePaused = paused;
+  }
+
   public getDiagnostics() {
     return {
       currentClip: this.currentClip,
@@ -222,6 +237,7 @@ export class CharacterDirector {
       chairYawDeg: this.getChairYawDeg(),
       bodyYawDeg: this.getBodyYawDeg(),
       ownerId: this.ownerId,
+      isDecorativePaused: this.isDecorativePaused,
     };
   }
 

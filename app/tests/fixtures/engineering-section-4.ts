@@ -42,7 +42,7 @@ export type WorldSnapshot = {
 };
 export type Preferences = {
   version: 1; introCompleted: boolean; soundEnabled: boolean;
-  quality: QualityTier | "auto"; clock24h: boolean;
+  quality: QualityTier | "auto"; clock24h: boolean; paused: boolean;
 };
 export type ExperienceIntent =
   | { type: "ENTER"; replay: boolean }

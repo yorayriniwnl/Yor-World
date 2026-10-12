@@ -1,6 +1,12 @@
 import * as THREE from "three";
 import { GLTFLoader, GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
-import type { LoadingProgress } from "./types";
+import type { LoadingProgress, ByteProgress, RequiredProgressActivity } from "./types";
+import {
+  AssetSessionId,
+  OptionalAssetResult,
+  OptionalConsumer,
+  SessionResourceLedger,
+} from "./asset-resources";
 
 export interface LoadedAssets {
   w1Gltf: GLTF;
@@ -9,15 +15,26 @@ export interface LoadedAssets {
   deskmatTexture: THREE.Texture | null;
   wallpaperTexture: THREE.Texture | null;
   interactionGltf: GLTF | null;
+  resourceLedger?: SessionResourceLedger | undefined;
+}
+
+export interface OptionalAssetsUpdate {
+  deskmatTexture?: THREE.Texture | null;
+  wallpaperTexture?: THREE.Texture | null;
+  interactionGltf?: GLTF | null;
 }
 
 export interface AssetLoaderOptions {
   sessionToken: number;
+  sessionGeneration?: number | undefined;
   signal?: AbortSignal | undefined;
+  optionalSignal?: AbortSignal | undefined;
   simulateAssetError?: boolean | undefined;
   maxRetries?: number | undefined;
   mobile?: boolean | undefined;
   onProgress?: ((progress: LoadingProgress) => void) | undefined;
+  onOptionalReady?: ((optional: OptionalAssetsUpdate) => void) | undefined;
+  onOptionalConsumer?: OptionalConsumer | undefined;
 }
 
 export class AssetLoadingError extends Error {
@@ -32,13 +49,113 @@ export class AssetLoadingError extends Error {
   }
 }
 
-export class AssetLoader {
-  private ownerId: string;
-  private maxRetries: number;
+interface FetchResult {
+  buffer: ArrayBuffer;
+  isCompressed: boolean;
+  contentLength: number;
+  byteLength: number;
+  trustedLength: boolean;
+}
 
-  constructor(ownerId: string = "primary-asset-loader") {
+interface ByteRead {
+  loaded: number;
+  total: number;
+  isCompressed: boolean;
+  trustedLength: boolean;
+  eof: boolean;
+}
+
+async function fetchWithAbort(
+  url: string,
+  signal?: AbortSignal,
+  onByteProgress?: (progress: ByteRead) => void
+): Promise<FetchResult> {
+  const response = await fetch(url, signal ? { signal } : undefined);
+  if (!response.ok) throw new Error(`HTTP ${response.status} for required asset`);
+
+  const rawEncoding = response.headers.get("content-encoding");
+  const encoding = rawEncoding?.trim().toLowerCase();
+  const isCompressed = encoding !== undefined && encoding !== "" && encoding !== "identity";
+  const hasTransferEncoding = response.headers.get("transfer-encoding") !== null;
+  const rawLength = response.headers.get("content-length");
+  const normalizedLength = rawLength?.trim();
+  const parsedLength = normalizedLength && /^[1-9]\d*$/.test(normalizedLength) ? Number(normalizedLength) : Number.NaN;
+  const hasTrustedHeader = response.status === 200
+    && encoding === "identity"
+    && !hasTransferEncoding
+    && Number.isSafeInteger(parsedLength)
+    && parsedLength > 0;
+  const contentLength = hasTrustedHeader ? parsedLength : 0;
+
+  if (signal?.aborted) throw new DOMException("Asset loading aborted by user", "AbortError");
+  if (!response.body) {
+    const buffer = await response.arrayBuffer();
+    const byteLength = buffer.byteLength;
+    onByteProgress?.({ loaded: byteLength, total: contentLength, isCompressed, trustedLength: hasTrustedHeader, eof: true });
+    return {
+      buffer,
+      isCompressed,
+      contentLength,
+      byteLength,
+      trustedLength: hasTrustedHeader && byteLength === contentLength,
+    };
+  }
+
+  const reader = response.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let loaded = 0;
+  onByteProgress?.({ loaded: 0, total: contentLength, isCompressed, trustedLength: hasTrustedHeader, eof: false });
+  try {
+    while (true) {
+      if (signal?.aborted) {
+        try { await reader.cancel(); } catch {}
+        throw new DOMException("Asset loading aborted by user", "AbortError");
+      }
+      const { done, value } = await reader.read();
+      if (done) break;
+      if (value?.byteLength) {
+        chunks.push(value);
+        loaded += value.byteLength;
+        onByteProgress?.({ loaded, total: contentLength, isCompressed, trustedLength: hasTrustedHeader, eof: false });
+      }
+    }
+  } catch (error) {
+    try { await reader.cancel(); } catch {}
+    throw error;
+  }
+
+  const buffer = new Uint8Array(loaded);
+  let offset = 0;
+  for (const chunk of chunks) {
+    buffer.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  onByteProgress?.({ loaded, total: contentLength, isCompressed, trustedLength: hasTrustedHeader, eof: true });
+  return {
+    buffer: buffer.buffer,
+    isCompressed,
+    contentLength,
+    byteLength: loaded,
+    trustedLength: hasTrustedHeader && loaded === contentLength,
+  };
+}
+
+const REQUIRED_ASSET_IDS = ["room", "resident", "fixture"] as const;
+type RequiredAssetId = typeof REQUIRED_ASSET_IDS[number];
+
+interface AttemptProgress {
+  attempt: number;
+  loaded: number;
+  total: number;
+  trustedLength: boolean;
+}
+
+export class AssetLoader {
+  public readonly ownerId: string;
+  public readonly maxRetries = 2;
+
+  constructor(ownerId = "primary-asset-loader") {
     this.ownerId = ownerId;
-    this.maxRetries = 3;
   }
 
   public getOwnerId(): string {
@@ -46,141 +163,253 @@ export class AssetLoader {
   }
 
   public async loadSession(options: AssetLoaderOptions): Promise<LoadedAssets> {
-    const { signal, simulateAssetError = false, maxRetries = 3, onProgress } = options;
-    this.maxRetries = maxRetries;
+    const {
+      signal,
+      simulateAssetError = false,
+      onProgress,
+      onOptionalReady,
+      onOptionalConsumer,
+    } = options;
+    const optionalSignal = options.optionalSignal ?? signal;
+    const retryLimit = Number.isFinite(options.maxRetries)
+      ? Math.min(2, Math.max(0, Math.floor(options.maxRetries!)))
+      : 2;
+    const sessionId: AssetSessionId = {
+      generation: options.sessionGeneration ?? 1,
+      token: options.sessionToken,
+    };
+    const ledger = new SessionResourceLedger(sessionId);
+    const abortListener = () => ledger.disposeSoon();
+    signal?.addEventListener("abort", abortListener, { once: true });
 
-    const report = (
-      stage: string,
-      progress: number,
-      reqLoaded: number,
-      reqTotal: number,
-      optLoaded: number,
-      optTotal: number,
-      retryCount: number = 0,
-      failedAsset?: string
-    ) => {
-      if (signal?.aborted) return;
-      if (onProgress) {
-        onProgress({
-          stage,
-          progress: Math.min(Math.max(progress, 0), 1),
-          requiredLoaded: reqLoaded,
-          requiredTotal: reqTotal,
-          optionalLoaded: optLoaded,
-          optionalTotal: optTotal,
-          retryCount,
-          maxRetries,
-          failedAsset,
-        });
+    let requiredLoaded = 0;
+    let optionalLoaded = 0;
+    const attemptProgress: AttemptProgress[] = REQUIRED_ASSET_IDS.map(() => ({ attempt: 0, loaded: 0, total: 0, trustedLength: false }));
+    let aggregateInvalid = false;
+    let lastBytes: ByteProgress = { kind: "indeterminate", reason: "required-headers-unconfirmed" };
+    let lastRatio: number | undefined;
+
+    const currentAggregate = (): ByteProgress => {
+      const allKnown = attemptProgress.every((entry) => entry.trustedLength && entry.total > 0);
+      if (aggregateInvalid || !allKnown) {
+        return { kind: "indeterminate", reason: aggregateInvalid ? "untrusted-required-representation" : "required-headers-unconfirmed" };
       }
+      const total = attemptProgress.reduce((sum, entry) => sum + entry.total, 0);
+      const loaded = attemptProgress.reduce((sum, entry) => sum + entry.loaded, 0);
+      if (!Number.isSafeInteger(total) || total <= 0 || !Number.isSafeInteger(loaded) || loaded < 0 || loaded > total) {
+        return { kind: "indeterminate", reason: "required-aggregate-invalid" };
+      }
+      return { kind: "determinate", scope: "required-session", loaded, total };
     };
 
-    report("Initiating asset session...", 0.05, 0, 3, 0, 3, 0);
+    const emit = (
+      stage: string,
+      activity?: RequiredProgressActivity,
+      failedAsset?: string,
+      attempt = 1,
+      retryCount = 0
+    ): void => {
+      lastBytes = currentAggregate();
+      lastRatio = lastBytes.kind === "determinate" ? lastBytes.loaded / lastBytes.total : undefined;
+      if (!onProgress || signal?.aborted) return;
+      const progress: LoadingProgress = {
+        session: sessionId,
+        stage,
+        progress: lastRatio,
+        bytes: lastBytes,
+        requiredLoaded,
+        requiredTotal: 3,
+        optionalLoaded,
+        optionalTotal: 2,
+        retryCount,
+        maxRetries: 2,
+        attempt: Math.min(attempt, 3) as 1 | 2 | 3,
+        failedAsset,
+        activity,
+        bytesLoaded: lastBytes.kind === "determinate" ? lastBytes.loaded : undefined,
+        bytesTotal: lastBytes.kind === "determinate" ? lastBytes.total : undefined,
+      };
+      try { onProgress(progress); } catch (error) { console.error("[AssetLoader] Progress consumer failed", error); }
+    };
 
-    if (signal?.aborted) {
-      throw new DOMException("Asset loading aborted by user", "AbortError");
-    }
-
-    if (simulateAssetError) {
-      report("Failed to load required model asset", 0.1, 0, 3, 0, 3, 3, "production-room-full.glb");
-      throw new AssetLoadingError(
-        "Simulated Asset Loading 404 / Parse Failure (required asset: production-room-full.glb)",
-        "production-room-full.glb",
-        3
+    const emitBytes = (assetIndex: number, attempt: number, read: ByteRead): void => {
+      const entry = attemptProgress[assetIndex]!;
+      if (entry.attempt !== attempt) {
+        entry.attempt = attempt;
+        entry.loaded = 0;
+        entry.total = 0;
+        entry.trustedLength = false;
+      }
+      entry.loaded = read.loaded;
+      const trustedEof = read.eof && read.trustedLength && read.total > 0 && read.loaded === read.total;
+      if (trustedEof) {
+        entry.total = read.total;
+        entry.trustedLength = true;
+      } else {
+        entry.total = 0;
+        entry.trustedLength = false;
+      }
+      if (read.isCompressed || (read.eof && read.trustedLength && read.loaded !== read.total)) {
+        aggregateInvalid = true;
+      }
+      emit(
+        `Downloading ${REQUIRED_ASSET_IDS[assetIndex]} (${attempt}/${retryLimit + 1})...`,
+        read.loaded > 0 ? { kind: "required-bytes", assetId: REQUIRED_ASSET_IDS[assetIndex] as RequiredAssetId, loaded: read.loaded } : undefined,
+        undefined,
+        attempt,
+        attempt - 1
       );
+    };
+
+    emit("Initiating asset session...");
+    if (signal?.aborted) {
+      ledger.disposeSoon();
+      signal?.removeEventListener("abort", abortListener);
+      throw new DOMException("Asset loading aborted by user", "AbortError");
     }
 
     const gltfLoader = new GLTFLoader();
     const textureLoader = new THREE.TextureLoader();
+    const waitForRetry = (milliseconds: number): Promise<void> => new Promise((resolve, reject) => {
+      if (signal?.aborted) {
+        reject(new DOMException("Asset loading aborted by user", "AbortError"));
+        return;
+      }
+      const timer: ReturnType<typeof setTimeout> = setTimeout(() => {
+        signal?.removeEventListener("abort", onAbort);
+        resolve();
+      }, milliseconds);
+      const onAbort = () => {
+        clearTimeout(timer);
+        signal?.removeEventListener("abort", onAbort);
+        reject(new DOMException("Asset loading aborted by user", "AbortError"));
+      };
+      signal?.addEventListener("abort", onAbort, { once: true });
+    });
 
-    // Helper to load with bounded retry
-    const loadRequiredGltf = async (url: string, name: string, baseProgress: number, stageName: string): Promise<GLTF> => {
-      let attempts = 0;
-      while (attempts <= this.maxRetries) {
-        if (signal?.aborted) {
-          throw new DOMException("Asset loading aborted by user", "AbortError");
+    const loadRequiredGltf = async (url: string, name: string, stage: string, index: number): Promise<GLTF> => {
+      let attempt = 0;
+      while (attempt <= retryLimit) {
+        if (signal?.aborted) throw new DOMException("Asset loading aborted by user", "AbortError");
+        if (attemptProgress[index]!.attempt !== attempt + 1) {
+          attemptProgress[index] = { attempt: attempt + 1, loaded: 0, total: 0, trustedLength: false };
         }
+        emit(`Loading ${stage} (${attempt + 1}/${retryLimit + 1})...`, undefined, undefined, attempt + 1, attempt);
         try {
-          report(`Loading ${stageName}...`, baseProgress, attempts, 3, 0, 3, attempts);
-          const gltf = await gltfLoader.loadAsync(url);
+          if (simulateAssetError) throw new Error(`Simulated asset failure for ${name}`);
+          let gltf: GLTF;
+          if (typeof window !== "undefined" && typeof URL !== "undefined" && typeof URL.createObjectURL === "function") {
+            const fetched = await fetchWithAbort(url, signal, (read) => emitBytes(index, attempt + 1, read));
+            if (signal?.aborted) throw new DOMException("Asset loading aborted by user", "AbortError");
+            gltf = await gltfLoader.parseAsync(fetched.buffer, url);
+          } else {
+            gltf = await gltfLoader.loadAsync(url);
+          }
+          ledger.registerGltf(gltf);
           if (signal?.aborted) {
+            ledger.disposeSoon();
             throw new DOMException("Asset loading aborted by user", "AbortError");
           }
+          requiredLoaded += 1;
+          const decodeId = `decode:${REQUIRED_ASSET_IDS[index]}` as Extract<RequiredProgressActivity, { kind: "required-stage" }>['id'];
+          emit(`${stage} decoded`, { kind: "required-stage", id: decodeId }, undefined, attempt + 1, attempt);
           return gltf;
-        } catch (err) {
-          attempts++;
-          if (attempts > this.maxRetries || signal?.aborted) {
-            report(`Failed to load ${name}`, baseProgress, 0, 3, 0, 3, attempts, name);
-            throw new AssetLoadingError(
-              `Required asset "${name}" failed to load after ${attempts} attempts: ${(err as Error).message}`,
-              name,
-              attempts
-            );
+        } catch (error) {
+          if (signal?.aborted || (error as Error).name === "AbortError") throw new DOMException("Asset loading aborted by user", "AbortError");
+          attempt += 1;
+          if (attempt > retryLimit) {
+            emit(`Failed to load ${name}`, undefined, name, attempt, attempt - 1);
+            throw new AssetLoadingError(`Required asset "${name}" failed to load after ${attempt} attempts: ${(error as Error).message}`, name, attempt);
           }
-          // Short delay before bounded retry
-          await new Promise((resolve) => setTimeout(resolve, 100 * attempts));
+          attemptProgress[index] = { attempt: attempt + 1, loaded: 0, total: 0, trustedLength: false };
+          const delay = attempt === 1 ? 500 : 1500;
+          emit(`Retrying ${name} (${attempt}/${retryLimit})...`, undefined, name, attempt + 1, attempt);
+          await waitForRetry(delay);
         }
       }
-      throw new AssetLoadingError(`Required asset "${name}" exceeded max retries`, name, attempts);
+      throw new AssetLoadingError(`Required asset "${name}" exceeded the retry ceiling`, name, attempt);
     };
 
-    // 1. Required Asset 1: Production environment
-    const w1Gltf = await loadRequiredGltf("/models/production-room-full.glb", "production-room-full.glb", 0.15, "production environment (required)");
-    report("Production environment loaded", 0.4, 1, 3, 0, 3, 0);
-
-    // 2. Required Asset 2: Production resident
-    const avatarGltf = await loadRequiredGltf("/models/resident-production.glb", "resident-production.glb", 0.45, "resident avatar (required)");
-    report("Resident avatar loaded", 0.65, 2, 3, 0, 3, 0);
-
-    // 3. Required Asset 3: Production chair fixture
-    const fixtureGltf = await loadRequiredGltf("/models/fixture-production.glb", "fixture-production.glb", 0.7, "chair fixture (required)");
-    report("Chair fixture loaded", 0.85, 3, 3, 0, 3, 0);
-
-    // 4. Optional assets preserve a complete DOM experience even when metadata/textures fail.
-    // Optional asset failures DO NOT prevent world entrance
-    report("Loading optional visual enhancements...", 0.88, 3, 3, 0, 3, 0);
-
-    let deskmatTexture: THREE.Texture | null = null;
-    let wallpaperTexture: THREE.Texture | null = null;
-
+    let w1Gltf: GLTF;
+    let avatarGltf: GLTF;
+    let fixtureGltf: GLTF;
     try {
-      if (!signal?.aborted) {
-        deskmatTexture = await textureLoader.loadAsync("/textures/deskmat-topography.png");
-      }
-    } catch {
-      console.warn("[AssetLoader] Optional asset deskmat-topography.png failed to load; using fallback material.");
+      w1Gltf = await loadRequiredGltf("/models/production-room-full.glb", "production-room-full.glb", "production environment", 0);
+      emit("Production environment decoded");
+      avatarGltf = await loadRequiredGltf("/models/resident-production.glb", "resident-production.glb", "resident avatar", 1);
+      emit("Resident avatar decoded");
+      fixtureGltf = await loadRequiredGltf("/models/fixture-production.glb", "fixture-production.glb", "chair fixture", 2);
+      emit("All required assets decoded");
+    } catch (error) {
+      ledger.disposeSoon();
+      signal?.removeEventListener("abort", abortListener);
+      throw error;
     }
-    report("Optional deskmat texture processed", 0.92, 3, 3, 1, 3, 0);
-
-    try {
-      if (!signal?.aborted) {
-        wallpaperTexture = await textureLoader.loadAsync("/textures/monitor-wallpaper.png");
-      }
-    } catch {
-      console.warn("[AssetLoader] Optional asset monitor-wallpaper.png failed to load; using fallback material.");
-    }
-    report("Optional wallpaper texture processed", 0.96, 3, 3, 2, 3, 0);
 
     if (signal?.aborted) {
+      ledger.disposeSoon();
+      signal.removeEventListener("abort", abortListener);
       throw new DOMException("Asset loading aborted by user", "AbortError");
     }
+    signal?.removeEventListener("abort", abortListener);
 
-    let interactionGltf: GLTF | null = null;
-    try {
-      interactionGltf = await gltfLoader.loadAsync(options.mobile ? "/models/interaction-assets-mobile.glb" : "/models/interaction-assets.glb");
-    } catch {
-      console.warn("[AssetLoader] Optional frozen interaction asset unavailable; production mesh and DOM controls remain available.");
-    }
-    if (signal?.aborted) throw new DOMException("Asset loading aborted by user", "AbortError");
-    report("All required assets ready. Configuring scene...", 1.0, 3, 3, 3, 3, 0);
+    const loadOptionalTexture = async (id: "deskmat" | "wallpaper", url: string): Promise<void> => {
+      try {
+        if (optionalSignal?.aborted) return;
+        let texture: THREE.Texture;
+        if (typeof window !== "undefined" && typeof URL !== "undefined" && typeof URL.createObjectURL === "function") {
+          const { buffer } = await fetchWithAbort(url, optionalSignal);
+          if (optionalSignal?.aborted) return;
+          const objectUrl = URL.createObjectURL(new Blob([buffer]));
+          ledger.registerObjectUrl(objectUrl);
+          try { texture = await textureLoader.loadAsync(objectUrl); }
+          finally { ledger.revokeObjectUrl(objectUrl); }
+        } else {
+          texture = await textureLoader.loadAsync(url);
+        }
+        ledger.registerTexture(texture);
+        if (optionalSignal?.aborted) {
+          ledger.disposeTexture(texture);
+          return;
+        }
+
+        let adopted = false;
+        try {
+          const result: OptionalAssetResult = { session: sessionId, id, kind: "texture", resource: texture };
+          if (onOptionalConsumer) adopted = onOptionalConsumer(result) === "adopted";
+          else if (onOptionalReady) {
+            onOptionalReady(id === "deskmat" ? { deskmatTexture: texture } : { wallpaperTexture: texture });
+            adopted = true;
+          }
+        } catch (error) {
+          ledger.disposeTexture(texture);
+          throw error;
+        }
+        if (!adopted) {
+          ledger.disposeTexture(texture);
+          return;
+        }
+        optionalLoaded += 1;
+        emit(`${id === "deskmat" ? "Deskmat" : "Wallpaper"} optional texture adopted`);
+      } catch {
+        console.warn(`[AssetLoader] Optional asset ${id} failed; retaining the base material.`);
+      }
+    };
+
+    const optionalWork = (async () => {
+      await loadOptionalTexture("deskmat", "/textures/deskmat-topography.png");
+      await loadOptionalTexture("wallpaper", "/textures/monitor-wallpaper.png");
+    })();
+    void optionalWork;
 
     return {
       w1Gltf,
       avatarGltf,
       fixtureGltf,
-      deskmatTexture,
-      wallpaperTexture,
-      interactionGltf,
+      deskmatTexture: null,
+      wallpaperTexture: null,
+      interactionGltf: null,
+      resourceLedger: ledger,
     };
   }
 }
