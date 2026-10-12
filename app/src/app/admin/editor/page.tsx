@@ -22,7 +22,8 @@ export default async function AdminEditorPage() {
         </p>
       </header>
 
-      <ProjectEditor initialProjects={drafts.filter((draft) => draft.projectId !== "candidatex").map((draft) => draft.project)} />
+      <ProjectEditor initialProjects={drafts.map((draft) => draft.project)}
+        initialDraftRevisions={Object.fromEntries(drafts.map((draft) => [draft.projectId,draft.draftRevision]))} />
     </div>
   );
 }
