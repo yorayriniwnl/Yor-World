@@ -1,0 +1,59 @@
+﻿{
+    "candidateCommit":  "e377e06c514819ee6dbd82da2216c95813bedd2f",
+    "sourceBaseCommit":  "f62a43c5e71c00dcb89e28275ea81d842167db80",
+    "replayedTree":  "5dc26a201e715ca15757ae661639589948ab4800",
+    "appTree":  "0fdc8972f303cd5304f812f89ece493fef170ea1",
+    "checks":  [
+                   {
+                       "name":  "browser-absent-draft",
+                       "command":  [
+                                       "pnpm",
+                                       "exec",
+                                       "playwright",
+                                       "test",
+                                       "tests/e2e/platform/completion-authoring-workflow.spec.ts",
+                                       "--project=chromium",
+                                       "--grep",
+                                       "owner request for an absent private draft"
+                                   ],
+                       "cwd":  "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app",
+                       "startedUtc":  "2026-10-12T04:46:28.1409886Z",
+                       "durationSeconds":  9.3397004,
+                       "exitCode":  0,
+                       "log":  "browser-absent.log",
+                       "environment":  {
+                                           "YOR_E2E_FIXTURE":  "1",
+                                           "YOR_TEST_DATABASE_PATH":  "F:\\A1-R8-Temp-20261012\\reaudit-run-01\\db-absent-retry",
+                                           "YOR_E2E_OMIT_CANDIDATEX_DRAFT":  "1",
+                                           "CI":  "1",
+                                           "TEMP":  "F:\\A1-R8-Temp-20261012\\reaudit-run-01",
+                                           "PWTEST_CACHE_DIR":  "F:\\A1-R8-Temp-20261012\\reaudit-run-01\\pw-cache"
+                                       }
+                   },
+                   {
+                       "name":  "browser-normal-authoring",
+                       "command":  [
+                                       "pnpm",
+                                       "exec",
+                                       "playwright",
+                                       "test",
+                                       "tests/e2e/platform/completion-authoring-workflow.spec.ts",
+                                       "--project=chromium",
+                                       "--grep-invert",
+                                       "owner request for an absent private draft"
+                                   ],
+                       "cwd":  "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app",
+                       "startedUtc":  "2026-10-12T04:46:37.4901968Z",
+                       "durationSeconds":  13.951937,
+                       "exitCode":  0,
+                       "log":  "browser-normal.log",
+                       "environment":  {
+                                           "PWTEST_CACHE_DIR":  "F:\\A1-R8-Temp-20261012\\reaudit-run-01\\pw-cache",
+                                           "CI":  "1",
+                                           "YOR_E2E_FIXTURE":  "1",
+                                           "TEMP":  "F:\\A1-R8-Temp-20261012\\reaudit-run-01",
+                                           "YOR_TEST_DATABASE_PATH":  "F:\\A1-R8-Temp-20261012\\reaudit-run-01\\db-normal-retry"
+                                       }
+                   }
+               ]
+}

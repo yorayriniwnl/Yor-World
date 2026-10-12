@@ -27,7 +27,7 @@
     "rulingDecisionPath": "docs/planning/reviews/2026-10-08-rc6-r1/decision.json"
   },
   "completionProgram": {
-    "status": "R2 DESIGN ACCEPTED / A1-R4 REWORK / A1-R5 FINISH-24 REWORK; FINISH-29 R5-07 PACKAGE DELIVERED, FINISH-32 GPT PLUS #2 AUDIT NOT DISPATCHED; FINISH-36 A1 PARENT-LOCAL TECHNICAL RECHECK PASS RECOMMENDATION / B1-R3 FINISH-20 REWORK; B1-R4-02 FULL-ROOM FIDELITY FAIL-OPEN; FINISH-35 B1-R5 PACKAGE DELIVERED, FINISH-43 GPT PLUS #2 AUDIT PROMPT PREPARED NOT DISPATCHED, PARENT PACKAGE REBIND PASS, OWNER VISUAL REVIEW AND FULL REFERENCE FIDELITY OPEN; FINISH-46 C1 E-01 RECEIPT-INTEGRITY PASS / C1 IMPLEMENTATION ACCEPTANCE PENDING / C1-R7 FINISH-26 AUDIT ROOT COLLISION PRESERVED; C1-R8 FINISH-30 REWORK; C1-R9 FINISH-34 GPT PLUS #2 AUDIT NOT DISPATCHED; FINISH-36 C1 PARENT-LOCAL TECHNICAL RECHECK PASS RECOMMENDATION / NO CANONICAL COMPLETION INTEGRATION / EXTERNAL AUDITS AND PARENT ACCEPTANCE PENDING",
+    "status": "R2 DESIGN ACCEPTED / A1-R8 FINISH-45 DELIVERED, PARENT-LOCAL TARGETED RECHECK PASS, EXTERNAL AUDIT AND ACCEPTANCE PENDING; B1-R6 FINISH-44 DELIVERED, MOBILE PEGBOARD FAIL-OPEN, OWNER VISUAL REVIEW / EXTERNAL AUDIT / ACCEPTANCE PENDING; C1-R9 FINISH-30/33 DELIVERED, FINISH-46 E-01 RECEIPT-INTEGRITY PASS ONLY, C1 IMPLEMENTATION ACCEPTANCE PENDING; NO CANONICAL COMPLETION INTEGRATION / G7 PRODUCTION GATES OPEN",
     "coordinationCommit": "ab369d413c7501224e3d79aa78e56172f97839ff",
     "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
     "contractsGate": {
@@ -562,12 +562,17 @@
     "activeA1Successor": {
       "packetId": "FINISH-45",
       "packetPath": "docs/planning/reconciliation-packets/2026-10-12-finish-45-a1-matrix-coverage-correction.md",
-      "status": "AUTHORIZED / HANDOFF PREPARED / MAKER EXECUTION PENDING",
+      "status": "DELIVERED / PARENT-LOCAL RAW-GIT, PATCH REPLAY AND TARGETED TEST RECHECK PASS / EXTERNAL GPT PLUS #2 REVIEW AND PARENT ACCEPTANCE PENDING",
       "candidateBaseCommit": "76d679dcb98064152021830b98f16eb456b3ae19",
       "deliveryRoot": "deliveries/FINISH-A1-R8/",
       "candidateBranch": "codex/finish-45-a1-test-claim-coverage-correction-20261012",
       "canonicalAppChanged": false,
-      "parentAcceptance": "NOT ACCEPTED"
+      "parentAcceptance": "NOT ACCEPTED",
+      "candidateCommit": "e377e06c514819ee6dbd82da2216c95813bedd2f",
+      "candidateTree": "552cb2618c31fe000ab4fae0a9e5997c6442d084",
+      "outputManifestSha256": "db6957ef40d2552772dcbf0ab66acffc75222a42f8bad2ec64192cb3266abc1f",
+      "parentLocalReaudit": "docs/planning/reviews/2026-10-12-completion-reaudit/report.md",
+      "browserEvidenceNote": "Parent reruns pass with YOR_TEST_DATABASE_PATH; maker browser binding does not record this required isolated PGlite path"
     },
     "latestInternalPreaudits": {
       "reviewer": "Parent-local Codex with read-only internal reviewers; not GPT Plus #2",
@@ -602,13 +607,18 @@
     "activeB1Successor": {
       "packetId": "FINISH-44",
       "packetPath": "docs/planning/reconciliation-packets/2026-10-12-finish-44-b1-full-reference-detail-correction.md",
-      "status": "AUTHORIZED / HANDOFF PREPARED / MAKER EXECUTION PENDING",
+      "status": "DELIVERED / PARENT-LOCAL PACKAGE REBIND PASS / MOBILE PEGBOARD FAIL / OWNER VISUAL REVIEW, EXTERNAL AUDIT AND PARENT ACCEPTANCE PENDING",
       "candidateBaseCommit": "a5ebcc88170703751a5f504f67aed637d2f7d8e9",
       "deliveryRoot": "deliveries/FINISH-B1-R6/",
       "candidateBranch": "codex/finish-44-b1-full-reference-detail-correction-20261012",
       "scope": "Static reference-anchor detail within existing room and fixture assets; no app, camera, or door changes",
       "canonicalAppChanged": false,
-      "parentAcceptance": "NOT ACCEPTED"
+      "parentAcceptance": "NOT ACCEPTED",
+      "candidateCommit": "e8ea9187c1b6cd47b66ce7de9ad520daf9bd6baf",
+      "candidateTree": "60da77df9e600670a416635101558203872bde7b",
+      "outputManifestSha256": "80d6cb214cf9f1f74334268193365b9f9115c86b884c6762072d777d65c30525",
+      "blockingFinding": "Right-wall controller pegboard is outside the unchanged mobile camera frame",
+      "parentLocalReaudit": "docs/planning/reviews/2026-10-12-completion-reaudit/report.md"
     },
     "activeB1Correction": {
       "packetPath": "docs/planning/reconciliation-packets/2026-10-12-finish-35-b1-reference-visual-correction.md",
@@ -624,6 +634,25 @@
       "externalAuditStatus": "PROMPT PREPARED / NOT DISPATCHED",
       "ownerVisualReview": "PENDING; palette improvement visible but detail, composition, props and accent prominence remain different",
       "canonicalAppChanged": false
+    },
+    "latestCompletionReaudit": {
+      "date": "2026-10-12",
+      "status": "PARENT-LOCAL REAUDIT COMPLETE / A1 TARGETED CHECKS PASS / B1 MOBILE VISUAL GAP FAIL-OPEN / C1 IMPLEMENTATION PENDING",
+      "reviewer": "Parent-local Codex; not GPT Plus #2",
+      "reportPath": "docs/planning/reviews/2026-10-12-completion-reaudit/report.md",
+      "evidenceRoot": "docs/planning/reviews/2026-10-12-completion-reaudit/",
+      "candidateIntegrityPath": "docs/planning/reviews/2026-10-12-completion-reaudit/candidate-integrity.json",
+      "a1RerunReceiptPath": "docs/planning/reviews/2026-10-12-completion-reaudit/a1-browser-rerun-receipts.json",
+      "a1TargetedReruns": "5 unit + 22 integration + 1 absent-draft Chromium + 1 normal authoring Chromium; all PASS",
+      "b1VisualFinding": "Required mobile right-wall controller pegboard is absent from the frozen crop",
+      "c1Scope": "FINISH-46 E-01 receipt-integrity PASS only; C1 implementation acceptance pending",
+      "externalGptPlus2": "NOT RUN",
+      "ownerVisualReview": "PENDING",
+      "parentAcceptance": "PENDING",
+      "canonicalIntegration": false,
+      "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+      "sitesProjectListing": "EMPTY; hosting state not reverified",
+      "productionProviderChecks": "NOT RUN"
     }
   },
   "hostingPreview": {
