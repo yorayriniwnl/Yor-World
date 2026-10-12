@@ -44,7 +44,11 @@ The exact-candidate [A1-R5 audit](../../deliveries/completion-audits/FINISH-A1/f
 
 The [October 11 project-folder audit](reviews/2026-10-11-project-folder-audit.md) classifies the neighboring Yor World worktrees, CandidateX and portfolio sources, Yor Talks worktrees/media, CCI research files, and unrelated Abhyodhya project. Keep separate products in separate Git roots and preserve historical candidates and bound evidence; the folder audit authorized no moves or deletions.
 
-## October 11 local correction recheck and reallocations
+## October 11-12 local correction rechecks and reallocations
+
+FINISH-36's newest A1/C1 outputs are archived under the FINISH-42 allocated roots: [A1](../../deliveries/completion-audits/FINISH-A1/finish-09/20261011T233517Z-a1-r5-r7-parent-local-technical-recheck-07-950c2b33/report.md) and [C1](../../deliveries/completion-audits/FINISH-C1/finish-16/20261011T233517Z-c1-r9-parent-local-technical-recheck-07-950c2b33/report.md). Their local recommendations do not replace the unrun GPT Plus #2 audits or pending Parent acceptance.
+
+FINISH-35 B1-R5 is delivered at a5ebcc88170703751a5f504f67aed637d2f7d8e9. Parent rebind verifies all 127 output hashes, 44 raw-Git input bindings, and the exact 129-file package set; the [report](../../deliveries/completion-audits/FINISH-B1/finish-08/20261012T000732Z-b1-r5-parent-local-rebind-01-a5ebcc88/report.md) recommends PASS for package integrity only. The matched captures show a palette improvement, while full reference fidelity remains OPEN. [FINISH-43](reconciliation-packets/2026-10-12-finish-43-b1-r5-independent-audit.md) assigns the separate GPT Plus #2 delta audit; the [prompt](production-prompts/repairs-2026-10-12/24-CODEX-B1-R5-AUDIT.md) is prepared but not dispatched. Owner visual review, Parent acceptance, door/camera ownership, and canonical integration remain pending.
 
 The FINISH-B1-R4 maker package is committed and pushed at `5c2d6ee1935b6245d0f5ef59392d856426ceac7d`; its exact 248-file package verification passed. Parent acceptance and a separate exact-candidate review remain pending, and FINISH-20's door/camera owner issue remains outside the R4 correction.
 
