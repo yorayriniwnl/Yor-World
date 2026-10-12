@@ -1,0 +1,3 @@
+﻿# FINISH-50 - B1-R8 source-patch maker handoff
+
+You are the B1 art-evidence maker. Follow AGENTS.md, START_HERE.md, and docs/planning/reconciliation-packets/2026-10-12-finish-50-b1-r8-source-patch-supplement.md. Work only in F:/Yor-World-B1-R8-20261012 on branch codex/finish-50-b1-r8-source-patch-supplement-20261012. Preserve R7 and all earlier candidates. Create the independently replayable binary-capable source.patch and raw-Git-bound evidence specified by FINISH-50. Change no app, art, capture or camera files. Commit and push the scoped R8 package, then stop for fresh independent review and Parent decision.
