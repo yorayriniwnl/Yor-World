@@ -1,0 +1,273 @@
+{
+  "format": "YOR-WORLD-A1-R8-VERIFICATION-v1",
+  "sourceCandidateCommit": "76d679dcb98064152021830b98f16eb456b3ae19",
+  "sourceBaseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+  "replayedCandidateTree": "5dc26a201e715ca15757ae661639589948ab4800",
+  "candidateAppTree": "0fdc8972f303cd5304f812f89ece493fef170ea1",
+  "sourcePatchSha256": "6241ab27996cea9518d0d202e6cf3c9a362c63e283a91e2180158814e871f061",
+  "buildId": "bkuEvCWn_avaExBuQBUoq",
+  "generatedUtc": "2026-10-12T04:25:01.590595+00:00",
+  "checks": [
+    {
+      "label": "install",
+      "status": "PASS",
+      "summary": "Frozen-lockfile offline package installation completed.",
+      "command": [
+        "cmd.exe",
+        "/d",
+        "/c",
+        "corepack pnpm install --frozen-lockfile --offline"
+      ],
+      "workingDirectory": "deliveries/FINISH-A1-R8/.work/replay/app",
+      "exitCode": 0,
+      "startedUtc": "2026-10-12T03:52:48.328245+00:00",
+      "durationSeconds": 160.015,
+      "rawLog": "evidence/r8/logs/install.log",
+      "rawReceipt": "evidence/r8/logs/install.json"
+    },
+    {
+      "label": "final-focused-unit",
+      "status": "PASS",
+      "summary": "Focused URL validation unit suite: 1 file, 5 tests.",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.config.ts",
+        "tests/unit/platform/completion-authoring-blocks.test.ts"
+      ],
+      "workingDirectory": "deliveries/FINISH-A1-R8/.work/replay/app",
+      "exitCode": 0,
+      "startedUtc": "2026-10-12T04:09:28.819623+00:00",
+      "durationSeconds": 20.016,
+      "rawLog": "evidence/r8/logs/final-focused-unit.log",
+      "rawReceipt": "evidence/r8/logs/final-focused-unit.json"
+    },
+    {
+      "label": "final-focused-integration",
+      "status": "PASS",
+      "summary": "Focused preview integration suite: 1 file, 22 tests.",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "tests/integration/platform/completion-authoring-preview.test.ts"
+      ],
+      "workingDirectory": "deliveries/FINISH-A1-R8/.work/replay/app",
+      "exitCode": 0,
+      "startedUtc": "2026-10-12T04:09:52.295422+00:00",
+      "durationSeconds": 40.0,
+      "rawLog": "evidence/r8/logs/final-focused-integration.log",
+      "rawReceipt": "evidence/r8/logs/final-focused-integration.json"
+    },
+    {
+      "label": "final-full-unit",
+      "status": "PASS",
+      "summary": "Full unit suite: 24 files, 317 tests.",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.config.ts"
+      ],
+      "workingDirectory": "deliveries/FINISH-A1-R8/.work/replay/app",
+      "exitCode": 0,
+      "startedUtc": "2026-10-12T04:10:39.937384+00:00",
+      "durationSeconds": 20.0,
+      "rawLog": "evidence/r8/logs/final-full-unit.log",
+      "rawReceipt": "evidence/r8/logs/final-full-unit.json"
+    },
+    {
+      "label": "final-full-integration",
+      "status": "PASS",
+      "summary": "Full integration suite: 28 files, 308 tests.",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.integration.config.ts"
+      ],
+      "workingDirectory": "deliveries/FINISH-A1-R8/.work/replay/app",
+      "exitCode": 0,
+      "startedUtc": "2026-10-12T04:11:04.691460+00:00",
+      "durationSeconds": 40.016,
+      "rawLog": "evidence/r8/logs/final-full-integration.log",
+      "rawReceipt": "evidence/r8/logs/final-full-integration.json"
+    },
+    {
+      "label": "final-lint",
+      "status": "PASS",
+      "summary": "ESLint completed with max warnings set to zero.",
+      "command": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        ".",
+        "--max-warnings=0"
+      ],
+      "workingDirectory": "deliveries/FINISH-A1-R8/.work/replay/app",
+      "exitCode": 0,
+      "startedUtc": "2026-10-12T04:11:50.298378+00:00",
+      "durationSeconds": 20.0,
+      "rawLog": "evidence/r8/logs/final-lint.log",
+      "rawReceipt": "evidence/r8/logs/final-lint.json"
+    },
+    {
+      "label": "final-typecheck",
+      "status": "PASS",
+      "summary": "TypeScript typecheck completed with no emit.",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit"
+      ],
+      "workingDirectory": "deliveries/FINISH-A1-R8/.work/replay/app",
+      "exitCode": 0,
+      "startedUtc": "2026-10-12T04:12:15.497595+00:00",
+      "durationSeconds": 20.0,
+      "rawLog": "evidence/r8/logs/final-typecheck.log",
+      "rawReceipt": "evidence/r8/logs/final-typecheck.json"
+    },
+    {
+      "label": "patch-replay",
+      "status": "PASS",
+      "summary": "Exact-base patch check/apply, diff check, staged path/tree and patch reproduction passed.",
+      "command": [
+        [
+          "git",
+          "reset",
+          "--hard",
+          "f62a43c5e71c00dcb89e28275ea81d842167db80"
+        ],
+        [
+          "git",
+          "apply",
+          "--check",
+          "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\source.patch"
+        ],
+        [
+          "git",
+          "apply",
+          "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\source.patch"
+        ],
+        [
+          "git",
+          "diff",
+          "--check"
+        ],
+        [
+          "git",
+          "add",
+          "--",
+          "app/src/app/admin/editor/page.tsx",
+          "app/src/app/admin/preview/[slug]/page.tsx",
+          "app/src/app/admin/preview/page.tsx",
+          "app/src/app/admin/publish/page.tsx",
+          "app/src/app/api/admin/media/route.ts",
+          "app/src/app/api/admin/preview/media/[id]/route.ts",
+          "app/src/app/api/admin/preview/route.ts",
+          "app/src/app/api/admin/projects/route.ts",
+          "app/src/app/api/admin/publish/route.ts",
+          "app/src/app/api/admin/rollback/route.ts",
+          "app/src/features/admin/draft-preview.tsx",
+          "app/src/features/admin/project-editor.tsx",
+          "app/src/features/admin/publish-review.tsx",
+          "app/src/features/admin/structured-block-editor.tsx",
+          "app/src/features/portfolio/case-study.tsx",
+          "app/src/server/content/preview.ts",
+          "app/src/server/content/publish.ts",
+          "app/src/server/content/revisions.ts",
+          "app/src/server/media/manifest.ts",
+          "app/tests/e2e/platform/admin-publish.spec.ts",
+          "app/tests/e2e/platform/completion-authoring-workflow.spec.ts",
+          "app/tests/integration/platform/canonical-platform.test.ts",
+          "app/tests/integration/platform/completion-authoring-preview.test.ts",
+          "app/tests/integration/platform/publication.test.ts",
+          "app/tests/unit/platform/completion-authoring-blocks.test.ts"
+        ]
+      ],
+      "workingDirectory": "deliveries/FINISH-A1-R8/.work/replay/app",
+      "exitCode": 0,
+      "startedUtc": null,
+      "durationSeconds": null,
+      "rawLog": "evidence/r8/logs/patch-replay.log",
+      "rawReceipt": "evidence/r8/logs/patch-replay.json"
+    },
+    {
+      "label": "final-build",
+      "status": "PASS",
+      "summary": "Production Next.js Turbopack build completed.",
+      "command": [
+        "node",
+        "node_modules/next/dist/bin/next",
+        "build"
+      ],
+      "workingDirectory": "deliveries/FINISH-A1-R8/.work/replay/app",
+      "exitCode": 0,
+      "startedUtc": "2026-10-12T04:12:39.971450+00:00",
+      "durationSeconds": 20.016,
+      "rawLog": "evidence/r8/logs/final-build.log",
+      "rawReceipt": "evidence/r8/logs/final-build.json"
+    },
+    {
+      "label": "browser-absent-draft-exact",
+      "status": "PASS",
+      "summary": "Isolated Chromium valid-slug absent-private-draft owner-page test: 1/1.",
+      "command": [
+        "node",
+        "node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/cli.js",
+        "test",
+        "tests/e2e/platform/completion-authoring-workflow.spec.ts",
+        "--project=chromium",
+        "--grep",
+        "owner request for an absent private draft"
+      ],
+      "workingDirectory": "deliveries/FINISH-A1-R8/.work/replay/app",
+      "exitCode": 0,
+      "startedUtc": "2026-10-12T04:14:32.276219+00:00",
+      "durationSeconds": 20.016,
+      "rawLog": "evidence/r8/logs/browser-absent-draft-exact.log",
+      "rawReceipt": "evidence/r8/logs/browser-absent-draft-exact.json"
+    },
+    {
+      "label": "browser-normal-fixture",
+      "status": "PASS",
+      "summary": "Chromium admin/authoring suite using unchanged normal fixture defaults: 6/6.",
+      "command": [
+        "node",
+        "node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/cli.js",
+        "test",
+        "tests/e2e/platform/admin-publish.spec.ts",
+        "tests/e2e/platform/completion-authoring-workflow.spec.ts",
+        "--project=chromium",
+        "--grep-invert",
+        "owner request for an absent private draft"
+      ],
+      "workingDirectory": "deliveries/FINISH-A1-R8/.work/replay/app",
+      "exitCode": 0,
+      "startedUtc": "2026-10-12T04:15:05.366793+00:00",
+      "durationSeconds": 20.015,
+      "rawLog": "evidence/r8/logs/browser-normal-fixture.log",
+      "rawReceipt": "evidence/r8/logs/browser-normal-fixture.json"
+    }
+  ],
+  "browserSummary": {
+    "expected": 7,
+    "unexpected": 0,
+    "skipped": 0,
+    "runs": [
+      "browser-absent-draft-exact",
+      "browser-normal-fixture"
+    ]
+  },
+  "staticBuildScan": {
+    "status": "PASS",
+    "scannedFiles": 980,
+    "matches": 0,
+    "path": "evidence/r8/static-build-sentinel-scan.json"
+  }
+}

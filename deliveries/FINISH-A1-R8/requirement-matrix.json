@@ -1,0 +1,610 @@
+{
+  "format": "YOR-WORLD-A1-R8-REQUIREMENT-MATRIX-v1",
+  "candidateAppTree": "0fdc8972f303cd5304f812f89ece493fef170ea1",
+  "sourceBaseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+  "rows": [
+    {
+      "clause": "FINISH-04/A1-01",
+      "requirement": "Candidate identity is bound to the exact accepted source base and frozen A1 path ownership.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/app/admin/editor/page.tsx",
+        "app/src/app/admin/preview/[slug]/page.tsx",
+        "app/src/app/admin/preview/page.tsx",
+        "app/src/app/admin/publish/page.tsx",
+        "app/src/app/api/admin/media/route.ts",
+        "app/src/app/api/admin/preview/media/[id]/route.ts",
+        "app/src/app/api/admin/preview/route.ts",
+        "app/src/app/api/admin/projects/route.ts",
+        "app/src/app/api/admin/publish/route.ts",
+        "app/src/app/api/admin/rollback/route.ts",
+        "app/src/features/admin/draft-preview.tsx",
+        "app/src/features/admin/project-editor.tsx",
+        "app/src/features/admin/publish-review.tsx",
+        "app/src/features/admin/structured-block-editor.tsx",
+        "app/src/features/portfolio/case-study.tsx",
+        "app/src/server/content/preview.ts",
+        "app/src/server/content/publish.ts",
+        "app/src/server/content/revisions.ts",
+        "app/src/server/media/manifest.ts",
+        "app/tests/e2e/platform/admin-publish.spec.ts",
+        "app/tests/e2e/platform/completion-authoring-workflow.spec.ts",
+        "app/tests/integration/platform/canonical-platform.test.ts",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts",
+        "app/tests/integration/platform/publication.test.ts",
+        "app/tests/unit/platform/completion-authoring-blocks.test.ts"
+      ],
+      "evidencePaths": [
+        "changed-paths.txt",
+        "evidence/r8/logs/patch-replay.json",
+        "evidence/r8/logs/patch-replay.log",
+        "source.patch"
+      ],
+      "limits": "25 changed paths are a subset of the 26 frozen A1 paths. Canonical app/ was not modified. Candidate is a maker return, not an accepted overlay."
+    },
+    {
+      "clause": "FINISH-04/A1-02",
+      "requirement": "Four content block variants, section and list editing, order, keyboard controls, focus, and retained failed-save buffers.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/features/admin/project-editor.tsx",
+        "app/src/features/admin/structured-block-editor.tsx",
+        "app/tests/unit/platform/completion-authoring-blocks.test.ts",
+        "app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+      ],
+      "evidencePaths": [
+        "evidence/r8/browser-absent-draft-exact/browser-results.json",
+        "evidence/r8/browser-normal-fixture/browser-results.json",
+        "evidence/r8/logs/browser-absent-draft-exact.log",
+        "evidence/r8/logs/browser-normal-fixture.log",
+        "evidence/r8/logs/final-full-integration.log",
+        "evidence/r8/logs/final-full-unit.log"
+      ],
+      "limits": "Local unit/integration plus local Chromium only; no assistive-technology or physical-device session."
+    },
+    {
+      "clause": "FINISH-04/A1-03",
+      "requirement": "Review identity binds complete publishable project documents, preserves array order, canonicalizes object keys, and recomputes before publish.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/server/content/preview.ts",
+        "app/src/server/content/publish.ts",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts"
+      ],
+      "evidencePaths": [
+        "evidence/r8/logs/browser-absent-draft-exact.log",
+        "evidence/r8/logs/browser-normal-fixture.log",
+        "evidence/r8/logs/final-full-integration.log"
+      ],
+      "limits": "Embedded PGlite and deterministic local tests only; no native multi-process PostgreSQL race test."
+    },
+    {
+      "clause": "FINISH-04/A1-04",
+      "requirement": "Private draft review and preview are owner guarded, nonpublishable for CandidateX, escaped, and use a guarded private image route.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/app/admin/preview/[slug]/page.tsx",
+        "app/src/app/admin/preview/page.tsx",
+        "app/src/app/api/admin/preview/route.ts",
+        "app/src/app/api/admin/preview/media/[id]/route.ts",
+        "app/src/features/admin/draft-preview.tsx",
+        "app/src/features/portfolio/case-study.tsx",
+        "app/src/server/content/preview.ts",
+        "app/src/server/media/manifest.ts",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts"
+      ],
+      "evidencePaths": [
+        "evidence/candidatex-private-preview.png",
+        "evidence/r8/browser-absent-draft-exact/browser-results.json",
+        "evidence/r8/browser-normal-fixture/browser-results.json",
+        "evidence/r8/logs/browser-absent-draft-exact.log",
+        "evidence/r8/logs/browser-normal-fixture.log",
+        "evidence/r8/logs/final-full-integration.log"
+      ],
+      "limits": "Synthetic local identity and PGlite/mocked Storage; no provider Auth or Storage."
+    },
+    {
+      "clause": "FINISH-04/A1-05",
+      "requirement": "Save validates content/media before writes; stale revision/review conflicts do not partially mutate durable publication state.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/server/content/revisions.ts",
+        "app/src/server/content/publish.ts",
+        "app/src/app/api/admin/projects/route.ts",
+        "app/src/app/api/admin/publish/route.ts",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts",
+        "app/tests/integration/platform/publication.test.ts",
+        "app/tests/integration/platform/canonical-platform.test.ts"
+      ],
+      "evidencePaths": [
+        "evidence/publish-rollback-review.png",
+        "evidence/r8/logs/browser-absent-draft-exact.log",
+        "evidence/r8/logs/browser-normal-fixture.log",
+        "evidence/r8/logs/final-full-integration.log"
+      ],
+      "limits": "Local PGlite and test auth; native PostgreSQL, provider concurrency and live rollback not run."
+    },
+    {
+      "clause": "FINISH-04/A1-06",
+      "requirement": "Private API responses use no-store and truthful cache/visibility states; public output excludes private draft sentinels.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/app/api/admin/media/route.ts",
+        "app/src/app/api/admin/preview/media/[id]/route.ts",
+        "app/src/app/api/admin/preview/route.ts",
+        "app/src/app/api/admin/projects/route.ts",
+        "app/src/app/api/admin/publish/route.ts",
+        "app/src/app/api/admin/rollback/route.ts",
+        "app/src/server/content/publish.ts"
+      ],
+      "evidencePaths": [
+        "evidence/r8/logs/browser-absent-draft-exact.log",
+        "evidence/r8/logs/browser-normal-fixture.log",
+        "evidence/r8/logs/final-full-integration.log",
+        "evidence/r8/static-build-sentinel-scan.json"
+      ],
+      "limits": "Local browser and built output only; CDN/shared-cache and deployed origin behavior not observed."
+    },
+    {
+      "clause": "A3-01",
+      "requirement": "Candidate package identity, exact base, source tree, patch, allowed path set, and replacement bytes are reproducible.",
+      "status": "PASS",
+      "sourcePaths": [
+        "changed-paths.txt",
+        "source.patch",
+        "source/"
+      ],
+      "evidencePaths": [
+        "evidence/r8/logs/patch-replay.json",
+        "evidence/r8/logs/patch-replay.log",
+        "input-hashes.json"
+      ],
+      "limits": "Replay verified in a disposable linked Git worktree at the exact base. Package commit/push is separate from acceptance."
+    },
+    {
+      "clause": "A3-02",
+      "requirement": "Strict review DTO validation and API/service enforcement of complete review identity and expected revision.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/server/content/preview.ts",
+        "app/src/server/content/publish.ts",
+        "app/src/app/api/admin/publish/route.ts",
+        "app/src/app/api/admin/projects/route.ts",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts"
+      ],
+      "evidencePaths": [
+        "evidence/r8/logs/final-full-integration.log",
+        "evidence/r8/logs/final-full-unit.log"
+      ],
+      "limits": "Embedded PGlite/mock auth only; no hosted API or native provider validation."
+    },
+    {
+      "clause": "A3-03-HASH",
+      "requirement": "Candidate hash covers project bodies and ordered document arrays while canonicalizing object-key order.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/server/content/preview.ts",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts"
+      ],
+      "evidencePaths": [
+        "evidence/r8/logs/final-full-integration.log"
+      ],
+      "limits": "Local deterministic checks; source identity is candidate tree 0fdc8972f303cd5304f812f89ece493fef170ea1."
+    },
+    {
+      "clause": "A3-03-DURABLE",
+      "requirement": "Publication revision and draft/project locks are checked in one ordered durable transaction; stale review rejects before writes.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/server/content/publish.ts",
+        "app/src/server/content/revisions.ts",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts",
+        "app/tests/integration/platform/publication.test.ts"
+      ],
+      "evidencePaths": [
+        "evidence/r8/logs/final-full-integration.log"
+      ],
+      "limits": "PGlite embedded SQL evidence; no native PostgreSQL sessions or multi-process races."
+    },
+    {
+      "clause": "A3-03-MEDIA",
+      "requirement": "Reviewed media identity and fetched bytes are bound to approved metadata, type, dimensions, size and SHA-256.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/server/media/manifest.ts",
+        "app/src/server/content/preview.ts",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts"
+      ],
+      "evidencePaths": [
+        "evidence/r8/logs/final-full-integration.log"
+      ],
+      "limits": "Synthetic PNG, mocked Storage, and local registry fixtures; no genuinely provider-approved bytes."
+    },
+    {
+      "clause": "A3-03-STREAM",
+      "requirement": "Private media stream enforces a 5 MiB streaming cap, cancellation, declared-length validation, and a 10-second deadline.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/server/media/manifest.ts",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts"
+      ],
+      "evidencePaths": [
+        "evidence/r8/logs/final-full-integration.log"
+      ],
+      "limits": "Local mocked streams only; provider network timing and cancellation semantics remain unverified."
+    },
+    {
+      "clause": "A3-04-API",
+      "requirement": "Media listing, save validation, and private byte proxy enforce approval and authorization boundaries.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/app/api/admin/media/route.ts",
+        "app/src/app/api/admin/preview/media/[id]/route.ts",
+        "app/src/app/api/admin/projects/route.ts",
+        "app/src/server/media/manifest.ts",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts"
+      ],
+      "evidencePaths": [
+        "evidence/r8/logs/final-full-integration.log"
+      ],
+      "limits": "Synthetic auth and mocked Storage; no native provider behavior."
+    },
+    {
+      "clause": "A3-04-BROWSER",
+      "requirement": "Real editor picker selects a clearly synthetic approved PNG, saves/reopens the draft, and displays the image through guarded private preview.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/features/admin/project-editor.tsx",
+        "app/src/features/admin/draft-preview.tsx",
+        "app/src/app/api/admin/preview/media/[id]/route.ts",
+        "app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+      ],
+      "evidencePaths": [
+        "evidence/candidatex-private-preview.png",
+        "evidence/r8/browser-absent-draft-exact/browser-results.json",
+        "evidence/r8/browser-binding.json",
+        "evidence/r8/browser-normal-fixture/browser-results.json",
+        "evidence/r8/logs/browser-absent-draft-exact.log",
+        "evidence/r8/logs/browser-normal-fixture.log"
+      ],
+      "limits": "This is a local synthetic test fixture, not provider approval or production content."
+    },
+    {
+      "clause": "A3-05-PRIVACY",
+      "requirement": "CandidateX private preview does not publish and private drafts/media do not leak through public HTML or API.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/server/content/preview.ts",
+        "app/src/server/media/manifest.ts",
+        "app/src/app/api/admin/preview/route.ts",
+        "app/src/app/api/admin/preview/media/[id]/route.ts",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts",
+        "app/tests/e2e/platform/admin-publish.spec.ts"
+      ],
+      "evidencePaths": [
+        "evidence/r8/logs/browser-absent-draft-exact.log",
+        "evidence/r8/logs/browser-normal-fixture.log",
+        "evidence/r8/logs/final-full-integration.log",
+        "evidence/r8/static-build-sentinel-scan.json"
+      ],
+      "limits": "Local browser and static build scan only; no CDN, shared edge, or deployed-origin proof."
+    },
+    {
+      "clause": "A3-05-ROLLBACK",
+      "requirement": "Local publish and rollback workflow reports committed/origin visibility truthfully and preserves expected-revision/reason checks.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/server/content/publish.ts",
+        "app/src/app/api/admin/rollback/route.ts",
+        "app/src/features/admin/publish-review.tsx",
+        "app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+      ],
+      "evidencePaths": [
+        "evidence/publish-rollback-review.png",
+        "evidence/r8/browser-absent-draft-exact/browser-results.json",
+        "evidence/r8/browser-normal-fixture/browser-results.json",
+        "evidence/r8/logs/browser-absent-draft-exact.log",
+        "evidence/r8/logs/browser-normal-fixture.log"
+      ],
+      "limits": "Local fixture only; live CDN visibility and hosted rollback were not run."
+    },
+    {
+      "clause": "A3-05-HEADERS",
+      "requirement": "Private no-store and Vary headers cover tested success, denial, validation, and not-found branches.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/app/api/admin/media/route.ts",
+        "app/src/app/api/admin/preview/media/[id]/route.ts",
+        "app/src/app/api/admin/preview/route.ts",
+        "app/src/app/api/admin/projects/route.ts",
+        "app/src/app/api/admin/publish/route.ts",
+        "app/src/app/api/admin/rollback/route.ts"
+      ],
+      "evidencePaths": [
+        "evidence/r8/logs/final-full-integration.log"
+      ],
+      "limits": "Only the explicit local test branches; provider outage/503 and deployed intermediary behavior not run."
+    },
+    {
+      "clause": "A3-06-LOCAL",
+      "requirement": "Full local unit and integration suites, lint, typecheck and production build.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/"
+      ],
+      "evidencePaths": [
+        "evidence/r8/logs/final-full-unit.log",
+        "evidence/r8/logs/final-full-integration.log",
+        "evidence/r8/logs/final-lint.log",
+        "evidence/r8/logs/final-typecheck.log",
+        "evidence/r8/logs/final-build.log",
+        "evidence/r8/logs/patch-replay.log",
+        "evidence/r8/verification-results.json",
+        "evidence/r8/build-binding.json"
+      ],
+      "limits": "R8 exact-base local reruns; PGlite and deterministic local tests. No native multi-process PostgreSQL or provider environment."
+    },
+    {
+      "clause": "A3-06-BROWSER",
+      "requirement": "Required Chromium workflow on the final bound candidate build.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/tests/e2e/platform/admin-publish.spec.ts",
+        "app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+      ],
+      "evidencePaths": [
+        "evidence/r8/logs/browser-absent-draft-exact.log",
+        "evidence/r8/logs/browser-normal-fixture.log",
+        "evidence/r8/browser-absent-draft-exact/browser-results.json",
+        "evidence/r8/browser-normal-fixture/browser-results.json",
+        "evidence/r8/browser-binding.json"
+      ],
+      "limits": "7 passing Chromium tests across two runs (1 isolated absent-draft owner-page case; 6 normal-fixture cases). Local PGlite, synthetic owner auth/media. Provider Auth/Storage and deployed routing remain NOT RUN."
+    },
+    {
+      "clause": "FINISH-12-01",
+      "requirement": "Review hash binds full publishable project bodies and preserves project/document/block order while canonicalizing object keys.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/server/content/preview.ts",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts"
+      ],
+      "evidencePaths": [
+        "evidence/r8/logs/final-full-integration.log"
+      ],
+      "limits": "Local test coverage only."
+    },
+    {
+      "clause": "FINISH-12-02",
+      "requirement": "Private media reads reject oversized declared lengths before reading, stream within 5 MiB, cancel on overflow/error, check EOF length, and time out at 10 seconds.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/server/media/manifest.ts",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts"
+      ],
+      "evidencePaths": [
+        "evidence/r8/logs/final-full-integration.log"
+      ],
+      "limits": "Mocked streams; native provider response and network deadlines are not established."
+    },
+    {
+      "clause": "FINISH-12-03",
+      "requirement": "Private review DTO validates complete records, coherent IDs/checks/timestamps/actors and canPublish semantics; malformed legacy probes are rejected.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/server/content/preview.ts",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts"
+      ],
+      "evidencePaths": [
+        "evidence/r8/logs/final-full-integration.log",
+        "evidence/r8/logs/final-full-unit.log"
+      ],
+      "limits": "Local schema tests only."
+    },
+    {
+      "clause": "FINISH-12-04",
+      "requirement": "Chromium performs actual image selection, save, reopen and guarded private image preview with an explicitly synthetic PNG.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/features/admin/project-editor.tsx",
+        "app/src/features/admin/draft-preview.tsx",
+        "app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+      ],
+      "evidencePaths": [
+        "evidence/candidatex-private-preview.png",
+        "evidence/r8/browser-absent-draft-exact/browser-results.json",
+        "evidence/r8/browser-binding.json",
+        "evidence/r8/browser-normal-fixture/browser-results.json",
+        "evidence/r8/logs/browser-absent-draft-exact.log",
+        "evidence/r8/logs/browser-normal-fixture.log"
+      ],
+      "limits": "Synthetic fixture is not provider-approved; production Supabase media remains untested."
+    },
+    {
+      "clause": "FINISH-12-05",
+      "requirement": "Standalone matrix maps assigned clauses to source paths, evidence paths, result and scope limits.",
+      "status": "PASS",
+      "sourcePaths": [
+        "requirement-matrix.json"
+      ],
+      "evidencePaths": [
+        "requirement-matrix.json"
+      ],
+      "limits": "Maker traceability only; not independent audit or acceptance."
+    },
+    {
+      "clause": "FINISH-12-06",
+      "requirement": "Exact-base patch replay, candidate/source/build/browser bindings, tool versions, logs and captures are packaged.",
+      "status": "PASS",
+      "sourcePaths": [
+        "source.patch",
+        "changed-paths.txt",
+        "source/"
+      ],
+      "evidencePaths": [
+        "evidence/r8/browser-binding.json",
+        "evidence/r8/build-output-manifest.json",
+        "evidence/r8/logs/browser-absent-draft-exact.log",
+        "evidence/r8/logs/browser-normal-fixture.log",
+        "evidence/r8/logs/patch-replay.log",
+        "evidence/r8/tool-versions.txt",
+        "input-hashes.json"
+      ],
+      "limits": "Local reproducibility evidence; no external reviewer was run."
+    },
+    {
+      "clause": "LIMIT-NATIVE",
+      "requirement": "Native PostgreSQL/Auth/Storage and concurrent provider-backed media mutation tests.",
+      "status": "NOT RUN",
+      "sourcePaths": [],
+      "evidencePaths": [
+        "report.md",
+        "requirement-matrix.json"
+      ],
+      "limits": "Only embedded PGlite, synthetic auth and mocked Storage were used; no provider credentials or sessions."
+    },
+    {
+      "clause": "LIMIT-DEPLOYMENT-CDN",
+      "requirement": "Deployed origin, production hosting, CDN/shared-cache visibility and live rollback.",
+      "status": "NOT RUN",
+      "sourcePaths": [],
+      "evidencePaths": [
+        "evidence/r8/static-build-sentinel-scan.json",
+        "report.md"
+      ],
+      "limits": "No deployment or CDN access was used; local build scan cannot establish deployed behavior."
+    },
+    {
+      "clause": "LIMIT-DEVICE-RECOVERY-MANUAL",
+      "requirement": "Physical devices, assistive technology, backup/recovery rehearsal and manual acceptance.",
+      "status": "NOT RUN",
+      "sourcePaths": [],
+      "evidencePaths": [
+        "report.md"
+      ],
+      "limits": "No physical devices, screen-reader sessions, recovery target, or manual operator session was available or executed."
+    },
+    {
+      "clause": "GATE-INDEPENDENT-PARENT",
+      "requirement": "Independent audit, delta review, Parent implementation acceptance, and canonical integration.",
+      "status": "NOT RUN",
+      "sourcePaths": [],
+      "evidencePaths": [
+        "report.md"
+      ],
+      "limits": "Maker cannot self-accept. Package is returned for fresh independent audit and separate Parent ruling; app/ remains unchanged."
+    },
+    {
+      "clause": "FINISH-27/A1-R5-01",
+      "requirement": "Frozen wire compatibility: approvalAudit is {eventId,createdAt}; PrivateDraftReview has only accepted fields; ReviewCheck allows generic project/site scope and string ID; malformed extras are rejected.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/server/media/manifest.ts",
+        "app/src/server/content/preview.ts",
+        "app/tests/unit/platform/completion-authoring-blocks.test.ts",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts"
+      ],
+      "evidencePaths": [
+        "evidence/r8/logs/final-focused-integration.log",
+        "evidence/r8/logs/final-focused-unit.log"
+      ],
+      "limits": "Local schema and PGlite integration tests; no deployed API run."
+    },
+    {
+      "clause": "FINISH-27/A1-R5-02",
+      "requirement": "Healthy publish and rollback refreshes consume activePublication and show the current review/publication identity without a page reload.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/features/admin/publish-review.tsx",
+        "app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+      ],
+      "evidencePaths": [
+        "evidence/publish-rollback-review.png",
+        "evidence/r8/browser-absent-draft-exact/browser-results.json",
+        "evidence/r8/browser-binding.json",
+        "evidence/r8/browser-normal-fixture/browser-results.json",
+        "evidence/r8/logs/browser-absent-draft-exact.log",
+        "evidence/r8/logs/browser-normal-fixture.log"
+      ],
+      "limits": "Local Chromium/PGlite fixture; CDN and deployed-origin state not observed."
+    },
+    {
+      "clause": "FINISH-27/A1-R5-03",
+      "requirement": "A requested private draft that does not exist returns 404 from the API and reaches the page not-found path without constructing a successful review or leaking content.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/server/content/preview.ts",
+        "app/src/app/api/admin/preview/route.ts",
+        "app/src/app/admin/preview/[slug]/page.tsx",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts"
+      ],
+      "evidencePaths": [
+        "evidence/r8/logs/final-focused-integration.log",
+        "evidence/r8/logs/final-full-integration.log",
+        "evidence/r8/logs/browser-absent-draft-exact.log",
+        "evidence/r8/browser-absent-draft-exact/browser-results.json",
+        "evidence/r8/screenshots/absent-private-draft-not-found.png"
+      ],
+      "limits": "Owner-page branch exercised in local Chromium with a valid project slug absent from the isolated synthetic draft fixture; API/API page behavior is local. No provider Auth or deployed route test."
+    },
+    {
+      "clause": "FINISH-27/A1-R5-04",
+      "requirement": "An authorized stale save returns the current draft revision/content in 409 without writes; unauthorized callers receive no draft content; editor preserves the unsaved buffer.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/server/content/revisions.ts",
+        "app/src/app/api/admin/projects/route.ts",
+        "app/src/features/admin/project-editor.tsx",
+        "app/tests/integration/platform/completion-authoring-preview.test.ts",
+        "app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+      ],
+      "evidencePaths": [
+        "evidence/r8/browser-binding.json",
+        "evidence/r8/logs/browser-absent-draft-exact.log",
+        "evidence/r8/logs/browser-normal-fixture.log",
+        "evidence/r8/logs/final-focused-integration.log"
+      ],
+      "limits": "Embedded PGlite and synthetic auth; native PostgreSQL concurrency not run."
+    },
+    {
+      "clause": "FINISH-27/A1-R5-05",
+      "requirement": "Draft images render only for the exact canonical owner-preview media URL for the encoded ID; absolute, origin-confused, query, fragment and traversal inputs are rejected.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/features/portfolio/case-study.tsx",
+        "app/tests/unit/platform/completion-authoring-blocks.test.ts"
+      ],
+      "evidencePaths": [
+        "evidence/r8/logs/final-focused-unit.log",
+        "evidence/r8/logs/final-full-unit.log"
+      ],
+      "limits": "Exact URL allow/deny cases are unit tested; no live CDN or deployed browser-origin test."
+    },
+    {
+      "clause": "FINISH-27/A1-R5-06",
+      "requirement": "New section, paragraph, list, code and link content defaults are empty; links have no fabricated URL/check time; evidence defaults remain unknown/null.",
+      "status": "PASS",
+      "sourcePaths": [
+        "app/src/features/admin/project-editor.tsx",
+        "app/src/features/admin/structured-block-editor.tsx",
+        "app/tests/unit/platform/completion-authoring-blocks.test.ts",
+        "app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+      ],
+      "evidencePaths": [
+        "evidence/r8/logs/final-focused-unit.log",
+        "evidence/r8/logs/browser-normal-fixture.log",
+        "evidence/r8/browser-normal-fixture/browser-results.json",
+        "evidence/r8/logs/final-full-unit.log"
+      ],
+      "limits": "Blank and unknown defaults asserted in local authoring UI and persisted project API under synthetic local owner fixture; no provider write or production authoring session."
+    }
+  ],
+  "sourcePatchSha256": "6241ab27996cea9518d0d202e6cf3c9a362c63e283a91e2180158814e871f061",
+  "makerStatus": "FINISH-45 focused test/evidence correction complete; independent review and Parent acceptance pending.",
+  "frozenAllowlistCount": 26,
+  "changedPathCount": 25,
+  "unchangedAllowedPath": "app/tests/integration/platform/published-media.test.ts",
+  "sourceCandidateCommit": "76d679dcb98064152021830b98f16eb456b3ae19",
+  "sourceCandidateCommitTree": "6bb0a24c3ec9b716a4728b88fc0e07d5df440cd6",
+  "replayedCandidateTree": "5dc26a201e715ca15757ae661639589948ab4800"
+}

@@ -1,0 +1,529 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "tests/e2e/platform/admin-publish.spec.ts",
+      "tests/e2e/platform/completion-authoring-workflow.spec.ts",
+      "--project=chromium"
+    ],
+    "configFile": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\playwright.config.ts",
+    "rootDir": "F:/Yor-World-A1-R8/deliveries/FINISH-A1-R8/.work/replay/app/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "F:/Yor-World-A1-R8/deliveries/FINISH-A1-R8/.work/replay/app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "F:/Yor-World-A1-R8/deliveries/FINISH-A1-R8/.work/replay/app/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\evidence\\r8\\browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 4317",
+      "url": "http://127.0.0.1:4317",
+      "reuseExistingServer": false,
+      "timeout": 60000,
+      "env": {
+        "NEXT_TELEMETRY_DISABLED": "1"
+      },
+      "stdout": "ignore",
+      "stderr": "pipe"
+    }
+  },
+  "suites": [
+    {
+      "title": "platform\\admin-publish.spec.ts",
+      "file": "platform/admin-publish.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Milestone A4: Project Editor & Publication Management E2E",
+          "file": "platform/admin-publish.spec.ts",
+          "line": 44,
+          "column": 6,
+          "specs": [
+            {
+              "title": "admin navigation includes links to Dashboard, Editor, and Publish",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7172,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('navigation', { name: /Administration navigation/i })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('navigation', { name: /Administration navigation/i }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('navigation', { name: /Administration navigation/i })\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('navigation', { name: /Administration navigation/i })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('navigation', { name: /Administration navigation/i }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('navigation', { name: /Administration navigation/i })\u001b[22m\n\n    at F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\tests\\e2e\\platform\\admin-publish.spec.ts:52:23",
+                        "location": {
+                          "file": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\tests\\e2e\\platform\\admin-publish.spec.ts",
+                          "column": 23,
+                          "line": 52
+                        },
+                        "snippet": "  50 |\n  51 |     const nav = page.getByRole(\"navigation\", { name: /Administration navigation/i });\n> 52 |     await expect(nav).toBeVisible();\n     |                       ^\n  53 |\n  54 |     const editorLink = page.getByRole(\"link\", { name: /^Editor$/i });\n  55 |     await expect(editorLink).toBeVisible();"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\tests\\e2e\\platform\\admin-publish.spec.ts",
+                            "column": 23,
+                            "line": 52
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('navigation', { name: /Administration navigation/i })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('navigation', { name: /Administration navigation/i }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('navigation', { name: /Administration navigation/i })\u001b[22m\n\n\n  50 |\n  51 |     const nav = page.getByRole(\"navigation\", { name: /Administration navigation/i });\n> 52 |     await expect(nav).toBeVisible();\n     |                       ^\n  53 |\n  54 |     const editorLink = page.getByRole(\"link\", { name: /^Editor$/i });\n  55 |     await expect(editorLink).toBeVisible();\n    at F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\tests\\e2e\\platform\\admin-publish.spec.ts:52:23"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-12T04:04:14.526Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\test-results\\platform-admin-publish-Mil-c5092-ashboard-Editor-and-Publish-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\test-results\\platform-admin-publish-Mil-c5092-ashboard-Editor-and-Publish-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\tests\\e2e\\platform\\admin-publish.spec.ts",
+                        "column": 23,
+                        "line": 52
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "2551250f49b45418769d-793bb432c48cf3c9c5cd",
+              "file": "platform/admin-publish.spec.ts",
+              "line": 48,
+              "column": 3
+            },
+            {
+              "title": "loads project editor with structured editing controls",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 5524,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveTitle\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/Project Editor \\| YOR WORLD Administration/i\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveTitle\" with timeout 5000ms\u001b[22m\n\u001b[2m    13 × locator resolved to <html id=\"__next_error__\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveTitle\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/Project Editor \\| YOR WORLD Administration/i\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveTitle\" with timeout 5000ms\u001b[22m\n\u001b[2m    13 × locator resolved to <html id=\"__next_error__\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"\"\u001b[22m\n\n    at F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\tests\\e2e\\platform\\admin-publish.spec.ts:66:24",
+                        "location": {
+                          "file": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\tests\\e2e\\platform\\admin-publish.spec.ts",
+                          "column": 24,
+                          "line": 66
+                        },
+                        "snippet": "  64 |     await page.goto(\"/admin/editor\");\n  65 |\n> 66 |     await expect(page).toHaveTitle(/Project Editor \\| YOR WORLD Administration/i);\n     |                        ^\n  67 |     const heading = page.getByRole(\"heading\", { level: 1, name: /Project Content & Draft Editor/i });\n  68 |     await expect(heading).toBeVisible();\n  69 |     await captureScreenshot(page, \"a4-project-editor\");"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\tests\\e2e\\platform\\admin-publish.spec.ts",
+                            "column": 24,
+                            "line": 66
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveTitle\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/Project Editor \\| YOR WORLD Administration/i\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveTitle\" with timeout 5000ms\u001b[22m\n\u001b[2m    13 × locator resolved to <html id=\"__next_error__\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"\"\u001b[22m\n\n\n  64 |     await page.goto(\"/admin/editor\");\n  65 |\n> 66 |     await expect(page).toHaveTitle(/Project Editor \\| YOR WORLD Administration/i);\n     |                        ^\n  67 |     const heading = page.getByRole(\"heading\", { level: 1, name: /Project Content & Draft Editor/i });\n  68 |     await expect(heading).toBeVisible();\n  69 |     await captureScreenshot(page, \"a4-project-editor\");\n    at F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\tests\\e2e\\platform\\admin-publish.spec.ts:66:24"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-12T04:04:27.258Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\test-results\\platform-admin-publish-Mil-9b274-structured-editing-controls-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\test-results\\platform-admin-publish-Mil-9b274-structured-editing-controls-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\tests\\e2e\\platform\\admin-publish.spec.ts",
+                        "column": 24,
+                        "line": 66
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "2551250f49b45418769d-188bc2ac4ecb7ca72746",
+              "file": "platform/admin-publish.spec.ts",
+              "line": 63,
+              "column": 3
+            },
+            {
+              "title": "loads publish review with pre-flight checklist and publication history table",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 5526,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveTitle\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/Publish Review & Rollback \\| YOR WORLD Administration/i\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveTitle\" with timeout 5000ms\u001b[22m\n\u001b[2m    14 × locator resolved to <html id=\"__next_error__\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveTitle\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/Publish Review & Rollback \\| YOR WORLD Administration/i\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveTitle\" with timeout 5000ms\u001b[22m\n\u001b[2m    14 × locator resolved to <html id=\"__next_error__\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"\"\u001b[22m\n\n    at F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\tests\\e2e\\platform\\admin-publish.spec.ts:97:24",
+                        "location": {
+                          "file": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\tests\\e2e\\platform\\admin-publish.spec.ts",
+                          "column": 24,
+                          "line": 97
+                        },
+                        "snippet": "   95 |     await page.goto(\"/admin/publish\");\n   96 |\n>  97 |     await expect(page).toHaveTitle(/Publish Review & Rollback \\| YOR WORLD Administration/i);\n      |                        ^\n   98 |     const heading = page.getByRole(\"heading\", { level: 1, name: /Publication Review & Rollback/i });\n   99 |     await expect(heading).toBeVisible();\n  100 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\tests\\e2e\\platform\\admin-publish.spec.ts",
+                            "column": 24,
+                            "line": 97
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveTitle\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/Publish Review & Rollback \\| YOR WORLD Administration/i\u001b[39m\nReceived string:  \u001b[31m\"\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveTitle\" with timeout 5000ms\u001b[22m\n\u001b[2m    14 × locator resolved to <html id=\"__next_error__\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"\"\u001b[22m\n\n\n   95 |     await page.goto(\"/admin/publish\");\n   96 |\n>  97 |     await expect(page).toHaveTitle(/Publish Review & Rollback \\| YOR WORLD Administration/i);\n      |                        ^\n   98 |     const heading = page.getByRole(\"heading\", { level: 1, name: /Publication Review & Rollback/i });\n   99 |     await expect(heading).toBeVisible();\n  100 |\n    at F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\tests\\e2e\\platform\\admin-publish.spec.ts:97:24"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-12T04:04:35.657Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\test-results\\platform-admin-publish-Mil-4631d-d-publication-history-table-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\test-results\\platform-admin-publish-Mil-4631d-d-publication-history-table-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\tests\\e2e\\platform\\admin-publish.spec.ts",
+                        "column": 24,
+                        "line": 97
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "2551250f49b45418769d-730db2b0e245ea019029",
+              "file": "platform/admin-publish.spec.ts",
+              "line": 94,
+              "column": 3
+            },
+            {
+              "title": "editor and publish interfaces require zero WebGL, canvas, or 3D models",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2100,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-12T04:04:43.713Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2551250f49b45418769d-e8b927105f966bb47309",
+              "file": "platform/admin-publish.spec.ts",
+              "line": 121,
+              "column": 3
+            },
+            {
+              "title": "public portfolio continues to serve approved snapshot with no private media leakage",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 553,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-12T04:04:46.203Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2551250f49b45418769d-6d35c27da0cb3f415a5b",
+              "file": "platform/admin-publish.spec.ts",
+              "line": 138,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "platform\\completion-authoring-workflow.spec.ts",
+      "file": "platform/completion-authoring-workflow.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "FINISH A1 editor, private preview, and publication workflow",
+          "file": "platform/completion-authoring-workflow.spec.ts",
+          "line": 15,
+          "column": 6,
+          "specs": [
+            {
+              "title": "owner request for an absent private draft reaches the not-found page",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 428,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m404\u001b[39m\nReceived: \u001b[31m500\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m404\u001b[39m\nReceived: \u001b[31m500\u001b[39m\n    at F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\tests\\e2e\\platform\\completion-authoring-workflow.spec.ts:20:32",
+                        "location": {
+                          "file": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\tests\\e2e\\platform\\completion-authoring-workflow.spec.ts",
+                          "column": 32,
+                          "line": 20
+                        },
+                        "snippet": "  18 |   test(\"owner request for an absent private draft reaches the not-found page\", async ({ page }) => {\n  19 |     const response = await page.goto(\"/admin/preview/candidatex\");\n> 20 |     expect(response?.status()).toBe(404);\n     |                                ^\n  21 |     await expect(page.getByRole(\"heading\", { level: 1, name: \"Page not found\" })).toBeVisible();\n  22 |     await expect(page.getByText(\"This page is not available. Only verified projects will have published case studies.\")).toBeVisible();\n  23 |     const body = await page.locator(\"body\").innerText();"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\tests\\e2e\\platform\\completion-authoring-workflow.spec.ts",
+                            "column": 32,
+                            "line": 20
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m404\u001b[39m\nReceived: \u001b[31m500\u001b[39m\n\n  18 |   test(\"owner request for an absent private draft reaches the not-found page\", async ({ page }) => {\n  19 |     const response = await page.goto(\"/admin/preview/candidatex\");\n> 20 |     expect(response?.status()).toBe(404);\n     |                                ^\n  21 |     await expect(page.getByRole(\"heading\", { level: 1, name: \"Page not found\" })).toBeVisible();\n  22 |     await expect(page.getByText(\"This page is not available. Only verified projects will have published case studies.\")).toBeVisible();\n  23 |     const body = await page.locator(\"body\").innerText();\n    at F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\tests\\e2e\\platform\\completion-authoring-workflow.spec.ts:20:32"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-12T04:04:46.801Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\test-results\\platform-completion-author-704b5--reaches-the-not-found-page-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\test-results\\platform-completion-author-704b5--reaches-the-not-found-page-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\tests\\e2e\\platform\\completion-authoring-workflow.spec.ts",
+                        "column": 32,
+                        "line": 20
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "873dd968999caf8e555b-8a9bd685a7656e14f109",
+              "file": "platform/completion-authoring-workflow.spec.ts",
+              "line": 18,
+              "column": 3
+            },
+            {
+              "title": "edits, cancels, preserves a rich buffer on 409, previews private media, and publishes then rolls back",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 30080,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\tests\\e2e\\platform\\completion-authoring-workflow.spec.ts",
+                            "column": 46,
+                            "line": 31
+                          },
+                          "message": "Error: locator.selectOption: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel(/Select project/i)\u001b[22m\n\n\n  29 |   test(\"edits, cancels, preserves a rich buffer on 409, previews private media, and publishes then rolls back\", async ({ page, context }) => {\n  30 |     await page.goto(\"/admin/editor\");\n> 31 |     await page.getByLabel(/Select project/i).selectOption(\"candidatex\");\n     |                                              ^\n  32 |     const savedCandidateTitle = await page.getByLabel(/^Title$/i).inputValue();\n  33 |     await page.getByLabel(/^Title$/i).fill(\"Discard this unsaved title\");\n  34 |     await page.getByRole(\"button\", { name: /Discard unsaved changes/i }).click();\n    at F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\tests\\e2e\\platform\\completion-authoring-workflow.spec.ts:31:46"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-12T04:04:51.189Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\test-results\\platform-completion-author-77c76-d-publishes-then-rolls-back-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\test-results\\platform-completion-author-77c76-d-publishes-then-rolls-back-chromium\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "873dd968999caf8e555b-987b7f4cd2e1d7a57549",
+              "file": "platform/completion-authoring-workflow.spec.ts",
+              "line": 29,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-12T04:04:12.645Z",
+    "duration": 69964.91,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 5,
+    "flaky": 0
+  }
+}

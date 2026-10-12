@@ -1,0 +1,37 @@
+
+Running 1 test using 1 worker
+
+  x  1 [chromium] › tests\e2e\platform\completion-authoring-workflow.spec.ts:18:3 › FINISH A1 editor, private preview, and publication workflow › edits, cancels, preserves a rich buffer on 409, previews private media, and publishes then rolls back (10.6s)
+
+
+  1) [chromium] › tests\e2e\platform\completion-authoring-workflow.spec.ts:18:3 › FINISH A1 editor, private preview, and publication workflow › edits, cancels, preserves a rich buffer on 409, previews private media, and publishes then rolls back 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('status').filter({ hasText: /Rollback to revision .* committed\. Review refreshed/i })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('status').filter({ hasText: /Rollback to revision .* committed\. Review refreshed/i }) with timeout 5000ms
+      - waiting for getByRole('status').filter({ hasText: /Rollback to revision .* committed\. Review refreshed/i })
+
+
+      177 |     page.once("dialog", (dialog) => dialog.accept("Synthetic E2E rollback reason"));
+      178 |     await rollbackButton.click();
+    > 179 |     await expect(page.getByRole("status").filter({ hasText: /Rollback to revision .* committed\. Review refreshed/i })).toBeVisible();
+          |                                                                                                                         ^
+      180 |     await expect(page.getByRole("cell", { name: "Synthetic E2E rollback reason" })).toBeVisible();
+      181 |     await expect(page.getByText(/CDN\/edge not observed/i)).toBeVisible();
+      182 |     await capture(page, "publish-rollback-review.png");
+        at C:\Users\yoray\Projects\Yor World\deliveries\FINISH-A1\r5-07\.work\worker\app\tests\e2e\platform\completion-authoring-workflow.spec.ts:179:121
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\platform-completion-author-77c76-d-publishes-then-rolls-back-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\platform-completion-author-77c76-d-publishes-then-rolls-back-chromium\error-context.md
+
+  1 failed
+    [chromium] › tests\e2e\platform\completion-authoring-workflow.spec.ts:18:3 › FINISH A1 editor, private preview, and publication workflow › edits, cancels, preserves a rich buffer on 409, previews private media, and publishes then rolls back 

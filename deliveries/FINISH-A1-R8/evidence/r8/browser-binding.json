@@ -1,0 +1,77 @@
+{
+  "format": "YOR-WORLD-A1-R8-BROWSER-BINDING-v1",
+  "sourceCandidateCommit": "76d679dcb98064152021830b98f16eb456b3ae19",
+  "sourceBaseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+  "replayedCandidateTree": "5dc26a201e715ca15757ae661639589948ab4800",
+  "candidateAppTree": "0fdc8972f303cd5304f812f89ece493fef170ea1",
+  "sourcePatchSha256": "6241ab27996cea9518d0d202e6cf3c9a362c63e283a91e2180158814e871f061",
+  "buildId": "bkuEvCWn_avaExBuQBUoq",
+  "buildOutputManifestSha256": "9c7a9442aa03459c64b3b4e645d8a528259eda19caeca8c1ef3aeb817c59e53b",
+  "browserVersion": "153.0.8010.12",
+  "playwrightVersion": "1.63.0",
+  "runs": [
+    {
+      "name": "browser-absent-draft-exact",
+      "browserProject": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "expected": 1,
+      "unexpected": 0,
+      "skipped": 0,
+      "fixtureEnvironment": {
+        "YOR_E2E_FIXTURE": "1",
+        "YOR_E2E_OMIT_CANDIDATEX_DRAFT": "1"
+      },
+      "playwrightCommand": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\node_modules\\.pnpm\\playwright@1.63.0\\node_modules\\playwright\\cli.js",
+        "test",
+        "tests/e2e/platform/completion-authoring-workflow.spec.ts",
+        "--project=chromium",
+        "--grep",
+        "owner request for an absent private draft"
+      ],
+      "resultPath": "evidence/r8/browser-absent-draft-exact/browser-results.json",
+      "resultSha256": "df2d58755b4612ff76c445e6ac8c2c0be555f1e7631d77b3472c7e6927a547bd",
+      "rawLog": "evidence/r8/logs/browser-absent-draft-exact.log",
+      "testNames": [
+        "owner request for an absent private draft reaches the not-found page"
+      ]
+    },
+    {
+      "name": "browser-normal-fixture",
+      "browserProject": "chromium",
+      "browserVersion": "153.0.8010.12",
+      "expected": 6,
+      "unexpected": 0,
+      "skipped": 0,
+      "fixtureEnvironment": {
+        "YOR_E2E_FIXTURE": "1",
+        "YOR_E2E_OMIT_CANDIDATEX_DRAFT": "unset/default"
+      },
+      "playwrightCommand": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "F:\\Yor-World-A1-R8\\deliveries\\FINISH-A1-R8\\.work\\replay\\app\\node_modules\\.pnpm\\playwright@1.63.0\\node_modules\\playwright\\cli.js",
+        "test",
+        "tests/e2e/platform/admin-publish.spec.ts",
+        "tests/e2e/platform/completion-authoring-workflow.spec.ts",
+        "--project=chromium",
+        "--grep-invert",
+        "owner request for an absent private draft"
+      ],
+      "resultPath": "evidence/r8/browser-normal-fixture/browser-results.json",
+      "resultSha256": "f109b8f108e0a55f3091184405bb8c0b1ed7363a9ca048eac8e8a73f4e0d7b67",
+      "rawLog": "evidence/r8/logs/browser-normal-fixture.log",
+      "testNames": [
+        "admin navigation includes links to Dashboard, Editor, and Publish",
+        "loads project editor with structured editing controls",
+        "loads publish review with pre-flight checklist and publication history table",
+        "editor and publish interfaces require zero WebGL, canvas, or 3D models",
+        "public portfolio continues to serve approved snapshot with no private media leakage",
+        "edits, cancels, preserves a rich buffer on 409, previews private media, and publishes then rolls back"
+      ]
+    }
+  ],
+  "totalExpected": 7,
+  "totalUnexpected": 0,
+  "limits": "Local Chromium and PGlite with synthetic owner auth/media fixture; no provider Auth/Storage or deployed route was exercised."
+}
