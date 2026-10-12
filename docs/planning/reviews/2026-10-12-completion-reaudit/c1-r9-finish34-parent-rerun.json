@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "packet": "FINISH-34",
+  "reviewer": "Parent-local Codex; not GPT Plus #2",
+  "candidate": {
+    "branch": "codex/finish-30-c1-r9-20261011",
+    "remoteBranchHead": "3dda9a616033375768f3d5f60f8c653d504f7c8c",
+    "commit": "3dda9a616033375768f3d5f60f8c653d504f7c8c",
+    "tree": "5a38d405499737ff40b0141a64845c244a9e4813",
+    "parent": "c398876583bc337c069414b79364e3fdea745879",
+    "deliverySubtree": "aa097f12adff2dbac2c88d6300c949f37bf34251",
+    "pinnedSourceDeliverySubtree": "da822d0362e06e92497001583afb7405b7ccd472",
+    "canonicalAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d"
+  },
+  "packageBinding": {
+    "outputManifestSha256": "31903805363ed7d56521d334893d40d99079a716e1b374ac2a4c1895ecaff465",
+    "manifestRows": 26,
+    "manifestBytes": 145757,
+    "actualPackagePaths": 27,
+    "selfExcludedManifest": "output-hashes.json",
+    "allRowsMatchRawGitBlobs": true,
+    "unhashedPaths": [
+      "output-hashes.json"
+    ],
+    "commitAddsOnlyR9DeliveryRoot": true,
+    "canonicalAppUnchanged": true
+  },
+  "delta": {
+    "sharedR8FilesCompared": 22,
+    "changedSharedFiles": [
+      "requirement-matrix.json",
+      "scripts/finalize.py"
+    ],
+    "changedPathInventoryMatches": true,
+    "matrixRows": 7,
+    "onlyChangedRequirement": "E-02-05",
+    "oldE0205Evidence": [
+      "evidence/cli-negative-false-pass.json",
+      "evidence/cli-negative-false-pass.log"
+    ],
+    "newE0205Evidence": [
+      "evidence/cli-negative-false-pass.json"
+    ],
+    "allDistinctMatrixEvidencePathsResolve": true,
+    "distinctMatrixEvidencePaths": 5
+  },
+  "negativeCli": {
+    "candidateCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
+    "mutation": "zero sourceManifest.sha256 in a disposable copy",
+    "parentRerun": {
+      "exactCommittedRunnerAndInputsExtractedFrom": "3dda9a616033375768f3d5f60f8c653d504f7c8c",
+      "command": "python -B <temporary-R9-package>/scripts/verify-negative-cli.py",
+      "scratch": "fresh temporary directory under the governed checkout; removed on completion",
+      "pythonVersion": "Python 3.12.10",
+      "gitVersion": "git version 2.55.0.windows.5",
+      "runnerExitCode": 0,
+      "runnerStdout": "PASS: uncached verifier CLI rejected the zeroed manifest SHA-256 (exit 1)",
+      "runnerStderr": ""
+    },
+    "childExitCode": 1,
+    "childParsedStatus": "FAIL",
+    "childError": "candidate sourceManifest sha256 differs from the pinned R6 manifest blob",
+    "childStderr": "",
+    "sourceReceiptUnchanged": true
+  },
+  "disposition": {
+    "e0205EvidencePointerCorrection": "PASS",
+    "inheritedBehavioralTests": "NOT RUN",
+    "fullFinalizer": "NOT RUN",
+    "e01": "OPEN; not adjudicated by this recheck",
+    "externalGptPlus2": "NOT RUN",
+    "parentAcceptance": "PENDING",
+    "canonicalIntegration": false,
+    "g7": "NOT RUN"
+  }
+}

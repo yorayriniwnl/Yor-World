@@ -32,6 +32,14 @@ FINISH-44 expressly forbids camera-profile edits and says to report an anchor th
 
 FINISH-C1-R9 is an evidence correction, not a C1 runtime implementation acceptance. The parent-local FINISH-46 ruling closes only E-01 receipt integrity for C1-R7. FINISH-34's GPT Plus #2 delta audit is still marked not dispatched, and earlier R9 test receipts were not rerun during the FINISH-30/33 pointer correction. The existing status ledger remains authoritative for those bounded findings.
 
+### FINISH-34 parent-local E-02-05 pointer recheck
+
+I independently rebound the remote R9 branch, exact R8 parent, full tree, R9 subtree, source subtree, and unchanged canonical app tree. All 26 output-manifest rows (145,757 bytes) match raw Git blobs; the only unhashed package path is the self-excluded manifest. The commit adds only the R9 delivery root. Comparing 22 shared R8/R9 package files shows the E-02-05 matrix pointer and its matching finalizer template as the only inherited content changes; the matrix has seven rows, the other rows are unchanged, and all five distinct evidence paths resolve.
+
+The E-02-05 receipt points only to `evidence/cli-negative-false-pass.json`. I reran the committed R9 negative-runner and its exact committed inputs in fresh temporary scratch. The runner exited 0; its uncached child verifier returned structured `FAIL`, exit 1, and the expected pinned-manifest-hash error. The scratch was removed. Detailed identities and results are in [the parent rerun receipt](c1-r9-finish34-parent-rerun.json).
+
+**Disposition remains limited to the E-02-05 evidence-pointer correction: PASS.** This is Parent-local, not GPT Plus #2 review or C1 acceptance. I did not rerun the inherited behavior suite or full finalizer. FINISH-34 remains undispatched to GPT Plus #2; E-01 is still open, and C1 implementation acceptance, integration, provider/device, deployment, recovery, and G7 remain pending or NOT RUN.
+
 All three candidate root `app/` trees match the accepted RC6 source tree. No candidate has been canonically integrated. The existing hosted preview could not be rechecked: the Sites connector returned an empty project list on this audit, and Vercel/Supabase account access was not available in the local tools. This does not establish that the old private preview is offline; it means its current deployment and provider configuration were not verified here.
 
 ## Remaining work
