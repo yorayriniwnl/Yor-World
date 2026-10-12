@@ -46,6 +46,9 @@ test("reserveAttempt creates exclusive raw directory and prevents collisions", a
     assert.equal(fs.readFileSync(path.join(res.artifactDir, "data.txt"), "utf8"), "hello");
     res.writeReceipt({ status: "PASS" });
     assert.equal(fs.existsSync(res.output), true);
+    const originalReceipt = fs.readFileSync(res.output);
+    assert.throws(() => res.writeReceipt({ status: "FAIL" }), /Cannot overwrite existing receipt/);
+    assert.deepEqual(fs.readFileSync(res.output), originalReceipt);
   });
 
   await t.test("reserving an existing receipt path fails", () => {

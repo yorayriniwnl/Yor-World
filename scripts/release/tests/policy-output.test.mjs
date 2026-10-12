@@ -360,7 +360,21 @@ spec = importlib.util.spec_from_file_location("driver", ${JSON.stringify(f.drive
 module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
 source = Path(${JSON.stringify(path.join(f.root, "source.jsonl"))})
 target = Path(${JSON.stringify(path.join(f.root, "evidence/execution.jsonl"))})
+source.write_bytes(b'{"id":"partial"}')
+try: module.export_plan(source, target, append_only=True)
+except ValueError as error: assert "Source execution log ends with an incomplete record" in str(error), error
+else: raise AssertionError("an incomplete first execution log was accepted")
+assert not target.exists()
 source.write_bytes(b'{"id":"first"}' + bytes([10]))
+create_race = Path(${JSON.stringify(path.join(f.root, "evidence/create-race.jsonl"))})
+plan = module.export_plan(source, create_race, append_only=True)
+assert plan == ("create", 0)
+create_race.parent.mkdir(parents=True, exist_ok=True)
+create_race.write_bytes(b"concurrent prior evidence\n")
+try: module.export_file(source, create_race, append_only=True, plan=plan)
+except FileExistsError: pass
+else: raise AssertionError("exclusive log creation replaced a concurrent destination")
+assert create_race.read_bytes() == b"concurrent prior evidence\n"
 module.export_file(source, target, append_only=True)
 assert target.read_bytes() == b'{"id":"first"}' + bytes([10])
 module.export_file(source, target, append_only=True)
@@ -368,6 +382,18 @@ source.write_bytes(b'{"id":"first"}' + bytes([10]) + b'{"id":"second"}' + bytes(
 module.export_file(source, target, append_only=True)
 assert target.read_bytes() == source.read_bytes()
 original = target.read_bytes()
+partial_target = Path(${JSON.stringify(path.join(f.root, "evidence/partial-target.jsonl"))})
+partial_target.write_bytes(b'{"id":"fir')
+partial_before = partial_target.read_bytes()
+try: module.export_file(source, partial_target, append_only=True)
+except ValueError as error: assert "incomplete record" in str(error), error
+else: raise AssertionError("a truncated non-newline target was accepted")
+assert partial_target.read_bytes() == partial_before
+source.write_bytes(b'{"id":"first"}' + bytes([10]) + b'{"id":"second"}')
+try: module.export_file(source, target, append_only=True)
+except ValueError as error: assert "Source execution log ends with an incomplete record" in str(error), error
+else: raise AssertionError("a truncated non-newline source log was appended")
+assert target.read_bytes() == original
 source.write_bytes(b'{"id":"replacement"}' + bytes([10]))
 try: module.export_file(source, target, append_only=True)
 except ValueError as error: assert ("not a preserved prefix" in str(error) or "refusing to overwrite prior evidence" in str(error)), error
@@ -378,11 +404,11 @@ try: module.export_file(source, target)
 except ValueError as error: assert "refusing to overwrite prior evidence" in str(error), error
 else: raise AssertionError("ordinary existing export was overwritten")
 assert target.read_bytes() == original
-print("PASS primary exports are exclusive and log growth preserves an exact prefix")
+print("PASS primary exports are exclusive; append rejects divergent, truncated and incomplete logs")
 `;
   const result = f.run("python", ["-B", "-c", script]);
   assert.equal(result.status, 0, `${result.stdout}${result.stderr}`);
-  assert.match(result.stdout, /PASS primary exports are exclusive/);
+  assert.match(result.stdout, /PASS primary exports are exclusive; append rejects divergent, truncated and incomplete logs/);
   f.unchanged();
 });
 
@@ -423,6 +449,82 @@ print("PASS interrupted phases preserve start receipt and block retry/advance")
   const result = f.run("python", ["-B", "-c", script]);
   assert.equal(result.status, 0, `${result.stdout}${result.stderr}`);
   assert.match(result.stdout, /PASS interrupted phases preserve start receipt/);
+  f.unchanged();
+});
+
+test("phase prerequisites require matching source-bound receipts at both roots", async (t) => {
+  const f = await fixture(t);
+  const script = String.raw`
+import importlib.util, json, shutil
+from pathlib import Path
+spec = importlib.util.spec_from_file_location("driver", ${JSON.stringify(f.driver)})
+module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+repo = Path(${JSON.stringify(f.root)})
+checkout = Path(${JSON.stringify(f.checkout)})
+source = ${JSON.stringify(source)}
+driver = module.Driver.__new__(module.Driver)
+driver.repo = repo
+driver.checkout = checkout
+driver.delivery_relative = Path(${JSON.stringify(rootName)})
+driver.source = source
+driver.export = lambda: None
+
+def write_receipt(relative, payload, primary=True, primary_payload=None):
+    checkout_path = driver.phase_path("prepare", "completed", checkout)
+    primary_path = driver.phase_path("prepare", "completed", repo)
+    # Each scenario gets a distinct delivery root, so old receipts are never overwritten.
+    driver.delivery_relative = Path(relative)
+    checkout_path = driver.phase_path("prepare", "completed", checkout)
+    primary_path = driver.phase_path("prepare", "completed", repo)
+    checkout_path.parent.mkdir(parents=True, exist_ok=True)
+    checkout_path.write_text(json.dumps(payload), encoding="utf-8")
+    if primary:
+        primary_path.parent.mkdir(parents=True, exist_ok=True)
+        primary_path.write_text(json.dumps(primary_payload if primary_payload is not None else payload), encoding="utf-8")
+
+def rejected(index, payload, expected, primary=True, primary_payload=None):
+    relative = f"deliveries/G7/phase-binding-{index}"
+    write_receipt(relative, payload, primary=primary, primary_payload=primary_payload)
+    try: driver.require_phase_complete("prepare")
+    except RuntimeError as error: assert expected in str(error), error
+    else: raise AssertionError(f"invalid phase receipts were accepted: {index}")
+
+valid = {"phase":"prepare", "status":"PASS", "sourceCommit":source,
+         "deliveryRoot":${JSON.stringify(rootName)}}
+rejected(0, {**valid, "sourceCommit":"f" * 40}, "does not bind this source and delivery")
+rejected(1, {**valid, "deliveryRoot":"deliveries/G7/other"}, "does not bind this source and delivery")
+rejected(2, valid, "completion is absent", primary=False)
+rejected(3, valid, "differs from detached evidence", primary_payload={**valid, "status":"STARTED"})
+rejected(4, {**valid, "status":"STARTED"}, "does not bind this source and delivery")
+rejected(5, {**valid, "phase":"checks"}, "does not bind this source and delivery")
+
+driver.delivery_relative = Path(${JSON.stringify(rootName + "-phase-prerequisite")})
+for root in (checkout, repo):
+    receipt = driver.phase_path("prepare", "completed", root)
+    receipt.parent.mkdir(parents=True, exist_ok=True)
+    receipt.write_text(json.dumps({**valid, "deliveryRoot":driver.delivery_relative.as_posix()}), encoding="utf-8")
+driver.begin_phase("checks", "prepare")
+started = driver.phase_path("checks", "started").read_bytes()
+payload = json.loads(started)
+assert payload["phase"] == "checks" and payload["status"] == "STARTED"
+assert payload["sourceCommit"] == source and payload["deliveryRoot"] == driver.delivery_relative.as_posix()
+try: driver.begin_phase("package", "checks")
+except RuntimeError as error: assert "checks phase completion is absent" in str(error), error
+else: raise AssertionError("a later phase advanced before its prerequisite completed")
+driver.finish_phase("checks")
+completed = driver.phase_path("checks", "completed")
+primary = driver.phase_path("checks", "completed", repo)
+primary.parent.mkdir(parents=True, exist_ok=True)
+shutil.copyfile(completed, primary)
+driver.begin_phase("package", "checks")
+package_started = json.loads(driver.phase_path("package", "started").read_text(encoding="utf-8"))
+assert package_started["sourceCommit"] == source
+assert package_started["deliveryRoot"] == driver.delivery_relative.as_posix()
+print("PASS phase receipts bind exact source/delivery and require both matching prerequisite copies")
+`;
+  const result = f.run("python", ["-B", "-c", script]);
+  assert.equal(result.status, 0, `${result.stdout}${result.stderr}`);
+  assert.match(result.stdout, /PASS phase receipts bind exact source\/delivery/);
   f.unchanged();
 });
 
