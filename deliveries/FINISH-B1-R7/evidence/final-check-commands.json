@@ -1,0 +1,116 @@
+{
+  "status": "PASS",
+  "scope": "FINISH-B1-R7 candidate validation before commit; production/device/owner acceptance is separate.",
+  "commands": [
+    {
+      "argv": [
+        "python",
+        "deliveries/FINISH-B1-R7/scripts/verify-input-bindings.py"
+      ],
+      "exitCode": 0,
+      "log": "deliveries/FINISH-B1-R7/evidence/logs/input-bindings.log"
+    },
+    {
+      "argv": [
+        "F:\\Tools\\blender-5.2.2-portable\\blender-5.2.2-windows-x64\\blender.exe",
+        "--background",
+        "--python-exit-code",
+        "1",
+        "--python",
+        "deliveries/FINISH-B1-R7/scripts/build-pegboard-correction.py"
+      ],
+      "exitCode": 0,
+      "log": "deliveries/FINISH-B1-R7/evidence/logs/build-pegboard-correction.log"
+    },
+    {
+      "argv": [
+        "python",
+        "deliveries/FINISH-B1-R7/scripts/merge-pegboard-correction.py"
+      ],
+      "exitCode": 0,
+      "log": "deliveries/FINISH-B1-R7/evidence/logs/merge-pegboard-correction.log"
+    },
+    {
+      "argv": [
+        "node",
+        "deliveries/FINISH-B1-R7/scripts/verify-browser.mjs"
+      ],
+      "exitCode": 0,
+      "log": "deliveries/FINISH-B1-R7/evidence/logs/browser-final.log"
+    },
+    {
+      "argv": [
+        "F:\\Tools\\blender-5.2.2-portable\\blender-5.2.2-windows-x64\\blender.exe",
+        "--background",
+        "--python-exit-code",
+        "1",
+        "--python",
+        "deliveries/FINISH-B1-R7/scripts/verify-blender-imports.py"
+      ],
+      "exitCode": 0,
+      "log": "deliveries/FINISH-B1-R7/evidence/logs/blender-imports.log"
+    },
+    {
+      "argv": [
+        "node",
+        "deliveries/FINISH-B1-R7/scripts/validate-glb.mjs"
+      ],
+      "exitCode": 0,
+      "log": "deliveries/FINISH-B1-R7/evidence/logs/gltf-validation.log"
+    },
+    {
+      "argv": [
+        "python",
+        "deliveries/FINISH-B1-R7/scripts/verify-invariants.py"
+      ],
+      "exitCode": 0,
+      "log": "deliveries/FINISH-B1-R7/evidence/logs/invariants.log"
+    },
+    {
+      "argv": [
+        "python",
+        "deliveries/FINISH-B1-R7/scripts/verify-final-budgets.py"
+      ],
+      "exitCode": 0,
+      "log": "deliveries/FINISH-B1-R7/evidence/logs/final-budgets.log"
+    },
+    {
+      "argv": [
+        "python",
+        "deliveries/FINISH-B1-R7/scripts/build-output-hashes.py"
+      ],
+      "exitCode": 0,
+      "result": "output-hashes.json"
+    },
+    {
+      "argv": [
+        "python",
+        "deliveries/FINISH-B1-R7/scripts/verify-package.py"
+      ],
+      "exitCode": 0,
+      "result": "evidence/package-verification.json"
+    },
+    {
+      "argv": [
+        "python",
+        "deliveries/FINISH-B1-R7/scripts/build-delivery-receipts.py"
+      ],
+      "result": "candidate-asset-manifest.json, requirement-matrix.json, final-budgets.json, comparison page, Blender checksum receipt, tool-versions.json",
+      "exitCode": 0
+    }
+  ],
+  "postCommit": [
+    {
+      "argv": [
+        "python",
+        "deliveries/FINISH-B1-R7/scripts/verify-raw-git-blobs.py"
+      ],
+      "status": "RUN AFTER CANDIDATE COMMIT; receipt records exact commit and all manifest-listed raw blobs."
+    }
+  ],
+  "environment": {
+    "FINISH_B1_DEPENDENCY_ROOT": "F:\\Yor-World-B1-R7-Scratch\\harness-deps",
+    "PLAYWRIGHT_BROWSERS_PATH": "F:\\Yor-World-B1-R7-Scratch\\playwright-browsers",
+    "workingDirectory": "F:\\Yor-World-B1-R7"
+  }
+}

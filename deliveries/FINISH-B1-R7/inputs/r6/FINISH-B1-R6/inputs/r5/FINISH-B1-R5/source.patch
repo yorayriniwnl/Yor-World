@@ -1,0 +1,79 @@
+--- a/source/blender/scripts/build-environment.py
++++ b/source/blender/scripts/build-environment.py
+@@ -143,6 +143,41 @@
+     _MAT_CACHE[name] = mat
+     return mat
+ 
++# FINISH-35: bounded reference palette values. Geometry and room lighting energy stay fixed.
++FINISH35_ROOM_PALETTE = {'Wall_SoftLavender': ((0.85, 0.82, 0.93, 1.0), 0.78, 0.0, (0.85, 0.82, 0.93, 1.0), 0.28),
++ 'Ceiling_Matte': ((0.93, 0.91, 0.97, 1.0), 0.88, 0.0, (0.93, 0.91, 0.97, 1.0), 0.18),
++ 'Desk_IvoryTop': ((0.98, 0.95, 0.9, 1.0), 0.32, 0.0, (0.98, 0.95, 0.9, 1.0), 0.5),
++ 'Alex_DrawerWhite': ((0.98, 0.95, 0.9, 1.0), 0.35, 0.0, (0.98, 0.95, 0.9, 1.0), 0.42),
++ 'Desk_MatTopography': ((0.95, 0.92, 0.87, 1.0), 0.8, 0.0, (0.95, 0.92, 0.87, 1.0), 0.28),
++ 'Acoustic_Backing': ((0.84, 0.78, 0.93, 1.0), 0.75, 0.0, (0.84, 0.78, 0.93, 1.0), 0.2),
++ 'Chair_CobaltFabric': ((0.067, 0.156, 0.665, 1.0), 0.45, 0.0, (0.067, 0.156, 0.665, 1.0), 0.25),
++ 'Chair_WhiteNylon': ((0.95, 0.92, 0.88, 1.0), 0.34, 0.0, (0.95, 0.92, 0.88, 1.0), 0.22),
++ 'PC_ChassisWhite': ((0.95, 0.92, 0.88, 1.0), 0.3, 0.1, (0.95, 0.92, 0.88, 1.0), 0.18),
++ 'Window_BlindsSatin': ((0.95, 0.92, 0.88, 1.0), 0.44, 0.05, (0.95, 0.92, 0.88, 1.0), 0.16),
++ 'Pegboard_Perforated': ((0.95, 0.92, 0.88, 1.0), 0.44, 0.02, (0.95, 0.92, 0.88, 1.0), 0.16),
++ 'Plant_CeramicWhite': ((0.95, 0.92, 0.88, 1.0), 0.24, 0.0, (0.95, 0.92, 0.88, 1.0), 0.12),
++ 'Hex_LilacEmissive': ((0.88, 0.38, 0.9, 1.0), 0.15, 0.0, (0.88, 0.38, 0.9, 1.0), 1.2),
++ 'Hex_VioletEmissive': ((0.49, 0.32, 0.92, 1.0), 0.15, 0.0, (0.49, 0.32, 0.92, 1.0), 1.15),
++ 'Cyan_UnderdeskFill': ((0.17, 0.67, 0.9, 1.0), 0.2, 0.0, (0.17, 0.67, 0.9, 1.0), 1.15)}
++FINISH35_AUTHORED_LIGHT_COLORS = {'HexWall_PointLight': (0.92, 0.7, 1.0),
++ 'CyanUnderdesk_PointLight': (0.17, 0.67, 0.9),
++ 'CeilingAmbient_PointLight': (1.0, 0.96, 0.9)}
++
++def apply_finish35_reference_palette(materials):
++    for name, (color, roughness, metallic, emission, strength) in FINISH35_ROOM_PALETTE.items():
++        material = materials[name]
++        bsdf = material.node_tree.nodes.get("Principled BSDF")
++        bsdf.inputs["Base Color"].default_value = color
++        bsdf.inputs["Roughness"].default_value = roughness
++        bsdf.inputs["Metallic"].default_value = metallic
++        if "Emission Color" in bsdf.inputs:
++            bsdf.inputs["Emission Color"].default_value = emission
++        elif "Emission" in bsdf.inputs:
++            bsdf.inputs["Emission"].default_value = emission
++        if "Emission Strength" in bsdf.inputs:
++            bsdf.inputs["Emission Strength"].default_value = strength
++        material.diffuse_color = color
++
+ def create_all_materials(textures_dir):
+     m = {}
+ 
+@@ -365,6 +400,7 @@
+         emission_strength=1.5
+     )
+ 
++    apply_finish35_reference_palette(m)
+     return m
+ 
+ # Primitive Geometry Helpers
+@@ -793,7 +829,7 @@
+ 
+     # Hex Wall Pink/Violet Glow Light (energy 12.0)
+     hex_light_data = bpy.data.lights.new(name="HexWall_PointLight", type='POINT')
+-    hex_light_data.color = (0.94, 0.58, 0.94)
++    hex_light_data.color = FINISH35_AUTHORED_LIGHT_COLORS['HexWall_PointLight']
+     hex_light_data.energy = 12.0
+     hex_light_data.shadow_soft_size = 0.30
+     hex_light_obj = bpy.data.objects.new("Light_HexWall", hex_light_data)
+@@ -815,7 +851,7 @@
+ 
+     # Cyan Under-desk Fill (energy 6.0)
+     cyan_fill_data = bpy.data.lights.new(name="CyanUnderdesk_PointLight", type='POINT')
+-    cyan_fill_data.color = (0.0, 0.90, 1.0)
++    cyan_fill_data.color = FINISH35_AUTHORED_LIGHT_COLORS['CyanUnderdesk_PointLight']
+     cyan_fill_data.energy = 6.0
+     cyan_fill_data.shadow_soft_size = 0.30
+     cyan_fill_obj = bpy.data.objects.new("Light_CyanFill", cyan_fill_data)
+@@ -825,7 +861,7 @@
+ 
+     # Ambient Ceiling Soft Fill (energy 8.0)
+     ambient_data = bpy.data.lights.new(name="CeilingAmbient_PointLight", type='POINT')
+-    ambient_data.color = (0.95, 0.95, 1.0)
++    ambient_data.color = FINISH35_AUTHORED_LIGHT_COLORS['CeilingAmbient_PointLight']
+     ambient_data.energy = 8.0
+     ambient_data.shadow_soft_size = 0.80
+     ambient_obj = bpy.data.objects.new("Light_CeilingAmbient", ambient_data)
