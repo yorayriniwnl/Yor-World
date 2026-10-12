@@ -1,0 +1,126 @@
+{
+  "format": "YOR-WORLD-A1-R10-BROWSER-RUN-v1",
+  "label": "browser-normal-fixture",
+  "mode": "normal-fixture",
+  "status": "PASS",
+  "commandReceipt": "evidence/logs/browser-normal-fixture.json",
+  "command": [
+    "node",
+    "node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/cli.js",
+    "test",
+    "tests/e2e/platform/admin-publish.spec.ts",
+    "tests/e2e/platform/completion-authoring-workflow.spec.ts",
+    "--project=chromium",
+    "--grep-invert",
+    "owner request for an absent private draft"
+  ],
+  "cwd": "F:\\A1-R10-Replay-f5978b91\\app",
+  "exitCode": 0,
+  "startedUtc": "2026-10-12T06:50:29.684335+00:00",
+  "endedUtc": "2026-10-12T06:50:48.727020+00:00",
+  "durationSeconds": 19.043,
+  "playwrightVersion": "1.63.0",
+  "browserVersion": "153.0.8010.12",
+  "resultPath": "evidence/captures/normal-fixture/browser-results.json",
+  "resultSha256": "b3b5419611ea62412ba03731c199d4f5e92c858545683aec2e714c8a6aef7720",
+  "stdout": "evidence/logs/browser-normal-fixture.stdout.log",
+  "stdoutSha256": "b775913fccfb929df4e1814c5cede7b870e3c8a8a73de4ad3e0caa58a68bbe78",
+  "stderr": "evidence/logs/browser-normal-fixture.stderr.log",
+  "stderrSha256": "82bd1028b62a263a805eb3dc6fda8a0d9bbac8696b429953e30749abe681b97e",
+  "database": {
+    "YOR_TEST_DATABASE_PATH": "F:\\A1-R10-Temp-20261012\\pglite\\20261012T064936239747Z-normal-fixture",
+    "pathSha256": "6dc146b355e94868cbd5eb1f0e90da86c65b2df8de60916419f0d97d88b1065a",
+    "fresh": true,
+    "existedBeforeRun": false,
+    "existsAfterRun": true,
+    "fixture": "PGlite",
+    "productionDatabaseVariables": "unset"
+  },
+  "environment": {
+    "YOR_E2E_OMIT_CANDIDATEX_DRAFT": "unset",
+    "DATABASE_URL": "unset",
+    "SUPABASE_URL": "unset",
+    "SUPABASE_ANON_KEY": "unset",
+    "SUPABASE_SERVICE_ROLE_KEY": "unset",
+    "SUPABASE_SERVICE_KEY": "unset",
+    "NEXT_PUBLIC_SUPABASE_URL": "unset",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "unset",
+    "COREPACK_HOME": "F:\\A1-R10-Temp-20261012\\corepack",
+    "npm_config_store_dir": "F:\\.pnpm-store",
+    "npm_config_cache": "F:\\A1-R10-Temp-20261012\\npm-cache",
+    "TEMP": "F:\\A1-R10-Temp-20261012\\tmp",
+    "TMP": "F:\\A1-R10-Temp-20261012\\tmp",
+    "PLAYWRIGHT_BROWSERS_PATH": "F:\\A1-R9-Temp-20261012\\browsers",
+    "NEXT_TELEMETRY_DISABLED": "1",
+    "CI": "1",
+    "PORT": "4432",
+    "YOR_TEST_DATABASE_PATH": "F:\\A1-R10-Temp-20261012\\pglite\\20261012T064936239747Z-normal-fixture",
+    "YOR_E2E_FIXTURE": "1",
+    "A1_EVIDENCE_DIR": "F:\\Yor-World-A1-R10-20261012\\deliveries\\FINISH-A1-R10\\evidence\\captures\\normal-fixture",
+    "B5_EVIDENCE_DIR": "F:\\Yor-World-A1-R10-20261012\\deliveries\\FINISH-A1-R10\\evidence\\captures\\normal-fixture"
+  },
+  "captures": [
+    {
+      "path": "evidence/captures/normal-fixture/candidatex-private-preview.png",
+      "bytes": 167012,
+      "sha256": "4ede2ef188ca80292b92b36fed7d3ab57629e64b7c98cb1f5c6e75b44ae85e6b"
+    },
+    {
+      "path": "evidence/captures/normal-fixture/publish-rollback-review.png",
+      "bytes": 204605,
+      "sha256": "f6a650893f2e9b92afff2a50d3966b08e61b21a867b2795225e22c81bd6b4562"
+    }
+  ],
+  "resultStats": {
+    "startTime": "2026-10-12T06:50:30.296Z",
+    "duration": 18407.722,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "testCases": [
+    {
+      "title": "admin navigation includes links to Dashboard, Editor, and Publish",
+      "project": "chromium",
+      "statuses": [
+        "passed"
+      ]
+    },
+    {
+      "title": "loads project editor with structured editing controls",
+      "project": "chromium",
+      "statuses": [
+        "passed"
+      ]
+    },
+    {
+      "title": "loads publish review with pre-flight checklist and publication history table",
+      "project": "chromium",
+      "statuses": [
+        "passed"
+      ]
+    },
+    {
+      "title": "editor and publish interfaces require zero WebGL, canvas, or 3D models",
+      "project": "chromium",
+      "statuses": [
+        "passed"
+      ]
+    },
+    {
+      "title": "public portfolio continues to serve approved snapshot with no private media leakage",
+      "project": "chromium",
+      "statuses": [
+        "passed"
+      ]
+    },
+    {
+      "title": "edits, cancels, preserves a rich buffer on 409, previews private media, and publishes then rolls back",
+      "project": "chromium",
+      "statuses": [
+        "passed"
+      ]
+    }
+  ]
+}

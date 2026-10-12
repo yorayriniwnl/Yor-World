@@ -1,0 +1,150 @@
+{
+  "format": "YOR-WORLD-A1-R10-REQUIREMENT-MATRIX-v1",
+  "candidateAppTree": "0fdc8972f303cd5304f812f89ece493fef170ea1",
+  "sourceBaseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+  "rows": [
+    {
+      "clause": "FINISH-49/R8B-01",
+      "requirement": "The two previously raw-Git-unavailable review files are reproduced byte-for-byte and their history is labelled honestly.",
+      "status": "PASS",
+      "evidencePaths": [
+        "../FINISH-A1-R8B/input-recovery.json",
+        "../FINISH-A1-R8B/recovered/findings.json",
+        "../FINISH-A1-R8B/recovered/report.md",
+        "input-hashes.json"
+      ],
+      "limits": "Bytes are PARENT-LOCAL-COPY historical inputs; R8 has no corresponding blobs. R8B establishes only the new raw-Git copy."
+    },
+    {
+      "clause": "FINISH-49/INPUT-02",
+      "requirement": "All 15 declared R8 inputs are bound: 13 original R8 raw-Git blobs and the two recovered R8B blobs.",
+      "status": "PASS",
+      "evidencePaths": [
+        "input-hashes.json",
+        "../FINISH-A1-R8B/output-hashes.json"
+      ],
+      "limits": "The original history for two inputs remains unavailable at pinned R8 and is not repaired retroactively."
+    },
+    {
+      "clause": "FINISH-49/REPLAY-03",
+      "requirement": "Unchanged R8 source patch replays from its exact base and produces the same candidate app tree bound by R8 and R9.",
+      "status": "PASS",
+      "evidencePaths": [
+        "source.patch",
+        "evidence/logs/replay-verification.log",
+        "evidence/browser-binding.json",
+        "candidate-binding.json"
+      ],
+      "limits": "Replay is local Git evidence; no canonical integration."
+    },
+    {
+      "clause": "FINISH-49/INSTALL-04",
+      "requirement": "Frozen dependency install and production build complete on the exact replay.",
+      "status": "PASS",
+      "evidencePaths": [
+        "evidence/logs/install.json",
+        "evidence/logs/install.stdout.log",
+        "evidence/logs/install.stderr.log",
+        "evidence/logs/build.json",
+        "evidence/logs/build.stdout.log",
+        "evidence/logs/build.stderr.log",
+        "evidence/build-binding.json",
+        "evidence/build-output-manifest.json"
+      ],
+      "limits": "Offline install uses F: package cache; Next build IDs are generated per build. This run is bound to the included fresh build ID."
+    },
+    {
+      "clause": "FINISH-49/BROWSER-05",
+      "requirement": "Owner-authenticated request for valid absent private draft /admin/preview/candidatex renders not-found when only the E2E seed is omitted.",
+      "status": "PASS",
+      "evidencePaths": [
+        "evidence/browser-absent-draft.json",
+        "evidence/logs/browser-absent-draft.json",
+        "evidence/logs/browser-absent-draft.stdout.log",
+        "evidence/logs/browser-absent-draft.stderr.log",
+        "evidence/captures/absent-draft/browser-results.json",
+        "evidence/captures/absent-draft/absent-private-draft-not-found.png"
+      ],
+      "limits": "One synthetic owner-cookie/PGlite Chromium case. Omission control is test-fixture-only and enabled only under YOR_E2E_FIXTURE=1; no provider auth or deployed route."
+    },
+    {
+      "clause": "FINISH-49/BROWSER-06",
+      "requirement": "Remaining normal-fixture Chromium coverage passes with the default CandidateX seed and a separate fresh PGlite store.",
+      "status": "PASS",
+      "evidencePaths": [
+        "evidence/browser-normal-fixture.json",
+        "evidence/logs/browser-normal-fixture.json",
+        "evidence/logs/browser-normal-fixture.stdout.log",
+        "evidence/logs/browser-normal-fixture.stderr.log",
+        "evidence/captures/normal-fixture/browser-results.json",
+        "evidence/captures/normal-fixture/candidatex-private-preview.png",
+        "evidence/captures/normal-fixture/publish-rollback-review.png"
+      ],
+      "limits": "Six local Chromium cases, synthetic auth/media and PGlite only; no provider or deployment behavior."
+    },
+    {
+      "clause": "FINISH-49/ENV-07",
+      "requirement": "Build, Chromium versions, two distinct database paths, results, captures, commands, exits, and UTC intervals are linked.",
+      "status": "PASS",
+      "evidencePaths": [
+        "evidence/browser-version.json",
+        "evidence/browser-preflight.cjs",
+        "evidence/database-paths.json",
+        "evidence/build-binding.json",
+        "evidence/browser-binding.json",
+        "evidence/logs/"
+      ],
+      "limits": "Existing F: R9 Chromium cache was reused read-only; R10 dependency install, replay tree, PGlite directories, receipts and captures are fresh."
+    },
+    {
+      "clause": "FINISH-49/SCOPE-08",
+      "requirement": "R10 contains only the authorized evidence delivery root and leaves app/test/dependency files and pinned predecessors unchanged.",
+      "status": "PASS",
+      "evidencePaths": [
+        "candidate-binding.json",
+        "output-hashes.json",
+        "report.md"
+      ],
+      "limits": "Candidate is a maker package; no audit or acceptance claim."
+    },
+    {
+      "clause": "FINISH-49/LOCAL-09",
+      "requirement": "R10 reruns full unit/integration, lint and typecheck suites.",
+      "status": "NOT RUN",
+      "evidencePaths": [
+        "report.md"
+      ],
+      "limits": "Packet calls for exact source replay and two scoped browser cases; full prior R8 local suites are inherited evidence and were not rerun as R10 checks."
+    },
+    {
+      "clause": "LIMIT-PROVIDER-10",
+      "requirement": "Provider Auth/Storage, production database, deployed origin/CDN and live route behavior.",
+      "status": "NOT RUN",
+      "evidencePaths": [
+        "report.md",
+        "evidence/browser-binding.json"
+      ],
+      "limits": "No credentials or remote deployment were used; local synthetic fixture only."
+    },
+    {
+      "clause": "LIMIT-DEVICE-11",
+      "requirement": "Physical devices, assistive technology, manual accessibility/recovery, and backup/restore rehearsal.",
+      "status": "NOT RUN",
+      "evidencePaths": [
+        "report.md"
+      ],
+      "limits": "No physical device, AT session or recovery target was available or executed."
+    },
+    {
+      "clause": "GATE-REVIEW-12",
+      "requirement": "Fresh exact-candidate GPT Plus #2 audit and Parent acceptance/integration/G7.",
+      "status": "NOT RUN",
+      "evidencePaths": [
+        "report.md",
+        "candidate-binding.json"
+      ],
+      "limits": "Maker cannot self-audit or accept; stop at delivery candidate gate."
+    }
+  ],
+  "overallStatus": "MAKER EVIDENCE ONLY; independent audit and Parent decision pending"
+}
