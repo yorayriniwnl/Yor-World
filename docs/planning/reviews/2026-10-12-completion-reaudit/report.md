@@ -2,15 +2,25 @@
 
 ## Disposition
 
-The latest local correction packages are delivered, but the three lanes are not accepted or production-complete. FINISH-48 A1-R9 now passes the bounded browser-evidence recheck, and FINISH-47 B1-R7 brings the pegboard and both mounted controllers inside the unchanged mobile frame. C1-R9/FINISH-46 closes only bounded receipt-integrity checks; C1 implementation acceptance remains pending. None of these candidates changed the canonical `app/` tree, and no completion candidate has been integrated.
+The latest local correction packages are delivered, but the three lanes are not accepted or production-complete. FINISH-49 A1-R10 now passes Parent-local provenance, replay and browser-evidence checks; FINISH-50 B1-R8 now passes the binary source-patch replay check. C1-R9 retains its bounded FINISH-34 evidence-pointer PASS, and FINISH-46 remains a Parent-local E-01 receipt-integrity PASS only. None changed the canonical `app/` tree, and no completion candidate has been integrated.
 
 This is a Parent-local re-audit. It is not the required GPT Plus #2 review, owner visual approval, or Parent implementation acceptance.
 
 | Lane | Candidate | Re-audit result | Still open |
 | --- | --- | --- | --- |
-| A1 | FINISH-A1-R9, `a2f0e218f8153ceec311616f49b7b654c9892bb2` | Parent-local exact package/build/browser binding passes; absent-draft case 1/1 and normal authoring/publish suite 6/6 with separate fresh PGlite paths. | Independent GPT Plus #2 review and Parent acceptance. Two of 15 upstream R8 audit inputs have no pinned raw-Git object; their local copies match the recorded hashes. Broader R8 suites were inherited, not rerun in R9. |
-| B1 | FINISH-B1-R7, `876e119d100936fc821b8618c5aa0e057584b338` | Parent-local package/input rebind passes; matched fixed-profile captures show the full pegboard and both controllers inside desktop and mobile frames. | Independent GPT Plus #2 review, owner visual review, and Parent acceptance. Other full-reference fidelity and production/device checks remain open. |
-| C1 | FINISH-C1-R9, `3dda9a616033375768f3d5f60f8c653d504f7c8c` | Exact package binding passes. FINISH-46 records PASS for FINISH-16 E-01 receipt integrity only. | C1 implementation acceptance, FINISH-34 external audit, and canonical integration remain pending. |
+| A1 | FINISH-A1-R10, `7a201eef928c5b42897a33333f9ff5694645560b` | Parent-local package/provenance/replay checks pass; absent-draft browser case 1/1 and normal authoring/publish 6/6 with separate fresh PGlite paths. | FINISH-51 GPT Plus #2 audit, Parent acceptance, integration, production provider and live checks. Broader R8 suites were inherited, not rerun in R10. |
+| B1 | FINISH-B1-R8, `cb0af1174dcbd2cd714e6cd55de447ae3e8a15a6` | Parent-local package and binary patch replay checks pass; R7's pegboard and two controllers are in the unchanged desktop/mobile frames. | FINISH-52 GPT Plus #2 audit, owner visual review, Parent acceptance, full reference-fidelity review, and production/device checks. |
+| C1 | FINISH-C1-R9, `3dda9a616033375768f3d5f60f8c653d504f7c8c` | Parent-local package and E-02-05 evidence-pointer checks pass. FINISH-46 separately passes E-01 receipt integrity only. | FINISH-53 GPT Plus #2 delta audit, E-01 independent disposition, C1 implementation acceptance, and canonical integration remain pending. |
+
+## FINISH-49 A1-R8B/R10 and FINISH-50 B1-R8 rechecks
+
+The exact R10 branch `codex/finish-49-a1-r8b-r10-provenance-correction-20261012` points to `7a201eef928c5b42897a33333f9ff5694645560b`, the exact child of R8B `f5978b91ea981d740ab0ba42b46368175f045cf8`. Raw-Git recomputation matched all 40 output-manifest rows (932,350 bytes); only `deliveries/FINISH-A1-R10/` changed, and the candidate root app remains `42ea29ec235225046a75959eb19eb386ac2f821d`. The unchanged R8 patch replays to tree `5dc26a201e715ca15757ae661639589948ab4800` and app tree `0fdc8972f303cd5304f812f89ece493fef170ea1`. All 15 review inputs are now bound as 13 original R8 Git objects and two exact R8B Git objects whose historical origin is honestly labeled `PARENT-LOCAL-COPY`; those two original paths have no Git blobs in R8.
+
+R10's frozen offline install and production build passed. Chromium's absent-private-draft case passed 1/1; normal authoring/publish passed 6/6. Their receipts bind separate fresh PGlite paths, browser/build identity, logs, JSON results and captures. Provider Auth/Storage, production DB and deployed behavior were not exercised. Broader unit/integration/lint/typecheck evidence is inherited from R8 rather than rerun in R10.
+
+The exact R8 branch `codex/finish-50-b1-r8-source-patch-supplement-20261012` points to `cb0af1174dcbd2cd714e6cd55de447ae3e8a15a6`, an exact child of B1-R7 `876e119d100936fc821b8618c5aa0e057584b338`. All 11 package-manifest rows (802,294 bytes) match raw Git. The binary patch applies only to `assets/room.glb` and `assets/source/room.blend`; independent replay from R6 raw Git blobs yields the exact R7 hashes and sizes. B1-R7's 260 output rows (49,362,930 bytes), source inputs and matched capture identities were rechecked; the R6-to-R7 art delta is limited to the two declared room outputs, and `app/` is unchanged. This validates the required patch supplement, not a new art render or full visual acceptance.
+
+Three separate exact-candidate GPT Plus #2 handoffs are now prepared: [FINISH-51 A1-R10](../../reconciliation-packets/2026-10-12-finish-51-a1-r10-independent-audit.md), [FINISH-52 B1-R8](../../reconciliation-packets/2026-10-12-finish-52-b1-r8-independent-audit.md), and [FINISH-53 C1-R9](../../reconciliation-packets/2026-10-12-finish-53-c1-r9-independent-audit.md). They have not been dispatched. Their reserved output roots were empty at handoff creation. See [the exact-candidate recheck receipt](latest-candidate-rechecks.json) for identities and bounded dispositions.
 
 ## A1-R8
 
@@ -62,8 +72,8 @@ All three candidate root `app/` trees match the accepted RC6 source tree. No can
 
 ## Remaining work
 
-1. Complete separate GPT Plus #2 exact-candidate audits for A1-R9, B1-R7, and C1-R9. FINISH-34 is prepared for C1 but remains undispatched.
-2. Obtain owner visual review for B1-R7 and keep the remaining full-reference fidelity limits in its ruling.
+1. Dispatch FINISH-51/52/53 to GPT Plus #2 and review its separate exact-candidate findings. Do not treat prepared prompts or Parent-local checks as external audit.
+2. Obtain owner visual review for B1-R7's fixed-frame pegboard correction and keep the remaining full-reference fidelity limits in its ruling.
 3. Record Parent acceptance only after each lane's independent audit passes. Then issue a separate integration packet and rerun integration checks; keep the accepted canonical source unchanged until that gate.
-4. Reconnect Sites, Vercel, and Supabase before checking deployment, database, authentication, private media, or live rollback. The October 12 Sites retry remained empty and the stored ID returned 404; Vercel/Supabase tools were unavailable.
+4. Finish reconnecting Sites, Vercel, and Supabase before checking deployment, database, authentication, private media, or live rollback. The post-intent Sites listing remains empty; the stored ID previously returned `project_not_found`. Vercel/Supabase tools remain unavailable in this session.
 5. Complete the separate G7 production gates, including provider, device/accessibility, recovery, and live-origin evidence. Local candidate tests and a private preview do not close those gates.
