@@ -1,0 +1,74 @@
+
+> yor-world@1.0.0-rc6 test:unit W:\deliveries\FINISH-A1\r5-02\.work\candidate\app
+> vitest run --config vitest.config.ts "--reporter=dot"
+
+
+ RUN  v5.0.2 W:/deliveries/FINISH-A1/r5-02/.work/candidate/app
+
+stderr | tests/unit/lifecycle-manager.test.ts > LifecycleManager - 8 Explicit States and Adversarial Guarantees > enforces bounded retries (maxRetries = 3)
+[LifecycleManager] Bounded retry limit reached.
+
+stderr | tests/unit/lifecycle-manager.test.ts > LifecycleManager - 8 Explicit States and Adversarial Guarantees > DISPOSING cleans up all listeners and returns to STATIC
+[LifecycleManager] Cannot request entry: manager is disposed.
+
+stderr | tests/unit/quality-policy.test.ts > C3 AudioController Opt-in, Denial & Disposal > reports actual disabled state (false) when browser denies audio activation
+[AudioController] Browser denied audio activation: Error: Autoplay not allowed without user interaction
+    at W:/deliveries/FINISH-A1/r5-02/.work/candidate/app/tests/unit/quality-policy.test.ts:327:50
+    at file:///W:/deliveries/FINISH-A1/r5-02/.work/candidate/app/node_modules/.pnpm/vitest@5.0.2_@types+node@24.19.0_vite@8.3.1_@types+node@24.19.0_/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:1628:35
+    at file:///W:/deliveries/FINISH-A1/r5-02/.work/candidate/app/node_modules/.pnpm/vitest@5.0.2_@types+node@24.19.0_vite@8.3.1_@types+node@24.19.0_/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:2783:26
+    at file:///W:/deliveries/FINISH-A1/r5-02/.work/candidate/app/node_modules/.pnpm/vitest@5.0.2_@types+node@24.19.0_vite@8.3.1_@types+node@24.19.0_/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3319:20
+    at new Promise (<anonymous>)
+    at runWithCancel (file:///W:/deliveries/FINISH-A1/r5-02/.work/candidate/app/node_modules/.pnpm/vitest@5.0.2_@types+node@24.19.0_vite@8.3.1_@types+node@24.19.0_/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3314:10)
+    at file:///W:/deliveries/FINISH-A1/r5-02/.work/candidate/app/node_modules/.pnpm/vitest@5.0.2_@types+node@24.19.0_vite@8.3.1_@types+node@24.19.0_/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3299:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///W:/deliveries/FINISH-A1/r5-02/.work/candidate/app/node_modules/.pnpm/vitest@5.0.2_@types+node@24.19.0_vite@8.3.1_@types+node@24.19.0_/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3257:10)
+    at file:///W:/deliveries/FINISH-A1/r5-02/.work/candidate/app/node_modules/.pnpm/vitest@5.0.2_@types+node@24.19.0_vite@8.3.1_@types+node@24.19.0_/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3876:64
+
+stderr | tests/unit/interaction-controller.test.ts > ExperienceController & Interaction Arbitration (Task C1) > Attack 8: renderer failure > transitions cleanly to static fallback and aborts in-flight work on RENDERER_FAILED
+[ExperienceController] Renderer failed (CONTEXT_LOST), falling back to static presentation.
+
+stderr | tests/unit/entrance-coordinator.test.ts > EntranceCoordinator - Single Active Entrance and Bounded Duration > PROVE: only one active entrance exists at any time
+[EntranceCoordinator] Entrance already running; returning active entrance promise.
+
+····································································································································································································································x····································x················································
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/boundaries.test.ts > enforces integrated dependency boundaries: HTML shell stays free of 3D and browser features stay free of server imports
+Error: Forbidden import (import) in src/features/admin/draft-preview.tsx:1: specifier "@/server/content/revisions" resolves to "src/server/content/revisions" matching /(?:^|\/)server(?:\/|$)/
+ ❯ validateProductionModule tests/unit/boundaries.test.ts:106:15
+    104|     for (const pattern of forbiddenPatterns) {
+    105|       if (pattern.test(imp.specifier) || pattern.test(imp.resolvedPath…
+    106|         throw new Error(
+       |               ^
+    107|           `Forbidden import (${imp.kind}) in ${filePath}:${imp.line}: …
+    108|         );
+ ❯ tests/unit/boundaries.test.ts:147:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/unit/boundaries.test.ts > keeps privileged server modules and secrets out of every transitive client import
+AssertionError: client src\features\admin\publish-review.tsx reaches src/server/content/preview.ts: expected 'src/server/content/preview.ts' not to match /src\/server\/|src\/content\/se…/server\
+
+- Expected:
+/src\/server\/|src\/content\/server-publication/
+
++ Received:
+"src/server/content/preview.ts"
+
+ ❯ tests/unit/boundaries.test.ts:253:69
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 23 passed (24)
+      Tests  2 failed | 312 passed (314)
+   Start at  11:46:01
+   Duration  11.16s (transform 54%, import 29%, tests 17%)
+
+  Transform  transforming modules took 34.22s · 54% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+
+ ELIFECYCLE  Command failed with exit code 1.

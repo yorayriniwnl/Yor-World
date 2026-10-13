@@ -1,0 +1,47 @@
+
+> yor-world@1.0.0-rc6 lint W:\deliveries\FINISH-A1\r5-02\.work\candidate\app
+> eslint . --max-warnings=0
+
+
+W:\deliveries\FINISH-A1\r5-02\.work\candidate\app\src\app\api\admin\projects\route.ts
+  62:23  warning  '_clientRevision' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+W:\deliveries\FINISH-A1\r5-02\.work\candidate\app\src\features\admin\project-editor.tsx
+  142:25  warning  '_revision' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+W:\deliveries\FINISH-A1\r5-02\.work\candidate\app\src\features\admin\publish-review.tsx
+  61:10  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+W:\deliveries\FINISH-A1\r5-02\.work\candidate\app\src\features\admin\publish-review.tsx:61:10
+  59 |
+  60 |   useEffect(() => {
+> 61 |     void refreshReview().catch((error: unknown) => {
+     |          ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  62 |       setFeedback({ type: "error", message: error instanceof Error ? error.message : "The current draft review is unavailable." });
+  63 |     });
+  64 |   }, []);  react-hooks/set-state-in-effect
+
+W:\deliveries\FINISH-A1\r5-02\.work\candidate\app\src\server\content\preview.ts
+   20:8   warning  'DraftRecord' is defined but never used   @typescript-eslint/no-unused-vars
+  226:52  warning  'actor' is defined but never used         @typescript-eslint/no-unused-vars
+  247:46  warning  'sectionIndex' is defined but never used  @typescript-eslint/no-unused-vars
+  247:94  warning  'blockIndex' is defined but never used    @typescript-eslint/no-unused-vars
+
+W:\deliveries\FINISH-A1\r5-02\.work\candidate\app\src\server\content\publish.ts
+  10:8  warning  'ProjectId' is defined but never used             @typescript-eslint/no-unused-vars
+  12:8  warning  'PublishedProject' is defined but never used      @typescript-eslint/no-unused-vars
+  19:3  warning  'getTestDraftRegistry' is defined but never used  @typescript-eslint/no-unused-vars
+  21:3  warning  'readDurableDrafts' is defined but never used     @typescript-eslint/no-unused-vars
+
+W:\deliveries\FINISH-A1\r5-02\.work\candidate\app\tests\integration\platform\canonical-platform.test.ts
+  4:10  warning  'createHash' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 12 problems (1 error, 11 warnings)
+
+ ELIFECYCLE  Command failed with exit code 1.

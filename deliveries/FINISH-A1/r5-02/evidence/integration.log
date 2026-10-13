@@ -1,0 +1,67 @@
+
+> yor-world@1.0.0-rc6 test:integration W:\deliveries\FINISH-A1\r5-02\.work\candidate\app
+> vitest run --config vitest.integration.config.ts "--reporter=dot"
+
+
+ RUN  v5.0.2 W:/deliveries/FINISH-A1/r5-02/.work/candidate/app
+
+·······················x······················x········································································································································································································································································x········
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/platform/media-access.test.ts > Milestone A4: Media Validation & Private Draft Storage Access > Media Approval Workflow > approval changes status from pending to approved
+Error: Durable database is not configured.
+ ❯ getPlatformDb src/server/database.ts:49:32
+     47|   }
+     48|   const connectionString = process.env.DATABASE_URL;
+     49|   if (!connectionString) throw new Error("Durable database is not conf…
+       |                                ^
+     50|   pool ??= new Pool({ connectionString, max: 5, connectionTimeoutMilli…
+     51|   const currentPool = pool;
+ ❯ checkMediaApproved src/server/media/manifest.ts:368:35
+ ❯ tests/integration/platform/media-access.test.ts:256:33
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/integration/platform/owner-auth.test.ts > Milestone A3: Owner Authentication & MFA Verification > Protected API Route Handlers: /api/admin/* > /api/admin/projects GET protects private project metadata
+AssertionError: expected [ { id: 'ai-vs-real', …(3) }, …(4) ] to have a length of 4 but got 5
+
+- Expected
++ Received
+
+- 4
++ 5
+
+ ❯ tests/integration/platform/owner-auth.test.ts:271:34
+    269|       expect(ownerRes.status).toBe(200);
+    270|       const ownerData = await ownerRes.json();
+    271|       expect(ownerData.projects).toHaveLength(4);
+       |                                  ^
+    272|     });
+    273|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/integration/platform/published-media.test.ts > Public media signed URL resolver preserves approval and publication boundary > caller-supplied unpublished references cannot request a private object signature
+AssertionError: expected { …(1) } to deeply equal {}
+
+- Expected
++ Received
+
+- {}
++ {
++   "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa": "https://storage.fixture.test/approved-image.png?synthetic-signature=approved",
++ }
+
+ ❯ tests/integration/platform/published-media.test.ts:43:61
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  3 failed | 25 passed (28)
+      Tests  3 failed | 317 passed (320)
+   Start at  11:46:02
+   Duration  48.06s (tests 72%, import 16%, transform 11%)
+
+ ELIFECYCLE  Command failed with exit code 1.

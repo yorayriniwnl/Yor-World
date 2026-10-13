@@ -1,0 +1,112 @@
+{
+  "candidate": "FINISH-B1-R5",
+  "makerAcceptance": false,
+  "status": "SCOPED CANDIDATE; OWNER VISUAL REVIEW AND INDEPENDENT AUDIT PENDING",
+  "issues": [
+    {
+      "id": "INPUT-LINEAGE",
+      "status": "PASS",
+      "finding": "Exact R4-02 commit/tree/subtree and raw-Git package manifest are bound; accepted app tree untouched.",
+      "evidence": [
+        "evidence/input-bindings.json",
+        "inputs/r4/git-manifest.json"
+      ]
+    },
+    {
+      "id": "SOURCE-REPLAY",
+      "status": "PASS",
+      "finding": "Source patch applies to the exact R4-02 builder input and recreates the delivered builder byte-for-byte. Full geometry rebuild is intentionally not used because it changes pinned R4 geometry.",
+      "evidence": [
+        "source.patch",
+        "evidence/source-patch-replay.json"
+      ]
+    },
+    {
+      "id": "MATERIAL-LIGHT-DELTA",
+      "status": "PASS LOCAL",
+      "finding": "Only named existing material values and two authored punctual-light colors changed; five untouched assets remain byte-identical.",
+      "evidence": [
+        "evidence/gltf-palette-replay.json",
+        "evidence/palette-invariants.json"
+      ]
+    },
+    {
+      "id": "NODE-GEOMETRY-UV-TRS-ANIMATION-HOOKS",
+      "status": "PASS LOCAL",
+      "finding": "GLB binary chunks and all non-palette JSON are unchanged. Blender inventory retains the exact 246-object, 96-mesh, 43-material, 4-light scene, geometry/UV hashes, assignments, hierarchy, transforms, actions and scene settings.",
+      "evidence": [
+        "evidence/palette-invariants.json",
+        "evidence/native-inventory-r4.json",
+        "evidence/native-inventory-r5.json"
+      ]
+    },
+    {
+      "id": "REFERENCE-PALETTE",
+      "status": "IMPROVED; OWNER REVIEW PENDING",
+      "finding": "White/ivory surfaces, blue chair, pink/lilac hex lights and cyan fill are more distinct. The full scene remains structurally simpler and less photoreal than the reference; full B1 art fidelity stays open.",
+      "evidence": [
+        "evidence/visual-comparison.png",
+        "evidence/mobile-comparison.png"
+      ]
+    },
+    {
+      "id": "BROWSER-PROFILES",
+      "status": "PASS LOCAL",
+      "finding": "Exact inherited desktop and mobile profiles rendered; no browser console/page errors; R5 output has 103 desktop / 75 mobile calls and 15,428 / 14,056 triangles.",
+      "evidence": [
+        "evidence/browser-results.json",
+        "captures/R5/desktop-home/webgl-canvas.png",
+        "captures/R5/mobile-home/webgl-canvas.png"
+      ]
+    },
+    {
+      "id": "GLTF-BLENDER-IMPORT",
+      "status": "PASS",
+      "finding": "Five GLBs validate with 0 errors and 0 warnings and freshly import in Blender 5.2.2.",
+      "evidence": [
+        "evidence/gltf-validation.json",
+        "evidence/blender-imports.json"
+      ]
+    },
+    {
+      "id": "ASSET-TRANSFER-BUDGETS",
+      "status": "PASS LOCAL",
+      "finding": "Local draw, triangle, transfer, texture and software renderer timing budgets pass; not device or production qualification.",
+      "evidence": [
+        "evidence/final-budgets.json"
+      ]
+    },
+    {
+      "id": "OWNER-VISUAL-REVIEW",
+      "status": "PENDING",
+      "finding": "Owner review is required before B1 art admission.",
+      "evidence": [
+        "evidence/visual-comparison.png"
+      ]
+    },
+    {
+      "id": "INDEPENDENT-GPT2-AND-PARENT-ACCEPTANCE",
+      "status": "PENDING",
+      "finding": "Maker does not approve its own output; separate independent audit and parent acceptance are not included.",
+      "evidence": [
+        "report.md"
+      ]
+    },
+    {
+      "id": "DOOR-CAMERA-OWNERSHIP",
+      "status": "OPEN; OUT OF SCOPE",
+      "finding": "Positive-Y sweep margin and production transform ownership remain open.",
+      "evidence": [
+        "inputs/finish-35/2026-10-12-finish-35-b1-reference-visual-correction.md"
+      ]
+    },
+    {
+      "id": "PRODUCTION-DEVICE-PROVIDER-G7",
+      "status": "NOT RUN",
+      "finding": "No canonical integration, provider/host verification, physical device or production/G7 evidence is claimed.",
+      "evidence": [
+        "report.md"
+      ]
+    }
+  ]
+}

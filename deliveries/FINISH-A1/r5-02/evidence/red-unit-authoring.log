@@ -1,0 +1,292 @@
+
+ RUN  v5.0.2 W:/deliveries/FINISH-A1/r5-02/.work/candidate/app
+
+ ❯ tests/unit/platform/completion-authoring-blocks.test.ts (2 tests | 2 failed) 43ms
+   ❯ A1 write-time structured content requirements (2)
+     × rejects duplicate stable section IDs before advancing the draft 35ms
+     × rejects empty list content before advancing the draft 6ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/platform/completion-authoring-blocks.test.ts > A1 write-time structured content requirements > rejects duplicate stable section IDs before advancing the draft
+AssertionError: promise resolved "{ draftRevision: 2, project: { …(9) } }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "draftRevision": 2,
++   "project": {
++     "contribution": "Sole developer. Architected the asynchronous event-streaming backend using Python and FastAPI, designed WebSocket subscription channels, built threshold anomaly detection rules, and containerized the system with Docker Compose.",
++     "evidence": [
++       {
++         "checkedAt": "2026-10-01T12:00:00Z",
++         "id": "ev-hel-repo",
++         "kind": "repository",
++         "note": "Public repository with FastAPI asynchronous streaming server and Docker Compose orchestration.",
++         "status": "verified",
++         "url": "https://github.com/yorayriniwnl/Yor-Helios",
++       },
++       {
++         "checkedAt": "2026-10-01T12:00:00Z",
++         "id": "ev-hel-status",
++         "kind": "document",
++         "note": "Project is in active development with runnable Docker Compose local environment; live cloud production hosting is not deployed.",
++         "status": "verified",
++         "url": null,
++       },
++     ],
++     "id": "helios",
++     "links": [
++       {
++         "checkedAt": "2026-10-01T12:00:00Z",
++         "label": "Source Repository",
++         "url": "https://github.com/yorayriniwnl/Yor-Helios",
++       },
++     ],
++     "revision": 2,
++     "sections": [
++       {
++         "blocks": [
++           {
++             "text": "Industrial and commercial facility power monitoring requires immediate detection of voltage spikes, sustained overcurrent, and phase imbalances. Yor Helios provides a lightweight event pipeline designed for low-overhead local or edge deployment.",
++             "type": "paragraph",
++           },
++           {
++             "text": "Built on FastAPI and Python's asyncio event loop, the backend ingests incoming energy telemetry streams and broadcasts parsed anomaly events over persistent WebSocket connections.",
++             "type": "paragraph",
++           },
++           {
++             "alt": "Yor Helios edge telemetry architecture diagram",
++             "caption": "Figure 1: Architectural topology under review for public asset publication.",
++             "mediaId": "missing-helios-diagram",
++             "type": "image",
++           },
++         ],
++         "heading": "Streaming Architecture & Event Broker",
++         "id": "architecture",
++       },
++       {
++         "blocks": [
++           {
++             "items": [
++               "Channel-Specific Subscriptions: Operators can isolate alerts by electrical bus, facility zone, or severity rating.",
++               "Sliding Window Anomaly Rules: Tracks short-term rolling averages to differentiate transient motor inrush spikes from sustained overloads.",
++               "Heartbeat & Reconnection Protocol: Provides connection liveness verification and resilient automated client re-connection.",
++             ],
++             "type": "list",
++           },
++           {
++             "language": "python",
++             "text": "# WebSocket broadcaster and channel routing
++ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
++
++ class ConnectionManager:
++     def __init__(self):
++         self.active_channels: dict[str, list[WebSocket]] = {}
++
++     async def connect(self, channel: str, websocket: WebSocket):
++         await websocket.accept()
++         self.active_channels.setdefault(channel, []).append(websocket)
++
++     def disconnect(self, channel: str, websocket: WebSocket):
++         if channel in self.active_channels and websocket in self.active_channels[channel]:
++             self.active_channels[channel].remove(websocket)
++
++     async def broadcast_alert(self, channel: str, event: dict):
++         for connection in self.active_channels.get(channel, []):
++             await connection.send_json(event)",
++             "type": "code",
++           },
++         ],
++         "heading": "Threshold Engine & Channel Subscriptions",
++         "id": "anomaly-engine",
++       },
++       {
++         "blocks": [
++           {
++             "text": "Yor Helios is containerized using Docker Compose for one-command local reproduction. In accordance with honest disclosure standards, this platform is in development: no live cloud production cluster or physical sensor hardware integration is active.",
++             "type": "paragraph",
++           },
++         ],
++         "heading": "Development Status & Scope",
++         "id": "deployment-status",
++       },
++       {
++         "blocks": [
++           {
++             "text": "Industrial and commercial facility power monitoring requires immediate detection of voltage spikes, sustained overcurrent, and phase imbalances. Yor Helios provides a lightweight event pipeline designed for low-overhead local or edge deployment.",
++             "type": "paragraph",
++           },
++           {
++             "text": "Built on FastAPI and Python's asyncio event loop, the backend ingests incoming energy telemetry streams and broadcasts parsed anomaly events over persistent WebSocket connections.",
++             "type": "paragraph",
++           },
++           {
++             "alt": "Yor Helios edge telemetry architecture diagram",
++             "caption": "Figure 1: Architectural topology under review for public asset publication.",
++             "mediaId": "missing-helios-diagram",
++             "type": "image",
++           },
++         ],
++         "heading": "Duplicate identity",
++         "id": "architecture",
++       },
++     ],
++     "slug": "helios",
++     "summary": "An energy-monitoring platform streaming anomaly and threshold events into channel-specific operator dashboards.",
++     "title": "Yor Helios",
++   },
+  }
+
+ ❯ tests/unit/platform/completion-authoring-blocks.test.ts:35:6
+     33|         actor
+     34|       )
+     35|     ).rejects.toBeInstanceOf(ContentValidationError);
+       |      ^
+     36|     expect((await getProjectDraft("helios", actor))?.draftRevision).to…
+     37|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/unit/platform/completion-authoring-blocks.test.ts > A1 write-time structured content requirements > rejects empty list content before advancing the draft
+AssertionError: promise resolved "{ draftRevision: 2, project: { …(9) } }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "draftRevision": 2,
++   "project": {
++     "contribution": "Sole developer. Architected the asynchronous event-streaming backend using Python and FastAPI, designed WebSocket subscription channels, built threshold anomaly detection rules, and containerized the system with Docker Compose.",
++     "evidence": [
++       {
++         "checkedAt": "2026-10-01T12:00:00Z",
++         "id": "ev-hel-repo",
++         "kind": "repository",
++         "note": "Public repository with FastAPI asynchronous streaming server and Docker Compose orchestration.",
++         "status": "verified",
++         "url": "https://github.com/yorayriniwnl/Yor-Helios",
++       },
++       {
++         "checkedAt": "2026-10-01T12:00:00Z",
++         "id": "ev-hel-status",
++         "kind": "document",
++         "note": "Project is in active development with runnable Docker Compose local environment; live cloud production hosting is not deployed.",
++         "status": "verified",
++         "url": null,
++       },
++     ],
++     "id": "helios",
++     "links": [
++       {
++         "checkedAt": "2026-10-01T12:00:00Z",
++         "label": "Source Repository",
++         "url": "https://github.com/yorayriniwnl/Yor-Helios",
++       },
++     ],
++     "revision": 2,
++     "sections": [
++       {
++         "blocks": [
++           {
++             "text": "Industrial and commercial facility power monitoring requires immediate detection of voltage spikes, sustained overcurrent, and phase imbalances. Yor Helios provides a lightweight event pipeline designed for low-overhead local or edge deployment.",
++             "type": "paragraph",
++           },
++           {
++             "text": "Built on FastAPI and Python's asyncio event loop, the backend ingests incoming energy telemetry streams and broadcasts parsed anomaly events over persistent WebSocket connections.",
++             "type": "paragraph",
++           },
++           {
++             "alt": "Yor Helios edge telemetry architecture diagram",
++             "caption": "Figure 1: Architectural topology under review for public asset publication.",
++             "mediaId": "missing-helios-diagram",
++             "type": "image",
++           },
++         ],
++         "heading": "Streaming Architecture & Event Broker",
++         "id": "architecture",
++       },
++       {
++         "blocks": [
++           {
++             "items": [
++               "Channel-Specific Subscriptions: Operators can isolate alerts by electrical bus, facility zone, or severity rating.",
++               "Sliding Window Anomaly Rules: Tracks short-term rolling averages to differentiate transient motor inrush spikes from sustained overloads.",
++               "Heartbeat & Reconnection Protocol: Provides connection liveness verification and resilient automated client re-connection.",
++             ],
++             "type": "list",
++           },
++           {
++             "language": "python",
++             "text": "# WebSocket broadcaster and channel routing
++ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
++
++ class ConnectionManager:
++     def __init__(self):
++         self.active_channels: dict[str, list[WebSocket]] = {}
++
++     async def connect(self, channel: str, websocket: WebSocket):
++         await websocket.accept()
++         self.active_channels.setdefault(channel, []).append(websocket)
++
++     def disconnect(self, channel: str, websocket: WebSocket):
++         if channel in self.active_channels and websocket in self.active_channels[channel]:
++             self.active_channels[channel].remove(websocket)
++
++     async def broadcast_alert(self, channel: str, event: dict):
++         for connection in self.active_channels.get(channel, []):
++             await connection.send_json(event)",
++             "type": "code",
++           },
++         ],
++         "heading": "Threshold Engine & Channel Subscriptions",
++         "id": "anomaly-engine",
++       },
++       {
++         "blocks": [
++           {
++             "text": "Yor Helios is containerized using Docker Compose for one-command local reproduction. In accordance with honest disclosure standards, this platform is in development: no live cloud production cluster or physical sensor hardware integration is active.",
++             "type": "paragraph",
++           },
++         ],
++         "heading": "Development Status & Scope",
++         "id": "deployment-status",
++       },
++       {
++         "blocks": [
++           {
++             "items": [],
++             "type": "list",
++           },
++         ],
++         "heading": "Empty list",
++         "id": "empty-list",
++       },
++     ],
++     "slug": "helios",
++     "summary": "An energy-monitoring platform streaming anomaly and threshold events into channel-specific operator dashboards.",
++     "title": "Yor Helios",
++   },
+  }
+
+ ❯ tests/unit/platform/completion-authoring-blocks.test.ts:55:6
+     53|         actor
+     54|       )
+     55|     ).rejects.toBeInstanceOf(ContentValidationError);
+       |      ^
+     56|     expect((await getProjectDraft("helios", actor))?.draftRevision).to…
+     57|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  11:23:01
+   Duration  3.52s (transform 74%, import 24%, tests 2%)
+
