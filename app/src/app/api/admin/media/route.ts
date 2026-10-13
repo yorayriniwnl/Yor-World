@@ -5,17 +5,25 @@ import {
   listMediaAssets,
   MediaValidationError,
 } from "@/server/media/validate-upload";
+import { listE2EApprovedMediaFixtures } from "@/server/media/manifest";
 
 export const dynamic = "force-dynamic";
+const privateHeaders = { "Cache-Control": "private, no-store, no-cache, must-revalidate", Pragma: "no-cache", Expires: "0", Vary: "Authorization, Cookie" };
+
+function authFailure(result: Exclude<Awaited<ReturnType<typeof verifyOwner>>, { ok: true }>) {
+  const response = createAuthErrorResponse(result);
+  for (const [name, value] of Object.entries(privateHeaders)) response.headers.set(name, value);
+  return response;
+}
 
 export async function GET(request: Request) {
   const result = await verifyOwner(request);
   if (!result.ok) {
-    return createAuthErrorResponse(result);
+    return authFailure(result);
   }
 
   try {
-  const assets = await listMediaAssets();
+  const assets = [...await listMediaAssets(), ...listE2EApprovedMediaFixtures()];
 
   return Response.json(
     {
@@ -23,14 +31,11 @@ export async function GET(request: Request) {
       authorizedActor: result.context.userId,
     },
     {
-      headers: {
-        "Cache-Control": "no-store",
-        Vary: "Authorization, Cookie",
-      },
+      headers: privateHeaders,
     }
   );
   } catch {
-    return Response.json({ error: "Private storage is temporarily unavailable." },{ status: 503,headers: { "Cache-Control": "no-store, private",Vary: "Authorization, Cookie" } });
+  return Response.json({ error: "Private storage is temporarily unavailable." },{ status: 503,headers: privateHeaders });
   }
 
 }
@@ -38,7 +43,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const result = await verifyOwner(request);
   if (!result.ok) {
-    return createAuthErrorResponse(result);
+    return authFailure(result);
   }
 
   try {
@@ -52,7 +57,7 @@ export async function POST(request: Request) {
       const formData = await request.formData();
       const file = formData.get("file") as File | null;
       if (!file) {
-        return Response.json({ error: "Missing file field in multipart form" }, { status: 422 });
+        return Response.json({ error: "Missing file field in multipart form" }, { status: 422, headers: privateHeaders });
       }
       buffer = new Uint8Array(await file.arrayBuffer());
       mime = file.type;
@@ -61,7 +66,7 @@ export async function POST(request: Request) {
       // JSON base64 upload fallback
       const body = await request.json();
       if (!body.data || !body.mime) {
-        return Response.json({ error: "Missing data (base64) or mime in JSON payload" }, { status: 422 });
+        return Response.json({ error: "Missing data (base64) or mime in JSON payload" }, { status: 422, headers: privateHeaders });
       }
       buffer = Buffer.from(body.data, "base64");
       mime = body.mime;
@@ -78,18 +83,18 @@ export async function POST(request: Request) {
         asset,
         actor: result.context.userId,
       },
-      { status: 201 }
+      { status: 201, headers: privateHeaders }
     );
   } catch (err) {
     if (err instanceof MediaValidationError) {
       return Response.json(
         { error: err.message, code: err.code },
-        { status: 422 }
+        { status: 422, headers: privateHeaders }
       );
     }
     return Response.json(
       { error: "Private storage is temporarily unavailable." },
-      { status: 503 }
+      { status: 503, headers: privateHeaders }
     );
   }
 }

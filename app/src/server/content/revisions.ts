@@ -155,12 +155,44 @@ export function validateDraftContent(data: unknown): PublishedProject {
   }
 
   // Validate sections and blocks
+  const seenSectionIds = new Set<string>();
+  if (project.sections.length === 0) throw new ContentValidationError("A project draft must contain at least one section.");
   for (const section of project.sections) {
     if (!section.heading || section.heading.trim().length === 0) {
       throw new ContentValidationError(`Section '${section.id}' has empty heading`);
     }
+    if (seenSectionIds.has(section.id)) {
+      throw new ContentValidationError(`Duplicate section id '${section.id}' in project '${project.slug}'`);
+    }
+    seenSectionIds.add(section.id);
+
     if (section.blocks.length === 0) {
       throw new ContentValidationError(`Section '${section.id}' must contain at least one content block`);
+    }
+
+    for (const block of section.blocks) {
+      if (block.type === "paragraph") {
+        if (!block.text || block.text.trim().length === 0) {
+          throw new ContentValidationError(`Paragraph block in section '${section.id}' cannot be empty`);
+        }
+      } else if (block.type === "code") {
+        if (!block.text || block.text.trim().length === 0) {
+          throw new ContentValidationError(`Code block in section '${section.id}' cannot be empty`);
+        }
+      } else if (block.type === "list") {
+        if (!block.items || block.items.length === 0) {
+          throw new ContentValidationError(`List block in section '${section.id}' must have at least one item`);
+        }
+        for (const item of block.items) {
+          if (!item || item.trim().length === 0) {
+            throw new ContentValidationError(`List block in section '${section.id}' contains an empty item`);
+          }
+        }
+      } else if (block.type === "image") {
+        if (!block.mediaId || block.mediaId.trim().length === 0) {
+          throw new ContentValidationError(`Image block in section '${section.id}' requires mediaId`);
+        }
+      }
     }
   }
 
@@ -241,6 +273,7 @@ export async function saveProjectDraft(
 
   // Content validation (throws 422 if invalid)
   const validatedProject = validateDraftContent(projectWithRev);
+  await (await import("../media/manifest")).validateDraftMediaReferences(validatedProject);
 
   const updatedRecord: DraftRecord = {
     projectId: input.projectId,
@@ -271,6 +304,8 @@ export async function readDurableDrafts(db: QueryableDb): Promise<DraftRecord[]>
     drafts.set(project.id, { projectId: project.id, draftRevision: project.revision, project,
       updatedAt: approvedPublication.publishedAt, updatedBy: "accepted-static-baseline" });
   }
+  const privateCandidate = initializeDefaultDrafts().get("candidatex");
+  if (privateCandidate) drafts.set("candidatex", { ...privateCandidate,draftRevision: 0 });
   for (const row of result.rows) {
     const project = validateDraftContent(row["payload"]);
     drafts.set(project.id, { projectId: project.id, draftRevision: Number(row["draft_revision"]), project,
@@ -293,6 +328,7 @@ async function saveDurableDraft(input: {
     if (currentRevision !== input.expectedRevision) throw new RevisionConflictError("Draft changed. Refresh before saving.");
     const nextRevision = currentRevision + 1;
     const project = validateDraftContent({ ...input.project, revision: nextRevision });
+    await (await import("../media/manifest")).validateDraftMediaReferences(project,tx);
     if (!row) {
       row = (await tx.query("INSERT INTO public.projects(slug,title,draft_revision) VALUES($1,$2,$3) RETURNING id", [input.projectId, project.title, nextRevision])).rows[0]!;
     } else {
