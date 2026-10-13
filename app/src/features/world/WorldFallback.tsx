@@ -18,7 +18,7 @@ export function WorldFallback({ reason, onRetry, onDismiss }: WorldFallbackProps
       aria-labelledby="fallback-heading"
       data-testid="world-fallback-banner"
     >
-      <h3 id="fallback-heading" className={styles.fallbackTitle}>
+      <h3 id="fallback-heading" className={styles.fallbackTitle} tabIndex={-1}>
         Accessible Portfolio View (3D Studio Fallback)
       </h3>
       <p className={styles.fallbackDescription}>

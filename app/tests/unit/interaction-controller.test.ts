@@ -269,6 +269,28 @@ describe("ExperienceController & Interaction Arbitration (Task C1)", () => {
     });
   });
 
+  describe("Responsive replay fallback", () => {
+    it("returns to the measured mobile HOME camera immediately when reduced motion is enabled", async () => {
+      controller.setHomeCamera("home-mobile");
+      controller.setReducedMotion(true);
+
+      await controller.send({ type: "ENTER", replay: true });
+
+      expect(mockCam.transitionTo).not.toHaveBeenCalled();
+      expect(mockCam.setCameraPreset).toHaveBeenCalledWith("home-mobile", true);
+      expect(controller.getSnapshot().activeCamera).toBe("home-mobile");
+    });
+
+    it("uses the measured mobile HOME destination after a regular replay", async () => {
+      controller.setHomeCamera("home-mobile");
+
+      await controller.send({ type: "ENTER", replay: true });
+
+      expect(mockCam.transitionTo).toHaveBeenCalledWith("home-mobile", 2.0);
+      expect(controller.getSnapshot().activeCamera).toBe("home-mobile");
+    });
+  });
+
   describe("Attack 8: renderer failure", () => {
     it("transitions cleanly to static fallback and aborts in-flight work on RENDERER_FAILED", async () => {
       let resolveCam: () => void = () => {};

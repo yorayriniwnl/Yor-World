@@ -8,14 +8,36 @@ import { ExperienceController } from "@/features/experience/controller";
 import { configureProductionLighting, PRODUCTION_LIGHT_INTENSITIES } from "@/features/world/ProductionLighting";
 import { RuntimeMaterialQuality } from "@/features/world/RuntimeMaterialQuality";
 import { WorldInteractionBinding } from "@/features/world/WorldInteractionBinding";
+import { ASSET_LOCATIONS } from "@/features/world/asset-locations";
 
-const assetPath = path.join(process.cwd(), "public/models/production-room-full.glb");
+const publicRoot = path.resolve(process.cwd(), "public");
+const manifestPath = path.join(publicRoot, "asset-manifest.json");
+const legacyRoomPath = path.join(publicRoot, "models/production-room-full.glb");
+
+type RoomManifestEntry = { id: string; url: string; sha256: string; bytes: number };
+
+function currentRoomBinding(): { entry: RoomManifestEntry; assetPath: string } {
+  const manifest = JSON.parse(readFileSync(manifestPath, "utf8")) as { groups: RoomManifestEntry[] };
+  const entry = manifest.groups.find((group) => group.id === "production-room-full");
+  expect(entry, "asset manifest must declare production-room-full").toBeDefined();
+  if (!entry) throw new Error("asset manifest is missing production-room-full");
+
+  expect(ASSET_LOCATIONS.roomFull).toBe(entry.url);
+  const assetPath = path.resolve(publicRoot, `.${entry.url}`);
+  expect(path.relative(publicRoot, assetPath).startsWith(".."), "manifest asset must stay below public/").toBe(false);
+  expect(assetPath).not.toBe(legacyRoomPath);
+  expect(path.basename(assetPath)).toContain(entry.sha256);
+  return { entry, assetPath };
+}
 
 /** Decode the actual shipped light/node/mesh data. Only bitmap decoding is omitted
  * in memory for Node. The original file retains its complete texture metadata.
  */
 async function loadRoom() {
+  const { entry, assetPath } = currentRoomBinding();
   const bytes = readFileSync(assetPath);
+  expect(bytes.byteLength).toBe(entry.bytes);
+  expect(createHash("sha256").update(bytes).digest("hex")).toBe(entry.sha256);
   const jsonLength = bytes.readUInt32LE(12);
   const json = JSON.parse(bytes.subarray(20, 20 + jsonLength).toString("utf8"));
   for (const material of json.materials ?? []) {
@@ -42,7 +64,7 @@ async function loadRoom() {
   const buffer = glb.buffer.slice(glb.byteOffset, glb.byteOffset + glb.byteLength) as ArrayBuffer;
   const scene = (await new GLTFLoader().parseAsync(buffer, "")).scene;
   scene.updateMatrixWorld(true);
-  return { scene, bytes };
+  return { scene, bytes, assetPath };
 }
 
 function productionLights(scene: THREE.Object3D) {
@@ -103,13 +125,23 @@ function bindEnvironment(scene: THREE.Object3D, reducedMotion = false) {
 
 describe("Frozen production lighting and runtime controls", () => {
   it("calibrates the four actual glTF lights while preserving their authored attributes, meshes and asset bytes", async () => {
-    const { scene, bytes } = await loadRoom();
+    const { scene, bytes, assetPath } = await loadRoom();
     const lights = productionLights(scene);
     const originalLightStates = new Map([...lights].map(([name, light]) => [name, lightState(light)]));
     const originalMeshes = meshState(scene);
     expect([...lights.values()].filter((light) => light instanceof THREE.PointLight)).toHaveLength(3);
     expect([...lights.values()].filter((light) => light instanceof THREE.SpotLight)).toHaveLength(1);
     for (const light of lights.values()) expect(light.intensity).toBeGreaterThan(1_000);
+
+    // The successor runtime intentionally calibrates two emissive surface
+    // constants for readable pink/violet ACES output; geometry and all other
+    // authored material state must still remain unchanged.
+    for (const row of originalMeshes as Array<{ materials: Array<Record<string, unknown>> }>) {
+      for (const material of row.materials) {
+        if (material.name === "Hex_LilacEmissive") { material.emissive = new THREE.Color("#e982f8").getHex(); material.emissiveIntensity = 0.55; }
+        if (material.name === "Hex_VioletEmissive") { material.emissive = new THREE.Color("#a34ded").getHex(); material.emissiveIntensity = 0.68; }
+      }
+    }
 
     configureProductionLighting(scene);
 
@@ -143,7 +175,7 @@ describe("Frozen production lighting and runtime controls", () => {
     expect([lightState(fill, true), lightState(spot, true)]).toEqual(externalBefore);
   });
 
-  it("the real environment binding eases the task lamp off and on using its calibrated 2.5 baseline", async () => {
+  it("the real environment binding eases the task lamp off and on using its calibrated baseline", async () => {
     const { scene } = await loadRoom();
     configureProductionLighting(scene);
     const lights = productionLights(scene);
@@ -152,17 +184,17 @@ describe("Frozen production lighting and runtime controls", () => {
       .map(([name, light]) => [name, light.intensity]);
     const { controller, binding } = bindEnvironment(scene);
     try {
-      expect(lamp.intensity).toBe(2.5);
+      expect(lamp.intensity).toBe(PRODUCTION_LIGHT_INTENSITIES.Light_TaskDownlight);
       await controller.send({ type: "SET_LAMP", enabled: false });
       controller.advance(0.125);
-      expect(lamp.intensity).toBeCloseTo(1.25);
+      expect(lamp.intensity).toBeCloseTo(PRODUCTION_LIGHT_INTENSITIES.Light_TaskDownlight! / 2);
       controller.advance(0.125);
       expect(lamp.intensity).toBe(0);
       await controller.send({ type: "SET_LAMP", enabled: true });
       controller.advance(0.125);
-      expect(lamp.intensity).toBeCloseTo(1.25);
+      expect(lamp.intensity).toBeCloseTo(PRODUCTION_LIGHT_INTENSITIES.Light_TaskDownlight! / 2);
       controller.advance(0.125);
-      expect(lamp.intensity).toBe(2.5);
+      expect(lamp.intensity).toBe(PRODUCTION_LIGHT_INTENSITIES.Light_TaskDownlight);
       expect([...lights].filter(([name]) => name !== "Light_TaskDownlight")
         .map(([name, light]) => [name, light.intensity])).toEqual(otherIntensities);
     } finally {
@@ -172,7 +204,7 @@ describe("Frozen production lighting and runtime controls", () => {
   });
 
   it("LOW and HIGH restore actual point layers without reviving uncalibrated intensities or a lamp switched off", async () => {
-    const { scene, bytes } = await loadRoom();
+    const { scene, bytes, assetPath } = await loadRoom();
     configureProductionLighting(scene);
     const lights = productionLights(scene);
     const points = [...lights.values()].filter((light): light is THREE.PointLight => light instanceof THREE.PointLight);
@@ -186,7 +218,7 @@ describe("Frozen production lighting and runtime controls", () => {
       quality.apply("low");
       expect(points.map((light) => light.layers.mask)).toEqual([0, 0, 0]);
       expect(lamp.layers.mask).toBe(lampMask);
-      expect(lamp.intensity).toBe(2.5);
+      expect(lamp.intensity).toBe(PRODUCTION_LIGHT_INTENSITIES.Light_TaskDownlight);
       await controller.send({ type: "SET_LAMP", enabled: false });
       expect(lamp.intensity).toBe(0);
       quality.apply("high");
@@ -196,7 +228,7 @@ describe("Frozen production lighting and runtime controls", () => {
       expect(lamp.intensity).toBe(0);
       quality.apply("low");
       await controller.send({ type: "SET_LAMP", enabled: true });
-      expect(lamp.intensity).toBe(2.5);
+      expect(lamp.intensity).toBe(PRODUCTION_LIGHT_INTENSITIES.Light_TaskDownlight);
       quality.dispose();
       expect(points.map((light) => light.layers.mask)).toEqual(masks);
       for (const [name, light] of lights) expect(light.intensity).toBe(PRODUCTION_LIGHT_INTENSITIES[name]);

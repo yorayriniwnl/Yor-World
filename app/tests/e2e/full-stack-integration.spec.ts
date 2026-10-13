@@ -1,8 +1,26 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, type APIRequestContext, type Page } from "@playwright/test";
+import { createHash } from "node:crypto";
 import { spawn } from "node:child_process";
 import path from "node:path";
 import { createServer } from "node:net";
 import type { Publication, PublishedProject } from "@/contracts/content";
+import { ASSET_LOCATIONS } from "@/features/world/asset-locations";
+
+type ManifestGroup = { url: string; sha256: string; bytes: number };
+
+async function expectManifestBoundAsset(request: APIRequestContext, url: string) {
+  const manifestResponse = await request.get("/asset-manifest.json");
+  expect(manifestResponse.status()).toBe(200);
+  const manifest = await manifestResponse.json() as { groups: ManifestGroup[] };
+  const entry = manifest.groups.find((group) => group.url === url);
+  expect(entry, `current manifest must declare ${url}`).toBeDefined();
+  if (!entry) throw new Error(`current manifest is missing ${url}`);
+  const assetResponse = await request.get(url);
+  expect(assetResponse.status()).toBe(200);
+  const bytes = await assetResponse.body();
+  expect(bytes.byteLength).toBe(entry.bytes);
+  expect(createHash("sha256").update(bytes).digest("hex")).toBe(entry.sha256);
+}
 
 async function openLauncher(page: Page) {
   await expect(page.getByTestId("world-stage-container")).toBeVisible({ timeout: 15_000 });
@@ -35,12 +53,20 @@ test.describe("RC3 cross-lane full stack", () => {
     await page.setExtraHTTPHeaders({ "x-forwarded-for": `198.51.${network % 200}.${(network >>> 8) % 200 + 1}` });
   });
 
-  test("world monitor contact command reaches the real durable contact API", async ({ page }) => {
+test("world monitor contact command reaches the real durable contact API", async ({ page, request }) => {
     const models: string[] = [];
     page.on("request", (request) => { if (request.url().endsWith(".glb")) models.push(new URL(request.url()).pathname); });
     await page.goto("/?studio=1");
     await openLauncher(page);
-    expect(models).toEqual(expect.arrayContaining(["/models/production-room-full.glb", "/models/resident-production.glb", "/models/fixture-production.glb", "/models/interaction-assets.glb"]));
+    expect(models).toEqual(expect.arrayContaining([
+      ASSET_LOCATIONS.roomFull,
+      ASSET_LOCATIONS.avatar,
+      ASSET_LOCATIONS.fixture,
+      ASSET_LOCATIONS.interactionDesktop,
+    ]));
+    for (const url of [ASSET_LOCATIONS.roomFull, ASSET_LOCATIONS.avatar, ASSET_LOCATIONS.fixture, ASSET_LOCATIONS.interactionDesktop]) {
+      await expectManifestBoundAsset(request, url);
+    }
     expect(models.some((url) => /proof|blockout/.test(url))).toBe(false);
     await page.getByRole("textbox", { name: "Terminal command input" }).fill("contact");
     await page.getByRole("textbox", { name: "Terminal command input" }).press("Enter");
@@ -150,6 +176,8 @@ test.describe("RC3 cross-lane full stack", () => {
   test("static fallback uses approved projects and exposes no draft/private data", async ({ page, request }) => {
     await page.goto("/?studio=1");
     await expect(page.getByTestId("world-stage-container")).toBeVisible({ timeout: 15_000 });
+    await page.getByTestId("studio-options-toggle").click();
+    await expect(page.getByTestId("studio-options-panel")).toBeVisible();
     await page.getByRole("combobox", { name: "Visual Quality Tier" }).selectOption("static");
     const fallback = page.getByTestId("static-fallback-section");
     await expect(fallback).toBeVisible();

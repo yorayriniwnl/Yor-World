@@ -46,6 +46,7 @@ test.describe("C3 Failure Recovery, Context Loss & Mobile Resilience", () => {
     // Verify accessible fallback banner is displayed
     const fallback = page.locator('[data-testid="world-fallback-banner"]');
     await expect(fallback).toBeVisible({ timeout: 5000 });
+    await expect(page.locator("#fallback-heading")).toBeFocused();
 
     // Verify Retry and Continue buttons exist
     const retryBtn = page.locator('[data-testid="fallback-retry-btn"]');
@@ -159,7 +160,7 @@ test.describe("C3 Failure Recovery, Context Loss & Mobile Resilience", () => {
     await expect.poll(async () => JSON.parse((await page.getByTestId("world-diagnostics").textContent())!).qualityTier).toBe("medium");
     await page.getByTestId("diagnostics-toggle-btn").click();
 
-    const reducedMotion = page.getByTestId("toggle-reduced-motion-btn");
+    const reducedMotion = page.getByTestId("reduced-motion-toggle-btn");
     await expect(reducedMotion).toHaveAttribute("aria-checked", "true");
     await reducedMotion.click();
     await expect(reducedMotion).toHaveAttribute("aria-checked", "false");

@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState, useSyncExternalStore, useEffect, useRef } from "react";
+import React, { useState, useSyncExternalStore, useEffect, useRef, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { createPortal } from "react-dom";
 import styles from "./world.module.css";
 import portfolioStyles from "@/features/portfolio/portfolio.module.css";
 import type { PublishedProject } from "@/contracts/content";
 import { publishedProjects } from "@/features/portfolio/public-content";
+import { hasPotentialReturnSnapshot } from "../experience/return-snapshot-presence";
 
 const emptySubscribe = () => () => {};
 
@@ -47,16 +48,46 @@ export function StudioLauncher({ projects = publishedProjects, publicationRevisi
 
   const [manuallyClosed, setManuallyClosed] = useState<boolean>(false);
   const [manuallyOpened, setManuallyOpened] = useState<boolean>(false);
+  const [restoreOnMount, setRestoreOnMount] = useState(false);
+  const [stageHost, setStageHost] = useState<HTMLElement | null>(null);
 
-  const isEntered = (autoEnter && !manuallyClosed) || manuallyOpened;
+  const isEntered = ((autoEnter || restoreOnMount) && !manuallyClosed) || manuallyOpened;
   const disclosureRef = useRef<HTMLDetailsElement>(null);
   const wasEntered = useRef(false);
+  const handleStudioClose = useCallback(() => {
+    setManuallyClosed(true);
+    setManuallyOpened(false);
+  }, []);
+  useEffect(() => {
+    let active = true;
+    const frame = requestAnimationFrame(() => {
+      // This component appears before the stage host in the page tree, so a
+      // render-time lookup can be null on a client history restore. Resolve the
+      // portal target after commit and let React mount the studio on that host.
+      setStageHost(document.getElementById("studio-stage-host"));
+
+      // Only load schema validation when this tab may have a return snapshot;
+      // ordinary portfolio visits keep that code out of the initial bundle.
+      // The lightweight probe also sees snapshots saved in memory when storage
+      // is blocked, and the reader still performs the authoritative validation.
+      if (!hasPotentialReturnSnapshot()) return;
+      void import("../experience/return-snapshot")
+        .then(({ getReturnSnapshot }) => {
+          if (active) setRestoreOnMount(Boolean(getReturnSnapshot()));
+        })
+        .catch(() => {
+          if (active) setRestoreOnMount(false);
+        });
+    });
+    return () => {
+      active = false;
+      cancelAnimationFrame(frame);
+    };
+  }, []);
   useEffect(() => {
     if (wasEntered.current && !isEntered) disclosureRef.current?.querySelector("summary")?.focus();
     wasEntered.current = isEntered;
   }, [isEntered]);
-  const stageHost = typeof document === "undefined" ? null : document.getElementById("studio-stage-host");
-
   return (
     <div>
       {!isEntered ? (
@@ -88,10 +119,7 @@ export function StudioLauncher({ projects = publishedProjects, publicationRevisi
         <DynamicWorldRoot
           projects={projects}
           publicationRevision={publicationRevision}
-          onClose={() => {
-            setManuallyClosed(true);
-            setManuallyOpened(false);
-          }}
+          onClose={handleStudioClose}
           simulateAssetError={simulateAssetError}
           simulateRendererError={simulateRendererError}
         />, stageHost

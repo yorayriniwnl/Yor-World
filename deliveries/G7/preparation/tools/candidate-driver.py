@@ -45,6 +45,8 @@ PRESERVED_OUTPUTS = [
     "deliveries/G7/rc6-candidate", "deliveries/G7/rc6-candidate-r2",
     "deliveries/G7/rc6-candidate-r3", "deliveries/G7/rc6-candidate-r4", "deliveries/G7/rc6-candidate-r5",
     "deliveries/G7/rc6-candidate-r6",
+    "deliveries/G7/rc6-candidate-r7/release-composition.json",
+    "deliveries/G7/rc6-candidate-r7/gltf-validation-receipt.json",
     "deliveries/G7/rc6-independent-delta/r6-audit",
     "deliveries/G7/rc6-independent-delta/gate-advice/final-r6",
     "docs/planning/reviews/2026-10-08-rc6-r1",
@@ -104,7 +106,76 @@ def utc():
 def write_json(path, value):
     assert_single_link_output(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8", newline="\n")
+    with path.open("x", encoding="utf-8", newline="\n") as stream:
+        stream.write(json.dumps(value, indent=2) + "\n")
+
+
+def files_equal(left, right):
+    if left.stat().st_size != right.stat().st_size:
+        return False
+    with left.open("rb") as left_stream, right.open("rb") as right_stream:
+        while True:
+            left_chunk = left_stream.read(1024 * 1024)
+            right_chunk = right_stream.read(1024 * 1024)
+            if left_chunk != right_chunk:
+                return False
+            if not left_chunk:
+                return True
+
+
+def export_plan(source, target, append_only=False):
+    """Preflight a detached output without replacing any primary evidence."""
+    assert_single_link_output(target)
+    if append_only and source.is_file() and source.stat().st_size:
+        with source.open("rb") as stream:
+            stream.seek(-1, os.SEEK_END)
+            if stream.read(1) != b"\n":
+                raise ValueError(f"Source execution log ends with an incomplete record: {source}")
+    if not target.exists():
+        return "create", 0
+    if not target.is_file():
+        raise ValueError(f"Existing export destination is not a regular file: {target}")
+    target_size = target.stat().st_size
+    source_size = source.stat().st_size
+    if target_size == source_size and files_equal(source, target):
+        return "same", target_size
+    if not append_only or target_size >= source_size:
+        raise ValueError(f"Existing export differs; refusing to overwrite prior evidence: {target}")
+    with source.open("rb") as source_stream, target.open("rb") as target_stream:
+        remaining = target_size
+        while remaining:
+            chunk = target_stream.read(min(1024 * 1024, remaining))
+            if not chunk or source_stream.read(len(chunk)) != chunk:
+                raise ValueError(f"Existing export is not a preserved prefix: {target}")
+            remaining -= len(chunk)
+    if target_size:
+        with target.open("rb") as stream:
+            stream.seek(-1, os.SEEK_END)
+            if stream.read(1) != b"\n":
+                raise ValueError(f"Existing execution log ends with an incomplete record: {target}")
+    return "append", target_size
+
+
+def export_file(source, target, append_only=False, plan=None):
+    """Create a primary copy exclusively, or append only verified new log bytes."""
+    action, expected_size = plan or export_plan(source, target, append_only)
+    if action == "same":
+        if not target.is_file() or not files_equal(source, target):
+            raise ValueError(f"Export destination changed after preflight: {target}")
+        return
+    target.parent.mkdir(parents=True, exist_ok=True)
+    if action == "create":
+        with source.open("rb") as source_stream, target.open("xb") as target_stream:
+            shutil.copyfileobj(source_stream, target_stream)
+        return
+    if action != "append" or not append_only or target.stat().st_size != expected_size:
+        raise ValueError(f"Export destination changed after preflight: {target}")
+    current_action, current_size = export_plan(source, target, append_only=True)
+    if current_action != "append" or current_size != expected_size:
+        raise ValueError(f"Export destination changed after preflight: {target}")
+    with source.open("rb") as source_stream, target.open("ab") as target_stream:
+        source_stream.seek(expected_size)
+        shutil.copyfileobj(source_stream, target_stream)
 
 
 def digest(path):
@@ -165,11 +236,12 @@ class Driver:
             name = (self.delivery_relative / relative).as_posix()
             safe_output(self.checkout, name)
             target = safe_output(self.repo, name)
-            copies.append((path, target))
-        # Preflight every source/destination before copying any files.
-        for path, target in copies:
-            target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(path, target)
+            append_only = relative.as_posix() == "evidence/execution.jsonl"
+            plan = export_plan(path, target, append_only)
+            copies.append((path, target, append_only, plan))
+        # Preflight every source/destination before creating or appending any files.
+        for path, target, append_only, plan in copies:
+            export_file(path, target, append_only, plan)
 
     def verify_exported_inputs(self):
         """Reject incomplete, divergent or nonportable final inputs before primary validation."""
@@ -239,6 +311,33 @@ class Driver:
                 or receipt.get("releaseBundleSha256") != manifest.get("releaseBundleSha256")):
             raise RuntimeError("Strict primary validation receipt is absent or differs from final exported proof")
 
+    def verify_primary_inventory(self, command):
+        receipt_name = (self.delivery_relative / "evidence/inventory-completed.json").as_posix()
+        checksums_name = (self.delivery_relative / "SHA256SUMS.txt").as_posix()
+        receipt_path = safe_output(self.repo, receipt_name)
+        checksums_path = safe_output(self.repo, checksums_name)
+        if not receipt_path.is_file() or not checksums_path.is_file():
+            raise RuntimeError("Final inventory completion receipt or checksum inventory is absent")
+        receipt_bytes = receipt_path.read_bytes()
+        receipt = json.loads(receipt_bytes)
+        completed_at = receipt.get("completedAt")
+        try:
+            parsed_completed_at = dt.datetime.fromisoformat(completed_at) if isinstance(completed_at, str) else None
+        except ValueError:
+            parsed_completed_at = None
+        if (receipt.get("phase") != "inventory" or receipt.get("status") != "PASS"
+                or receipt.get("result") != "PASS" or receipt.get("exitCode") != 0
+                or receipt.get("sourceCommit") != self.source
+                or receipt.get("deliveryRoot") != self.delivery_relative.as_posix()
+                or receipt.get("releaseId") != self.release_id
+                or receipt.get("command") != command
+                or parsed_completed_at is None or parsed_completed_at.tzinfo is None):
+            raise RuntimeError("Primary inventory completion does not bind this source, delivery and command")
+        expected_line = f"{hashlib.sha256(receipt_bytes).hexdigest()}  {receipt_name}"
+        checksum_lines = checksums_path.read_text(encoding="utf-8").splitlines()
+        if checksum_lines.count(expected_line.rstrip("\n")) != 1:
+            raise RuntimeError("Primary inventory completion receipt is not listed exactly once with its exact SHA-256")
+
     def assert_source(self):
         if git(self.checkout, "rev-parse", "HEAD") != self.source:
             raise RuntimeError("Detached checkout HEAD no longer equals exact sourceCommit")
@@ -263,7 +362,7 @@ class Driver:
         command_env = {**self.env, **(env or {})}
         t0 = time.monotonic()
         chunks = []
-        with log.open("w", encoding="utf-8", newline="\n") as stream:
+        with log.open("x", encoding="utf-8", newline="\n") as stream:
             stream.write(f"COMMAND: {subprocess.list2cmdline(command)}\nCWD: {cwd}\nSOURCE: {self.source}\nSTARTED: {started}\n")
             stream.flush()
             try:
@@ -317,8 +416,8 @@ class Driver:
             raise RuntimeError("Checkout target already exists; use a new path or a later phase")
         if self.checkout == self.repo or self.repo in self.checkout.parents:
             raise RuntimeError("Fresh checkout must be outside the primary repository")
-        if (self.destination / "evidence/execution.jsonl").exists():
-            raise RuntimeError("Existing successor execution evidence cannot be silently replaced; choose a new delivery revision")
+        if self.destination.exists() or self.destination.is_symlink():
+            raise RuntimeError("Delivery target already exists, even if incomplete; preserve it and choose a new delivery revision")
         resolved = git(self.repo, "rev-parse", f"{self.source}^{{commit}}")
         if resolved != self.source:
             raise RuntimeError("Source identity did not resolve exactly")
@@ -331,6 +430,11 @@ class Driver:
                                 cwd=self.repo, capture_output=True, text=True, encoding="utf-8", errors="replace")
         if result.returncode:
             raise RuntimeError(f"Worktree creation failed ({result.returncode}): {result.stdout}{result.stderr}")
+        self.evidence.mkdir(parents=True, exist_ok=False)
+        write_json(self.evidence / "prepare-started.json", {
+            "phase": "prepare", "status": "STARTED", "sourceCommit": self.source,
+            "deliveryRoot": self.delivery_relative.as_posix(), "startedAt": utc(),
+        })
         initial = {
             "nodeModulesPresent": (self.checkout / "app/node_modules").exists(),
             "nextBuildPresent": (self.checkout / "app/.next").exists(),
@@ -348,20 +452,6 @@ class Driver:
             "executionMode": "Fresh exact-source detached Git worktree; CI=true; pinned full Chromium browser channel; no pre-existing dependencies or build output.",
             "secretConfiguration": "App service environment removed; synthetic E2E fixture configuration exists only for E2E/accessibility commands.",
         })
-        package = json.loads((self.checkout / "app/package.json").read_text(encoding="utf-8"))
-        write_json(self.evidence / "versions.json", {
-            "clientDate": self.args.client_date, "clientTimezone": "Asia/Calcutta", "sourceCommit": self.source,
-            "sourceAppTree": git(self.checkout, "rev-parse", f"{self.source}:app"),
-            "node": capture(["node", "--version"], self.checkout),
-            "pnpm": capture([self.pnpm, "--version"], self.checkout),
-            "git": git(self.checkout, "--version"), "python": platform.python_version(), "os": platform.platform(),
-            "workingDirectory": str(self.checkout), "canonicalApplicationRoot": "app",
-            "executionMode": "Fresh detached checkout; CI=true selects exactly one Chromium project for all browser checks.",
-            "cleanInitialState": initial, "packageVersion": package["version"], "packageManager": package["packageManager"],
-            "declaredNodeEngine": package["engines"]["node"], "playwrightPackage": package["devDependencies"]["@playwright/test"],
-            "lockfileSha256": hashlib.sha256((self.checkout / "app/pnpm-lock.yaml").read_bytes().replace(b"\r\n", b"\n")).hexdigest(),
-            "lockfileHashMode": "lf", "dependencyDownloadCache": "pnpm host store may be reused; node_modules and .next did not exist at checkout creation.",
-        })
         historical_delta = [line.split("\t", 1) for line in git(self.checkout, "diff", "--name-status", BASE, self.source, "--", *HISTORICAL).splitlines()]
         historical = [name for status, name in historical_delta if not (status == "A" and name.startswith("docs/planning/reviews/"))]
         added_review_files = [name for status, name in historical_delta if status == "A" and name.startswith("docs/planning/reviews/")]
@@ -377,6 +467,11 @@ class Driver:
         self.export()
         if historical or unauthorized:
             raise RuntimeError(f"Historical or unauthorized production trees changed: {historical + unauthorized}")
+        write_json(self.evidence / "prepare-completed.json", {
+            "phase": "prepare", "status": "PASS", "sourceCommit": self.source,
+            "deliveryRoot": self.delivery_relative.as_posix(), "completedAt": utc(),
+        })
+        self.export()
         print(f"Prepared fresh detached checkout at {self.checkout}", flush=True)
 
     def require_session(self):
@@ -385,6 +480,47 @@ class Driver:
         if session["sourceCommit"] != self.source or session["checkoutPath"] != str(self.checkout):
             raise RuntimeError("Session identity differs from requested exact checkout")
         self.assert_source()
+        self.require_phase_complete("prepare")
+
+    def phase_path(self, phase, state, root=None):
+        root = root or self.checkout
+        return safe_output(root, (self.delivery_relative / "evidence" / f"{phase}-{state}.json").as_posix())
+
+    def require_phase_complete(self, phase):
+        checkout_receipt = self.phase_path(phase, "completed")
+        primary_receipt = self.phase_path(phase, "completed", self.repo)
+        if not checkout_receipt.is_file() or not primary_receipt.is_file():
+            raise RuntimeError(f"Required {phase} phase completion is absent; interrupted attempts must use a new delivery revision")
+        checkout_bytes = checkout_receipt.read_bytes()
+        if primary_receipt.read_bytes() != checkout_bytes:
+            raise RuntimeError(f"Primary {phase} completion differs from detached evidence")
+        receipt = json.loads(checkout_bytes)
+        if (receipt.get("phase") != phase or receipt.get("status") != "PASS"
+                or receipt.get("sourceCommit") != self.source
+                or receipt.get("deliveryRoot") != self.delivery_relative.as_posix()):
+            raise RuntimeError(f"{phase} completion does not bind this source and delivery")
+
+    def begin_phase(self, phase, prerequisite):
+        if prerequisite:
+            self.require_phase_complete(prerequisite)
+        started = self.phase_path(phase, "started")
+        completed = self.phase_path(phase, "completed")
+        primary_started = self.phase_path(phase, "started", self.repo)
+        primary_completed = self.phase_path(phase, "completed", self.repo)
+        if any(path.exists() for path in [started, completed, primary_started, primary_completed]):
+            raise RuntimeError(f"{phase} phase already started or completed; preserve this attempt and use a new delivery revision")
+        write_json(started, {
+            "phase": phase, "status": "STARTED", "sourceCommit": self.source,
+            "deliveryRoot": self.delivery_relative.as_posix(), "startedAt": utc(),
+        })
+        self.export()
+
+    def finish_phase(self, phase):
+        write_json(self.phase_path(phase, "completed"), {
+            "phase": phase, "status": "PASS", "sourceCommit": self.source,
+            "deliveryRoot": self.delivery_relative.as_posix(), "completedAt": utc(),
+        })
+        self.export()
 
     def browser_env(self, bucket, fixture):
         destination = self.evidence / bucket
@@ -430,6 +566,7 @@ class Driver:
 
     def checks(self):
         self.require_session()
+        self.begin_phase("checks", "prepare")
         app = self.checkout / "app"
         counts = {}
         for number, check_id, args in [
@@ -441,18 +578,31 @@ class Driver:
         self.record("asset-validation", ["node", "scripts/release/validate-gltf-assets.mjs", "--output",
                     (self.delivery_relative / "asset-validation.json").as_posix()], self.checkout, 6)
         self.record("production-build", [self.pnpm, "build"], app, 7)
-        versions_path = self.evidence / "versions.json"
-        versions = json.loads(versions_path.read_text(encoding="utf-8"))
-        versions["buildId"] = (app / ".next/BUILD_ID").read_text(encoding="utf-8").strip()
+        build_id = (app / ".next/BUILD_ID").read_text(encoding="utf-8").strip()
         self.record("browser-install", [self.pnpm, "exec", "playwright", "install", "chromium"], app, 18)
         browser_script = ('const {chromium}=require("@playwright/test");(async()=>{'
                           'const browser=await chromium.launch({channel:"chromium",headless:true});'
                           'console.log(JSON.stringify({version:browser.version(),executable:chromium.executablePath(),'
                           'channel:"chromium",headless:true}));await browser.close();})().catch(e=>{console.error(e);process.exit(1)})')
         raw = self.record("browser-version", ["node", "-e", browser_script], app, 19, output=True)
-        versions["browser"] = json.loads(raw)
-        versions["installedPlaywrightVersion"] = capture([self.pnpm, "exec", "playwright", "--version"], app)
-        write_json(versions_path, versions)
+        package = json.loads((app / "package.json").read_text(encoding="utf-8"))
+        session = json.loads(self.session_path.read_text(encoding="utf-8"))
+        versions = {
+            "clientDate": self.args.client_date, "clientTimezone": "Asia/Calcutta", "sourceCommit": self.source,
+            "sourceAppTree": git(self.checkout, "rev-parse", f"{self.source}:app"),
+            "node": capture(["node", "--version"], self.checkout),
+            "pnpm": capture([self.pnpm, "--version"], self.checkout),
+            "git": git(self.checkout, "--version"), "python": platform.python_version(), "os": platform.platform(),
+            "workingDirectory": str(self.checkout), "canonicalApplicationRoot": "app",
+            "executionMode": "Fresh detached checkout; CI=true selects exactly one Chromium project for all browser checks.",
+            "cleanInitialState": session["initialState"], "packageVersion": package["version"],
+            "packageManager": package["packageManager"], "declaredNodeEngine": package["engines"]["node"],
+            "playwrightPackage": package["devDependencies"]["@playwright/test"], "buildId": build_id,
+            "browser": json.loads(raw), "installedPlaywrightVersion": capture([self.pnpm, "exec", "playwright", "--version"], app),
+            "lockfileSha256": hashlib.sha256((app / "pnpm-lock.yaml").read_bytes().replace(b"\r\n", b"\n")).hexdigest(),
+            "lockfileHashMode": "lf", "dependencyDownloadCache": "pnpm host store may be reused; node_modules and .next did not exist at checkout creation.",
+        }
+        write_json(self.evidence / "versions.json", versions)
         counts["e2e"] = self.discover("e2e", [], self.args.expected_e2e or self.policy.get("expectedBrowserChecks", {}).get("e2e"), 20)
         counts["accessibility"] = self.discover("accessibility", ["tests/e2e/accessibility.spec.ts"], self.args.expected_accessibility or self.policy.get("expectedBrowserChecks", {}).get("accessibility"), 21)
         counts["performance"] = self.discover("performance", ["--config", "playwright.performance.config.ts"], self.args.expected_performance or self.policy.get("expectedBrowserChecks", {}).get("performance"), 22)
@@ -480,18 +630,22 @@ class Driver:
             "overallStatus": "PASS", "buildId": versions["buildId"],
         })
         self.export()
+        self.finish_phase("checks")
 
     def package(self):
         self.require_session()
+        self.begin_phase("package", "checks")
         counts = json.loads((self.evidence / "browser-counts.json").read_text(encoding="utf-8"))
         if counts["sourceCommit"] != self.source or counts["overallStatus"] != "PASS":
             raise RuntimeError("Fresh check completion receipt is absent or bound to another source")
         self.record("bundle-assembly", ["node", "scripts/release/build-release-bundle.mjs", "--source-commit", self.source], self.checkout, 14)
         assembly = Path(__file__).with_name("assemble-evidence.py")
         self.record("evidence-assembly", [sys.executable, str(assembly), "--repository", str(self.checkout), "--policy", self.policy_path, "--source", self.source], self.checkout, 23)
+        self.finish_phase("package")
 
     def validate(self):
         self.require_session()
+        self.begin_phase("validate", "package")
         self.record("release-manifest-validation", ["node", "scripts/release/validate-release.mjs", "--strict", "--receipt",
                     (self.delivery_relative / "release-manifest-validation.receipt.json").as_posix()], self.checkout, 13)
         self.export()
@@ -500,17 +654,24 @@ class Driver:
                     (self.delivery_relative / "primary-release-manifest-validation.receipt.json").as_posix()], self.repo, 24)
         self.verify_exported_inputs()
         self.verify_primary_validation()
+        self.finish_phase("validate")
 
     def inventory(self):
         self.require_session()
+        self.begin_phase("inventory", "validate")
         self.verify_exported_inputs()
         self.verify_primary_validation()
         # Parent report and actual GitHub observations may now exist only in the primary delivery.
         assembly = Path(__file__).with_name("assemble-evidence.py")
-        result = subprocess.run([sys.executable, str(assembly), "--repository", str(self.repo), "--policy", self.policy_path, "--source", self.source,
-                                 "--inventory-only"], check=False)
+        assembly_arg = assembly.resolve().relative_to(self.repo).as_posix()
+        command = [sys.executable, assembly_arg, "--repository", ".", "--policy", self.policy_path,
+                   "--source", self.source, "--inventory-only"]
+        result = subprocess.run(command, cwd=self.repo, check=False)
         if result.returncode:
             raise RuntimeError(f"Final inventory failed: exit {result.returncode}")
+        # The assembler writes the primary completion receipt as its final, checksum-covered output.
+        # Verify it read-only; any subsequent delivery write would invalidate the final inventory.
+        self.verify_primary_inventory(command[1:])
 
 
 def main():

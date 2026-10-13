@@ -38,6 +38,7 @@ export interface ExperienceDependencies {
   navigation?: NavigationAdapter;
   cameraDirector?: CameraDirectorAdapter;
   characterDirector?: CharacterDirectorAdapter;
+  replayEntrance?: (() => Promise<void>) | undefined;
   preferencesStore?: PreferencesStore;
   paintingController?: PaintingController;
   environmentController?: EnvironmentController;
@@ -56,6 +57,7 @@ export class ExperienceController {
   private paused = false;
   private reducedMotion = false;
   private activeCamera: CameraId = "home-desktop";
+  private homeCamera: "home-desktop" | "home-mobile" = "home-desktop";
 
   public readonly cancellation: CancellationCoordinator;
   public readonly arbitrator: IntentArbitrator;
@@ -67,6 +69,7 @@ export class ExperienceController {
   private navigation: NavigationAdapter;
   private cameraDirector?: CameraDirectorAdapter | undefined;
   private characterDirector?: CharacterDirectorAdapter | undefined;
+  private replayEntrance?: (() => Promise<void>) | undefined;
 
   private listeners = new Set<(snapshot: ExperienceSnapshot) => void>();
   private isDisposed = false;
@@ -94,6 +97,7 @@ export class ExperienceController {
 
     this.cameraDirector = deps.cameraDirector;
     this.characterDirector = deps.characterDirector;
+    this.replayEntrance = deps.replayEntrance;
     if (this.characterDirector) {
       this.greeting.setCharacterDirector(this.characterDirector);
     }
@@ -122,7 +126,10 @@ export class ExperienceController {
     this.greeting.settle();
     this.preferencesStore.save(validated.preferences);
     this.environment.restore(validated.world);
-    this.activeCamera = getRestorableCamera(validated);
+    const restoredCamera = getRestorableCamera(validated);
+    this.activeCamera = restoredCamera === "home-desktop" || restoredCamera === "home-mobile"
+      ? this.homeCamera
+      : restoredCamera;
     this.cameraDirector?.setCameraPreset(this.activeCamera, true);
     this.activeProject = null;
     this.activePanel = null;
@@ -138,6 +145,18 @@ export class ExperienceController {
     return () => {
       this.listeners.delete(listener);
     };
+  }
+
+  /** Runtime-owned responsive home framing used when closing panels or restoring HOME. */
+  public setHomeCamera(preset: "home-desktop" | "home-mobile"): void {
+    this.homeCamera = preset;
+  }
+
+  /** Keep snapshots aligned when the runtime changes the active camera directly. */
+  public syncCameraFromRuntime(preset: CameraId): void {
+    if (this.isDisposed || this.activeCamera === preset) return;
+    this.activeCamera = preset;
+    this.notify();
   }
 
   private notify(): void {
@@ -330,9 +349,9 @@ export class ExperienceController {
     this.greeting.settle();
 
     // Reset camera to home
-    this.activeCamera = "home-desktop";
+    this.activeCamera = this.homeCamera;
     if (this.cameraDirector) {
-      this.cameraDirector.setCameraPreset("home-desktop");
+      this.cameraDirector.setCameraPreset(this.homeCamera);
     }
 
     // Safe base-state restoration: return phase to explore
@@ -344,9 +363,9 @@ export class ExperienceController {
   private async handleSkip(): Promise<void> {
     this.cancellation.abortCurrent("ESCAPE_REQUESTED");
     this.greeting.settle();
-    this.activeCamera = "home-desktop";
+    this.activeCamera = this.homeCamera;
     if (this.cameraDirector) {
-      this.cameraDirector.setCameraPreset("home-desktop");
+      this.cameraDirector.setCameraPreset(this.homeCamera);
     }
     this.phase = "explore";
     this.currentIntent = null;
@@ -445,6 +464,14 @@ export class ExperienceController {
   }
 
   private async handleReplayEntrance(): Promise<void> {
+    if (this.replayEntrance) {
+      // Close the control panel and settle controller-owned state before the
+      // runtime takes over the same session's lifecycle and entrance camera.
+      await this.handleEscape();
+      await this.replayEntrance();
+      return;
+    }
+
     const token = this.cancellation.startTransition("replay_entrance");
     this.phase = "intro";
     this.activeCamera = "entry";
@@ -452,11 +479,15 @@ export class ExperienceController {
     this.greeting.settle();
     this.notify();
 
-    if (this.cameraDirector && !this.reducedMotion) {
-      try {
-        await this.cameraDirector.transitionTo("home-desktop", 2.0);
-      } catch {
-        // Aborted
+    if (this.cameraDirector) {
+      if (this.reducedMotion) {
+        this.cameraDirector.setCameraPreset(this.homeCamera, true);
+      } else {
+        try {
+          await this.cameraDirector.transitionTo(this.homeCamera, 2.0);
+        } catch {
+          // Aborted
+        }
       }
     }
 
@@ -465,7 +496,7 @@ export class ExperienceController {
     }
 
     this.phase = "explore";
-    this.activeCamera = "home-desktop";
+    this.activeCamera = this.homeCamera;
     this.currentIntent = null;
     this.notify();
   }

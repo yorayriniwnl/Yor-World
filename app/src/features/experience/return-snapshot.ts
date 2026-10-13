@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { CameraIdSchema, PreferencesSchema, WorldSnapshotSchema, defaultPreferences, defaultWorldSnapshot, type CameraId } from "@/contracts/experience";
 import { ProjectIdSchema } from "@/contracts/content";
+import { RETURN_SNAPSHOT_STORAGE_KEY, markReturnSnapshotAvailable, markReturnSnapshotUnavailable } from "./return-snapshot-presence";
+
+export { RETURN_SNAPSHOT_STORAGE_KEY } from "./return-snapshot-presence";
 
 export const ReturnSnapshotSchema = z.strictObject({
   returnToStudio: z.literal(true),
@@ -12,7 +15,6 @@ export const ReturnSnapshotSchema = z.strictObject({
 });
 export type ReturnSnapshot = z.infer<typeof ReturnSnapshotSchema>;
 export const RETURN_SNAPSHOT_MAX_AGE_MS = 24 * 60 * 60 * 1000;
-export const RETURN_SNAPSHOT_STORAGE_KEY = "yor_world_return_snapshot_v1";
 let memoryFallback: ReturnSnapshot | null = null;
 
 export function validateReturnSnapshot(value: unknown, now = Date.now()): ReturnSnapshot | null {
@@ -37,20 +39,30 @@ export function saveReturnSnapshot(data: Partial<ReturnSnapshot>): void {
   });
   if (!snapshot) return;
   memoryFallback = snapshot;
+  markReturnSnapshotAvailable();
   try { window.sessionStorage.setItem(RETURN_SNAPSHOT_STORAGE_KEY, JSON.stringify(snapshot)); } catch { /* blocked storage retains this tab's memory snapshot */ }
 }
 
 export function getReturnSnapshot(): ReturnSnapshot | null {
   try {
     const raw = window.sessionStorage.getItem(RETURN_SNAPSHOT_STORAGE_KEY);
-    if (raw === null) return validateReturnSnapshot(memoryFallback);
+    if (raw === null) {
+      const snapshot = validateReturnSnapshot(memoryFallback);
+      if (snapshot) markReturnSnapshotAvailable();
+      else { memoryFallback = null; markReturnSnapshotUnavailable(); }
+      return snapshot;
+    }
     const snapshot = validateReturnSnapshot(JSON.parse(raw));
     // Corrupt/stale stored data cannot resurrect an older memory snapshot.
-    if (!snapshot) memoryFallback = null;
+    if (!snapshot) { memoryFallback = null; markReturnSnapshotUnavailable(); }
+    else { memoryFallback = snapshot; markReturnSnapshotAvailable(); }
     return snapshot;
   } catch (error) {
-    if (error instanceof SyntaxError) { memoryFallback = null; return null; }
-    return validateReturnSnapshot(memoryFallback);
+    if (error instanceof SyntaxError) { memoryFallback = null; markReturnSnapshotUnavailable(); return null; }
+    const snapshot = validateReturnSnapshot(memoryFallback);
+    if (snapshot) markReturnSnapshotAvailable();
+    else { memoryFallback = null; markReturnSnapshotUnavailable(); }
+    return snapshot;
   }
 }
 
@@ -63,7 +75,30 @@ export function restoreReturnSnapshot(): ReturnSnapshot | null {
   return snapshot;
 }
 
+export function clearReturnSnapshotIfMatches(expected: ReturnSnapshot): boolean {
+  const current = getReturnSnapshot();
+  if (!current || !sameReturnSnapshot(current, expected)) return false;
+  clearReturnSnapshot();
+  return true;
+}
+
+function sameReturnSnapshot(left: ReturnSnapshot, right: ReturnSnapshot): boolean {
+  return left.timestamp === right.timestamp
+    && left.lastProjectId === right.lastProjectId
+    && left.previousCamera === right.previousCamera
+    && left.preferences.version === right.preferences.version
+    && left.preferences.introCompleted === right.preferences.introCompleted
+    && left.preferences.soundEnabled === right.preferences.soundEnabled
+    && left.preferences.quality === right.preferences.quality
+    && left.preferences.clock24h === right.preferences.clock24h
+    && left.world.version === right.world.version
+    && left.world.lampOn === right.world.lampOn
+    && left.world.blindsOpen === right.world.blindsOpen
+    && left.world.detailFound === right.world.detailFound;
+}
+
 export function clearReturnSnapshot(): void {
   memoryFallback = null;
+  markReturnSnapshotUnavailable();
   try { window.sessionStorage.removeItem(RETURN_SNAPSHOT_STORAGE_KEY); } catch { /* storage may be blocked */ }
 }

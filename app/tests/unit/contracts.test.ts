@@ -26,7 +26,7 @@ const project = { id: "candidatex", slug: "test-only", title: "Synthetic test",
 const publication = { revision: 1, publishedAt: "2026-09-30T00:00:00Z",
   projects: [project], assetManifestRevision: "test-only" };
 const manifest = { revision: "test-only", schemaVersion: 1, groups: [{
-  id: "test-room", tier: "static", url: "https://example.invalid/room.glb",
+  id: "test-room", tier: "static", url: "/models/test-only/room.glb",
   sha256: "a".repeat(64), bytes: 0, triangles: 0, materials: 0, estimatedGpuBytes: 0,
   clips: ["coding_idle"], provenanceId: "test-only", approved: false,
 }] };
@@ -63,6 +63,10 @@ describe("engineering section 4 boundaries", () => {
   it("allows nullable unknown evidence without inventing verification", () => {
     expect(EvidenceRefSchema.parse(evidence).status).toBe("unknown");
     expect(EvidenceRefSchema.safeParse({ ...evidence, checkedAt: "yesterday" }).success).toBe(false);
+  });
+
+  it.each(["https://example.invalid/room.glb", "//example.invalid/room.glb", "/models/../room.glb", "/models/a//room.glb", "/models/room.glb?version=1", "/models/not-a-glb.txt"]) ("rejects noncanonical asset manifest URLs: %s", (url) => {
+    expect(AssetManifestSchema.safeParse({ ...manifest, groups: [{ ...manifest.groups[0], url }] }).success).toBe(false);
   });
 
   it.each(["javascript:alert(1)", "data:text/html,x", "http://example.invalid", "/relative"])("rejects unsafe or non-HTTPS URLs: %s", (url) => {

@@ -5,7 +5,7 @@ import { parseArgs } from "node:util";
 import { inspectComposition } from "./check-release-composition.mjs";
 import { verifyBrowserReport } from "./verify-playwright-results.mjs";
 import { verifyActiveBenchmark } from "./verify-active-benchmark.mjs";
-import { assertNoFileCollision, assertPolicyOutput, assertPolicyOutputs, buildBundle, git, normalized, policy, readJson, safePath, sha256, writeJson } from "./release-lib.mjs";
+import { assertNoFileCollision, assertPolicyOutput, assertPolicyOutputs, assertSchemaMigrationInventory, buildBundle, git, normalized, policy, readJson, safePath, sha256, writeJson } from "./release-lib.mjs";
 
 const failures = [];
 function requireThat(condition, reason) { if (!condition) failures.push(reason); }
@@ -39,6 +39,7 @@ try {
   if (manifest.releaseBundlePath !== policy.bundle.path) throw new Error("releaseBundlePath must identify the current canonical archive");
   requireThat(manifest.gitCommit === undefined || manifest.gitCommit === manifest.sourceCommit, "gitCommit conflicts with sourceCommit");
   const bundle = buildBundle(manifest.sourceCommit); // Requires ancestor, unchanged committed implementation, and matching worktree.
+  assertSchemaMigrationInventory(bundle.files);
   const sourceAppTree = git("rev-parse", manifest.sourceCommit + ":" + policy.canonicalApplicationRoot);
   requireThat(manifest.sourceAppTree === sourceAppTree, "sourceAppTree must equal the exact sourceCommit application tree");
   const actualArchive = fs.readFileSync(safePath(manifest.releaseBundlePath));

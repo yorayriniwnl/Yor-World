@@ -333,8 +333,9 @@ test.describe("G1 Combined World Integration & Browser Behavior", () => {
 
     // Toggle Reduced Motion ON
     if (!await page.getByTestId("studio-options").evaluate((node) => (node as HTMLDetailsElement).open)) await page.getByTestId("studio-options-toggle").click();
-    await page.click('[data-testid="reduced-motion-toggle-btn"]');
-    await expect(page.locator('[data-testid="reduced-motion-toggle-btn"]')).toContainText("Reduced Motion: On");
+    const reducedMotionToggle = page.getByRole("switch", { name: "Toggle Reduced Motion" });
+    await reducedMotionToggle.click();
+    await expect(reducedMotionToggle).toHaveAttribute("aria-checked", "true");
     await expect(page.locator('[data-testid="world-diagnostics"]')).toContainText('"reducedMotion": true');
     text = await page.locator('[data-testid="world-diagnostics"]').textContent();
     diag = JSON.parse(text!);

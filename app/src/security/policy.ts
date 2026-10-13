@@ -1,13 +1,20 @@
 /** Pure header policy. No credentials, private configuration or browser state. */
 export const frozenModelPaths = [
-  "group-a-essential.glb", "group-b-props.glb", "on-demand-projects.glb", "production-room-full.glb",
-  "mobile-room-lod.glb", "resident-production.glb", "fixture-production.glb", "interaction-assets.glb", "interaction-assets-mobile.glb",
-  "world-art-local-corrections-20261009-r1/group-a-essential.e275dd9b.glb",
-  "world-art-local-corrections-20261009-r1/group-b-props.95867245.glb",
-  "world-art-local-corrections-20261009-r1/on-demand-projects.b809c043.glb",
-  "world-art-local-corrections-20261009-r1/production-room-full.d3ce1bfa.glb",
-  "world-art-local-corrections-20261009-r1/mobile-room-lod.d3ce1bfa.glb",
-  "world-art-local-corrections-20261009-r1/fixture-production.c7ed9909.glb",
+  "fixture-production.glb",
+  "group-a-essential.glb",
+  "group-b-props.glb",
+  "interaction-assets-mobile.glb",
+  "interaction-assets.glb",
+  "mobile-room-lod.glb",
+  "on-demand-projects.glb",
+  "production-room-full.glb",
+  "resident-production.glb",
+  "world-art-local-corrections-20261009-r1/fixture-production.c7ed99092cfc2d71470065099cec2a0d1dac565e149521dff28c588677cbc3a5.glb",
+  "world-art-local-corrections-20261009-r1/group-a-essential.0e1ec002af40fe7a6c6e791873613587d7556d0801c4af723b0f71c70514c08d.glb",
+  "world-art-local-corrections-20261009-r1/group-b-props.ed82bf5c7842f4789e1ec4a0ba0f33dd3db6c620f5ea2fadb0a929386e761512.glb",
+  "world-art-local-corrections-20261009-r1/mobile-room-lod.0d89de4d97d94220a16cd67d028e42896424a698c4f8787f1aeaea728d8c8ecb.glb",
+  "world-art-local-corrections-20261009-r1/on-demand-projects.ad50321289ebc3502f71b28259041d2eb0395dfccd493301515bab3d21362e75.glb",
+  "world-art-local-corrections-20261009-r1/production-room-full.2b4c1d18b81874630da5c32836b0e37ec1ff9f25147ccb92aba1d22f62e46a6e.glb",
 ].map((name) => "/models/" + name);
 
 export const apiContentSecurityPolicy = "default-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none';";

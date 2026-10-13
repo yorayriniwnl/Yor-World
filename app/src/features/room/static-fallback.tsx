@@ -26,7 +26,7 @@ export function StaticFallback({ projects = publishedProjects, reason, onRetry, 
           <span className={styles.staticFallbackBadge} aria-label="Static Portfolio Tier Active">
             Accessible Static Presentation
           </span>
-          <h2 id="static-fallback-heading" className={styles.staticFallbackTitle}>
+          <h2 id="static-fallback-heading" className={styles.staticFallbackTitle} tabIndex={-1}>
             Full Portfolio Mode
           </h2>
           <p className={styles.staticFallbackReason}>

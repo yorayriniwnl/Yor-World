@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 /** Standalone root-invoked public-browser evidence. No backend submissions or acceptance. */
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import crypto from "node:crypto";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
+import { reserveAttempt } from "./reserve-attempt.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../..");
 const hash = (bytes) => crypto.createHash("sha256").update(bytes).digest("hex");
@@ -34,18 +36,15 @@ async function main() {
   const origin = new URL(binding.targetOrigin);
   check(origin.protocol === "https:" && !origin.username && !origin.password && origin.pathname === "/"
     && !origin.search && !origin.hash && !["localhost", "127.0.0.1", "::1"].includes(origin.hostname), "Authorized public HTTPS origin required");
-  const output = safe(values.output);
-  check(output.startsWith(path.join(root, "deliveries/G7/evidence") + path.sep) && !fs.existsSync(output), "Preserve prior receipts; choose new output inside deliveries/G7/evidence");
-  const artifactDir = output.slice(0, -path.extname(output).length) + "-raw";
-  check(!fs.existsSync(artifactDir), "Raw artifact directory already exists; preserve historical attempt");
-  fs.mkdirSync(artifactDir);
+  const reservation = reserveAttempt(root, values.output, "deliveries/G7/evidence");
+  const output = reservation.output;
+  const artifactDir = reservation.artifactDir;
   const require = createRequire(path.join(root, "app/package.json"));
   const playwright = require("@playwright/test");
   const executedAt = new Date().toISOString();
   const browsers = [];
   const artifacts = [];
-  function archive(filename) {
-    const bytes = fs.readFileSync(filename);
+  function archive(filename, bytes) {
     const result = { path: path.relative(root, filename).split(path.sep).join("/"), bytes: bytes.length, sha256: hash(bytes), hashMode: "raw" };
     artifacts.push(result); return result;
   }
@@ -80,9 +79,10 @@ async function main() {
         const refreshed = await page.reload({ waitUntil: "domcontentloaded" });
         check(refreshed?.status() === expected, "Hard refresh status differs");
         check(await page.locator('a[href="/projects/candidatex"]').count() === 0, "CandidateX appears in a public launcher");
-        const screenshot = path.join(artifactDir, name + "-route-" + (route.slice(1).replaceAll("/", "_") || "root") + ".png");
-        await page.screenshot({ path: screenshot });
-        return { route, directStatus: response.status(), refreshStatus: refreshed.status(), screenshot: archive(screenshot) };
+        const screenshotName = name + "-route-" + (route.slice(1).replaceAll("/", "_") || "root") + ".png";
+        const screenshotBytes = await page.screenshot();
+        const screenshot = reservation.writeArtifact(screenshotName, screenshotBytes);
+        return { route, directStatus: response.status(), refreshStatus: refreshed.status(), screenshot: archive(screenshot, screenshotBytes) };
       });
       await test("client-navigation-history", async () => {
         await page.goto("/", { waitUntil: "domcontentloaded" });
@@ -163,9 +163,22 @@ async function main() {
       });
       if (result.pageErrors.length) result.status = "FAIL";
     } finally {
-      const trace = path.join(artifactDir, name + ".trace.zip");
-      await context.tracing.stop({ path: trace }); archive(trace);
-      await context.close(); await browser.close();
+      const tempTraceDir = fs.mkdtempSync(path.join(os.tmpdir(), "yor-g7-trace-"));
+      try {
+        const tempTrace = path.join(tempTraceDir, name + ".trace.zip");
+        await context.tracing.stop({ path: tempTrace });
+        const traceBytes = fs.readFileSync(tempTrace);
+        const trace = reservation.writeArtifact(name + ".trace.zip", traceBytes);
+        archive(trace, traceBytes);
+      } finally {
+        const realTempTraceDir = fs.realpathSync.native(tempTraceDir);
+        if (path.dirname(realTempTraceDir) !== fs.realpathSync.native(os.tmpdir())
+            || !path.basename(realTempTraceDir).startsWith("yor-g7-trace-")) {
+          throw new Error("Temporary browser trace directory identity changed");
+        }
+        fs.rmSync(realTempTraceDir, { recursive: true, force: true });
+        await context.close(); await browser.close();
+      }
     }
     browsers.push(result);
   }
@@ -177,7 +190,7 @@ async function main() {
     physicalDeviceSessions: "NOT RUN", assistiveSpeechSessions: "NOT RUN", physicalThermalSession: "NOT RUN",
     contactSubmissionAndNativeServiceProof: "NOT RUN", contextLossAndAvatarFullContract: "NOT RUN", rollbackRehearsal: "NOT RUN",
     heapGpuLeakAbsence: "UNKNOWN", independentReview: "NOT RUN", overallStatus: "NOT RUN", acceptanceClaim: false };
-  fs.writeFileSync(output, JSON.stringify(receipt, null, 2) + "\n");
+  reservation.writeReceipt(receipt);
   console.log(`Actual automated public browser observations: ${receipt.observationStatus}; complete G7 and manual/service proofs remain NOT RUN.`);
   if (receipt.observationStatus !== "PASS") process.exitCode = 1;
 }

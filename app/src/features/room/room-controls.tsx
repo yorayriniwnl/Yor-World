@@ -11,10 +11,11 @@ export interface RoomControlsProps {
   controller: ExperienceController;
   snapshot?: ExperienceSnapshot;
   onClose?: () => void;
-  onSoundChange?: ((enabled: boolean) => void | Promise<void>) | undefined;
+  returnFocus?: (() => HTMLElement | null) | undefined;
 }
 
-export function RoomControls({ controller, snapshot: initialSnapshot, onClose, onSoundChange }: RoomControlsProps) {
+export function RoomControls({ controller, snapshot: initialSnapshot, onClose, returnFocus }: RoomControlsProps) {
+  const closeButtonRef = React.useRef<HTMLButtonElement | null>(null);
   const [snapshot, setSnapshot] = React.useState<ExperienceSnapshot>(
     () => initialSnapshot ?? controller.getSnapshot()
   );
@@ -33,13 +34,15 @@ export function RoomControls({ controller, snapshot: initialSnapshot, onClose, o
       className={styles.container}
       testId="room-controls-panel"
       onClose={() => onClose?.()}
+      returnFocus={returnFocus}
+      initialFocus={closeButtonRef}
     >
       <header className={styles.header} data-testid="room-controls-modal">
         <h2 className={styles.title}>Room controls</h2>
         {onClose && (
           <button
             type="button"
-            autoFocus
+            ref={closeButtonRef}
             className={styles.closeBtn}
             onClick={onClose}
             aria-label="Close room controls panel"
@@ -128,18 +131,6 @@ export function RoomControls({ controller, snapshot: initialSnapshot, onClose, o
           Clock Format ({preferences.clock24h ? "24-Hour" : "12-Hour"})
         </label>
 
-        <label className={styles.switchLabel}>
-          <input
-            type="checkbox"
-            checked={preferences.soundEnabled}
-            data-testid="control-toggle-sound"
-            onChange={(e) => {
-              if (onSoundChange) void onSoundChange(e.target.checked);
-              else void controller.send({ type: "SET_SOUND", enabled: e.target.checked });
-            }}
-          />
-          Studio Sound Effects ({preferences.soundEnabled ? "ENABLED" : "MUTED"})
-        </label>
       </div>
 
       <div className={styles.group}>

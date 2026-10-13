@@ -2,12 +2,14 @@
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import hashlib
 import json
 import os
 from pathlib import Path, PurePosixPath
 import re
 import subprocess
+import sys
 
 BASE = "eb1ff201391334d6041b35c59eb350fcd012a79c"
 RC5_SOURCE = "c34e01bb5bff210d924f42d5266e2fa1ed13288e"
@@ -95,6 +97,25 @@ def safe_repo_path(root: Path, name: str, *, output: bool = False) -> Path:
                 raise ValueError(f"Hard-linked release output is forbidden: {name}")
             raise ValueError(f"Output already exists; preserve the prior attempt: {name}")
     return target
+
+
+def write_preflighted_outputs(output_paths, completion_target=None, writer=None):
+    """Write preflighted outputs exclusively, with a completion receipt as the final write."""
+    def write_exclusively(target, content):
+        with target.open("xb") as stream:
+            stream.write(content)
+
+    write_output = writer or write_exclusively
+    completion_output = None
+    for target, content in output_paths:
+        if target == completion_target:
+            completion_output = (target, content)
+            continue
+        write_output(target, content)
+    if completion_target is not None:
+        if completion_output is None:
+            raise RuntimeError("Final inventory completion receipt was not preflighted")
+        write_output(*completion_output)
 
 
 def main():
@@ -341,6 +362,15 @@ def main():
     omissions_name = output_prefix + "inventory-omissions.json"
     checksums_name = output_prefix + "SHA256SUMS.txt"
     write_text_file(commands_name, "\n".join(lines) + "\n")
+    inventory_receipt_name = f"{DELIVERY}/evidence/inventory-completed.json" if args.inventory_only else None
+    if inventory_receipt_name is not None:
+        staged[inventory_receipt_name] = (json.dumps({
+            "phase": "inventory", "status": "PASS", "sourceCommit": args.source,
+            "deliveryRoot": DELIVERY, "releaseId": policy["releaseId"],
+            "result": "PASS", "exitCode": 0,
+            "completedAt": dt.datetime.now(dt.timezone.utc).isoformat(),
+            "command": sys.argv,
+        }, indent=2) + "\n").encode("utf-8")
     inventory = []
     omissions = []
     if args.inventory_only:
@@ -372,6 +402,8 @@ def main():
             raise RuntimeError(f"Required check evidence is missing or changed: {evidence_path}")
     mandatory_evidence = {item["path"] for item in final_manifest["evidenceHashes"]}
     mandatory_evidence.update(item["evidencePath"] for item in final_manifest["requiredChecks"])
+    if inventory_receipt_name is not None:
+        mandatory_evidence.add(inventory_receipt_name)
     portable_names = set()
     for path in sorted(delivery.rglob("*")):
         name = path.relative_to(root).as_posix()
@@ -431,9 +463,9 @@ def main():
             raise ValueError(f"Release output parent directory is missing: {relative}")
         output_paths.append((target, staged[relative]))
     # Every destination and input collision is checked before the first write.
-    for target, content in output_paths:
-        with target.open("xb") as stream:
-            stream.write(content)
+    completion_target = (root.joinpath(*safe_relative(inventory_receipt_name, "release output"))
+                         if inventory_receipt_name is not None else None)
+    write_preflighted_outputs(output_paths, completion_target)
     print(f"Bound {len(latest)} exact-source command identities; inventoried {len(inventory)} artifacts. LF hashes apply to text; raw hashes to binary artifacts.")
 
 

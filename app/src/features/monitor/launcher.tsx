@@ -23,6 +23,8 @@ export interface LauncherProps {
   reducedMotion?: boolean;
   isOpen?: boolean;
   onClose?: () => void;
+  returnFocus?: (() => HTMLElement | null) | undefined;
+  onBeforeProjectNavigation?: (projectId: ProjectId) => void;
   navigationAdapter?: NavigationAdapter;
   isFramedFallback?: boolean;
 }
@@ -33,6 +35,8 @@ export function Launcher({
   reducedMotion = false,
   isOpen = true,
   onClose,
+  returnFocus,
+  onBeforeProjectNavigation,
   navigationAdapter,
   isFramedFallback = false,
 }: LauncherProps) {
@@ -50,6 +54,7 @@ export function Launcher({
   ]);
   const [terminalInput, setTerminalInput] = useState("");
   const terminalEndRef = useRef<HTMLDivElement>(null);
+  const terminalInputRef = useRef<HTMLInputElement>(null);
 
   // Auto-scroll terminal history to bottom
   useEffect(() => {
@@ -87,15 +92,17 @@ export function Launcher({
     try {
       if (navigationAdapter) {
         // Delegate to adapter which manages cancellation and route transitions
+        onBeforeProjectNavigation?.(projectId);
         navigationAdapter.openProject(projectId);
       } else {
         // Execute bounded transition with progress updates
         await startProjectTransition(projectId, abortController.signal, {
           reducedMotion,
           onMotifProgress: (progress) => {
-            setActiveTransition((prev) => (prev ? { ...prev, progress } : null));
+            setActiveTransition((prev) => prev?.abortController === abortController ? { ...prev, progress } : prev);
           },
         });
+        onBeforeProjectNavigation?.(projectId);
         router.push(`/projects/${project.slug}`);
       }
     } catch (err) {
@@ -105,8 +112,25 @@ export function Launcher({
         console.error("Transition error:", err);
       }
     } finally {
+      setActiveTransition((current) => current?.abortController === abortController ? null : current);
+    }
+  };
+
+  const handleDirectProjectNavigation = (event: React.MouseEvent<HTMLAnchorElement>, projectId: ProjectId) => {
+    const sameTabPrimaryClick = event.button === 0
+      && !event.metaKey
+      && !event.ctrlKey
+      && !event.shiftKey
+      && !event.altKey
+      && !event.defaultPrevented
+      && (!event.currentTarget.target || event.currentTarget.target === "_self");
+    if (!sameTabPrimaryClick) return;
+
+    if (activeTransition) {
+      activeTransition.abortController.abort("DIRECT_PROJECT_LINK");
       setActiveTransition(null);
     }
+    onBeforeProjectNavigation?.(projectId);
   };
 
   const handleTerminalSubmit = (e: React.FormEvent) => {
@@ -143,6 +167,8 @@ export function Launcher({
         isFramedFallback ? styles.framedFallback : ""
       }`}
       onClose={() => onClose?.()}
+      returnFocus={returnFocus}
+      initialFocus={terminalInputRef}
       onEscape={() => {
         if (activeTransition) {
           activeTransition.abortController.abort("USER_ESCAPE");
@@ -178,7 +204,7 @@ export function Launcher({
               Verified Project Systems
             </h3>
             <span style={{ fontSize: "11px", color: "#64748b" }}>
-              Click tile for 3D camera transition, or use direct link
+              Select a project for a short evidence motif, or use its direct URL
             </span>
           </div>
 
@@ -222,6 +248,7 @@ export function Launcher({
                         href={`/projects/${tile.slug}`}
                         prefetch={false}
                         className={styles.directLink}
+                        onClick={(event) => handleDirectProjectNavigation(event, tile.id)}
                       >
                         Direct URL
                       </Link>
@@ -261,6 +288,7 @@ export function Launcher({
             <form onSubmit={handleTerminalSubmit} className={styles.terminalForm}>
               <span className={styles.promptLabel}>visitor@studio:~$</span>
               <input
+                ref={terminalInputRef}
                 type="text"
                 value={terminalInput}
                 onChange={(e) => setTerminalInput(e.target.value)}

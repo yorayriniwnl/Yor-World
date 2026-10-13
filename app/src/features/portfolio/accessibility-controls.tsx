@@ -8,10 +8,9 @@ import styles from "./accessibility-controls.module.css";
 export interface AccessibilityControlsProps {
   currentTier?: QualityTier | "auto" | undefined;
   onTierChange?: ((tier: QualityTier | "auto") => void) | undefined;
+  onBeforeNavigate?: ((href: string) => void) | undefined;
   reducedMotion?: boolean | undefined;
   onReducedMotionToggle?: (() => void) | undefined;
-  soundEnabled?: boolean | undefined;
-  onSoundToggle?: (() => void) | undefined;
   decorativePaused?: boolean | undefined;
   onDecorativePauseToggle?: (() => void) | undefined;
 }
@@ -19,13 +18,18 @@ export interface AccessibilityControlsProps {
 export function AccessibilityControls({
   currentTier = "auto",
   onTierChange,
+  onBeforeNavigate,
   reducedMotion = false,
   onReducedMotionToggle,
-  soundEnabled = false,
-  onSoundToggle,
   decorativePaused = false,
   onDecorativePauseToggle,
 }: AccessibilityControlsProps) {
+  const handleSameTabNavigation = (href: string) => (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (event.currentTarget.target && event.currentTarget.target !== "_self") return;
+    onBeforeNavigate?.(href);
+  };
+
   return (
     <aside
       className={styles.controlsToolbar}
@@ -61,23 +65,9 @@ export function AccessibilityControls({
           onClick={onReducedMotionToggle}
           className={`${styles.toggleButton} ${reducedMotion ? styles.toggleButtonActive : ""}`}
           aria-label="Toggle Reduced Motion"
-          data-testid="toggle-reduced-motion-btn"
+          data-testid="reduced-motion-toggle-btn"
         >
           Reduced Motion: {reducedMotion ? "ON" : "OFF"}
-        </button>
-      </div>
-
-      <div className={styles.controlItem}>
-        <button
-          type="button"
-          role="switch"
-          aria-checked={soundEnabled}
-          onClick={onSoundToggle}
-          className={`${styles.toggleButton} ${soundEnabled ? styles.toggleButtonActive : ""}`}
-          aria-label="Toggle Audio Sound"
-          data-testid="toggle-sound-btn"
-        >
-          Sound: {soundEnabled ? "ON" : "OFF (Muted)"}
         </button>
       </div>
 
@@ -96,16 +86,16 @@ export function AccessibilityControls({
       </div>
 
       <nav className={styles.navRail} aria-label="Accessible Portfolio Destinations" data-testid="accessible-nav-rail">
-        <Link href="/projects" className={styles.navRailLink} data-testid="a11y-link-projects">
+        <Link href="/projects" onClick={handleSameTabNavigation("/projects")} className={styles.navRailLink} data-testid="a11y-link-projects">
           All Projects
         </Link>
-        <Link href="/about" className={styles.navRailLink} data-testid="a11y-link-about">
+        <Link href="/about" onClick={handleSameTabNavigation("/about")} className={styles.navRailLink} data-testid="a11y-link-about">
           About
         </Link>
-        <Link href="/resume" className={styles.navRailLink} data-testid="a11y-link-resume">
+        <Link href="/resume" onClick={handleSameTabNavigation("/resume")} className={styles.navRailLink} data-testid="a11y-link-resume">
           Résumé
         </Link>
-        <Link href="/contact" className={styles.navRailLink} data-testid="a11y-link-contact">
+        <Link href="/contact" onClick={handleSameTabNavigation("/contact")} className={styles.navRailLink} data-testid="a11y-link-contact">
           Contact
         </Link>
       </nav>

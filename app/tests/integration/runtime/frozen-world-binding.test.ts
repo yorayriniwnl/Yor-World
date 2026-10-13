@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -8,12 +9,25 @@ import { WorldInteractionBinding } from "@/features/world/WorldInteractionBindin
 import { ExperienceController } from "@/features/experience/controller";
 import { RuntimeMaterialQuality } from "@/features/world/RuntimeMaterialQuality";
 import { LowQualityBatch } from "@/features/world/LowQualityBatch";
+import { ASSET_LOCATIONS } from "@/features/world/asset-locations";
+
+const publicRoot = path.resolve(process.cwd(), "public");
+const manifestPath = path.join(publicRoot, "asset-manifest.json");
+type RoomManifestEntry = { id: string; url: string; sha256: string; bytes: number };
 
 /** Parse the shipped GLB's actual mesh/skin/animation/node data. Omit bitmap decoding
  * only in this Node test; no production asset is changed or written by the test.
  */
-async function parseFrozenModel(name: string) {
-  const file = readFileSync(path.join(process.cwd(), "public/models", name));
+async function parseCurrentModel(url: string) {
+  const manifest = JSON.parse(readFileSync(manifestPath, "utf8")) as { groups: RoomManifestEntry[] };
+  const entry = manifest.groups.find((group) => group.url === url);
+  expect(entry, `asset manifest must bind ${url}`).toBeDefined();
+  if (!entry) throw new Error(`asset manifest is missing ${url}`);
+  const assetPath = path.resolve(publicRoot, `.${url}`);
+  expect(path.relative(publicRoot, assetPath).startsWith(".."), "manifest asset must stay below public/").toBe(false);
+  const file = readFileSync(assetPath);
+  expect(file.byteLength).toBe(entry.bytes);
+  expect(createHash("sha256").update(file).digest("hex")).toBe(entry.sha256);
   const jsonLength = file.readUInt32LE(12);
   const json = JSON.parse(file.subarray(20, 20 + jsonLength).toString("utf8"));
   for (const material of json.materials ?? []) {
@@ -50,10 +64,10 @@ function pointer(canvas: HTMLCanvasElement, type: string, x = 500, y = 500) {
   canvas.dispatchEvent(event);
 }
 
-describe("Actual frozen production assets and C1 pointer binding", () => {
+describe("Current manifest-bound production assets and C1 pointer binding", () => {
   it("parses real production rigs, prunes duplicate chair/proof furniture, and keeps F1 anchors", async () => {
     const [room, resident, fixture] = await Promise.all([
-      parseFrozenModel("production-room-full.glb"), parseFrozenModel("resident-production.glb"), parseFrozenModel("fixture-production.glb"),
+      parseCurrentModel(ASSET_LOCATIONS.roomFull), parseCurrentModel(ASSET_LOCATIONS.avatar), parseCurrentModel(ASSET_LOCATIONS.fixture),
     ]);
     const result = integrateScene(room, resident, fixture);
     expect(result.nodeCounts).toEqual({ residentCount: 1, chairRootCount: 1, chairBaseCount: 1, deskCount: 1, fixtureStaticCount: 0 });
@@ -67,11 +81,11 @@ describe("Actual frozen production assets and C1 pointer binding", () => {
   });
 
   it.each(["high", "low"] as const)("%s real production phone raycast dispatches contact; disposal detaches events", async (tier) => {
-    const [room, interactions] = await Promise.all([parseFrozenModel("production-room-full.glb"), parseFrozenModel("interaction-assets.glb")]);
+    const [room, interactions] = await Promise.all([parseCurrentModel(ASSET_LOCATIONS.roomFull), parseCurrentModel(ASSET_LOCATIONS.interactionDesktop)]);
     const phone = room.scene.getObjectByName("contact_phone_body")!;
     const center = new THREE.Box3().setFromObject(phone).getCenter(new THREE.Vector3());
     const camera = new THREE.PerspectiveCamera(50, 1, 0.05, 30);
-    camera.position.copy(center).add(new THREE.Vector3(0, 0.6, 0.9));
+    camera.position.copy(center).add(new THREE.Vector3(0, 0.8, 0));
     camera.lookAt(center); camera.updateMatrixWorld(true);
     const openRoute = vi.fn();
     const controller = new ExperienceController({ navigation: { openProject: vi.fn(), openRoute }, reducedMotion: true });
@@ -106,7 +120,7 @@ describe("Actual frozen production assets and C1 pointer binding", () => {
   });
 
   it("mismatched frozen IA proxy coordinates never create a ghost production phone hit", async () => {
-    const interactions = await parseFrozenModel("interaction-assets.glb");
+    const interactions = await parseCurrentModel(ASSET_LOCATIONS.interactionDesktop);
     const phoneProxy = interactions.scene.getObjectByName("hit_contact_phone")!;
     interactions.scene.updateMatrixWorld(true);
     const center = phoneProxy.getWorldPosition(new THREE.Vector3());

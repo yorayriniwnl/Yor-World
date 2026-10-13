@@ -129,7 +129,8 @@ test("useful HTML and native navigation remain with JavaScript disabled", async 
     await page.keyboard.press("Enter");
     await expect(page.getByRole("main")).toBeFocused();
     await page.locator("summary").click();
-    await expect(page.getByText("The studio is not yet available.", { exact: true })).toBeVisible();
+    await expect(page.getByText(/Explore the interactive studio\. Sound starts muted/)).toBeVisible();
+    await expect(page.getByRole("button", { name: "Launch 3D Studio" })).toBeVisible();
     await screenshot(page, info, "javascript-disabled");
     await page.getByRole("navigation").getByRole("link", { name: "Contact", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Send a Message" })).toBeVisible();
@@ -137,7 +138,7 @@ test("useful HTML and native navigation remain with JavaScript disabled", async 
   } finally { await context.close(); }
 });
 
-test("world and backend requests blocked; entry reports unavailable; sound and WebGL stay off", async ({ page, baseURL }, info) => {
+test("world and backend requests blocked; unopened studio stays safe; sound and WebGL stay off", async ({ page, baseURL }, info) => {
   const requested: string[] = [];
   const blocked: string[] = [];
   await page.addInitScript(() => {
@@ -178,12 +179,13 @@ test("world and backend requests blocked; entry reports unavailable; sound and W
   await page.locator("summary").focus();
   await page.keyboard.press("Enter");
   await expect(page.locator("details")).toHaveAttribute("open", "");
-  await expect(page.getByText("The studio is not yet available.", { exact: true })).toBeVisible();
+  await expect(page.getByText(/Explore the interactive studio\. Sound starts muted/)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Launch 3D Studio" })).toBeVisible();
   await page.waitForLoadState("networkidle");
   const probe = await page.evaluate(() => (window as unknown as { __w3Probe: object }).__w3Probe);
   expect(probe).toEqual({ webgl: 0, audioContexts: 0, mediaPlay: 0 });
   await expect(page.locator("canvas, audio, video")).toHaveCount(0);
-  await screenshot(page, info, "studio-unavailable");
+  await screenshot(page, info, "studio-pre-entry-shell");
   await page.keyboard.press("Space");
   await expect(page.locator("details")).not.toHaveAttribute("open", "");
   for (const [route, heading] of routes.slice(1)) {

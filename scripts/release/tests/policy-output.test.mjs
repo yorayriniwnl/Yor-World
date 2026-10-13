@@ -528,6 +528,101 @@ print("PASS phase receipts bind exact source/delivery and require both matching 
   f.unchanged();
 });
 
+test("final inventory verifies the primary receipt read-only and blocks detached retry", async (t) => {
+  const f = await fixture(t);
+  const script = String.raw`
+import hashlib, importlib.util, json
+from pathlib import Path
+from types import SimpleNamespace
+spec = importlib.util.spec_from_file_location("driver", ${JSON.stringify(f.driver)})
+module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+repo = Path(${JSON.stringify(f.root)})
+checkout = Path(${JSON.stringify(f.checkout)})
+checkout.mkdir(parents=True, exist_ok=True)
+source = ${JSON.stringify(source)}
+delivery = ${JSON.stringify(rootName)}
+release_id = json.loads((repo / "scripts/release/rc6-policy.json").read_text())["releaseId"]
+driver = module.Driver.__new__(module.Driver)
+driver.repo = repo
+driver.checkout = checkout
+driver.delivery_relative = Path(delivery)
+driver.source = source
+driver.release_id = release_id
+driver.policy_path = "scripts/release/rc6-policy.json"
+events = []
+driver.require_session = lambda: events.append("session")
+driver.begin_phase = lambda phase, prerequisite: events.append(("begin", phase, prerequisite))
+driver.verify_exported_inputs = lambda: events.append("inputs")
+driver.verify_primary_validation = lambda: events.append("primary-validation")
+def forbidden_write(*args, **kwargs): raise AssertionError("driver wrote after final inventory")
+driver.finish_phase = forbidden_write
+driver.export = forbidden_write
+
+def fake_run(command, cwd=None, check=False):
+    events.append(("assemble", list(command)))
+    name = f"{delivery}/evidence/inventory-completed.json"
+    receipt = {
+        "phase":"inventory", "status":"PASS", "result":"PASS", "exitCode":0,
+        "sourceCommit":source, "deliveryRoot":delivery, "releaseId":release_id,
+        "completedAt":"2026-10-12T10:00:00+00:00", "command":list(command[1:]),
+    }
+    receipt_bytes = (json.dumps(receipt, indent=2) + "\n").encode()
+    receipt_path = repo / name
+    receipt_path.parent.mkdir(parents=True, exist_ok=True)
+    with receipt_path.open("xb") as stream: stream.write(receipt_bytes)
+    checksums = repo / delivery / "SHA256SUMS.txt"
+    with checksums.open("xb") as stream: stream.write(f"{hashlib.sha256(receipt_bytes).hexdigest()}  {name}\n".encode())
+    return SimpleNamespace(returncode=0)
+module.subprocess.run = fake_run
+verify = driver.verify_primary_inventory
+try: verify([])
+except RuntimeError as error: assert "receipt or checksum inventory is absent" in str(error), error
+else: raise AssertionError("driver accepted an absent final inventory receipt")
+def tracked_verify(command):
+    events.append("verify-primary-inventory")
+    verify(command)
+driver.verify_primary_inventory = tracked_verify
+driver.inventory()
+assert events[0:4] == ["session", ("begin", "inventory", "validate"), "inputs", "primary-validation"], events
+assert events[4][0] == "assemble" and events[4][1][-1] == "--inventory-only", events
+assert events[4][1][1] == "deliveries/G7/preparation/tools/assemble-evidence.py"
+assert events[4][1][events[4][1].index("--repository") + 1] == ".", events[4]
+assert events[5] == "verify-primary-inventory", events
+assert not (checkout / delivery / "evidence/inventory-completed.json").exists()
+receipt_name = f"{delivery}/evidence/inventory-completed.json"
+receipt_path = repo / receipt_name
+checksums_path = repo / delivery / "SHA256SUMS.txt"
+receipt_before = receipt_path.read_bytes()
+checksums_before = checksums_path.read_bytes()
+try: verify(["wrong-command"])
+except RuntimeError as error: assert "does not bind this source, delivery and command" in str(error), error
+else: raise AssertionError("driver accepted a receipt for another command")
+checksums_path.write_bytes(b"0" * 64 + b"  " + receipt_name.encode() + b"\n")
+try: verify(events[4][1][1:])
+except RuntimeError as error: assert "not listed exactly once" in str(error), error
+else: raise AssertionError("driver accepted a mismatched receipt checksum")
+checksums_path.write_bytes(checksums_before)
+assert receipt_path.read_bytes() == receipt_before
+
+# A fresh detached checkout cannot resume a delivery whose primary inventory receipt exists.
+valid = {"phase":"validate", "status":"PASS", "sourceCommit":source, "deliveryRoot":delivery}
+for root in (checkout, repo):
+    prerequisite = root / delivery / "evidence/validate-completed.json"
+    prerequisite.parent.mkdir(parents=True, exist_ok=True)
+    prerequisite.write_text(json.dumps(valid), encoding="utf-8")
+try: module.Driver.begin_phase(driver, "inventory", "validate")
+except RuntimeError as error: assert "already started or completed" in str(error), error
+else: raise AssertionError("primary completion did not block a detached retry")
+assert not driver.phase_path("inventory", "started").exists()
+assert not driver.phase_path("inventory", "completed").exists()
+print("PASS final inventory receipt is source/delivery/command-bound, checksum-verified, read-only, and non-resumable")
+`;
+  const result = f.run("python", ["-B", "-c", script]);
+  assert.equal(result.status, 0, `${result.stdout}${result.stderr}`);
+  assert.match(result.stdout, /PASS final inventory receipt is source\/delivery\/command-bound/);
+  f.unchanged();
+});
+
 test("Python output preflight protects every preserved root and filesystem alias", async (t) => {
   const f = await fixture(t);
   for (const [index, old] of oldRoots.entries()) {

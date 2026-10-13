@@ -2,10 +2,9 @@ import { z } from "zod";
 import { QualityTierSchema } from "./experience";
 
 const count = z.number().int().nonnegative();
-const ManifestUrlSchema = z.union([
-  z.url({ protocol: /^https$/ }),
-  z.string().regex(/^\/models\/[a-zA-Z0-9_\-\./]+$/),
-]);
+const ManifestUrlSchema = z.string().max(1024)
+  .regex(/^\/models\/[a-zA-Z0-9_.-]+(?:\/[a-zA-Z0-9_.-]+)*\.glb$/)
+  .refine((value) => value.slice(1).split("/").every((part) => part && part !== "." && part !== ".."));
 
 export const AssetManifestGroupSchema = z.strictObject({
   id: z.string().min(1),
@@ -19,7 +18,7 @@ export const AssetManifestGroupSchema = z.strictObject({
   clips: z.array(z.string().min(1)),
   provenanceId: z.string().min(1),
   approved: z.boolean(),
-  status: z.string().optional(),
+  status: z.enum(["candidate", "approved"]).optional(),
 });
 
 export const AssetManifestSchema = z.strictObject({
@@ -27,8 +26,12 @@ export const AssetManifestSchema = z.strictObject({
   schemaVersion: z.literal(1),
   lane: z.string().optional(),
   notice: z.string().optional(),
-  generatedAt: z.string().optional(),
-  groups: z.array(AssetManifestGroupSchema),
+  generatedAt: z.string().datetime().optional(),
+  groups: z.array(AssetManifestGroupSchema).min(1).max(64),
+}).superRefine((manifest, context) => {
+  if (new Set(manifest.groups.map((group) => group.id)).size !== manifest.groups.length
+      || new Set(manifest.groups.map((group) => group.url)).size !== manifest.groups.length)
+    context.addIssue({ code: "custom", message: "Asset IDs and URLs must be unique." });
 });
 
 export type AssetManifest = {

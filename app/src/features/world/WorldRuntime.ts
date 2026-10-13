@@ -7,6 +7,7 @@ import { EntranceCoordinator } from "./EntranceCoordinator";
 import { TransitionCoordinator } from "./TransitionCoordinator";
 import { LifecycleManager } from "./LifecycleManager";
 import { ExperienceController } from "../experience/controller";
+import type { PreferencesStore } from "../experience/preferences-store";
 import type { CameraPreset, Diagnostics, WorldLifecycleState } from "./types";
 import { WORLD_RENDERED_FRAME_EVENT, type RenderedWorldFrame } from "./types";
 import type { QualityTier } from "../../contracts/experience";
@@ -18,6 +19,7 @@ import { RuntimeMaterialQuality } from "./RuntimeMaterialQuality";
 import { RigidWorldBatch } from "./RigidWorldBatch";
 import { isSoftwareRenderer } from "./device-capabilities";
 import { configureProductionLighting } from "./ProductionLighting";
+import { requestRuntimeReplayEntrance } from "./replay-entrance-actions";
 
 export interface WorldRuntimeOptions {
   initialSnapshot?: ReturnSnapshot | null | undefined;
@@ -31,12 +33,14 @@ export interface WorldRuntimeOptions {
   canvas: HTMLCanvasElement;
   lifecycleManager?: LifecycleManager | undefined;
   experienceController?: ExperienceController | undefined;
+  preferencesStore?: PreferencesStore | undefined;
   soundEnabled?: boolean | undefined;
   reducedMotion?: boolean | undefined;
   initialTier?: QualityTier | undefined;
   simulateAssetError?: boolean | undefined;
   simulateRendererError?: boolean | undefined;
   onReady?: ((diagnostics: Diagnostics) => void) | undefined;
+  onInitialSnapshotRestored?: ((restored: boolean) => void) | undefined;
   onError?: ((err: Error) => void) | undefined;
   onStateChange?: ((state: WorldLifecycleState) => void) | undefined;
 }
@@ -108,6 +112,8 @@ export class WorldRuntime {
       new ExperienceController({
         cameraDirector: this.cameraDirector,
         reducedMotion: this.reducedMotion,
+        ...(options.preferencesStore ? { preferencesStore: options.preferencesStore } : {}),
+        replayEntrance: () => requestRuntimeReplayEntrance(this),
         navigation: {
           openProject: (id) => {
             const project = (options.projects ?? publishedProjects).find((item) => item.id === id && item.id !== "candidatex");
@@ -121,6 +127,8 @@ export class WorldRuntime {
           },
         },
       });
+
+    this.experienceController.setHomeCamera(this.containerWidth < 640 ? "home-mobile" : "home-desktop");
 
     // Attach canvas context loss listeners
     this.canvas.addEventListener("webglcontextlost", this.handleContextLost);
@@ -145,6 +153,9 @@ export class WorldRuntime {
 
   private handleContextLost = (e: Event) => {
     this.pause();
+    this.loadingAbort.abort();
+    this.entranceCoordinator?.dispose();
+    this.cameraDirector?.setReducedMotion(true);
     e.preventDefault();
     console.warn("[WorldRuntime] WebGL context lost.");
     this.lifecycleManager.fail("WebGL graphics context was lost.", this.sessionToken);
@@ -226,7 +237,7 @@ export class WorldRuntime {
       // Three's automatic reset occurs after shadows and omits those draws.
       // This runtime owns one reset before all passes of each complete frame.
       this.renderer.info.autoReset = false;
-      this.renderer.toneMappingExposure = 1.15;
+      this.renderer.toneMappingExposure = 0.9;
       this.renderer.shadowMap.enabled = this.qualityTier !== "low" && this.qualityTier !== "static";
       this.renderer.shadowMap.type = this.qualityTier === "high" ? THREE.PCFSoftShadowMap : THREE.PCFShadowMap;
 
@@ -276,7 +287,7 @@ export class WorldRuntime {
 
     const resourceOwner = loadedAssets.resourceOwner ?? new AssetResourceOwner();
     for (const gltf of [loadedAssets.w1Gltf, loadedAssets.avatarGltf, loadedAssets.fixtureGltf]) resourceOwner.adoptGltf(gltf);
-    if (this.isDisposed || this.lifecycleManager.isStale(token) || this.loadingAbort.signal.aborted) {
+    if (this.isDisposed || this.lifecycleManager.isStale(token) || this.loadingAbort.signal.aborted || this.lifecycleManager.getState() !== "LOADING") {
       resourceOwner.dispose();
       return;
     }
@@ -362,7 +373,10 @@ export class WorldRuntime {
       if (this.entranceCoordinator) {
         this.entranceCoordinator.skip(isMobile);
       }
-      if (options.initialSnapshot) this.experienceController.restoreSnapshot(options.initialSnapshot);
+      if (options.initialSnapshot) {
+        const restored = this.experienceController.restoreSnapshot(options.initialSnapshot);
+        options.onInitialSnapshotRestored?.(restored);
+      }
       this.reportIntroComplete();
     } else {
       this.entranceCoordinator
@@ -381,7 +395,10 @@ export class WorldRuntime {
         .then(() => {
           if (!this.isDisposed && !this.lifecycleManager.isStale(token)) {
             this.lifecycleManager.completeEntrance(token);
-            if (options.initialSnapshot) this.experienceController.restoreSnapshot(options.initialSnapshot);
+            if (options.initialSnapshot) {
+              const restored = this.experienceController.restoreSnapshot(options.initialSnapshot);
+              options.onInitialSnapshotRestored?.(restored);
+            }
             this.reportIntroComplete();
           }
         })
@@ -397,20 +414,20 @@ export class WorldRuntime {
   }
 
   private setupLighting() {
-    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x687c9a, 2.1);
+    const hemiLight = new THREE.HemisphereLight(0xd8dbff, 0x38527c, 0.65);
     this.scene.add(hemiLight);
 
-    const whiteDir = new THREE.DirectionalLight(0xfff5e8, 3.1);
+    const whiteDir = new THREE.DirectionalLight(0xfff5ef, 1.35);
     whiteDir.position.set(-2, 4, 3);
     whiteDir.castShadow = true;
     whiteDir.shadow.mapSize.set(1024, 1024);
     this.scene.add(whiteDir);
 
-    const cyanLight = new THREE.PointLight(0x78e4ff, 15, 8);
+    const cyanLight = new THREE.PointLight(0x67dbff, 7, 8);
     cyanLight.position.set(2, 2, -1);
     this.scene.add(cyanLight);
 
-    const pinkLight = new THREE.PointLight(0xffa4e6, 14, 8);
+    const pinkLight = new THREE.PointLight(0xee8cff, 8, 8);
     pinkLight.position.set(-1, 2.1, -1.6);
     this.scene.add(pinkLight);
   }
@@ -466,6 +483,12 @@ export class WorldRuntime {
     this.renderer.setSize(width, height, false);
     if (this.cameraDirector) {
       this.cameraDirector.resize(width, height);
+      const homeCamera = width < 640 ? "home-mobile" : "home-desktop";
+      this.experienceController.setHomeCamera(homeCamera);
+      const activeCamera = this.cameraDirector.getCurrentPreset();
+      if (activeCamera === "home-desktop" || activeCamera === "home-mobile") {
+        this.experienceController.syncCameraFromRuntime(activeCamera);
+      }
     }
     if (changed && this.entranceCoordinator?.isRunning()) this.skip();
   }
@@ -473,18 +496,29 @@ export class WorldRuntime {
   private reportIntroComplete(): void {
     if (this.introCompletionReported || this.isDisposed || this.lifecycleManager.isStale(this.sessionToken)) return;
     this.introCompletionReported = true;
+    this.experienceController.preferencesStore.update({ introCompleted: true });
     this.onIntroComplete?.();
   }
 
   public async replayEntrance(): Promise<void> {
     if (this.isDisposed || !this.integratedResult || !this.entranceCoordinator) return;
+    // A resident greeting owns the lifecycle transition slot. Explicit replay
+    // settles that decorative action first, then reuses the current session.
+    // An active entrance is left alone so its completion callback cannot settle
+    // a newly started replay with the same session token.
+    if (this.lifecycleManager.getState() === "TRANSITION") this.escape();
     if (!this.lifecycleManager.replayEntrance(this.sessionToken, this.reducedMotion)) return;
     this.experienceController.greeting.settle();
     await this.entranceCoordinator.playEntrance({ sessionToken: this.sessionToken,
       signal: this.loadingAbort.signal, isMobile: this.containerWidth > 0 && this.containerWidth < 640,
       reducedMotion: this.reducedMotion, durationSec: 5,
       onPhaseChange: () => this.lifecycleManager.updateEntranceDiagnostics(this.sessionToken, this.entranceCoordinator!.getDiagnostics()) });
-    if (!this.isDisposed) this.lifecycleManager.completeEntrance(this.sessionToken);
+    if (this.isDisposed) return;
+    if (this.lifecycleManager.getState() === "ENTRANCE") this.lifecycleManager.completeEntrance(this.sessionToken);
+    if (this.lifecycleManager.getState() !== "HOME") return;
+    const homeCamera = this.containerWidth > 0 && this.containerWidth < 640 ? "home-mobile" : "home-desktop";
+    this.experienceController.setHomeCamera(homeCamera);
+    this.experienceController.syncCameraFromRuntime(homeCamera);
   }
 
   public greet(): number {
@@ -522,21 +556,28 @@ export class WorldRuntime {
     }
     const wasEntrance = this.lifecycleManager.getState() === "ENTRANCE";
     this.lifecycleManager.skip(this.sessionToken);
+    const activeCamera = this.cameraDirector?.getCurrentPreset();
+    if (activeCamera === "home-desktop" || activeCamera === "home-mobile") {
+      this.experienceController.syncCameraFromRuntime(activeCamera);
+    }
     if (wasEntrance) this.reportIntroComplete();
     return this.characterDirector ? this.characterDirector.settle() : 0;
   }
 
   public escape(): number {
     const isMobile = this.containerWidth > 0 && this.containerWidth < 640;
+    const homeCamera = isMobile ? "home-mobile" : "home-desktop";
     if (this.entranceCoordinator) {
       this.entranceCoordinator.skip(isMobile);
     }
     if (this.transitionCoordinator) {
       this.transitionCoordinator.skip();
     }
+    this.experienceController.setHomeCamera(homeCamera);
     if (this.cameraDirector) {
-      this.cameraDirector.setPreset(isMobile ? "home-mobile" : "home-desktop");
+      this.cameraDirector.setPreset(homeCamera);
     }
+    this.experienceController.syncCameraFromRuntime(homeCamera);
     if (this.experienceController) {
       this.experienceController.send({ type: "ESCAPE" });
     }
@@ -555,12 +596,28 @@ export class WorldRuntime {
     if (this.cameraDirector) {
       this.cameraDirector.setPreset(preset);
     }
+    this.experienceController.syncCameraFromRuntime(
+      preset === "reverse-doorway" ? (this.containerWidth > 0 && this.containerWidth < 640 ? "home-mobile" : "home-desktop") : preset
+    );
     this.lifecycleManager.completeTransition(this.sessionToken);
   }
 
-  public setSound(enabled: boolean) {
+  /** Stop active work and retire the studio session before returning to the portfolio. */
+  public continueWithPortfolio(): boolean {
+    if (this.isDisposed) return false;
+    const isMobile = this.containerWidth > 0 && this.containerWidth < 640;
+    this.loadingAbort.abort();
+    this.entranceCoordinator?.skip(isMobile);
+    this.transitionCoordinator?.skip();
+    void this.experienceController.send({ type: "ESCAPE" });
+    const continued = this.lifecycleManager.continueWithPortfolio();
+    this.dispose();
+    return continued;
+  }
+
+  public setSound(enabled: boolean, persistPreference = true) {
     this.soundEnabled = enabled;
-    void this.experienceController.send({ type: "SET_SOUND", enabled });
+    if (persistPreference) void this.experienceController.send({ type: "SET_SOUND", enabled });
   }
 
   public setReducedMotion(enabled: boolean) {
@@ -574,6 +631,10 @@ export class WorldRuntime {
       this.characterDirector?.settle();
       if (this.lifecycleManager.getState() === "ENTRANCE") {
         this.lifecycleManager.completeEntrance(this.sessionToken);
+        const activeCamera = this.cameraDirector?.getCurrentPreset();
+        if (activeCamera === "home-desktop" || activeCamera === "home-mobile") {
+          this.experienceController.syncCameraFromRuntime(activeCamera);
+        }
         this.reportIntroComplete();
       }
     }
@@ -609,7 +670,7 @@ export class WorldRuntime {
     // Three's fallback submits each instance separately without this extension.
     if (tier !== "static" && this.materialQuality && this.renderer) {
       this.rigidWorldBatch = new RigidWorldBatch(this.scene,
-        Boolean(this.renderer.getContext().getExtension("WEBGL_multi_draw")), this.camera);
+        Boolean(this.renderer.getContext().getExtension("WEBGL_multi_draw")), this.camera, this.renderer);
     }
   }
 

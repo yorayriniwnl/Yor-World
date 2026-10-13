@@ -103,11 +103,9 @@ test.describe("Physical & Room Interactions: Task C1 Arbitration & Robustness", 
     await clockCheckbox.uncheck();
     await expect(clockCheckbox).not.toBeChecked(); // 12h
 
-    // Toggle Sound Opt-in
-    const soundCheckbox = page.locator('[data-testid="control-toggle-sound"]');
-    await expect(soundCheckbox).not.toBeChecked();
-    await soundCheckbox.check();
-    await expect(soundCheckbox).toBeChecked();
+    // Sound remains available from the single global dock control, not duplicated here.
+    await expect(page.getByTestId("control-toggle-sound")).toHaveCount(0);
+    await expect(page.getByTestId("sound-toggle-btn")).toHaveCount(1);
   });
 
   test("5. Painting interaction: inspection tilt triggers spring response and discovers hidden mark", async ({ page }) => {

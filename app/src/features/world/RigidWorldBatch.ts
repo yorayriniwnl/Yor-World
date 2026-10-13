@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { animatedNodes, attributeLayout, eligible, LOW_BATCH_ORIGINAL_LAYER } from "./LowQualityBatch";
+import { ConstantMaterialBatch } from "./ConstantMaterialBatch";
 
 interface Original {
   mesh: THREE.Mesh;
@@ -47,17 +48,20 @@ export class RigidWorldBatch {
   private readonly mergedEntries: MergedEntry[] = [];
   private readonly unsafeAnimationTargets: Set<THREE.Object3D>;
   private disposed = false;
+  private readonly constants?: ConstantMaterialBatch;
 
-  constructor(private readonly scene: THREE.Object3D, multiDrawSupported: boolean, private readonly camera?: THREE.Camera) {
+  constructor(private readonly scene: THREE.Object3D, multiDrawSupported: boolean, private readonly camera?: THREE.Camera, renderer?: THREE.WebGLRenderer) {
     this.unsafeAnimationTargets = animatedNodes(scene, true);
     // Without multi-draw, use actual merged draw buffers rather than Three's
     // per-instance fallback. Camera culling keeps the same per-object visibility.
     if (!multiDrawSupported && !camera) return;
+    if (scene instanceof THREE.Scene && camera && renderer) this.constants = new ConstantMaterialBatch(scene, camera, renderer);
     scene.updateWorldMatrix(true, true);
     const groups = new Map<THREE.Material, Map<string, THREE.Mesh[]>>();
     scene.traverse((object) => {
       if (!(object as THREE.Mesh).isMesh) return;
       const mesh = object as THREE.Mesh;
+      if (this.constants?.claimed.has(mesh)) return;
       if (!eligible(mesh, this.unsafeAnimationTargets, true) || Array.isArray(mesh.material)) return;
       const layout = attributeLayout(mesh.geometry);
       if (!layout) return;
@@ -155,6 +159,7 @@ export class RigidWorldBatch {
 
   public update(): void {
     if (this.disposed) return;
+    this.constants?.update();
     this.scene.updateWorldMatrix(true, true);
     const inverse = this.scene.matrixWorld.clone().invert();
     for (const { batch, originals } of this.entries) for (const entry of originals) {
@@ -232,5 +237,6 @@ export class RigidWorldBatch {
       batch.geometry.dispose();
     }
     this.mergedEntries.length = 0;
+    this.constants?.dispose();
   }
 }

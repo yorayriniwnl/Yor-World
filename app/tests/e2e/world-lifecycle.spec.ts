@@ -200,7 +200,7 @@ test.describe("B5 Production Runtime Lifecycle Foundation - Adversarial & Invari
     const fallback = page.locator('[data-testid="world-fallback-banner"]');
     await expect(fallback).toBeVisible({ timeout: 15000 });
 
-    await expect(fallback).toContainText(/Asset Loading 404/i);
+    await expect(fallback).toContainText(/required asset failure/i);
     const retryBtn = page.locator('[data-testid="fallback-retry-btn"]');
     await expect(retryBtn).toBeVisible();
 
@@ -249,9 +249,10 @@ test.describe("B5 Production Runtime Lifecycle Foundation - Adversarial & Invari
     await expect(page.locator('[data-testid="world-loading-overlay"]')).not.toBeVisible({ timeout: 15000 });
 
     // Toggle reduced motion ON
+    await page.getByTestId("studio-options-toggle").click();
     const rmBtn = page.locator('[data-testid="reduced-motion-toggle-btn"]');
     await rmBtn.click();
-    await expect(rmBtn).toHaveText(/Reduced Motion: On/);
+    await expect(page.getByRole("switch", { name: "Toggle Reduced Motion" })).toHaveAttribute("aria-checked", "true");
 
     // Switch camera
     await page.locator('[data-testid="camera-monitor-btn"]').click();

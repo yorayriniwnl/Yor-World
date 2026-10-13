@@ -7,6 +7,7 @@ import dns from "node:dns/promises";
 import tls from "node:tls";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
+import { reserveAttempt } from "./reserve-attempt.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../..");
 const sha = (bytes) => crypto.createHash("sha256").update(bytes).digest("hex");
@@ -37,19 +38,16 @@ async function main() {
   const origin = new URL(binding.targetOrigin);
   check(origin.protocol === "https:" && !origin.username && !origin.password && origin.pathname === "/" && !origin.search && !origin.hash
     && !["localhost", "127.0.0.1", "::1"].includes(origin.hostname), "Target must be the root-authorized public HTTPS origin");
-  const output = workspacePath(values.output);
-  check(output.startsWith(path.join(root, "deliveries/G7/evidence") + path.sep), "Live output must stay inside deliveries/G7/evidence");
-  check(!fs.existsSync(output), "Existing live receipt must be preserved; choose a new observation path");
-  const artifactDir = output.slice(0, -path.extname(output).length) + "-raw";
-  check(!fs.existsSync(artifactDir), "Raw artifact directory already exists; preserve historical attempt");
-  fs.mkdirSync(artifactDir);
+  const reservation = reserveAttempt(root, values.output, "deliveries/G7/evidence");
+  const output = reservation.output;
+  const artifactDir = reservation.artifactDir;
   const executedAt = new Date().toISOString();
   const observations = [];
   const failures = [];
   const artifacts = [];
   function artifact(name, bytes) {
+    reservation.writeArtifact(name, bytes);
     const target = path.join(artifactDir, name);
-    fs.writeFileSync(target, bytes);
     const receipt = { path: relative(target), sha256: sha(bytes), hashMode: "raw", bytes: bytes.length };
     artifacts.push(receipt);
     return receipt;
@@ -165,7 +163,7 @@ async function main() {
       { id: 9, name: "monitoring", status: "NOT RUN", observations: [], remaining: "Health response does not prove readiness semantics, logging, uptime monitoring or PII retention." }],
     overallStatus: "NOT RUN", acceptanceClaim: false, independentReview: "NOT RUN",
     limitations: ["No browser/manual/service mutation/rollback rehearsal was executed.", "No physical device or screen reader was exercised.", "Raw public response artifacts are retained; these are actual observations rather than complete G7 conformance."] };
-  fs.writeFileSync(output, JSON.stringify(receipt, null, 2) + "\n");
+  reservation.writeReceipt(receipt);
   console.log(`HTTP-only observations ${receipt.observationStatus}; complete G7 requirements remain NOT RUN. Receipt ${relative(output)}`);
   if (failures.length) process.exitCode = 1;
 }

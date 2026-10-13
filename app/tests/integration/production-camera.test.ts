@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -6,12 +7,36 @@ import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { CameraDirector, CAMERA_PRESETS } from "@/features/world/CameraDirector";
 import { CharacterDirector } from "@/features/world/CharacterDirector";
 import { EntranceCoordinator, entrancePositionAt } from "@/features/world/EntranceCoordinator";
+import { ASSET_LOCATIONS } from "@/features/world/asset-locations";
+
+const publicRoot = path.resolve(process.cwd(), "public");
+const manifestPath = path.join(publicRoot, "asset-manifest.json");
+const legacyRoomPath = path.join(publicRoot, "models/production-room-full.glb");
+
+type RoomManifestEntry = { id: string; url: string; sha256: string; bytes: number };
+
+function currentRoomBinding(): { entry: RoomManifestEntry; assetPath: string } {
+  const manifest = JSON.parse(readFileSync(manifestPath, "utf8")) as { groups: RoomManifestEntry[] };
+  const entry = manifest.groups.find((group) => group.id === "production-room-full");
+  expect(entry, "asset manifest must declare production-room-full").toBeDefined();
+  if (!entry) throw new Error("asset manifest is missing production-room-full");
+
+  expect(ASSET_LOCATIONS.roomFull).toBe(entry.url);
+  const assetPath = path.resolve(publicRoot, `.${entry.url}`);
+  expect(path.relative(publicRoot, assetPath).startsWith(".."), "manifest asset must stay below public/").toBe(false);
+  expect(assetPath).not.toBe(legacyRoomPath);
+  expect(path.basename(assetPath)).toContain(entry.sha256);
+  return { entry, assetPath };
+}
 
 /** Decode the shipped mesh buffers and transforms. Bitmap decoding is unnecessary
  * for collision/raycast tests in Node; the file and its geometry stay untouched.
  */
 async function loadProductionRoom() {
-  const file = readFileSync(path.join(process.cwd(), "public/models/production-room-full.glb"));
+  const { entry, assetPath } = currentRoomBinding();
+  const file = readFileSync(assetPath);
+  expect(file.byteLength).toBe(entry.bytes);
+  expect(createHash("sha256").update(file).digest("hex")).toBe(entry.sha256);
   const jsonLength = file.readUInt32LE(12);
   const json = JSON.parse(file.subarray(20, 20 + jsonLength).toString("utf8"));
   for (const material of json.materials ?? []) {
@@ -171,7 +196,7 @@ describe("Production room camera integration", () => {
     }
     expect(camera.position.toArray()).toEqual(CAMERA_PRESETS[isMobile ? "home-mobile" : "home-desktop"].position);
     expect(entrancePositionAt(0, isMobile).toArray()).toEqual(positions[0]!.toArray());
-    expect(entrancePositionAt(1, isMobile).toArray()).toEqual(camera.position.toArray());
+    expect(entrancePositionAt(1, isMobile).distanceTo(camera.position)).toBeLessThan(1e-12);
     expect(entrance.getDiagnostics().phase).toBe("settled");
     entrance.dispose();
     director.dispose();
