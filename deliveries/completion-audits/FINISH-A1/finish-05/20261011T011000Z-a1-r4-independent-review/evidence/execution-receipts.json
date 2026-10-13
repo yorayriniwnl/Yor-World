@@ -1,0 +1,220 @@
+{
+  "schemaVersion": 1,
+  "candidateCommit": "2e183eb3a1470427950265fc6bf4dadb8ad6411e",
+  "commands": [
+    {
+      "id": "install",
+      "command": "pnpm install --offline --frozen-lockfile",
+      "startedUtc": "2026-10-11T01:48:59.928988+00:00",
+      "exitCode": 0,
+      "logPath": "evidence/logs/install.log",
+      "outputBytes": 2661
+    },
+    {
+      "id": "unit",
+      "command": "pnpm run test:unit",
+      "startedUtc": "2026-10-11T01:50:00.944047+00:00",
+      "exitCode": 0,
+      "logPath": "evidence/logs/unit.log",
+      "outputBytes": 782
+    },
+    {
+      "id": "integration",
+      "command": "pnpm run test:integration",
+      "startedUtc": "2026-10-11T01:50:12.317297+00:00",
+      "exitCode": 0,
+      "logPath": "evidence/logs/integration.log",
+      "outputBytes": 535
+    },
+    {
+      "id": "lint",
+      "command": "pnpm run lint",
+      "startedUtc": "2026-10-11T01:50:38.449674+00:00",
+      "exitCode": 0,
+      "logPath": "evidence/logs/lint.log",
+      "outputBytes": 201
+    },
+    {
+      "id": "typecheck",
+      "command": "pnpm run typecheck",
+      "startedUtc": "2026-10-11T01:50:56.923306+00:00",
+      "exitCode": 0,
+      "logPath": "evidence/logs/typecheck.log",
+      "outputBytes": 193
+    },
+    {
+      "id": "build",
+      "command": "pnpm run build",
+      "startedUtc": "2026-10-11T01:51:10.292604+00:00",
+      "exitCode": 0,
+      "logPath": "evidence/logs/build.log",
+      "outputBytes": 1539
+    },
+    {
+      "id": "browser-no-fixture",
+      "command": "pnpm exec playwright test tests/e2e/platform/admin-publish.spec.ts tests/e2e/platform/completion-authoring-workflow.spec.ts --project=chromium --workers=1 --reporter=list",
+      "startedUtc": "2026-10-11T01:52:00.170235+00:00",
+      "exitCode": 1,
+      "result": "4 passed / 6 failed; private pages redirected to login because YOR_E2E_FIXTURE was unset",
+      "logPath": "evidence/logs/browser-no-fixture.log",
+      "logBytes": 17145,
+      "environment": {
+        "YOR_E2E_FIXTURE": "unset",
+        "YOR_TEST_DATABASE_PATH": "unset"
+      },
+      "classification": "superseded setup failure; corrected fixture run follows"
+    },
+    {
+      "id": "browser",
+      "command": "pnpm exec playwright test tests/e2e/platform/admin-publish.spec.ts tests/e2e/platform/completion-authoring-workflow.spec.ts --project=chromium --workers=1 --reporter=list",
+      "startedUtc": "2026-10-11T01:54:20.471912+00:00",
+      "exitCode": 0,
+      "logPath": "evidence/logs/browser.log",
+      "outputBytes": 2676,
+      "result": "10 Chromium tests passed",
+      "environment": {
+        "CI": "1",
+        "PORT": "3157",
+        "YOR_E2E_FIXTURE": "1",
+        "YOR_TEST_DATABASE_PATH": ".work/a1-r4-review-e2e-db",
+        "A4_EVIDENCE_DIR": "evidence/e2e",
+        "B5_EVIDENCE_DIR": "evidence/browser-results"
+      },
+      "browserResultsJson": "not produced by --reporter=list; raw log and five screenshots retained"
+    },
+    {
+      "id": "probes",
+      "command": "pnpm exec vitest run tests/integration/platform/audit-r4-probes.test.ts --config vitest.integration.config.ts --reporter=verbose",
+      "startedUtc": "2026-10-11T01:57:20.984613+00:00",
+      "exitCode": 0,
+      "logPath": "evidence/logs/probes.log",
+      "outputBytes": 650
+    },
+    {
+      "id": "project-hash",
+      "command": "pnpm exec vitest run tests/integration/platform/audit-r4-probes.test.ts --config vitest.integration.config.ts --reporter=verbose",
+      "startedUtc": "2026-10-11T01:58:56.316356+00:00",
+      "exitCode": 0,
+      "logPath": "evidence/logs/project-hash.log",
+      "outputBytes": 816
+    },
+    {
+      "id": "project-hash-final",
+      "command": "pnpm exec vitest run tests/integration/platform/audit-r4-probes.test.ts --config vitest.integration.config.ts --reporter=verbose",
+      "startedUtc": "2026-10-11T01:59:06.254563+00:00",
+      "exitCode": 0,
+      "logPath": "evidence/logs/project-hash-final.log",
+      "outputBytes": 816
+    },
+    {
+      "id": "final-probes",
+      "command": "pnpm exec vitest run tests/integration/platform/audit-r4-probes.test.ts --config vitest.integration.config.ts --reporter=verbose",
+      "startedUtc": "2026-10-11T02:03:26.955928+00:00",
+      "exitCode": 0,
+      "logPath": "evidence/logs/final-probes.log",
+      "outputBytes": 827,
+      "result": "3 audit-only probes passed: permissive DTO, full oversized object materialization, project-body/order hash omission; unsafe integer separately rejected",
+      "sourcePath": "evidence/audit-r4-probes.test.ts"
+    },
+    {
+      "id": "validate-audit-build-binding-bom",
+      "command": "python .work/tools/validate_audit.py",
+      "startedUtc": "2026-10-11T02:07:53.661993+00:00",
+      "exitCode": 1,
+      "result": "Hash/file-set checks passed; JSON parse caught a BOM in the audit build-binding receipt; normalized and reran.",
+      "logPath": "evidence/final-validation-build-binding-bom.json",
+      "classification": "auditor-owned receipt format issue; not candidate evidence",
+      "logBytes": 903
+    },
+    {
+      "id": "validate-audit-build-binding-empty",
+      "command": "python .work/tools/validate_audit.py",
+      "startedUtc": "2026-10-11T02:08:15.917772+00:00",
+      "exitCode": 1,
+      "result": "Hash/file-set checks passed; JSON parse caught an empty audit build-binding receipt after a rewrite error; corrected and reran.",
+      "logPath": "evidence/final-validation-build-binding-empty.json",
+      "classification": "auditor-owned receipt format issue; not candidate evidence",
+      "logBytes": 873
+    },
+    {
+      "id": "validate-audit",
+      "command": "python .work/tools/validate_audit.py",
+      "startedUtc": "2026-10-11T02:08:44.534033+00:00",
+      "exitCode": 0,
+      "result": "PASS: all existing output hashes/file paths and JSON artifacts match; candidate tree/replacements match; canonical app unchanged.",
+      "logPath": "evidence/final-validation-pre-metadata-update.json",
+      "classification": "superseded by final post-metadata validation",
+      "logBytes": 743
+    },
+    {
+      "id": "validate-audit-final",
+      "command": "python .work/tools/validate_audit.py",
+      "startedUtc": "2026-10-11T02:09:20.733041+00:00",
+      "exitCode": 0,
+      "result": "PASS: 35 existing output files hash-match; JSON parses; candidate tree and all 25 replacements match; canonical app unchanged.",
+      "logPath": "evidence/final-validation.json",
+      "classification": "final check before output manifest was regenerated to include this receipt",
+      "logBytes": 820
+    },
+    {
+      "id": "validate-audit-post-metadata",
+      "command": "python .work/tools/validate_audit.py",
+      "startedUtc": "2026-10-11T05:16:23.949758+00:00",
+      "exitCode": 0,
+      "result": "PASS: all other current output hashes/file paths and JSON artifacts match; candidate identity/replay and canonical tree pass.",
+      "logPath": "evidence/final-validation.json",
+      "classification": "latest receipt; its own hash is added by the finalizer",
+      "logBytes": 820
+    },
+    {
+      "id": "identity-verification",
+      "command": "python .work/tools/verify_intake.py",
+      "exitCode": 0,
+      "result": "127/127 manifest files verified; 25 paths; exact candidate app tree and source replacements",
+      "logPath": "evidence/logs/identity-verification.log",
+      "logBytes": 316,
+      "receiptPath": "evidence/identity-verification.json"
+    },
+    {
+      "id": "identity-verification-with-audit-probe",
+      "command": "python .work/tools/verify_intake.py (before removing the temporary audit probe from the isolated assembly)",
+      "exitCode": 1,
+      "result": "expected scratch-only mismatch: verifier staged the temporary probe into the isolated assembly; probe was removed and final identity verification passed",
+      "logPath": "evidence/logs/identity-verification-with-audit-probe.log",
+      "logBytes": 668,
+      "classification": "auditor scratch/tooling event; not a candidate mismatch"
+    },
+    {
+      "id": "patch-replay",
+      "command": "python .work/tools/replay_patch.py",
+      "exitCode": 0,
+      "result": "fresh exact-base patch check/apply; 25/25 replacement equality; candidate app tree reproduced",
+      "logPath": "evidence/logs/patch-replay.log",
+      "logBytes": 3017,
+      "receiptPath": "evidence/patch-replay.json"
+    },
+    {
+      "id": "probe-unsafe-integer-initial-expectation",
+      "command": "pnpm exec vitest run tests/integration/platform/audit-r4-probes.test.ts --config vitest.integration.config.ts --reporter=verbose",
+      "exitCode": 1,
+      "result": "initial assertion expected unsafe integer to parse; observed schema rejection and corrected probe to assert rejection",
+      "logPath": "evidence/logs/probe-unsafe-integer-rejected.log",
+      "logBytes": 1721,
+      "classification": "expected probe correction; unsafe integer is not an A1-R4 defect"
+    },
+    {
+      "id": "static-build-sentinel-scan",
+      "command": "rg -l -F -e PRIVATE_SENTINEL -e R4_PRIVATE_WORKFLOW_SENTINEL .next --glob '!*.map'",
+      "exitCode": 1,
+      "result": "PASS: rg exit 1 means no matching build files",
+      "logPath": "evidence/logs/static-build-sentinel-scan.log",
+      "logBytes": 171,
+      "workingDirectory": ".work/assembly/app"
+    }
+  ],
+  "candidateSource": {
+    "commit": "2e183eb3a1470427950265fc6bf4dadb8ad6411e",
+    "appTree": "ae4f54e366774969dfd202806451e7e4ec66d10b"
+  },
+  "reviewScope": "exact isolated candidate; no production source edits; local Codex independent review"
+}

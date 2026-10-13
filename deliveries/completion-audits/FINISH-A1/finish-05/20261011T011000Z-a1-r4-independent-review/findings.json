@@ -1,0 +1,131 @@
+{
+  "advice": "REWORK",
+  "implementationAcceptance": false,
+  "canonicalIntegrationAuthorized": false,
+  "reviewer": {
+    "identity": "local Codex independent reviewer",
+    "externalGptPlus2ReviewClaimed": false
+  },
+  "candidate": {
+    "commit": "2e183eb3a1470427950265fc6bf4dadb8ad6411e",
+    "baseCommit": "f62a43c5e71c00dcb89e28275ea81d842167db80",
+    "baseAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+    "candidateAppTree": "ae4f54e366774969dfd202806451e7e4ec66d10b",
+    "patchSha256": "7b2dd8ba10801dfca095191ce4b8c81a05d11a95eac4b016dd32fb433c619604",
+    "outputManifestSha256": "c97e0daa58ad2be10dea1477d593cc8d2bb7f42d82403876aa6e1ed8b2ef7604"
+  },
+  "findings": [
+    {
+      "id": "A1R4-01",
+      "type": "source",
+      "severity": "P2",
+      "status": "OPEN",
+      "title": "Candidate hash omits project document bodies and order",
+      "locations": [
+        "deliveries/FINISH-A1/r4/source/src/server/content/preview.ts:84-98",
+        "deliveries/FINISH-A1/r4/source/src/server/content/preview.ts:203-214"
+      ],
+      "contract": "FINISH-00-R2 requires the deterministic candidate hash to bind projects and preserve document-array order; changed bodies/order must change the hash.",
+      "reproduction": "The audit-only probe supplies two different project bodies with reversed section order and the same projectId/draftRevision vector. computeReviewHash ignores candidateProjects and produces the same hash.",
+      "impact": "A changed durable body with an unchanged revision vector is outside the review identity. Normal save code increments revisions, so this does not establish a stale-review bypass through the current save route; it remains a required hash-integrity defect.",
+      "evidence": [
+        "evidence/audit-r4-probes.test.ts",
+        "evidence/logs/final-probes.log",
+        "docs/planning/reconciliation-packets/finish-contracts-r2/02-platform-schema-recovery.md:98"
+      ]
+    },
+    {
+      "id": "A1R4-02",
+      "type": "source",
+      "severity": "P2",
+      "status": "OPEN",
+      "title": "Private media bytes are fully materialized before the size limit and without a deadline",
+      "locations": [
+        "deliveries/FINISH-A1/r4/source/src/server/media/manifest.ts:138-150",
+        "deliveries/FINISH-A1/r4/source/src/server/media/validate-upload.ts:184-201"
+      ],
+      "contract": "PLAT-R2-01 requires bounded private Storage reads, bounded byte accumulation, read-time limits and abort on failures.",
+      "reproduction": "A mocked approved row returns 5 MiB + 1 byte; readReviewedMedia calls arrayBuffer once and materializes the entire payload before validateUpload rejects the size.",
+      "impact": "An unexpectedly large object can consume memory proportional to its full size in owner-triggered review/save/publish/proxy paths; Storage latency is not bounded by this helper.",
+      "evidence": [
+        "evidence/audit-r4-probes.test.ts",
+        "evidence/logs/final-probes.log",
+        "docs/planning/reconciliation-packets/finish-contracts-r2/02-platform-schema-recovery.md:102"
+      ]
+    },
+    {
+      "id": "A1R4-03",
+      "type": "source",
+      "severity": "P2",
+      "status": "OPEN",
+      "title": "PrivateDraftReviewSchema does not validate DraftRecord or cross-field review semantics",
+      "locations": [
+        "deliveries/FINISH-A1/r4/source/src/server/content/preview.ts:22-60",
+        "deliveries/FINISH-A1/r4/source/src/app/api/admin/preview/route.ts:22-31"
+      ],
+      "contract": "A1 requires exact strict ReviewIdentity and PrivateDraftReview DTO schemas and rejection of malformed fields.",
+      "reproduction": "The audit-only probe passes duplicate project IDs, a non-DraftRecord object in drafts, a non-timestamp string, empty checks, and canPublish=true. ReviewIdentitySchema does reject an unsafe integer through z.number().int(); this was verified and is not reported as a defect.",
+      "impact": "The preview route's output parse cannot guarantee the documented DTO shape or consistency. The publish service recomputes and compares ReviewIdentity, and no publish authorization bypass was reproduced.",
+      "evidence": [
+        "evidence/audit-r4-probes.test.ts",
+        "evidence/logs/final-probes.log",
+        "evidence/logs/probe-unsafe-integer-rejected.log"
+      ]
+    },
+    {
+      "id": "A1R4-04",
+      "type": "delivery-evidence",
+      "severity": "P2",
+      "status": "OPEN",
+      "title": "Maker return omits the required standalone complete requirement matrix",
+      "locations": [
+        "deliveries/FINISH-A1/r4/report.md",
+        "deliveries/FINISH-A1/r4/output-hashes.json"
+      ],
+      "contract": "The R4 production prompt requires a complete requirement matrix as a reviewable delivery artifact.",
+      "reproduction": "The R4 output manifest verifies 127 delivered files and contains no requirement-matrix.json. The narrative report's compact summary table does not map every requirement to evidence and scope.",
+      "impact": "The reviewer had to create this audit matrix; this does not retroactively satisfy the maker's missing delivery artifact.",
+      "evidence": [
+        "evidence/identity-verification.json",
+        "requirement-matrix.json"
+      ]
+    },
+    {
+      "id": "A1R4-05",
+      "type": "verification-gap",
+      "severity": "P2",
+      "status": "NOT RUN",
+      "title": "Approved image selection and visual preview were not exercised in Chromium",
+      "locations": [
+        "deliveries/FINISH-A1/r4/source/src/features/admin/structured-block-editor.tsx:279-294",
+        "deliveries/FINISH-A1/r4/source/tests/e2e/platform/completion-authoring-workflow.spec.ts:19-84"
+      ],
+      "contract": "A1 requires approved image selection and preview in the actual authoring workflow.",
+      "reproduction": "The browser test asserts the empty picker, edits alt/caption, receives the expected 422, deletes the image block, then saves. No approved image is selected or rendered in the browser.",
+      "impact": "The editor has an accessible selector and separate private-preview route, but the required end-to-end media flow remains unverified. No provider-backed approved asset was available.",
+      "evidence": [
+        "deliveries/FINISH-A1/r4/receipts.json",
+        "evidence/logs/browser.log",
+        "evidence/e2e/screenshots/"
+      ]
+    }
+  ],
+  "integrityAssessment": {
+    "currentCandidateBytes": "VERIFIED",
+    "historicalWriter": "UNKNOWN",
+    "r4SourceAndPatchAttribution": "NOT ESTABLISHED",
+    "r3ExactPreservation": "NOT ESTABLISHED",
+    "notes": [
+      "Current R4 manifest, exact patch, path set, and replacement mapping were independently reverified.",
+      "Process snapshots found no matching live process but cannot identify an exited writer; no attribution or intent is inferred.",
+      "R3 baseline and later inventory differ by 17 baseline files and include a new candidate/node_modules tree. The receipts do not attribute these changes or establish exact preservation.",
+      "Late fixture and out-of-root browser artifacts have preservation/discrepancy receipts; those records do not establish their historical writer."
+    ]
+  },
+  "limits": [
+    "PGlite, synthetic auth, mocked Storage, and local browser fixtures are not native provider evidence.",
+    "Native PostgreSQL/Auth/Storage, multi-process races, provider-approved image selection, complete 503/outage matrix, CDN, deployment, PDF approval, device, recovery, and G7 were not run.",
+    "No GPT Plus #2 or other external review is claimed; Parent acceptance remains pending."
+  ],
+  "narrativeProvenance": "Written by local Codex for the authorized FINISH-10 audit; no candidate files were edited or accepted."
+}

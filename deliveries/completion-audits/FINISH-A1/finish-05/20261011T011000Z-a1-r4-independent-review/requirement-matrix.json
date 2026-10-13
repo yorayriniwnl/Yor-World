@@ -1,0 +1,184 @@
+[
+  {
+    "clause": "A3-01",
+    "requirement": "Candidate commit, exact base commit, app-tree and output-manifest identities",
+    "result": "PASS",
+    "scope": "All 127 manifest entries match current bytes; candidate is bound to the pinned base and expected app tree.",
+    "evidence": ["evidence/identity-verification.json", "evidence/logs/identity-verification.log"]
+  },
+  {
+    "clause": "A3-01",
+    "requirement": "Valid UTF-8 patch applies to exact base and maps every replacement byte-for-byte",
+    "result": "PASS",
+    "scope": "Fresh detached replay; 25 paths; exact app tree; 25/25 replacement equality.",
+    "evidence": ["evidence/patch-replay.json", "evidence/logs/patch-replay.log"]
+  },
+  {
+    "clause": "A3-01",
+    "requirement": "Exhaustive A1 path ownership; frozen content contract and dependency files remain unchanged",
+    "result": "PASS",
+    "scope": "All 25 candidate paths are within the A1 table; canonical app tree remains the pinned base tree.",
+    "evidence": ["evidence/identity-verification.json", "evidence/logs/identity-verification.log"]
+  },
+  {
+    "clause": "A3-01",
+    "requirement": "Complete maker requirement matrix included in the candidate package",
+    "result": "FAIL",
+    "scope": "R4 has a narrative report table but no standalone requirement-matrix.json; this file is an independent audit matrix.",
+    "evidence": ["deliveries/FINISH-A1/r4/report.md", "deliveries/FINISH-A1/r4/output-hashes.json"]
+  },
+  {
+    "clause": "A3-01",
+    "requirement": "Historical source/patch/receipt writer attribution",
+    "result": "NOT ESTABLISHED",
+    "scope": "Current bytes are identified; live process snapshots cannot establish an exited writer. No external Gemini execution is claimed.",
+    "evidence": ["deliveries/FINISH-A1/r4/evidence/r4-integrity-discrepancy.md", "deliveries/FINISH-A1/r4/evidence/r4-process-commandline-snapshot.json", "docs/planning/reviews/2026-10-11-finish-07-a1-r4-intake.md"]
+  },
+  {
+    "clause": "A3-02",
+    "requirement": "ReviewIdentity and PrivateDraftReview schemas strictly validate complete DTOs",
+    "result": "FAIL",
+    "scope": "The schema accepts duplicate project IDs, arbitrary timestamp text, unknown draft object shapes, and canPublish=true with an empty checks list.",
+    "evidence": ["evidence/audit-r4-probes.test.ts", "evidence/logs/final-probes.log", "evidence/logs/probe-unsafe-integer-rejected.log"]
+  },
+  {
+    "clause": "A3-02",
+    "requirement": "API and durable service require the complete review and matching expected revision before writes",
+    "result": "PASS",
+    "scope": "PGlite integration verifies missing/mismatched review rejection and unchanged publication/history/audit state; not hosted PostgreSQL.",
+    "evidence": ["deliveries/FINISH-A1/r4/source/tests/integration/platform/completion-authoring-preview.test.ts", "evidence/logs/integration.log"]
+  },
+  {
+    "clause": "A3-02 / A3-03",
+    "requirement": "Durable publication revision and project locks are read in one ordered transaction",
+    "result": "PASS",
+    "scope": "Embedded PGlite verifies durable revision 7 and ordered transaction lock trace; no native multi-process race claim.",
+    "evidence": ["deliveries/FINISH-A1/r4/source/tests/integration/platform/completion-authoring-preview.test.ts", "evidence/logs/integration.log"]
+  },
+  {
+    "clause": "A3-03",
+    "requirement": "Canonical candidate hash binds project bodies and ordered document content",
+    "result": "FAIL",
+    "scope": "Hash input contains only project ID/revision pairs; changed body and reversed sections with the same revision hash identically.",
+    "evidence": ["evidence/audit-r4-probes.test.ts", "evidence/logs/final-probes.log", "deliveries/FINISH-A1/r4/source/src/server/content/preview.ts"]
+  },
+  {
+    "clause": "A3-03",
+    "requirement": "ReviewedMedia binds available row identity and latest approval-audit event",
+    "result": "PASS WITH LIMIT",
+    "scope": "Source binds object key, hash, MIME, bytes, dimensions, provenance, status, timestamps and audit ID; integration reproduces four valid same-ID changes in embedded SQL and mocked Storage.",
+    "evidence": ["deliveries/FINISH-A1/r4/source/src/server/media/manifest.ts", "deliveries/FINISH-A1/r4/source/tests/integration/platform/completion-authoring-preview.test.ts", "evidence/logs/integration.log"]
+  },
+  {
+    "clause": "A3-03",
+    "requirement": "Safe integer and lowercase SHA-256 identity validation",
+    "result": "PASS",
+    "scope": "Lowercase SHA-256 has a strict regex; the audit probe confirms Zod integer validation rejects an unsafe byte count.",
+    "evidence": ["deliveries/FINISH-A1/r4/source/src/server/content/preview.ts", "evidence/audit-r4-probes.test.ts", "evidence/logs/final-probes.log"]
+  },
+  {
+    "clause": "A3-03",
+    "requirement": "Actual private image bytes are checked against type, maximum size, hash, dimensions and row values",
+    "result": "PASS WITH LIMIT",
+    "scope": "PGlite/mocked Storage covers a valid synthetic PNG and tampered bytes; no provider-backed Storage claim.",
+    "evidence": ["deliveries/FINISH-A1/r4/source/tests/integration/platform/completion-authoring-preview.test.ts", "evidence/logs/integration.log"]
+  },
+  {
+    "clause": "A3-03",
+    "requirement": "Private Storage accumulation is bounded and reads have a deadline/abort",
+    "result": "FAIL",
+    "scope": "The full Blob arrayBuffer is read before the 5 MiB validator; the probe observes 5 MiB + 1 byte materialized before rejection.",
+    "evidence": ["evidence/audit-r4-probes.test.ts", "evidence/logs/final-probes.log", "deliveries/FINISH-A1/r4/source/src/server/media/manifest.ts"]
+  },
+  {
+    "clause": "A3-03",
+    "requirement": "Valid same-ID media/approval mutations invalidate the old review with no partial writes",
+    "result": "PASS WITH LIMIT",
+    "scope": "Object-key, provenance, creation-time and approval-audit changes are exercised with synthetic valid PNG data and embedded SQL; this is not a native database race.",
+    "evidence": ["deliveries/FINISH-A1/r4/source/tests/integration/platform/completion-authoring-preview.test.ts", "evidence/logs/integration.log"]
+  },
+  {
+    "clause": "A3-03",
+    "requirement": "Full media vector/order/dedup and concurrent native-provider mutation matrix",
+    "result": "PARTIAL / NOT RUN",
+    "scope": "Code sorts/deduplicates referenced IDs and covered same-ID cases pass; complete metadata variant matrix, native PostgreSQL/Auth/Storage and multi-process races were not run.",
+    "evidence": ["deliveries/FINISH-A1/r4/report.md", "deliveries/FINISH-A1/r4/receipts.json"]
+  },
+  {
+    "clause": "A3-04",
+    "requirement": "Approved-media route, image-save validation and private proxy byte rejection",
+    "result": "PASS WITH LIMIT",
+    "scope": "Local PGlite/synthetic auth/mocked Storage verifies media-list shape, missing-image save rejection and tampered proxy rejection.",
+    "evidence": ["deliveries/FINISH-A1/r4/source/tests/integration/platform/completion-authoring-preview.test.ts", "evidence/logs/integration.log"]
+  },
+  {
+    "clause": "A3-04",
+    "requirement": "Browser selection and preview of an approved image",
+    "result": "NOT RUN",
+    "scope": "Chromium asserts only the empty picker; no approved media object is selected or previewed. The candidate records this limitation.",
+    "evidence": ["deliveries/FINISH-A1/r4/source/tests/e2e/platform/completion-authoring-workflow.spec.ts", "evidence/logs/browser.log", "deliveries/FINISH-A1/r4/receipts.json"]
+  },
+  {
+    "clause": "A3-04",
+    "requirement": "Four block editors, ordering/focus, failed-buffer retention, save/reopen and cancel",
+    "result": "PASS WITH LIMIT",
+    "scope": "10 Chromium tests pass with local fixture; image block is created in empty state then removed after expected 422, so image selection/edit is not covered.",
+    "evidence": ["deliveries/FINISH-A1/r4/source/tests/e2e/platform/completion-authoring-workflow.spec.ts", "evidence/logs/browser.log", "evidence/e2e/screenshots/"]
+  },
+  {
+    "clause": "A3-04 / A3-05",
+    "requirement": "Private draft rendering, CandidateX privacy, and safe draft-only media route boundaries",
+    "result": "PASS WITH LIMIT",
+    "scope": "PGlite/server rendering and local Chromium verify CandidateX draft visibility and public exclusion; approved-image rendering was not browser-tested.",
+    "evidence": ["deliveries/FINISH-A1/r4/source/tests/integration/platform/completion-authoring-preview.test.ts", "deliveries/FINISH-A1/r4/source/tests/e2e/platform/admin-publish.spec.ts", "evidence/logs/integration.log", "evidence/logs/browser.log"]
+  },
+  {
+    "clause": "A3-05",
+    "requirement": "Rollback concurrency/reason and truthful committed/origin/edge visibility states",
+    "result": "PASS WITH LIMIT",
+    "scope": "Local integration/browser workflow exercises rollback; CDN/edge visibility is explicitly unobserved.",
+    "evidence": ["deliveries/FINISH-A1/r4/source/tests/integration/platform/completion-authoring-preview.test.ts", "deliveries/FINISH-A1/r4/source/tests/e2e/platform/completion-authoring-workflow.spec.ts", "evidence/logs/browser.log"]
+  },
+  {
+    "clause": "A3-05",
+    "requirement": "Private cache headers on authenticated, denial, validation and not-found branches",
+    "result": "PASS WITH LIMIT",
+    "scope": "Selected 401/403/404/422 and success branches pass synthetic/local checks; provider outage/503 matrix was not run.",
+    "evidence": ["deliveries/FINISH-A1/r4/source/tests/integration/platform/completion-authoring-preview.test.ts", "evidence/logs/integration.log", "deliveries/FINISH-A1/r4/receipts.json"]
+  },
+  {
+    "clause": "A3-05",
+    "requirement": "Public HTML/API/build output do not expose pre-publication private sentinels or media",
+    "result": "PASS WITH LIMIT",
+    "scope": "Chromium public portfolio check passes and the built .next output has no named private sentinel matches; no CDN/shared-edge cache proof.",
+    "evidence": ["evidence/logs/browser.log", "evidence/logs/static-build-sentinel-scan.log"]
+  },
+  {
+    "clause": "A3-06",
+    "requirement": "Offline install, full unit/integration suites, lint, typecheck and production build",
+    "result": "PASS",
+    "scope": "Exact isolated candidate: install pass; 24/314 unit; 28/313 integration; lint/typecheck/build exit 0.",
+    "evidence": ["evidence/logs/install.log", "evidence/logs/unit.log", "evidence/logs/integration.log", "evidence/logs/lint.log", "evidence/logs/typecheck.log", "evidence/logs/build.log", "evidence/build-binding.json"]
+  },
+  {
+    "clause": "A3-06",
+    "requirement": "Chromium authoring/publication workflows on the bound candidate server",
+    "result": "PASS WITH LIMIT",
+    "scope": "10/10 pass with YOR_E2E_FIXTURE=1 and a local test database. A preceding no-fixture run failed 6/10 at the owner login redirect; no native Auth/Storage is established.",
+    "evidence": ["evidence/logs/browser-no-fixture.log", "evidence/logs/browser.log", "evidence/e2e/screenshots/", "evidence/build-binding.json"]
+  },
+  {
+    "clause": "Production / G7",
+    "requirement": "Native providers, live deployment/CDN, physical device, PDF, recovery and G7 acceptance",
+    "result": "NOT RUN",
+    "scope": "No external services, credentials, provider sessions, physical devices or recovery process were accessed.",
+    "evidence": ["deliveries/FINISH-A1/r4/report.md", "deliveries/FINISH-A1/r4/receipts.json"]
+  },
+  {
+    "clause": "R3 / R4 evidence integrity",
+    "requirement": "Exact R3 preservation and attributable R4 package lineage",
+    "result": "NOT ESTABLISHED",
+    "scope": "R3 baseline and later inventories differ; R4 source/patch/receipt writer remains unknown. No attribution or intent inferred.",
+    "evidence": ["deliveries/FINISH-A1/r4/evidence/r3-preservation.json", "deliveries/FINISH-A1/r4/evidence/r3-discrepancy.json", "deliveries/FINISH-A1/r4/evidence/r4-integrity-discrepancy.md", "deliveries/FINISH-A1/r4/evidence/out-of-root-artifact-lineage.json"]
+  }
+]

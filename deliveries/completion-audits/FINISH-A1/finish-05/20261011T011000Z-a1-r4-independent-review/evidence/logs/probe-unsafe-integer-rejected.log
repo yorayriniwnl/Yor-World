@@ -1,0 +1,39 @@
+COMMAND=pnpm exec vitest run tests/integration/platform/audit-r4-probes.test.ts --config vitest.integration.config.ts --reporter=verbose
+STARTED_UTC=2026-10-11T02:03:04.943598+00:00
+EXIT_CODE=1
+
+
+ RUN  v5.0.2 C:/Users/yoray/Projects/Yor World/deliveries/completion-audits/FINISH-A1/finish-05/20261011T011000Z-a1-r4-independent-review/.work/assembly/app
+
+ × tests/integration/platform/audit-r4-probes.test.ts > FINISH-10 audit-only R4 probes > reproduces permissive review DTO acceptance of invalid fields and semantics 13ms
+   → expected false to be true // Object.is equality
+ ✓ tests/integration/platform/audit-r4-probes.test.ts > FINISH-10 audit-only R4 probes > reproduces complete oversized Storage materialization before the image size rejection 2ms
+ ✓ tests/integration/platform/audit-r4-probes.test.ts > FINISH-10 audit-only R4 probes > reproduces candidate hashes ignoring project document bodies and order 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/platform/audit-r4-probes.test.ts > FINISH-10 audit-only R4 probes > reproduces permissive review DTO acceptance of invalid fields and semantics
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/integration/platform/audit-r4-probes.test.ts:60:28
+     58|       canPublish: true,
+     59|     });
+     60|     expect(parsed.success).toBe(true);
+       |                            ^
+     61|   });
+     62|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  07:33:05
+   Duration  555ms (import 63%, transform 32%, tests 4%, worker 1%)
+

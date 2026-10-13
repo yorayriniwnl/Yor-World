@@ -1,0 +1,203 @@
+COMMAND=pnpm exec playwright test tests/e2e/platform/admin-publish.spec.ts tests/e2e/platform/completion-authoring-workflow.spec.ts --project=chromium --workers=1 --reporter=list
+STARTED_UTC=2026-10-11T01:52:00.170235+00:00
+EXIT_CODE=1
+
+[WebServer] (node:47768) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 10 tests using 1 worker
+
+(node:12316) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [chromium] › tests\e2e\platform\admin-publish.spec.ts:48:3 › Milestone A4: Project Editor & Publication Management E2E › admin navigation includes links to Dashboard, Editor, and Publish (1.8s)
+  x   2 [chromium] › tests\e2e\platform\admin-publish.spec.ts:63:3 › Milestone A4: Project Editor & Publication Management E2E › loads project editor with structured editing controls (5.5s)
+(node:32288) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   3 [chromium] › tests\e2e\platform\admin-publish.spec.ts:94:3 › Milestone A4: Project Editor & Publication Management E2E › loads publish review with pre-flight checklist and publication history table (5.9s)
+(node:36424) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   4 [chromium] › tests\e2e\platform\admin-publish.spec.ts:126:3 › Milestone A4: Project Editor & Publication Management E2E › edits, saves, reloads, and privately previews CandidateX without adding it to public pages (30.1s)
+(node:3028) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  5 [chromium] › tests\e2e\platform\admin-publish.spec.ts:146:3 › Milestone A4: Project Editor & Publication Management E2E › editor and publish interfaces require zero WebGL, canvas, or 3D models (1.6s)
+  ok  6 [chromium] › tests\e2e\platform\admin-publish.spec.ts:163:3 › Milestone A4: Project Editor & Publication Management E2E › public portfolio continues to serve approved snapshot with no private media leakage (694ms)
+  x   7 [chromium] › tests\e2e\platform\completion-authoring-workflow.spec.ts:19:3 › A1 completion authoring and publication workflow › edits all block variants, ordering, picker empty state, save/reopen/cancel, and preserves a failed buffer (30.1s)
+(node:46668) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   8 [chromium] › tests\e2e\platform\completion-authoring-workflow.spec.ts:92:3 › A1 completion authoring and publication workflow › two open editor sessions reject the stale save and retain its unsaved value (5.8s)
+(node:49444) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   9 [chromium] › tests\e2e\platform\completion-authoring-workflow.spec.ts:115:3 › A1 completion authoring and publication workflow › publishes from a fresh review, states edge visibility limits, then rolls back with a reason (745ms)
+(node:36264) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 10 [chromium] › tests\e2e\platform\completion-authoring-workflow.spec.ts:141:3 › A1 completion authoring and publication workflow › keeps private APIs isolated for anonymous callers and never publishes the CandidateX sentinel (948ms)
+
+
+  1) [chromium] › tests\e2e\platform\admin-publish.spec.ts:63:3 › Milestone A4: Project Editor & Publication Management E2E › loads project editor with structured editing controls 
+
+    Error: expect(page).toHaveTitle(expected) failed
+
+    Expected pattern: /Project Editor \| YOR WORLD Administration/i
+    Received string:  "Owner Administration Login | YOR WORLD"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toHaveTitle" with timeout 5000ms
+        14 × locator resolved to <html lang="en">…</html>
+           - unexpected value "Owner Administration Login | YOR WORLD"
+
+
+      64 |     await page.goto("/admin/editor");
+      65 |
+    > 66 |     await expect(page).toHaveTitle(/Project Editor \| YOR WORLD Administration/i);
+         |                        ^
+      67 |     const heading = page.getByRole("heading", { level: 1, name: /Project Content & Draft Editor/i });
+      68 |     await expect(heading).toBeVisible();
+      69 |     await captureScreenshot(page, "a4-project-editor");
+        at C:\Users\yoray\Projects\Yor World\deliveries\completion-audits\FINISH-A1\finish-05\20261011T011000Z-a1-r4-independent-review\.work\assembly\app\tests\e2e\platform\admin-publish.spec.ts:66:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\platform-admin-publish-Mil-9b274-structured-editing-controls-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\platform-admin-publish-Mil-9b274-structured-editing-controls-chromium\error-context.md
+
+  2) [chromium] › tests\e2e\platform\admin-publish.spec.ts:94:3 › Milestone A4: Project Editor & Publication Management E2E › loads publish review with pre-flight checklist and publication history table 
+
+    Error: expect(page).toHaveTitle(expected) failed
+
+    Expected pattern: /Publish Review & Rollback \| YOR WORLD Administration/i
+    Received string:  "Owner Administration Login | YOR WORLD"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toHaveTitle" with timeout 5000ms
+        14 × locator resolved to <html lang="en">…</html>
+           - unexpected value "Owner Administration Login | YOR WORLD"
+
+
+       95 |     await page.goto("/admin/publish");
+       96 |
+    >  97 |     await expect(page).toHaveTitle(/Publish Review & Rollback \| YOR WORLD Administration/i);
+          |                        ^
+       98 |     const heading = page.getByRole("heading", { level: 1, name: /Publication Review & Rollback/i });
+       99 |     await expect(heading).toBeVisible();
+      100 |
+        at C:\Users\yoray\Projects\Yor World\deliveries\completion-audits\FINISH-A1\finish-05\20261011T011000Z-a1-r4-independent-review\.work\assembly\app\tests\e2e\platform\admin-publish.spec.ts:97:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\platform-admin-publish-Mil-4631d-d-publication-history-table-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\platform-admin-publish-Mil-4631d-d-publication-history-table-chromium\error-context.md
+
+  3) [chromium] › tests\e2e\platform\admin-publish.spec.ts:126:3 › Milestone A4: Project Editor & Publication Management E2E › edits, saves, reloads, and privately previews CandidateX without adding it to public pages 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.selectOption: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByLabel(/Select Project:/i)
+
+
+      127 |     const previewReceipt = `R4 browser private-preview receipt ${testInfo.project.name}`;
+      128 |     await page.goto("/admin/editor");
+    > 129 |     await page.getByLabel(/Select Project:/i).selectOption("candidatex");
+          |                                               ^
+      130 |     const firstSection = page.locator('[data-section-index="0"]');
+      131 |     const existingBlockCount = await firstSection.locator('[data-testid^="section-0-block-"]').count();
+      132 |     await firstSection.getByRole("button", { name: /^\+ List$/ }).click();
+        at C:\Users\yoray\Projects\Yor World\deliveries\completion-audits\FINISH-A1\finish-05\20261011T011000Z-a1-r4-independent-review\.work\assembly\app\tests\e2e\platform\admin-publish.spec.ts:129:47
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\platform-admin-publish-Mil-da5ba-t-adding-it-to-public-pages-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\platform-admin-publish-Mil-da5ba-t-adding-it-to-public-pages-chromium\error-context.md
+
+  4) [chromium] › tests\e2e\platform\completion-authoring-workflow.spec.ts:19:3 › A1 completion authoring and publication workflow › edits all block variants, ordering, picker empty state, save/reopen/cancel, and preserves a failed buffer 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.selectOption: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByLabel(/Select Project:/i)
+
+
+      22 |
+      23 |     await page.goto("/admin/editor");
+    > 24 |     await page.getByLabel(/Select Project:/i).selectOption("candidatex");
+         |                                               ^
+      25 |     const priorSectionCount = await page.locator("[data-section-index]").count();
+      26 |     await page.getByRole("button", { name: /\+ Add Section/i }).click();
+      27 |     const createdSection = page.locator(`[data-section-index="${priorSectionCount}"]`);
+        at C:\Users\yoray\Projects\Yor World\deliveries\completion-audits\FINISH-A1\finish-05\20261011T011000Z-a1-r4-independent-review\.work\assembly\app\tests\e2e\platform\completion-authoring-workflow.spec.ts:24:47
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\platform-completion-author-9e384-d-preserves-a-failed-buffer-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\platform-completion-author-9e384-d-preserves-a-failed-buffer-chromium\error-context.md
+
+  5) [chromium] › tests\e2e\platform\completion-authoring-workflow.spec.ts:92:3 › A1 completion authoring and publication workflow › two open editor sessions reject the stale save and retain its unsaved value 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('#project-select')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('#project-select') with timeout 5000ms
+      - waiting for locator('#project-select')
+
+
+       95 |     const projectSelect = page.locator("#project-select");
+       96 |     const secondProjectSelect = second.locator("#project-select");
+    >  97 |     await expect(projectSelect).toBeVisible();
+          |                                 ^
+       98 |     await expect(secondProjectSelect).toBeVisible();
+       99 |     await projectSelect.selectOption("candidatex");
+      100 |     await secondProjectSelect.selectOption("candidatex");
+        at C:\Users\yoray\Projects\Yor World\deliveries\completion-audits\FINISH-A1\finish-05\20261011T011000Z-a1-r4-independent-review\.work\assembly\app\tests\e2e\platform\completion-authoring-workflow.spec.ts:97:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\platform-completion-author-eb782-nd-retain-its-unsaved-value-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\platform-completion-author-eb782-nd-retain-its-unsaved-value-chromium\test-failed-2.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\platform-completion-author-eb782-nd-retain-its-unsaved-value-chromium\error-context.md
+
+  6) [chromium] › tests\e2e\platform\completion-authoring-workflow.spec.ts:115:3 › A1 completion authoring and publication workflow › publishes from a fresh review, states edge visibility limits, then rolls back with a reason 
+
+    Error: expect(received).toBeTruthy()
+
+    Received: false
+
+      117 |     const body = await page.locator("body").innerText();
+      118 |     const priorRevision = Number(body.match(/Current Revision:\s*r(\d+)/)?.[1]);
+    > 119 |     expect(Number.isInteger(priorRevision)).toBeTruthy();
+          |                                             ^
+      120 |     const publishButton = page.getByRole("button", { name: /Publish Revision/i });
+      121 |     await expect(publishButton).toBeEnabled();
+      122 |
+        at C:\Users\yoray\Projects\Yor World\deliveries\completion-audits\FINISH-A1\finish-05\20261011T011000Z-a1-r4-independent-review\.work\assembly\app\tests\e2e\platform\completion-authoring-workflow.spec.ts:119:45
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\platform-completion-author-4e005-en-rolls-back-with-a-reason-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\platform-completion-author-4e005-en-rolls-back-with-a-reason-chromium\error-context.md
+
+  6 failed
+    [chromium] › tests\e2e\platform\admin-publish.spec.ts:63:3 › Milestone A4: Project Editor & Publication Management E2E › loads project editor with structured editing controls 
+    [chromium] › tests\e2e\platform\admin-publish.spec.ts:94:3 › Milestone A4: Project Editor & Publication Management E2E › loads publish review with pre-flight checklist and publication history table 
+    [chromium] › tests\e2e\platform\admin-publish.spec.ts:126:3 › Milestone A4: Project Editor & Publication Management E2E › edits, saves, reloads, and privately previews CandidateX without adding it to public pages 
+    [chromium] › tests\e2e\platform\completion-authoring-workflow.spec.ts:19:3 › A1 completion authoring and publication workflow › edits all block variants, ordering, picker empty state, save/reopen/cancel, and preserves a failed buffer 
+    [chromium] › tests\e2e\platform\completion-authoring-workflow.spec.ts:92:3 › A1 completion authoring and publication workflow › two open editor sessions reject the stale save and retain its unsaved value 
+    [chromium] › tests\e2e\platform\completion-authoring-workflow.spec.ts:115:3 › A1 completion authoring and publication workflow › publishes from a fresh review, states edge visibility limits, then rolls back with a reason 
+  4 passed (1.6m)

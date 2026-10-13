@@ -1,0 +1,71 @@
+STARTED_UTC=2026-10-11T02:00:54.596764+00:00
+COMMAND=git -c core.longpaths=true worktree add --detach --no-checkout "C:\Users\yoray\Projects\Yor World\deliveries\completion-audits\FINISH-A1\finish-05\20261011T011000Z-a1-r4-independent-review\.work\patch-replay" f62a43c5e71c00dcb89e28275ea81d842167db80
+STARTED_UTC=2026-10-11T02:00:54.596764+00:00
+EXIT_CODE=0
+Preparing worktree (detached HEAD f62a43c)
+
+COMMAND=git sparse-checkout init --cone
+STARTED_UTC=2026-10-11T02:00:54.969985+00:00
+EXIT_CODE=0
+
+COMMAND=git sparse-checkout set app
+STARTED_UTC=2026-10-11T02:00:55.041712+00:00
+EXIT_CODE=0
+
+COMMAND=git -c core.longpaths=true reset --hard f62a43c5e71c00dcb89e28275ea81d842167db80
+STARTED_UTC=2026-10-11T02:00:55.115039+00:00
+EXIT_CODE=0
+HEAD is now at f62a43c docs: add detailed audited completion prompts
+
+COMMAND=git -c core.longpaths=true apply --check --whitespace=error-all "C:\Users\yoray\Projects\Yor World\deliveries\FINISH-A1\r4\source.patch"
+STARTED_UTC=2026-10-11T02:00:56.482329+00:00
+EXIT_CODE=0
+
+COMMAND=git -c core.longpaths=true apply --whitespace=error-all "C:\Users\yoray\Projects\Yor World\deliveries\FINISH-A1\r4\source.patch"
+STARTED_UTC=2026-10-11T02:00:56.637071+00:00
+EXIT_CODE=0
+
+COMMAND=git -c core.longpaths=true add -- app
+STARTED_UTC=2026-10-11T02:00:56.738001+00:00
+EXIT_CODE=0
+
+COMMAND=git write-tree
+STARTED_UTC=2026-10-11T02:00:58.332691+00:00
+EXIT_CODE=0
+a9b8e4d0196f24447bd208bdbf089f0ac64d30fa
+
+COMMAND=git rev-parse a9b8e4d0196f24447bd208bdbf089f0ac64d30fa:app
+STARTED_UTC=2026-10-11T02:00:58.417697+00:00
+EXIT_CODE=0
+ae4f54e366774969dfd202806451e7e4ec66d10b
+
+COMMAND=git status --short -- app
+STARTED_UTC=2026-10-11T02:00:58.464864+00:00
+EXIT_CODE=0
+M  app/src/app/admin/editor/page.tsx
+A  app/src/app/admin/preview/[slug]/page.tsx
+A  app/src/app/admin/preview/page.tsx
+M  app/src/app/admin/publish/page.tsx
+M  app/src/app/api/admin/media/route.ts
+A  app/src/app/api/admin/preview/media/[id]/route.ts
+A  app/src/app/api/admin/preview/route.ts
+M  app/src/app/api/admin/projects/route.ts
+M  app/src/app/api/admin/publish/route.ts
+M  app/src/app/api/admin/rollback/route.ts
+A  app/src/features/admin/draft-preview.tsx
+M  app/src/features/admin/project-editor.tsx
+M  app/src/features/admin/publish-review.tsx
+A  app/src/features/admin/structured-block-editor.tsx
+M  app/src/features/portfolio/case-study.tsx
+A  app/src/server/content/preview.ts
+M  app/src/server/content/publish.ts
+M  app/src/server/content/revisions.ts
+M  app/src/server/media/manifest.ts
+M  app/tests/e2e/platform/admin-publish.spec.ts
+A  app/tests/e2e/platform/completion-authoring-workflow.spec.ts
+M  app/tests/integration/platform/canonical-platform.test.ts
+A  app/tests/integration/platform/completion-authoring-preview.test.ts
+M  app/tests/integration/platform/publication.test.ts
+A  app/tests/unit/platform/completion-authoring-blocks.test.ts
+
+RESULT={"appTreeMatches": true, "changedPathCount": 25, "patchAppliedAppTree": "ae4f54e366774969dfd202806451e7e4ec66d10b", "sourceReplacementsByteEqual": true}

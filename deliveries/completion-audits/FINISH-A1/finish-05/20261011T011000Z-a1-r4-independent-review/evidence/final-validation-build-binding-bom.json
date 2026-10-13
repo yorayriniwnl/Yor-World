@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "command": "python .work/tools/validate_audit.py",
+  "checkedAtUtc": "2026-10-11T02:07:53.661993+00:00",
+  "result": "FAIL",
+  "checks": {
+    "existingOutputManifestEntries": 32,
+    "outputManifestHashesMatch": true,
+    "outputFileSetMatches": true,
+    "jsonArtifactsParse": false,
+    "candidateManifestFilesVerified": true,
+    "candidatePatchTreeMatches": true,
+    "all25ReplacementFilesEqual": true,
+    "canonicalAppTreeUnchanged": true
+  },
+  "mismatches": {
+    "hash": [],
+    "unmanifested": [],
+    "missing": [],
+    "json": [
+      {
+        "path": "evidence/build-binding.json",
+        "error": "Unexpected UTF-8 BOM (decode using utf-8-sig): line 1 column 1 (char 0)"
+      }
+    ]
+  },
+  "note": "This receipt is added after checking the existing manifest; the finalizer then adds this receipt to output-hashes.json. The manifest excludes only itself."
+}
