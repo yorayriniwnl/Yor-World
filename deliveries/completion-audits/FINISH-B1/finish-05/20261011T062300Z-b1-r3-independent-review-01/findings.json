@@ -1,0 +1,134 @@
+{
+  "candidate": {
+    "delivery": "deliveries/FINISH-B1-R3/",
+    "commit": "1753b9278c4537b5377c3893172b2a0f26d13b10",
+    "deliveryTree": "0bc042af5add583314a7e0713c6db8793f5ca18b",
+    "outputManifestSha256": "338a04d5cc00a9b78fbc5d1bc13785b1e2ded0aac6e8e85d17a08a6e118976b3"
+  },
+  "recommendation": "REWORK",
+  "acceptanceAuthority": "Parent only; this is independent evidence advice and does not accept the candidate or authorize C2/I1 integration.",
+  "findings": [
+    {
+      "id": "B1R3-F01",
+      "severity": "HIGH",
+      "status": "FAIL",
+      "title": "Turn and return poses lose floor contact by about 52 mm",
+      "requirement": "The feet remain in steady floor contact through the paired turn and return motions.",
+      "evidence": [
+        "deliveries/FINISH-B1-R3/report.md:33 claims foot-floor distance is within floating-point contact tolerance.",
+        "browser-deformation-rerun.json: turn_to_visitor leftFootFloor gap 0.0519819887 m at t=0.233333 s and rightFootFloor gap 0.0519947954 m at t=0.4 s.",
+        "browser-deformation-rerun.json: return_to_work leftFootFloor gap 0.0518879199 m at t=0.2 s; the opposite foot also exceeds 0.05 m during the same clip."
+      ],
+      "action": "Correct the paired motion and rerun hash-bound deformed-foot contact checks across both complete clips."
+    },
+    {
+      "id": "B1R3-F02",
+      "severity": "HIGH",
+      "status": "FAIL",
+      "title": "The packaged builder does not reproduce the delivered resident or fixture exports",
+      "requirement": "Delivered source/export lineage must bind the tested exports to reproducible native source and commands.",
+      "evidence": [
+        "deliveries/FINISH-B1-R3/report.md:23 and validator-logs/path-guard-and-baseline-restoration.json record delivered resident bb0c6a271080890aeaccc2961cd3b3a846c41698a471ef6ba5feda62063c2de2 and a non-promoted builder result d0d5d3c506d21856a91856813f9868c569085e03998a103895c1f86a93d97eec.",
+        "resident-builder-rerun.json: independent Blender 5.2.2 run of the exact packaged builder produced resident 0ebfbb368a6c6c361f0b682edc16809b97d30c14838164a027d98310f53814b4 and fixture 0a138b23737e07f22c0ca77a6dec1ba127d006b6bc719a842456aa73c9260dcb.",
+        "Delivered files are resident bb0c6a271080890aeaccc2961cd3b3a846c41698a471ef6ba5feda62063c2de2 and fixture 0aeb5b55b4646d8c424c5d9cb77aea864364643f0ea1a449e7319fa71af6af30."
+      ],
+      "action": "Reconcile and regenerate the final exports from the packaged source, or explicitly deliver the exact matching source and a hash-bound build receipt."
+    },
+    {
+      "id": "B1R3-F03",
+      "severity": "HIGH",
+      "status": "FAIL",
+      "title": "Cancellation proof covers three sequence positions, not each finite clip",
+      "requirement": "The frozen contract requires cancellation at start, middle, and end of every finite clip: 18 cases across six finite clips.",
+      "evidence": [
+        "browser-rerun-summary.json reports only three scenarios: start on notice_visitor, middle on turn_to_visitor, and end on return_to_work.",
+        "deliveries/FINISH-B1-R3/scripts/run-r3-verification.mjs:190-194 defines only those three scenarios over a four-clip greeting sequence.",
+        "The cancellation helper handles notice_visitor, turn_to_visitor, greeting_nod, and return_to_work; it does not exercise mouse_idle or attention_glance cancellation."
+      ],
+      "action": "Run and report all 18 finite-clip cancellation cases, including settled transforms and animation-owner cleanup."
+    },
+    {
+      "id": "B1R3-F04",
+      "severity": "MEDIUM",
+      "status": "NOT RUN",
+      "title": "Loop-seam continuity is not measured",
+      "requirement": "coding_idle and breathing_idle are seamless loops; motion proof must measure loop seams.",
+      "evidence": [
+        "The maker and independent browser logs contain full-clip sample rows but no seam comparison or seam-specific assertion.",
+        "The frozen contract names coding_idle and breathing_idle as seamless loops and requires loop-seam sampling."
+      ],
+      "action": "Add hash-bound first/last pose and velocity seam measurements for both loops and record the tolerances."
+    },
+    {
+      "id": "B1R3-F05",
+      "severity": "HIGH",
+      "status": "NOT RUN",
+      "title": "No production owner currently writes Door_Hinge",
+      "requirement": "EntranceCoordinator is the sole production door-transform owner and drives the specified door sweep.",
+      "evidence": [
+        "deliveries/FINISH-B1-R3/report.md:36 correctly records the owner as not found.",
+        "The standalone rerun measures 451 door samples and clearance, while browser-deformation-rerun.json states no production source writes Door_Hinge.",
+        "A search of app/src finds the door-hinge interaction mapping and LowQualityBatch exclusion, but no Door_Hinge transform writer; EntranceCoordinator has camera-path ownership only."
+      ],
+      "action": "C2 must bind the production Door_Hinge writer to EntranceCoordinator and prove its timeline, interruption, skip, reduced-motion, and re-entry behavior before integration."
+    },
+    {
+      "id": "B1R3-F06",
+      "severity": "MEDIUM",
+      "status": "FAIL",
+      "title": "Required full-room comparisons and visual-deviation record are absent",
+      "requirement": "Provide matched Blender/browser views and honest reference deviations; captures must remain source-bound and accurately labeled.",
+      "evidence": [
+        "capture-recheck.json independently verifies all 30 indexed browser images at the declared hashes and dimensions, plus all 8 native image hashes.",
+        "captures/comparisons exists but contains zero files; captures/native/index.json explicitly scopes the native stills to resident/fixture only, not the full room; no per-view deviation field is present.",
+        "Nine supplemental PNGs are outside captures/index.json, although the package output manifest hashes them.",
+        "The desktop WebGL image is visibly much darker and sparser than references/images/main-reference.png, with a mauve desk and dark chair where the reference shows a bright ivory desk and blue/white chair; the test HUD calls the scene 'Reference-faithful'."
+      ],
+      "action": "Provide same-camera full-room Blender/browser comparisons, index supplemental raw frames, state visible deviations, and remove the reference-faithful claim until supported. Keep user visual/likeness acceptance separate."
+    },
+    {
+      "id": "B1R3-F07",
+      "severity": "HIGH",
+      "status": "FAIL",
+      "title": "Both frozen draw-call ceilings are exceeded on the raw exports",
+      "requirement": "Desktop <=120 draw calls and mobile <=80 draw calls.",
+      "evidence": [
+        "draw-call-attribution-rerun.json counts 202 desktop calls (limit 120) and 146 mobile calls (limit 80); intercepted render calls match renderer.info.",
+        "draw-budget-assertion-rerun.log records both failures and the assertion process exits 1.",
+        "No runtime target-tier/controller or C3 target mobile profile ran, so those future reductions cannot change this raw FAIL."
+      ],
+      "action": "Keep raw art budget as FAIL; only close it with a measured, contract-approved source/runtime path and a fresh target-tier assertion."
+    },
+    {
+      "id": "B1R3-F08",
+      "severity": "MEDIUM",
+      "status": "NOT RUN",
+      "title": "Cold-load and target-device performance qualification is absent",
+      "requirement": "Measure cold and warm cache, optional overlap, decoded residency, entry, frame-time, and target-device performance on the defined profiles.",
+      "evidence": [
+        "browser-frame-diagnostic-rerun.json contains 120 warm RAF intervals per desktop/mobile viewport in one local headless browser context.",
+        "The diagnostic explicitly disclaims target-device performance acceptance; no cold-load or overlapping-optional-resource run is present."
+      ],
+      "action": "Assign the target-tier, cold-load, and mobile profile checks to the defined C2/C3 validation owners."
+    }
+  ],
+  "passedMajorChecks": [
+    "Pinned candidate and app-tree identity verified; candidate remains an ancestor of current HEAD and app tree matches the accepted base.",
+    "Source patch affects only the two assigned B1 builders and replays to byte-identical LF-normalized sources from R2.",
+    "204/204 declared output hashes match; the sole self-excluded manifest verification receipt is documented and independently hashed.",
+    "Fresh glTF Validator run: five of five exports, zero errors and zero warnings.",
+    "Fresh Blender import: five of five exports passed on Blender 5.2.2 LTS.",
+    "Independent binary GLB inspection confirms required hierarchy anchors, unique names, expected clip inventory, and mesh/triangle totals.",
+    "The 15-view browser capture index and eight native stills have matching content hashes; indexed browser image dimensions match the index.",
+    "Browser console rerun reports no console or page errors; root drift and desk-interior vertex hits were zero in the standalone asset harness."
+  ],
+  "explicitNotRun": [
+    "External GPT Plus #2 audit",
+    "Astra review",
+    "User art/likeness acceptance",
+    "Physical iOS/Safari and Android/Chrome device checks",
+    "Production deployment/CDN validation",
+    "C2 production door owner and target-tier integration",
+    "C3 cold-load/mobile target profile"
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "candidateCommit": "1753b9278c4537b5377c3893172b2a0f26d13b10",
+  "recommendation": "REWORK",
+  "requirements": [
+    {
+      "id": "IDENTITY-01",
+      "requirement": "Review exact candidate identity and preserve the accepted application baseline.",
+      "status": "PASS",
+      "evidence": "candidate-identity.json: candidate tree 0bc042af5add583314a7e0713c6db8793f5ca18b; app tree 42ea29ec235225046a75959eb19eb386ac2f821d matches accepted base."
+    },
+    {
+      "id": "SCOPE-01",
+      "requirement": "Source patch changes only assigned B1 builder files; no app or other-lane changes.",
+      "status": "PASS",
+      "evidence": "source-patch-replay.json and candidate-identity.json; two assigned builder paths replay from R2, parent-to-candidate commit changes are B1-R3-only."
+    },
+    {
+      "id": "HASH-01",
+      "requirement": "Every packaged output is inventoried and hash-verified.",
+      "status": "PASS",
+      "evidence": "output-hash-receipt.json: 204/204 manifest entries pass; only output-hashes.json and the explicitly documented self-excluded manifest-verification.json are outside those rows."
+    },
+    {
+      "id": "GLB-01",
+      "requirement": "All five exported GLBs pass independent structural validation.",
+      "status": "PASS",
+      "evidence": "gltf-validator-rerun.json: 5 files, 0 errors, 0 warnings; candidate hashes match."
+    },
+    {
+      "id": "GLB-02",
+      "requirement": "All final GLBs import in the prescribed Blender version.",
+      "status": "PASS",
+      "evidence": "blender-import-rerun.json and blender-import-rerun.log: Blender 5.2.2 LTS, 5/5 pass."
+    },
+    {
+      "id": "GEOM-01",
+      "requirement": "Binary geometry, bounds, hierarchy, contract anchors, mesh counts, and action targets are preserved.",
+      "status": "PASS",
+      "evidence": "independent-glb-inspection.json and ownership-recheck.json; 225 room nodes, 28 resident nodes, 24 fixture nodes, unique names, required door/keyboard/mouse/chair anchors retained."
+    },
+    {
+      "id": "BATCH-01",
+      "requirement": "Static batching preserves semantic moving/hit/contact targets and geometry.",
+      "status": "PASS",
+      "evidence": "ownership-recheck.json and candidate static-batch reports; Chair_Seat remains a mesh and is excluded; moving and mutable exclusions remain present. Raw draw ceilings are separately FAIL."
+    },
+    {
+      "id": "MOTION-01",
+      "requirement": "All eight clips have required names and durations; paired chair/body movement remains aligned.",
+      "status": "PASS",
+      "evidence": "independent-glb-inspection.json and browser-deformation-rerun.json; eight clips sampled at 60 Hz; 20 greeting/return repetitions; no root drift. Standalone harness only."
+    },
+    {
+      "id": "CONTACT-01",
+      "requirement": "Hands reach the final keyboard/mouse without entering surfaces; seated pelvis remains aligned to the chair.",
+      "status": "PASS",
+      "evidence": "browser-deformation-rerun.json; minimum mouse surface gap 3.031 mm; keyboard contact about 0.57-1.00 mm; pelvis-seat measurements remain at contact tolerance in measured rows."
+    },
+    {
+      "id": "CONTACT-02",
+      "requirement": "Feet remain in steady contact with the floor during turn and return motions.",
+      "status": "FAIL",
+      "evidence": "browser-deformation-rerun.json: turn_to_visitor and return_to_work include measured foot-floor gaps of approximately 51.9-52.0 mm; contradicts candidate report.md:33."
+    },
+    {
+      "id": "MOTION-02",
+      "requirement": "Cancel every finite clip at start, middle, and end (18 cases total).",
+      "status": "FAIL",
+      "evidence": "browser-rerun-summary.json and scripts/run-r3-verification.mjs: only three cancellations are run, on notice_visitor, turn_to_visitor, and return_to_work."
+    },
+    {
+      "id": "MOTION-03",
+      "requirement": "Measure coding_idle and breathing_idle loop-seam continuity.",
+      "status": "NOT RUN",
+      "evidence": "No loop-seam comparison or assertion found in maker or reviewer scripts/logs."
+    },
+    {
+      "id": "DOOR-01",
+      "requirement": "Measure the standalone 2.5-second 0-to-90-degree door sweep and geometry clearance.",
+      "status": "PASS",
+      "evidence": "browser-rerun-summary.json: 451 samples; no triangle intersections; minimum frame clearance 2.586 micrometers. Geometry harness only."
+    },
+    {
+      "id": "DOOR-02",
+      "requirement": "Bind a production Door_Hinge transform writer to EntranceCoordinator and prove integrated lifecycle behavior.",
+      "status": "NOT RUN",
+      "evidence": "candidate report.md:36 and browser-deformation-rerun.json state no production writer; app/src search found no transform writer."
+    },
+    {
+      "id": "CAPTURE-01",
+      "requirement": "Index and hash raw browser/native views with declared dimensions and capture context.",
+      "status": "PASS",
+      "evidence": "capture-recheck.json: 15 browser views, 30/30 browser image hashes/dimensions pass, and 8/8 native still hashes pass."
+    },
+    {
+      "id": "CAPTURE-02",
+      "requirement": "Supply matched full-room Blender/browser comparisons and honest visual deviations.",
+      "status": "FAIL",
+      "evidence": "capture-recheck.json: comparison directory is empty and no per-view deviation field exists; native index disclaims full-room coverage; 9 supplemental capture files are unindexed."
+    },
+    {
+      "id": "ART-01",
+      "requirement": "User visual/likeness and reference fit acceptance.",
+      "status": "NOT RUN",
+      "evidence": "No user review or independent visual acceptance receipt is present. Reviewer visual comparison observes major room color/detail differences but is not user acceptance."
+    },
+    {
+      "id": "PERF-01",
+      "requirement": "Meet frozen raw draw-call ceilings of 120 desktop and 80 mobile.",
+      "status": "FAIL",
+      "evidence": "draw-call-attribution-rerun.json and draw-budget-assertion-rerun.log: desktop 202/120; mobile 146/80; final assertion exits 1."
+    },
+    {
+      "id": "PERF-02",
+      "requirement": "Run target-tier, cold/warm cache, optional overlap, decoded residency, and device profiles.",
+      "status": "NOT RUN",
+      "evidence": "browser-frame-diagnostic-rerun.json contains only 120 warm intervals per local viewport and explicitly disclaims target-device qualification."
+    },
+    {
+      "id": "HIST-01",
+      "requirement": "Reconcile archived native proxy failures without inventing original frames.",
+      "status": "PARTIAL",
+      "evidence": "Candidate historical-proxy-failure-reconciliation.json preserves the original three failure IDs and unknown frames; isolated replays do not reproduce all original pair maps, and builder output differs from the final delivered export."
+    },
+    {
+      "id": "EXTERNAL-01",
+      "requirement": "Independent GPT Plus #2 audit, physical iOS/Android checks, and deployment/CDN validation.",
+      "status": "NOT RUN",
+      "evidence": "No such external/device/deployment run is claimed in the candidate or this audit."
+    }
+  ]
+}
