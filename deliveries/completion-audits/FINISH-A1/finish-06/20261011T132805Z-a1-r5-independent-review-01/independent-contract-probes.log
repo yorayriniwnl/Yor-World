@@ -1,0 +1,114 @@
+
+ RUN  v5.0.2 C:/Users/yoray/Projects/Yor World/deliveries/completion-audits/FINISH-A1/finish-06/20261011T132805Z-a1-r5-independent-review-01/.work/replay/app
+
+stdout | tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > accepts the exact accepted ReviewedMedia approvalAudit eventId shape
+frozen-media-parse {"success":false,"error":{"name":"ZodError","message":"[\n  {\n    \"expected\": \"string\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"approvalAudit\",\n      \"id\"\n    ],\n    \"message\": \"Invalid input: expected string, received undefined\"\n  },\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"media_approved\"\n    ],\n    \"path\": [\n      \"approvalAudit\",\n      \"action\"\n    ],\n    \"message\": \"Invalid input: expected \\\"media_approved\\\"\"\n  },\n  {\n    \"code\": \"unrecognized_keys\",\n    \"keys\": [\n      \"eventId\"\n    ],\n    \"path\": [\n      \"approvalAudit\"\n    ],\n    \"message\": \"Unrecognized key: \\\"eventId\\\"\"\n  }\n]"}}
+
+stdout | tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > accepts the exact accepted PrivateDraftReview shape without an allocated extra required property
+frozen-review-parse {"success":false,"error":{"name":"ZodError","message":"[\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"candidatex\",\n      \"helios\",\n      \"zenith\",\n      \"ai-vs-real\",\n      \"talks\"\n    ],\n    \"path\": [\n      \"previewProjectId\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"candidatex\\\"|\\\"helios\\\"|\\\"zenith\\\"|\\\"ai-vs-real\\\"|\\\"talks\\\"\"\n  }\n]"}}
+
+stdout | tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > retains the accepted generic ReviewCheck site scope seam
+frozen-site-check-parse {"success":false,"error":{"name":"ZodError","message":"[\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"project\"\n    ],\n    \"path\": [\n      \"scope\"\n    ],\n    \"message\": \"Invalid input: expected \\\"project\\\"\"\n  },\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"candidatex\",\n      \"helios\",\n      \"zenith\",\n      \"ai-vs-real\",\n      \"talks\"\n    ],\n    \"path\": [\n      \"id\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"candidatex\\\"|\\\"helios\\\"|\\\"zenith\\\"|\\\"ai-vs-real\\\"|\\\"talks\\\"\"\n  }\n]"}}
+
+stdout | tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > returns a private 404 for a known project with no genuine draft
+missing-draft-response 503 {"error":"Private review is temporarily unavailable."} {
+  'cache-control': 'private, no-store, no-cache, must-revalidate',
+  'content-type': 'application/json',
+  expires: '0',
+  pragma: 'no-cache',
+  vary: 'Authorization, Cookie'
+}
+
+ × tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > accepts the exact accepted ReviewedMedia approvalAudit eventId shape 17ms
+   → expected false to be true // Object.is equality
+ × tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > accepts the exact accepted PrivateDraftReview shape without an allocated extra required property 10ms
+   → expected false to be true // Object.is equality
+ × tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > retains the accepted generic ReviewCheck site scope seam 1ms
+   → expected false to be true // Object.is equality
+ × tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > returns a private 404 for a known project with no genuine draft 40ms
+   → expected 503 to be 404 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > accepts the exact accepted ReviewedMedia approvalAudit eventId shape
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/platform/audit-contract-probes.test.ts:18:28
+     16|     const parsed=ReviewedMediaSchema.safeParse(value);
+     17|     console.log("frozen-media-parse", JSON.stringify(parsed));
+     18|     expect(parsed.success).toBe(true);
+       |                            ^
+     19|   });
+     20|   it("accepts the exact accepted PrivateDraftReview shape without an a…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > accepts the exact accepted PrivateDraftReview shape without an allocated extra required property
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/platform/audit-contract-probes.test.ts:27:28
+     25|     const parsed=PrivateDraftReviewSchema.safeParse(value);
+     26|     console.log("frozen-review-parse", JSON.stringify(parsed));
+     27|     expect(parsed.success).toBe(true);
+       |                            ^
+     28|   });
+     29|   it("retains the accepted generic ReviewCheck site scope seam", () =>…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > retains the accepted generic ReviewCheck site scope seam
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/platform/audit-contract-probes.test.ts:32:28
+     30|     const parsed=ReviewCheckSchema.safeParse({scope:"site",id:"site",k…
+     31|     console.log("frozen-site-check-parse",JSON.stringify(parsed));
+     32|     expect(parsed.success).toBe(true);
+       |                            ^
+     33|   });
+     34|   it("returns a private 404 for a known project with no genuine draft"…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > returns a private 404 for a known project with no genuine draft
+AssertionError: expected 503 to be 404 // Object.is equality
+
+- Expected
++ Received
+
+- 404
++ 503
+
+ ❯ tests/unit/platform/audit-contract-probes.test.ts:40:29
+     38|     const response=await GET(new Request("http://localhost/api/admin/p…
+     39|     console.log("missing-draft-response",response.status,await respons…
+     40|     expect(response.status).toBe(404);
+       |                             ^
+     41|     expect(response.headers.get("cache-control")).toContain("no-store"…
+     42|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed (4)
+   Start at  19:04:57
+   Duration  961ms (import 64%, transform 26%, tests 9%, worker 1%)
+

@@ -1,0 +1,98 @@
+[
+  {
+    "finding": "A1R5-01",
+    "path": "deliveries/FINISH-A1/r5-05/source/app/src/server/media/manifest.ts",
+    "line": 34,
+    "snippet": "    approvalAudit: z.strictObject({ id: z.string().min(1), action: z.literal(\"media_approved\"), createdAt: timestampSchema }).nullable(),"
+  },
+  {
+    "finding": "A1R5-01",
+    "path": "deliveries/FINISH-A1/r5-05/source/app/src/server/content/preview.ts",
+    "line": 42,
+    "snippet": "  scope: z.literal(\"project\"),"
+  },
+  {
+    "finding": "A1R5-01",
+    "path": "deliveries/FINISH-A1/r5-05/source/app/src/server/content/preview.ts",
+    "line": 72,
+    "snippet": "  previewProjectId: ProjectIdSchema.nullable(),"
+  },
+  {
+    "finding": "A1R5-02",
+    "path": "deliveries/FINISH-A1/r5-05/source/app/src/features/admin/publish-review.tsx",
+    "line": 74,
+    "snippet": "  async function refreshAfterCommit(successMessage: string) {"
+  },
+  {
+    "finding": "A1R5-02",
+    "path": "deliveries/FINISH-A1/r5-05/source/app/src/features/admin/publish-review.tsx",
+    "line": 91,
+    "snippet": "  async function refreshReview() {"
+  },
+  {
+    "finding": "A1R5-02",
+    "path": "deliveries/FINISH-A1/r5-05/source/app/src/app/api/admin/publish/route.ts",
+    "line": 32,
+    "snippet": "  return privateResponse({ currentRevision: active.revision, activePublication: active, history, authorizedActor: result.context.userId });"
+  },
+  {
+    "finding": "A1R5-03",
+    "path": "deliveries/FINISH-A1/r5-05/source/app/src/server/content/preview.ts",
+    "line": 88,
+    "snippet": "    context.addIssue({ code: \"custom\", message: \"A private project preview must contain only its identified draft.\" });"
+  },
+  {
+    "finding": "A1R5-03",
+    "path": "deliveries/FINISH-A1/r5-05/source/app/src/app/api/admin/preview/route.ts",
+    "line": 20,
+    "snippet": "    const review = await generateDraftReview(result.context, undefined, projectId?.data ?? null);"
+  },
+  {
+    "finding": "A1R5-03",
+    "path": "deliveries/FINISH-A1/r5-05/source/app/src/app/admin/preview/[slug]/page.tsx",
+    "line": 16,
+    "snippet": "  const review = await generateDraftReview(actor, undefined, parsed.data);"
+  },
+  {
+    "finding": "A1R5-04",
+    "path": "deliveries/FINISH-A1/r5-05/source/app/src/app/api/admin/projects/route.ts",
+    "line": 74,
+    "snippet": "      return privateResponse({ error: err.message, code: err.code }, err.status);"
+  },
+  {
+    "finding": "A1R5-04",
+    "path": "deliveries/FINISH-A1/r5-05/source/app/src/server/content/revisions.ts",
+    "line": 18,
+    "snippet": "export class RevisionConflictError extends Error {"
+  },
+  {
+    "finding": "A1R5-05",
+    "path": "deliveries/FINISH-A1/r5-05/source/app/src/features/portfolio/case-study.tsx",
+    "line": 31,
+    "snippet": "      const parsed = new URL(approvedUrl, \"http://yor-world.local\");"
+  },
+  {
+    "finding": "A1R5-06",
+    "path": "deliveries/FINISH-A1/r5-05/source/app/src/features/admin/project-editor.tsx",
+    "line": 57,
+    "snippet": "    const section: ContentSection = { id: `section-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, heading: \"New Section\", blocks: [{ type: \"paragraph\", text: \"New section content.\" }] };"
+  },
+  {
+    "finding": "A1R5-06",
+    "path": "deliveries/FINISH-A1/r5-05/source/app/src/features/admin/project-editor.tsx",
+    "line": 94,
+    "snippet": "    updateProject(\"links\", [...currentProject.links, { label: \"Documentation\", url: \"https://example.com/docs\", checkedAt: new Date().toISOString() }]);"
+  },
+  {
+    "finding": "A1R5-06",
+    "path": "deliveries/FINISH-A1/r5-05/source/app/src/features/admin/structured-block-editor.tsx",
+    "line": 43,
+    "snippet": "      case \"paragraph\": block = { type, text: \"New paragraph.\" }; break;"
+  },
+  {
+    "finding": "A1R5-06",
+    "path": "deliveries/FINISH-A1/r5-05/source/app/src/features/admin/structured-block-editor.tsx",
+    "line": 44,
+    "snippet": "      case \"list\": block = { type, items: [\"New list item\"] }; break;"
+  }
+]

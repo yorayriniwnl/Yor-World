@@ -1,0 +1,199 @@
+
+ RUN  v5.0.2 C:/Users/yoray/Projects/Yor World/deliveries/completion-audits/FINISH-A1/finish-06/20261011T132805Z-a1-r5-independent-review-01/.work/replay/app
+
+stdout | tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > accepts the exact accepted ReviewedMedia approvalAudit eventId shape
+frozen-media-parse {"success":false,"error":{"name":"ZodError","message":"[\n  {\n    \"expected\": \"string\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"approvalAudit\",\n      \"id\"\n    ],\n    \"message\": \"Invalid input: expected string, received undefined\"\n  },\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"media_approved\"\n    ],\n    \"path\": [\n      \"approvalAudit\",\n      \"action\"\n    ],\n    \"message\": \"Invalid input: expected \\\"media_approved\\\"\"\n  },\n  {\n    \"code\": \"unrecognized_keys\",\n    \"keys\": [\n      \"eventId\"\n    ],\n    \"path\": [\n      \"approvalAudit\"\n    ],\n    \"message\": \"Unrecognized key: \\\"eventId\\\"\"\n  }\n]"}}
+
+stdout | tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > accepts the exact accepted PrivateDraftReview shape without an allocated extra required property
+frozen-review-parse {"success":false,"error":{"name":"ZodError","message":"[\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"candidatex\",\n      \"helios\",\n      \"zenith\",\n      \"ai-vs-real\",\n      \"talks\"\n    ],\n    \"path\": [\n      \"previewProjectId\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"candidatex\\\"|\\\"helios\\\"|\\\"zenith\\\"|\\\"ai-vs-real\\\"|\\\"talks\\\"\"\n  }\n]"}}
+
+stdout | tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > retains the accepted generic ReviewCheck site scope seam
+frozen-site-check-parse {"success":false,"error":{"name":"ZodError","message":"[\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"project\"\n    ],\n    \"path\": [\n      \"scope\"\n    ],\n    \"message\": \"Invalid input: expected \\\"project\\\"\"\n  },\n  {\n    \"code\": \"invalid_value\",\n    \"values\": [\n      \"candidatex\",\n      \"helios\",\n      \"zenith\",\n      \"ai-vs-real\",\n      \"talks\"\n    ],\n    \"path\": [\n      \"id\"\n    ],\n    \"message\": \"Invalid option: expected one of \\\"candidatex\\\"|\\\"helios\\\"|\\\"zenith\\\"|\\\"ai-vs-real\\\"|\\\"talks\\\"\"\n  }\n]"}}
+
+stdout | tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > returns a private 404 for a known project with no genuine draft
+missing-draft-response 503 {"error":"Private review is temporarily unavailable."} {
+  'cache-control': 'private, no-store, no-cache, must-revalidate',
+  'content-type': 'application/json',
+  expires: '0',
+  pragma: 'no-cache',
+  vary: 'Authorization, Cookie'
+}
+
+stdout | tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > returns the publication property consumed by both real publish-review refresh functions
+publication-refresh-response 200 [
+  'currentRevision',
+  'activePublication',
+  'history',
+  'authorizedActor'
+] publication undefined activePublication revision 1
+
+stdout | tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > returns current identity and content to an authorized stale-save caller
+authorized-stale-save-response 409 {"error":"Stale revision conflict on project 'helios': expected revision 1, but current revision is 2. Refresh before saving.","code":"STALE_REVISION_CONFLICT"}
+
+stdout | tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > rejects a draft image URL outside the exact relative route: http://yor-world.local/api/admin/preview/media/fixture
+private-figure-markup http://yor-world.local/api/admin/preview/media/fixture <figure class="_caseStudyFigure_ba8b06"><picture><img src="http://yor-world.local/api/admin/preview/media/fixture" alt="Independent synthetic probe" class="_caseStudyImage_ba8b06" loading="lazy"/></picture></figure>
+
+stdout | tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > rejects a draft image URL outside the exact relative route: /discard/../api/admin/preview/media/fixture
+private-figure-markup /discard/../api/admin/preview/media/fixture <figure class="_caseStudyFigure_ba8b06"><picture><img src="/discard/../api/admin/preview/media/fixture" alt="Independent synthetic probe" class="_caseStudyImage_ba8b06" loading="lazy"/></picture></figure>
+
+ × tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > accepts the exact accepted ReviewedMedia approvalAudit eventId shape 13ms
+   → expected false to be true // Object.is equality
+ × tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > accepts the exact accepted PrivateDraftReview shape without an allocated extra required property 7ms
+   → expected false to be true // Object.is equality
+ × tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > retains the accepted generic ReviewCheck site scope seam 1ms
+   → expected false to be true // Object.is equality
+ × tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > returns a private 404 for a known project with no genuine draft 22ms
+   → expected 503 to be 404 // Object.is equality
+ × tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > returns the publication property consumed by both real publish-review refresh functions 1ms
+   → expected undefined to be defined
+ × tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > returns current identity and content to an authorized stale-save caller 5ms
+   → expected '{"error":"Stale revision conflict on …' to contain 'Current durable-equivalent fixture ti…'
+ × tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > rejects a draft image URL outside the exact relative route: http://yor-world.local/api/admin/preview/media/fixture 7ms
+   → expected '<figure class="_caseStudyFigure_ba8b0…' not to contain '<img'
+ × tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > rejects a draft image URL outside the exact relative route: /discard/../api/admin/preview/media/fixture 1ms
+   → expected '<figure class="_caseStudyFigure_ba8b0…' not to contain '<img'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > accepts the exact accepted ReviewedMedia approvalAudit eventId shape
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/platform/audit-contract-probes.test.ts:23:28
+     21|     const parsed=ReviewedMediaSchema.safeParse(value);
+     22|     console.log("frozen-media-parse", JSON.stringify(parsed));
+     23|     expect(parsed.success).toBe(true);
+       |                            ^
+     24|   });
+     25|   it("accepts the exact accepted PrivateDraftReview shape without an a…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > accepts the exact accepted PrivateDraftReview shape without an allocated extra required property
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/platform/audit-contract-probes.test.ts:32:28
+     30|     const parsed=PrivateDraftReviewSchema.safeParse(value);
+     31|     console.log("frozen-review-parse", JSON.stringify(parsed));
+     32|     expect(parsed.success).toBe(true);
+       |                            ^
+     33|   });
+     34|   it("retains the accepted generic ReviewCheck site scope seam", () =>…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > retains the accepted generic ReviewCheck site scope seam
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/platform/audit-contract-probes.test.ts:37:28
+     35|     const parsed=ReviewCheckSchema.safeParse({scope:"site",id:"site",k…
+     36|     console.log("frozen-site-check-parse",JSON.stringify(parsed));
+     37|     expect(parsed.success).toBe(true);
+       |                            ^
+     38|   });
+     39|   it("returns a private 404 for a known project with no genuine draft"…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > returns a private 404 for a known project with no genuine draft
+AssertionError: expected 503 to be 404 // Object.is equality
+
+- Expected
++ Received
+
+- 404
++ 503
+
+ ❯ tests/unit/platform/audit-contract-probes.test.ts:45:29
+     43|     const response=await GET(new Request("http://localhost/api/admin/p…
+     44|     console.log("missing-draft-response",response.status,await respons…
+     45|     expect(response.status).toBe(404);
+       |                             ^
+     46|     expect(response.headers.get("cache-control")).toContain("no-store"…
+     47|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > returns the publication property consumed by both real publish-review refresh functions
+AssertionError: expected undefined to be defined
+ ❯ tests/unit/platform/audit-contract-probes.test.ts:56:30
+     54|     console.log("publication-refresh-response",response.status,Object.…
+     55|     expect(response.status).toBe(200);
+     56|     expect(body.publication).toBeDefined();
+       |                              ^
+     57|   });
+     58|   it("returns current identity and content to an authorized stale-save…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > returns current identity and content to an authorized stale-save caller
+AssertionError: expected '{"error":"Stale revision conflict on …' to contain 'Current durable-equivalent fixture ti…'
+
+Expected: "Current durable-equivalent fixture title"
+Received: "{"error":"Stale revision conflict on project 'helios': expected revision 1, but current revision is 2. Refresh before saving.","code":"STALE_REVISION_CONFLICT"}"
+
+ ❯ tests/unit/platform/audit-contract-probes.test.ts:67:34
+     65|     console.log("authorized-stale-save-response",response.status,JSON.…
+     66|     expect(response.status).toBe(409);
+     67|     expect(JSON.stringify(body)).toContain(project.title);
+       |                                  ^
+     68|   });
+     69|   it.each(["http://yor-world.local/api/admin/preview/media/fixture","/…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+ FAIL  tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > rejects a draft image URL outside the exact relative route: http://yor-world.local/api/admin/preview/media/fixture
+AssertionError: expected '<figure class="_caseStudyFigure_ba8b0…' not to contain '<img'
+
+Expected: "<img"
+Received: "<figure class="_caseStudyFigure_ba8b06"><picture><img src="http://yor-world.local/api/admin/preview/media/fixture" alt="Independent synthetic probe" class="_caseStudyImage_ba8b06" loading="lazy"/></picture></figure>"
+
+ ❯ tests/unit/platform/audit-contract-probes.test.ts:72:24
+     70|     const markup=renderToStaticMarkup(createElement(AccessibleFigure,{…
+     71|     console.log("private-figure-markup",approvedUrl,markup);
+     72|     expect(markup).not.toContain("<img");
+       |                        ^
+     73|   });
+     74| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/8]⎯
+
+ FAIL  tests/unit/platform/audit-contract-probes.test.ts > Independent FINISH-24 frozen DTO and missing-draft probes > rejects a draft image URL outside the exact relative route: /discard/../api/admin/preview/media/fixture
+AssertionError: expected '<figure class="_caseStudyFigure_ba8b0…' not to contain '<img'
+
+Expected: "<img"
+Received: "<figure class="_caseStudyFigure_ba8b06"><picture><img src="/discard/../api/admin/preview/media/fixture" alt="Independent synthetic probe" class="_caseStudyImage_ba8b06" loading="lazy"/></picture></figure>"
+
+ ❯ tests/unit/platform/audit-contract-probes.test.ts:72:24
+     70|     const markup=renderToStaticMarkup(createElement(AccessibleFigure,{…
+     71|     console.log("private-figure-markup",approvedUrl,markup);
+     72|     expect(markup).not.toContain("<img");
+       |                        ^
+     73|   });
+     74| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/8]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 failed (8)
+   Start at  19:05:43
+   Duration  914ms (import 59%, transform 32%, tests 8%, worker 1%)
+
