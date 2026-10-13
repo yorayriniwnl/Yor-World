@@ -69,7 +69,7 @@ test.describe("Milestone A4: Project Editor & Publication Management E2E", () =>
     await captureScreenshot(page, "a4-project-editor");
 
     // Project select dropdown
-    const select = page.getByLabel(/Select Project:/i);
+    const select = page.getByLabel(/Select project:/i);
     await expect(select).toBeVisible();
 
     // Overview fields
@@ -83,11 +83,11 @@ test.describe("Milestone A4: Project Editor & Publication Management E2E", () =>
     await expect(contribInput).toBeVisible();
 
     // Section controls
-    const addSectionBtn = page.getByRole("button", { name: /\+ Add Section/i });
+    const addSectionBtn = page.getByRole("button", { name: /Add section/i });
     await expect(addSectionBtn).toBeVisible();
 
     // Save draft button
-    const saveBtn = page.getByRole("button", { name: /Save Draft Revision/i });
+    const saveBtn = page.getByRole("button", { name: /Save draft revision/i });
     await expect(saveBtn).toBeVisible();
   });
 
@@ -98,18 +98,17 @@ test.describe("Milestone A4: Project Editor & Publication Management E2E", () =>
     const heading = page.getByRole("heading", { level: 1, name: /Publication Review & Rollback/i });
     await expect(heading).toBeVisible();
 
-    // Pre-flight checklist card
-    const checklist = page.getByText(/Pre-Flight Checklist/i);
+    const checklist = page.getByRole("heading", { level: 2, name: /Project preflight checks/i });
     await expect(checklist).toBeVisible();
-    await expect(page.getByText(/100% verified evidence/i)).toBeVisible();
-    await expect(page.getByText(/Approved media assets verification/i)).toBeVisible();
+    await expect(page.getByText(/evidence-records/).first()).toBeVisible();
+    await expect(page.getByText(/approved-media/).first()).toBeVisible();
 
     // Publish execution button
-    const publishBtn = page.getByRole("button", { name: /Publish Revision/i });
+    const publishBtn = page.getByRole("button", { name: /Publish candidate/i });
     await expect(publishBtn).toBeVisible();
 
     // Publication history table
-    const historyHeading = page.getByRole("heading", { level: 3, name: /Publication History & Rollback/i });
+    const historyHeading = page.getByRole("heading", { level: 2, name: /Publication history and rollback/i });
     await expect(historyHeading).toBeVisible();
 
     const table = page.locator("table");

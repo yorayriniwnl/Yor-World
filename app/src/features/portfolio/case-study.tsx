@@ -4,9 +4,14 @@ import type { PublishedProject, ContentSection } from "@/contracts/content";
 import { SafeExternalLink } from "./safe-link";
 import styles from "./portfolio.module.css";
 
+export type CaseStudyPresentation =
+  | { mode: "published" }
+  | { mode: "draft"; draftRevision: number };
+
 interface CaseStudyProps {
   project: PublishedProject;
   approvedMediaUrls?: Readonly<Record<string, string>>;
+  presentation?: CaseStudyPresentation;
 }
 
 interface AccessibleFigureProps {
@@ -14,15 +19,22 @@ interface AccessibleFigureProps {
   alt: string;
   caption: string;
   approvedUrl?: string | undefined;
+  draftPreview?: boolean;
 }
 
-export function AccessibleFigure({ mediaId, alt, caption, approvedUrl }: AccessibleFigureProps) {
+export function AccessibleFigure({ mediaId, alt, caption, approvedUrl, draftPreview = false }: AccessibleFigureProps) {
   // If mediaId is not a valid non-empty string or represents an ungenerated mock asset,
   // provide an accessible placeholder figure that never crashes or shows a broken image box.
-  let hasValidMedia = false;
-  try {
-    hasValidMedia = Boolean(mediaId && approvedUrl && new URL(approvedUrl).protocol === "https:");
-  } catch { /* Missing/malformed approved URL retains the accessible placeholder. */ }
+  let imageSrc: string | undefined;
+  if (mediaId && approvedUrl && draftPreview) {
+    const canonicalPreviewUrl = `/api/admin/preview/media/${encodeURIComponent(mediaId)}`;
+    if (approvedUrl === canonicalPreviewUrl) imageSrc = canonicalPreviewUrl;
+  } else if (mediaId && approvedUrl) {
+    try {
+      if (new URL(approvedUrl).protocol === "https:") imageSrc = approvedUrl;
+    } catch { /* Missing/malformed approved URL retains the accessible placeholder. */ }
+  }
+  const hasValidMedia = imageSrc !== undefined;
 
   return (
     <figure
@@ -32,7 +44,7 @@ export function AccessibleFigure({ mediaId, alt, caption, approvedUrl }: Accessi
       {hasValidMedia ? (
         <picture>
           <img
-            src={approvedUrl}
+            src={imageSrc}
             alt={alt}
             className={styles.caseStudyImage}
             loading="lazy"
@@ -61,7 +73,7 @@ export function AccessibleFigure({ mediaId, alt, caption, approvedUrl }: Accessi
   );
 }
 
-function SectionRenderer({ section, approvedMediaUrls }: { section: ContentSection; approvedMediaUrls: Readonly<Record<string, string>> }) {
+function SectionRenderer({ section, approvedMediaUrls, draftPreview }: { section: ContentSection; approvedMediaUrls: Readonly<Record<string, string>>; draftPreview: boolean }) {
   return (
     <section id={section.id} className={styles.caseStudySection} aria-labelledby={`heading-${section.id}`}>
       <h2 id={`heading-${section.id}`} className={styles.sectionHeading}>
@@ -106,6 +118,7 @@ function SectionRenderer({ section, approvedMediaUrls }: { section: ContentSecti
                   alt={block.alt}
                   caption={block.caption}
                   approvedUrl={approvedMediaUrls[block.mediaId]}
+                  draftPreview={draftPreview}
                 />
               );
             default:
@@ -117,11 +130,13 @@ function SectionRenderer({ section, approvedMediaUrls }: { section: ContentSecti
   );
 }
 
-export function CaseStudy({ project, approvedMediaUrls = {} }: CaseStudyProps) {
+export function CaseStudy({ project, approvedMediaUrls = {}, presentation = { mode: "published" } }: CaseStudyProps) {
+  const draftPreview = presentation.mode === "draft";
+  const displayedRevision = draftPreview ? presentation.draftRevision : project.revision;
   return (
     <article className={styles.caseStudyContainer}>
       <nav aria-label="Breadcrumb" className={styles.breadcrumbNav}>
-        <Link href="/projects" prefetch={false} className={styles.backLink}>
+        <Link href={draftPreview ? "/admin/editor" : "/projects"} prefetch={false} className={styles.backLink}>
           <span aria-hidden="true">←</span> Back to Projects
         </Link>
       </nav>
@@ -129,7 +144,7 @@ export function CaseStudy({ project, approvedMediaUrls = {} }: CaseStudyProps) {
       <header className={styles.caseStudyHeader}>
         <div className={styles.metaBadgeStrip}>
           <span className={styles.statusBadge}>
-            Verified Case Study · Rev {project.revision}
+            {draftPreview ? `Draft preview / Unpublished · Rev ${displayedRevision}` : `Verified Case Study · Rev ${displayedRevision}`}
           </span>
           <span className={styles.projectIdBadge}>
             ID: {project.id}
@@ -144,9 +159,9 @@ export function CaseStudy({ project, approvedMediaUrls = {} }: CaseStudyProps) {
           {project.summary}
         </p>
 
-        <section className={styles.contributionCard} aria-label="Verified Contribution">
+        <section className={styles.contributionCard} aria-label={draftPreview ? "Contribution" : "Verified Contribution"}>
           <h3 className={styles.contributionHeading}>
-            Verified Role &amp; Contribution
+            {draftPreview ? "Role & Contribution" : "Verified Role & Contribution"}
           </h3>
           <p className={styles.contributionText}>
             {project.contribution}
@@ -155,7 +170,7 @@ export function CaseStudy({ project, approvedMediaUrls = {} }: CaseStudyProps) {
 
         {project.links.length > 0 && (
           <div className={styles.linksBar}>
-            <h3 className={styles.linksHeading}>Verified Links:</h3>
+            <h3 className={styles.linksHeading}>{draftPreview ? "Links:" : "Verified Links:"}</h3>
             <ul className={styles.linksList}>
               {project.links.map((link) => (
                 <li key={link.url}>
@@ -171,13 +186,13 @@ export function CaseStudy({ project, approvedMediaUrls = {} }: CaseStudyProps) {
 
       <div className={styles.caseStudyBody}>
         {project.sections.map((section) => (
-          <SectionRenderer key={section.id} section={section} approvedMediaUrls={approvedMediaUrls} />
+          <SectionRenderer key={section.id} section={section} approvedMediaUrls={approvedMediaUrls} draftPreview={draftPreview} />
         ))}
       </div>
 
       <section className={styles.evidenceRegistrySection} aria-labelledby="evidence-heading">
         <h2 id="evidence-heading" className={styles.sectionHeading}>
-          Evidence Audit &amp; Verification State
+          {draftPreview ? "Evidence Record Status" : "Evidence Audit & Verification State"}
         </h2>
         <p className={styles.evidenceIntro}>
           In accordance with YOR WORLD constraint C01, every metric, deployment claim, and repository reference is registered with verifiable receipts:
@@ -204,7 +219,7 @@ export function CaseStudy({ project, approvedMediaUrls = {} }: CaseStudyProps) {
       </section>
 
       <footer className={styles.caseStudyFooter} style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-        <Link href="/projects" prefetch={false} className={styles.backLink}>
+        <Link href={draftPreview ? "/admin/editor" : "/projects"} prefetch={false} className={styles.backLink}>
           <span aria-hidden="true">←</span> Back to Projects
         </Link>
         <Link
