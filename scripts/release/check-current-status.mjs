@@ -11,6 +11,14 @@ export function inspectCurrentStatus() {
   const pkg = readJson("app/package.json");
   const failures = [];
   const requireThat = (condition, reason) => { if (!condition) failures.push(reason); };
+  function verifyAcceptanceLabel(claim, label, state) {
+    const text = typeof claim?.status === "string" ? claim.status.trim() : "";
+    const saysAccepted = /\bACCEPTED\b/i.test(text);
+    const saysNotAccepted = /\bNOT\s+(?:SOURCE\s+)?ACCEPTED\b/i.test(text);
+    requireThat(text.length > 0, label + " requires a visible status label");
+    requireThat(state === "ACCEPTED" ? saysAccepted && !saysNotAccepted : saysNotAccepted,
+      label + " status label must agree with its acceptance disposition");
+  }
   function verifyReference(reference, label) {
     try {
       requireThat(reference && typeof reference.path === "string" && /^[a-f0-9]{64}$/.test(reference.sha256 || "")
@@ -56,6 +64,9 @@ export function inspectCurrentStatus() {
   }
   requireThat(status.currentCandidate.releaseId === policy.releaseId && pkg.version === policy.releaseId.replace(/^v/, ""),
     "Current candidate, release policy and application package version must agree");
+  requireThat(["ACCEPTED", "NOT ACCEPTED"].includes(status.currentCandidate.acceptance),
+    "Current candidate acceptance must use an explicit accepted/pending state");
+  verifyAcceptanceLabel(status.currentCandidate, "Current candidate", status.currentCandidate.acceptance);
   requireThat(authorization.deploymentAuthorized === true && authorization.acceptanceClaim === false
     && authorization.authorizationId === status.g7.ownerAuthorizationId,
   "Production preparation requires actual owner authorization; authorization does not accept G7");
@@ -67,6 +78,9 @@ export function inspectCurrentStatus() {
     }
   }
   if (status.acceptedSourcePredecessor) {
+    requireThat(status.acceptedSourcePredecessor.acceptance === "ACCEPTED",
+      "Accepted source predecessor must remain explicitly accepted");
+    verifyAcceptanceLabel(status.acceptedSourcePredecessor, "Accepted predecessor", "ACCEPTED");
     if (status.acceptedSourcePredecessor.acceptance === "ACCEPTED") {
       requireThat(typeof status.acceptedSourcePredecessor.rulingDecisionPath === "string",
         "Accepted predecessor requires an actual ruling decision path");
@@ -101,6 +115,14 @@ export function inspectCurrentStatus() {
     requireThat(status.currentCandidate.rulingDecisionPath === null,
       "Pending current candidate must not reference an accepted ruling decision path");
   }
+  requireThat(["ACCEPTED", "NOT ACCEPTED"].includes(status.g7.acceptance),
+    "G7 acceptance must use an explicit accepted/pending state");
+  const g7Label = typeof status.g7.status === "string" ? status.g7.status.trim() : "";
+  requireThat(g7Label.length > 0
+    && (status.g7.acceptance === "ACCEPTED"
+      ? /\bACCEPTED\b/i.test(g7Label) && !/\bNOT\s+ACCEPTED\b/i.test(g7Label)
+      : !/\bACCEPTED\b/i.test(g7Label)),
+  "G7 visible status label must agree with its acceptance disposition");
   if (status.g7.acceptance === "ACCEPTED") {
     requireThat(status.currentCandidate.acceptance === "ACCEPTED" && typeof status.g7.rulingDecisionPath === "string"
       && /^https:\/\//.test(status.g7.productionOrigin || ""), "Completed G7 requires an accepted successor, actual HTTPS origin and separate ruling");

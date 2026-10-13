@@ -71,6 +71,8 @@ const immutableDirectories = [
   "docs/planning/reviews/2026-10-06-g6-r1",
 ];
 const immutableFiles = [
+  "deliveries/G7/rc6-candidate-r7/release-composition.json",
+  "deliveries/G7/rc6-candidate-r7/gltf-validation-receipt.json",
   "docs/planning/reviews/2026-10-06-g6-r1.md",
   "docs/planning/reviews/2026-10-08-rc6-r1.md",
   "docs/planning/reviews/2026-10-06-rc5-independent-full-stack-audit.md",
@@ -135,9 +137,12 @@ export function assertPolicyOutput(name, candidate = policy) {
   return target;
 }
 export function writeJson(name, value) {
-  const target = assertMutableOutput(name);
+  const contents = JSON.stringify(value, null, 2) + "\n";
+  let target = assertPolicyOutput(name);
   fs.mkdirSync(path.dirname(target), { recursive: true });
-  fs.writeFileSync(target, JSON.stringify(value, null, 2) + "\n");
+  target = assertPolicyOutput(name);
+  fs.writeFileSync(target, contents, { flag: "wx" });
+  return target;
 }
 export const git = (...args) => execFileSync("git", args, { cwd: ROOT, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 }).trim();
 export function walk(directory) {
@@ -231,20 +236,192 @@ export function buildBundle(commit) {
   archive[9] = 255; // Platform-independent gzip OS byte; USTAR has zero timestamps/UID/GID.
   return { archive, files, fileCount: files.length, sha256: sha256(archive), bytes: archive.length };
 }
-export function assetFiles() {
-  const publicRoot = safePath(policy.canonicalApplicationRoot + "/public");
-  const knownAssets = [...(policy.acceptedAssets || []), ...(policy.candidateAssets || [])];
+export function assertSchemaMigrationInventory(bundleFiles, candidate = policy) {
+  const expected = candidate.schemaMigrationInventory;
+  const prefix = `${candidate.canonicalApplicationRoot}/supabase/migrations/`;
+  if (candidate.schemaRevision !== "20261009000000_schema_v3" || !Array.isArray(expected) || expected.length !== 4) {
+    throw new Error("Schema-v3 policy must declare the exact ordered four-migration inventory");
+  }
+  const names = expected.map((item) => item?.path);
+  if (new Set(names).size !== names.length || names.some((name) => typeof name !== "string" || !name.startsWith(prefix))) {
+    throw new Error("Schema migration inventory paths must be unique canonical application paths");
+  }
+  const actual = bundleFiles.filter((item) => typeof item.path === "string"
+    && item.path.startsWith(prefix) && /^[^/]+\.sql$/.test(item.path.slice(prefix.length)))
+    .sort((left, right) => left.path.localeCompare(right.path, "en"));
+  if (actual.length !== expected.length || actual.some((item, index) => item.path !== names[index])) {
+    throw new Error("Candidate bundle migration files differ from the exact ordered schema-v3 inventory");
+  }
+  for (let index = 0; index < expected.length; index++) {
+    const binding = expected[index];
+    const file = actual[index];
+    if (!Number.isSafeInteger(binding.bytes) || binding.bytes <= 0
+        || !/^[a-f0-9]{64}$/.test(binding.sha256 || "")
+        || file.bytes !== binding.bytes || file.sha256 !== binding.sha256) {
+      throw new Error(`Candidate schema migration bytes/hash differ from policy: ${binding.path}`);
+    }
+  }
+  if (!names.at(-1).includes("/20261009000000_")) {
+    throw new Error("Schema-v3 forward migration must be the final ordered inventory entry");
+  }
+  return expected;
+}
+
+function exactKeys(value, keys) {
+  return value && typeof value === "object" && !Array.isArray(value)
+    && Object.keys(value).length === keys.length && keys.every((key) => Object.hasOwn(value, key));
+}
+
+function stableJson(value) {
+  if (Array.isArray(value)) return `[${value.map(stableJson).join(",")}]`;
+  if (value && typeof value === "object") return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${stableJson(value[key])}`).join(",")}}`;
+  return JSON.stringify(value);
+}
+
+function readBoundManifest(binding, expectedPath, expectedRevision, extraKeys = []) {
+  if (!exactKeys(binding, ["path", "sha256", "hashMode", "revision", ...extraKeys])
+      || binding.path !== expectedPath || binding.hashMode !== "raw"
+      || binding.revision !== expectedRevision || !/^[a-f0-9]{64}$/.test(binding.sha256 || "")) {
+    throw new Error(`Asset manifest binding is invalid: ${expectedPath}`);
+  }
+  const bytes = fs.readFileSync(safePath(binding.path));
+  if (sha256(bytes) !== binding.sha256) throw new Error(`Raw asset manifest hash differs from policy: ${binding.path}`);
+  try { return JSON.parse(bytes.toString("utf8")); }
+  catch { throw new Error(`Bound asset manifest is not valid JSON: ${binding.path}`); }
+}
+
+export function readBoundAssetManifests(candidate = policy) {
+  const manifestPath = `${candidate.canonicalApplicationRoot}/public/asset-manifest.json`;
+  const revisionManifestPath = "deliveries/production-environment/revisions/local-corrections-r1/manifest.json";
+  const manifest = readBoundManifest(candidate.assetManifestBinding, manifestPath, candidate.assetRevision, ["schemaVersion", "groupCount"]);
+  const revisionManifest = readBoundManifest(candidate.artRevisionManifestBinding, revisionManifestPath, candidate.assetRevision);
+  if (candidate.assetManifestBinding.schemaVersion !== manifest?.schemaVersion
+      || candidate.assetManifestBinding.groupCount !== manifest?.groups?.length) {
+    throw new Error("Public asset manifest binding does not match its declared schema/group count");
+  }
+  const allowedRevisionRoot = ["revision", "schemaVersion", "lane", "notice", "generatedAt", "groups", "gpuEstimateMethod", "evidence"];
+  if (!exactKeys(revisionManifest, allowedRevisionRoot)
+      || typeof revisionManifest.gpuEstimateMethod !== "string" || !revisionManifest.gpuEstimateMethod
+      || typeof revisionManifest.evidence !== "string" || !revisionManifest.evidence) {
+    throw new Error("Art revision manifest has an unexpected shape");
+  }
+  const common = ["revision", "schemaVersion", "lane", "notice", "generatedAt", "groups"];
+  if (common.some((key) => stableJson(manifest?.[key]) !== stableJson(revisionManifest[key]))) {
+    throw new Error("Public asset manifest differs from its art revision manifest");
+  }
+  return { manifest, revisionManifest };
+}
+
+export function validateVersionedAssetInventory(files, candidate, manifest) {
+  const prefix = `${candidate.assetRevision}/`;
+  const versionedFiles = files.filter((item) => item.url.startsWith(`/models/${prefix}`));
+  const manifestVersionedNames = manifest.groups
+    .filter((group) => group.url.startsWith(`/models/${prefix}`))
+    .map((group) => group.url.slice("/models/".length));
+  const declared = [...(candidate.candidateAssets || []), ...(candidate.retainedCandidateAssets || [])];
+  const declaredNames = new Set();
+  for (const item of declared) {
+    if (!exactKeys(item, item.status === "candidate"
+      ? ["filename", "sha256", "bytes", "triangles", "materials", "estimatedGpuBytes", "logicalAssetId", "revision", "tier", "clips", "provenanceId", "approved", "status"]
+      : ["filename", "sha256", "bytes", "logicalAssetId", "revision"])
+        || item.revision !== candidate.assetRevision || !item.filename.startsWith(prefix)
+        || item.filename.includes("\\") || item.filename.split("/").some((part) => !part || part === "." || part === "..")
+        || !/^[a-f0-9]{64}$/.test(item.sha256 || "") || !Number.isSafeInteger(item.bytes) || item.bytes <= 0
+        || typeof item.logicalAssetId !== "string" || !item.logicalAssetId) {
+      throw new Error("Versioned asset policy entry is malformed");
+    }
+    if (declaredNames.has(item.filename)) throw new Error(`Duplicate versioned asset policy path: ${item.filename}`);
+    declaredNames.add(item.filename);
+    const actual = files.find((file) => file.url === `/models/${item.filename}`);
+    if (!actual || actual.sha256 !== item.sha256 || actual.bytes !== item.bytes) {
+      throw new Error(`Versioned asset file differs from exact policy: ${item.filename}`);
+    }
+  }
+  if (declaredNames.size !== versionedFiles.length || versionedFiles.some((file) => !declaredNames.has(file.url.slice("/models/".length)))) {
+    throw new Error("Public versioned GLB inventory differs from candidate and retained policy entries");
+  }
+  const actualNames = versionedFiles.map((file) => file.url.slice("/models/".length)).sort();
+  if (JSON.stringify(actualNames) !== JSON.stringify(manifestVersionedNames.sort())) {
+    throw new Error("Public versioned GLB inventory differs from manifest-referenced asset URLs");
+  }
+}
+
+export function assetFiles(candidate = policy) {
+  const { manifest } = readBoundAssetManifests(candidate);
+  validateActiveAssetManifest(manifest, candidate);
+  const publicRoot = safePath(candidate.canonicalApplicationRoot + "/public");
+  const knownAssets = [...(candidate.acceptedAssets || []), ...(candidate.retainedCandidateAssets || []), ...(candidate.candidateAssets || [])];
   const files = walk(publicRoot).filter((name) => /\.glb$/i.test(name)).map((full) => {
     const relative = path.relative(ROOT, full).split(path.sep).join("/");
     const bytes = fs.readFileSync(full);
     const hash = sha256(bytes);
-    const accepted = knownAssets.find((item) => item.sha256 === hash && item.bytes === bytes.length);
+    const filename = path.relative(path.join(publicRoot, "models"), full).split(path.sep).join("/");
+    const accepted = knownAssets.find((item) => item.filename === filename && item.sha256 === hash && item.bytes === bytes.length);
     if (!accepted) throw new Error(`Asset is outside accepted freeze: ${relative} (${hash})`);
     return { path: relative, url: "/" + path.relative(publicRoot, full).split(path.sep).join("/"), bytes: bytes.length, sha256: hash, accepted };
   });
-  for (const name of policy.requiredProductionModels) {
+  for (const name of candidate.requiredProductionModels) {
     if (!files.some((item) => item.url === "/models/" + name)) throw new Error(`Missing frozen production asset: /models/${name}`);
   }
   if (!files.length) throw new Error("Canonical application has no GLB assets");
+  validateVersionedAssetInventory(files, candidate, manifest);
   return files;
+}
+
+export function validateActiveAssetManifest(manifest, candidate = policy) {
+  const rootKeys = ["revision", "schemaVersion", "lane", "notice", "generatedAt", "groups"];
+  const groupKeys = ["id", "tier", "url", "sha256", "bytes", "triangles", "materials", "estimatedGpuBytes", "clips", "provenanceId", "approved", "status"];
+  const requiredGroupKeys = groupKeys.filter((key) => key !== "status");
+  if (!exactKeys(manifest, rootKeys) || manifest.schemaVersion !== 1
+      || manifest.revision !== candidate.assetRevision || typeof manifest.lane !== "string" || !manifest.lane
+      || typeof manifest.notice !== "string" || !manifest.notice
+      || typeof manifest.generatedAt !== "string" || !Number.isFinite(Date.parse(manifest.generatedAt))
+      || !Array.isArray(manifest.groups) || !manifest.groups.length || manifest.groups.length > 64
+      || !Array.isArray(candidate.activeAssets) || candidate.activeAssets.length !== manifest.groups.length)
+    throw new Error("Canonical active asset manifest/revision/inventory is invalid");
+  const ids = new Set(); const urls = new Set();
+  for (const [index, group] of manifest.groups.entries()) {
+    if (!group || Object.keys(group).some((key) => !groupKeys.includes(key))
+        || requiredGroupKeys.some((key) => !Object.hasOwn(group, key))
+        || ids.has(group.id) || urls.has(group.url)
+        || typeof group.id !== "string" || !/^[a-z0-9][a-z0-9-]{0,63}$/.test(group.id)
+        || !["high", "medium", "low", "static"].includes(group.tier) || typeof group.approved !== "boolean"
+        || (group.status !== undefined && !["candidate", "approved"].includes(group.status))
+        || (group.approved === false && group.status !== "candidate")
+        || (group.approved === true && group.status === "candidate")
+        || !Array.isArray(group.clips) || group.clips.some((clip) => typeof clip !== "string" || !clip)
+        || new Set(group.clips).size !== group.clips.length
+        || typeof group.provenanceId !== "string" || !group.provenanceId
+        || !/^[a-f0-9]{64}$/.test(group.sha256 || "")
+        || ["bytes", "triangles", "materials", "estimatedGpuBytes"].some((key) => !Number.isSafeInteger(group[key]) || group[key] < 0)
+        || group.bytes <= 0
+        || typeof group.url !== "string" || !/^\/models\/[a-zA-Z0-9_.-]+(?:\/[a-zA-Z0-9_.-]+)*\.glb$/.test(group.url)
+        || group.url.split("/").slice(1).some((part) => !part || part === "." || part === ".."))
+      throw new Error("Canonical active asset group is invalid or duplicated");
+    ids.add(group.id); urls.add(group.url);
+    const expected = candidate.activeAssets[index];
+    const activeKeys = ["logicalAssetId", "url", "sha256", "bytes", "triangles", "materials", "estimatedGpuBytes", "revision", "tier", "clips", "provenanceId", "approved", "status"];
+    if (!exactKeys(expected, activeKeys.filter((key) => key !== "status").concat(Object.hasOwn(expected || {}, "status") ? ["status"] : []))
+        || expected.logicalAssetId !== group.id || expected.revision !== manifest.revision)
+      throw new Error(`Active asset logical ID/revision is not bound: ${group.id}`);
+    for (const key of ["url", "sha256", "bytes", "triangles", "materials", "estimatedGpuBytes", "tier", "provenanceId", "approved"])
+      if (group[key] !== expected[key]) throw new Error(`Active asset ${group.id} differs from exact policy ${key}`);
+    if (stableJson(group.clips) !== stableJson(expected.clips) || group.status !== expected.status)
+      throw new Error(`Active asset ${group.id} differs from exact policy clips/status`);
+    if (group.url.startsWith(`/models/${manifest.revision}/`)
+        && !group.url.endsWith(`.${group.sha256}.glb`))
+      throw new Error(`Versioned active asset ${group.id} URL must contain its full SHA-256`);
+  }
+  const candidates = manifest.groups.filter((group) => group.approved === false);
+  if (candidates.length !== candidate.candidateAssets?.length) throw new Error("Active candidate groups differ from candidate asset inventory");
+  for (const group of candidates) {
+    const expected = candidate.candidateAssets.find((item) => item.logicalAssetId === group.id);
+    if (!expected || expected.status !== "candidate" || expected.approved !== false
+        || expected.filename !== group.url.slice("/models/".length))
+      throw new Error(`Candidate asset ${group.id} lacks an exact unapproved versioned-file binding`);
+    for (const key of ["sha256", "bytes", "triangles", "materials", "estimatedGpuBytes", "tier", "provenanceId"])
+      if (group[key] !== expected[key]) throw new Error(`Candidate asset ${group.id} differs from exact file policy ${key}`);
+    if (stableJson(group.clips) !== stableJson(expected.clips)) throw new Error(`Candidate asset ${group.id} clips differ from policy`);
+  }
+  return manifest;
 }

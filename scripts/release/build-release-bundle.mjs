@@ -13,7 +13,8 @@ try {
   assertNoFileCollision(values.receipt, [values.output], "Bundle and receipt outputs must differ");
   const bundle = buildBundle(values["source-commit"]);
   fs.mkdirSync(path.dirname(target), { recursive: true });
-  fs.writeFileSync(target, bundle.archive);
+  const exclusiveTarget = assertPolicyOutput(values.output);
+  fs.writeFileSync(exclusiveTarget, bundle.archive, { flag: "wx" });
   writeJson(values.receipt, { releaseId: policy.releaseId, sourceCommit: values["source-commit"], sourceAppTree: git("rev-parse", values["source-commit"] + ":" + policy.canonicalApplicationRoot), canonicalApplicationRoot: policy.canonicalApplicationRoot, archivePath: values.output, fileCount: bundle.fileCount, bytes: bundle.bytes, sha256: bundle.sha256, inclusionPolicy: policy.bundle.inclusionPolicy, exclusionPolicy: policy.bundle, files: bundle.files });
   console.log(`PASS deterministic ${policy.releaseId} bundle: ${bundle.fileCount} files, ${bundle.bytes} bytes, SHA-256 ${bundle.sha256}`);
 } catch (error) {
