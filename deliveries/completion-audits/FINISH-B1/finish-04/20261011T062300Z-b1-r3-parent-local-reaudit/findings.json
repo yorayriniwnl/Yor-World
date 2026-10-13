@@ -1,0 +1,33 @@
+{
+  "advice": "REWORK",
+  "findings": [
+    {
+      "id": "B1-R3-AUD-01",
+      "severity": "HIGH",
+      "category": "missing_required_behavior_evidence",
+      "observed": "Only 3 cancellation cases cover positions in the four-clip greeting sequence. The frozen contract requires start/middle/end cancellation for each finite clip: mouse_idle, notice_visitor, turn_to_visitor, greeting_nod, return_to_work, attention_glance (18 cases). mouse_idle and attention_glance have no cancellation coverage. The 3/3 PASS claim is narrower than the required matrix.",
+      "required": "Add and pass a per-finite-clip by start/middle/end cancellation matrix against exact exported clips and paired chair; record compatible settled poses."
+    },
+    {
+      "id": "B1-R3-AUD-02",
+      "severity": "HIGH",
+      "category": "unresolved_production_ownership",
+      "observed": "Standalone 451-row door/camera sweep reports clearance, but the exact asset-bound receipt says: NOT FOUND: no supplied production source writes Door_Hinge; no room-target clip is exported. EntranceCoordinator owns camera path only.. The inspected base EntranceCoordinator only moves the camera; WorldInteractionBinding maps the door hook but does not write the hinge.",
+      "required": "Parent must bind a sole production Door_Hinge transform owner in C2 and require a production-owner-bound sweep test before closing the door requirement."
+    },
+    {
+      "id": "B1-R3-AUD-03",
+      "severity": "MEDIUM",
+      "category": "missing_reference_comparison_and_deviations",
+      "observed": "Native captures are explicitly character-only; no full-room same-camera comparison or per-view deviation record is present. Five raw-frame files are not referenced by captures/index.json. The desktop DOM overlay says reference-faithful while the rendered scene visibly differs from the main image.",
+      "required": "Supply hash-bound same-camera full-room comparisons and truthful per-view deviation notes; bind the origin and camera metadata for every delivered frame and qualify the reference-faithful overlay."
+    },
+    {
+      "id": "B1-R3-AUD-04",
+      "severity": "MEDIUM",
+      "category": "incomplete_performance_profiles",
+      "observed": "120 warm RAF intervals are recorded at each viewport; no cold-load sample is present. The GPU resource figure is a lower bound and excludes overlapping replacements/quality derivatives. Runtime tier thresholds are honestly marked NOT RUN with C2/C3 owners; raw calls remain FAIL.",
+      "required": "Add cold-load and applicable overlap resource/frame observations in the owner-approved profile packet; preserve target-tier FAIL/NOT RUN until actual C2/C3 results exist."
+    }
+  ]
+}
