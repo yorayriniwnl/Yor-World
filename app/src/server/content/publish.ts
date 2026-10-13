@@ -33,6 +33,7 @@ export interface PublicationHistoryEntry {
   publishedAt: string;
   action: "publish" | "rollback";
   targetRevision?: number;
+  reason?: string;
 }
 
 // In-memory publication history registry
@@ -210,13 +211,19 @@ async function handleCacheRefresh(publication: Publication): Promise<{ refreshed
  */
 export async function publishRevision(
   input: {
-    projectId?: ProjectId;
     expectedRevision: number;
-    customProjects?: PublishedProject[];
+    review: unknown;
   },
   actor: OwnerContext
 ): Promise<Publication & { cacheRefreshed?: boolean; cacheRefreshWarning?: string }> {
   if (!isDraftTestRegistryEnabled()) return publishDurable(input, actor);
+  const { generateDraftReview, assertReviewIdentityMatches } = await import("./preview");
+  const currentReview = await generateDraftReview(actor);
+  assertReviewIdentityMatches(currentReview.identity, input.review, input.expectedRevision);
+  if (!currentReview.canPublish) {
+    const reasons = currentReview.checks.filter((check) => check.status === "failed").flatMap((check) => check.reasons);
+    throw new ContentValidationError("Publication review failed: " + reasons.join(" "));
+  }
   const currentRevision = activePublication.revision;
 
   // 1. Optimistic concurrency check
@@ -226,24 +233,10 @@ export async function publishRevision(
     );
   }
 
-  // 2. Prepare projects to publish
-  let projectsToPublish: PublishedProject[];
-
-  if (input.customProjects) {
-    projectsToPublish = input.customProjects;
-  } else {
-    // Collect active drafts from draft registry
-    const draftRegistry = getTestDraftRegistry();
-    projectsToPublish = [];
-
-    // Include all approved projects from drafts, excluding unpublished candidatex
-    for (const [id, draft] of draftRegistry.entries()) {
-      if (id === "candidatex") {
-        continue;
-      }
-      projectsToPublish.push(draft.project);
-    }
-  }
+  // Only the server-derived candidate represented by the freshly checked review can publish.
+  const projectsToPublish = currentReview.drafts
+    .filter((draft) => draft.projectId !== "candidatex")
+    .map((draft) => draft.project);
 
   const nextRevision = currentRevision + 1;
   const now = new Date().toISOString();
@@ -289,15 +282,24 @@ export async function publishRevision(
  * - Records rollback in publication history and audit log
  */
 export async function rollbackPublication(
-  targetRevision: number,
+  input: { targetRevision: number; expectedRevision: number; reason: string },
   actor: OwnerContext
 ): Promise<Publication & { cacheRefreshed?: boolean; cacheRefreshWarning?: string }> {
-  if (!isDraftTestRegistryEnabled()) return rollbackDurable(targetRevision, actor);
+  const reason = typeof input.reason === "string" ? input.reason.trim() : "";
+  if (!Number.isSafeInteger(input.targetRevision) || input.targetRevision <= 0 ||
+      !Number.isSafeInteger(input.expectedRevision) || input.expectedRevision <= 0 ||
+      reason.length < 3 || reason.length > 500) {
+    throw new ContentValidationError("Rollback requires a valid target revision, expected revision, and a 3–500 character reason.");
+  }
+  if (!isDraftTestRegistryEnabled()) return rollbackDurable({ ...input, reason }, actor);
+  if (activePublication.revision !== input.expectedRevision) {
+    throw new RevisionConflictError("Publication changed. Refresh before rolling back.");
+  }
   // 1. Locate target revision in history
-  const targetEntry = publicationHistory.find((entry) => entry.revision === targetRevision);
+  const targetEntry = publicationHistory.find((entry) => entry.revision === input.targetRevision);
   if (!targetEntry) {
     throw new ContentValidationError(
-      `Rollback rejected: target publication revision ${targetRevision} does not exist in publication history`
+      `Rollback rejected: target publication revision ${input.targetRevision} does not exist in publication history`
     );
   }
 
@@ -322,7 +324,8 @@ export async function rollbackPublication(
     actor: actor.userId,
     publishedAt: now,
     action: "rollback",
-    targetRevision,
+    targetRevision: input.targetRevision,
+    reason,
   };
   publicationHistory.push(rollbackEntry);
   activePublication = restoredPublication;
@@ -365,24 +368,31 @@ export async function readPublicationHistory(): Promise<PublicationHistoryEntry[
     ...(row["action"] === "publication_rollback" ? { targetRevision: Number((row["audit_payload"] as Record<string,unknown>)["targetRevision"]) } : {}) }));
 }
 
-async function writeSnapshot(tx: QueryableDb, publication: Publication, actor: OwnerContext, targetRevision?: number) {
+async function writeSnapshot(tx: QueryableDb, publication: Publication, actor: OwnerContext, targetRevision?: number, reason?: string) {
   // Record the accepted baseline once so the first deployment has a rollback target.
   const baseline = await tx.query("SELECT revision FROM public.publication_history WHERE revision=$1 LIMIT 1", [approvedPublication.revision]);
   if (!baseline.rows.length) await tx.query("INSERT INTO public.publication_history(revision,snapshot,actor) VALUES($1,$2,$3)", [approvedPublication.revision,JSON.stringify(approvedPublication),actor.userId]);
   await tx.query("INSERT INTO public.publication_history(revision,snapshot,actor) VALUES($1,$2,$3)", [publication.revision,JSON.stringify(publication),actor.userId]);
   await tx.query("INSERT INTO public.published_content(revision,payload) VALUES($1,$2)", [publication.revision,JSON.stringify(publication)]);
   await tx.query("INSERT INTO public.audit_events(actor,action,entity_type,entity_id,payload) VALUES($1,$2,'publication',$3,$4)",
-    [actor.userId,targetRevision === undefined ? "publication_published" : "publication_rollback",String(publication.revision),JSON.stringify({ revision: publication.revision,...(targetRevision === undefined ? {} : { targetRevision }) })]);
+    [actor.userId,targetRevision === undefined ? "publication_published" : "publication_rollback",String(publication.revision),JSON.stringify({ revision: publication.revision,...(targetRevision === undefined ? {} : { targetRevision,reason }) })]);
 }
 
-async function publishDurable(input: { projectId?: ProjectId; expectedRevision: number; customProjects?: PublishedProject[] }, actor: OwnerContext) {
+async function publishDurable(input: { expectedRevision: number; review: unknown }, actor: OwnerContext) {
   const db = await getPlatformDb();
   if (!db.transaction) throw new Error("Transactional database is required.");
   const publication = await db.transaction(async (tx) => {
     await tx.query("SELECT pg_advisory_xact_lock(hashtext('yor-publication'))");
     const current = await readDurablePublication(tx);
     if (current.revision !== input.expectedRevision) throw new RevisionConflictError("Publication changed. Refresh before publishing.");
-    const projects = input.customProjects ?? (await readDurableDrafts(tx)).filter((draft) => draft.projectId !== "candidatex").map((draft) => draft.project);
+    const { generateDraftReviewInTransaction, assertReviewIdentityMatches } = await import("./preview");
+    const review = await generateDraftReviewInTransaction(tx, actor);
+    assertReviewIdentityMatches(review.identity, input.review, input.expectedRevision);
+    if (!review.canPublish) {
+      const reasons = review.checks.filter((check) => check.status === "failed").flatMap((check) => check.reasons);
+      throw new ContentValidationError("Publication review failed: " + reasons.join(" "));
+    }
+    const projects = review.drafts.filter((draft) => draft.projectId !== "candidatex").map((draft) => draft.project);
     // CandidateX cannot be added without a separately accepted content decision.
     if (projects.some((project) => project.id === "candidatex")) throw new ContentValidationError("CandidateX has no accepted public content decision.");
     const next: Publication = { revision: current.revision + 1,publishedAt: new Date().toISOString(),projects,
@@ -395,18 +405,19 @@ async function publishDurable(input: { projectId?: ProjectId; expectedRevision: 
   return { ...publication,cacheRefreshed: refreshed.refreshed,...(refreshed.error ? { cacheRefreshWarning: refreshed.error } : {}) };
 }
 
-async function rollbackDurable(targetRevision: number, actor: OwnerContext) {
+async function rollbackDurable(input: { targetRevision: number; expectedRevision: number; reason: string }, actor: OwnerContext) {
   const db = await getPlatformDb();
   if (!db.transaction) throw new Error("Transactional database is required.");
   const publication = await db.transaction(async (tx) => {
     await tx.query("SELECT pg_advisory_xact_lock(hashtext('yor-publication'))");
-    const rows = await tx.query("SELECT snapshot FROM public.publication_history WHERE revision=$1 ORDER BY created_at DESC LIMIT 1", [targetRevision]);
-    const target = rows.rows[0] ? PublicationSchema.parse(rows.rows[0]["snapshot"]) : targetRevision === approvedPublication.revision ? approvedPublication : null;
+    const current = await readDurablePublication(tx);
+    if (current.revision !== input.expectedRevision) throw new RevisionConflictError("Publication changed. Refresh before rolling back.");
+    const rows = await tx.query("SELECT snapshot FROM public.publication_history WHERE revision=$1 ORDER BY created_at DESC LIMIT 1", [input.targetRevision]);
+    const target = rows.rows[0] ? PublicationSchema.parse(rows.rows[0]["snapshot"]) : input.targetRevision === approvedPublication.revision ? approvedPublication : null;
     if (!target) throw new ContentValidationError("Rollback target does not exist.");
     await validatePublicationContent(target,tx);
-    const current = await readDurablePublication(tx);
     const next = { ...target,revision: current.revision + 1,publishedAt: new Date().toISOString() };
-    await writeSnapshot(tx,next,actor,targetRevision);
+    await writeSnapshot(tx,next,actor,input.targetRevision,input.reason);
     return next;
   });
   const refreshed = await handleCacheRefresh(publication);

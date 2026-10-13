@@ -7,21 +7,31 @@ import styles from "./portfolio.module.css";
 interface CaseStudyProps {
   project: PublishedProject;
   approvedMediaUrls?: Readonly<Record<string, string>>;
+  presentation?: CaseStudyPresentation;
 }
+
+export type CaseStudyPresentation =
+  | { mode: "published" }
+  | { mode: "draft"; draftRevision: number };
 
 interface AccessibleFigureProps {
   mediaId: string;
   alt: string;
   caption: string;
   approvedUrl?: string | undefined;
+  draftMode?: boolean;
 }
 
-export function AccessibleFigure({ mediaId, alt, caption, approvedUrl }: AccessibleFigureProps) {
+export function AccessibleFigure({ mediaId, alt, caption, approvedUrl, draftMode = false }: AccessibleFigureProps) {
   // If mediaId is not a valid non-empty string or represents an ungenerated mock asset,
   // provide an accessible placeholder figure that never crashes or shows a broken image box.
   let hasValidMedia = false;
   try {
-    hasValidMedia = Boolean(mediaId && approvedUrl && new URL(approvedUrl).protocol === "https:");
+    const privatePath = approvedUrl && /^\/api\/admin\/preview\/media\/[0-9a-f-]{36}$/i.test(approvedUrl) &&
+      !approvedUrl.includes("..") && !approvedUrl.includes("?") && !approvedUrl.includes("#");
+    const isApprovedHttpsUrl = Boolean(approvedUrl && /^https:\/\//i.test(approvedUrl) &&
+      new URL(approvedUrl).protocol === "https:");
+    hasValidMedia = Boolean(mediaId && (isApprovedHttpsUrl || (draftMode && privatePath)));
   } catch { /* Missing/malformed approved URL retains the accessible placeholder. */ }
 
   return (
@@ -61,7 +71,11 @@ export function AccessibleFigure({ mediaId, alt, caption, approvedUrl }: Accessi
   );
 }
 
-function SectionRenderer({ section, approvedMediaUrls }: { section: ContentSection; approvedMediaUrls: Readonly<Record<string, string>> }) {
+function SectionRenderer({ section, approvedMediaUrls, draftMode }: {
+  section: ContentSection;
+  approvedMediaUrls: Readonly<Record<string, string>>;
+  draftMode: boolean;
+}) {
   return (
     <section id={section.id} className={styles.caseStudySection} aria-labelledby={`heading-${section.id}`}>
       <h2 id={`heading-${section.id}`} className={styles.sectionHeading}>
@@ -106,6 +120,7 @@ function SectionRenderer({ section, approvedMediaUrls }: { section: ContentSecti
                   alt={block.alt}
                   caption={block.caption}
                   approvedUrl={approvedMediaUrls[block.mediaId]}
+                  draftMode={draftMode}
                 />
               );
             default:
@@ -117,7 +132,8 @@ function SectionRenderer({ section, approvedMediaUrls }: { section: ContentSecti
   );
 }
 
-export function CaseStudy({ project, approvedMediaUrls = {} }: CaseStudyProps) {
+export function CaseStudy({ project, approvedMediaUrls = {}, presentation = { mode: "published" } }: CaseStudyProps) {
+  const draftMode = presentation.mode === "draft";
   return (
     <article className={styles.caseStudyContainer}>
       <nav aria-label="Breadcrumb" className={styles.breadcrumbNav}>
@@ -129,7 +145,9 @@ export function CaseStudy({ project, approvedMediaUrls = {} }: CaseStudyProps) {
       <header className={styles.caseStudyHeader}>
         <div className={styles.metaBadgeStrip}>
           <span className={styles.statusBadge}>
-            Verified Case Study · Rev {project.revision}
+            {draftMode
+              ? "Draft preview · Unpublished · Rev " + presentation.draftRevision
+              : "Verified Case Study · Rev " + project.revision}
           </span>
           <span className={styles.projectIdBadge}>
             ID: {project.id}
@@ -144,9 +162,9 @@ export function CaseStudy({ project, approvedMediaUrls = {} }: CaseStudyProps) {
           {project.summary}
         </p>
 
-        <section className={styles.contributionCard} aria-label="Verified Contribution">
+        <section className={styles.contributionCard} aria-label={draftMode ? "Draft contribution" : "Verified Contribution"}>
           <h3 className={styles.contributionHeading}>
-            Verified Role &amp; Contribution
+            {draftMode ? "Contribution in draft" : "Verified Role & Contribution"}
           </h3>
           <p className={styles.contributionText}>
             {project.contribution}
@@ -155,7 +173,7 @@ export function CaseStudy({ project, approvedMediaUrls = {} }: CaseStudyProps) {
 
         {project.links.length > 0 && (
           <div className={styles.linksBar}>
-            <h3 className={styles.linksHeading}>Verified Links:</h3>
+            <h3 className={styles.linksHeading}>{draftMode ? "Links in draft:" : "Verified Links:"}</h3>
             <ul className={styles.linksList}>
               {project.links.map((link) => (
                 <li key={link.url}>
@@ -171,16 +189,18 @@ export function CaseStudy({ project, approvedMediaUrls = {} }: CaseStudyProps) {
 
       <div className={styles.caseStudyBody}>
         {project.sections.map((section) => (
-          <SectionRenderer key={section.id} section={section} approvedMediaUrls={approvedMediaUrls} />
+          <SectionRenderer key={section.id} section={section} approvedMediaUrls={approvedMediaUrls} draftMode={draftMode} />
         ))}
       </div>
 
       <section className={styles.evidenceRegistrySection} aria-labelledby="evidence-heading">
         <h2 id="evidence-heading" className={styles.sectionHeading}>
-          Evidence Audit &amp; Verification State
+          {draftMode ? "Evidence records in draft" : "Evidence Audit & Verification State"}
         </h2>
         <p className={styles.evidenceIntro}>
-          In accordance with YOR WORLD constraint C01, every metric, deployment claim, and repository reference is registered with verifiable receipts:
+          {draftMode
+            ? "Draft evidence records are shown as authored and are not independently verified by this preview."
+            : "In accordance with YOR WORLD constraint C01, every metric, deployment claim, and repository reference is registered with verifiable receipts:"}
         </p>
         <ul className={styles.evidenceList}>
           {project.evidence.map((ev) => (

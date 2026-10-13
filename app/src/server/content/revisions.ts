@@ -164,7 +164,38 @@ export function validateDraftContent(data: unknown): PublishedProject {
     }
   }
 
+  const sectionIds = project.sections.map((section) => section.id);
+  if (new Set(sectionIds).size !== sectionIds.length) {
+    throw new ContentValidationError("Section IDs must be unique within a project.");
+  }
+  if (project.sections.some((section) => section.blocks.some((block) =>
+      block.type === "list" && (block.items.length === 0 || block.items.some((item) => !item.trim()))))) {
+    throw new ContentValidationError("List blocks must contain non-empty items.");
+  }
   return project;
+}
+
+function validateImageReferences(projectId: ProjectId, project: PublishedProject): void {
+  const baseline = approvedPublication.projects.find((item) => item.id === projectId);
+  project.sections.forEach((section, sectionIndex) => section.blocks.forEach((block, blockIndex) => {
+    if (block.type !== "image" || !block.mediaId.startsWith("missing-")) return;
+    const accepted = baseline?.sections[sectionIndex]?.blocks[blockIndex];
+    if (accepted?.type !== "image" || JSON.stringify(accepted) !== JSON.stringify(block)) {
+      throw new ContentValidationError("Image is not an accepted baseline placeholder.");
+    }
+  }));
+}
+
+async function validateDraftMedia(project: PublishedProject, transaction?: QueryableDb): Promise<void> {
+  const { collectDraftMediaReferences, readReviewedMedia } = await import("../media/manifest");
+  const references = collectDraftMediaReferences([project]);
+  if (!references.ids.length) return;
+  const checked = await readReviewedMedia(references.ids, transaction);
+  const failed = references.ids.filter((id) => !checked.bytesById.has(id) || checked.issues.has(id));
+  if (failed.length) {
+    const { MediaValidationError } = await import("../media/validate-upload");
+    throw new MediaValidationError("Image references must resolve to approved, byte-verified media: " + failed.join(", "));
+  }
 }
 
 /**
@@ -241,6 +272,8 @@ export async function saveProjectDraft(
 
   // Content validation (throws 422 if invalid)
   const validatedProject = validateDraftContent(projectWithRev);
+  validateImageReferences(input.projectId, validatedProject);
+  await validateDraftMedia(validatedProject);
 
   const updatedRecord: DraftRecord = {
     projectId: input.projectId,
@@ -271,12 +304,14 @@ export async function readDurableDrafts(db: QueryableDb): Promise<DraftRecord[]>
     drafts.set(project.id, { projectId: project.id, draftRevision: project.revision, project,
       updatedAt: approvedPublication.publishedAt, updatedBy: "accepted-static-baseline" });
   }
+  const privateSeed = initializeDefaultDrafts().get("candidatex");
+  if (privateSeed) drafts.set("candidatex", privateSeed);
   for (const row of result.rows) {
     const project = validateDraftContent(row["payload"]);
     drafts.set(project.id, { projectId: project.id, draftRevision: Number(row["draft_revision"]), project,
       updatedAt: new Date(String(row["created_at"])).toISOString(), updatedBy: String(row["created_by"]) });
   }
-  return [...drafts.values()];
+  return [...drafts.values()].sort((left, right) => left.projectId < right.projectId ? -1 : left.projectId > right.projectId ? 1 : 0);
 }
 
 async function saveDurableDraft(input: {
@@ -289,10 +324,13 @@ async function saveDurableDraft(input: {
     const rows = await tx.query("SELECT id,draft_revision FROM public.projects WHERE slug=$1 FOR UPDATE", [input.projectId]);
     let row = rows.rows[0];
     const baseline = approvedPublication.projects.find((project) => project.id === input.projectId);
-    const currentRevision = row ? Number(row["draft_revision"]) : (baseline?.revision ?? 0);
+    const privateSeed = input.projectId === "candidatex" ? initializeDefaultDrafts().get("candidatex") : undefined;
+    const currentRevision = row ? Number(row["draft_revision"]) : (baseline?.revision ?? privateSeed?.draftRevision ?? 0);
     if (currentRevision !== input.expectedRevision) throw new RevisionConflictError("Draft changed. Refresh before saving.");
     const nextRevision = currentRevision + 1;
     const project = validateDraftContent({ ...input.project, revision: nextRevision });
+    validateImageReferences(input.projectId, project);
+    await validateDraftMedia(project, tx);
     if (!row) {
       row = (await tx.query("INSERT INTO public.projects(slug,title,draft_revision) VALUES($1,$2,$3) RETURNING id", [input.projectId, project.title, nextRevision])).rows[0]!;
     } else {

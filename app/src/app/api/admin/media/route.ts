@@ -5,40 +5,58 @@ import {
   listMediaAssets,
   MediaValidationError,
 } from "@/server/media/validate-upload";
+import { ensureR5E2EFixtureAsset, R5_E2E_FIXTURE_MEDIA_ID } from "@/server/media/manifest";
+import { isE2EFixture } from "@/server/database";
 
 export const dynamic = "force-dynamic";
+
+function privateJson(data: unknown, init: ResponseInit = {}): Response {
+  const headers = new Headers(init.headers);
+  headers.set("Cache-Control", "private, no-store");
+  headers.set("Vary", "Authorization, Cookie");
+  return Response.json(data, { ...init, headers });
+}
 
 export async function GET(request: Request) {
   const result = await verifyOwner(request);
   if (!result.ok) {
-    return createAuthErrorResponse(result);
+    const denied = createAuthErrorResponse(result);
+    return privateJson(await denied.json(), { status: denied.status, headers: denied.headers });
   }
 
   try {
-  const assets = await listMediaAssets();
+  await ensureR5E2EFixtureAsset();
+  const records = await listMediaAssets();
+  const assets = records
+    .filter((asset) => ["image/png", "image/jpeg", "image/webp"].includes(asset.mime))
+    .map((asset) => ({
+      id: asset.id,
+      approvalStatus: asset.approvalStatus,
+      mime: asset.mime,
+      bytes: asset.bytes,
+      dimensions: asset.dimensions,
+      createdAt: asset.createdAt,
+      ...(isE2EFixture() && asset.id === R5_E2E_FIXTURE_MEDIA_ID
+        ? { fixtureLabel: "LOCAL FIXTURE — SYNTHETIC; NOT PROVIDER APPROVAL" }
+        : {}),
+    }));
 
-  return Response.json(
+  return privateJson(
     {
       assets,
       authorizedActor: result.context.userId,
-    },
-    {
-      headers: {
-        "Cache-Control": "no-store",
-        Vary: "Authorization, Cookie",
-      },
     }
   );
   } catch {
-    return Response.json({ error: "Private storage is temporarily unavailable." },{ status: 503,headers: { "Cache-Control": "no-store, private",Vary: "Authorization, Cookie" } });
+    return privateJson({ error: "Private storage is temporarily unavailable." }, { status: 503 });
   }
-
 }
 
 export async function POST(request: Request) {
   const result = await verifyOwner(request);
   if (!result.ok) {
-    return createAuthErrorResponse(result);
+    const denied = createAuthErrorResponse(result);
+    return privateJson(await denied.json(), { status: denied.status, headers: denied.headers });
   }
 
   try {
@@ -71,23 +89,22 @@ export async function POST(request: Request) {
     const validated = await validateUpload({ buffer, mime, filename });
     const asset = await registerMediaAsset(validated, result.context);
 
-    return Response.json(
+    return privateJson(
       {
         success: true,
         action: "media_registered",
         asset,
         actor: result.context.userId,
-      },
-      { status: 201 }
+      }, { status: 201 }
     );
   } catch (err) {
     if (err instanceof MediaValidationError) {
-      return Response.json(
+      return privateJson(
         { error: err.message, code: err.code },
         { status: 422 }
       );
     }
-    return Response.json(
+    return privateJson(
       { error: "Private storage is temporarily unavailable." },
       { status: 503 }
     );
