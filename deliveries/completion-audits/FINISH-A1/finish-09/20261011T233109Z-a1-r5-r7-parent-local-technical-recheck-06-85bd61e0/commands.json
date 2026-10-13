@@ -1,0 +1,76 @@
+{
+  "format": "YOR-WORLD-FINISH-41-A1-COMMANDS-v1",
+  "commands": [
+    {
+      "name": "raw-git-reverification",
+      "command": [
+        "python",
+        "deliveries/completion-audits/FINISH-A1/finish-09/20261011T233109Z-a1-r5-r7-parent-local-technical-recheck-06-85bd61e0/evidence/raw_git_reverify.py"
+      ],
+      "exitCode": 0,
+      "evidence": "evidence/a1-raw-git-verification.json; also refreshes C1 evidence"
+    },
+    {
+      "name": "focused-unit-replay",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.config.ts",
+        "tests/unit/platform/completion-authoring-blocks.test.ts"
+      ],
+      "workingDirectory": ".work/a1-replay/app",
+      "exitCode": 0,
+      "result": "1 file, 5 passed"
+    },
+    {
+      "name": "focused-integration-replay",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.integration.config.ts",
+        "tests/integration/platform/completion-authoring-preview.test.ts"
+      ],
+      "workingDirectory": ".work/a1-replay/app",
+      "exitCode": 0,
+      "result": "1 file, 22 passed"
+    },
+    {
+      "name": "independent-boundary-probes",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "vitest.config.ts",
+        "tests/unit/platform/finish41-parent-boundaries.test.ts"
+      ],
+      "workingDirectory": ".work/a1-replay/app",
+      "exitCode": 0,
+      "result": "1 file, 3 passed",
+      "evidence": "evidence/a1-boundary-probes.*"
+    },
+    {
+      "name": "maker-evidence-binding-check",
+      "command": [
+        "python",
+        ".work/a1-maker-binding-check.py"
+      ],
+      "exitCode": 0,
+      "evidence": "evidence/a1-maker-binding-verification.json"
+    }
+  ],
+  "notRun": [
+    "Parent fresh production build",
+    "Parent fresh browser run",
+    "external GPT Plus #2 audit",
+    "Parent acceptance",
+    "canonical integration",
+    "native providers",
+    "deployed/CDN/device/recovery/G7 gates"
+  ],
+  "setupNote": "An initial redirection attempt resolved an output path relative to the isolated worktree; it did not start a test. The recorded replay and final boundary-probe commands above completed successfully."
+}

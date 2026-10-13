@@ -1,0 +1,59 @@
+{
+  "format": "YOR-WORLD-FINISH-41-A1-FINDINGS-v1",
+  "reviewer": "Parent-local Codex technical recheck; external GPT Plus #2 NOT RUN.",
+  "candidateCommit": "76d679dcb98064152021830b98f16eb456b3ae19",
+  "overallStatus": "PASS",
+  "recommendation": "No new local defect found in the six FINISH-24 corrections; proceed only to the required independent audit and separate Parent acceptance gate.",
+  "implementationAcceptance": false,
+  "canonicalIntegrationAuthorized": false,
+  "findings": [],
+  "verifiedCorrections": [
+    {
+      "id": "A1R5-01",
+      "status": "PASS"
+    },
+    {
+      "id": "A1R5-02",
+      "status": "PASS"
+    },
+    {
+      "id": "A1R5-03",
+      "status": "PASS"
+    },
+    {
+      "id": "A1R5-04",
+      "status": "PASS"
+    },
+    {
+      "id": "A1R5-05",
+      "status": "PASS"
+    },
+    {
+      "id": "A1R5-06",
+      "status": "PASS"
+    }
+  ],
+  "reviewerReruns": {
+    "focusedUnit": {
+      "status": "PASS",
+      "tests": 5
+    },
+    "focusedIntegration": {
+      "status": "PASS",
+      "tests": 22
+    },
+    "independentBoundaryProbes": {
+      "status": "PASS",
+      "tests": 3
+    },
+    "freshBrowser": "NOT RUN",
+    "freshBuild": "NOT RUN"
+  },
+  "makerEvidenceLimits": {
+    "initialSymlinkedBuildAttempt": "FAIL, retained and disclosed",
+    "exactBaseReplayBuildReceipt": "PASS, source/build/browser hashes match candidate binding",
+    "physicalMakerBuildFilesRehashed": false,
+    "makerChromium": "6 expected, 0 unexpected, 0 skipped, 0 flaky; receipt inspected, not rerun by Parent"
+  },
+  "processBoundaryIncident": "After FINISH-37, Parent inadvertently read report.md from both FINISH-36 output roots and wrote temporary verification/replay scratch under the then-active FINISH-37 roots. FINISH-38 roots were occupied; only immediate top-level names were recorded. No FINISH-37/38/39/40 output content is used as evidence here. This report is regenerated from raw candidate Git objects under FINISH-41. No candidate commit or canonical app source was modified."
+}

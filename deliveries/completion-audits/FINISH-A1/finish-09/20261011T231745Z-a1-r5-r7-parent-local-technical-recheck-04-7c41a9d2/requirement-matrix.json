@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "candidateCommit": "76d679dcb98064152021830b98f16eb456b3ae19",
+  "rows": [
+    {
+      "id": "A1R5-01",
+      "status": "PASS",
+      "evidence": [
+        "evidence/a1-replay-verification.json",
+        "evidence/maker-evidence-binding.json",
+        "evidence/parent-finish36-contract-probes.result.json"
+      ],
+      "note": "Frozen DTO shapes preserved: approvalAudit is {eventId,createdAt}; PrivateDraftReview has only identity/drafts/checks/canPublish; ReviewCheck supports project/site scope with a generic nonempty id. Unit schema probes pass."
+    },
+    {
+      "id": "A1R5-02",
+      "status": "PASS",
+      "evidence": [
+        "evidence/a1-replay-verification.json",
+        "evidence/maker-evidence-binding.json"
+      ],
+      "note": "The API returns activePublication and both client refresh paths consume it. The candidate E2E verifies post-publish and post-rollback refresh without reload."
+    },
+    {
+      "id": "A1R5-03",
+      "status": "PASS",
+      "evidence": [
+        "evidence/a1-replay-verification.json",
+        "evidence/maker-evidence-binding.json"
+      ],
+      "note": "A requested missing draft returns null; API maps it to private no-store 404 and the page calls notFound. The focused integration regression passes."
+    },
+    {
+      "id": "A1R5-04",
+      "status": "PASS",
+      "evidence": [
+        "evidence/a1-replay-verification.json",
+        "evidence/maker-evidence-binding.json"
+      ],
+      "note": "Authorized 409 returns projectId, draftRevision, and current project; owner authentication precedes save. Integration regression confirms no write, unauthorized callers receive no content, and the losing editor buffer is retained in E2E."
+    },
+    {
+      "id": "A1R5-05",
+      "status": "PASS",
+      "evidence": [
+        "evidence/a1-replay-verification.json",
+        "evidence/maker-evidence-binding.json",
+        "evidence/parent-finish36-contract-probes.result.json"
+      ],
+      "note": "Draft renderer emits only exact `/api/admin/preview/media/${encodeURIComponent(mediaId)}`; unit cases reject absolute, traversal, wrong-id, and query variants."
+    },
+    {
+      "id": "A1R5-06",
+      "status": "PASS",
+      "evidence": [
+        "evidence/a1-replay-verification.json",
+        "evidence/maker-evidence-binding.json"
+      ],
+      "note": "New section, paragraph, list, code, link, and evidence defaults contain no invented content/date/URL; link and evidence/section defaults are asserted in the E2E and source review."
+    },
+    {
+      "id": "PACKAGE-IDENTITY",
+      "status": "PASS",
+      "evidence": [
+        "evidence/raw-git-verification.json"
+      ],
+      "note": "Remote tip, parent, tree, package subtree and all 79 manifest rows match raw Git."
+    },
+    {
+      "id": "PATCH-AND-ALLOWLIST",
+      "status": "PASS",
+      "evidence": [
+        "evidence/a1-replay-verification.json"
+      ],
+      "note": "Exact-base patch replay yields ba8f952; 25 replacements match packaged source and fit the frozen 26-path allowlist."
+    },
+    {
+      "id": "FOCUSED-LOCAL-RERUNS",
+      "status": "PASS",
+      "evidence": [
+        "evidence/a1-replay-verification.json"
+      ],
+      "note": "Unit 5/5, supplemental contract probes 2/2, and focused integration 22/22."
+    },
+    {
+      "id": "GPT-PLUS-2",
+      "status": "NOT RUN",
+      "evidence": []
+    },
+    {
+      "id": "PARENT-ACCEPTANCE",
+      "status": "PENDING",
+      "evidence": []
+    },
+    {
+      "id": "CANONICAL-INTEGRATION",
+      "status": "NOT AUTHORIZED",
+      "evidence": []
+    },
+    {
+      "id": "PRODUCTION-AND-G7",
+      "status": "NOT RUN",
+      "evidence": []
+    }
+  ]
+}

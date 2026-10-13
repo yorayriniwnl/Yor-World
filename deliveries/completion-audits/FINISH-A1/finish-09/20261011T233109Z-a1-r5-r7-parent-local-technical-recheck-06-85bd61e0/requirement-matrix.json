@@ -1,0 +1,118 @@
+{
+  "format": "YOR-WORLD-FINISH-41-A1-REQUIREMENT-MATRIX-v1",
+  "candidateCommit": "76d679dcb98064152021830b98f16eb456b3ae19",
+  "results": [
+    {
+      "id": "BINDING-01",
+      "requirement": "Exact candidate, parent, tree, remote branch, package subtree, unchanged root app, patch encoding and package output rows are bound to raw Git.",
+      "status": "PASS",
+      "evidencePaths": [
+        "evidence/a1-raw-git-verification.json",
+        "candidate-binding.json"
+      ]
+    },
+    {
+      "id": "REPLAY-01",
+      "requirement": "The candidate patch applies to the pinned accepted base; the 25 source replacements match the replay and the changes stay within the 26-path frozen allowlist.",
+      "status": "PASS",
+      "evidencePaths": [
+        "evidence/a1-exact-base-replay-verification.json",
+        "evidence/a1-raw-git-verification.json"
+      ]
+    },
+    {
+      "id": "A1R5-01",
+      "requirement": "Frozen review DTO shapes are preserved: approvalAudit.eventId, the four-field PrivateDraftReview shape, generic project/site ReviewCheck scope and string ID, and strict rejection of unallocated fields.",
+      "status": "PASS",
+      "evidencePaths": [
+        "evidence/a1-exact-base-replay-verification.json",
+        "evidence/a1-boundary-probes.test.ts",
+        "evidence/a1-boundary-probes.stdout.log"
+      ]
+    },
+    {
+      "id": "A1R5-02",
+      "requirement": "Healthy publish and rollback refreshes consume activePublication and update review/publication identity without reload.",
+      "status": "PASS",
+      "evidencePaths": [
+        "evidence/a1-maker-browser-binding.json",
+        "evidence/a1-maker-browser-results.json",
+        "evidence/a1-maker-binding-verification.json"
+      ]
+    },
+    {
+      "id": "A1R5-03",
+      "requirement": "A requested absent private draft returns 404 and reaches the page not-found path without rendering draft content.",
+      "status": "PASS",
+      "evidencePaths": [
+        "evidence/a1-exact-base-replay-verification.json",
+        "evidence/a1-maker-verification-results.json"
+      ]
+    },
+    {
+      "id": "A1R5-04",
+      "requirement": "Authorized stale-save 409 includes current draft identity/content without writes; unauthorized callers get no content and the losing editor retains its buffer.",
+      "status": "PASS",
+      "evidencePaths": [
+        "evidence/a1-exact-base-replay-verification.json",
+        "evidence/a1-maker-browser-results.json",
+        "evidence/a1-maker-binding-verification.json"
+      ]
+    },
+    {
+      "id": "A1R5-05",
+      "requirement": "Draft media renders only for the exact canonical relative owner-preview URL; absolute, origin-relative, raw slash, case-altered/double encoding, query, fragment, trailing slash and traversal inputs are rejected.",
+      "status": "PASS",
+      "evidencePaths": [
+        "evidence/a1-boundary-probes.test.ts",
+        "evidence/a1-boundary-probes.stdout.log",
+        "evidence/a1-maker-verification-results.json"
+      ]
+    },
+    {
+      "id": "A1R5-06",
+      "requirement": "New section, paragraph, list, code and link inputs are empty; no fabricated link URL/check date is added; evidence starts unknown/null.",
+      "status": "PASS",
+      "evidencePaths": [
+        "evidence/a1-maker-browser-results.json",
+        "evidence/a1-maker-binding-verification.json"
+      ]
+    },
+    {
+      "id": "LOCAL-FOCUSED-RERUN",
+      "requirement": "Focused unit and integration checks pass on an isolated exact-base replay.",
+      "status": "PASS",
+      "evidencePaths": [
+        "evidence/a1-exact-base-replay-verification.json"
+      ]
+    },
+    {
+      "id": "MAKER-RECEIPTS",
+      "requirement": "Packaged unit/integration/lint/typecheck receipts and build/browser bindings match raw candidate package bytes.",
+      "status": "PASS",
+      "evidencePaths": [
+        "evidence/a1-maker-verification-results.json",
+        "evidence/a1-maker-browser-binding.json",
+        "evidence/a1-maker-binding-verification.json",
+        "evidence/a1-maker-build-output-manifest.json"
+      ]
+    },
+    {
+      "id": "PARENT-FRESH-BUILD-BROWSER",
+      "requirement": "Fresh parent build and fresh parent browser execution.",
+      "status": "NOT RUN",
+      "evidencePaths": [
+        "report.md"
+      ],
+      "limits": "Maker receipts were inspected and hash-bound; physical maker build output files were not rehashed in this recheck."
+    },
+    {
+      "id": "EXTERNAL-AND-PRODUCTION-GATES",
+      "requirement": "GPT Plus #2 audit, Parent acceptance, canonical integration, native providers, deployment/CDN, device/accessibility, recovery/manual operations, and G7.",
+      "status": "NOT RUN",
+      "evidencePaths": [
+        "report.md"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "reviewer": "Parent-local technical recheck",
+  "recommendation": "PASS recommendation for exact A1 R5-R7 bounded corrections and local evidence only",
+  "externalGptPlus2Audit": "NOT RUN",
+  "parentAcceptance": "PENDING",
+  "canonicalIntegration": "NOT AUTHORIZED",
+  "findings": [
+    {
+      "id": "A1R5-01",
+      "status": "PASS",
+      "summary": "Frozen DTO shapes preserved: approvalAudit is {eventId,createdAt}; PrivateDraftReview has only identity/drafts/checks/canPublish; ReviewCheck supports project/site scope with a generic nonempty id. Unit schema probes pass.",
+      "evidence": [
+        "evidence/a1-replay-verification.json",
+        "evidence/raw-git-verification.json",
+        "evidence/parent-finish36-contract-probes.result.json"
+      ],
+      "sourcePaths": [
+        "source/app/src/server/media/manifest.ts",
+        "source/app/src/server/content/preview.ts",
+        "source/app/tests/unit/platform/completion-authoring-blocks.test.ts"
+      ]
+    },
+    {
+      "id": "A1R5-02",
+      "status": "PASS",
+      "summary": "The API returns activePublication and both client refresh paths consume it. The candidate E2E verifies post-publish and post-rollback refresh without reload.",
+      "evidence": [
+        "evidence/a1-replay-verification.json",
+        "evidence/raw-git-verification.json"
+      ],
+      "sourcePaths": [
+        "source/app/src/app/api/admin/publish/route.ts",
+        "source/app/src/features/admin/publish-review.tsx",
+        "source/app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+      ]
+    },
+    {
+      "id": "A1R5-03",
+      "status": "PASS",
+      "summary": "A requested missing draft returns null; API maps it to private no-store 404 and the page calls notFound. The focused integration regression passes.",
+      "evidence": [
+        "evidence/a1-replay-verification.json",
+        "evidence/raw-git-verification.json"
+      ],
+      "sourcePaths": [
+        "source/app/src/server/content/preview.ts",
+        "source/app/src/app/api/admin/preview/route.ts",
+        "source/app/src/app/admin/preview/[slug]/page.tsx",
+        "source/app/tests/integration/platform/completion-authoring-preview.test.ts"
+      ]
+    },
+    {
+      "id": "A1R5-04",
+      "status": "PASS",
+      "summary": "Authorized 409 returns projectId, draftRevision, and current project; owner authentication precedes save. Integration regression confirms no write, unauthorized callers receive no content, and the losing editor buffer is retained in E2E.",
+      "evidence": [
+        "evidence/a1-replay-verification.json",
+        "evidence/raw-git-verification.json"
+      ],
+      "sourcePaths": [
+        "source/app/src/server/content/revisions.ts",
+        "source/app/src/app/api/admin/projects/route.ts",
+        "source/app/src/features/admin/project-editor.tsx",
+        "source/app/tests/integration/platform/completion-authoring-preview.test.ts",
+        "source/app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+      ]
+    },
+    {
+      "id": "A1R5-05",
+      "status": "PASS",
+      "summary": "Draft renderer emits only exact `/api/admin/preview/media/${encodeURIComponent(mediaId)}`; unit cases reject absolute, traversal, wrong-id, and query variants.",
+      "evidence": [
+        "evidence/a1-replay-verification.json",
+        "evidence/raw-git-verification.json",
+        "evidence/parent-finish36-contract-probes.result.json"
+      ],
+      "sourcePaths": [
+        "source/app/src/features/portfolio/case-study.tsx",
+        "source/app/tests/unit/platform/completion-authoring-blocks.test.ts"
+      ]
+    },
+    {
+      "id": "A1R5-06",
+      "status": "PASS",
+      "summary": "New section, paragraph, list, code, link, and evidence defaults contain no invented content/date/URL; link and evidence/section defaults are asserted in the E2E and source review.",
+      "evidence": [
+        "evidence/a1-replay-verification.json",
+        "evidence/raw-git-verification.json"
+      ],
+      "sourcePaths": [
+        "source/app/src/features/admin/project-editor.tsx",
+        "source/app/src/features/admin/structured-block-editor.tsx",
+        "source/app/tests/e2e/platform/completion-authoring-workflow.spec.ts"
+      ]
+    }
+  ],
+  "limits": [
+    "Provider/native PostgreSQL/Auth/Storage/deployment/device/recovery/manual/G7 checks NOT RUN.",
+    "Full unit/integration, lint, typecheck, build, and browser were maker-reported; only focused 5/5 unit and 22/22 integration suites were rerun by Parent.",
+    "Process-boundary incident disclosed in evidence/process-boundary-note.json."
+  ]
+}
