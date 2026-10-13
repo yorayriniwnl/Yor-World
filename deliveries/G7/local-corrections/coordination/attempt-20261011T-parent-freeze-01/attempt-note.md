@@ -1,0 +1,3 @@
+# Attempt 01 — failed evidence wrapper
+
+At 2026-10-11T17:16Z, the parent invoked `pnpm lint` and `pnpm typecheck` from `app/`, but the evidence paths were incorrectly resolved relative to `app/` rather than the repository root. PowerShell could not open the command and log files, and the pipeline returned exit code -1. Because no auditable command output was preserved and the wrapper exit code is not a reliable test result, both checks are recorded **NOT RUN / INVALID COLLECTION** for this attempt. No source files were changed by the attempt. The checks are rerun in attempt 02 with absolute evidence paths.

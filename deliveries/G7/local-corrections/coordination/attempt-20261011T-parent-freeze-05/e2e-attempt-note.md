@@ -1,0 +1,3 @@
+﻿# Attempt note
+
+The browser run was stopped after 36 of 248 tests. It was launched without the repository-documented isolated E2E PGlite fixture (`YOR_E2E_FIXTURE=1` and a fresh `YOR_TEST_DATABASE_PATH`), so durable contact/admin E2E cases failed with `STORAGE_UNAVAILABLE`. The result is incomplete and INVALID for acceptance; retain the raw `e2e.log` and partial browser results. It also revealed one case-only test expectation mismatch (`Reduced Motion: On` vs rendered `ON`), returned to the UI/runtime maker for a narrow semantic assertion correction. The final E2E rerun will use a fresh temporary PGlite database after the source correction and fresh build.
