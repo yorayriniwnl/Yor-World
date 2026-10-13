@@ -1,0 +1,92 @@
+{
+  "scope": "SCP-04 V1 still-image-only media correction",
+  "independentSourceRoot": "deliveries/G6/rc3-platform-independent-verification/reviewers/media/fixtures/",
+  "independentApngOracle": "deliveries/G6/rc3-platform-independent-verification/reviewers/media/apng-details.json",
+  "generator": "workers/media/evidence/prepare-fixtures.py; Pillow 12.3.0",
+  "files": [
+    {
+      "name": "actl-only.png",
+      "bytes": 109,
+      "sha256": "9281b21f582775d3645873afe2e78723a701cdfff5d06eab1d88d9f9829703d1",
+      "provenance": {
+        "kind": "valid-CRC acTL declaration inserted after IHDR; no frame chunks",
+        "base": "normal-rgb.png",
+        "chunkSource": "animated.png"
+      }
+    },
+    {
+      "name": "animated.png",
+      "bytes": 334,
+      "sha256": "75dc1991dbdfb30b8a0058e1531f126110f8547fa72b7643379edf10622b838f",
+      "provenance": {
+        "kind": "byte-preserved copy of independent verification fixture",
+        "source": "deliveries/G6/rc3-platform-independent-verification/reviewers/media/fixtures/animated.png"
+      }
+    },
+    {
+      "name": "animated.webp",
+      "bytes": 660,
+      "sha256": "1258bd96e9f74e26d9480dff0bc08e5b139f7f140125d6049da9e222659f7128",
+      "provenance": {
+        "kind": "byte-preserved copy of independent verification fixture",
+        "source": "deliveries/G6/rc3-platform-independent-verification/reviewers/media/fixtures/animated.webp"
+      }
+    },
+    {
+      "name": "corrupt-second-frame.png",
+      "bytes": 334,
+      "sha256": "536989dab6f4b7892a26009cccca13781462f4c02d7fb543d58dc1cce23512fe",
+      "provenance": {
+        "kind": "byte-preserved copy of independent verification fixture",
+        "source": "deliveries/G6/rc3-platform-independent-verification/reviewers/media/fixtures/corrupt-second-frame.png"
+      }
+    },
+    {
+      "name": "normal-rgb.png",
+      "bytes": 89,
+      "sha256": "53e46933234a01aaaa9dc2f938d990bfb9300d4452f4c63893771259e6565312",
+      "provenance": {
+        "kind": "new genuine RGB PNG",
+        "generator": "Pillow 12.3.0"
+      }
+    },
+    {
+      "name": "orphan-fctl.png",
+      "bytes": 127,
+      "sha256": "40653d4c4ef2279f90349edc58e1839294ee314185d35898120c29591fd3a37a",
+      "provenance": {
+        "kind": "valid-CRC orphan fcTL inserted after IDAT and before IEND; no acTL",
+        "base": "normal-rgb.png",
+        "chunkSource": "animated.png"
+      }
+    },
+    {
+      "name": "orphan-fdat.png",
+      "bytes": 176,
+      "sha256": "21fdd63320fbfb325c998ef52107117948bbb9b77d39f5ac7367e5a491dca93f",
+      "provenance": {
+        "kind": "valid-CRC orphan fdAT inserted after IDAT and before IEND; no acTL",
+        "base": "normal-rgb.png",
+        "chunkSource": "animated.png"
+      }
+    },
+    {
+      "name": "pixels-ok.png",
+      "bytes": 25457,
+      "sha256": "01b2943a3eed01b1621070b410506bffdd005ca1a8e19dcb8a0130555cf32e8a",
+      "provenance": {
+        "kind": "byte-preserved copy of independent verification fixture",
+        "source": "deliveries/G6/rc3-platform-independent-verification/reviewers/media/fixtures/pixels-ok.png"
+      }
+    },
+    {
+      "name": "truncated-fdat.png",
+      "bytes": 88,
+      "sha256": "4be26480f46872493b89f8e3f1eb99bdd562285a52c3d40be97f9852cd0c1bc2",
+      "provenance": {
+        "kind": "orphan fdAT with truncated declared data and no CRC/IEND",
+        "base": "normal-rgb.png"
+      }
+    }
+  ]
+}
