@@ -1,0 +1,164 @@
+--- a/source/blender/scripts/build-environment.py
++++ b/source/blender/scripts/build-environment.py
+@@ -155,13 +155,17 @@
+     )
+     m["Ceiling_Matte"] = get_or_create_pbr_mat(
+         "Ceiling_Matte",
+-        base_color=(0.82, 0.82, 0.84, 1.0),
+-        roughness=0.88, metallic=0.0
++        base_color=(1.0, 1.0, 1.0, 1.0),
++        roughness=0.88, metallic=0.0,
++        emission_color=(1.0, 1.0, 1.0, 1),
++        emission_strength=0.16
+     )
+     m["Wall_SoftLavender"] = get_or_create_pbr_mat(
+         "Wall_SoftLavender",
+-        base_color=(0.80, 0.79, 0.84, 1.0),
+-        roughness=0.78, metallic=0.0
++        base_color=(1.0, 0.97, 1.0, 1.0),
++        roughness=0.78, metallic=0.0,
++        emission_color=(1.0, 0.96, 1.0, 1),
++        emission_strength=0.10
+     )
+     m["Baseboard_Charcoal"] = get_or_create_pbr_mat(
+         "Baseboard_Charcoal",
+@@ -180,30 +184,36 @@
+     )
+     m["Window_BlindsSatin"] = get_or_create_pbr_mat(
+         "Window_BlindsSatin",
+-        base_color=(0.84, 0.84, 0.86, 1.0),
+-        roughness=0.40, metallic=0.05
++        base_color=(0.96, 0.96, 0.99, 1.0),
++        roughness=0.40, metallic=0.05,
++        emission_color=(1, 1, 1, 1),
++        emission_strength=0.06
+     )
+ 
+     # 2. Workstation & Furniture
+     m["Desk_IvoryTop"] = get_or_create_pbr_mat(
+         "Desk_IvoryTop",
+-        base_color=(0.84, 0.84, 0.86, 1.0),
+-        roughness=0.25, metallic=0.0
++        base_color=(1.0, 0.98, 0.94, 1.0),
++        roughness=0.32, metallic=0.0,
++        emission_color=(0.99, 0.97, 0.94, 1),
++        emission_strength=0.28
+     )
+     m["Alex_DrawerWhite"] = get_or_create_pbr_mat(
+         "Alex_DrawerWhite",
+-        base_color=(0.84, 0.84, 0.86, 1.0),
+-        roughness=0.30, metallic=0.0
++        base_color=(0.99, 0.97, 0.93, 1.0),
++        roughness=0.42, metallic=0.0,
++        emission_color=(0.98, 0.96, 0.92, 1),
++        emission_strength=0.35
+     )
+     m["Desk_MatTopography"] = get_or_create_pbr_mat(
+         "Desk_MatTopography",
+-        base_color=(0.84, 0.84, 0.86, 1.0),
++        base_color=(0.96, 0.94, 0.97, 1.0),
+         roughness=0.80, metallic=0.0,
+         image_path=textures_dir / "desk-mat-pattern.png"
+     )
+     m["Acoustic_Backing"] = get_or_create_pbr_mat(
+         "Acoustic_Backing",
+-        base_color=(0.82, 0.80, 0.86, 1.0),
++        base_color=(0.94, 0.92, 0.98, 1.0),
+         roughness=0.75, metallic=0.0,
+         image_path=textures_dir / "acoustic-panel.png"
+     )
+@@ -216,8 +226,10 @@
+     )
+     m["Chair_WhiteNylon"] = get_or_create_pbr_mat(
+         "Chair_WhiteNylon",
+-        base_color=(0.84, 0.84, 0.86, 1.0),
+-        roughness=0.30, metallic=0.0
++        base_color=(0.99, 0.97, 0.93, 1.0),
++        roughness=0.30, metallic=0.0,
++        emission_color=(0.99, 0.97, 0.94, 1),
++        emission_strength=0.10
+     )
+     m["Chair_DarkMetal"] = get_or_create_pbr_mat(
+         "Chair_DarkMetal",
+@@ -259,8 +271,10 @@
+     )
+     m["PC_ChassisWhite"] = get_or_create_pbr_mat(
+         "PC_ChassisWhite",
+-        base_color=(0.84, 0.84, 0.86, 1.0),
+-        roughness=0.25, metallic=0.10
++        base_color=(0.99, 0.97, 0.94, 1.0),
++        roughness=0.25, metallic=0.10,
++        emission_color=(0.99, 0.97, 0.94, 1),
++        emission_strength=0.07
+     )
+     m["PC_TemperedGlass"] = get_or_create_pbr_mat(
+         "PC_TemperedGlass",
+@@ -277,17 +291,17 @@
+     # 5. Emissive Lights & Reference Accents (Calibrated to resolve B1-R3 overexposure)
+     m["Hex_LilacEmissive"] = get_or_create_pbr_mat(
+         "Hex_LilacEmissive",
+-        base_color=(0.94, 0.60, 0.94, 1.0),
++        base_color=(0.98, 0.42, 0.86, 1.0),
+         roughness=0.15, metallic=0.0,
+-        emission_color=(0.94, 0.60, 0.94, 1.0),
+-        emission_strength=2.0
++        emission_color=(0.98, 0.42, 0.86, 1.0),
++        emission_strength=0.85
+     )
+     m["Hex_VioletEmissive"] = get_or_create_pbr_mat(
+         "Hex_VioletEmissive",
+-        base_color=(0.78, 0.58, 0.96, 1.0),
++        base_color=(0.66, 0.43, 0.98, 1.0),
+         roughness=0.15, metallic=0.0,
+-        emission_color=(0.78, 0.58, 0.96, 1.0),
+-        emission_strength=1.8
++        emission_color=(0.66, 0.43, 0.98, 1.0),
++        emission_strength=0.85
+     )
+     m["Cyan_UnderdeskFill"] = get_or_create_pbr_mat(
+         "Cyan_UnderdeskFill",
+@@ -314,9 +328,11 @@
+     # 6. Pegboard, Art, Plants
+     m["Pegboard_Perforated"] = get_or_create_pbr_mat(
+         "Pegboard_Perforated",
+-        base_color=(0.84, 0.84, 0.86, 1.0),
++        base_color=(0.98, 0.97, 0.95, 1.0),
+         roughness=0.40, metallic=0.02,
+-        image_path=textures_dir / "pegboard-pattern.png"
++        image_path=textures_dir / "pegboard-pattern.png",
++        emission_color=(0.99, 0.98, 0.96, 1),
++        emission_strength=0.06
+     )
+     m["Plant_Foliage"] = get_or_create_pbr_mat(
+         "Plant_Foliage",
+@@ -325,8 +341,10 @@
+     )
+     m["Plant_CeramicWhite"] = get_or_create_pbr_mat(
+         "Plant_CeramicWhite",
+-        base_color=(0.84, 0.84, 0.86, 1.0),
+-        roughness=0.20, metallic=0.0
++        base_color=(0.99, 0.97, 0.93, 1.0),
++        roughness=0.20, metallic=0.0,
++        emission_color=(0.99, 0.97, 0.94, 1),
++        emission_strength=0.06
+     )
+     m["Wall_ArtPainting"] = get_or_create_pbr_mat(
+         "Wall_ArtPainting",
+@@ -793,7 +811,7 @@
+ 
+     # Hex Wall Pink/Violet Glow Light (energy 12.0)
+     hex_light_data = bpy.data.lights.new(name="HexWall_PointLight", type='POINT')
+-    hex_light_data.color = (0.94, 0.58, 0.94)
++    hex_light_data.color = (0.98, 0.60, 0.98)
+     hex_light_data.energy = 12.0
+     hex_light_data.shadow_soft_size = 0.30
+     hex_light_obj = bpy.data.objects.new("Light_HexWall", hex_light_data)
+@@ -825,7 +843,7 @@
+ 
+     # Ambient Ceiling Soft Fill (energy 8.0)
+     ambient_data = bpy.data.lights.new(name="CeilingAmbient_PointLight", type='POINT')
+-    ambient_data.color = (0.95, 0.95, 1.0)
++    ambient_data.color = (1.0, 1.0, 1.0)
+     ambient_data.energy = 8.0
+     ambient_data.shadow_soft_size = 0.80
+     ambient_obj = bpy.data.objects.new("Light_CeilingAmbient", ambient_data)

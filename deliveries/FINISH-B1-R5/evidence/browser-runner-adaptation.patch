@@ -1,0 +1,29 @@
+--- a/scripts/verify-browser.mjs
++++ b/scripts/verify-browser.mjs
+@@ -17,7 +17,7 @@
+   const url=new URL(req.url,'http://localhost');
+   if(url.pathname==='/'){
+     const variant=url.searchParams.get('variant');
+-    const prefix=variant==='R3'?'/deliveries/FINISH-B1-R4-02/inputs/r3':variant==='material-only'?'/deliveries/FINISH-B1-R4-02/checkpoints/material-only':'/deliveries/FINISH-B1-R4-02';
++    const prefix=variant==='R3'?'/deliveries/FINISH-B1-R5/inputs/r3':variant==='material-only'?'/deliveries/FINISH-B1-R5/checkpoints/material-only':'/deliveries/FINISH-B1-R5';
+     res.writeHead(200,{'Content-Type':'text/html'});res.end(inherited.replaceAll('/deliveries/FINISH-B1-R3',prefix));return;
+   }
+   const base=url.pathname.startsWith('/app/node_modules/')?DEP:ROOT;
+@@ -31,7 +31,7 @@
+ const closeViews=[{key:'pc-glass-outside',width:1280,height:960,camera:{position:[0.55,1.18,-0.77],target:[0.928,1.00,-1.15],fov:48}},{key:'pc-glass-inside',width:1280,height:960,camera:{position:[1.07,1.05,-1.15],target:[0.928,1.05,-1.15],fov:80}},{key:'window-glass',width:1280,height:960,camera:{position:[-1.48,1.52,-0.17],target:[-2.145,1.55,-0.60],fov:48}}];
+ closeViews.push({key:'window-glass-outside',width:1280,height:960,camera:{position:[-2.58,1.62,-0.95],target:[-2.145,1.55,-0.60],fov:56}});
+ closeViews.push({key:'pc-glass-outside-base',width:1280,height:960,excludeOnDemand:true,camera:{position:[0.55,1.18,-0.77],target:[0.928,1.00,-1.15],fov:48}});
+-let browser;const result={command:'node deliveries/FINISH-B1-R4-02/scripts/verify-browser.mjs',scope:'Local Chromium and exact R3 asset renderer harness; URL remap only. No production runtime/device/provider acceptance.',harnessSHA256:sha(Buffer.from(inherited)),assetHashes:{R3:hashes('R3'),'material-only':hashes('material-only'),R4:hashes('R4')},measurements:[],captures:[],console:[]};
++let browser;const result={command:'node deliveries/FINISH-B1-R5/scripts/verify-browser.mjs',scope:'Local Chromium and exact R3 asset renderer harness; URL remap only. No production runtime/device/provider acceptance.',harnessSHA256:sha(Buffer.from(inherited)),assetHashes:{R3:hashes('R3'),'material-only':hashes('material-only'),R4:hashes('R4')},measurements:[],captures:[],console:[]};
+ try{
+  await new Promise(r=>server.listen(0,'127.0.0.1',r));
+  browser=await chromium.launch({headless:true,args:['--use-gl=angle','--use-angle=default','--enable-webgl']});
+@@ -39,7 +39,7 @@
+  for(const variant of ['R3','material-only','R4']){
+   const page=await browser.newPage({viewport:{width:1920,height:1080},deviceScaleFactor:1});
+   page.on('console',m=>result.console.push({variant,type:m.type(),text:m.text()}));page.on('pageerror',e=>result.console.push({variant,type:'pageerror',text:e.message}));
+-  const loads=[];page.on('response',async response=>{if(response.url().endsWith('.glb')){const bytes=await response.body();loads.push({url:response.url(),bytes:bytes.length,sha256:sha(bytes)});}});
++  const loads=[];page.on('response',response=>{if(response.url().endsWith('.glb'))loads.push({url:response.url(),status:response.status()});});
+   await page.goto(`http://127.0.0.1:${server.address().port}/?variant=${variant}`,{waitUntil:'domcontentloaded'});
+   await page.waitForFunction(()=>window.playbackState?.isReady&&window.__audit?.residentGroup,null,{timeout:30000});
+   for(const profile of [...profiles,...closeViews]){
