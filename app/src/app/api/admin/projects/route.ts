@@ -5,14 +5,31 @@ import {
   RevisionConflictError,
   ContentValidationError,
 } from "@/server/content/revisions";
-import type { ProjectId, PublishedProject } from "@/contracts/content";
+import { ProjectIdSchema, PublishedProjectSchema } from "@/contracts/content";
+import { z } from "zod";
+import { MediaValidationError } from "@/server/media/validate-upload";
 
 export const dynamic = "force-dynamic";
+const privateHeaders = { "Cache-Control": "private, no-store, no-cache, must-revalidate", Pragma: "no-cache", Expires: "0", Vary: "Authorization, Cookie" };
+const saveBodySchema = z.strictObject({
+  projectId: ProjectIdSchema,
+  expectedRevision: z.number().int().positive().safe(),
+  project: PublishedProjectSchema,
+});
+
+function privateResponse(body: unknown, status = 200) {
+  return Response.json(body, { status, headers: privateHeaders });
+}
+
+function privateAuthResponse(response: Response): Response {
+  for (const [name, value] of Object.entries(privateHeaders)) response.headers.set(name, value);
+  return response;
+}
 
 export async function GET(request: Request) {
   const result = await verifyOwner(request);
   if (!result.ok) {
-    return createAuthErrorResponse(result);
+    return privateAuthResponse(createAuthErrorResponse(result));
   }
 
   try {
@@ -26,21 +43,15 @@ export async function GET(request: Request) {
       draftRevision: d.draftRevision,
     }));
 
-  return Response.json(
+  return privateResponse(
     {
       projects,
       drafts,
       authorizedActor: result.context.userId,
-    },
-    {
-      headers: {
-        "Cache-Control": "no-store",
-        Vary: "Authorization, Cookie",
-      },
     }
   );
   } catch {
-    return Response.json({ error: "Private storage is temporarily unavailable." },{ status: 503,headers: { "Cache-Control": "no-store, private",Vary: "Authorization, Cookie" } });
+    return privateResponse({ error: "Private storage is temporarily unavailable." }, 503);
   }
 
 }
@@ -48,56 +59,23 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const result = await verifyOwner(request);
   if (!result.ok) {
-    return createAuthErrorResponse(result);
+    return privateAuthResponse(createAuthErrorResponse(result));
   }
 
   try {
-    const body = (await request.json()) as {
-      projectId?: ProjectId;
-      expectedRevision?: number;
-      project?: Omit<PublishedProject, "revision">;
-      title?: string;
-    };
-
-    if (body.project && typeof body.expectedRevision === "number" && body.projectId) {
-      const saved = await saveProjectDraft(
-        {
-          projectId: body.projectId,
-          expectedRevision: body.expectedRevision,
-          project: body.project,
-        },
-        result.context
-      );
-
-      return Response.json(
-        {
-          success: true,
-          action: "draft_saved",
-          draftRevision: saved.draftRevision,
-          project: saved.project,
-          actor: result.context.userId,
-        },
-        { status: 201 }
-      );
-    }
-
-    return Response.json({ error: "projectId, expectedRevision, and structured project are required" },{ status: 422 });
+    const parsed = saveBodySchema.safeParse(await request.json().catch(() => null));
+    if (!parsed.success) return privateResponse({ error: "projectId, positive expectedRevision and a complete project are required." }, 422);
+    const { revision: _revision, ...project } = parsed.data.project;
+    void _revision;
+    const saved = await saveProjectDraft({ projectId: parsed.data.projectId, expectedRevision: parsed.data.expectedRevision, project }, result.context);
+    return privateResponse({ success: true, action: "draft_saved", draftRevision: saved.draftRevision, project: saved.project, actor: result.context.userId }, 201);
   } catch (err) {
     if (err instanceof RevisionConflictError) {
-      return Response.json(
-        { error: err.message, code: err.code },
-        { status: err.status } // 409
-      );
+      return privateResponse({ error: err.message, code: err.code, currentDraft: err.currentDraft }, err.status);
     }
-    if (err instanceof ContentValidationError) {
-      return Response.json(
-        { error: err.message, code: err.code },
-        { status: err.status } // 422
-      );
+    if (err instanceof ContentValidationError || err instanceof MediaValidationError) {
+      return privateResponse({ error: err.message, code: err.code }, err.status);
     }
-    return Response.json(
-      { error: "Private storage is temporarily unavailable." },
-      { status: 503 }
-    );
+    return privateResponse({ error: "Private storage is temporarily unavailable." }, 503);
   }
 }

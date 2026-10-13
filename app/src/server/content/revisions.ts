@@ -12,16 +12,18 @@ import {
 } from "@/contracts/content";
 import type { OwnerContext } from "../auth/types";
 import { approvedPublication } from "@/content/approved-publication";
-import { getPlatformDb, hasPlatformDatabase, isTestRuntime } from "../database";
+import { getPlatformDb, hasPlatformDatabase, isE2EFixture, isTestRuntime } from "../database";
 import type { QueryableDb } from "../contact/quota";
 
 export class RevisionConflictError extends Error {
   readonly status = 409;
   readonly code = "STALE_REVISION_CONFLICT";
+  readonly currentDraft: { projectId: ProjectId; draftRevision: number; project: PublishedProject } | null;
 
-  constructor(message: string) {
+  constructor(message: string, currentDraft: { projectId: ProjectId; draftRevision: number; project: PublishedProject } | null = null) {
     super(message);
     this.name = "RevisionConflictError";
+    this.currentDraft = currentDraft;
   }
 }
 
@@ -46,6 +48,27 @@ export interface DraftRecord {
 // In-memory test draft registry initialized with approved publication projects
 let testDraftRegistry: Map<ProjectId, DraftRecord> | null = null;
 
+function candidateDraft(now = new Date().toISOString()): DraftRecord {
+  return {
+    projectId: "candidatex",
+    draftRevision: 1,
+    project: {
+      id: "candidatex",
+      slug: "candidatex",
+      title: "CandidateX (Private Draft Fixture)",
+      summary: "Synthetic private draft seed. Replace with owner-authored content before use.",
+      contribution: "Owner-authored contribution pending.",
+      sections: [{ id: "overview", heading: "Overview", blocks: [{ type: "paragraph", text: "Synthetic private draft fixture; no public project claim is made." }] }],
+      links: [],
+      evidence: [{ id: "ev-cx-pending", kind: "document", url: null, checkedAt: null,
+        status: "unknown", note: "Synthetic local draft fixture; source evidence has not been supplied." }],
+      revision: 1,
+    },
+    updatedAt: now,
+    updatedBy: "system-seed",
+  };
+}
+
 function initializeDefaultDrafts(): Map<ProjectId, DraftRecord> {
   const map = new Map<ProjectId, DraftRecord>();
   const now = new Date().toISOString();
@@ -60,39 +83,7 @@ function initializeDefaultDrafts(): Map<ProjectId, DraftRecord> {
     });
   }
 
-  // Also include candidatex as an unpublished draft (revision 1)
-  map.set("candidatex", {
-    projectId: "candidatex",
-    draftRevision: 1,
-    project: {
-      id: "candidatex",
-      slug: "candidatex",
-      title: "CandidateX (Draft)",
-      summary: "Draft recruitment analytics platform.",
-      contribution: "Sole architect and full-stack engineer.",
-      sections: [
-        {
-          id: "overview",
-          heading: "Overview",
-          blocks: [{ type: "paragraph", text: "Draft analytics platform documentation." }],
-        },
-      ],
-      links: [{ label: "Repository", url: "https://github.com/yorayriniwnl/candidatex", checkedAt: now }],
-      evidence: [
-        {
-          id: "ev-cx-repo",
-          kind: "repository",
-          url: "https://github.com/yorayriniwnl/candidatex",
-          checkedAt: now,
-          status: "verified",
-          note: "Private repository code review.",
-        },
-      ],
-      revision: 1,
-    },
-    updatedAt: now,
-    updatedBy: "system-seed",
-  });
+  map.set("candidatex", candidateDraft(now));
 
   return map;
 }
@@ -122,6 +113,14 @@ export function validateDraftContent(data: unknown): PublishedProject {
   }
 
   const project = result.data;
+
+  const sectionIds = new Set<string>();
+  for (const section of project.sections) {
+    if (!section.id.trim() || sectionIds.has(section.id)) {
+      throw new ContentValidationError("Section IDs must be nonempty and unique within a project.");
+    }
+    sectionIds.add(section.id);
+  }
 
   // Enforce HTTPS URLs
   for (const link of project.links) {
@@ -161,6 +160,11 @@ export function validateDraftContent(data: unknown): PublishedProject {
     }
     if (section.blocks.length === 0) {
       throw new ContentValidationError(`Section '${section.id}' must contain at least one content block`);
+    }
+    for (const block of section.blocks) {
+      if (block.type === "list" && block.items.length === 0) {
+        throw new ContentValidationError(`List blocks in section '${section.id}' must contain at least one item.`);
+      }
     }
   }
 
@@ -229,7 +233,8 @@ export async function saveProjectDraft(
   // Optimistic concurrency check
   if (currentRevision !== input.expectedRevision) {
     throw new RevisionConflictError(
-      `Stale revision conflict on project '${input.projectId}': expected revision ${input.expectedRevision}, but current revision is ${currentRevision}. Refresh before saving.`
+      `Stale revision conflict on project '${input.projectId}': expected revision ${input.expectedRevision}, but current revision is ${currentRevision}. Refresh before saving.`,
+      existing ? { projectId: existing.projectId, draftRevision: existing.draftRevision, project: existing.project } : null
     );
   }
 
@@ -241,6 +246,8 @@ export async function saveProjectDraft(
 
   // Content validation (throws 422 if invalid)
   const validatedProject = validateDraftContent(projectWithRev);
+  const media = await import("../media/manifest");
+  await media.validateDraftMediaReferences(validatedProject);
 
   const updatedRecord: DraftRecord = {
     projectId: input.projectId,
@@ -271,6 +278,7 @@ export async function readDurableDrafts(db: QueryableDb): Promise<DraftRecord[]>
     drafts.set(project.id, { projectId: project.id, draftRevision: project.revision, project,
       updatedAt: approvedPublication.publishedAt, updatedBy: "accepted-static-baseline" });
   }
+  if (isE2EFixture()) drafts.set("candidatex", candidateDraft());
   for (const row of result.rows) {
     const project = validateDraftContent(row["payload"]);
     drafts.set(project.id, { projectId: project.id, draftRevision: Number(row["draft_revision"]), project,
@@ -286,13 +294,26 @@ async function saveDurableDraft(input: {
   if (!db.transaction) throw new Error("Transactional database is required.");
   return db.transaction(async (tx) => {
     await tx.query("SELECT pg_advisory_xact_lock(hashtext($1))", [`yor-draft-${input.projectId}`]);
-    const rows = await tx.query("SELECT id,draft_revision FROM public.projects WHERE slug=$1 FOR UPDATE", [input.projectId]);
+    const rows = await tx.query(`SELECT p.id,p.draft_revision,r.payload
+      FROM public.projects p LEFT JOIN public.project_revisions r
+        ON r.project_id=p.id AND r.revision=p.draft_revision
+      WHERE p.slug=$1 FOR UPDATE OF p`, [input.projectId]);
     let row = rows.rows[0];
     const baseline = approvedPublication.projects.find((project) => project.id === input.projectId);
-    const currentRevision = row ? Number(row["draft_revision"]) : (baseline?.revision ?? 0);
-    if (currentRevision !== input.expectedRevision) throw new RevisionConflictError("Draft changed. Refresh before saving.");
+    const fixtureRevision = isE2EFixture() && input.projectId === "candidatex" ? 1 : 0;
+    const currentRevision = row ? Number(row["draft_revision"]) : (baseline?.revision ?? fixtureRevision);
+    if (currentRevision !== input.expectedRevision) {
+      const currentProject = row?.["payload"] ? validateDraftContent(row["payload"]) : baseline ?? null;
+      throw new RevisionConflictError("Draft changed. Refresh before saving.", currentProject ? {
+        projectId: input.projectId,
+        draftRevision: currentRevision,
+        project: { ...currentProject, revision: currentRevision },
+      } : null);
+    }
     const nextRevision = currentRevision + 1;
     const project = validateDraftContent({ ...input.project, revision: nextRevision });
+    const media = await import("../media/manifest");
+    await media.validateDraftMediaReferences(project, tx);
     if (!row) {
       row = (await tx.query("INSERT INTO public.projects(slug,title,draft_revision) VALUES($1,$2,$3) RETURNING id", [input.projectId, project.title, nextRevision])).rows[0]!;
     } else {
