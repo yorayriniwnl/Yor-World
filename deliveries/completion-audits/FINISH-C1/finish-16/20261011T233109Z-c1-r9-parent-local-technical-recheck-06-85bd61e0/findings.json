@@ -1,0 +1,35 @@
+{
+  "format": "YOR-WORLD-FINISH-41-C1-FINDINGS-v1",
+  "reviewer": "Parent-local Codex technical recheck; external GPT Plus #2 NOT RUN.",
+  "candidateCommit": "3dda9a616033375768f3d5f60f8c653d504f7c8c",
+  "overallStatus": "PASS",
+  "recommendation": "The narrow R9 E-02-05 evidence-pointer correction and its committed receipt are verified. E-01 and inherited behavioral proof remain open.",
+  "implementationAcceptance": false,
+  "canonicalIntegrationAuthorized": false,
+  "findings": [],
+  "verifiedCorrection": {
+    "id": "E-02-05",
+    "status": "PASS",
+    "matrixEvidence": [
+      "evidence/cli-negative-false-pass.json"
+    ],
+    "finalizerTemplateDiff": "Only removes the obsolete .log item from the E-02-05 evidence list.",
+    "childExitCode": 1,
+    "parsedChildStatus": "FAIL",
+    "stderr": "",
+    "uncached": true,
+    "originalReceiptUnchanged": true
+  },
+  "matrixStatuses": {
+    "E-02-01": "PASS",
+    "E-02-02": "PASS",
+    "E-02-03": "PASS",
+    "E-02-04": "PASS",
+    "E-02-05": "PASS",
+    "LINEAGE-01": "PASS",
+    "LIMIT-01": "NOT RUN"
+  },
+  "inheritedBehavioralTests": "NOT RUN",
+  "finalizer": "NOT RUN",
+  "processBoundaryIncident": "After FINISH-37, Parent inadvertently read report.md from both FINISH-36 output roots and wrote temporary verification/replay scratch under the then-active FINISH-37 roots. FINISH-38 roots were occupied; only immediate top-level names were recorded. No FINISH-37/38/39/40 output content is used as evidence here. This report is regenerated from raw candidate Git objects under FINISH-41. No candidate commit or canonical app source was modified."
+}

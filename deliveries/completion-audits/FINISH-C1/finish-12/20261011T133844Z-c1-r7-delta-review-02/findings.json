@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "audit": "FINISH-26 C1-R7 exact-candidate independent delta audit",
+  "reviewer": "local Codex independent reviewer; external GPT Plus #2 NOT RUN",
+  "candidateCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
+  "candidateTree": "419950200cc9705a101468d44e5b589b40f609f0",
+  "candidateAppTree": "42ea29ec235225046a75959eb19eb386ac2f821d",
+  "overallStatus": "FAIL_VERIFIER_COVERAGE",
+  "recommendation": "REWORK_EVIDENCE_VERIFIER",
+  "parentAcceptance": "PENDING",
+  "e01Disposition": "No auditor closure. Corrected raw receipts independently PASS; Parent adjudication remains pending.",
+  "sourceContractFindings": [],
+  "findings": [
+    {
+      "id": "E-02",
+      "severity": "P2",
+      "category": "evidence-verifier-contract",
+      "status": "CONFIRMED",
+      "title": "Verifier returns PASS with contradictory duplicated manifest/package receipt fields",
+      "locations": [
+        "deliveries/FINISH-C1-R7/verify-input-provenance.py:332",
+        "deliveries/FINISH-C1-R7/candidate-input-provenance.json:sourceManifest",
+        "deliveries/FINISH-C1-R7/source-binding.json:threeDependencyEvidence.packageFiles"
+      ],
+      "requirement": "FINISH-21 step 4 and FINISH-23 check 5 require fail-closed behavior on missing/mismatched paths, commits, counts and hashes.",
+      "summary": "The candidate input sourceManifest is checked only for blobOid; wrong commit, path, SHA-256 or byte count in the disposable copy still returns PASS. A wrong duplicated source-binding packageFiles[0].sha256 also returns PASS. Those exact candidate fields are correct; this is negative-case verification coverage, not a demonstrated false receipt in the candidate.",
+      "reproduction": [
+        "Run python -B audit-recompute.py to extract and verify the exact committed verifier/receipts into owned .work.",
+        "Run python -B audit-package-negatives.py for supplemental path/package-field probes and copied-package availability checks.",
+        "Run python -B audit-cli-negative.py for the uncached original CLI-main confirmation: disposable sourceManifest.sha256 is 64 zeros; returned JSON status is PASS and exit is 0."
+      ],
+      "evidence": [
+        "evidence/negative-probes.json",
+        "evidence/package-negative-probes.json",
+        "evidence/cli-negative-false-pass.json",
+        "evidence/cli-negative-false-pass.log",
+        "evidence/agreement-and-preservation.json"
+      ],
+      "scope": "Primary corrected Git/installed-byte receipts and the exact candidate output manifest are protected and independently pass. No application/runtime/source discrepancy is indicated. Five distinct ignored metadata mutations produce six false-pass checks including the repeated CLI zero-hash case; 30/36 negative checks reject correctly.",
+      "recommendation": "Maker should return a fresh evidence-only correction validating all candidate sourceManifest identity fields and duplicated installed package declarations; do not edit historical/canonical application evidence. Independent delta review and Parent adjudication remain required."
+    }
+  ],
+  "notRun": [
+    "Application/runtime/unit/integration/build/browser checks; inherited from FINISH-16 within its original scope",
+    "New package installation or registry download",
+    "Historical R5 red invocation",
+    "External GPT Plus #2",
+    "Parent acceptance or E-01 closure",
+    "Provider/CDN, physical/manual-device, accessibility/assistive-technology, deployment, G7"
+  ]
+}

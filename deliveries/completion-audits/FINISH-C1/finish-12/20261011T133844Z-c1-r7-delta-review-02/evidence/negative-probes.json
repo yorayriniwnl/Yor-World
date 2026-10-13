@@ -1,0 +1,199 @@
+{
+  "method": "Unmodified exact-candidate verifier imported from extracted Git bytes; REPO_ROOT redirected to actual repository, PACKAGE_DIR to disposable exact-candidate receipts. Every probe resets receipt bytes. Cached results come from real Git subprocesses for immutable objects; cache does not change parsing or checks.",
+  "pinnedVerifierReceipt": {
+    "relativePath": "verify-input-provenance.py",
+    "commit": "e2670d4152c461005da86b392dbcea12cec740bf",
+    "path": "deliveries/FINISH-C1-R7/verify-input-provenance.py",
+    "blobOid": "6897e9ccd09adc0fc870fcc8daa6b8bd2df6d6bf",
+    "sha256": "bc8aaa4d97dcf6117c9fce9d319c3f96d9cbb94af453552ba3e224ea2ef7bb91",
+    "bytes": 31314,
+    "status": "PASS"
+  },
+  "cases": [
+    {
+      "case": "missing receipt file",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Users\\\\yoray\\\\Projects\\\\Yor World\\\\deliveries\\\\completion-audits\\\\FINISH-C1\\\\finish-12\\\\20261011T133844Z-c1-r7-delta-review-02\\\\.work\\\\exact-candidate\\\\deliveries\\\\FINISH-C1-R7\\\\candidate-input-provenance.json'"
+    },
+    {
+      "case": "missing R6 input row",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: candidate input provenance count is 28; expected 29"
+    },
+    {
+      "case": "duplicate R6 input alias",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: candidate input provenance contains duplicate alias values"
+    },
+    {
+      "case": "wrong direct Git path",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: docs/planning/reconciliation-packets/2026-10-11-finish-09-c1-r6.md: wrong authoritative Git path"
+    },
+    {
+      "case": "wrong direct Git commit",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: docs/planning/reconciliation-packets/2026-10-11-finish-09-c1-r6.md: wrong Git commit"
+    },
+    {
+      "case": "wrong corrected Git hash",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: docs/planning/reconciliation-packets/2026-10-11-finish-09-c1-r6.md: corrected Git sha256 differs"
+    },
+    {
+      "case": "missing corrected Git hash",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: docs/planning/reconciliation-packets/2026-10-11-finish-09-c1-r6.md: corrected Git sha256 differs"
+    },
+    {
+      "case": "wrong corrected Git byte count",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: docs/planning/reconciliation-packets/2026-10-11-finish-09-c1-r6.md: corrected Git bytes differs"
+    },
+    {
+      "case": "wrong input counts",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: candidate input provenance counts differ"
+    },
+    {
+      "case": "original historical expected hash altered",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: docs/planning/reconciliation-packets/2026-10-11-finish-09-c1-r6.md: original receipt values were changed"
+    },
+    {
+      "case": "wrong source binding tree",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: source-binding commit/tree pins differ from FINISH-21-R1"
+    },
+    {
+      "case": "wrong source binding manifest hash",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: r6InputManifest sha256 does not match Git blob"
+    },
+    {
+      "case": "wrong package integrity",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: source binding has wrong Three.js integrity"
+    },
+    {
+      "case": "wrong corrected installed file hash",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: candidate-app/node_modules/three/build/three.module.js: corrected package receipt differs from installed bytes"
+    },
+    {
+      "case": "package mislabeled as Git-backed",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: candidate-app/node_modules/three/build/three.module.js: wrong provenance kind"
+    },
+    {
+      "case": "duplicate R5 output path",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: R5 predecessor outputs contains duplicate path values"
+    },
+    {
+      "case": "wrong R5 manifest receipt hash",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: R5 source manifest sha256 differs"
+    },
+    {
+      "case": "wrong R5 output commit",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: deliveries/FINISH-C1-R5/.gitignore: wrong commit"
+    },
+    {
+      "case": "wrong R5 output hash",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: deliveries/FINISH-C1-R5/.gitignore: corrected Git sha256 differs"
+    },
+    {
+      "case": "wrong R5 output count",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: R5 receipt count field is not 32"
+    },
+    {
+      "case": "missing Git object path",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: git rev-parse --verify 9188b413d37da0ec3381b5430e25dc375a45bb18:app/no-such-file.fin26 failed with exit 128: fatal: Needed a single revision"
+    },
+    {
+      "case": "unpinned Git commit",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: unresolved or unpinned commit: 0000000000000000000000000000000000000000"
+    },
+    {
+      "case": "duplicate authoritative path",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: audit-probe contains duplicate path values"
+    },
+    {
+      "case": "candidate sourceManifest redundant hash mismatch",
+      "expectedRejection": true,
+      "rejected": false,
+      "status": "FAIL",
+      "result": "Verifier returned PASS"
+    },
+    {
+      "case": "candidate sourceManifest redundant commit mismatch",
+      "expectedRejection": true,
+      "rejected": false,
+      "status": "FAIL",
+      "result": "Verifier returned PASS"
+    },
+    {
+      "case": "candidate sourceManifest redundant byte count mismatch",
+      "expectedRejection": true,
+      "rejected": false,
+      "status": "FAIL",
+      "result": "Verifier returned PASS"
+    }
+  ],
+  "passed": 23,
+  "failed": 3,
+  "missingOrMismatchedInstalledPackageBytes": "NOT RUN by this script; supplemental audit-package-negatives.py checks disposable package copies without editing production dependencies"
+}

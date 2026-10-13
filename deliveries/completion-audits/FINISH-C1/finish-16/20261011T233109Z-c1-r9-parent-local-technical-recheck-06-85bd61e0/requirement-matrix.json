@@ -1,0 +1,70 @@
+{
+  "format": "YOR-WORLD-FINISH-41-C1-REQUIREMENT-MATRIX-v1",
+  "candidateCommit": "3dda9a616033375768f3d5f60f8c653d504f7c8c",
+  "results": [
+    {
+      "id": "BINDING-01",
+      "requirement": "R9 commit/parent/tree/remote branch/package subtree, R8 parent and remote input, unchanged root app, and raw output-manifest rows bind exactly.",
+      "status": "PASS",
+      "evidencePaths": [
+        "evidence/c1-raw-git-verification.json",
+        "candidate-binding.json"
+      ]
+    },
+    {
+      "id": "DELTA-01",
+      "requirement": "The R8-to-R9 delta is exactly seven declared paths: three changed inherited files and four additions, with no removals and all other 20 inherited files unchanged.",
+      "status": "PASS",
+      "evidencePaths": [
+        "evidence/c1-raw-git-verification.json",
+        "evidence/c1-finalizer-pointer-diff.patch"
+      ]
+    },
+    {
+      "id": "MATRIX-01",
+      "requirement": "All seven matrix statuses and non-E-02-05 rows are preserved; every R9 matrix evidence path resolves to a committed file.",
+      "status": "PASS",
+      "evidencePaths": [
+        "evidence/c1-r8-requirement-matrix.json",
+        "evidence/c1-r9-requirement-matrix.json",
+        "evidence/c1-raw-git-verification.json"
+      ]
+    },
+    {
+      "id": "E-02-05-POINTER",
+      "requirement": "E-02-05 cites only the committed JSON false-pass receipt; the finalizer template changes only that evidence-list pointer.",
+      "status": "PASS",
+      "evidencePaths": [
+        "evidence/c1-r9-requirement-matrix.json",
+        "evidence/c1-finalizer-pointer-diff.patch",
+        "evidence/c1-r9-correction-verification.json"
+      ]
+    },
+    {
+      "id": "E-02-05-RECEIPT",
+      "requirement": "The uncached zero-hash child run exits 1, parses as FAIL, has empty stderr, and leaves the original receipt hash unchanged.",
+      "status": "PASS",
+      "evidencePaths": [
+        "evidence/c1-cli-negative-false-pass.json",
+        "evidence/c1-raw-git-verification.json"
+      ]
+    },
+    {
+      "id": "INHERITED-BEHAVIOR",
+      "requirement": "R8 verifier/test behavior and the C1 finalizer are freshly rerun.",
+      "status": "NOT RUN",
+      "evidencePaths": [
+        "report.md"
+      ],
+      "limits": "The packet forbids running the finalizer; inherited behavioral tests were not rerun."
+    },
+    {
+      "id": "E01-AND-GATES",
+      "requirement": "E-01 disposition, GPT Plus #2 review, Parent acceptance, integration, runtime/build/browser/provider/device, deployment and G7.",
+      "status": "NOT RUN",
+      "evidencePaths": [
+        "report.md"
+      ]
+    }
+  ]
+}

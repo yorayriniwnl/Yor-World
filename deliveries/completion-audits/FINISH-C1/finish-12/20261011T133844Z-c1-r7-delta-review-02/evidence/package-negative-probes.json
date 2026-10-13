@@ -1,0 +1,71 @@
+{
+  "method": "Exact candidate verifier runs against disposable copied installed-package bytes; only scratch receipt installedPackageRoot changes for fake-root baseline. Raw immutable Git reads are cached after the original real-repository positive run; production node_modules was neither modified nor replaced. Final scratch receipts restored byte-for-byte to candidate.",
+  "cases": [
+    {
+      "case": "missing installed package manifest",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Users\\\\yoray\\\\Projects\\\\Yor World\\\\deliveries\\\\completion-audits\\\\FINISH-C1\\\\finish-12\\\\20261011T133844Z-c1-r7-delta-review-02\\\\.work\\\\package-availability-negative\\\\app\\\\node_modules\\\\three\\\\package.json'"
+    },
+    {
+      "case": "missing installed three.module.js",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: installed package file is unavailable for candidate-app/node_modules/three/build/three.module.js: [Errno 2] No such file or directory: 'C:\\\\Users\\\\yoray\\\\Projects\\\\Yor World\\\\deliveries\\\\completion-audits\\\\FINISH-C1\\\\finish-12\\\\20261011T133844Z-c1-r7-delta-review-02\\\\.work\\\\package-availability-negative\\\\app\\\\node_modules\\\\three\\\\build\\\\three.module.js'"
+    },
+    {
+      "case": "missing installed three.core.js",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: installed package file is unavailable for candidate-app/node_modules/three/build/three.core.js: [Errno 2] No such file or directory: 'C:\\\\Users\\\\yoray\\\\Projects\\\\Yor World\\\\deliveries\\\\completion-audits\\\\FINISH-C1\\\\finish-12\\\\20261011T133844Z-c1-r7-delta-review-02\\\\.work\\\\package-availability-negative\\\\app\\\\node_modules\\\\three\\\\build\\\\three.core.js'"
+    },
+    {
+      "case": "installed three.module.js bytes corrupted",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: candidate-app/node_modules/three/build/three.module.js: corrected package receipt differs from installed bytes"
+    },
+    {
+      "case": "installed three.core.js bytes corrupted",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: candidate-app/node_modules/three/build/three.core.js: corrected package receipt differs from installed bytes"
+    },
+    {
+      "case": "installed package version corrupted",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: installed Three.js version is not 0.180.0"
+    },
+    {
+      "case": "installed package name corrupted",
+      "expectedRejection": true,
+      "rejected": true,
+      "status": "PASS",
+      "result": "VerificationError: installed package is not named three"
+    },
+    {
+      "case": "candidate sourceManifest path corrupted",
+      "expectedRejection": true,
+      "rejected": false,
+      "status": "FAIL",
+      "result": "Verifier returned PASS"
+    },
+    {
+      "case": "source-binding packageFiles[0] hash corrupted",
+      "expectedRejection": true,
+      "rejected": false,
+      "status": "FAIL",
+      "result": "Verifier returned PASS"
+    }
+  ],
+  "passed": 7,
+  "failed": 2,
+  "productionPackageEdits": false
+}

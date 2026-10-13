@@ -1,0 +1,65 @@
+{
+  "candidateCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
+  "packet": "FINISH-28",
+  "results": [
+    {
+      "evidence": [
+        "tests/test_fail_closed_metadata.py",
+        "evidence/candidate-binding.json",
+        "evidence/tests.log"
+      ],
+      "id": "E-02-01",
+      "requirement": "All five candidate sourceManifest fields match the raw pinned R6 manifest blob; missing/extra fields fail closed.",
+      "status": "PASS"
+    },
+    {
+      "evidence": [
+        "evidence/candidate-binding.json",
+        "evidence/tests.log"
+      ],
+      "id": "E-02-02",
+      "requirement": "Every packageFiles alias, packageFile, SHA-256 and byte count is exact, unique, and matches installed three@0.180.0 bytes.",
+      "status": "PASS"
+    },
+    {
+      "evidence": [
+        "evidence/tests.log"
+      ],
+      "id": "E-02-03",
+      "requirement": "Malformed, missing, extra, duplicate, or contradictory declarations are rejected.",
+      "status": "PASS"
+    },
+    {
+      "evidence": [
+        "evidence/tests.log"
+      ],
+      "id": "E-02-04",
+      "requirement": "Previously passing malformed hash, wrong path/commit/count, duplicate alias/path, missing-file, unpinned commit, lock-integrity, and package identity/version/byte probes still reject.",
+      "status": "PASS"
+    },
+    {
+      "evidence": [
+        "evidence/cli-negative-false-pass.json"
+      ],
+      "id": "E-02-05",
+      "requirement": "Uncached CLI with zeroed sourceManifest hash and output-manifest check returns FAIL and nonzero.",
+      "status": "PASS"
+    },
+    {
+      "evidence": [
+        "evidence/candidate-binding.json",
+        "evidence/source-patch-replay.json"
+      ],
+      "id": "LINEAGE-01",
+      "requirement": "R7 candidate, R6 source manifest, installed package bytes, and patch replay are bound to exact local inputs.",
+      "status": "PASS"
+    },
+    {
+      "evidence": [],
+      "id": "LIMIT-01",
+      "requirement": "E-01 disposition, external GPT Plus #2, application/runtime/build/browser, physical/device/provider, deployment and G7.",
+      "status": "NOT RUN"
+    }
+  ],
+  "schemaVersion": 1
+}

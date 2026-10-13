@@ -1,0 +1,13 @@
+# FINISH-36 C1-R9 parent-local technical recheck
+
+**Recommendation: PASS for the bounded E-02-05 evidence-pointer correction only.** This is a Parent-local technical recheck, not an independent GPT Plus #2 audit or acceptance. GPT Plus #2 was NOT RUN; Parent acceptance and canonical integration remain pending. C1 E-01 remains OPEN.
+
+R9 `3dda9a616033375768f3d5f60f8c653d504f7c8c` (`codex/finish-30-c1-r9-20261011`) has exact R8 parent `c398876583bc337c069414b79364e3fdea745879`, full tree `5a38d405499737ff40b0141a64845c244a9e4813`, R9 subtree `aa097f12adff2dbac2c88d6300c949f37bf34251`, and unchanged canonical app tree `42ea29ec235225046a75959eb19eb386ac2f821d`. The R9 remote branch and the exact R8 input branch both match their pinned commits. All 26 output-manifest rows recompute from raw Git blobs at 145,757 bytes (manifest SHA-256 `31903805363ed7d56521d334893d40d99079a716e1b374ac2a4c1895ecaff465`).
+
+Relative to the exact R8 package subtree `da822d0362e06e92497001583afb7405b7ccd472`, 20 of 23 inherited files are byte-identical. The three changed inherited files are `output-hashes.json`, `requirement-matrix.json`, and `scripts/finalize.py`; four correction files are added; none are removed. The seven-path relative inventory is exact. All seven matrix statuses are unchanged and every referenced evidence file resolves. E-02-05 cites only committed `evidence/cli-negative-false-pass.json`. Its uncached receipt parses `FAIL`, exits 1, has empty stderr, records a zeroed `sourceManifest.sha256`, and preserves the original receipt hash. The finalizer template and matrix hashes match the candidate binding. The finalizer and inherited tests were NOT run.
+
+The output manifest's `candidateCommit` is the bound R7 source candidate `e2670d4152c461005da86b392dbcea12cec740bf`, which matches `r9-candidate-binding.json`; the delivered R9 commit is separately bound as `3dda9a616033375768f3d5f60f8c653d504f7c8c`.
+
+Provider/device/deployment/recovery/manual/G7 checks, external GPT Plus #2, Parent acceptance and integration remain OPEN or NOT RUN.
+
+**Process record:** During this continuation, Parent opened report.md in both original FINISH-36 output roots after receiving FINISH-37. Parent also wrote and ran temporary verification/replay scratch under FINISH-37 output roots. Those prior roots and contents are excluded as evidence and must be preserved. FINISH-38 output roots were found occupied; only their top-level names (.work/ and evidence/) were recorded and their contents were not opened. All evidence below was regenerated under FINISH-39 paths. No candidate commit or canonical app file was changed.

@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "audit": "FINISH-26 applying unchanged FINISH-23 scope",
+  "candidateCommit": "e2670d4152c461005da86b392dbcea12cec740bf",
+  "recommendation": "REWORK_EVIDENCE_VERIFIER",
+  "requirements": [
+    {
+      "id": "FIN23-01",
+      "requirement": "Bind exact commit/tree/parent/app tree, eleven R7 additions only, and all ten raw Git output rows totaling 186448 bytes.",
+      "status": "PASS",
+      "evidence": ["evidence/candidate-binding.json", "evidence/commands.log"]
+    },
+    {
+      "id": "FIN23-02-GIT",
+      "requirement": "Independently recompute all 19 direct and eight amended mapped R6 inputs from exact raw committed blobs without normalization.",
+      "status": "PASS",
+      "evidence": ["evidence/r6-independent-receipts.json", "evidence/commands.log"]
+    },
+    {
+      "id": "FIN23-02-PACKAGE",
+      "requirement": "Separately verify both installed Three.js files against package name/version, pinned package manifest, lock integrity, source-build identity and frozen-install receipt; never call them Git blobs.",
+      "status": "PASS",
+      "evidence": ["evidence/three-installed-package.json", "evidence/r6-independent-receipts.json"]
+    },
+    {
+      "id": "FIN23-02-VERIFIER",
+      "requirement": "Inspect and independently execute exact candidate verifier with exact-candidate output-manifest checking.",
+      "status": "PASS",
+      "evidence": ["evidence/verifier-rerun.log", "evidence/verifier-rerun.json"]
+    },
+    {
+      "id": "FIN23-03",
+      "requirement": "Recompute all 32 R5 predecessor rows and separate original manifest directly from pinned raw Git objects; verify OIDs/hashes/sizes/counts/unique paths and historical mismatch distinction.",
+      "status": "PASS",
+      "evidence": ["evidence/r5-independent-receipts.json", "evidence/negative-probes.json"]
+    },
+    {
+      "id": "FIN23-04",
+      "requirement": "Explain one-byte diagnostic discrepancy from exact R6 blob and pinned FINISH-16 log without inferring a source change; preserve original manifests.",
+      "status": "PASS",
+      "evidence": ["evidence/one-byte-proof.json", "evidence/agreement-and-preservation.json"]
+    },
+    {
+      "id": "FIN23-05",
+      "requirement": "Verifier fails closed on missing/mismatched paths, commits, counts, hashes and duplicate paths; use disposable copies for feasible negatives.",
+      "status": "FAIL",
+      "finding": "E-02",
+      "reason": "Five distinct duplicated metadata mutations are ignored; zero-hash false PASS confirmed through uncached exact original CLI main. Protected primary fields and copied-package availability/corruption negatives reject correctly.",
+      "evidence": ["evidence/negative-probes.json", "evidence/package-negative-probes.json", "evidence/cli-negative-false-pass.log"]
+    },
+    {
+      "id": "FIN23-06",
+      "requirement": "Maker matrix, source binding, report, verifier log and structured result agree with independently reproduced candidate values; runtime tests explicitly inherited and not rerun.",
+      "status": "PASS",
+      "evidence": ["evidence/agreement-and-preservation.json", "evidence/verifier-rerun.json", "report.md"]
+    },
+    {
+      "id": "FIN23-07",
+      "requirement": "Candidate changes no app or historical evidence path; app tree remains exact accepted baseline identity.",
+      "status": "PASS",
+      "evidence": ["evidence/candidate-binding.json", "evidence/agreement-and-preservation.json", "evidence/commands.log"]
+    },
+    {
+      "id": "FIN26-ROOT",
+      "requirement": "Use freshly rechecked finish-12 root only, preserve occupied FINISH-23 root without inspecting/using its contents, scratch only under owned .work, no fixes/commit/push/acceptance.",
+      "status": "PASS",
+      "evidence": ["evidence/execution-receipt.json", "report.md", "output-hashes.json"]
+    },
+    {
+      "id": "FIN26-RETURN",
+      "requirement": "Return report/findings/matrix, exact binding, raw commands/exits/tool versions, rerun receipts and all stable output hashes.",
+      "status": "PASS",
+      "evidence": ["report.md", "findings.json", "evidence/commands.json", "evidence/tool-versions.json", "output-hashes.json"]
+    },
+    {
+      "id": "RUNTIME-RERUN",
+      "requirement": "Application/runtime checks are inherited from FINISH-16; this evidence-only task claims no new runtime execution.",
+      "status": "NOT RUN",
+      "reason": "Evidence-only delta audit; source/runtime tests, build and browser execution are outside its scope."
+    },
+    {
+      "id": "EXTERNAL-ACCEPTANCE",
+      "requirement": "External GPT Plus #2, Parent acceptance, E-01 closure, provider/device, deployment and G7 require separate evidence.",
+      "status": "NOT RUN",
+      "reason": "No external account execution or acceptance authority is claimed."
+    }
+  ],
+  "sourceContractFindings": [],
+  "counts": {"r7Outputs": 10, "r7OutputBytes": 186448, "r6Inputs": 29, "r6GitBacked": 27, "r6InstalledPackageFiles": 2, "r5Outputs": 32, "negativeChecks": 36, "correctRejections": 30, "falsePassChecks": 6, "distinctIgnoredMetadataCases": 5}
+}
