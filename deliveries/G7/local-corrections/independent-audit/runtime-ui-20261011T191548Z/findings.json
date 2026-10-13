@@ -1,0 +1,30 @@
+{
+  "advice": "REWORK",
+  "role": "Local Codex independent audit only; not external GPT Plus #2",
+  "findings": [
+    {
+      "id": "RUI-01",
+      "severity": "MEDIUM",
+      "status": "FAIL",
+      "path": "app/src/features/world/WorldInteractionBinding.ts",
+      "line": 115,
+      "trigger": "Click monitor center behind opaque unregistered wall after optional hit-proxy arrival.",
+      "expected": "Nearest visible solid prevents activation of an occluded target.",
+      "observed": "Production raycast stops at wall, then unconditional optional-proxy loop activates main-monitor and opens launcher.",
+      "evidence": "optional-probe.test.ts:25; optional-probe-results.json",
+      "scope": "Actual Three.js raycast and real binding/controller on EventTarget canvas, no WebGL rendering."
+    },
+    {
+      "id": "RUI-02",
+      "severity": "MEDIUM",
+      "status": "FAIL",
+      "path": "app/src/features/world/WorldInteractionBinding.ts",
+      "line": 122,
+      "trigger": "Hide monitor production mesh, retain optional main-monitor hit-proxy, click center.",
+      "expected": "Hidden production target cannot gain activation through optional geometry.",
+      "observed": "Proxy fallback only checks target identity/bounds; activePanel becomes launcher despite monitor.visible=false.",
+      "evidence": "optional-probe.test.ts:31; optional-probe-results.json",
+      "scope": "Actual Three.js raycast and real binding/controller on EventTarget canvas, no WebGL rendering."
+    }
+  ]
+}

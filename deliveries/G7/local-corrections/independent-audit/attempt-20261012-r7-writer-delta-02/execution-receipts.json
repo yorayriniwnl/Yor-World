@@ -1,0 +1,99 @@
+{
+  "sourceIdentity": {
+    "branch": "fix/local-studio-check",
+    "head": "e75109a680454576601419e31d571463ad9167f1",
+    "workingTreeDirty": true
+  },
+  "toolVersions": {
+    "node": {
+      "exitCode": 0,
+      "version": "v24.19.0"
+    },
+    "python": {
+      "exitCode": 0,
+      "version": "Python 3.12.10"
+    },
+    "git": {
+      "exitCode": 0,
+      "version": "git version 2.55.0.windows.5"
+    },
+    "pnpm": {
+      "exitCode": null,
+      "version": "NOT AVAILABLE"
+    }
+  },
+  "commands": [
+    {
+      "command": "node --test scripts/release/tests/policy-output.test.mjs scripts/release/tests/reserve-attempt.test.mjs scripts/release/tests/assemble-evidence.test.mjs",
+      "exitCode": 0,
+      "log": {
+        "path": "focused-tests.log",
+        "sha256": "8693abf258b9310654206823e11a9c8f7caba380874190acf9e2448fb19b55ed",
+        "bytes": 4788
+      },
+      "summary": {
+        "tests": 62,
+        "pass": 62,
+        "fail": 0
+      }
+    },
+    {
+      "command": "node probe-writers-current.mjs",
+      "exitCode": 1,
+      "expectedDiagnosticExit": true,
+      "evidence": "writer-probes.json; R7-WRITER-01 and R7-WRITER-02 reproduce; hard-link, preserved-alias and interrupted-attempt controls pass"
+    },
+    {
+      "command": "node probe-current-r7-v2.mjs",
+      "exitCode": 0,
+      "evidence": "probe-results.json; missing-parent indices and sequential inventory-only outputs"
+    }
+  ],
+  "outputFiles": [
+    {
+      "path": "writer-probes.json",
+      "bytes": 2443,
+      "sha256": "3ee32e62470e35502485bc2d4920477a393cdc57965873c651434ec5b396dd94"
+    },
+    {
+      "path": "probe-results.json",
+      "bytes": 4151,
+      "sha256": "21fe66284283eba1ca28d5224eaa31bdca1093ed06ba34863da67047a33599e7"
+    },
+    {
+      "path": "focused-tests.log",
+      "bytes": 4788,
+      "sha256": "8693abf258b9310654206823e11a9c8f7caba380874190acf9e2448fb19b55ed"
+    },
+    {
+      "path": "probe-writers-current.mjs",
+      "bytes": 5274,
+      "sha256": "ae0131293bf15e2852e95f8bbc0d12b6eaece77d07d48ee1bfc888d5b0040db5"
+    },
+    {
+      "path": "probe-current-r7-v2.mjs",
+      "bytes": 6640,
+      "sha256": "8fd6bbb16ec7a5e6f00ff940237c6ad0f7eead8cdbb9b0940b5993a59adc2276"
+    },
+    {
+      "path": "delta-comparison.json",
+      "bytes": 2672,
+      "sha256": "d8940ab9fcd5bd45d3a0eec50a5874987c18c984c08b9e057bb9bf2d343576ef"
+    },
+    {
+      "path": "report.md",
+      "bytes": 4977,
+      "sha256": "0bd4d77a51a390f13f29b4a8d6c0fa04f70d2616ada8b52050f405c365da9772"
+    },
+    {
+      "path": "input-hashes.json",
+      "bytes": 2657,
+      "sha256": "e36271011ed4e59956d69c0c3901ae11e84d80d9c0f5cea452b4836087eb6b0b"
+    }
+  ],
+  "scopeLimits": [
+    "No candidate driver invocation",
+    "No actual R7 packaging, browser, provider, deployment or G7 execution",
+    "Bundle writer probe uses the current entrypoint body and copied current guards with only buildBundle/git substituted by nonwriting synthetic dependencies"
+  ]
+}

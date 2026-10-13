@@ -1,0 +1,62 @@
+{
+  "scriptSha256": "7960779f805a9cd300b17a17fe7706bc8d9336d6e0895685fc317145c05aad17",
+  "results": [
+    {
+      "case": "inventory-only accepts preserved archive policy plus failed nonexistent-hash execution",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\preparation\\tools\\assemble-evidence.py",
+        "--repository",
+        "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\independent-audit\\release-security-gate-01\\fixtures\\invalid-policy-and-execution",
+        "--source",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "--inventory-only"
+      ],
+      "exitCode": 0,
+      "stdout": "Bound 1 exact-source command identities; inventoried 4 artifacts. LF hashes apply to text; raw hashes to binary artifacts.\n",
+      "stderr": "",
+      "commandsCreated": true,
+      "checksumCreated": true,
+      "protectedChanged": null
+    },
+    {
+      "case": "inventory-only mutates before missing manifest rejection",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\preparation\\tools\\assemble-evidence.py",
+        "--repository",
+        "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\independent-audit\\release-security-gate-01\\fixtures\\missing-manifest",
+        "--source",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "--inventory-only"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\preparation\\tools\\assemble-evidence.py\", line 223, in <module>\n    main()\n  File \"C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\preparation\\tools\\assemble-evidence.py\", line 195, in main\n    final_manifest = read(DELIVERY + \"/release-manifest.json\")\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\preparation\\tools\\assemble-evidence.py\", line 63, in read\n    return json.loads((root / path).read_text(encoding=\"utf-8\"))\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\pathlib.py\", line 1027, in read_text\n    with self.open(mode='r', encoding=encoding, errors=errors) as f:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\pathlib.py\", line 1013, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Users\\\\yoray\\\\Projects\\\\Yor-World-Local-Corrections\\\\deliveries\\\\G7\\\\local-corrections\\\\independent-audit\\\\release-security-gate-01\\\\fixtures\\\\missing-manifest\\\\deliveries\\\\G7\\\\rc6-candidate-r7\\\\release-manifest.json'\n",
+      "commandsCreated": true,
+      "checksumCreated": false,
+      "protectedChanged": null
+    },
+    {
+      "case": "late output hardlink rejects only after earlier output mutations",
+      "command": [
+        "C:\\Users\\yoray\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-B",
+        "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\preparation\\tools\\assemble-evidence.py",
+        "--repository",
+        "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\independent-audit\\release-security-gate-01\\fixtures\\late-output-hardlink",
+        "--source",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "--inventory-only"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\preparation\\tools\\assemble-evidence.py\", line 223, in <module>\n    main()\n  File \"C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\preparation\\tools\\assemble-evidence.py\", line 218, in main\n    write_text_file(\"SHA256SUMS.txt\", \"\\n\".join(inventory) + \"\\n\")\n  File \"C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\preparation\\tools\\assemble-evidence.py\", line 187, in write_text_file\n    raise ValueError(f\"Hard-linked release output is forbidden: {target}\")\nValueError: Hard-linked release output is forbidden: C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\independent-audit\\release-security-gate-01\\fixtures\\late-output-hardlink\\deliveries\\G7\\rc6-candidate-r7\\SHA256SUMS.txt\n",
+      "commandsCreated": true,
+      "checksumCreated": true,
+      "protectedChanged": false
+    }
+  ]
+}

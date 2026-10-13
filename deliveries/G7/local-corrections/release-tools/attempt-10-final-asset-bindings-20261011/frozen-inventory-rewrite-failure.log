@@ -1,0 +1,12 @@
+﻿Command: prior Node script that enumerated 36 app/public/models/**/*.glb entries, replaced frozenModelPaths, and checked source.includes(paths[0]) where paths[0] included the /models/ prefix while policy.ts stores path suffixes.
+Result: process exit 1 after replacement verification threw; file was not written because the old source remained unchanged.
+Error: Error: Could not rewrite frozen model inventory
+    at [stdin]:13:39
+    at runScriptInThisContext (node:internal/vm:209:10)
+    at node:internal/process/execution:451:12
+    at [stdin]-wrapper:6:24
+    at runScriptInContext (node:internal/process/execution:449:60)
+    at evalFunction (node:internal/process/execution:283:30)
+    at evalTypeScript (node:internal/process/execution:295:3)
+    at node:internal/main/eval_stdin:51:5
+This was a post-replacement assertion mismatch: the source was unchanged at inspection. Corrected the assertion to compare the stored suffix after confirming the replacement expression matched. The next execution updated 36 entries.

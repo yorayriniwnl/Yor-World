@@ -1,0 +1,19 @@
+﻿Release asset inventory trace — Worker 1
+Date: 2026-10-12
+Branch: fix/local-studio-check
+HEAD: 3f0b47c78b3322f1d2be3d048620bd86e4b32f0f
+
+Exact failure path
+- scripts/release/tests/asset-manifest-validation.test.mjs:78-79 calls assetFiles() to assert the current public inventory.
+- scripts/release/tests/asset-manifest-validation.test.mjs:96-97 also calls assetFiles() before adding an orphan and calling validateVersionedAssetInventory(); the test therefore aborts before exercising the synthetic orphan assertion.
+- scripts/release/release-lib.mjs:363-370 walks every public .glb and accepts only an exact (filename, SHA-256, byte-count) entry from acceptedAssets, retainedCandidateAssets, or candidateAssets. It rejects the extra fixture below as outside the freeze.
+- The current manifest/policy candidate is fixture-production.c7ed99092cfc2d71470065099cec2a0d1dac565e149521dff28c588677cbc3a5.glb, SHA-256 c7ed99092cfc2d71470065099cec2a0d1dac565e149521dff28c588677cbc3a5, 377024 bytes, approved=false/status=candidate. The same URL and metadata appear in app/public/asset-manifest.json and scripts/release/rc6-policy.json; retainedCandidateAssets is empty.
+- The file rejected by assetFiles() is app/public/models/world-art-local-corrections-20261009-r1/fixture-production.ce05bcbd0033b685b1cdb91fa1591fd366653fc7fd6d7409c1a4efacb508c1fe.glb, raw SHA-256 ce05bcbd0033b685b1cdb91fa1591fd366653fc7fd6d7409c1a4efacb508c1fe, 391396 bytes. `git ls-files --stage` reports mode 100644, index blob 8b9ee3d31516105fb4775228bcc8e80be9526d28, stage 0; the path is unchanged in the current worktree. It is absent from active manifest and all accepted/retained/candidate policy lists.
+- Exact directory state is saved in r1-public-inventory.txt: 12 versioned R1 GLBs exist, while six URLs are manifest-bound. The six additional GLBs are tracked historical files, not entries in the current manifest/policy. This explains the cache test's 21 actual public GLBs versus 15 frozen cache paths, and 12 actual R1 URLs versus six manifest URLs.
+
+Observed tests
+- Full release command is in full-release-command.txt; raw output is full-release-regression.log; exit code 1. 121 tests: 119 pass, 2 fail, both at the inventory integration checks above.
+- App contract/cache command is in app-cache-contract-command.txt; raw output is app-cache-contract.log; exit code 1. 59 tests: 57 pass, 2 fail. Both fail because app/tests/unit/cache-policy.test.ts compares the six manifest R1 URLs and 15 frozen paths against 12 current disk R1 URLs and 21 public GLBs.
+
+Narrow guard behavior proposed for Parent adjudication
+Keep the strict guard. A public versioned GLB must be exactly represented by the manifest and policy; do not widen accepted/cache inventories, mark candidates approved, or silently whitelist legacy files. The art owner can archive the six historical extras outside app/public while preserving bytes, or Parent can explicitly authorize an alternative manifest policy that still names every public URL. The synthetic orphan test should be made independent of the live assetFiles() precondition so it reaches validateVersionedAssetInventory() even while the shared tree is out of sync. No source or asset changes were made for this trace.

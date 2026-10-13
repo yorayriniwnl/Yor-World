@@ -1,0 +1,54 @@
+{
+  "scope": "Isolated synthetic filesystem probes. No candidate-driver execution, real R7 writes, browser/network/provider/deployment actions.",
+  "rows": [
+    {
+      "id": "R7-WRITER-01",
+      "expected": "Occupied receipt rejects before any archive write",
+      "observed": {
+        "exitCode": 1,
+        "archiveCreated": true,
+        "receiptUnchanged": true,
+        "messages": [
+          "FAIL v1.0.0-rc6 bundle: EEXIST: file already exists, open 'C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\independent-audit\\attempt-20261012-r7-writer-delta-02\\.work\\repo-02\\deliveries\\G7\\rc6-candidate-r7\\attempt-20261011T1820Z-localfinal\\bundle-receipt.json'"
+        ]
+      },
+      "status": "FAIL",
+      "scope": "Actual unmodified entrypoint body and copied release-lib guards; only nonwriting buildBundle/git computations replaced by synthetic known-good dependencies; isolated fixture only"
+    },
+    {
+      "id": "hardlink guard",
+      "status": "PASS",
+      "observed": {
+        "error": "Hard-linked release output is forbidden: deliveries/G7/rc6-candidate-r7/attempt-20261011T1820Z-localfinal/hardlink.json",
+        "sentinelUnchanged": true
+      }
+    },
+    {
+      "id": "preserved alias guard",
+      "status": "PASS",
+      "observed": {
+        "error": "Accepted RC1-RC5 evidence, audit and G6-R1 are immutable; original RC6, rejected R2, reconciled R3, canonical R4 and incoming R5 proof are preserved; accepted R6, RC6-R1 and its independent/major reviews are immutable",
+        "sentinelUnchanged": true
+      }
+    },
+    {
+      "id": "R7-WRITER-02",
+      "expected": "Create missing evidence parent under existing deliveries/G7 prefix",
+      "status": "FAIL",
+      "observed": {
+        "error": "ENOENT: no such file or directory, scandir 'C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\independent-audit\\attempt-20261012-r7-writer-delta-02\\.work\\repo-02\\deliveries\\G7\\evidence'",
+        "requestedParentExists": false,
+        "unexpectedRootEvidenceCreated": true
+      }
+    },
+    {
+      "id": "interrupted raw attempt reuse",
+      "status": "PASS",
+      "observed": {
+        "error": "Raw artifact directory already exists; preserve historical attempt: deliveries\\G7\\evidence\\attempt-raw",
+        "rawDirectoryRetained": true,
+        "receiptNotInvented": true
+      }
+    }
+  ]
+}

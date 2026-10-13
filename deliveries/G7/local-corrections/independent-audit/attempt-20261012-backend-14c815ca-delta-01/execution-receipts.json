@@ -1,0 +1,37 @@
+[
+  {
+    "command": "node <audit>/probe-source.mjs",
+    "exitCode": 0,
+    "evidence": "source-probes.json",
+    "scope": "5 actual-source AST-extracted synthetic mock/cleanup probes; not native DB proof"
+  },
+  {
+    "command": "pnpm exec eslint tests/native/backend-native.test.ts vitest.native.config.ts --max-warnings=0",
+    "cwd": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app",
+    "exitCode": 0,
+    "stdout": "",
+    "toolReceipt": "c353f3"
+  },
+  {
+    "command": "pnpm exec tsc --noEmit --incremental false",
+    "cwd": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app",
+    "exitCode": 0,
+    "stdout": "",
+    "toolReceipt": "84c1c1"
+  },
+  {
+    "command": "git diff --check -- app/tests/native/backend-native.test.ts app/vitest.native.config.ts",
+    "exitCode": 0,
+    "stdout": ""
+  },
+  {
+    "command": "native PostgreSQL suite",
+    "status": "NOT RUN",
+    "reason": "Parent states database remains unreachable; prior independently preserved connection refusal; no repeat native claim"
+  },
+  {
+    "command": "hosted Supabase/Auth/Storage",
+    "status": "NOT RUN",
+    "reason": "No hosted execution in this delta"
+  }
+]

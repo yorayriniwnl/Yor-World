@@ -1,0 +1,67 @@
+{
+  "kind": "repeat-export hash reproducibility and geometry equivalence for unchanged fixture source",
+  "fixtureSourceSha256": "58b0252e1a26b969b794beccef93245fed1b3f89352b24b3c12fbc059fb4c200",
+  "attempts": [
+    {
+      "attempt": "fixture-attempt-04",
+      "sha256": "828a03348604924a3c030e4de9cec566cf3154111d4553ce37488ac860b40da2",
+      "bytes": 391396
+    },
+    {
+      "attempt": "fixture-attempt-05",
+      "sha256": "97889bf6341d82dbf966b004357b9a2f1ca941b54ea11804a8932aa73e806cc1",
+      "bytes": 391396
+    },
+    {
+      "attempt": "fixture-attempt-06",
+      "sha256": "5957f5d3c9121ba332ef545b4f304b85244afee0371c171ccf18f0c93eb83dab",
+      "bytes": 391396
+    }
+  ],
+  "pairsComparedToAttempt04": [
+    {
+      "baseline": "fixture-attempt-04",
+      "candidate": "fixture-attempt-05",
+      "sameGlbJson": true,
+      "changedBufferViews": [
+        2,
+        4,
+        5,
+        8,
+        11,
+        14
+      ],
+      "changedBufferViewCount": 6,
+      "positionsExactlyEqual": true,
+      "canonicalTriangleGeometryExactlyEqual": true,
+      "changedNormalScalarValues": 3,
+      "maxAbsoluteNormalDelta": 9.851157665252686e-05,
+      "sha256": "97889bf6341d82dbf966b004357b9a2f1ca941b54ea11804a8932aa73e806cc1",
+      "bytes": 391396
+    },
+    {
+      "baseline": "fixture-attempt-04",
+      "candidate": "fixture-attempt-06",
+      "sameGlbJson": true,
+      "changedBufferViews": [
+        1,
+        2,
+        4,
+        5,
+        8,
+        11,
+        13,
+        14
+      ],
+      "changedBufferViewCount": 8,
+      "positionsExactlyEqual": true,
+      "canonicalTriangleGeometryExactlyEqual": true,
+      "changedNormalScalarValues": 9,
+      "maxAbsoluteNormalDelta": 9.851157665252686e-05,
+      "sha256": "5957f5d3c9121ba332ef545b4f304b85244afee0371c171ccf18f0c93eb83dab",
+      "bytes": 391396
+    }
+  ],
+  "interpretation": "GLB JSON and position arrays are identical; triangulated geometry is identical. Blender changes only caster NORMAL/indices buffer view bytes between runs, so the exact GLB SHA-256 is not reproducible despite unchanged source and geometry. Use the chosen candidate file hash exactly for its versioned URL.",
+  "status": "PASS"
+}

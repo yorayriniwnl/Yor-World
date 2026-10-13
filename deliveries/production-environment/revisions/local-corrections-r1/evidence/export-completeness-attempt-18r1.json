@@ -1,0 +1,51 @@
+{
+  "kind": "active GLB scene-node completeness against authored scenes, accounting for separately loaded resident asset; no visual acceptance",
+  "status": "PASS",
+  "attempts": {
+    "environment": "build-attempt-18",
+    "fixture": "fixture-attempt-06"
+  },
+  "checks": {
+    "fullMatchesAuthoredNodeNames": true,
+    "mobileMatchesFullNodeNames": true,
+    "groupUnionMatchesFullNodeNames": true,
+    "fixtureMatchesAuthoredNamesExceptDocumentedExternalResident": true,
+    "allExportNodeNamesUnique": true,
+    "allAuthoredNodeNamesUnique": true,
+    "documentedResidentExclusionsPresentInAuthoredScene": true
+  },
+  "documentedExclusion": {
+    "nodeNames": [
+      "resident",
+      "resident-body"
+    ],
+    "reason": "The fixture GLB is chair/desk proof geometry only; source comment states resident bytes are intentionally retained from the historical public asset.",
+    "source": "source/resident-fixture/build-resident-production.py near export_gltf(OUT / \"fixture-production.glb\", fixture_objects)",
+    "separatePublicAsset": "app/public/models/resident-production.glb"
+  },
+  "counts": {
+    "environmentAuthored": 280,
+    "full": 280,
+    "mobile": 280,
+    "groupA": 136,
+    "groupB": 111,
+    "onDemand": 33,
+    "groupUnion": 280,
+    "fixtureAuthored": 70,
+    "fixtureExport": 68,
+    "intentionallyExternalResident": 2
+  },
+  "unexpected": {
+    "environmentMissing": [],
+    "environmentUnexpected": [],
+    "fixtureMissingAfterDocumentedExclusions": [],
+    "fixtureUnexpected": [],
+    "groupMissing": [],
+    "groupUnexpected": []
+  },
+  "duplicateNames": {
+    "environmentAuthored": [],
+    "fixtureAuthored": [],
+    "fixtureExport": []
+  }
+}

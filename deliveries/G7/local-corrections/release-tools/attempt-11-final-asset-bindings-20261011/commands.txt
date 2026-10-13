@@ -1,0 +1,19 @@
+﻿Source: C:\Users\yoray\Projects\Yor-World-Local-Corrections, branch fix/local-studio-check, HEAD a599a159bef3935a278a18e2d42877438d664c78
+
+Release regression suite (Node v24.19.0):
+node --test scripts/release/tests/assemble-evidence.test.mjs scripts/release/tests/reserve-attempt.test.mjs scripts/release/tests/current-status.test.mjs scripts/release/tests/status-check.test.mjs scripts/release/tests/immutable-output.test.mjs scripts/release/tests/policy-output.test.mjs scripts/release/tests/schema-migration-inventory.test.mjs scripts/release/tests/asset-manifest-validation.test.mjs
+Result: 107/107 passed, exit 0; see release-regression.log.
+
+Application contract/cache suite (run from app/, pnpm 9.15.9, Vitest 5.0.2):
+pnpm exec vitest run --config vitest.config.ts tests/unit/contracts.test.ts tests/unit/cache-policy.test.ts
+Result: 2 test files, 58/58 passed, exit 0; see app-cache-contract.log.
+
+Release helper syntax (Node v24.19.0):
+node --check scripts/release/release-lib.mjs
+Result: exit 0; see release-lib-syntax.log.
+
+Diff review:
+git diff --check -- app/src/contracts/assets.ts app/tests/unit/contracts.test.ts app/src/security/policy.ts scripts/release/build-release-bundle.mjs scripts/release/check-current-status.mjs scripts/release/rc6-policy.json scripts/release/release-lib.mjs scripts/release/validate-release.mjs scripts/release/tests/current-status.test.mjs scripts/release/tests/immutable-output.test.mjs deliveries/G7/preparation/tools/assemble-evidence.py deliveries/G7/preparation/tools/g7-browser-smoke.mjs deliveries/G7/preparation/tools/g7-live-probes.mjs
+Result: exit 0.
+
+Full R7 composition/production build, hosted CI, live probes, hosted PostgreSQL/Supabase, and real hosted storage verification: NOT RUN. No R7 writer was invoked.

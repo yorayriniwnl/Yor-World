@@ -1,0 +1,110 @@
+{
+  "advice": "REWORK",
+  "observedHead": "e75109a680454576601419e31d571463ad9167f1",
+  "policyIdentity": {
+    "path": "scripts/release/rc6-policy.json",
+    "bytes": 19936,
+    "sha256": "8155481ece63513437833dfd03ffd3d0cc5fe5d10ba7fd028391ef35f4c275f9",
+    "snapshotPath": "input-snapshot/scripts/release/rc6-policy.json",
+    "scope": "Read-only source/test identity; review focused writer-path/guard sections, not unrelated asset implementation"
+  },
+  "findings": [
+    {
+      "id": "R7-WRITER-01",
+      "severity": "MEDIUM",
+      "status": "OPEN",
+      "owner": "Assigned release-tool maker",
+      "sources": [
+        {
+          "path": "scripts/release/build-release-bundle.mjs",
+          "line": 12
+        },
+        {
+          "path": "scripts/release/build-release-bundle.mjs",
+          "line": 17
+        },
+        {
+          "path": "scripts/release/build-release-bundle.mjs",
+          "line": 18
+        },
+        {
+          "path": "scripts/release/release-lib.mjs",
+          "line": 128
+        }
+      ],
+      "trigger": "Safe policy delivery contains an ordinary existing bundle-receipt.json; archive path is absent and the bundle computation succeeds.",
+      "expected": "Preflight every exclusive destination and reject occupied receipt before archive/directory mutation.",
+      "observed": "Archive is written exclusively, then writeJson raises EEXIST for the receipt. Old receipt is preserved, but a new partial archive remains.",
+      "evidence": "writer-probes.json",
+      "scope": "Actual unmodified entrypoint and guards; synthetic nonwriting buildBundle/git computations only; isolated filesystem",
+      "makerAction": "Preflight occupation of both archive and receipt before first mutation; retain final exclusive writes and add occupied-receipt no-partial-output regression."
+    },
+    {
+      "id": "R7-WRITER-02",
+      "severity": "MEDIUM",
+      "status": "OPEN",
+      "owner": "Assigned release-tool maker",
+      "sources": [
+        {
+          "path": "deliveries/G7/preparation/tools/reserve-attempt.mjs",
+          "line": 55
+        },
+        {
+          "path": "deliveries/G7/preparation/tools/reserve-attempt.mjs",
+          "line": 56
+        },
+        {
+          "path": "deliveries/G7/preparation/tools/reserve-attempt.mjs",
+          "line": 113
+        },
+        {
+          "path": "scripts/release/tests/reserve-attempt.test.mjs",
+          "line": 14
+        }
+      ],
+      "trigger": "Root already has deliveries/G7, but requested evidence parent does not exist. reserveAttempt(root,deliveries/G7/evidence/attempt.json).",
+      "expected": "Create only root/deliveries/G7/evidence, then reserve attempt-raw there.",
+      "observed": "ensureParent creates root/evidence at the first missing component, then readdirSync on root/deliveries/G7/evidence throws ENOENT. Existing test precreates full parent and misses this branch.",
+      "evidence": "writer-probes.json",
+      "scope": "Actual unmodified reservation module, isolated filesystem",
+      "makerAction": "Create each missing component beneath its already validated ancestor; test first missing index0 and every later index, wrong-parent noncreation and aliases."
+    },
+    {
+      "id": "R7-WRITER-03",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "owner": "Assigned release-tool maker with Parent inventory contract coordination",
+      "sources": [
+        {
+          "path": "deliveries/G7/preparation/tools/candidate-driver.py",
+          "line": 607
+        },
+        {
+          "path": "deliveries/G7/preparation/tools/candidate-driver.py",
+          "line": 632
+        },
+        {
+          "path": "deliveries/G7/preparation/tools/assemble-evidence.py",
+          "line": 338
+        },
+        {
+          "path": "deliveries/G7/preparation/tools/assemble-evidence.py",
+          "line": 403
+        },
+        {
+          "path": "deliveries/G7/preparation/tools/assemble-evidence.py",
+          "line": 422
+        }
+      ],
+      "trigger": "Package assembly has emitted commands-and-exit-codes.md, inventory-omissions.json and SHA256SUMS.txt. Required later inventory phase invokes the assembler --inventory-only against that same delivery root.",
+      "expected": "A compatible final-inventory handoff can produce fresh final proof while preserving earlier outputs.",
+      "observed": "Assembler stages the same names in inventory-only mode and rejects them as existing case-alias/output collisions. Exact assembler fixture first run0,second1; earlier outputs unchanged. Driver phase sequence therefore has no valid normal completion path under current exclusive-output rules.",
+      "evidence": "assembler-probe.json",
+      "scope": "Actual assembler executions in existing isolated test fixture plus source-only driver phase trace; driver not invoked",
+      "makerAction": "Reconcile package/final-inventory outputs using a Parent-approved fresh namespace or versioned artifact contract, preserve all prior receipts, and add an isolated sequential package-to-validation-to-final-inventory regression."
+    }
+  ],
+  "productionSourceModified": false,
+  "realR7DriverExecuted": false,
+  "acceptanceAuthority": "Parent; no source/release/G7 acceptance"
+}

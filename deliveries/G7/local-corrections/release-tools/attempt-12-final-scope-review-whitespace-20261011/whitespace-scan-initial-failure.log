@@ -1,0 +1,4 @@
+﻿Command: Node trailing-whitespace scan across the 21 owned source/report files listed in the later final-review command.
+Result: exit code 1. The scanner reported lines 3-7 of backend-remediation-report.md only.
+Inspection: those five report metadata lines retain two trailing spaces as Markdown hard line breaks from the pre-existing report. No source file was changed by this scan. The tracked scoped `git diff --check` in the same command had passed before the scanner ran.
+Disposition: retain the report formatting; rerun the source whitespace scan excluding Markdown hard-break metadata, then record the final scoped diff/hash review in a new evidence root.

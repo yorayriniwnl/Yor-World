@@ -1,0 +1,1872 @@
+deliveries/G7/preparation/tools/g7-evidence.py:1: trailing whitespace.
++"""Initialize honest G7 receipts or summarize supplied evidence; no live actions."""
+deliveries/G7/preparation/tools/g7-evidence.py:2: trailing whitespace.
++from __future__ import annotations
+deliveries/G7/preparation/tools/g7-evidence.py:3: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:4: trailing whitespace.
++import argparse
+deliveries/G7/preparation/tools/g7-evidence.py:5: trailing whitespace.
++import datetime as dt
+deliveries/G7/preparation/tools/g7-evidence.py:6: trailing whitespace.
++import hashlib
+deliveries/G7/preparation/tools/g7-evidence.py:7: trailing whitespace.
++import json
+deliveries/G7/preparation/tools/g7-evidence.py:8: trailing whitespace.
++import ipaddress
+deliveries/G7/preparation/tools/g7-evidence.py:9: trailing whitespace.
++import math
+deliveries/G7/preparation/tools/g7-evidence.py:10: trailing whitespace.
++import os
+deliveries/G7/preparation/tools/g7-evidence.py:11: trailing whitespace.
++import re
+deliveries/G7/preparation/tools/g7-evidence.py:12: trailing whitespace.
++import stat
+deliveries/G7/preparation/tools/g7-evidence.py:13: trailing whitespace.
++from urllib.parse import urlsplit
+deliveries/G7/preparation/tools/g7-evidence.py:14: trailing whitespace.
++from pathlib import Path
+deliveries/G7/preparation/tools/g7-evidence.py:15: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:16: trailing whitespace.
++CRITERIA = [
+deliveries/G7/preparation/tools/g7-evidence.py:17: trailing whitespace.
++    (1, "live-domain", ["DNS resolution", "Valid TLS certificate", "HTTP to HTTPS 301/308 redirect", "Canonical origin/headers"]),
+deliveries/G7/preparation/tools/g7-evidence.py:18: trailing whitespace.
++    (2, "fresh-smoke", ["Postdeployment source/deployment identity", "Fresh critical paths", "No uncaught client exception", "Initial measured performance baseline"]),
+deliveries/G7/preparation/tools/g7-evidence.py:19: trailing whitespace.
++    (3, "public-routes", ["Direct public/project entry", "Hard refresh", "Client transitions", "Back/Forward", "CandidateX 404 and absent launcher"]),
+deliveries/G7/preparation/tools/g7-evidence.py:20: trailing whitespace.
++    (4, "world-entry", ["On-demand asset readiness/loading progress", "Entrance <=8000 ms", "Skip to settled HOME <=50 ms", "Avatar acknowledgment", "Camera/DOM interaction parity"]),
+deliveries/G7/preparation/tools/g7-evidence.py:21: trailing whitespace.
++    (5, "fallback", ["Complete HTML with JavaScript disabled", "WebGL unavailable fallback", "Context-loss recovery", "Mobile dialog/navigation recovery", "Keyboard/reduced-motion usability"]),
+deliveries/G7/preparation/tools/g7-evidence.py:22: trailing whitespace.
++    (6, "contact-behavior", ["Approved synthetic submission/sanitization", "Honeypot/body-size denial", "HTTP 429 burst limit", "Atomic native DB/outbox/receipt persistence", "R2 replay/conflict/concurrency", "Real provider delivery/retry/deduplication", "Zero PII in actual logs/telemetry"]),
+deliveries/G7/preparation/tools/g7-evidence.py:23: trailing whitespace.
++    (7, "production-configuration", ["Production env names/secret isolation; fixtures disabled", "Actual security/CSP/HSTS/CORS headers", "Three schema-v2 migrations then operational DCL", "15 public tables and private github_refresh_state privileges/RLS", "Native independent-session denial/concurrency", "Owner AAL2/TOTP/revocation", "Private Storage access", "Internal authenticated jobs/GitHub cadence"]),
+deliveries/G7/preparation/tools/g7-evidence.py:24: trailing whitespace.
++    (8, "asset-loading", ["Every live asset SHA-256 matches frozen manifest", "Actual CDN statuses/cache policy", "Text/JSON compression", "Binary byte-range HTTP 206", "Desktop essential encoded transfer <=6 MiB", "Mobile essential encoded transfer <=3 MiB"]),
+deliveries/G7/preparation/tools/g7-evidence.py:25: trailing whitespace.
++    (9, "monitoring", ["Actual backend-ready /api/health 200", "Process liveness separately classified", "Error logging tested", "External uptime probe operational", "Actual zero-PII retention controls"]),
+deliveries/G7/preparation/tools/g7-evidence.py:26: trailing whitespace.
++    (10, "rollback-readiness", ["Pinned previous immutable deployment", "Current schema backward compatibility", "Actual safe rollback rehearsal", "Postrollback smoke", "Measured RTO <=300 seconds", "RPO=0 evidenced by preserved receipts/data", "Hosted DB/Auth/blob backup and restore"]),
+deliveries/G7/preparation/tools/g7-evidence.py:27: trailing whitespace.
++]
+deliveries/G7/preparation/tools/g7-evidence.py:28: trailing whitespace.
++MANUAL = [
+deliveries/G7/preparation/tools/g7-evidence.py:29: trailing whitespace.
++    ("MD-01", "Physical iPhone/iPad Safari", "Actual device/OS/browser; portrait/landscape, touch/reflow, five cold loads, background/resume, context loss."),
+deliveries/G7/preparation/tools/g7-evidence.py:30: trailing whitespace.
++    ("MD-02", "Physical Android Chrome", "Actual mid-range device/OS/browser; portrait/landscape, touch/reflow and world fallback/recovery."),
+deliveries/G7/preparation/tools/g7-evidence.py:31: trailing whitespace.
++    ("MD-03", "Actual NVDA", "Recorded Windows browser, operator and listening/keyboard observations; focus/labels/errors/announcements."),
+deliveries/G7/preparation/tools/g7-evidence.py:32: trailing whitespace.
++    ("MD-04", "Actual VoiceOver", "Actual Safari/macOS or iOS device; listening/rotor/gesture observations."),
+deliveries/G7/preparation/tools/g7-evidence.py:33: trailing whitespace.
++    ("MD-05", "Actual TalkBack", "Actual Android device/browser; gestures, speech and focus/error recovery."),
+deliveries/G7/preparation/tools/g7-evidence.py:34: trailing whitespace.
++    ("MD-06", "600-second physical mobile thermal session", "Actual battery/temperature/charger/network/tier; raw pacing at 2/4/6/8/10 minutes; crashes/recovery."),
+deliveries/G7/preparation/tools/g7-evidence.py:35: trailing whitespace.
++]
+deliveries/G7/preparation/tools/g7-evidence.py:36: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:37: trailing whitespace.
++IDENTITY = ("releaseId", "sourceCommit", "sourceAppTree", "releaseBundleSha256", "manifestSha256",
+deliveries/G7/preparation/tools/g7-evidence.py:38: trailing whitespace.
++            "deploymentId", "targetOrigin", "deployedAt")
+deliveries/G7/preparation/tools/g7-evidence.py:39: trailing whitespace.
++CANDIDATE_IDENTITY = IDENTITY[:5]
+deliveries/G7/preparation/tools/g7-evidence.py:40: trailing whitespace.
++STATUSES = ("PASS", "FAIL", "NOT RUN")
+deliveries/G7/preparation/tools/g7-evidence.py:41: trailing whitespace.
++MANUAL_MEASUREMENTS = {
+deliveries/G7/preparation/tools/g7-evidence.py:42: trailing whitespace.
++    "MD-01": ("portrait", "landscape", "touchReflow", "coldLoads", "backgroundResume", "contextLoss"),
+deliveries/G7/preparation/tools/g7-evidence.py:43: trailing whitespace.
++    "MD-02": ("portrait", "landscape", "touchReflow", "fallbackRecovery"),
+deliveries/G7/preparation/tools/g7-evidence.py:44: trailing whitespace.
++    "MD-03": ("listening", "keyboard", "focus", "labels", "errors", "announcements"),
+deliveries/G7/preparation/tools/g7-evidence.py:45: trailing whitespace.
++    "MD-04": ("listening", "rotor", "gestures"),
+deliveries/G7/preparation/tools/g7-evidence.py:46: trailing whitespace.
++    "MD-05": ("gestures", "speech", "focus", "errorRecovery"),
+deliveries/G7/preparation/tools/g7-evidence.py:47: trailing whitespace.
++    "MD-06": ("batteryStartPercent", "batteryEndPercent", "temperatureStartC", "temperatureEndC",
+deliveries/G7/preparation/tools/g7-evidence.py:48: trailing whitespace.
++              "chargerConnected", "network", "qualityTier", "framePacing", "crashes", "recoveryObservations"),
+deliveries/G7/preparation/tools/g7-evidence.py:49: trailing whitespace.
++}
+deliveries/G7/preparation/tools/g7-evidence.py:50: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:51: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:52: trailing whitespace.
++def require(condition, message):
+deliveries/G7/preparation/tools/g7-evidence.py:53: trailing whitespace.
++    if not condition:
+deliveries/G7/preparation/tools/g7-evidence.py:54: trailing whitespace.
++        raise ValueError(message)
+deliveries/G7/preparation/tools/g7-evidence.py:55: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:56: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:57: trailing whitespace.
++def actual(value):
+deliveries/G7/preparation/tools/g7-evidence.py:58: trailing whitespace.
++    """Presence check only: this cannot authenticate an operator's factual claims."""
+deliveries/G7/preparation/tools/g7-evidence.py:59: trailing whitespace.
++    if isinstance(value, str):
+deliveries/G7/preparation/tools/g7-evidence.py:60: trailing whitespace.
++        return bool(value.strip()) and value.strip().upper() not in {"NOT RUN", "UNKNOWN", "NOT ASSIGNED", "N/A"}
+deliveries/G7/preparation/tools/g7-evidence.py:61: trailing whitespace.
++    if isinstance(value, (dict, list)):
+deliveries/G7/preparation/tools/g7-evidence.py:62: trailing whitespace.
++        return bool(value) and all(actual(v) for v in (value.values() if isinstance(value, dict) else value))
+deliveries/G7/preparation/tools/g7-evidence.py:63: trailing whitespace.
++    return value is not None
+deliveries/G7/preparation/tools/g7-evidence.py:64: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:65: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:66: trailing whitespace.
++def load_json(path):
+deliveries/G7/preparation/tools/g7-evidence.py:67: trailing whitespace.
++    def unique(pairs):
+deliveries/G7/preparation/tools/g7-evidence.py:68: trailing whitespace.
++        result = {}
+deliveries/G7/preparation/tools/g7-evidence.py:69: trailing whitespace.
++        for key, value in pairs:
+deliveries/G7/preparation/tools/g7-evidence.py:70: trailing whitespace.
++            require(key not in result, f"Duplicate JSON key: {key}")
+deliveries/G7/preparation/tools/g7-evidence.py:71: trailing whitespace.
++            result[key] = value
+deliveries/G7/preparation/tools/g7-evidence.py:72: trailing whitespace.
++        return result
+deliveries/G7/preparation/tools/g7-evidence.py:73: trailing whitespace.
++    result = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=unique,
+deliveries/G7/preparation/tools/g7-evidence.py:74: trailing whitespace.
++                        parse_constant=lambda value: (_ for _ in ()).throw(ValueError(f"Nonfinite JSON number: {value}")))
+deliveries/G7/preparation/tools/g7-evidence.py:75: trailing whitespace.
++    require(isinstance(result, dict), f"Expected JSON object: {path}")
+deliveries/G7/preparation/tools/g7-evidence.py:76: trailing whitespace.
++    return result
+deliveries/G7/preparation/tools/g7-evidence.py:77: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:78: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:79: trailing whitespace.
++def write(path, value):
+deliveries/G7/preparation/tools/g7-evidence.py:80: trailing whitespace.
++    """Write fixture inputs; the CLI output uses write_ledger_exclusive below."""
+deliveries/G7/preparation/tools/g7-evidence.py:81: trailing whitespace.
++    path.parent.mkdir(parents=True, exist_ok=True)
+deliveries/G7/preparation/tools/g7-evidence.py:82: trailing whitespace.
++    path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8", newline="\n")
+deliveries/G7/preparation/tools/g7-evidence.py:83: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:84: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:85: trailing whitespace.
++def path_key(path):
+deliveries/G7/preparation/tools/g7-evidence.py:86: trailing whitespace.
++    return os.path.normcase(os.path.abspath(os.fspath(path)))
+deliveries/G7/preparation/tools/g7-evidence.py:87: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:88: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:89: trailing whitespace.
++def is_junction(path):
+deliveries/G7/preparation/tools/g7-evidence.py:90: trailing whitespace.
++    return bool(hasattr(path, "is_junction") and path.is_junction())
+deliveries/G7/preparation/tools/g7-evidence.py:91: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:92: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:93: trailing whitespace.
++def validate_output_path(root, requested):
+deliveries/G7/preparation/tools/g7-evidence.py:94: trailing whitespace.
++    """Validate the lexical output identity and every existing path component."""
+deliveries/G7/preparation/tools/g7-evidence.py:95: trailing whitespace.
++    raw = os.fspath(requested)
+deliveries/G7/preparation/tools/g7-evidence.py:96: trailing whitespace.
++    require(isinstance(raw, str) and bool(raw), "Receipt output path must be a non-empty path")
+deliveries/G7/preparation/tools/g7-evidence.py:97: trailing whitespace.
++    portable = raw.replace("\\", "/")
+deliveries/G7/preparation/tools/g7-evidence.py:98: trailing whitespace.
++    require(not portable.endswith("/"), "Receipt output must name a file")
+deliveries/G7/preparation/tools/g7-evidence.py:99: trailing whitespace.
++    drive = re.match(r"^[a-zA-Z]:/", portable)
+deliveries/G7/preparation/tools/g7-evidence.py:100: trailing whitespace.
++    if re.match(r"^[a-zA-Z]:[^/]", portable):
+deliveries/G7/preparation/tools/g7-evidence.py:101: trailing whitespace.
++        raise ValueError("Drive-relative receipt output paths are forbidden")
+deliveries/G7/preparation/tools/g7-evidence.py:102: trailing whitespace.
++    parts_text = portable[3:] if drive else portable[1:] if portable.startswith("/") else portable
+deliveries/G7/preparation/tools/g7-evidence.py:103: trailing whitespace.
++    parts = parts_text.split("/")
+deliveries/G7/preparation/tools/g7-evidence.py:104: trailing whitespace.
++    require(all(parts), "Receipt output path contains an empty component")
+deliveries/G7/preparation/tools/g7-evidence.py:105: trailing whitespace.
++    for part in parts:
+deliveries/G7/preparation/tools/g7-evidence.py:106: trailing whitespace.
++        require(part not in (".", ".."), "Receipt output path cannot contain traversal components")
+deliveries/G7/preparation/tools/g7-evidence.py:107: trailing whitespace.
++        require(not re.search(r'[\x00-\x1f<>:"|?*]', part) and not part.endswith((".", " "))
+deliveries/G7/preparation/tools/g7-evidence.py:108: trailing whitespace.
++                and not re.match(r"^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)", part, re.I),
+deliveries/G7/preparation/tools/g7-evidence.py:109: trailing whitespace.
++                f"Receipt output path contains a nonportable component: {part}")
+deliveries/G7/preparation/tools/g7-evidence.py:110: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:111: trailing whitespace.
++    root = Path(root)
+deliveries/G7/preparation/tools/g7-evidence.py:112: trailing whitespace.
++    root_real = root.resolve(strict=True)
+deliveries/G7/preparation/tools/g7-evidence.py:113: trailing whitespace.
++    require(path_key(root) == path_key(root_real) and root.is_dir() and not root.is_symlink() and not is_junction(root),
+deliveries/G7/preparation/tools/g7-evidence.py:114: trailing whitespace.
++            "Repository root must be a real directory without filesystem aliases")
+deliveries/G7/preparation/tools/g7-evidence.py:115: trailing whitespace.
++    supplied = Path(portable)
+deliveries/G7/preparation/tools/g7-evidence.py:116: trailing whitespace.
++    candidate = supplied if supplied.is_absolute() else root / supplied
+deliveries/G7/preparation/tools/g7-evidence.py:117: trailing whitespace.
++    target = Path(os.path.abspath(candidate))
+deliveries/G7/preparation/tools/g7-evidence.py:118: trailing whitespace.
++    try:
+deliveries/G7/preparation/tools/g7-evidence.py:119: trailing whitespace.
++        relative = target.relative_to(root_real)
+deliveries/G7/preparation/tools/g7-evidence.py:120: trailing whitespace.
++    except ValueError as error:
+deliveries/G7/preparation/tools/g7-evidence.py:121: trailing whitespace.
++        raise ValueError("Receipt output must stay inside deliveries/G7") from error
+deliveries/G7/preparation/tools/g7-evidence.py:122: trailing whitespace.
++    require(len(relative.parts) >= 3 and relative.parts[:2] == ("deliveries", "G7"),
+deliveries/G7/preparation/tools/g7-evidence.py:123: trailing whitespace.
++            "Receipt output must stay inside deliveries/G7")
+deliveries/G7/preparation/tools/g7-evidence.py:124: trailing whitespace.
++    require(relative.parts[:4] != ("deliveries", "G7", "preparation", "tools"),
+deliveries/G7/preparation/tools/g7-evidence.py:125: trailing whitespace.
++            "Receipt output cannot overwrite release tool sources")
+deliveries/G7/preparation/tools/g7-evidence.py:126: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:127: trailing whitespace.
++    # For absolute paths, reject case-spelled aliases of the repository root.
+deliveries/G7/preparation/tools/g7-evidence.py:128: trailing whitespace.
++    if supplied.is_absolute():
+deliveries/G7/preparation/tools/g7-evidence.py:129: trailing whitespace.
++        raw_absolute = Path(os.path.abspath(supplied))
+deliveries/G7/preparation/tools/g7-evidence.py:130: trailing whitespace.
++        if len(raw_absolute.parts) >= len(root_real.parts):
+deliveries/G7/preparation/tools/g7-evidence.py:131: trailing whitespace.
++            root_spelling = raw_absolute.parts[:len(root_real.parts)]
+deliveries/G7/preparation/tools/g7-evidence.py:132: trailing whitespace.
++            canonical_root = root_real.parts
+deliveries/G7/preparation/tools/g7-evidence.py:133: trailing whitespace.
++            require(all(path_key(Path(left)) == path_key(Path(right)) and left == right
+deliveries/G7/preparation/tools/g7-evidence.py:134: trailing whitespace.
++                        for left, right in zip(root_spelling[1:], canonical_root[1:]))
+deliveries/G7/preparation/tools/g7-evidence.py:135: trailing whitespace.
++                    and path_key(Path(root_spelling[0])) == path_key(Path(canonical_root[0])),
+deliveries/G7/preparation/tools/g7-evidence.py:136: trailing whitespace.
++                    "Receipt output must use the canonical repository path spelling")
+deliveries/G7/preparation/tools/g7-evidence.py:137: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:138: trailing whitespace.
++    current = root_real
+deliveries/G7/preparation/tools/g7-evidence.py:139: trailing whitespace.
++    for index, part in enumerate(relative.parts):
+deliveries/G7/preparation/tools/g7-evidence.py:140: trailing whitespace.
++        if not current.exists():
+deliveries/G7/preparation/tools/g7-evidence.py:141: trailing whitespace.
++            break
+deliveries/G7/preparation/tools/g7-evidence.py:142: trailing whitespace.
++        if not current.is_dir() or current.is_symlink() or is_junction(current):
+deliveries/G7/preparation/tools/g7-evidence.py:143: trailing whitespace.
++            raise ValueError(f"Receipt output path contains a symlink, junction or non-directory component: {current}")
+deliveries/G7/preparation/tools/g7-evidence.py:144: trailing whitespace.
++        aliases = [entry.name for entry in current.iterdir() if entry.name.casefold() == part.casefold()]
+deliveries/G7/preparation/tools/g7-evidence.py:145: trailing whitespace.
++        if aliases and part not in aliases:
+deliveries/G7/preparation/tools/g7-evidence.py:146: trailing whitespace.
++            raise ValueError(f"Receipt output uses a case-alias path component: {part}")
+deliveries/G7/preparation/tools/g7-evidence.py:147: trailing whitespace.
++        current = current / part
+deliveries/G7/preparation/tools/g7-evidence.py:148: trailing whitespace.
++        try:
+deliveries/G7/preparation/tools/g7-evidence.py:149: trailing whitespace.
++            info = current.lstat()
+deliveries/G7/preparation/tools/g7-evidence.py:150: trailing whitespace.
++        except FileNotFoundError:
+deliveries/G7/preparation/tools/g7-evidence.py:151: trailing whitespace.
++            break
+deliveries/G7/preparation/tools/g7-evidence.py:152: trailing whitespace.
++        if current.is_symlink() or is_junction(current):
+deliveries/G7/preparation/tools/g7-evidence.py:153: trailing whitespace.
++            raise ValueError(f"Receipt output path contains a symlink or junction: {current}")
+deliveries/G7/preparation/tools/g7-evidence.py:154: trailing whitespace.
++        if index < len(relative.parts) - 1 and not stat.S_ISDIR(info.st_mode):
+deliveries/G7/preparation/tools/g7-evidence.py:155: trailing whitespace.
++            raise ValueError(f"Receipt output path contains a non-directory component: {current}")
+deliveries/G7/preparation/tools/g7-evidence.py:156: trailing whitespace.
++        resolved = current.resolve(strict=True)
+deliveries/G7/preparation/tools/g7-evidence.py:157: trailing whitespace.
++        require(path_key(resolved) == path_key(current), f"Receipt output path contains a filesystem alias: {current}")
+deliveries/G7/preparation/tools/g7-evidence.py:158: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:159: trailing whitespace.
++    parent = target.parent
+deliveries/G7/preparation/tools/g7-evidence.py:160: trailing whitespace.
++    if parent.exists():
+deliveries/G7/preparation/tools/g7-evidence.py:161: trailing whitespace.
++        aliases = [entry.name for entry in parent.iterdir() if entry.name.casefold() == target.name.casefold()]
+deliveries/G7/preparation/tools/g7-evidence.py:162: trailing whitespace.
++        if aliases and target.name not in aliases:
+deliveries/G7/preparation/tools/g7-evidence.py:163: trailing whitespace.
++            raise ValueError(f"Receipt output filename case-aliases existing evidence: {target.name}")
+deliveries/G7/preparation/tools/g7-evidence.py:164: trailing whitespace.
++    try:
+deliveries/G7/preparation/tools/g7-evidence.py:165: trailing whitespace.
++        info = target.lstat()
+deliveries/G7/preparation/tools/g7-evidence.py:166: trailing whitespace.
++    except FileNotFoundError:
+deliveries/G7/preparation/tools/g7-evidence.py:167: trailing whitespace.
++        info = None
+deliveries/G7/preparation/tools/g7-evidence.py:168: trailing whitespace.
++    if info is not None:
+deliveries/G7/preparation/tools/g7-evidence.py:169: trailing whitespace.
++        if stat.S_ISLNK(info.st_mode) or is_junction(target):
+deliveries/G7/preparation/tools/g7-evidence.py:170: trailing whitespace.
++            raise ValueError(f"Receipt output cannot be a symlink or junction: {target}")
+deliveries/G7/preparation/tools/g7-evidence.py:171: trailing whitespace.
++        if stat.S_ISREG(info.st_mode) and info.st_nlink > 1:
+deliveries/G7/preparation/tools/g7-evidence.py:172: trailing whitespace.
++            raise ValueError(f"Hard-linked receipt output is forbidden: {target}")
+deliveries/G7/preparation/tools/g7-evidence.py:173: trailing whitespace.
++        raise ValueError(f"Preserve prior evidence; receipt output already exists: {target}")
+deliveries/G7/preparation/tools/g7-evidence.py:174: trailing whitespace.
++    return target, relative
+deliveries/G7/preparation/tools/g7-evidence.py:175: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:176: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:177: trailing whitespace.
++def prepare_output_parent(root, relative):
+deliveries/G7/preparation/tools/g7-evidence.py:178: trailing whitespace.
++    """Create only missing real directories beneath the validated deliveries/G7 root."""
+deliveries/G7/preparation/tools/g7-evidence.py:179: trailing whitespace.
++    current = Path(root).resolve(strict=True)
+deliveries/G7/preparation/tools/g7-evidence.py:180: trailing whitespace.
++    for part in relative.parts[:-1]:
+deliveries/G7/preparation/tools/g7-evidence.py:181: trailing whitespace.
++        if not current.exists() or not current.is_dir() or current.is_symlink() or is_junction(current):
+deliveries/G7/preparation/tools/g7-evidence.py:182: trailing whitespace.
++            raise ValueError(f"Receipt output parent is not a real directory: {current}")
+deliveries/G7/preparation/tools/g7-evidence.py:183: trailing whitespace.
++        aliases = [entry.name for entry in current.iterdir() if entry.name.casefold() == part.casefold()]
+deliveries/G7/preparation/tools/g7-evidence.py:184: trailing whitespace.
++        if aliases and part not in aliases:
+deliveries/G7/preparation/tools/g7-evidence.py:185: trailing whitespace.
++            raise ValueError(f"Receipt output uses a case-alias parent component: {part}")
+deliveries/G7/preparation/tools/g7-evidence.py:186: trailing whitespace.
++        child = current / part
+deliveries/G7/preparation/tools/g7-evidence.py:187: trailing whitespace.
++        try:
+deliveries/G7/preparation/tools/g7-evidence.py:188: trailing whitespace.
++            child.mkdir()
+deliveries/G7/preparation/tools/g7-evidence.py:189: trailing whitespace.
++        except FileExistsError:
+deliveries/G7/preparation/tools/g7-evidence.py:190: trailing whitespace.
++            pass
+deliveries/G7/preparation/tools/g7-evidence.py:191: trailing whitespace.
++        if child.is_symlink() or is_junction(child) or not child.is_dir():
+deliveries/G7/preparation/tools/g7-evidence.py:192: trailing whitespace.
++            raise ValueError(f"Receipt output parent is a symlink, junction or non-directory: {child}")
+deliveries/G7/preparation/tools/g7-evidence.py:193: trailing whitespace.
++        if path_key(child.resolve(strict=True)) != path_key(child):
+deliveries/G7/preparation/tools/g7-evidence.py:194: trailing whitespace.
++            raise ValueError(f"Receipt output parent uses a filesystem alias: {child}")
+deliveries/G7/preparation/tools/g7-evidence.py:195: trailing whitespace.
++        current = child
+deliveries/G7/preparation/tools/g7-evidence.py:196: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:197: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:198: trailing whitespace.
++def write_ledger_exclusive(root, requested, value, inputs=()):
+deliveries/G7/preparation/tools/g7-evidence.py:199: trailing whitespace.
++    target, relative = validate_output_path(root, requested)
+deliveries/G7/preparation/tools/g7-evidence.py:200: trailing whitespace.
++    input_keys = {path_key(path.resolve(strict=True)) for path in inputs}
+deliveries/G7/preparation/tools/g7-evidence.py:201: trailing whitespace.
++    require(path_key(target) not in input_keys, "Receipt output cannot replace an input")
+deliveries/G7/preparation/tools/g7-evidence.py:202: trailing whitespace.
++    prepare_output_parent(root, relative)
+deliveries/G7/preparation/tools/g7-evidence.py:203: trailing whitespace.
++    # Recheck after parent creation; open('x') is the final race-safe reservation.
+deliveries/G7/preparation/tools/g7-evidence.py:204: trailing whitespace.
++    target, relative = validate_output_path(root, target)
+deliveries/G7/preparation/tools/g7-evidence.py:205: trailing whitespace.
++    require(path_key(target) not in input_keys, "Receipt output cannot replace an input")
+deliveries/G7/preparation/tools/g7-evidence.py:206: trailing whitespace.
++    try:
+deliveries/G7/preparation/tools/g7-evidence.py:207: trailing whitespace.
++        with target.open("x", encoding="utf-8", newline="\n") as stream:
+deliveries/G7/preparation/tools/g7-evidence.py:208: trailing whitespace.
++            stream.write(json.dumps(value, indent=2) + "\n")
+deliveries/G7/preparation/tools/g7-evidence.py:209: trailing whitespace.
++    except FileExistsError as error:
+deliveries/G7/preparation/tools/g7-evidence.py:210: trailing whitespace.
++        raise ValueError(f"Preserve prior evidence; receipt output already exists: {target}") from error
+deliveries/G7/preparation/tools/g7-evidence.py:211: trailing whitespace.
++    return target
+deliveries/G7/preparation/tools/g7-evidence.py:212: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:213: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:214: trailing whitespace.
++def hash_artifact(path, mode):
+deliveries/G7/preparation/tools/g7-evidence.py:215: trailing whitespace.
++    require(mode in ("raw", "lf"), "Hash mode must be raw or lf")
+deliveries/G7/preparation/tools/g7-evidence.py:216: trailing whitespace.
++    content = path.read_bytes()
+deliveries/G7/preparation/tools/g7-evidence.py:217: trailing whitespace.
++    return hashlib.sha256(content.replace(b"\r\n", b"\n") if mode == "lf" else content).hexdigest()
+deliveries/G7/preparation/tools/g7-evidence.py:218: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:219: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:220: trailing whitespace.
++def workspace_file(root, path):
+deliveries/G7/preparation/tools/g7-evidence.py:221: trailing whitespace.
++    require(isinstance(path, str) and bool(path), "Artifact path must be supplied")
+deliveries/G7/preparation/tools/g7-evidence.py:222: trailing whitespace.
++    filename = (root / path).resolve()
+deliveries/G7/preparation/tools/g7-evidence.py:223: trailing whitespace.
++    require(filename.is_relative_to(root) and filename.is_file(), "Artifact missing or outside repository")
+deliveries/G7/preparation/tools/g7-evidence.py:224: trailing whitespace.
++    return filename
+deliveries/G7/preparation/tools/g7-evidence.py:225: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:226: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:227: trailing whitespace.
++def verify_artifact(root, artifact):
+deliveries/G7/preparation/tools/g7-evidence.py:228: trailing whitespace.
++    require(isinstance(artifact, dict), "Artifact must be a path/hash object")
+deliveries/G7/preparation/tools/g7-evidence.py:229: trailing whitespace.
++    mode = artifact.get("hashMode", "raw")
+deliveries/G7/preparation/tools/g7-evidence.py:230: trailing whitespace.
++    require(isinstance(artifact.get("sha256"), str) and re.fullmatch(r"[0-9a-f]{64}", artifact["sha256"]), "Invalid artifact SHA-256")
+deliveries/G7/preparation/tools/g7-evidence.py:231: trailing whitespace.
++    filename = workspace_file(root, artifact.get("path"))
+deliveries/G7/preparation/tools/g7-evidence.py:232: trailing whitespace.
++    require(hash_artifact(filename, mode) == artifact["sha256"], "Artifact SHA-256 mismatch")
+deliveries/G7/preparation/tools/g7-evidence.py:233: trailing whitespace.
++    return filename
+deliveries/G7/preparation/tools/g7-evidence.py:234: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:235: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:236: trailing whitespace.
++def artifacts(root, values):
+deliveries/G7/preparation/tools/g7-evidence.py:237: trailing whitespace.
++    require(isinstance(values, list) and bool(values), "Each executed criterion/session needs hash-verified artifacts")
+deliveries/G7/preparation/tools/g7-evidence.py:238: trailing whitespace.
++    seen = set()
+deliveries/G7/preparation/tools/g7-evidence.py:239: trailing whitespace.
++    for value in values:
+deliveries/G7/preparation/tools/g7-evidence.py:240: trailing whitespace.
++        filename = verify_artifact(root, value)
+deliveries/G7/preparation/tools/g7-evidence.py:241: trailing whitespace.
++        require(filename not in seen, "Duplicate artifact in evidence inventory")
+deliveries/G7/preparation/tools/g7-evidence.py:242: trailing whitespace.
++        seen.add(filename)
+deliveries/G7/preparation/tools/g7-evidence.py:243: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:244: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:245: trailing whitespace.
++def timestamp(value, now):
+deliveries/G7/preparation/tools/g7-evidence.py:246: trailing whitespace.
++    require(isinstance(value, str) and bool(re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})", value)),
+deliveries/G7/preparation/tools/g7-evidence.py:247: trailing whitespace.
++            "Timestamp must be ISO 8601 with timezone")
+deliveries/G7/preparation/tools/g7-evidence.py:248: trailing whitespace.
++    result = dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
+deliveries/G7/preparation/tools/g7-evidence.py:249: trailing whitespace.
++    require(result <= now, "Future timestamp rejected")
+deliveries/G7/preparation/tools/g7-evidence.py:250: trailing whitespace.
++    return result
+deliveries/G7/preparation/tools/g7-evidence.py:251: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:252: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:253: trailing whitespace.
++def validate_manifest(root, path):
+deliveries/G7/preparation/tools/g7-evidence.py:254: trailing whitespace.
++    require(path.resolve().is_relative_to(root), "Manifest must be inside repository")
+deliveries/G7/preparation/tools/g7-evidence.py:255: trailing whitespace.
++    manifest = load_json(path)
+deliveries/G7/preparation/tools/g7-evidence.py:256: trailing whitespace.
++    for key in CANDIDATE_IDENTITY[:4]:
+deliveries/G7/preparation/tools/g7-evidence.py:257: trailing whitespace.
++        require(actual(manifest.get(key)), f"Manifest missing {key}")
+deliveries/G7/preparation/tools/g7-evidence.py:258: trailing whitespace.
++    require(isinstance(manifest["releaseId"], str), "Manifest releaseId must be a string")
+deliveries/G7/preparation/tools/g7-evidence.py:259: trailing whitespace.
++    for key, size in (("sourceCommit", 40), ("sourceAppTree", 40), ("releaseBundleSha256", 64)):
+deliveries/G7/preparation/tools/g7-evidence.py:260: trailing whitespace.
++        require(isinstance(manifest[key], str) and bool(re.fullmatch(f"[0-9a-f]{{{size}}}", manifest[key])), f"Invalid manifest {key}")
+deliveries/G7/preparation/tools/g7-evidence.py:261: trailing whitespace.
++    if "gitCommit" in manifest:
+deliveries/G7/preparation/tools/g7-evidence.py:262: trailing whitespace.
++        require(manifest["gitCommit"] == manifest["sourceCommit"], "Conflicting manifest gitCommit")
+deliveries/G7/preparation/tools/g7-evidence.py:263: trailing whitespace.
++    verify_artifact(root, {"path": manifest.get("releaseBundlePath"), "sha256": manifest["releaseBundleSha256"], "hashMode": "raw"})
+deliveries/G7/preparation/tools/g7-evidence.py:264: trailing whitespace.
++    source = load_json(verify_artifact(root, manifest.get("sourceBinding")))
+deliveries/G7/preparation/tools/g7-evidence.py:265: trailing whitespace.
++    for key in CANDIDATE_IDENTITY[:4]:
+deliveries/G7/preparation/tools/g7-evidence.py:266: trailing whitespace.
++        require(source.get(key) == manifest[key], f"Manifest/source binding mismatch: {key}")
+deliveries/G7/preparation/tools/g7-evidence.py:267: trailing whitespace.
++    return {**{key: manifest[key] for key in CANDIDATE_IDENTITY[:4]}, "manifestSha256": hash_artifact(path, "lf")}
+deliveries/G7/preparation/tools/g7-evidence.py:268: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:269: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:270: trailing whitespace.
++def validate_binding(root, path, identity, now):
+deliveries/G7/preparation/tools/g7-evidence.py:271: trailing whitespace.
++    require(path.resolve().is_relative_to(root), "Operational binding must be inside repository")
+deliveries/G7/preparation/tools/g7-evidence.py:272: trailing whitespace.
++    binding = load_json(path)
+deliveries/G7/preparation/tools/g7-evidence.py:273: trailing whitespace.
++    require(binding.get("status") == "AUTHORIZED", "Operational binding must be AUTHORIZED")
+deliveries/G7/preparation/tools/g7-evidence.py:274: trailing whitespace.
++    for key in CANDIDATE_IDENTITY:
+deliveries/G7/preparation/tools/g7-evidence.py:275: trailing whitespace.
++        require(binding.get(key) == identity[key], f"Operational candidate mismatch: {key}")
+deliveries/G7/preparation/tools/g7-evidence.py:276: trailing whitespace.
++    require(isinstance(binding.get("deploymentId"), str) and actual(binding["deploymentId"]), "Actual deploymentId required")
+deliveries/G7/preparation/tools/g7-evidence.py:277: trailing whitespace.
++    origin = binding.get("targetOrigin")
+deliveries/G7/preparation/tools/g7-evidence.py:278: trailing whitespace.
++    require(isinstance(origin, str), "Actual targetOrigin required")
+deliveries/G7/preparation/tools/g7-evidence.py:279: trailing whitespace.
++    parsed = urlsplit(origin)
+deliveries/G7/preparation/tools/g7-evidence.py:280: trailing whitespace.
++    require(parsed.scheme == "https" and parsed.hostname and not parsed.username and not parsed.password
+deliveries/G7/preparation/tools/g7-evidence.py:281: trailing whitespace.
++            and parsed.path == "" and not parsed.query and not parsed.fragment and parsed.netloc == parsed.netloc.lower(),
+deliveries/G7/preparation/tools/g7-evidence.py:282: trailing whitespace.
++            "Use a canonical public HTTPS origin without path, credentials, query or fragment")
+deliveries/G7/preparation/tools/g7-evidence.py:283: trailing whitespace.
++    require(parsed.port != 443, "Canonical origin must omit the default HTTPS port")
+deliveries/G7/preparation/tools/g7-evidence.py:284: trailing whitespace.
++    require(parsed.hostname != "localhost" and not parsed.hostname.endswith((".localhost", ".local", ".invalid")), "Public target origin required")
+deliveries/G7/preparation/tools/g7-evidence.py:285: trailing whitespace.
++    try:
+deliveries/G7/preparation/tools/g7-evidence.py:286: trailing whitespace.
++        address = ipaddress.ip_address(parsed.hostname)
+deliveries/G7/preparation/tools/g7-evidence.py:287: trailing whitespace.
++    except ValueError:
+deliveries/G7/preparation/tools/g7-evidence.py:288: trailing whitespace.
++        address = None
+deliveries/G7/preparation/tools/g7-evidence.py:289: trailing whitespace.
++    require(address is None or address.is_global, "Public target origin required")
+deliveries/G7/preparation/tools/g7-evidence.py:290: trailing whitespace.
++    deployed = timestamp(binding.get("deployedAt"), now)
+deliveries/G7/preparation/tools/g7-evidence.py:291: trailing whitespace.
++    owner = load_json(verify_artifact(root, binding.get("ownerAuthorizationReference")))
+deliveries/G7/preparation/tools/g7-evidence.py:292: trailing whitespace.
++    require(owner.get("authorizationId") == "G7-OWNER-AUTH-20261006" and owner.get("deploymentAuthorized") is True
+deliveries/G7/preparation/tools/g7-evidence.py:293: trailing whitespace.
++            and owner.get("g7Status") == "AUTHORIZED / PREPARATION" and owner.get("acceptanceClaim") is False
+deliveries/G7/preparation/tools/g7-evidence.py:294: trailing whitespace.
++            and actual(owner.get("ownerInstruction")),
+deliveries/G7/preparation/tools/g7-evidence.py:295: trailing whitespace.
++            "Reference does not record the actual continuing owner authorization")
+deliveries/G7/preparation/tools/g7-evidence.py:296: trailing whitespace.
++    require(dt.date.fromisoformat(owner["date"]) <= deployed.date(), "Deployment precedes owner authorization")
+deliveries/G7/preparation/tools/g7-evidence.py:297: trailing whitespace.
++    successor = load_json(verify_artifact(root, binding.get("acceptedSuccessorReference")))
+deliveries/G7/preparation/tools/g7-evidence.py:298: trailing whitespace.
++    require(successor.get("acceptance") == "ACCEPTED" and successor.get("ruling") == "RC6 SOURCE ACCEPTED"
+deliveries/G7/preparation/tools/g7-evidence.py:299: trailing whitespace.
++            and successor.get("authority") == "Parent Codex" and successor.get("rulingId") in ("RC6-R1", "RC6-R2"),
+deliveries/G7/preparation/tools/g7-evidence.py:300: trailing whitespace.
++            "Reference must be a Parent accepted-successor decision")
+deliveries/G7/preparation/tools/g7-evidence.py:301: trailing whitespace.
++    require(timestamp(successor.get("acceptedAt"), now) <= deployed, "Deployment precedes successor acceptance")
+deliveries/G7/preparation/tools/g7-evidence.py:302: trailing whitespace.
++    for key in CANDIDATE_IDENTITY:
+deliveries/G7/preparation/tools/g7-evidence.py:303: trailing whitespace.
++        require(successor.get(key) == identity[key], f"Accepted successor mismatch: {key}")
+deliveries/G7/preparation/tools/g7-evidence.py:304: trailing whitespace.
++    return {key: binding[key] for key in IDENTITY}, binding
+deliveries/G7/preparation/tools/g7-evidence.py:305: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:306: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:307: trailing whitespace.
++def execution_window(item, earliest, latest, now):
+deliveries/G7/preparation/tools/g7-evidence.py:308: trailing whitespace.
++    started = timestamp(item.get("startedAt"), now)
+deliveries/G7/preparation/tools/g7-evidence.py:309: trailing whitespace.
++    completed = timestamp(item.get("completedAt"), now)
+deliveries/G7/preparation/tools/g7-evidence.py:310: trailing whitespace.
++    require(earliest <= started <= completed <= latest, "Executed evidence timestamps conflict with receipt/deployment window")
+deliveries/G7/preparation/tools/g7-evidence.py:311: trailing whitespace.
++    return started, completed
+deliveries/G7/preparation/tools/g7-evidence.py:312: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:313: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:314: trailing whitespace.
++def validate_execution(root, item, earliest, latest, now):
+deliveries/G7/preparation/tools/g7-evidence.py:315: trailing whitespace.
++    execution_window(item, earliest, latest, now)
+deliveries/G7/preparation/tools/g7-evidence.py:316: trailing whitespace.
++    require(isinstance(item.get("method"), str), "Executed evidence method must describe the actual method")
+deliveries/G7/preparation/tools/g7-evidence.py:317: trailing whitespace.
++    for field in ("method", "measured", "expected"):
+deliveries/G7/preparation/tools/g7-evidence.py:318: trailing whitespace.
++        require(actual(item.get(field)), f"Executed evidence missing actual {field}")
+deliveries/G7/preparation/tools/g7-evidence.py:319: trailing whitespace.
++    artifacts(root, item.get("artifactHashes"))
+deliveries/G7/preparation/tools/g7-evidence.py:320: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:321: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:322: trailing whitespace.
++def number(value, low=None, high=None):
+deliveries/G7/preparation/tools/g7-evidence.py:323: trailing whitespace.
++    return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) and (low is None or value >= low) and (high is None or value <= high)
+deliveries/G7/preparation/tools/g7-evidence.py:324: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:325: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:326: trailing whitespace.
++def validate_manual(root, session, earliest, latest, now):
+deliveries/G7/preparation/tools/g7-evidence.py:327: trailing whitespace.
++    require(session.get("evidenceCategory") == "ACTUAL PHYSICAL OR ASSISTIVE SESSION", "Manual PASS needs an actual physical/assistive category")
+deliveries/G7/preparation/tools/g7-evidence.py:328: trailing whitespace.
++    validate_execution(root, session, earliest, latest, now)
+deliveries/G7/preparation/tools/g7-evidence.py:329: trailing whitespace.
++    for field in ("deviceModel", "os", "browserOrAssistiveToolVersion", "operator", "viewportDprNetworkCache"):
+deliveries/G7/preparation/tools/g7-evidence.py:330: trailing whitespace.
++        require(actual(session.get(field)), f"Manual session missing {field}")
+deliveries/G7/preparation/tools/g7-evidence.py:331: trailing whitespace.
++        if field != "viewportDprNetworkCache":
+deliveries/G7/preparation/tools/g7-evidence.py:332: trailing whitespace.
++            require(isinstance(session[field], str), f"Manual identity {field} must be a string")
+deliveries/G7/preparation/tools/g7-evidence.py:333: trailing whitespace.
++    ident = session["id"]
+deliveries/G7/preparation/tools/g7-evidence.py:334: trailing whitespace.
++    if ident in ("MD-01", "MD-02", "MD-06"):
+deliveries/G7/preparation/tools/g7-evidence.py:335: trailing whitespace.
++        require(session.get("physicalDevice") is True, "Physical sessions require an actual physical-device claim")
+deliveries/G7/preparation/tools/g7-evidence.py:336: trailing whitespace.
++    if ident == "MD-01":
+deliveries/G7/preparation/tools/g7-evidence.py:337: trailing whitespace.
++        require(session.get("platform") in ("iOS", "iPadOS") and session.get("browser") == "Safari", "MD-01 requires physical iOS/iPadOS Safari")
+deliveries/G7/preparation/tools/g7-evidence.py:338: trailing whitespace.
++    elif ident == "MD-02":
+deliveries/G7/preparation/tools/g7-evidence.py:339: trailing whitespace.
++        require(session.get("platform") == "Android" and session.get("browser") == "Chrome", "MD-02 requires physical Android Chrome")
+deliveries/G7/preparation/tools/g7-evidence.py:340: trailing whitespace.
++    elif ident == "MD-03":
+deliveries/G7/preparation/tools/g7-evidence.py:341: trailing whitespace.
++        require(session.get("platform") == "Windows" and session.get("assistiveTool") == "NVDA" and actual(session.get("browser")), "MD-03 requires actual Windows NVDA/browser identity")
+deliveries/G7/preparation/tools/g7-evidence.py:342: trailing whitespace.
++    elif ident == "MD-04":
+deliveries/G7/preparation/tools/g7-evidence.py:343: trailing whitespace.
++        require(session.get("platform") in ("macOS", "iOS", "iPadOS") and session.get("browser") == "Safari"
+deliveries/G7/preparation/tools/g7-evidence.py:344: trailing whitespace.
++                and session.get("assistiveTool") == "VoiceOver", "MD-04 requires actual Safari/VoiceOver identity")
+deliveries/G7/preparation/tools/g7-evidence.py:345: trailing whitespace.
++        if session.get("platform") != "macOS":
+deliveries/G7/preparation/tools/g7-evidence.py:346: trailing whitespace.
++            require(session.get("physicalDevice") is True, "Mobile VoiceOver needs physical device identity")
+deliveries/G7/preparation/tools/g7-evidence.py:347: trailing whitespace.
++    elif ident == "MD-05":
+deliveries/G7/preparation/tools/g7-evidence.py:348: trailing whitespace.
++        require(session.get("platform") == "Android" and session.get("assistiveTool") == "TalkBack"
+deliveries/G7/preparation/tools/g7-evidence.py:349: trailing whitespace.
++                and session.get("physicalDevice") is True and actual(session.get("browser")), "MD-05 requires actual physical Android TalkBack/browser identity")
+deliveries/G7/preparation/tools/g7-evidence.py:350: trailing whitespace.
++    elif ident == "MD-06":
+deliveries/G7/preparation/tools/g7-evidence.py:351: trailing whitespace.
++        require(session.get("platform") in ("Android", "iOS", "iPadOS") and actual(session.get("browser")), "MD-06 requires a physical mobile platform/browser")
+deliveries/G7/preparation/tools/g7-evidence.py:352: trailing whitespace.
++    measured = session.get("rawMeasurements")
+deliveries/G7/preparation/tools/g7-evidence.py:353: trailing whitespace.
++    require(isinstance(measured, dict), "Actual manual measurement inventory required")
+deliveries/G7/preparation/tools/g7-evidence.py:354: trailing whitespace.
++    if session["status"] != "PASS":
+deliveries/G7/preparation/tools/g7-evidence.py:355: trailing whitespace.
++        return
+deliveries/G7/preparation/tools/g7-evidence.py:356: trailing whitespace.
++    for key in MANUAL_MEASUREMENTS[session["id"]]:
+deliveries/G7/preparation/tools/g7-evidence.py:357: trailing whitespace.
++        require(actual(measured.get(key)), f"Actual manual measurement missing {key}")
+deliveries/G7/preparation/tools/g7-evidence.py:358: trailing whitespace.
++    if session["id"] == "MD-01":
+deliveries/G7/preparation/tools/g7-evidence.py:359: trailing whitespace.
++        require(isinstance(measured["coldLoads"], list) and len(measured["coldLoads"]) == 5
+deliveries/G7/preparation/tools/g7-evidence.py:360: trailing whitespace.
++                and all(number(v, 0) for v in measured["coldLoads"]), "MD-01 requires five measured cold-load durations in milliseconds")
+deliveries/G7/preparation/tools/g7-evidence.py:361: trailing whitespace.
++    if session["id"] == "MD-06":
+deliveries/G7/preparation/tools/g7-evidence.py:362: trailing whitespace.
++        started, completed = execution_window(session, earliest, latest, now)
+deliveries/G7/preparation/tools/g7-evidence.py:363: trailing whitespace.
++        require((completed - started).total_seconds() >= 600, "Thermal session must last at least 600 seconds")
+deliveries/G7/preparation/tools/g7-evidence.py:364: trailing whitespace.
++        for key in ("batteryStartPercent", "batteryEndPercent"):
+deliveries/G7/preparation/tools/g7-evidence.py:365: trailing whitespace.
++            require(number(measured[key], 0, 100), "Invalid thermal battery measurement")
+deliveries/G7/preparation/tools/g7-evidence.py:366: trailing whitespace.
++        for key in ("temperatureStartC", "temperatureEndC"):
+deliveries/G7/preparation/tools/g7-evidence.py:367: trailing whitespace.
++            require(number(measured[key]), "Invalid thermal temperature measurement")
+deliveries/G7/preparation/tools/g7-evidence.py:368: trailing whitespace.
++        require(isinstance(measured["chargerConnected"], bool) and type(measured["crashes"]) is int and measured["crashes"] >= 0
+deliveries/G7/preparation/tools/g7-evidence.py:369: trailing whitespace.
++                and measured["qualityTier"] in ("high", "medium", "low", "static"), "Invalid thermal charger/crashes/quality tier")
+deliveries/G7/preparation/tools/g7-evidence.py:370: trailing whitespace.
++        pacing = measured["framePacing"]
+deliveries/G7/preparation/tools/g7-evidence.py:371: trailing whitespace.
++        require(isinstance(pacing, list) and len(pacing) == 5, "Thermal pacing requires 2/4/6/8/10-minute samples")
+deliveries/G7/preparation/tools/g7-evidence.py:372: trailing whitespace.
++        require([row.get("elapsedSeconds") for row in pacing if isinstance(row, dict)] == [120, 240, 360, 480, 600], "Thermal pacing interval inventory mismatch")
+deliveries/G7/preparation/tools/g7-evidence.py:373: trailing whitespace.
++        for row in pacing:
+deliveries/G7/preparation/tools/g7-evidence.py:374: trailing whitespace.
++            require(isinstance(row.get("frameTimesMs"), list) and bool(row["frameTimesMs"])
+deliveries/G7/preparation/tools/g7-evidence.py:375: trailing whitespace.
++                    and all(number(v, 0) for v in row["frameTimesMs"]), "Raw thermal frame-time samples required")
+deliveries/G7/preparation/tools/g7-evidence.py:376: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:377: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:378: trailing whitespace.
++def blank_ledger():
+deliveries/G7/preparation/tools/g7-evidence.py:379: trailing whitespace.
++    requirements = [{"id": ident, "name": name, "status": "NOT RUN", "evidenceCategory": "LIVE PRODUCTION REQUIRED",
+deliveries/G7/preparation/tools/g7-evidence.py:380: trailing whitespace.
++                     "observations": [{"criterion": criterion, "status": "NOT RUN", "method": None, "measured": None,
+deliveries/G7/preparation/tools/g7-evidence.py:381: trailing whitespace.
++                                       "expected": None, "startedAt": None, "completedAt": None, "artifactHashes": [],
+deliveries/G7/preparation/tools/g7-evidence.py:382: trailing whitespace.
++                                       "defects": [], "limitations": []} for criterion in criteria]} for ident, name, criteria in CRITERIA]
+deliveries/G7/preparation/tools/g7-evidence.py:383: trailing whitespace.
++    manual = [{"id": ident, "name": name, "status": "NOT RUN", "requiredActualSession": details,
+deliveries/G7/preparation/tools/g7-evidence.py:384: trailing whitespace.
++               **{key: None for key in ("deviceModel", "os", "browserOrAssistiveToolVersion", "operator", "viewportDprNetworkCache",
+deliveries/G7/preparation/tools/g7-evidence.py:385: trailing whitespace.
++                                        "method", "measured", "expected", "startedAt", "completedAt", "rawMeasurements")},
+deliveries/G7/preparation/tools/g7-evidence.py:386: trailing whitespace.
++               "artifactHashes": [], "defects": []} for ident, name, details in MANUAL]
+deliveries/G7/preparation/tools/g7-evidence.py:387: trailing whitespace.
++    return requirements, manual
+deliveries/G7/preparation/tools/g7-evidence.py:388: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:389: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:390: trailing whitespace.
++def build_ledger(root, manifest_path=None, authorization_path=None, receipt_paths=(), operator="NOT ASSIGNED", now=None):
+deliveries/G7/preparation/tools/g7-evidence.py:391: trailing whitespace.
++    now = now or dt.datetime.now(dt.timezone.utc)
+deliveries/G7/preparation/tools/g7-evidence.py:392: trailing whitespace.
++    identity = dict.fromkeys(IDENTITY)
+deliveries/G7/preparation/tools/g7-evidence.py:393: trailing whitespace.
++    if manifest_path:
+deliveries/G7/preparation/tools/g7-evidence.py:394: trailing whitespace.
++        identity.update(validate_manifest(root, manifest_path))
+deliveries/G7/preparation/tools/g7-evidence.py:395: trailing whitespace.
++    binding = None
+deliveries/G7/preparation/tools/g7-evidence.py:396: trailing whitespace.
++    if authorization_path:
+deliveries/G7/preparation/tools/g7-evidence.py:397: trailing whitespace.
++        require(manifest_path is not None, "Operational binding requires a manifest")
+deliveries/G7/preparation/tools/g7-evidence.py:398: trailing whitespace.
++        identity, binding = validate_binding(root, authorization_path, identity, now)
+deliveries/G7/preparation/tools/g7-evidence.py:399: trailing whitespace.
++    requirements, manual = blank_ledger()
+deliveries/G7/preparation/tools/g7-evidence.py:400: trailing whitespace.
++    supplied, seen_criteria, seen_sessions = [], set(), set()
+deliveries/G7/preparation/tools/g7-evidence.py:401: trailing whitespace.
++    for receipt_path in receipt_paths:
+deliveries/G7/preparation/tools/g7-evidence.py:402: trailing whitespace.
++        receipt = load_json(receipt_path)
+deliveries/G7/preparation/tools/g7-evidence.py:403: trailing whitespace.
++        incoming, sessions = receipt.get("requirements", []), receipt.get("physicalAndAssistiveSessions", [])
+deliveries/G7/preparation/tools/g7-evidence.py:404: trailing whitespace.
++        require(isinstance(incoming, list) and isinstance(sessions, list), "Receipt inventories must be arrays")
+deliveries/G7/preparation/tools/g7-evidence.py:405: trailing whitespace.
++        executed = any(item.get("status") in ("PASS", "FAIL") or any(obs.get("status") in ("PASS", "FAIL") for obs in item.get("observations", [])) for item in incoming + sessions)
+deliveries/G7/preparation/tools/g7-evidence.py:406: trailing whitespace.
++        earliest = latest = None
+deliveries/G7/preparation/tools/g7-evidence.py:407: trailing whitespace.
++        if executed:
+deliveries/G7/preparation/tools/g7-evidence.py:408: trailing whitespace.
++            require(binding is not None, "Executed receipts require a validated manifest and separate operational binding")
+deliveries/G7/preparation/tools/g7-evidence.py:409: trailing whitespace.
++            require(not any(receipt.get(key) for key in ("auditFixture", "synthetic", "localFixture")), "Synthetic fixtures cannot establish production proof")
+deliveries/G7/preparation/tools/g7-evidence.py:410: trailing whitespace.
++            for key in IDENTITY:
+deliveries/G7/preparation/tools/g7-evidence.py:411: trailing whitespace.
++                require(receipt.get(key) == identity[key], f"Receipt identity mismatch: {key}")
+deliveries/G7/preparation/tools/g7-evidence.py:412: trailing whitespace.
++            earliest, latest = timestamp(receipt.get("executedAt"), now), timestamp(receipt.get("completedAt"), now)
+deliveries/G7/preparation/tools/g7-evidence.py:413: trailing whitespace.
++            require(timestamp(identity["deployedAt"], now) <= earliest <= latest, "Receipt execution must follow deployment")
+deliveries/G7/preparation/tools/g7-evidence.py:414: trailing whitespace.
++        seen_requirements = set()
+deliveries/G7/preparation/tools/g7-evidence.py:415: trailing whitespace.
++        for item in incoming:
+deliveries/G7/preparation/tools/g7-evidence.py:416: trailing whitespace.
++            ident = item.get("id")
+deliveries/G7/preparation/tools/g7-evidence.py:417: trailing whitespace.
++            require(type(ident) is int and ident in range(1, 11) and ident not in seen_requirements, "Unknown/duplicate G7 requirement")
+deliveries/G7/preparation/tools/g7-evidence.py:418: trailing whitespace.
++            seen_requirements.add(ident)
+deliveries/G7/preparation/tools/g7-evidence.py:419: trailing whitespace.
++            target = requirements[ident - 1]
+deliveries/G7/preparation/tools/g7-evidence.py:420: trailing whitespace.
++            require(item.get("name", target["name"]) == target["name"], "Conflicting requirement name")
+deliveries/G7/preparation/tools/g7-evidence.py:421: trailing whitespace.
++            require(item.get("status") in STATUSES, "Unsupported requirement status")
+deliveries/G7/preparation/tools/g7-evidence.py:422: trailing whitespace.
++            observations = item.get("observations", [])
+deliveries/G7/preparation/tools/g7-evidence.py:423: trailing whitespace.
++            require(isinstance(observations, list), "Subcriteria inventory must be an array")
+deliveries/G7/preparation/tools/g7-evidence.py:424: trailing whitespace.
++            required = {row["criterion"] for row in target["observations"]}
+deliveries/G7/preparation/tools/g7-evidence.py:425: trailing whitespace.
++            found = set()
+deliveries/G7/preparation/tools/g7-evidence.py:426: trailing whitespace.
++            for obs in observations:
+deliveries/G7/preparation/tools/g7-evidence.py:427: trailing whitespace.
++                criterion = obs.get("criterion")
+deliveries/G7/preparation/tools/g7-evidence.py:428: trailing whitespace.
++                require(criterion in required and criterion not in found, "Unknown/duplicate subcriterion")
+deliveries/G7/preparation/tools/g7-evidence.py:429: trailing whitespace.
++                found.add(criterion)
+deliveries/G7/preparation/tools/g7-evidence.py:430: trailing whitespace.
++                require(obs.get("status") in STATUSES, "Unsupported subcriterion status")
+deliveries/G7/preparation/tools/g7-evidence.py:431: trailing whitespace.
++                if obs["status"] == "NOT RUN":
+deliveries/G7/preparation/tools/g7-evidence.py:432: trailing whitespace.
++                    continue
+deliveries/G7/preparation/tools/g7-evidence.py:433: trailing whitespace.
++                require((ident, criterion) not in seen_criteria, "Conflicting/repeated executed subcriterion; use a fresh ledger for a new run")
+deliveries/G7/preparation/tools/g7-evidence.py:434: trailing whitespace.
++                seen_criteria.add((ident, criterion))
+deliveries/G7/preparation/tools/g7-evidence.py:435: trailing whitespace.
++                category = obs.get("evidenceCategory", receipt.get("evidenceCategory"))
+deliveries/G7/preparation/tools/g7-evidence.py:436: trailing whitespace.
++                require(category == receipt.get("evidenceCategory"), "Observation category conflicts with receipt category")
+deliveries/G7/preparation/tools/g7-evidence.py:437: trailing whitespace.
++                require(category in ("LIVE PRODUCTION", "HTTP ONLY", "LIVE BROWSER AUTOMATED"), "Synthetic/local/emulated categories cannot supply live observations")
+deliveries/G7/preparation/tools/g7-evidence.py:438: trailing whitespace.
++                validate_execution(root, obs, earliest, latest, now)
+deliveries/G7/preparation/tools/g7-evidence.py:439: trailing whitespace.
++                matching = next(row for row in target["observations"] if row["criterion"] == criterion)
+deliveries/G7/preparation/tools/g7-evidence.py:440: trailing whitespace.
++                matching.update({key: value for key, value in obs.items() if key not in ("criterion", "evidenceCategory")})
+deliveries/G7/preparation/tools/g7-evidence.py:441: trailing whitespace.
++                matching["evidenceCategory"] = category
+deliveries/G7/preparation/tools/g7-evidence.py:442: trailing whitespace.
++            if item["status"] == "PASS":
+deliveries/G7/preparation/tools/g7-evidence.py:443: trailing whitespace.
++                require(found == required and all(obs["status"] == "PASS" for obs in observations), "Complete requirement PASS requires exact complete PASS subcriteria inventory")
+deliveries/G7/preparation/tools/g7-evidence.py:444: trailing whitespace.
++                require(all(obs.get("evidenceCategory", receipt.get("evidenceCategory")) == "LIVE PRODUCTION" for obs in observations), "Surrogate/HTTP/browser-only observations cannot mark a complete live requirement PASS")
+deliveries/G7/preparation/tools/g7-evidence.py:445: trailing whitespace.
++            if item["status"] == "FAIL":
+deliveries/G7/preparation/tools/g7-evidence.py:446: trailing whitespace.
++                require(any(obs["status"] == "FAIL" for obs in observations), "Requirement FAIL needs a failed executed subcriterion")
+deliveries/G7/preparation/tools/g7-evidence.py:447: trailing whitespace.
++            target["status"] = "FAIL" if any(row["status"] == "FAIL" for row in target["observations"]) else "PASS" if all(row["status"] == "PASS" and row.get("evidenceCategory") == "LIVE PRODUCTION" for row in target["observations"]) else "NOT RUN"
+deliveries/G7/preparation/tools/g7-evidence.py:448: trailing whitespace.
++        for session in sessions:
+deliveries/G7/preparation/tools/g7-evidence.py:449: trailing whitespace.
++            ident = session.get("id")
+deliveries/G7/preparation/tools/g7-evidence.py:450: trailing whitespace.
++            target = next((row for row in manual if row["id"] == ident), None)
+deliveries/G7/preparation/tools/g7-evidence.py:451: trailing whitespace.
++            require(target is not None and ident not in seen_sessions, "Unknown/duplicate manual session")
+deliveries/G7/preparation/tools/g7-evidence.py:452: trailing whitespace.
++            seen_sessions.add(ident)
+deliveries/G7/preparation/tools/g7-evidence.py:453: trailing whitespace.
++            require(session.get("name", target["name"]) == target["name"] and session.get("status") in STATUSES, "Conflicting manual identity/status")
+deliveries/G7/preparation/tools/g7-evidence.py:454: trailing whitespace.
++            if session["status"] != "NOT RUN":
+deliveries/G7/preparation/tools/g7-evidence.py:455: trailing whitespace.
++                require(receipt.get("evidenceCategory") == "ACTUAL PHYSICAL OR ASSISTIVE SESSION", "Manual receipt must classify actual sessions")
+deliveries/G7/preparation/tools/g7-evidence.py:456: trailing whitespace.
++                normalized = {**session, "evidenceCategory": session.get("evidenceCategory", receipt["evidenceCategory"])}
+deliveries/G7/preparation/tools/g7-evidence.py:457: trailing whitespace.
++                validate_manual(root, normalized, earliest, latest, now)
+deliveries/G7/preparation/tools/g7-evidence.py:458: trailing whitespace.
++                target.update({key: value for key, value in normalized.items() if key not in ("id", "name", "requiredActualSession")})
+deliveries/G7/preparation/tools/g7-evidence.py:459: trailing whitespace.
++        supplied.append({"path": str(receipt_path), "sha256": hash_artifact(receipt_path, "lf"), "hashMode": "lf"})
+deliveries/G7/preparation/tools/g7-evidence.py:460: trailing whitespace.
++    all_items = requirements + manual
+deliveries/G7/preparation/tools/g7-evidence.py:461: trailing whitespace.
++    return {"schemaVersion": 2, "createdAt": now.isoformat(), **identity, "operator": operator,
+deliveries/G7/preparation/tools/g7-evidence.py:462: trailing whitespace.
++            "evidenceCategory": "MAKER EVIDENCE LEDGER", "validationScope": "STRUCTURE, IDENTITY AND ARTIFACT HASHES ONLY",
+deliveries/G7/preparation/tools/g7-evidence.py:463: trailing whitespace.
++            "operationalBinding": {"path": str(authorization_path), "sha256": hash_artifact(authorization_path, "lf"), "hashMode": "lf"} if binding else None,
+deliveries/G7/preparation/tools/g7-evidence.py:464: trailing whitespace.
++            "requirements": requirements, "physicalAndAssistiveSessions": manual, "suppliedReceipts": supplied,
+deliveries/G7/preparation/tools/g7-evidence.py:465: trailing whitespace.
++            "overallStatus": "FAIL" if any(item["status"] == "FAIL" for item in all_items) else "PASS" if all(item["status"] == "PASS" for item in all_items) else "NOT RUN",
+deliveries/G7/preparation/tools/g7-evidence.py:466: trailing whitespace.
++            "heapGpuLeakAbsence": "UNKNOWN", "independentReview": "NOT RUN", "acceptanceClaim": False,
+deliveries/G7/preparation/tools/g7-evidence.py:467: trailing whitespace.
++            "governance": "Owner-authorized preparation. Independent review and Parent adjudication remain separate; this ledger cannot accept a release or gate.",
+deliveries/G7/preparation/tools/g7-evidence.py:468: trailing whitespace.
++            "limitations": ["Structural validation and artifact hashes do not attest truth, actual execution, authority authenticity or operator claims; independent review and Parent adjudication are required.",
+deliveries/G7/preparation/tools/g7-evidence.py:469: trailing whitespace.
++                            "HTTP/browser-only observations do not establish complete live production or manual proof.",
+deliveries/G7/preparation/tools/g7-evidence.py:470: trailing whitespace.
++                            "Fixtures, local SQL, viewport emulation and axe do not prove real services, hardware, assistive speech or thermal sessions.",
+deliveries/G7/preparation/tools/g7-evidence.py:471: trailing whitespace.
++                            "Process liveness does not prove backend readiness. Canvas removal does not establish heap/GPU leak absence."]}
+deliveries/G7/preparation/tools/g7-evidence.py:472: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:473: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:474: trailing whitespace.
++def main():
+deliveries/G7/preparation/tools/g7-evidence.py:475: trailing whitespace.
++    parser = argparse.ArgumentParser(description=__doc__)
+deliveries/G7/preparation/tools/g7-evidence.py:476: trailing whitespace.
++    parser.add_argument("--repository", type=Path, default=Path(__file__).resolve().parents[4])
+deliveries/G7/preparation/tools/g7-evidence.py:477: trailing whitespace.
++    parser.add_argument("--output", required=True)
+deliveries/G7/preparation/tools/g7-evidence.py:478: trailing whitespace.
++    parser.add_argument("--manifest", type=Path)
+deliveries/G7/preparation/tools/g7-evidence.py:479: trailing whitespace.
++    parser.add_argument("--authorization", type=Path, help="Separate operational binding with hash-verified authorization/accepted-successor references")
+deliveries/G7/preparation/tools/g7-evidence.py:480: trailing whitespace.
++    parser.add_argument("--receipts", type=Path, nargs="*", default=[])
+deliveries/G7/preparation/tools/g7-evidence.py:481: trailing whitespace.
++    parser.add_argument("--operator", default="NOT ASSIGNED")
+deliveries/G7/preparation/tools/g7-evidence.py:482: trailing whitespace.
++    args = parser.parse_args()
+deliveries/G7/preparation/tools/g7-evidence.py:483: trailing whitespace.
++    root_input = args.repository.absolute()
+deliveries/G7/preparation/tools/g7-evidence.py:484: trailing whitespace.
++    root = root_input.resolve(strict=True)
+deliveries/G7/preparation/tools/g7-evidence.py:485: trailing whitespace.
++    require(path_key(root_input) == path_key(root) and root.is_dir()
+deliveries/G7/preparation/tools/g7-evidence.py:486: trailing whitespace.
++            and not root_input.is_symlink() and not is_junction(root_input),
+deliveries/G7/preparation/tools/g7-evidence.py:487: trailing whitespace.
++            "Repository root must be a real directory without filesystem aliases")
+deliveries/G7/preparation/tools/g7-evidence.py:488: trailing whitespace.
++    target, _ = validate_output_path(root, args.output)
+deliveries/G7/preparation/tools/g7-evidence.py:489: trailing whitespace.
++    inputs = [p.resolve(strict=True) for p in [args.manifest, args.authorization, *args.receipts] if p]
+deliveries/G7/preparation/tools/g7-evidence.py:490: trailing whitespace.
++    input_keys = {path_key(path) for path in inputs}
+deliveries/G7/preparation/tools/g7-evidence.py:491: trailing whitespace.
++    require(path_key(target) not in input_keys, "Receipt output cannot replace an input")
+deliveries/G7/preparation/tools/g7-evidence.py:492: trailing whitespace.
++    ledger = build_ledger(root, args.manifest, args.authorization, args.receipts, args.operator)
+deliveries/G7/preparation/tools/g7-evidence.py:493: trailing whitespace.
++    write_ledger_exclusive(root, args.output, ledger, inputs)
+deliveries/G7/preparation/tools/g7-evidence.py:494: trailing whitespace.
++    print(f"Wrote structurally validated evidence ledger: {target}; overall {ledger['overallStatus']}; independent review NOT RUN; no acceptance claim.")
+deliveries/G7/preparation/tools/g7-evidence.py:495: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:496: trailing whitespace.
++
+deliveries/G7/preparation/tools/g7-evidence.py:497: trailing whitespace.
++if __name__ == "__main__":
+deliveries/G7/preparation/tools/g7-evidence.py:498: trailing whitespace.
++    main()
+deliveries/G7/preparation/tools/test_g7_evidence.py:1: trailing whitespace.
++"""Isolated structural fixtures only. No production, physical or authority proof."""
+deliveries/G7/preparation/tools/test_g7_evidence.py:2: trailing whitespace.
++from __future__ import annotations
+deliveries/G7/preparation/tools/test_g7_evidence.py:3: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:4: trailing whitespace.
++import copy
+deliveries/G7/preparation/tools/test_g7_evidence.py:5: trailing whitespace.
++import datetime as dt
+deliveries/G7/preparation/tools/test_g7_evidence.py:6: trailing whitespace.
++import importlib.util
+deliveries/G7/preparation/tools/test_g7_evidence.py:7: trailing whitespace.
++import json
+deliveries/G7/preparation/tools/test_g7_evidence.py:8: trailing whitespace.
++import os
+deliveries/G7/preparation/tools/test_g7_evidence.py:9: trailing whitespace.
++from pathlib import Path
+deliveries/G7/preparation/tools/test_g7_evidence.py:10: trailing whitespace.
++import subprocess
+deliveries/G7/preparation/tools/test_g7_evidence.py:11: trailing whitespace.
++import sys
+deliveries/G7/preparation/tools/test_g7_evidence.py:12: trailing whitespace.
++import tempfile
+deliveries/G7/preparation/tools/test_g7_evidence.py:13: trailing whitespace.
++import unittest
+deliveries/G7/preparation/tools/test_g7_evidence.py:14: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:15: trailing whitespace.
++TOOL = Path(__file__).with_name("g7-evidence.py")
+deliveries/G7/preparation/tools/test_g7_evidence.py:16: trailing whitespace.
++SPEC = importlib.util.spec_from_file_location("g7_evidence", TOOL)
+deliveries/G7/preparation/tools/test_g7_evidence.py:17: trailing whitespace.
++G7 = importlib.util.module_from_spec(SPEC)
+deliveries/G7/preparation/tools/test_g7_evidence.py:18: trailing whitespace.
++SPEC.loader.exec_module(G7)
+deliveries/G7/preparation/tools/test_g7_evidence.py:19: trailing whitespace.
++NOW = dt.datetime(2026, 10, 7, 12, tzinfo=dt.timezone.utc)
+deliveries/G7/preparation/tools/test_g7_evidence.py:20: trailing whitespace.
++LABEL = "ISOLATED STRUCTURAL TEST FIXTURE; NOT LIVE EVIDENCE OR AN ACTUAL RULING"
+deliveries/G7/preparation/tools/test_g7_evidence.py:21: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:22: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:23: trailing whitespace.
++class LedgerTests(unittest.TestCase):
+deliveries/G7/preparation/tools/test_g7_evidence.py:24: trailing whitespace.
++    def setUp(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:25: trailing whitespace.
++        self.temp = tempfile.TemporaryDirectory(prefix="pre-g7-05-isolated-")
+deliveries/G7/preparation/tools/test_g7_evidence.py:26: trailing whitespace.
++        self.addCleanup(self.temp.cleanup)
+deliveries/G7/preparation/tools/test_g7_evidence.py:27: trailing whitespace.
++        self.root = Path(self.temp.name)
+deliveries/G7/preparation/tools/test_g7_evidence.py:28: trailing whitespace.
++        self.base = self.root / "deliveries/G7/isolated-labelled-fixtures"
+deliveries/G7/preparation/tools/test_g7_evidence.py:29: trailing whitespace.
++        self.base.mkdir(parents=True)
+deliveries/G7/preparation/tools/test_g7_evidence.py:30: trailing whitespace.
++        self.raw = self.base / "NOT-LIVE-artifact.txt"
+deliveries/G7/preparation/tools/test_g7_evidence.py:31: trailing whitespace.
++        self.raw.write_text(LABEL + "\n", encoding="utf-8")
+deliveries/G7/preparation/tools/test_g7_evidence.py:32: trailing whitespace.
++        self.artifact = self.ref(self.raw)
+deliveries/G7/preparation/tools/test_g7_evidence.py:33: trailing whitespace.
++        self.candidate = {"releaseId": "v1.0.0-rc6", "sourceCommit": "1" * 40, "sourceAppTree": "2" * 40,
+deliveries/G7/preparation/tools/test_g7_evidence.py:34: trailing whitespace.
++                          "releaseBundleSha256": self.artifact["sha256"]}
+deliveries/G7/preparation/tools/test_g7_evidence.py:35: trailing whitespace.
++        source = self.save("NOT-REAL-source-binding.json", self.candidate)
+deliveries/G7/preparation/tools/test_g7_evidence.py:36: trailing whitespace.
++        self.manifest = self.save("NOT-REAL-manifest.json", {**self.candidate, "releaseBundlePath": self.artifact["path"], "sourceBinding": self.ref(source), "fixtureLabel": LABEL})
+deliveries/G7/preparation/tools/test_g7_evidence.py:37: trailing whitespace.
++        self.identity = {**self.candidate, "manifestSha256": G7.hash_artifact(self.manifest, "lf"),
+deliveries/G7/preparation/tools/test_g7_evidence.py:38: trailing whitespace.
++                         "deploymentId": "NOT-REAL-deployment", "targetOrigin": "https://structural-fixture.example.com", "deployedAt": "2026-10-07T08:00:00Z"}
+deliveries/G7/preparation/tools/test_g7_evidence.py:39: trailing whitespace.
++        self.owner = self.save("NOT-REAL-owner.json", {"authorizationId": "G7-OWNER-AUTH-20261006", "deploymentAuthorized": True,
+deliveries/G7/preparation/tools/test_g7_evidence.py:40: trailing whitespace.
++                               "g7Status": "AUTHORIZED / PREPARATION", "acceptanceClaim": False, "ownerInstruction": LABEL, "date": "2026-10-06"})
+deliveries/G7/preparation/tools/test_g7_evidence.py:41: trailing whitespace.
++        self.successor = self.save("NOT-REAL-successor.json", {**{key: self.identity[key] for key in G7.CANDIDATE_IDENTITY},
+deliveries/G7/preparation/tools/test_g7_evidence.py:42: trailing whitespace.
++                                  "acceptance": "ACCEPTED", "ruling": "RC6 SOURCE ACCEPTED", "rulingId": "RC6-R1",
+deliveries/G7/preparation/tools/test_g7_evidence.py:43: trailing whitespace.
++                                  "authority": "Parent Codex", "acceptedAt": "2026-10-07T07:00:00Z", "fixtureLabel": LABEL})
+deliveries/G7/preparation/tools/test_g7_evidence.py:44: trailing whitespace.
++        self.binding_data = {**self.identity, "status": "AUTHORIZED", "ownerAuthorizationReference": self.ref(self.owner),
+deliveries/G7/preparation/tools/test_g7_evidence.py:45: trailing whitespace.
++                             "acceptedSuccessorReference": self.ref(self.successor), "fixtureLabel": LABEL}
+deliveries/G7/preparation/tools/test_g7_evidence.py:46: trailing whitespace.
++        self.binding = self.save("NOT-REAL-binding.json", self.binding_data)
+deliveries/G7/preparation/tools/test_g7_evidence.py:47: trailing whitespace.
++        self.receipt = {**self.identity, "executedAt": "2026-10-07T09:00:00Z", "completedAt": "2026-10-07T10:00:00Z",
+deliveries/G7/preparation/tools/test_g7_evidence.py:48: trailing whitespace.
++                        "evidenceCategory": "LIVE PRODUCTION", "requirements": [self.requirement(1)], "fixtureLabel": LABEL}
+deliveries/G7/preparation/tools/test_g7_evidence.py:49: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:50: trailing whitespace.
++    def save(self, name, value):
+deliveries/G7/preparation/tools/test_g7_evidence.py:51: trailing whitespace.
++        path = self.base / name
+deliveries/G7/preparation/tools/test_g7_evidence.py:52: trailing whitespace.
++        G7.write(path, value)
+deliveries/G7/preparation/tools/test_g7_evidence.py:53: trailing whitespace.
++        return path
+deliveries/G7/preparation/tools/test_g7_evidence.py:54: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:55: trailing whitespace.
++    def ref(self, path):
+deliveries/G7/preparation/tools/test_g7_evidence.py:56: trailing whitespace.
++        return {"path": path.relative_to(self.root).as_posix(), "sha256": G7.hash_artifact(path, "raw"), "hashMode": "raw"}
+deliveries/G7/preparation/tools/test_g7_evidence.py:57: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:58: trailing whitespace.
++    def execution(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:59: trailing whitespace.
++        return {"status": "PASS", "method": LABEL, "measured": {"fixtureValue": 1}, "expected": LABEL,
+deliveries/G7/preparation/tools/test_g7_evidence.py:60: trailing whitespace.
++                "startedAt": "2026-10-07T09:01:00Z", "completedAt": "2026-10-07T09:11:00Z", "artifactHashes": [copy.deepcopy(self.artifact)]}
+deliveries/G7/preparation/tools/test_g7_evidence.py:61: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:62: trailing whitespace.
++    def requirement(self, ident):
+deliveries/G7/preparation/tools/test_g7_evidence.py:63: trailing whitespace.
++        number, name, criteria = G7.CRITERIA[ident - 1]
+deliveries/G7/preparation/tools/test_g7_evidence.py:64: trailing whitespace.
++        return {"id": number, "name": name, "status": "PASS", "observations": [{"criterion": key, **self.execution()} for key in criteria]}
+deliveries/G7/preparation/tools/test_g7_evidence.py:65: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:66: trailing whitespace.
++    def session(self, ident):
+deliveries/G7/preparation/tools/test_g7_evidence.py:67: trailing whitespace.
++        name = next(name for key, name, _ in G7.MANUAL if key == ident)
+deliveries/G7/preparation/tools/test_g7_evidence.py:68: trailing whitespace.
++        measured = {key: LABEL for key in G7.MANUAL_MEASUREMENTS[ident]}
+deliveries/G7/preparation/tools/test_g7_evidence.py:69: trailing whitespace.
++        if ident == "MD-01":
+deliveries/G7/preparation/tools/test_g7_evidence.py:70: trailing whitespace.
++            measured["coldLoads"] = [1, 2, 3, 4, 5]
+deliveries/G7/preparation/tools/test_g7_evidence.py:71: trailing whitespace.
++        if ident == "MD-06":
+deliveries/G7/preparation/tools/test_g7_evidence.py:72: trailing whitespace.
++            measured = {"batteryStartPercent": 90, "batteryEndPercent": 85, "temperatureStartC": 30,
+deliveries/G7/preparation/tools/test_g7_evidence.py:73: trailing whitespace.
++                        "temperatureEndC": 35, "chargerConnected": False, "network": LABEL, "qualityTier": "low",
+deliveries/G7/preparation/tools/test_g7_evidence.py:74: trailing whitespace.
++                        "framePacing": [{"elapsedSeconds": seconds, "frameTimesMs": [16.7, 17.1]} for seconds in (120, 240, 360, 480, 600)],
+deliveries/G7/preparation/tools/test_g7_evidence.py:75: trailing whitespace.
++                        "crashes": 0, "recoveryObservations": LABEL}
+deliveries/G7/preparation/tools/test_g7_evidence.py:76: trailing whitespace.
++        identity = {
+deliveries/G7/preparation/tools/test_g7_evidence.py:77: trailing whitespace.
++            "MD-01": {"platform": "iOS", "browser": "Safari", "physicalDevice": True},
+deliveries/G7/preparation/tools/test_g7_evidence.py:78: trailing whitespace.
++            "MD-02": {"platform": "Android", "browser": "Chrome", "physicalDevice": True},
+deliveries/G7/preparation/tools/test_g7_evidence.py:79: trailing whitespace.
++            "MD-03": {"platform": "Windows", "browser": "Firefox", "assistiveTool": "NVDA"},
+deliveries/G7/preparation/tools/test_g7_evidence.py:80: trailing whitespace.
++            "MD-04": {"platform": "macOS", "browser": "Safari", "assistiveTool": "VoiceOver"},
+deliveries/G7/preparation/tools/test_g7_evidence.py:81: trailing whitespace.
++            "MD-05": {"platform": "Android", "browser": "Chrome", "assistiveTool": "TalkBack", "physicalDevice": True},
+deliveries/G7/preparation/tools/test_g7_evidence.py:82: trailing whitespace.
++            "MD-06": {"platform": "Android", "browser": "Chrome", "physicalDevice": True},
+deliveries/G7/preparation/tools/test_g7_evidence.py:83: trailing whitespace.
++        }[ident]
+deliveries/G7/preparation/tools/test_g7_evidence.py:84: trailing whitespace.
++        return {"id": ident, "name": name, **self.execution(), **identity, "deviceModel": LABEL, "os": LABEL,
+deliveries/G7/preparation/tools/test_g7_evidence.py:85: trailing whitespace.
++                "browserOrAssistiveToolVersion": LABEL, "operator": LABEL, "viewportDprNetworkCache": LABEL,
+deliveries/G7/preparation/tools/test_g7_evidence.py:86: trailing whitespace.
++                "rawMeasurements": measured, "evidenceCategory": "ACTUAL PHYSICAL OR ASSISTIVE SESSION"}
+deliveries/G7/preparation/tools/test_g7_evidence.py:87: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:88: trailing whitespace.
++    def run_receipt(self, receipt=None, manifest=True, binding=True):
+deliveries/G7/preparation/tools/test_g7_evidence.py:89: trailing whitespace.
++        receipt_path = self.save("NOT-LIVE-receipt.json", receipt or self.receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:90: trailing whitespace.
++        return G7.build_ledger(self.root, self.manifest if manifest else None, self.binding if binding else None, [receipt_path], now=NOW)
+deliveries/G7/preparation/tools/test_g7_evidence.py:91: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:92: trailing whitespace.
++    def change_binding(self, field, value):
+deliveries/G7/preparation/tools/test_g7_evidence.py:93: trailing whitespace.
++        self.binding_data[field] = value
+deliveries/G7/preparation/tools/test_g7_evidence.py:94: trailing whitespace.
++        G7.write(self.binding, self.binding_data)
+deliveries/G7/preparation/tools/test_g7_evidence.py:95: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:96: trailing whitespace.
++    def change_reference(self, field, changes):
+deliveries/G7/preparation/tools/test_g7_evidence.py:97: trailing whitespace.
++        path = self.owner if field == "ownerAuthorizationReference" else self.successor
+deliveries/G7/preparation/tools/test_g7_evidence.py:98: trailing whitespace.
++        value = G7.load_json(path)
+deliveries/G7/preparation/tools/test_g7_evidence.py:99: trailing whitespace.
++        value.update(changes)
+deliveries/G7/preparation/tools/test_g7_evidence.py:100: trailing whitespace.
++        G7.write(path, value)
+deliveries/G7/preparation/tools/test_g7_evidence.py:101: trailing whitespace.
++        self.change_binding(field, self.ref(path))
+deliveries/G7/preparation/tools/test_g7_evidence.py:102: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:103: trailing whitespace.
++    def test_initialize_without_manifest_or_live_binding(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:104: trailing whitespace.
++        ledger = G7.build_ledger(self.root, now=NOW)
+deliveries/G7/preparation/tools/test_g7_evidence.py:105: trailing whitespace.
++        self.assertEqual(len(ledger["requirements"]), 10)
+deliveries/G7/preparation/tools/test_g7_evidence.py:106: trailing whitespace.
++        self.assertEqual(len(ledger["physicalAndAssistiveSessions"]), 6)
+deliveries/G7/preparation/tools/test_g7_evidence.py:107: trailing whitespace.
++        self.assertEqual(ledger["overallStatus"], "NOT RUN")
+deliveries/G7/preparation/tools/test_g7_evidence.py:108: trailing whitespace.
++        self.assertEqual(ledger["heapGpuLeakAbsence"], "UNKNOWN")
+deliveries/G7/preparation/tools/test_g7_evidence.py:109: trailing whitespace.
++        self.assertFalse(ledger["acceptanceClaim"])
+deliveries/G7/preparation/tools/test_g7_evidence.py:110: trailing whitespace.
++        self.assertIsNone(ledger["sourceCommit"])
+deliveries/G7/preparation/tools/test_g7_evidence.py:111: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:112: trailing whitespace.
++    def test_manifest_only_remains_not_run(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:113: trailing whitespace.
++        ledger = G7.build_ledger(self.root, self.manifest, now=NOW)
+deliveries/G7/preparation/tools/test_g7_evidence.py:114: trailing whitespace.
++        self.assertEqual(ledger["sourceCommit"], self.identity["sourceCommit"])
+deliveries/G7/preparation/tools/test_g7_evidence.py:115: trailing whitespace.
++        self.assertEqual(ledger["overallStatus"], "NOT RUN")
+deliveries/G7/preparation/tools/test_g7_evidence.py:116: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:117: trailing whitespace.
++    def test_pass_requires_manifest_and_binding(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:118: trailing whitespace.
++        for manifest, binding in ((False, False), (True, False), (False, True)):
+deliveries/G7/preparation/tools/test_g7_evidence.py:119: trailing whitespace.
++            with self.subTest(manifest=manifest, binding=binding), self.assertRaises(ValueError):
+deliveries/G7/preparation/tools/test_g7_evidence.py:120: trailing whitespace.
++                self.run_receipt(manifest=manifest, binding=binding)
+deliveries/G7/preparation/tools/test_g7_evidence.py:121: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:122: trailing whitespace.
++    def test_each_exact_receipt_identity_is_required(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:123: trailing whitespace.
++        for key in G7.IDENTITY:
+deliveries/G7/preparation/tools/test_g7_evidence.py:124: trailing whitespace.
++            for action in ("missing", "wrong"):
+deliveries/G7/preparation/tools/test_g7_evidence.py:125: trailing whitespace.
++                value = copy.deepcopy(self.receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:126: trailing whitespace.
++                if action == "missing":
+deliveries/G7/preparation/tools/test_g7_evidence.py:127: trailing whitespace.
++                    value.pop(key)
+deliveries/G7/preparation/tools/test_g7_evidence.py:128: trailing whitespace.
++                else:
+deliveries/G7/preparation/tools/test_g7_evidence.py:129: trailing whitespace.
++                    value[key] = "incorrect"
+deliveries/G7/preparation/tools/test_g7_evidence.py:130: trailing whitespace.
++                with self.subTest(key=key, action=action), self.assertRaisesRegex(ValueError, "Receipt identity mismatch"):
+deliveries/G7/preparation/tools/test_g7_evidence.py:131: trailing whitespace.
++                    self.run_receipt(value)
+deliveries/G7/preparation/tools/test_g7_evidence.py:132: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:133: trailing whitespace.
++    def test_each_candidate_binding_field_is_required(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:134: trailing whitespace.
++        original = copy.deepcopy(self.binding_data)
+deliveries/G7/preparation/tools/test_g7_evidence.py:135: trailing whitespace.
++        for key in G7.CANDIDATE_IDENTITY:
+deliveries/G7/preparation/tools/test_g7_evidence.py:136: trailing whitespace.
++            self.binding_data = copy.deepcopy(original)
+deliveries/G7/preparation/tools/test_g7_evidence.py:137: trailing whitespace.
++            self.change_binding(key, "incorrect")
+deliveries/G7/preparation/tools/test_g7_evidence.py:138: trailing whitespace.
++            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "Operational candidate mismatch"):
+deliveries/G7/preparation/tools/test_g7_evidence.py:139: trailing whitespace.
++                self.run_receipt()
+deliveries/G7/preparation/tools/test_g7_evidence.py:140: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:141: trailing whitespace.
++    def test_manifest_bundle_and_source_binding_are_hash_verified(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:142: trailing whitespace.
++        self.raw.write_text("tampered", encoding="utf-8")
+deliveries/G7/preparation/tools/test_g7_evidence.py:143: trailing whitespace.
++        with self.assertRaisesRegex(ValueError, "SHA-256 mismatch"):
+deliveries/G7/preparation/tools/test_g7_evidence.py:144: trailing whitespace.
++            self.run_receipt()
+deliveries/G7/preparation/tools/test_g7_evidence.py:145: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:146: trailing whitespace.
++    def test_source_binding_identity_must_match(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:147: trailing whitespace.
++        manifest = G7.load_json(self.manifest)
+deliveries/G7/preparation/tools/test_g7_evidence.py:148: trailing whitespace.
++        source = self.save("conflicting-source.json", {**self.candidate, "sourceCommit": "f" * 40})
+deliveries/G7/preparation/tools/test_g7_evidence.py:149: trailing whitespace.
++        manifest["sourceBinding"] = self.ref(source)
+deliveries/G7/preparation/tools/test_g7_evidence.py:150: trailing whitespace.
++        G7.write(self.manifest, manifest)
+deliveries/G7/preparation/tools/test_g7_evidence.py:151: trailing whitespace.
++        with self.assertRaisesRegex(ValueError, "Manifest/source binding mismatch"):
+deliveries/G7/preparation/tools/test_g7_evidence.py:152: trailing whitespace.
++            self.run_receipt()
+deliveries/G7/preparation/tools/test_g7_evidence.py:153: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:154: trailing whitespace.
++    def test_reference_hashes_cannot_be_stale(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:155: trailing whitespace.
++        for path in (self.owner, self.successor):
+deliveries/G7/preparation/tools/test_g7_evidence.py:156: trailing whitespace.
++            original = path.read_bytes()
+deliveries/G7/preparation/tools/test_g7_evidence.py:157: trailing whitespace.
++            path.write_bytes(original + b" ")
+deliveries/G7/preparation/tools/test_g7_evidence.py:158: trailing whitespace.
++            with self.subTest(path=path.name), self.assertRaisesRegex(ValueError, "SHA-256 mismatch"):
+deliveries/G7/preparation/tools/test_g7_evidence.py:159: trailing whitespace.
++                self.run_receipt()
+deliveries/G7/preparation/tools/test_g7_evidence.py:160: trailing whitespace.
++            path.write_bytes(original)
+deliveries/G7/preparation/tools/test_g7_evidence.py:161: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:162: trailing whitespace.
++    def test_actual_owner_record_fields_required(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:163: trailing whitespace.
++        original = G7.load_json(self.owner)
+deliveries/G7/preparation/tools/test_g7_evidence.py:164: trailing whitespace.
++        for changes in ({"authorizationId": "another-owner"}, {"deploymentAuthorized": False}, {"acceptanceClaim": True}, {"g7Status": "ACCEPTED"}, {"date": "2026-10-08"}):
+deliveries/G7/preparation/tools/test_g7_evidence.py:165: trailing whitespace.
++            G7.write(self.owner, original)
+deliveries/G7/preparation/tools/test_g7_evidence.py:166: trailing whitespace.
++            self.change_reference("ownerAuthorizationReference", changes)
+deliveries/G7/preparation/tools/test_g7_evidence.py:167: trailing whitespace.
++            with self.subTest(changes=changes), self.assertRaises(ValueError):
+deliveries/G7/preparation/tools/test_g7_evidence.py:168: trailing whitespace.
++                self.run_receipt()
+deliveries/G7/preparation/tools/test_g7_evidence.py:169: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:170: trailing whitespace.
++    def test_successor_requires_actual_parent_decision_and_exact_candidate(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:171: trailing whitespace.
++        original = G7.load_json(self.successor)
+deliveries/G7/preparation/tools/test_g7_evidence.py:172: trailing whitespace.
++        for ruling_id in ("RC6-R1", "RC6-R2"):
+deliveries/G7/preparation/tools/test_g7_evidence.py:173: trailing whitespace.
++            for changes in ({"acceptance": "PENDING"}, {"ruling": "RC6 NOT ACCEPTED"},
+deliveries/G7/preparation/tools/test_g7_evidence.py:174: trailing whitespace.
++                            {"authority": "Maker"}, {"authority": "Parent Codex "},
+deliveries/G7/preparation/tools/test_g7_evidence.py:175: trailing whitespace.
++                            {"rulingId": "G6-R1"}, {"rulingId": "RC6-R3"}, {"rulingId": "rc6-r2"},
+deliveries/G7/preparation/tools/test_g7_evidence.py:176: trailing whitespace.
++                            {"rulingId": None}, {"acceptedAt": "2026-10-07T08:01:00Z"},
+deliveries/G7/preparation/tools/test_g7_evidence.py:177: trailing whitespace.
++                            {"acceptedAt": "2027-01-01T00:00:00Z"}, {"acceptedAt": "invalid"},
+deliveries/G7/preparation/tools/test_g7_evidence.py:178: trailing whitespace.
++                            *({key: "incorrect"} for key in G7.CANDIDATE_IDENTITY)):
+deliveries/G7/preparation/tools/test_g7_evidence.py:179: trailing whitespace.
++                G7.write(self.successor, {**original, "rulingId": ruling_id})
+deliveries/G7/preparation/tools/test_g7_evidence.py:180: trailing whitespace.
++                self.change_reference("acceptedSuccessorReference", changes)
+deliveries/G7/preparation/tools/test_g7_evidence.py:181: trailing whitespace.
++                with self.subTest(ruling_id=ruling_id, changes=changes), self.assertRaises(ValueError):
+deliveries/G7/preparation/tools/test_g7_evidence.py:182: trailing whitespace.
++                    self.run_receipt()
+deliveries/G7/preparation/tools/test_g7_evidence.py:183: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:184: trailing whitespace.
++    def test_both_successor_rulings_reject_stale_reference_hashes(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:185: trailing whitespace.
++        original = G7.load_json(self.successor)
+deliveries/G7/preparation/tools/test_g7_evidence.py:186: trailing whitespace.
++        for ruling_id in ("RC6-R1", "RC6-R2"):
+deliveries/G7/preparation/tools/test_g7_evidence.py:187: trailing whitespace.
++            G7.write(self.successor, {**original, "rulingId": ruling_id})
+deliveries/G7/preparation/tools/test_g7_evidence.py:188: trailing whitespace.
++            self.change_binding("acceptedSuccessorReference", self.ref(self.successor))
+deliveries/G7/preparation/tools/test_g7_evidence.py:189: trailing whitespace.
++            self.successor.write_bytes(self.successor.read_bytes() + b" ")
+deliveries/G7/preparation/tools/test_g7_evidence.py:190: trailing whitespace.
++            with self.subTest(ruling_id=ruling_id), self.assertRaisesRegex(ValueError, "SHA-256 mismatch"):
+deliveries/G7/preparation/tools/test_g7_evidence.py:191: trailing whitespace.
++                self.run_receipt()
+deliveries/G7/preparation/tools/test_g7_evidence.py:192: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:193: trailing whitespace.
++    def test_invalid_or_stale_execution_timestamps_rejected(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:194: trailing whitespace.
++        for key, value in (("executedAt", "1999-01-01T00:00:00Z"), ("completedAt", "2027-01-01T00:00:00Z"), ("executedAt", "2026-10-07T10:01:00Z"), ("executedAt", "2026-10-07T09:00:00"), ("executedAt", "invalid")):
+deliveries/G7/preparation/tools/test_g7_evidence.py:195: trailing whitespace.
++            receipt = copy.deepcopy(self.receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:196: trailing whitespace.
++            receipt[key] = value
+deliveries/G7/preparation/tools/test_g7_evidence.py:197: trailing whitespace.
++            with self.subTest(key=key, value=value), self.assertRaises(ValueError):
+deliveries/G7/preparation/tools/test_g7_evidence.py:198: trailing whitespace.
++                self.run_receipt(receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:199: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:200: trailing whitespace.
++    def test_invalid_deployment_origins_and_time_rejected(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:201: trailing whitespace.
++        original = copy.deepcopy(self.binding_data)
+deliveries/G7/preparation/tools/test_g7_evidence.py:202: trailing whitespace.
++        for key, value in (("targetOrigin", "http://example.com"), ("targetOrigin", "https://localhost"), ("targetOrigin", "https://127.0.0.1"), ("targetOrigin", "https://example.com/path"), ("targetOrigin", "https://name:pass@example.com"), ("targetOrigin", "https://example.com:invalid"), ("deployedAt", "invalid"), ("deployedAt", "2027-01-01T00:00:00Z")):
+deliveries/G7/preparation/tools/test_g7_evidence.py:203: trailing whitespace.
++            self.binding_data = copy.deepcopy(original)
+deliveries/G7/preparation/tools/test_g7_evidence.py:204: trailing whitespace.
++            self.change_binding(key, value)
+deliveries/G7/preparation/tools/test_g7_evidence.py:205: trailing whitespace.
++            with self.subTest(key=key, value=value), self.assertRaises(ValueError):
+deliveries/G7/preparation/tools/test_g7_evidence.py:206: trailing whitespace.
++                self.run_receipt()
+deliveries/G7/preparation/tools/test_g7_evidence.py:207: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:208: trailing whitespace.
++    def test_partial_pass_rejected_but_partial_observation_preserves_inventory(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:209: trailing whitespace.
++        receipt = copy.deepcopy(self.receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:210: trailing whitespace.
++        receipt["requirements"][0]["observations"] = receipt["requirements"][0]["observations"][:1]
+deliveries/G7/preparation/tools/test_g7_evidence.py:211: trailing whitespace.
++        with self.assertRaisesRegex(ValueError, "exact complete"):
+deliveries/G7/preparation/tools/test_g7_evidence.py:212: trailing whitespace.
++            self.run_receipt(receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:213: trailing whitespace.
++        receipt["requirements"][0]["status"] = "NOT RUN"
+deliveries/G7/preparation/tools/test_g7_evidence.py:214: trailing whitespace.
++        ledger = self.run_receipt(receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:215: trailing whitespace.
++        requirement = ledger["requirements"][0]
+deliveries/G7/preparation/tools/test_g7_evidence.py:216: trailing whitespace.
++        self.assertEqual(requirement["status"], "NOT RUN")
+deliveries/G7/preparation/tools/test_g7_evidence.py:217: trailing whitespace.
++        self.assertEqual(len(requirement["observations"]), len(G7.CRITERIA[0][2]))
+deliveries/G7/preparation/tools/test_g7_evidence.py:218: trailing whitespace.
++        self.assertEqual([row["status"] for row in requirement["observations"]], ["PASS", "NOT RUN", "NOT RUN", "NOT RUN"])
+deliveries/G7/preparation/tools/test_g7_evidence.py:219: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:220: trailing whitespace.
++    def test_unknown_duplicate_or_conflicting_inventories_rejected(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:221: trailing whitespace.
++        variants = []
+deliveries/G7/preparation/tools/test_g7_evidence.py:222: trailing whitespace.
++        for criterion in ("unknown", G7.CRITERIA[0][2][0]):
+deliveries/G7/preparation/tools/test_g7_evidence.py:223: trailing whitespace.
++            receipt = copy.deepcopy(self.receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:224: trailing whitespace.
++            receipt["requirements"][0]["observations"].append({"criterion": criterion, **self.execution()})
+deliveries/G7/preparation/tools/test_g7_evidence.py:225: trailing whitespace.
++            variants.append(receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:226: trailing whitespace.
++        receipt = copy.deepcopy(self.receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:227: trailing whitespace.
++        receipt["requirements"].append(copy.deepcopy(receipt["requirements"][0]))
+deliveries/G7/preparation/tools/test_g7_evidence.py:228: trailing whitespace.
++        variants.append(receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:229: trailing whitespace.
++        for key, value in (("id", 11), ("id", True), ("name", "other")):
+deliveries/G7/preparation/tools/test_g7_evidence.py:230: trailing whitespace.
++            receipt = copy.deepcopy(self.receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:231: trailing whitespace.
++            receipt["requirements"][0][key] = value
+deliveries/G7/preparation/tools/test_g7_evidence.py:232: trailing whitespace.
++            variants.append(receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:233: trailing whitespace.
++        for receipt in variants:
+deliveries/G7/preparation/tools/test_g7_evidence.py:234: trailing whitespace.
++            with self.subTest(receipt=receipt), self.assertRaises(ValueError):
+deliveries/G7/preparation/tools/test_g7_evidence.py:235: trailing whitespace.
++                self.run_receipt(receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:236: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:237: trailing whitespace.
++    def test_each_executed_subcriterion_needs_fields_and_verified_artifacts(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:238: trailing whitespace.
++        for key in ("method", "measured", "expected", "startedAt", "completedAt", "artifactHashes"):
+deliveries/G7/preparation/tools/test_g7_evidence.py:239: trailing whitespace.
++            receipt = copy.deepcopy(self.receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:240: trailing whitespace.
++            receipt["requirements"][0]["observations"][0].pop(key)
+deliveries/G7/preparation/tools/test_g7_evidence.py:241: trailing whitespace.
++            with self.subTest(key=key), self.assertRaises(ValueError):
+deliveries/G7/preparation/tools/test_g7_evidence.py:242: trailing whitespace.
++                self.run_receipt(receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:243: trailing whitespace.
++        receipt = copy.deepcopy(self.receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:244: trailing whitespace.
++        receipt["requirements"][0]["observations"][0]["method"] = False
+deliveries/G7/preparation/tools/test_g7_evidence.py:245: trailing whitespace.
++        with self.assertRaisesRegex(ValueError, "actual method"):
+deliveries/G7/preparation/tools/test_g7_evidence.py:246: trailing whitespace.
++            self.run_receipt(receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:247: trailing whitespace.
++        for mutation in ({"sha256": "f" * 64}, {"hashMode": "unverified"}, {"path": "../outside.txt"}):
+deliveries/G7/preparation/tools/test_g7_evidence.py:248: trailing whitespace.
++            receipt = copy.deepcopy(self.receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:249: trailing whitespace.
++            receipt["requirements"][0]["observations"][0]["artifactHashes"][0].update(mutation)
+deliveries/G7/preparation/tools/test_g7_evidence.py:250: trailing whitespace.
++            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+deliveries/G7/preparation/tools/test_g7_evidence.py:251: trailing whitespace.
++                self.run_receipt(receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:252: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:253: trailing whitespace.
++    def test_surrogate_categories_cannot_promote_requirement(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:254: trailing whitespace.
++        for category in ("HTTP ONLY", "LIVE BROWSER AUTOMATED", "VIEWPORT EMULATION", "AUTOMATED AXE", "LOCAL EMBEDDED SQL", "SYNTHETIC", "ACTUAL PHYSICAL OR ASSISTIVE SESSION"):
+deliveries/G7/preparation/tools/test_g7_evidence.py:255: trailing whitespace.
++            receipt = copy.deepcopy(self.receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:256: trailing whitespace.
++            receipt["evidenceCategory"] = category
+deliveries/G7/preparation/tools/test_g7_evidence.py:257: trailing whitespace.
++            with self.subTest(category=category), self.assertRaises(ValueError):
+deliveries/G7/preparation/tools/test_g7_evidence.py:258: trailing whitespace.
++                self.run_receipt(receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:259: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:260: trailing whitespace.
++    def test_partial_http_inventory_never_promotes_even_when_complete(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:261: trailing whitespace.
++        receipt = copy.deepcopy(self.receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:262: trailing whitespace.
++        receipt["evidenceCategory"] = "HTTP ONLY"
+deliveries/G7/preparation/tools/test_g7_evidence.py:263: trailing whitespace.
++        receipt["requirements"][0]["status"] = "NOT RUN"
+deliveries/G7/preparation/tools/test_g7_evidence.py:264: trailing whitespace.
++        self.assertEqual(self.run_receipt(receipt)["requirements"][0]["status"], "NOT RUN")
+deliveries/G7/preparation/tools/test_g7_evidence.py:265: trailing whitespace.
++        receipt["requirements"][0]["observations"][0]["evidenceCategory"] = "LIVE PRODUCTION"
+deliveries/G7/preparation/tools/test_g7_evidence.py:266: trailing whitespace.
++        with self.assertRaisesRegex(ValueError, "category conflicts"):
+deliveries/G7/preparation/tools/test_g7_evidence.py:267: trailing whitespace.
++            self.run_receipt(receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:268: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:269: trailing whitespace.
++    def test_explicit_fixture_markers_rejected(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:270: trailing whitespace.
++        for key in ("auditFixture", "synthetic", "localFixture"):
+deliveries/G7/preparation/tools/test_g7_evidence.py:271: trailing whitespace.
++            receipt = copy.deepcopy(self.receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:272: trailing whitespace.
++            receipt[key] = True
+deliveries/G7/preparation/tools/test_g7_evidence.py:273: trailing whitespace.
++            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "Synthetic fixtures"):
+deliveries/G7/preparation/tools/test_g7_evidence.py:274: trailing whitespace.
++                self.run_receipt(receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:275: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:276: trailing whitespace.
++    def manual_receipt(self, sessions=None):
+deliveries/G7/preparation/tools/test_g7_evidence.py:277: trailing whitespace.
++        return {**self.receipt, "requirements": [], "evidenceCategory": "ACTUAL PHYSICAL OR ASSISTIVE SESSION",
+deliveries/G7/preparation/tools/test_g7_evidence.py:278: trailing whitespace.
++                "physicalAndAssistiveSessions": sessions if sessions is not None else [self.session("MD-06")]}
+deliveries/G7/preparation/tools/test_g7_evidence.py:279: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:280: trailing whitespace.
++    def test_all_six_manual_sessions_validate_structurally_only(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:281: trailing whitespace.
++        ledger = self.run_receipt(self.manual_receipt([self.session(key) for key, _, _ in G7.MANUAL]))
+deliveries/G7/preparation/tools/test_g7_evidence.py:282: trailing whitespace.
++        self.assertTrue(all(row["status"] == "PASS" for row in ledger["physicalAndAssistiveSessions"]))
+deliveries/G7/preparation/tools/test_g7_evidence.py:283: trailing whitespace.
++        self.assertEqual(ledger["overallStatus"], "NOT RUN")
+deliveries/G7/preparation/tools/test_g7_evidence.py:284: trailing whitespace.
++        self.assertFalse(ledger["acceptanceClaim"])
+deliveries/G7/preparation/tools/test_g7_evidence.py:285: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:286: trailing whitespace.
++    def test_manual_identity_category_timing_and_artifacts(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:287: trailing whitespace.
++        for key in ("deviceModel", "os", "operator", "browserOrAssistiveToolVersion", "viewportDprNetworkCache", "rawMeasurements", "method", "artifactHashes", "startedAt", "completedAt"):
+deliveries/G7/preparation/tools/test_g7_evidence.py:288: trailing whitespace.
++            receipt = self.manual_receipt()
+deliveries/G7/preparation/tools/test_g7_evidence.py:289: trailing whitespace.
++            receipt["physicalAndAssistiveSessions"][0].pop(key)
+deliveries/G7/preparation/tools/test_g7_evidence.py:290: trailing whitespace.
++            with self.subTest(key=key), self.assertRaises(ValueError):
+deliveries/G7/preparation/tools/test_g7_evidence.py:291: trailing whitespace.
++                self.run_receipt(receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:292: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:293: trailing whitespace.
++    def test_manual_platform_device_and_assistive_identity_must_match(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:294: trailing whitespace.
++        for ident, changes in (("MD-01", {"platform": "Android"}), ("MD-01", {"browser": "Chrome"}),
+deliveries/G7/preparation/tools/test_g7_evidence.py:295: trailing whitespace.
++                               ("MD-02", {"physicalDevice": False}), ("MD-03", {"assistiveTool": "VoiceOver"}),
+deliveries/G7/preparation/tools/test_g7_evidence.py:296: trailing whitespace.
++                               ("MD-04", {"platform": "Windows"}), ("MD-05", {"assistiveTool": "NVDA"}),
+deliveries/G7/preparation/tools/test_g7_evidence.py:297: trailing whitespace.
++                               ("MD-06", {"platform": "Windows"})):
+deliveries/G7/preparation/tools/test_g7_evidence.py:298: trailing whitespace.
++            session = self.session(ident)
+deliveries/G7/preparation/tools/test_g7_evidence.py:299: trailing whitespace.
++            session.update(changes)
+deliveries/G7/preparation/tools/test_g7_evidence.py:300: trailing whitespace.
++            with self.subTest(ident=ident, changes=changes), self.assertRaises(ValueError):
+deliveries/G7/preparation/tools/test_g7_evidence.py:301: trailing whitespace.
++                self.run_receipt(self.manual_receipt([session]))
+deliveries/G7/preparation/tools/test_g7_evidence.py:302: trailing whitespace.
++        for changes in ({"id": "MD-99"}, {"name": "different"}, {"evidenceCategory": "VIEWPORT EMULATION"}, {"startedAt": "2026-10-07T08:59:00Z"}):
+deliveries/G7/preparation/tools/test_g7_evidence.py:303: trailing whitespace.
++            receipt = self.manual_receipt()
+deliveries/G7/preparation/tools/test_g7_evidence.py:304: trailing whitespace.
++            receipt["physicalAndAssistiveSessions"][0].update(changes)
+deliveries/G7/preparation/tools/test_g7_evidence.py:305: trailing whitespace.
++            with self.subTest(changes=changes), self.assertRaises(ValueError):
+deliveries/G7/preparation/tools/test_g7_evidence.py:306: trailing whitespace.
++                self.run_receipt(receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:307: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:308: trailing whitespace.
++    def test_thermal_600_second_duration_and_full_measurement_inventory(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:309: trailing whitespace.
++        receipt = self.manual_receipt()
+deliveries/G7/preparation/tools/test_g7_evidence.py:310: trailing whitespace.
++        receipt["physicalAndAssistiveSessions"][0]["completedAt"] = "2026-10-07T09:10:59Z"
+deliveries/G7/preparation/tools/test_g7_evidence.py:311: trailing whitespace.
++        with self.assertRaisesRegex(ValueError, "600 seconds"):
+deliveries/G7/preparation/tools/test_g7_evidence.py:312: trailing whitespace.
++            self.run_receipt(receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:313: trailing whitespace.
++        for key in G7.MANUAL_MEASUREMENTS["MD-06"]:
+deliveries/G7/preparation/tools/test_g7_evidence.py:314: trailing whitespace.
++            receipt = self.manual_receipt()
+deliveries/G7/preparation/tools/test_g7_evidence.py:315: trailing whitespace.
++            receipt["physicalAndAssistiveSessions"][0]["rawMeasurements"].pop(key)
+deliveries/G7/preparation/tools/test_g7_evidence.py:316: trailing whitespace.
++            with self.subTest(key=key), self.assertRaises(ValueError):
+deliveries/G7/preparation/tools/test_g7_evidence.py:317: trailing whitespace.
++                self.run_receipt(receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:318: trailing whitespace.
++        for key, value in (("batteryStartPercent", 101), ("temperatureStartC", "warm"), ("chargerConnected", "false"), ("qualityTier", "unknown"), ("framePacing", [{"elapsedSeconds": 600, "frameTimesMs": [16]}])):
+deliveries/G7/preparation/tools/test_g7_evidence.py:319: trailing whitespace.
++            receipt = self.manual_receipt()
+deliveries/G7/preparation/tools/test_g7_evidence.py:320: trailing whitespace.
++            receipt["physicalAndAssistiveSessions"][0]["rawMeasurements"][key] = value
+deliveries/G7/preparation/tools/test_g7_evidence.py:321: trailing whitespace.
++            with self.subTest(key=key), self.assertRaises(ValueError):
+deliveries/G7/preparation/tools/test_g7_evidence.py:322: trailing whitespace.
++                self.run_receipt(receipt)
+deliveries/G7/preparation/tools/test_g7_evidence.py:323: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:324: trailing whitespace.
++    def test_manual_failure_prevents_overall_pass(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:325: trailing whitespace.
++        receipt = self.manual_receipt()
+deliveries/G7/preparation/tools/test_g7_evidence.py:326: trailing whitespace.
++        receipt["physicalAndAssistiveSessions"][0]["status"] = "FAIL"
+deliveries/G7/preparation/tools/test_g7_evidence.py:327: trailing whitespace.
++        self.assertEqual(self.run_receipt(receipt)["overallStatus"], "FAIL")
+deliveries/G7/preparation/tools/test_g7_evidence.py:328: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:329: trailing whitespace.
++    def test_full_structural_fixture_still_has_no_review_or_acceptance(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:330: trailing whitespace.
++        live = {**self.receipt, "requirements": [self.requirement(number) for number, _, _ in G7.CRITERIA]}
+deliveries/G7/preparation/tools/test_g7_evidence.py:331: trailing whitespace.
++        paths = [self.save("NOT-LIVE-all-live.json", live), self.save("NOT-LIVE-all-manual.json", self.manual_receipt([self.session(key) for key, _, _ in G7.MANUAL]))]
+deliveries/G7/preparation/tools/test_g7_evidence.py:332: trailing whitespace.
++        for ruling_id in ("RC6-R1", "RC6-R2"):
+deliveries/G7/preparation/tools/test_g7_evidence.py:333: trailing whitespace.
++            self.change_reference("acceptedSuccessorReference", {"rulingId": ruling_id})
+deliveries/G7/preparation/tools/test_g7_evidence.py:334: trailing whitespace.
++            with self.subTest(ruling_id=ruling_id):
+deliveries/G7/preparation/tools/test_g7_evidence.py:335: trailing whitespace.
++                ledger = G7.build_ledger(self.root, self.manifest, self.binding, paths, now=NOW)
+deliveries/G7/preparation/tools/test_g7_evidence.py:336: trailing whitespace.
++                self.assertEqual(ledger["overallStatus"], "PASS")
+deliveries/G7/preparation/tools/test_g7_evidence.py:337: trailing whitespace.
++                self.assertEqual(ledger["validationScope"], "STRUCTURE, IDENTITY AND ARTIFACT HASHES ONLY")
+deliveries/G7/preparation/tools/test_g7_evidence.py:338: trailing whitespace.
++                self.assertEqual(ledger["independentReview"], "NOT RUN")
+deliveries/G7/preparation/tools/test_g7_evidence.py:339: trailing whitespace.
++                self.assertEqual(ledger["heapGpuLeakAbsence"], "UNKNOWN")
+deliveries/G7/preparation/tools/test_g7_evidence.py:340: trailing whitespace.
++                self.assertFalse(ledger["acceptanceClaim"])
+deliveries/G7/preparation/tools/test_g7_evidence.py:341: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:342: trailing whitespace.
++    def test_repeated_executed_subcriteria_across_receipts_rejected(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:343: trailing whitespace.
++        paths = [self.save("a.json", self.receipt), self.save("b.json", self.receipt)]
+deliveries/G7/preparation/tools/test_g7_evidence.py:344: trailing whitespace.
++        with self.assertRaisesRegex(ValueError, "repeated executed subcriterion"):
+deliveries/G7/preparation/tools/test_g7_evidence.py:345: trailing whitespace.
++            G7.build_ledger(self.root, self.manifest, self.binding, paths, now=NOW)
+deliveries/G7/preparation/tools/test_g7_evidence.py:346: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:347: trailing whitespace.
++    def test_duplicate_json_keys_rejected(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:348: trailing whitespace.
++        path = self.base / "duplicate.json"
+deliveries/G7/preparation/tools/test_g7_evidence.py:349: trailing whitespace.
++        path.write_text('{"releaseId":"one","releaseId":"two"}', encoding="utf-8")
+deliveries/G7/preparation/tools/test_g7_evidence.py:350: trailing whitespace.
++        with self.assertRaisesRegex(ValueError, "Duplicate JSON key"):
+deliveries/G7/preparation/tools/test_g7_evidence.py:351: trailing whitespace.
++            G7.load_json(path)
+deliveries/G7/preparation/tools/test_g7_evidence.py:352: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:353: trailing whitespace.
++    def test_cli_initialization_and_existing_output_preservation(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:354: trailing whitespace.
++        output = self.base / "NOT-LIVE-empty-output.json"
+deliveries/G7/preparation/tools/test_g7_evidence.py:355: trailing whitespace.
++        command = [sys.executable, str(TOOL), "--repository", str(self.root), "--output", str(output)]
+deliveries/G7/preparation/tools/test_g7_evidence.py:356: trailing whitespace.
++        run = subprocess.run(command, capture_output=True, text=True)
+deliveries/G7/preparation/tools/test_g7_evidence.py:357: trailing whitespace.
++        self.assertEqual(run.returncode, 0, run.stderr)
+deliveries/G7/preparation/tools/test_g7_evidence.py:358: trailing whitespace.
++        original = output.read_bytes()
+deliveries/G7/preparation/tools/test_g7_evidence.py:359: trailing whitespace.
++        run = subprocess.run(command, capture_output=True, text=True)
+deliveries/G7/preparation/tools/test_g7_evidence.py:360: trailing whitespace.
++        self.assertNotEqual(run.returncode, 0)
+deliveries/G7/preparation/tools/test_g7_evidence.py:361: trailing whitespace.
++        self.assertEqual(output.read_bytes(), original)
+deliveries/G7/preparation/tools/test_g7_evidence.py:362: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:363: trailing whitespace.
++    def test_cli_rejects_input_output_collision_without_mutation(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:364: trailing whitespace.
++        original = self.manifest.read_bytes()
+deliveries/G7/preparation/tools/test_g7_evidence.py:365: trailing whitespace.
++        run = subprocess.run([sys.executable, str(TOOL), "--repository", str(self.root),
+deliveries/G7/preparation/tools/test_g7_evidence.py:366: trailing whitespace.
++                              "--manifest", str(self.manifest), "--output", str(self.manifest)],
+deliveries/G7/preparation/tools/test_g7_evidence.py:367: trailing whitespace.
++                             capture_output=True, text=True)
+deliveries/G7/preparation/tools/test_g7_evidence.py:368: trailing whitespace.
++        self.assertNotEqual(run.returncode, 0)
+deliveries/G7/preparation/tools/test_g7_evidence.py:369: trailing whitespace.
++        self.assertEqual(self.manifest.read_bytes(), original)
+deliveries/G7/preparation/tools/test_g7_evidence.py:370: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:371: trailing whitespace.
++    def test_cli_rejects_traversal_and_case_alias_outputs_without_mutation(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:372: trailing whitespace.
++        outside = self.root / "deliveries/G7/NOT-LIVE-traversal.json"
+deliveries/G7/preparation/tools/test_g7_evidence.py:373: trailing whitespace.
++        traversal = self.base / ".." / outside.name
+deliveries/G7/preparation/tools/test_g7_evidence.py:374: trailing whitespace.
++        run = subprocess.run([sys.executable, str(TOOL), "--repository", str(self.root), "--output", str(traversal)],
+deliveries/G7/preparation/tools/test_g7_evidence.py:375: trailing whitespace.
++                             capture_output=True, text=True)
+deliveries/G7/preparation/tools/test_g7_evidence.py:376: trailing whitespace.
++        self.assertNotEqual(run.returncode, 0)
+deliveries/G7/preparation/tools/test_g7_evidence.py:377: trailing whitespace.
++        self.assertFalse(outside.exists())
+deliveries/G7/preparation/tools/test_g7_evidence.py:378: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:379: trailing whitespace.
++        case_alias = self.root / "deliveries/G7" / self.base.name.upper() / "NOT-LIVE-case-alias.json"
+deliveries/G7/preparation/tools/test_g7_evidence.py:380: trailing whitespace.
++        run = subprocess.run([sys.executable, str(TOOL), "--repository", str(self.root), "--output", str(case_alias)],
+deliveries/G7/preparation/tools/test_g7_evidence.py:381: trailing whitespace.
++                             capture_output=True, text=True)
+deliveries/G7/preparation/tools/test_g7_evidence.py:382: trailing whitespace.
++        self.assertNotEqual(run.returncode, 0)
+deliveries/G7/preparation/tools/test_g7_evidence.py:383: trailing whitespace.
++        self.assertFalse((self.base / case_alias.name).exists())
+deliveries/G7/preparation/tools/test_g7_evidence.py:384: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:385: trailing whitespace.
++    def test_cli_rejects_symlink_or_junction_parent_without_writing_through_it(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:386: trailing whitespace.
++        alias = self.root / "deliveries/G7/NOT-LIVE-output-alias"
+deliveries/G7/preparation/tools/test_g7_evidence.py:387: trailing whitespace.
++        try:
+deliveries/G7/preparation/tools/test_g7_evidence.py:388: trailing whitespace.
++            alias.symlink_to(self.base, target_is_directory=True)
+deliveries/G7/preparation/tools/test_g7_evidence.py:389: trailing whitespace.
++        except OSError as symlink_error:
+deliveries/G7/preparation/tools/test_g7_evidence.py:390: trailing whitespace.
++            if os.name == "nt":
+deliveries/G7/preparation/tools/test_g7_evidence.py:391: trailing whitespace.
++                env = os.environ.copy()
+deliveries/G7/preparation/tools/test_g7_evidence.py:392: trailing whitespace.
++                env["YOR_LEDGER_ALIAS"] = str(alias)
+deliveries/G7/preparation/tools/test_g7_evidence.py:393: trailing whitespace.
++                env["YOR_LEDGER_TARGET"] = str(self.base)
+deliveries/G7/preparation/tools/test_g7_evidence.py:394: trailing whitespace.
++                try:
+deliveries/G7/preparation/tools/test_g7_evidence.py:395: trailing whitespace.
++                    junction = subprocess.run(
+deliveries/G7/preparation/tools/test_g7_evidence.py:396: trailing whitespace.
++                        ["powershell.exe", "-NoLogo", "-NoProfile", "-Command",
+deliveries/G7/preparation/tools/test_g7_evidence.py:397: trailing whitespace.
++                         "New-Item -ItemType Junction -Path $env:YOR_LEDGER_ALIAS -Target $env:YOR_LEDGER_TARGET | Out-Null"],
+deliveries/G7/preparation/tools/test_g7_evidence.py:398: trailing whitespace.
++                        capture_output=True, text=True, env=env)
+deliveries/G7/preparation/tools/test_g7_evidence.py:399: trailing whitespace.
++                except OSError as junction_error:
+deliveries/G7/preparation/tools/test_g7_evidence.py:400: trailing whitespace.
++                    self.skipTest(f"Directory alias creation unavailable: {symlink_error}; {junction_error}")
+deliveries/G7/preparation/tools/test_g7_evidence.py:401: trailing whitespace.
++                if junction.returncode != 0 or not alias.is_dir():
+deliveries/G7/preparation/tools/test_g7_evidence.py:402: trailing whitespace.
++                    self.skipTest(f"Symlink denied ({symlink_error}); junction unavailable: {junction.stderr.strip()}")
+deliveries/G7/preparation/tools/test_g7_evidence.py:403: trailing whitespace.
++            else:
+deliveries/G7/preparation/tools/test_g7_evidence.py:404: trailing whitespace.
++                self.skipTest(f"Directory symlink unavailable: {symlink_error}")
+deliveries/G7/preparation/tools/test_g7_evidence.py:405: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:406: trailing whitespace.
++        self.assertTrue(alias.is_symlink() or (hasattr(alias, "is_junction") and alias.is_junction()))
+deliveries/G7/preparation/tools/test_g7_evidence.py:407: trailing whitespace.
++        output = alias / "NOT-LIVE-aliased-output.json"
+deliveries/G7/preparation/tools/test_g7_evidence.py:408: trailing whitespace.
++        run = subprocess.run([sys.executable, str(TOOL), "--repository", str(self.root), "--output", str(output)],
+deliveries/G7/preparation/tools/test_g7_evidence.py:409: trailing whitespace.
++                             capture_output=True, text=True)
+deliveries/G7/preparation/tools/test_g7_evidence.py:410: trailing whitespace.
++        self.assertNotEqual(run.returncode, 0)
+deliveries/G7/preparation/tools/test_g7_evidence.py:411: trailing whitespace.
++        self.assertFalse((self.base / output.name).exists())
+deliveries/G7/preparation/tools/test_g7_evidence.py:412: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:413: trailing whitespace.
++    def test_cli_rejects_hard_link_output_without_changing_linked_source(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:414: trailing whitespace.
++        output = self.base / "NOT-LIVE-hard-link-output.json"
+deliveries/G7/preparation/tools/test_g7_evidence.py:415: trailing whitespace.
++        original = self.raw.read_bytes()
+deliveries/G7/preparation/tools/test_g7_evidence.py:416: trailing whitespace.
++        os.link(self.raw, output)
+deliveries/G7/preparation/tools/test_g7_evidence.py:417: trailing whitespace.
++        run = subprocess.run([sys.executable, str(TOOL), "--repository", str(self.root), "--output", str(output)],
+deliveries/G7/preparation/tools/test_g7_evidence.py:418: trailing whitespace.
++                             capture_output=True, text=True)
+deliveries/G7/preparation/tools/test_g7_evidence.py:419: trailing whitespace.
++        self.assertNotEqual(run.returncode, 0)
+deliveries/G7/preparation/tools/test_g7_evidence.py:420: trailing whitespace.
++        self.assertEqual(self.raw.read_bytes(), original)
+deliveries/G7/preparation/tools/test_g7_evidence.py:421: trailing whitespace.
++        self.assertEqual(output.read_bytes(), original)
+deliveries/G7/preparation/tools/test_g7_evidence.py:422: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:423: trailing whitespace.
++    def test_cli_output_creation_is_exclusive_under_concurrent_writers(self):
+deliveries/G7/preparation/tools/test_g7_evidence.py:424: trailing whitespace.
++        output = self.base / "NOT-LIVE-concurrent-output.json"
+deliveries/G7/preparation/tools/test_g7_evidence.py:425: trailing whitespace.
++        command = [sys.executable, str(TOOL), "--repository", str(self.root), "--output", str(output)]
+deliveries/G7/preparation/tools/test_g7_evidence.py:426: trailing whitespace.
++        first = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+deliveries/G7/preparation/tools/test_g7_evidence.py:427: trailing whitespace.
++        second = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+deliveries/G7/preparation/tools/test_g7_evidence.py:428: trailing whitespace.
++        first_stdout, first_stderr = first.communicate()
+deliveries/G7/preparation/tools/test_g7_evidence.py:429: trailing whitespace.
++        second_stdout, second_stderr = second.communicate()
+deliveries/G7/preparation/tools/test_g7_evidence.py:430: trailing whitespace.
++        self.assertCountEqual([first.returncode, second.returncode], [0, 1],
+deliveries/G7/preparation/tools/test_g7_evidence.py:431: trailing whitespace.
++                              f"first: {first_stdout}\n{first_stderr}\nsecond: {second_stdout}\n{second_stderr}")
+deliveries/G7/preparation/tools/test_g7_evidence.py:432: trailing whitespace.
++        ledger = json.loads(output.read_text(encoding="utf-8"))
+deliveries/G7/preparation/tools/test_g7_evidence.py:433: trailing whitespace.
++        self.assertEqual(ledger["overallStatus"], "NOT RUN")
+deliveries/G7/preparation/tools/test_g7_evidence.py:434: trailing whitespace.
++        self.assertFalse(ledger["acceptanceClaim"])
+deliveries/G7/preparation/tools/test_g7_evidence.py:435: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:436: trailing whitespace.
++
+deliveries/G7/preparation/tools/test_g7_evidence.py:437: trailing whitespace.
++if __name__ == "__main__":
+deliveries/G7/preparation/tools/test_g7_evidence.py:438: trailing whitespace.
++    unittest.main(verbosity=2)

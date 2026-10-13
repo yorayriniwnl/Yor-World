@@ -1,0 +1,134 @@
+﻿<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Parent integrated candidate art review</title>
+<script type="importmap">{"imports":{"three":"/three/build/three.module.js","three/addons/":"/three/examples/jsm/","three/examples/jsm/":"/three/examples/jsm/"}}</script>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0c1017}canvas{width:100%;height:100%;display:block}</style>
+</head>
+<body>
+<canvas></canvas>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {integrateScene} from '/src/features/world/SceneIntegrator';
+import {RigidWorldBatch} from '/src/features/world/RigidWorldBatch';
+import {configureProductionLighting} from '/src/features/world/ProductionLighting';
+import {CameraDirector} from '/src/features/world/CameraDirector';
+import {CharacterDirector} from '/src/features/world/CharacterDirector';
+
+const params = new URLSearchParams(location.search);
+const environmentAttempt = params.get('environment') || 'build-attempt-18';
+const fixtureAttempt = params.get('fixture') || 'fixture-attempt-06';
+const environment = '/candidate/' + environmentAttempt + '/runtime/production-room-full.glb';
+const fixture = '/candidate/' + fixtureAttempt + '/runtime/fixture-production.glb';
+const resident = '/models/resident-production.glb';
+
+const renderer = new THREE.WebGLRenderer({
+  canvas: document.querySelector('canvas'),
+  antialias: true,
+  preserveDrawingBuffer: true
+});
+renderer.info.autoReset = false;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.9;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5));
+renderer.setSize(innerWidth, innerHeight, false);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color('#0c1017');
+scene.add(new THREE.HemisphereLight(0xd8dbff, 0x38527c, 0.65));
+const whiteDir = new THREE.DirectionalLight(0xfff5ef, 1.35);
+whiteDir.position.set(-2, 4, 3);
+whiteDir.castShadow = true;
+whiteDir.shadow.mapSize.set(1024, 1024);
+scene.add(whiteDir);
+const cyanLight = new THREE.PointLight(0x67dbff, 7, 8);
+cyanLight.position.set(2, 2, -1);
+scene.add(cyanLight);
+const pinkLight = new THREE.PointLight(0xee8cff, 8, 8);
+pinkLight.position.set(-1, 2.1, -1.6);
+scene.add(pinkLight);
+
+const loader = new GLTFLoader();
+const gltfs = await Promise.all([environment, resident, fixture].map((url) => loader.loadAsync(url)));
+const integrated = integrateScene(...gltfs);
+scene.add(integrated.scene);
+configureProductionLighting(integrated.scene);
+for (const gltf of gltfs) gltf.scene.animations = gltf.animations;
+const hiddenMark = integrated.scene.getObjectByName('hidden-yor-mark');
+if (hiddenMark) hiddenMark.visible = false;
+
+const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.05, 30);
+const cameras = new CameraDirector(camera);
+cameras.resize(innerWidth, innerHeight);
+const character = new CharacterDirector(
+  integrated.avatarMixer,
+  integrated.chairMixer,
+  integrated.avatarActions,
+  integrated.chairActions,
+  integrated.bodyTurn,
+  integrated.chairRoot
+);
+character.settleToWork();
+
+const ext = renderer.getContext().getExtension('WEBGL_multi_draw');
+const batch = new RigidWorldBatch(scene, Boolean(ext), camera, renderer);
+const bounds = (name) => new THREE.Box3().setFromObject(integrated.scene.getObjectByName(name));
+
+window.art = {
+  renderer, scene, camera, cameras, character, integrated, batch, THREE,
+  resize(width, height) {
+    renderer.setSize(width, height, false);
+    cameras.resize(width, height);
+  },
+  setPreset(name) {
+    cameras.setPreset(name, true);
+  },
+  inspect() {
+    const gl = renderer.getContext();
+    const debug = gl.getExtension('WEBGL_debug_renderer_info');
+    const names = [
+      'certificate_glass', 'painting_canvas', 'desk_clock_display',
+      'painting-pivot', 'door-hinge', 'chair-root', 'desk'
+    ];
+    return {
+      environmentAttempt,
+      fixtureAttempt,
+      nodeCounts: integrated.nodeCounts,
+      camera: cameras.getDiagnostics(),
+      renderer: debug ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER),
+      multiDraw: Boolean(ext),
+      calls: renderer.info.render.calls,
+      triangles: renderer.info.render.triangles,
+      assetUrls: [environment, resident, fixture],
+      nodes: names.map((name) => {
+        const object = integrated.scene.getObjectByName(name);
+        if (!object) return { name, missing: true };
+        const box = bounds(name);
+        return {
+          name,
+          position: object.getWorldPosition(new THREE.Vector3()).toArray(),
+          bounds: { min: box.min.toArray(), max: box.max.toArray() }
+        };
+      })
+    };
+  }
+};
+
+let last = performance.now();
+function frame(now) {
+  character.advance(Math.min((now - last) / 1000, 0.1));
+  last = now;
+  batch.update();
+  renderer.info.reset();
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+window.ready = true;
+</script>
+</body>
+</html>

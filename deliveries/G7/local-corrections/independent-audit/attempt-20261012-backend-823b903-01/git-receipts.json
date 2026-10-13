@@ -1,0 +1,63 @@
+[
+  {
+    "command": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exitCode": 0,
+    "stdout": "823b90352b3ebd0d84cedf7b59cdfcdfb022449d\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "git",
+      "rev-parse",
+      "HEAD:app"
+    ],
+    "exitCode": 0,
+    "stdout": "c96c498bd7fdb07170fe0687a3e71813832b78e3\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--name-only",
+      "--",
+      "app/src/server",
+      "app/src/app/api",
+      "app/supabase",
+      "app/tests/integration/platform"
+    ],
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "git",
+      "show",
+      "--format=",
+      "--name-only",
+      "823b90352b3ebd0d84cedf7b59cdfcdfb022449d"
+    ],
+    "exitCode": 0,
+    "stdout": "app/tests/integration/platform/canonical-platform.test.ts\ndeliveries/G7/local-corrections/backend/attempt-13-approved-provider-fixture-retest-20261011/commands.txt\ndeliveries/G7/local-corrections/backend/attempt-13-approved-provider-fixture-retest-20261011/final-hashes.txt\ndeliveries/G7/local-corrections/backend/attempt-13-approved-provider-fixture-retest-20261011/focused-integration.log\ndeliveries/G7/local-corrections/backend/attempt-13-approved-provider-fixture-retest-20261011/focused-lint.log\ndeliveries/G7/local-corrections/backend/attempt-13-approved-provider-fixture-retest-20261011/git-diff-check-exit-code.txt\ndeliveries/G7/local-corrections/backend/attempt-13-approved-provider-fixture-retest-20261011/git-diff-check.log\ndeliveries/G7/local-corrections/backend/attempt-13-approved-provider-fixture-retest-20261011/integration-exit-code.txt\ndeliveries/G7/local-corrections/backend/attempt-13-approved-provider-fixture-retest-20261011/lint-exit-code.txt\ndeliveries/G7/local-corrections/backend/attempt-13-approved-provider-fixture-retest-20261011/preflight.txt\ndeliveries/G7/local-corrections/backend/attempt-13-approved-provider-fixture-retest-20261011/report.md\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "git",
+      "show",
+      "--format=",
+      "--no-ext-diff",
+      "823b90352b3ebd0d84cedf7b59cdfcdfb022449d",
+      "--",
+      "app/tests/integration/platform/canonical-platform.test.ts"
+    ],
+    "exitCode": 0,
+    "stdout": "diff --git a/app/tests/integration/platform/canonical-platform.test.ts b/app/tests/integration/platform/canonical-platform.test.ts\nindex 320ef99d..55f8fcce 100644\n--- a/app/tests/integration/platform/canonical-platform.test.ts\n+++ b/app/tests/integration/platform/canonical-platform.test.ts\n@@ -130,23 +130,32 @@ describe(\"Canonical production provider and actual platform route integration\",(\n     const hash = createHash(\"sha256\").update(validPng).digest(\"hex\");\n     const bucket = \"fixture-private\";\n     const objectKey = \"drafts/approved.png\";\n-    const spy = vi.spyOn(authClients, \"createAdminServiceRoleClient\").mockReturnValue({\n+    const downloadedObjects: string[] = [];\n+    const spy = vi.spyOn(authClients, \"createAdminServiceRoleClient\").mockImplementation((_signal, observeResponse) => ({\n       storage: {\n-        from: () => ({\n-          download: () => ({\n-            asStream: async () => ({\n-              data: new ReadableStream({\n-                start(controller) {\n-                  controller.enqueue(new Uint8Array(validPng));\n-                  controller.close();\n-                },\n-              }),\n-              error: null,\n-            }),\n+        from: (actualBucket: string) => ({\n+          download: (actualObjectKey: string) => ({\n+            asStream: async () => {\n+              downloadedObjects.push(`${actualBucket}/${actualObjectKey}`);\n+              if (actualBucket !== bucket || actualObjectKey !== objectKey) {\n+                observeResponse?.(new Response(null, { status: 404 }));\n+                return { data: null, error: { statusCode: \"404\", message: \"Fixture object not found\" } };\n+              }\n+              observeResponse?.(new Response(null, { headers: { \"content-type\": \"image/png\" } }));\n+              return {\n+                data: new ReadableStream<Uint8Array>({\n+                  start(controller) {\n+                    controller.enqueue(new Uint8Array(validPng));\n+                    controller.close();\n+                  },\n+                }),\n+                error: null,\n+              };\n+            },\n           }),\n         }),\n       },\n-    } as unknown as SupabaseClient);\n+    } as unknown as SupabaseClient));\n     try {\n       await db.query(\"INSERT INTO public.media_assets(id,object_key,hash,mime,bytes,approval_status,storage_bucket,integrity_verified_at) VALUES($1,$2,$3,'image/png',$4,'approved',$5,now())\",[mediaId,objectKey,hash,validPng.length,bucket]);\n       const projects=approvedPublication.projects.map((project) => ({ ...project,sections: project.sections.map((section) => ({ ...section,blocks: section.blocks.map((block) => block.type === \"image\" ? { ...block,mediaId } : block) })) }));\n@@ -164,6 +173,7 @@ describe(\"Canonical production provider and actual platform route integration\",(\n       }) };\n       setPlatformDbForTests(provider);\n       const next=await publishRevision({ expectedRevision: approvedPublication.revision,customProjects: projects },actor);\n+      expect(downloadedObjects).toEqual([`${bucket}/${objectKey}`]);\n       expect(lockedMediaChecks).toBe(1);\n       expect(next.revision).toBe(2);\n       await db.query(\"UPDATE public.media_assets SET approval_status='rejected' WHERE id=$1\",[mediaId]);\n",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,43 @@
+[
+  {
+    "command": "pnpm exec vitest run --config vitest.integration.config.ts tests/integration/platform/canonical-platform.test.ts tests/integration/platform/media-integrity.test.ts tests/integration/platform/media-fail-closed.test.ts --maxWorkers=1 --reporter=verbose --reporter=json --outputFile.json=<audit>/focused-results.json",
+    "cwd": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app",
+    "exitCode": 0,
+    "evidence": "focused-results.json",
+    "toolReceipt": "fffd06",
+    "scope": "embedded PGlite plus mocked/installed SDK synthetic HTTP"
+  },
+  {
+    "command": "pnpm exec vitest run --config vitest.integration.config.ts tests/integration/platform/streamed-body-limits.test.ts tests/integration/platform/contact.test.ts tests/integration/platform/contact-idempotency-r2.test.ts tests/integration/platform/schema-v3-identity.test.ts tests/integration/platform/database-authorization.test.ts --maxWorkers=1 --reporter=verbose --reporter=json --outputFile.json=<audit>/assigned-backend-results.json",
+    "cwd": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app",
+    "exitCode": 0,
+    "evidence": "assigned-backend-results.json",
+    "toolReceipt": [
+      "37b875",
+      "c8eeca"
+    ],
+    "scope": "embedded PGlite/memory/synthetic streams"
+  },
+  {
+    "command": "YOR_NATIVE_DATABASE_URL=postgresql://yor_test@127.0.0.1:54329/postgres pnpm exec vitest run --config vitest.native.config.ts --maxWorkers=1 --testNamePattern 'publication before deletion|publication-before-deletion|JSON-only AAL2' --reporter=verbose --reporter=json --outputFile.json=<audit>/native-focused-results.json",
+    "cwd": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app",
+    "exitCode": 1,
+    "evidence": "native-focused-results.json",
+    "toolReceipt": "a312c8",
+    "observed": "connect ECONNREFUSED 127.0.0.1:54329; beforeAll failed before database creation;14 tests skipped; preserved database undefined",
+    "classification": "SETUP BLOCKED, application outcomes NOT RUN"
+  },
+  {
+    "command": "pnpm exec eslint tests/integration/platform/canonical-platform.test.ts --max-warnings=0",
+    "cwd": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\app",
+    "exitCode": 0,
+    "stdout": "",
+    "toolReceipt": "0b780c"
+  },
+  {
+    "command": "git diff --check -- app/tests/integration/platform/canonical-platform.test.ts",
+    "cwd": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections",
+    "exitCode": 0,
+    "stdout": ""
+  }
+]

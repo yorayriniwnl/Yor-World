@@ -1,0 +1,3 @@
+# Attempt 14 preflight collection failure
+
+The collector incorrectly applied `Join-Path` to a slash-prefixed model URL on Windows, yielding backslash URLs and a reported R1 count of zero. The filesystem enumeration itself found 15 files. No tests ran and no product files were changed by this attempt. `preflight.txt` is retained as captured; the corrected evidence run uses a fresh attempt directory.

@@ -1,0 +1,54 @@
+{
+  "scope": "Synthetic JavaScript execution of AST-extracted current native mock/cleanup only; zero database queries; not native PostgreSQL or hosted-provider proof",
+  "identity": {
+    "path": "app/tests/native/backend-native.test.ts",
+    "bytes": 14403,
+    "sha256": "2a17bf15bb2c61e291ab9ec7f17814a174bfe50408868edd3f1420f0244483d7"
+  },
+  "enteredCount": 3,
+  "probes": [
+    {
+      "kind": "actual native mock AST extraction",
+      "bucket": "audit-private",
+      "key": "approved.png",
+      "present": true,
+      "status": 200,
+      "contentType": "image/png",
+      "statusChecked": "PASS"
+    },
+    {
+      "kind": "actual native mock AST extraction",
+      "bucket": "wrong-bucket",
+      "key": "approved.png",
+      "present": false,
+      "status": 404,
+      "contentType": null,
+      "statusChecked": "PASS"
+    },
+    {
+      "kind": "actual native mock AST extraction",
+      "bucket": "audit-private",
+      "key": "missing.png",
+      "present": false,
+      "status": 404,
+      "contentType": null,
+      "statusChecked": "PASS"
+    },
+    {
+      "kind": "actual afterAll AST extraction",
+      "adminConnected": false,
+      "database": "undefined",
+      "logs": [],
+      "adminEndCalls": 0,
+      "statusChecked": "PASS"
+    },
+    {
+      "kind": "actual afterAll AST extraction",
+      "adminConnected": true,
+      "database": "undefined",
+      "logs": [],
+      "adminEndCalls": 1,
+      "statusChecked": "PASS"
+    }
+  ]
+}

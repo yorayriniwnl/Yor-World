@@ -1,0 +1,51 @@
+{
+  "fixtureCommitAdvice": "PASS",
+  "assignedBackendCompletionAdvice": "REWORK: current native fixture/proof gap",
+  "productionDefectsReproduced": [],
+  "findings": [
+    {
+      "id": "BACKEND-NATIVE-01",
+      "severity": "MEDIUM",
+      "status": "OPEN",
+      "type": "stale test fixture and current native proof gap",
+      "owner": "Assigned backend maker",
+      "sources": [
+        {
+          "path": "app/tests/native/backend-native.test.ts",
+          "line": 76
+        },
+        {
+          "path": "app/src/server/media/integrity.ts",
+          "line": 47
+        },
+        {
+          "path": "app/src/server/media/integrity.ts",
+          "line": 62
+        },
+        {
+          "path": "app/tests/native/backend-native.test.ts",
+          "line": 148
+        },
+        {
+          "path": "app/tests/native/backend-native.test.ts",
+          "line": 169
+        },
+        {
+          "path": "app/tests/native/backend-native.test.ts",
+          "line": 178
+        }
+      ],
+      "trigger": "Execute current native positive publication, approval-before-withdrawal and initial-publication rollback cases with the supplied mock returning valid bytes.",
+      "expected": "The valid native test provider delivers the exact object MIME through createAdminServiceRoleClient response observer; actual multi-connection SQL/race assertions then execute.",
+      "observed": "Source mock ignores observer argument, leaving providerResponse.contentType=null. Current verifier rejects before media-positive workflow completes. Native local execution could not reach this case because cluster refused connection; this rejection is a source-level deterministic inference supported by executed missing-header provider regression, not a claim of an executed native failure.",
+      "evidence": [
+        "focused-results.json",
+        "native-focused-results.json",
+        "backend-source-identity.json"
+      ],
+      "makerAction": "Update only the native Storage stand-in to supply exact matching object MIME through the observer and truthful missing-object response, preserve race assertions, then rerun the native suite against an available isolated loopback PostgreSQL cluster and bind exact current source hashes."
+    }
+  ],
+  "hostedProviderProof": "NOT RUN",
+  "acceptanceAuthority": "Parent; no implementation/deployment/G7 acceptance granted"
+}

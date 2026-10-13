@@ -1,0 +1,30 @@
+{
+  "id": "R7-WRITER-03",
+  "scope": "Actual unmodified assembler CLI in the existing test fixture, under owned audit scratch; no candidate-driver or real R7 execution",
+  "fixtureRoot": "C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\independent-audit\\attempt-20261012-r7-writer-isolation-01\\.work\\yor-assembler-lqHARv\\repo",
+  "expected": "The required later inventory phase has a valid fresh-output path after package has already emitted inventory outputs",
+  "observed": {
+    "first": {
+      "exitCode": 0,
+      "stdout": "Bound 1 exact-source command identities; inventoried 7 artifacts. LF hashes apply to text; raw hashes to binary artifacts.\r\n",
+      "stderr": ""
+    },
+    "second": {
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\r\n  File \"C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\independent-audit\\attempt-20261012-r7-writer-isolation-01\\.work\\yor-assembler-lqHARv\\repo\\deliveries\\G7\\preparation\\tools\\assemble-evidence.py\", line 436, in <module>\r\n    main()\r\n  File \"C:\\Users\\yoray\\Projects\\Yor-World-Local-Corrections\\deliveries\\G7\\local-corrections\\independent-audit\\attempt-20261012-r7-writer-isolation-01\\.work\\yor-assembler-lqHARv\\repo\\deliveries\\G7\\preparation\\tools\\assemble-evidence.py\", line 403, in main\r\n    raise RuntimeError(f\"Output case-aliases an existing portable inventory path: {name}\")\r\nRuntimeError: Output case-aliases an existing portable inventory path: deliveries/G7/fixture-candidate-r7/commands-and-exit-codes.md\r\n"
+    },
+    "before": {
+      "commands-and-exit-codes.md": "d19f7f67248914736f09349b2620c19ffdf53e3f65f52893b53c01008a0af632",
+      "inventory-omissions.json": "d5204c1871d6735da82d87f2553c0449de652e7bf76ab5023333103c58819ea4",
+      "SHA256SUMS.txt": "aa65ecec0eb3d8803064dc20b3d7954d304545001012728f8365e7a19bb8721c"
+    },
+    "after": {
+      "commands-and-exit-codes.md": "d19f7f67248914736f09349b2620c19ffdf53e3f65f52893b53c01008a0af632",
+      "inventory-omissions.json": "d5204c1871d6735da82d87f2553c0449de652e7bf76ab5023333103c58819ea4",
+      "SHA256SUMS.txt": "aa65ecec0eb3d8803064dc20b3d7954d304545001012728f8365e7a19bb8721c"
+    },
+    "priorOutputsUnchanged": true
+  },
+  "status": "FAIL"
+}

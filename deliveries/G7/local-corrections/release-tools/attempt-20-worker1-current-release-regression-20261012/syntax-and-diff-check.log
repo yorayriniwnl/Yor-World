@@ -1,0 +1,14 @@
+﻿PASS node --check deliveries/G7/preparation/tools/g7-browser-smoke.mjs
+PASS node --check deliveries/G7/preparation/tools/g7-live-probes.mjs
+PASS node --check scripts/release/check-current-status.mjs
+PASS node --check scripts/release/tests/current-status.test.mjs
+PASS node --check scripts/release/tests/immutable-output.test.mjs
+PASS node --check scripts/release/tests/status-check.test.mjs
+PASS node --check scripts/release/tests/schema-migration-inventory.test.mjs
+PASS node --check scripts/release/tests/asset-manifest-validation.test.mjs
+PASS node --check scripts/release/validate-release.mjs
+PASS python -m ast deliveries/G7/preparation/tools/candidate-driver.py
+PASS python -m ast deliveries/G7/preparation/tools/assemble-evidence.py
+PASS python -m ast deliveries/G7/preparation/tools/g7-evidence.py
+PASS scoped git diff --check
+PASS untracked test source trailing-whitespace scan

@@ -1,0 +1,22 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import {fileURLToPath} from 'node:url';
+import {spawnSync} from 'node:child_process';
+const out=path.dirname(fileURLToPath(import.meta.url));
+const root=path.join(out,'fixtures/browser-entry-alias');
+const toolDir=path.join(root,'deliveries/G7/preparation/tools');
+fs.mkdirSync(toolDir,{recursive:true});
+for(const file of ['g7-browser-smoke.mjs','reserve-attempt.mjs']) fs.copyFileSync(path.join(out,'input-snapshot/deliveries/G7/preparation/tools',file),path.join(toolDir,file));
+const preserved=path.join(root,'deliveries/G7/rc6-candidate-r6');
+fs.mkdirSync(preserved);
+fs.symlinkSync(preserved,path.join(root,'deliveries/G7/evidence'),process.platform==='win32'?'junction':'dir');
+const manifest={releaseId:'v1.0.0-rc6',sourceCommit:'a'.repeat(40),sourceAppTree:'b'.repeat(40)};
+const bytes=JSON.stringify(manifest);fs.writeFileSync(path.join(root,'manifest.json'),bytes);
+fs.writeFileSync(path.join(root,'binding.json'),JSON.stringify({...manifest,status:'AUTHORIZED',ownerAuthorizationReference:'isolated',acceptedSuccessorReference:'isolated',deploymentId:'isolated',deployedAt:'2026-01-01T00:00:00Z',targetOrigin:'https://isolated.invalid',manifestSha256:crypto.createHash('sha256').update(bytes).digest('hex')}));
+// Intentionally absent app/package dependency: entry fails after reservation, before browser/network activity.
+const args=[path.join(toolDir,'g7-browser-smoke.mjs'),'--authorization','binding.json','--manifest','manifest.json','--output','deliveries/G7/evidence/browser.json'];
+const proc=spawnSync(process.execPath,args,{cwd:root,encoding:'utf8',windowsHide:true});
+const result={command:[process.execPath,...args],exitCode:proc.status,stdout:proc.stdout,stderr:proc.stderr,preservedFixtureEntries:fs.readdirSync(preserved),networkRun:false};
+fs.writeFileSync(path.join(out,'browser-entry-probe.json'),JSON.stringify(result,null,2)+'\n');
+console.log(result);

@@ -1,0 +1,5 @@
+Release suite: node --test scripts/release/tests/assemble-evidence.test.mjs scripts/release/tests/reserve-attempt.test.mjs scripts/release/tests/current-status.test.mjs scripts/release/tests/status-check.test.mjs scripts/release/tests/immutable-output.test.mjs scripts/release/tests/policy-output.test.mjs scripts/release/tests/schema-migration-inventory.test.mjs scripts/release/tests/asset-manifest-validation.test.mjs
+App suite (working directory app): pnpm exec vitest run --config vitest.config.ts tests/unit/contracts.test.ts tests/unit/cache-policy.test.ts
+Syntax: node --check scripts/release/release-lib.mjs
+Tracked scoped whitespace: git diff --check -- scripts/release/rc6-policy.json scripts/release/release-lib.mjs app/src/security/policy.ts
+Untracked test whitespace: git diff --no-index --check -- NUL scripts/release/tests/asset-manifest-validation.test.mjs and git diff --no-index --check -- NUL app/tests/unit/cache-policy.test.ts (exit 1 means files differ from empty; no output means no whitespace errors)
