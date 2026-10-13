@@ -1,0 +1,2804 @@
+Then we should stop treating it like a portfolio redesign and start treating it like a flagship digital product.
+The target is not “a cool Three.js site.” The target is:
+a cinematic interactive world, a serious full-stack application, and a technical case study that happens to be your portfolio.
+
+A visitor should remember the door opening, entering your room, meeting you, exploring your work physically, and then discovering that the entire thing is engineered properly underneath.
+Product north star
+I would lock five non-negotiables:
+Dimension	Target
+Visual	Awwwards-level art direction
+3D	Film-quality composition, web-optimized assets
+Interaction	Game-like responsiveness without game-like complexity
+Engineering	Production architecture, tests, observability, CMS, APIs
+Performance	Fast enough that the spectacle never becomes punishment
+
+
+The project succeeds only if all five survive together. A gorgeous 22 FPS website is a failed product wearing expensive makeup.
+The experience
+The homepage becomes a continuous cinematic sequence.
+BLACK
+ ↓
+minimal loading sequence
+ ↓
+hallway / exterior
+ ↓
+door
+ ↓
+visitor interacts
+ ↓
+door opens
+ ↓
+light leaks into hallway
+ ↓
+camera enters
+ ↓
+room slowly reveals itself
+ ↓
+camera approaches workstation
+ ↓
+you are coding
+ ↓
+you notice movement
+ ↓
+pause
+ ↓
+turn toward visitor
+ ↓
+small smile / wave / "Hi"
+ ↓
+turn back
+ ↓
+typing resumes
+ ↓
+interface unlocks
+ ↓
+EXPLORE
+
+Everything before EXPLORE is essentially the opening shot of a short film.
+Everything after EXPLORE becomes an interactive application.
+That separation is crucial.
+The room is the information architecture
+Your reference room remains the center of the entire project, but we rebuild it into your world rather than reproducing somebody else's gaming setup.
+Each important object should have purpose.
+Object	Portfolio meaning	Interaction
+Main monitor	CandidateX / primary work	camera dives toward display
+Secondary display	GitHub / engineering	live developer activity
+Server / PC	Helios	network visualization activates
+Energy sculpture	Zenith	energy paths illuminate
+Camera / scanner	AI vs Real	object performs visual scan
+Microphone	Yor Talks	waveform activates
+Books / documents	Research	papers and publications
+Wall board	Skills / stack	technologies reveal
+Shelf	Certifications / achievements	detail camera
+Phone	Contact	opens contact experience
+Window	Personal identity / city / time	ambient world-building
+Door	Return / reset experience	exits focused project mode
+
+
+This makes the environment semantic.
+Nothing expensive exists merely because “3D rooms have stuff.”
+Your character becomes part of the system
+Your character needs proper art direction, rigging and animation states.
+Not a mascot bouncing around.
+The character exists in three behavioral modes:
+Mode	Behavior
+Cinematic	notice visitor, turn, greet
+Ambient	code, mouse, stretch, glance
+Reactive	respond to selected project/object
+
+
+The animation set can eventually contain around 12–18 polished clips, but MVP only needs the essential six or seven.
+We should use a state machine rather than improvising:
+CODING
+ ↓
+HEARS_DOOR
+ ↓
+NOTICE
+ ↓
+TURN
+ ↓
+GREET
+ ↓
+RETURN
+ ↓
+CODING
+
+              PROJECT_SELECTED
+                     ↓
+CODING ─────────> REACT
+                     ↓
+               PROJECT_FOCUS
+
+That makes animation deterministic and testable.
+Art pipeline
+For this quality bar, Blender becomes its own production discipline.
+The pipeline should be:
+visual research
+      ↓
+art bible
+      ↓
+floor plan
+      ↓
+gray-box blockout
+      ↓
+camera blocking
+      ↓
+lighting blockout
+      ↓
+hero asset modeling
+      ↓
+secondary props
+      ↓
+materials
+      ↓
+avatar sculpt/model
+      ↓
+rigging
+      ↓
+animation
+      ↓
+high-quality render validation
+      ↓
+web retopology
+      ↓
+texture baking
+      ↓
+LOD generation
+      ↓
+GLB export
+      ↓
+browser validation
+
+Notice that camera blocking happens before detailed modeling.
+That's intentional.
+There is no point spending three days modeling the back of a shelf that never appears in the camera.
+Art bible before Blender
+Before making final assets, we create a small visual specification.
+It defines things such as:
+System	Rule
+Geometry	rounded stylized realism
+Proportions	slightly exaggerated, not cartoonish
+Base palette	graphite, ivory, near-black
+Accent	violet + restrained cyan
+Warm light	tungsten / amber
+Materials	soft plastics, metal, wood, fabric
+Emission	reserved for interactive states
+UI typography	clean grotesk
+Environmental typography	rare
+Character	stylized-realistic
+Lighting	cinematic rather than RGB explosion
+
+
+That prevents the project from slowly mutating into “random cool things we found on Dribbble.”
+Camera system
+The camera is effectively another character.
+I would define named cameras rather than free orbit:
+CAM_00_DOOR
+CAM_01_ENTRY
+CAM_02_ROOM_REVEAL
+CAM_03_DESK
+CAM_04_GREETING
+CAM_05_HOME
+CAM_10_CANDIDATEX
+CAM_11_HELIOS
+CAM_12_ZENITH
+CAM_13_AI_REAL
+CAM_14_TALKS
+CAM_20_ABOUT
+CAM_30_CONTACT
+
+Visitors aren't controlling a Blender viewport.
+We control composition.
+Mouse position can introduce tiny parallax, perhaps 1–3°, but the art director owns the camera.
+Technical architecture
+For this version I would make the engineering architecture more serious than the earlier proposal.
+                          ┌─────────────────────┐
+                          │       CDN/EDGE      │
+                          └──────────┬──────────┘
+                                     │
+                              ┌──────▼──────┐
+                              │    Next.js  │
+                              │     Web     │
+                              └──────┬──────┘
+                                     │
+              ┌──────────────────────┼─────────────────────┐
+              │                      │                     │
+       ┌──────▼─────┐        ┌──────▼──────┐       ┌─────▼─────┐
+       │ React UI   │        │ R3F / Three │       │ Web APIs  │
+       └────────────┘        └─────────────┘       └─────┬─────┘
+                                                         │
+                                                 ┌───────▼───────┐
+                                                 │ Backend API   │
+                                                 │ modular mono  │
+                                                 └───────┬───────┘
+                                                         │
+                                    ┌────────────────────┼──────────────┐
+                                    │                    │              │
+                             PostgreSQL              Redis          Storage
+
+For the backend, I'd seriously consider a TypeScript modular monolith, probably NestJS, rather than cramming everything into random route handlers.
+Not because NestJS is inherently “better.”
+Because this project should demonstrate:
+- API architecture
+- authentication
+- caching
+- queues
+- validation
+- database modeling
+- testing
+- observability
+- API documentation
+without forcing us into microservice cosplay.
+Repository architecture
+A monorepo is appropriate.
+yor-world/
+│
+├── apps/
+│   ├── web/
+│   ├── api/
+│   └── admin/
+│
+├── packages/
+│   ├── ui/
+│   ├── three/
+│   ├── database/
+│   ├── schemas/
+│   ├── config/
+│   └── analytics/
+│
+├── assets/
+│   ├── blender/
+│   ├── textures/
+│   ├── audio/
+│   └── source/
+│
+├── tooling/
+│   ├── eslint/
+│   ├── typescript/
+│   └── scripts/
+│
+└── docs/
+    ├── architecture/
+    ├── art/
+    ├── adr/
+    └── production/
+
+Probably Turborepo or equivalent monorepo tooling.
+Frontend
+Core stack:
+Layer	Choice
+Framework	Next.js
+Language	TypeScript strict
+Rendering	React
+3D	Three.js
+React 3D	React Three Fiber
+Utilities	Drei
+Cinematics	GSAP
+UI motion	Motion
+State	Zustand
+3D state	XState or explicit scene FSM
+Styling	CSS/Tailwind where appropriate
+API data	TanStack Query
+Runtime schemas	Zod
+
+
+I would strongly consider XState for the cinematic/interaction machine.
+This project has enough states that explicit statecharts may actually improve reliability.
+Backend
+Backend modules:
+Module	Purpose
+Projects	portfolio project data
+Content	biography, skills, metadata
+Assets	media metadata
+GitHub	cached repository data
+Contact	messages + anti-spam
+Analytics	interaction events
+Resume	controlled resume versions
+Admin	content management
+Auth	admin authentication
+Feature flags	controlled rollouts
+Experiments	optional UX testing
+
+
+Database:
+PostgreSQL
+Cache/session:
+Redis
+Files:
+R2 / equivalent object storage
+Queues:
+something lightweight such as BullMQ if we genuinely need jobs.
+CMS
+I absolutely want a proper admin system in the final version.
+Imagine logging into:
+/admin
+
+and changing:
+- featured project
+- homepage text
+- project ordering
+- GitHub links
+- screenshots
+- project technology
+- availability status
+- résumé
+- project objects
+- scene labels
+without changing source code.
+That makes this a real product.
+The monitor is special
+The monitor should not merely contain a screenshot baked into Blender.
+It should become a live rendered surface.
+There are several ways to do this.
+We could render a React interface into the scene or use an HTML overlay carefully aligned to the screen.
+Then the monitor can genuinely show:
+VS Code-style coding
+CandidateX dashboard
+terminal
+GitHub
+project launcher
+system status
+
+without embedding unreadable texture text into a GLB.
+This will probably become one of the signature technical features.
+Project transitions
+Each project needs its own cinematic grammar.
+For example:
+CandidateX
+Camera approaches monitor.
+Evidence nodes begin leaving the monitor.
+The graph expands into the room.
+Room lighting dims.
+CandidateX title appears.
+HTML case study takes control.
+Helios
+PC/server begins pulsing.
+Network topology flows outward.
+Camera follows a signal.
+Transition into architecture page.
+Zenith
+Room lights momentarily switch energy mode.
+Power travels from desk to miniature grid.
+Camera follows it.
+Case study begins.
+Now the projects don't feel interchangeable.
+Audio design
+At this scale, audio becomes worthwhile.
+But it should be understated.
+Potential layers:
+room tone
+computer fan
+quiet keyboard
+distant city/rain
+door hinge
+subtle movement
+interaction accents
+project transition signatures
+
+No autoplay soundtrack.
+One user gesture activates the audio engine.
+There should be:
+sound on / off
+and the site should remember the preference.
+Performance budget
+This needs to be defined before asset creation.
+Metric	Hard target
+Initial HTML/JS experience	as lean as practicable
+Initial hero assets	~8–12 MB desktop ceiling
+Full optional world	<30–40 MB lazy-loaded
+Hero textures	mostly 1K–2K
+Desktop FPS	60 target
+mid-range mobile	≥30 FPS
+initial draw calls	<100 ideal
+long tasks	aggressively controlled
+intro ready	<3–4 sec on decent connection
+non-3D fallback	near-instant
+
+
+Nobody downloads the entire museum before entering the lobby.
+Device quality system
+We should probably create something like:
+ULTRA
+HIGH
+MEDIUM
+LOW
+FALLBACK
+
+Based on:
+- GPU capability
+- device memory
+- DPR
+- mobile/desktop
+- performance sampling
+And dynamically adjust:
+shadows
+SSR
+particles
+texture resolution
+DPR
+post-processing
+reflections
+LOD
+
+This is one of those engineering details that makes a visually ambitious product actually respectable.
+Accessibility
+A million-dollar visual experience still needs to be a usable website.
+Therefore:
+3D object ↔ HTML equivalent.
+A keyboard user can access everything.
+A screen-reader user gets the complete portfolio.
+Reduced-motion users bypass cinematics.
+Low-end hardware gets a lightweight version.
+Google still gets semantic HTML.
+The WebGL experience is progressive enhancement, not the only door into the content.
+SEO
+Every project still gets an actual URL.
+/projects/candidatex
+/projects/helios
+/projects/zenith
+/projects/ai-vs-real
+/projects/talks
+
+Not:
+/#cameraPosition=4234
+
+The cinematic experience links into real routes.
+That means:
+- shareable
+- indexable
+- reload-safe
+- analytics-friendly
+- accessible
+Observability
+For something this complex, errors cannot disappear into WebGL darkness.
+I would include:
+- Sentry
+- structured server logs
+- frontend error boundaries
+- WebGL crash detection
+- performance monitoring
+- analytics funnels
+- failed asset telemetry
+Example:
+door_started
+door_completed
+intro_skipped
+room_loaded
+character_greeted
+project_hovered
+project_opened
+case_study_read
+github_opened
+contact_opened
+contact_submitted
+
+Then we can actually see whether visitors are exploring the experience or getting lost in the hallway. 🫠
+Testing
+Not just component tests.
+The project needs several test layers.
+Type	What
+Unit	utilities, state machines
+API	services and validation
+DB	integration
+UI	React components
+E2E	project flows
+Visual	screenshots
+Performance	Lighthouse/WebGL
+Accessibility	automated + manual
+3D smoke	asset/load/camera state
+Mobile	device viewport tests
+
+
+The intro itself becomes an E2E scenario.
+load
+→ door visible
+→ enter
+→ door opens
+→ camera settles
+→ greeting triggers
+→ exploration enabled
+
+CI/CD
+GitHub Actions should roughly enforce:
+install
+ ↓
+lint
+ ↓
+typecheck
+ ↓
+unit
+ ↓
+integration
+ ↓
+build
+ ↓
+E2E
+ ↓
+asset validation
+ ↓
+bundle budget
+ ↓
+preview deploy
+
+PR gets preview environment.
+Main gets production.
+Large GLBs should be caught before somebody quietly merges a 92 MB chair. 😭
+Documentation
+If we want this project to stand as a technical achievement, documentation matters.
+I'd create Architecture Decision Records for things like:
+ADR-001 Three.js + R3F
+ADR-002 cinematic state machine
+ADR-003 modular backend
+ADR-004 asset delivery strategy
+ADR-005 CMS design
+ADR-006 scene quality tiers
+ADR-007 WebGL fallback
+ADR-008 analytics model
+
+The GitHub repository then reads like a professional software project rather than an art experiment.
+Production roadmap
+For this ambition, I would increase the schedule significantly.
+Stage	Duration
+Product definition	1 week
+UX + storyboard	1 week
+Art direction	1 week
+Scene blockout	1 week
+Character design	1–2 weeks
+Environment production	2–3 weeks
+Character rig + animation	1–2 weeks
+Web architecture	1 week
+Core R3F implementation	2 weeks
+Cinematic system	1–2 weeks
+Project interactions	2 weeks
+Backend	1–2 weeks
+CMS	1 week
+Case studies	1–2 weeks
+Mobile	1 week
+Optimization	1–2 weeks
+QA/accessibility	1 week
+Final polish	1–2 weeks
+
+
+A serious target is therefore roughly 14–20 weeks for a highly polished solo/AI-assisted flagship build.
+Could we create something in three weeks?
+Absolutely.
+Would it be this project?
+No.
+For this one, I'd rather build a cathedral than ship a painted cardboard castle.
+Release strategy
+Don't wait four months to deploy anything.
+Milestone	Result
+R0	blockout video
+R1	door + room browser prototype
+R2	animated character
+R3	complete hero experience
+R4	first interactive project
+Alpha	complete desktop experience
+Beta	mobile + backend + CMS
+RC	performance/QA
+1.0	public flagship release
+
+
+Every milestone is independently testable.
+Team thinking, even if we're effectively doing it ourselves
+Treat the work as separate disciplines:
+Hat	Responsibility
+Creative Director	visual language
+UX Designer	visitor journey
+3D Artist	models
+Environment Artist	room
+Character Artist	avatar
+Animator	character/camera
+Motion Designer	transitions
+Frontend Engineer	web UI
+Graphics Engineer	WebGL
+Backend Engineer	API/data
+DevOps Engineer	deployment
+QA Engineer	stability
+Performance Engineer	optimization
+
+
+You and I can cover a lot of these roles, but keeping the hats separate prevents one concern from contaminating another.
+The immediate next phase
+Do not code yet.
+We're now in Pre-production / Phase 0.
+Before a repository gets touched, I want us to lock:
+product brief → full storyboard → room floor plan → object-to-feature map → avatar behavior → project transition concepts → art bible → technical architecture → performance budget → production milestones.
+Only after those are stable should Blender blockout and the web prototype start in parallel.
+That is how I would plan it if the instruction were genuinely:
+Build the best project in the portfolio, not merely the portfolio itself.
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+Considering everything at peak and with no compromise like a god like 3d visual artist developer and all. Tell me everything that we were discussing. I will plan it with Astra now.
+
+
+
+
+
+ 
+
+
+
+
+
+
+Yes. Below is the master brief I would hand to Astra. It consolidates the entire concept we developed, but treats it at the highest possible quality bar: 3D art, cinematography, animation, motion design, frontend engineering, backend engineering, performance, accessibility, product architecture, deployment, testing and production management.
+You can essentially copy this whole thing into Astra as the project constitution.
+Project codename: YOR WORLD
+1. Vision
+Build a flagship personal portfolio that behaves less like a website and more like an interactive cinematic 3D world.
+The visitor should not arrive at a conventional developer landing page.
+They should enter the creator's world.
+The experience begins outside a room.
+A door opens.
+The camera enters.
+Lighting from the workspace leaks into the hallway.
+The workstation gradually appears.
+Ayush is sitting at the desk coding.
+The camera approaches.
+He notices the visitor.
+He pauses.
+Turns around.
+Looks toward the camera.
+Smiles / gives a restrained greeting or wave.
+Then turns back toward the workstation and resumes coding.
+At that moment the cinematic experience transitions naturally into an interactive portfolio.
+The room itself becomes the navigation system.
+The objective is:
+A cinematic interactive world + serious software engineering platform + complete portfolio + technical case study.
+
+Not a Three.js gimmick.
+Not a gaming-room render with buttons floating over it.
+Not a normal portfolio with a 3D object pasted into the hero.
+The entire product should feel like one coherent authored universe.
+2. Quality bar
+Everything should be designed around these five pillars.
+Dimension	Target
+Art direction	World-class
+Cinematography	Film/game-intro quality
+3D environment	Stylized premium realism
+Interaction	Smooth, intentional, intuitive
+Engineering	Production-grade full-stack
+
+
+The site should be memorable even if somebody spends only 30 seconds inside it.
+The underlying repository should remain impressive even if somebody turns WebGL off.
+That gives us two separate tests:
+Visual test: Would an Awwwards/Dribbble/3D artist care about this?
+Engineering test: Would a senior developer respect the architecture?
+Both must pass.
+3. Primary visual reference
+The central environment is based conceptually on the 3D workstation reference already selected:
+- premium desk
+- ultrawide display
+- gaming/developer chair
+- shelving
+- plants
+- wall lighting
+- controlled purple/blue lighting
+- pegboard/accessories
+- PC
+- keyboard/mouse
+- microphone
+- atmospheric room composition
+However, do not recreate the reference literally.
+The final environment must become unmistakably Ayush/Yor.
+Gaming decoration should be replaced where appropriate with meaningful engineering/project objects.
+The result should be:
+developer studio + creative laboratory + personal digital world
+rather than:
+expensive RGB gaming room.
+4. Art direction
+Target style:
+stylized realism
+Not Pixar-cartoon.
+Not hyperphotoreal.
+Not low-poly.
+Not cyberpunk overload.
+Objects can have slightly simplified or exaggerated proportions, but materials, lighting and cinematography should feel sophisticated.
+Palette
+Primary environment:
+- graphite
+- charcoal
+- deep navy
+- black
+- ivory/white
+- subtle metallic finishes
+Interactive accents:
+- violet
+- electric blue
+- restrained cyan
+Warm counter-lighting:
+- amber
+- tungsten
+- soft warm white
+The reference RGB saturation should be reduced significantly.
+Approximate visual balance:
+Property	Target
+Neutral/dark materials	65–75%
+Accent colors	15–20%
+Warm practical lighting	10–15%
+Highly emissive surfaces	minimal
+
+
+Color should communicate interaction, not merely decorate the room.
+5. Opening cinematic
+The opening sequence is one of the signature experiences.
+Approximate first-visit choreography:
+Time	Event
+0–1.5 s	loading / atmospheric darkness
+1.5–2.5 s	hallway/door established
+2.5–3.5 s	door begins opening
+3.5–5.5 s	camera moves through doorway
+5.5–7 s	desk and environment reveal
+7–8 s	camera approaches workstation
+8–9 s	Ayush notices visitor
+9–10 s	character turns toward camera
+10–11 s	restrained greeting
+11–12 s	character turns back
+12 s+	coding loop + portfolio interaction unlocked
+
+
+Exact timing should be tuned during animation development.
+The sequence should feel elegant rather than long.
+Critical UX rule
+Do not force the cinematic every time.
+First visit:
+full intro
+Returning visitor:
+shortened reveal
+Also provide:
+Skip Intro
+And respect:
+prefers-reduced-motion
+6. Narrative structure
+The portfolio should behave like an environment with narrative progression.
+ARRIVAL
+↓
+DOOR
+↓
+ENTRY
+↓
+ROOM REVEAL
+↓
+MEET CREATOR
+↓
+CREATOR RETURNS TO WORK
+↓
+EXPLORE
+↓
+DISCOVER PROJECTS
+↓
+ENTER PROJECT
+↓
+CASE STUDY
+↓
+RETURN TO ROOM
+
+The user should always understand where they are.
+No chaotic free-camera experience.
+7. Camera philosophy
+The visitor should not receive unrestricted orbit controls.
+This is art-directed cinematography.
+The camera should use predetermined compositions.
+Possible camera states:
+CAM_00_LOADING
+
+CAM_01_HALLWAY
+CAM_02_DOOR
+CAM_03_ENTRY
+CAM_04_ROOM_REVEAL
+CAM_05_DESK_APPROACH
+CAM_06_GREETING
+CAM_07_HOME
+
+CAM_10_CANDIDATEX
+CAM_11_HELIOS
+CAM_12_ZENITH
+CAM_13_AI_REAL
+CAM_14_TALKS
+
+CAM_20_ABOUT
+CAM_21_SKILLS
+CAM_22_RESEARCH
+
+CAM_30_CONTACT
+
+Mouse movement may introduce perhaps:
+1–3° subtle parallax
+but the composition remains controlled.
+Think cinematic dolly, crane and focus shots rather than “rotate model with mouse.”
+8. Character
+The character represents Ayush.
+Preferred framing:
+back / three-quarter rear view
+rather than constantly facing the audience.
+Benefits:
+- keeps attention on environment
+- reduces uncanny facial requirements
+- feels natural
+- supports cinematic greeting
+- lowers visual complexity
+The character is normally working.
+The visitor interrupts that activity.
+That creates narrative.
+9. Character animation system
+Initial required animation clips:
+coding_idle
+typing_variant
+mouse_idle
+notice_visitor
+turn_to_camera
+greet_wave
+turn_back
+chair_adjust
+breathing_idle
+
+Later optional animations:
+stretch
+check_secondary_screen
+reach_for_mug
+headphones
+project_reaction
+idle_glance
+
+Do not constantly animate everything.
+The default behavior should feel calm.
+10. Character state machine
+Character behavior must be deterministic.
+Example:
+CODING
+ ↓
+DOOR_DETECTED
+ ↓
+NOTICE_VISITOR
+ ↓
+TURNING
+ ↓
+GREETING
+ ↓
+RETURNING
+ ↓
+CODING
+
+During portfolio interaction:
+CODING
+  ↓
+PROJECT_SELECTED
+  ↓
+PROJECT_REACTION
+  ↓
+PROJECT_FOCUS
+
+This should be driven by a real state machine rather than scattered React booleans.
+11. Global scene state machine
+The entire experience should have explicit states.
+BOOT
+↓
+ASSET_LOADING
+↓
+DOOR_READY
+↓
+DOOR_OPENING
+↓
+ROOM_ENTRY
+↓
+ROOM_REVEAL
+↓
+CHARACTER_NOTICE
+↓
+CHARACTER_GREETING
+↓
+CODING_IDLE
+↓
+EXPLORE
+
+Explore branches into:
+PROJECT_FOCUS
+ABOUT_FOCUS
+SKILLS_FOCUS
+RESEARCH_FOCUS
+CONTACT_FOCUS
+RETURN_HOME
+
+Use XState or a similarly disciplined state-machine architecture.
+12. The room IS the navigation system
+Every meaningful object represents something.
+Object	Meaning
+Main monitor	CandidateX
+PC/server	Helios
+Energy device/model	Zenith
+Scanner/camera	AI vs Real
+Microphone	Yor Talks
+Secondary monitor	GitHub/activity
+Books/research shelf	Research/papers
+Certificate objects	Certifications
+Wall display	Technologies/skills
+Phone/device	Contact
+Window	ambient world/personal atmosphere
+Door	home/reset/exit
+
+
+Decorative objects should still exist, but they must remain secondary.
+Approximate content balance:
+60% meaningful
+25% environment building
+15% pure decoration
+13. Project interaction philosophy
+Objects should not simply display tooltips.
+Each project should have its own audiovisual behavior.
+CandidateX
+Main monitor becomes active.
+Evidence nodes emerge.
+Graph expands beyond screen.
+Room lighting reacts.
+Camera approaches screen.
+Transition into CandidateX.
+Helios
+Server/PC wakes.
+Network lights propagate.
+Camera follows signal flow.
+Architecture appears.
+Transition into case study.
+Zenith
+Energy paths activate.
+Room electricity becomes visualized.
+Lighting passes through miniature grid/battery system.
+Camera follows energy path.
+AI vs Real
+Camera/scanner activates.
+Objects/materials split between synthetic/real representations.
+Scanning effect reveals project.
+Yor Talks
+Microphone activates.
+Waveform appears spatially.
+Audio visualization expands.
+Transition into project.
+Each project should feel different.
+14. Monitor system
+The main display should be one of the strongest technical features.
+Avoid simply baking UI screenshots into Blender textures.
+Prefer a live UI mapped/aligned to the 3D monitor.
+Potential implementation:
+HTML overlay precisely aligned to monitor
+or
+DOM/Canvas texture rendered into WebGL
+The screen can genuinely display:
+- project launcher
+- code
+- terminal
+- CandidateX
+- GitHub
+- developer activity
+- status system
+This creates a beautiful overlap between ordinary web UI and 3D.
+15. Website layer
+3D should not contain all content.
+Use this split:
+WebGL / Three.js
+Responsible for:
+- room
+- avatar
+- cinematics
+- project interactions
+- environmental storytelling
+- transitions
+HTML / React
+Responsible for:
+- project case studies
+- biography
+- technical descriptions
+- project architecture
+- resume
+- contact forms
+- accessible navigation
+- SEO content
+This architecture is essential.
+16. Project pages
+Every project receives a real URL.
+/projects/candidatex
+/projects/helios
+/projects/zenith
+/projects/ai-vs-real
+/projects/talks
+
+A user may enter from the 3D room, but a recruiter can directly open the URL.
+Each project page should contain:
+Overview
+Problem
+Why it matters
+Architecture
+Engineering decisions
+Implementation
+Tech stack
+UI/screens
+Challenges
+Tradeoffs
+Testing
+Deployment
+Results
+GitHub
+Live demo
+Future work
+
+The project pages should themselves be premium case studies.
+17. Core frontend technology
+Recommended stack:
+Layer	Technology
+Web framework	Next.js
+Language	TypeScript
+UI	React
+3D	Three.js
+React 3D	React Three Fiber
+Three helpers	Drei
+Cinematic animation	GSAP
+UI motion	Motion
+Scene state	XState
+App state	Zustand
+Remote state	TanStack Query
+Validation	Zod
+Styling	Tailwind + custom CSS
+
+
+Use current stable releases when implementation begins.
+Do not lock obsolete versions during pre-production.
+18. 3D production stack
+Primary tool:
+Blender
+Possible supporting tools depending on production needs:
+- Substance Painter
+- Photoshop
+- Illustrator/Figma
+- Mixamo only for prototyping
+- custom rigging for final character
+- audio tooling for sound design
+Blender remains the source of truth for the world.
+19. Blender production pipeline
+research
+↓
+art bible
+↓
+floor plan
+↓
+graybox
+↓
+camera blocking
+↓
+lighting blocking
+↓
+environment models
+↓
+hero props
+↓
+character
+↓
+materials
+↓
+rigging
+↓
+character animation
+↓
+camera animation
+↓
+render validation
+↓
+retopology
+↓
+texture baking
+↓
+LODs
+↓
+web optimization
+↓
+GLB export
+
+Important:
+Camera blocking before detailed modeling.
+Do not waste modeling effort on geometry cameras never see.
+20. 3D asset architecture
+Do not create a single enormous room GLB.
+Use modular assets.
+Example:
+/assets/models/
+
+room-shell.glb
+door.glb
+desk.glb
+chair.glb
+monitor.glb
+keyboard.glb
+mouse.glb
+pc.glb
+microphone.glb
+shelves.glb
+plants.glb
+
+avatar.glb
+
+candidatex.glb
+helios.glb
+zenith.glb
+ai-real.glb
+talks.glb
+
+Benefits:
+- lazy loading
+- individual LOD
+- easier iteration
+- memory efficiency
+- independent replacement
+- cleaner scene structure
+21. Asset optimization
+The browser version should not contain production-render geometry directly.
+Use:
+- retopology
+- Draco or Meshopt
+- KTX2
+- texture atlases
+- baked AO
+- baked lighting where possible
+- instancing
+- LOD
+- frustum culling
+- occlusion strategy
+- controlled shadow maps
+- limited dynamic lighting
+The mission is:
+look computationally expensive while actually being computationally disciplined.
+
+22. Performance budget
+Performance must be treated as a design constraint.
+Approximate targets:
+Metric	Goal
+Initial desktop 3D	8–12 MB
+Initial mobile 3D	4–6 MB
+Full lazy-loaded world	<30–40 MB
+Main textures	mostly 1K
+Hero textures	maximum 2K where justified
+Initial visible triangles	~200k–400k
+Draw calls	preferably <100–150
+Desktop FPS	60
+Mid-range mobile	≥30 FPS
+High-end mobile	60 where practical
+
+
+Never merge a 90 MB chair because it happens to look nice. 😭
+23. Adaptive graphics
+Implement device quality tiers.
+ULTRA
+HIGH
+MEDIUM
+LOW
+FALLBACK
+
+Adapt:
+- DPR
+- shadows
+- reflections
+- bloom
+- SSAO
+- particles
+- post-processing
+- texture resolution
+- LOD
+- dynamic lights
+- physics/animation complexity
+Potential inputs:
+- GPU
+- device memory
+- viewport
+- DPR
+- initial frame timing
+- WebGL capability
+The site should benchmark itself lightly and adapt.
+24. Mobile
+Do not simply shrink desktop.
+Create a dedicated mobile composition.
+Desktop can show:
+full room
+Mobile shows:
+desk + monitor + character + essential interactions
+Potential simplifications:
+- fewer props
+- fewer dynamic lights
+- weaker shadows
+- lower texture resolution
+- reduced post-processing
+- shorter cinematic
+- fewer particles
+- reduced character complexity
+Still maintain the same identity.
+25. Fallback experience
+If WebGL fails or hardware is weak:
+Visitors still get a beautiful portfolio.
+Use:
+- rendered hero/poster
+- HTML project navigation
+- all case studies
+- contact
+- resume
+- GitHub
+- biography
+WebGL is enhancement.
+The portfolio itself must never disappear because someone's GPU is weak.
+26. Backend philosophy
+Because this is meant to prove full-stack ability, the backend should be genuine.
+For the final architecture I would use:
+TypeScript backend + modular monolith
+Potential choice:
+NestJS
+Not because microservices are needed.
+Exactly the opposite.
+Use a disciplined modular monolith rather than fake-enterprise microservices.
+27. Backend modules
+Potential modules:
+Projects
+Content
+Media
+GitHub
+Contact
+Analytics
+Resume
+Admin
+Authentication
+Settings
+FeatureFlags
+Experiments
+
+Each should have clear ownership.
+28. Database
+Recommended:
+PostgreSQL
+Potential ORM:
+Drizzle
+Core tables could include:
+projects
+project_sections
+project_media
+technologies
+project_technologies
+
+skills
+certifications
+research
+
+contact_messages
+
+analytics_events
+sessions
+
+site_settings
+feature_flags
+
+admin_users
+
+29. Cache
+Use Redis only where useful.
+Potential uses:
+- GitHub API cache
+- rate limiting
+- sessions
+- aggregated analytics
+- temporary jobs
+Do not introduce infrastructure solely to look sophisticated.
+30. Storage
+Use object storage for:
+- project screenshots
+- video
+- resumes
+- downloadable content
+- optimized media
+Potential choice:
+Cloudflare R2
+or equivalent.
+31. GitHub integration
+GitHub information should be fetched server-side and cached.
+Potential data:
+- repositories
+- languages
+- stars
+- releases
+- commit activity
+- project metadata
+Avoid hitting GitHub from every browser session.
+32. Contact system
+Real contact backend.
+Flow:
+Visitor
+↓
+Contact UI
+↓
+Validation
+↓
+Rate limiting
+↓
+API
+↓
+Database
+↓
+Email notification
+
+Include:
+- validation
+- spam prevention
+- rate limiting
+- logging
+- confirmation state
+Potential email provider:
+Resend
+33. Admin system
+Create a real internal control panel.
+Route:
+/admin
+
+Capabilities:
+- edit projects
+- reorder projects
+- change project metadata
+- upload media
+- manage links
+- manage resume
+- update biography
+- toggle availability
+- edit homepage copy
+- update scene/project labels
+- read contact messages
+- review analytics
+This transforms the portfolio into a real content platform.
+34. Analytics
+Use privacy-respecting first-party analytics where possible.
+Interesting events:
+intro_started
+intro_completed
+intro_skipped
+
+door_opened
+room_entered
+character_greeted
+
+project_hovered
+project_selected
+
+candidatex_opened
+helios_opened
+zenith_opened
+ai_real_opened
+talks_opened
+
+case_study_viewed
+
+github_clicked
+resume_downloaded
+
+contact_opened
+contact_submitted
+
+This allows us to evaluate actual experience design.
+35. Audio
+Audio can dramatically improve the project.
+But remain restrained.
+Potential sounds:
+- door
+- room ambience
+- PC fan
+- keyboard
+- mouse
+- distant city
+- subtle HVAC
+- rain if environment calls for it
+- interface sounds
+- project-specific transitions
+Important:
+No surprise autoplay audio.
+Sound begins after a user interaction.
+Provide:
+Sound On / Off
+Remember preference.
+36. Motion design
+Motion should have hierarchy.
+Motion	Intensity
+Ambient breathing	extremely low
+plants	almost none
+character idle	low
+screen UI	moderate
+hover	short
+project activation	strong
+camera transitions	strongest
+cinematics	intentional
+
+
+Do not make everything float.
+Stillness makes movement more powerful.
+37. Lighting
+Lighting should function narratively.
+Potential layers:
+Moon/city fill
+warm desk practical
+monitor glow
+violet accent
+blue room fill
+interaction-specific emission
+When a project activates, lighting can subtly shift toward that project's identity.
+That creates emotional transitions without replacing the scene.
+38. Typography
+The typography should remain highly editorial.
+Avoid gamer fonts.
+Use:
+- large grotesk/sans display face
+- high whitespace
+- restrained labels
+- huge project/title moments
+Example homepage text:
+AYUSH
+ROY
+
+SOFTWARE ENGINEER
+AI / FULL-STACK DEVELOPER
+CREATIVE DEVELOPER
+
+Possible role stack:
+Software Engineer
+AI / Full-Stack Developer
+Creative Developer
+Avoid claiming:
+3D Artist
+as your professional title unless you eventually decide your work supports it strongly.
+The site itself can demonstrate 3D ability without needing the label.
+39. Homepage UI
+UI should remain minimal.
+Potential elements:
+Ayush Roy
+
+Home
+Projects
+About
+Contact
+
+Software Engineer
+AI / Full-Stack Developer
+Creative Developer
+
+Explore
+
+The 3D room should dominate.
+No dashboard-like clutter.
+40. Things explicitly banned
+Avoid the following:
+- random floating spheres
+- giant spinning laptop
+- skill progress bars
+- generic tech-logo cloud
+- excessive glassmorphism
+- fake sci-fi HUD
+- endless gradient cards
+- orbit-control demo feel
+- neon everywhere
+- unnecessary robot mascot
+- fake terminal spam
+- twenty moving elements
+- giant GitHub graph in hero
+- “Hi, I'm Ayush 👋” cliché
+- meaningless decorative 3D
+- gaming-room identity overpowering engineering identity
+The visual hierarchy should remain disciplined.
+41. SEO
+Everything important should exist as semantic HTML.
+Implement:
+- metadata
+- OpenGraph
+- Twitter cards
+- schema.org structured data
+- canonical URLs
+- sitemap
+- robots
+- project-specific metadata
+The 3D world cannot be allowed to destroy discoverability.
+42. Accessibility
+Full portfolio must remain accessible.
+Requirements:
+- keyboard navigation
+- screen-reader content
+- accessible project links
+- contrast compliance
+- reduced motion
+- reduced transparency where useful
+- no interaction available only through 3D
+- semantic HTML equivalents for every 3D action
+For every 3D object:
+3D interaction
+↕
+HTML equivalent
+
+43. Repository architecture
+Recommended monorepo:
+yor-world/
+│
+├── apps/
+│   ├── web/
+│   ├── api/
+│   └── admin/
+│
+├── packages/
+│   ├── ui/
+│   ├── three/
+│   ├── database/
+│   ├── schemas/
+│   ├── config/
+│   ├── analytics/
+│   └── shared/
+│
+├── assets/
+│   ├── blender/
+│   ├── textures/
+│   ├── audio/
+│   ├── concept/
+│   └── source/
+│
+├── tooling/
+│
+├── tests/
+│
+└── docs/
+
+Use a monorepo tool such as Turborepo if appropriate.
+44. Source 3D files
+Keep original production assets separately.
+Example:
+assets/blender/
+
+room/
+avatar/
+desk/
+projects/
+props/
+lighting/
+camera/
+
+The repository should distinguish:
+source asset
+from
+optimized runtime asset.
+Never ship Blender production files to the browser.
+45. CI/CD
+Pipeline approximately:
+install
+↓
+lint
+↓
+typecheck
+↓
+unit tests
+↓
+backend integration tests
+↓
+build
+↓
+asset validation
+↓
+bundle-size validation
+↓
+E2E
+↓
+accessibility
+↓
+preview deployment
+
+Then production after merge.
+46. Testing
+Use multiple layers.
+Testing layer	Candidate
+Unit	Vitest
+React	React Testing Library
+E2E	Playwright
+API	integration tests
+Accessibility	axe/manual
+Performance	Lighthouse/custom metrics
+Visual	screenshot regression
+Database	integration suite
+3D	load/camera/state smoke tests
+
+
+The cinematic intro itself should have testable states.
+Example:
+page loads
+↓
+door available
+↓
+door activates
+↓
+camera transitions
+↓
+greeting happens
+↓
+explore mode becomes available
+
+47. Observability
+Include:
+- Sentry
+- error boundaries
+- structured backend logs
+- WebGL crash detection
+- asset-load errors
+- API monitoring
+- performance telemetry
+If someone's GPU explodes metaphorically, we should know which shader committed the crime.
+48. Architecture documentation
+Use Architecture Decision Records.
+Possible documents:
+ADR-001 React Three Fiber
+ADR-002 Three.js scene architecture
+ADR-003 XState cinematic state machine
+ADR-004 modular monolith backend
+ADR-005 3D asset strategy
+ADR-006 adaptive quality
+ADR-007 accessibility fallback
+ADR-008 analytics
+ADR-009 CMS
+ADR-010 project routing
+
+This dramatically improves the value of the GitHub repository as a software-engineering artifact.
+49. Product documentation
+Maintain:
+PRODUCT.md
+ARCHITECTURE.md
+ART_BIBLE.md
+STORYBOARD.md
+SCENE_MAP.md
+PERFORMANCE_BUDGET.md
+ANIMATION_BIBLE.md
+ACCESSIBILITY.md
+DEPLOYMENT.md
+
+This project should look managed, not improvised.
+50. Development process
+Use releases rather than waiting months for perfection.
+Release	Outcome
+R0	storyboard
+R1	Blender graybox
+R2	door + room WebGL prototype
+R3	character integration
+R4	greeting sequence
+R5	complete hero
+R6	first project interaction
+Alpha	complete desktop world
+Beta	backend + mobile + CMS
+RC	optimization + QA
+V1.0	flagship release
+
+
+51. Production phases
+For the no-compromise version:
+Phase	Approx. duration
+Product definition	1 week
+UX/storyboarding	1 week
+Art direction	1 week
+Room blockout	1 week
+Character direction	1–2 weeks
+Environment production	2–3 weeks
+Character rig	1 week
+Character animation	1–2 weeks
+Core web architecture	1 week
+R3F scene	2 weeks
+Cinematic implementation	1–2 weeks
+Project interactions	2 weeks
+Backend	1–2 weeks
+CMS	1 week
+Case studies	1–2 weeks
+Mobile	1 week
+Performance	1–2 weeks
+QA/accessibility	1 week
+Final polish	1–2 weeks
+
+
+A realistic flagship release:
+14–20 weeks
+assuming serious work and heavy AI assistance.
+A truly extreme polishing phase could push beyond that.
+52. Earlier milestone expectations
+There can still be usable milestones much sooner.
+~2–3 weeks
+Prototype:
+door → room → camera → avatar greeting → coding
+plus minimal site shell.
+~5–7 weeks
+Strong working portfolio:
+- scene
+- avatar
+- main projects
+- case studies
+- basic backend
+~8–10 weeks
+Advanced version:
+- richer interactions
+- mobile
+- optimization
+- analytics
+- admin
+- complete backend
+~14–20 weeks
+No-compromise flagship.
+53. First implementation milestone
+Do NOT begin by modeling everything.
+Create the world's ugliest but most useful room first.
+Gray boxes.
+Basic chair.
+Cube desk.
+Cube monitor.
+Cylinder avatar.
+Door.
+Then test:
+door opens
+camera enters
+camera arrives
+character turns
+character greets
+character returns
+interactive state begins
+
+If this feels boring with gray cubes, prettier textures won't save it.
+If it already feels compelling with gray cubes, we have something.
+54. Parallel production tracks
+Once pre-production finishes, run three tracks concurrently.
+ART
+Blender
+character
+environment
+textures
+animation
+
+ENGINE
+Next.js
+R3F
+backend
+database
+CMS
+
+EXPERIENCE
+storyboard
+camera
+interaction
+sound
+UI
+motion
+
+All three meet continuously.
+Do not let Blender disappear for three weeks and hand engineering an impossible room afterward.
+55. Roles to think through
+Even if one person + AI performs several jobs, mentally separate them.
+Discipline	Responsibility
+Creative director	overall vision
+Art director	visual consistency
+Environment artist	room
+Prop artist	objects
+Character artist	avatar
+Animator	character
+Cinematic designer	camera
+Motion designer	transitions
+UI designer	overlays/case studies
+UX designer	navigation
+Graphics engineer	WebGL
+Frontend engineer	React
+Backend engineer	system
+Database engineer	data
+DevOps	infrastructure
+Performance engineer	optimization
+QA	reliability
+
+
+This prevents decisions being made only through one lens.
+56. The core technical architecture
+At the highest level:
+                    USER
+
+                     │
+                     ▼
+
+             ┌──────────────┐
+             │   Next.js    │
+             │   Website    │
+             └──────┬───────┘
+                    │
+     ┌──────────────┼───────────────┐
+     │              │               │
+     ▼              ▼               ▼
+
+  React UI       R3F World       API Client
+                     │
+                     ▼
+                  Three.js
+
+
+                     │
+                     ▼
+
+               Backend API
+                  NestJS
+
+          ┌──────────┼─────────┐
+          ▼          ▼         ▼
+
+      PostgreSQL   Redis      Storage
+
+57. The three-layer philosophy
+Think of the project as three products stacked together.
+┌─────────────────────────────────┐
+│        EXPERIENCE LAYER         │
+│  Blender • Three.js • GSAP      │
+│  cinematics • sound • motion    │
+├─────────────────────────────────┤
+│         PORTFOLIO LAYER         │
+│ React • HTML • case studies     │
+│ resume • projects • contact     │
+├─────────────────────────────────┤
+│          SYSTEM LAYER           │
+│ API • DB • auth • CMS • GitHub  │
+│ analytics • testing • CI/CD     │
+└─────────────────────────────────┘
+
+Each solves a different problem.
+Experience attracts.
+Portfolio communicates.
+Engineering proves capability.
+58. What makes the project special
+The major differentiator is not technically Three.js.
+Thousands of developers can render a Three.js room.
+The differentiator will be the integration of:
+storytelling
++
+art direction
++
+character animation
++
+cinematic camera
++
+semantic physical navigation
++
+serious software engineering
+The scene must communicate:
+“You entered someone's engineering world.”
+
+rather than:
+“Someone downloaded a Blender room.”
+
+59. Ultimate visitor experience
+A recruiter opens the site.
+Door appears.
+They click.
+The door opens.
+They walk into your room.
+You're coding.
+You notice them.
+Turn.
+Give a brief greeting.
+Turn back.
+The room quietly becomes interactive.
+They hover the monitor.
+CandidateX wakes up.
+They click.
+The camera glides toward the monitor.
+Evidence graphs begin moving beyond the screen.
+The world transitions.
+They land inside a meticulously structured CandidateX case study.
+They inspect the architecture.
+They return.
+The room reconstructs.
+They activate Helios.
+The PC turns into a visual network.
+Eventually they click Contact.
+Instead of another arbitrary form appearing, the camera moves toward a meaningful communication object and the UI transitions naturally.
+By the time they leave, they have experienced both:
+your personality as a creator
+and
+your competence as an engineer.
+60. The immediate task for Astra
+We are currently not in implementation.
+We are in:
+PRE-PRODUCTION
+Astra should help produce and critically challenge these deliverables before coding begins:
+1. Master product brief
+2. Full storyboard
+3. Room floor plan
+4. Object-to-feature map
+5. Camera map
+6. Character behavior specification
+7. Animation list
+8. Project transition concepts
+9. Art bible
+10. Lighting bible
+11. Motion language
+12. Audio strategy
+13. Frontend architecture
+14. Backend architecture
+15. Database schema
+16. CMS specification
+17. Asset pipeline
+18. Performance budget
+19. Mobile strategy
+20. Fallback strategy
+21. Accessibility plan
+22. SEO architecture
+23. Testing architecture
+24. CI/CD
+25. Observability
+26. Repository structure
+27. Milestones
+28. Risk register
+29. Production timeline
+30. Definition of Done for V1
+Only after those are challenged, revised and frozen do we begin proper production.
+The single instruction I would give Astra
+Treat YOR WORLD as a flagship interactive digital product, not a portfolio template. Optimize simultaneously for world-class 3D art direction, cinematic storytelling, motion design, character animation, graphics engineering, frontend engineering, backend architecture, accessibility, SEO and performance. The centerpiece is a stylized premium developer room entered through a cinematic opening door. Ayush is coding at the workstation, notices the visitor, turns to greet them, then resumes working. The room then becomes the spatial navigation interface for his projects. Every major object should have semantic meaning, every project should have its own cinematic transition, and all substantive content must remain accessible as normal semantic web content. Avoid gimmicks, unnecessary complexity and generic developer-portfolio tropes. Plan the entire production before implementation and challenge every decision against both visual and engineering quality.
+
+That is the full project we've been designing.
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+The user must be able to interact with it. For example. If he will click on me. I'll look back. If he will touch the wall painting, It will show movement. Give more detailed.
+
+
+
+
+
+ 
+
+
+
+
+
+
+Exactly. The room cannot merely be navigable. It needs to feel alive and aware of the visitor.
+The key upgrade is this:
+Every important object gets a behavior, not merely a link.
+
+If the visitor clicks you, you react. If they touch the painting, the painting behaves physically. If they move near a plant, leaves respond. If they touch the keyboard, the monitor reacts. If they turn lights off, the entire room changes. This turns the portfolio from a 3D menu into an interactive digital place.
+The interaction philosophy
+Every object should belong to one of four levels:
+Level	Meaning	Example
+Ambient	Happens without user action	typing, fan spinning, LEDs breathing
+Reactive	Responds to user presence	eyes/head follow pointer slightly
+Interactive	User deliberately activates it	click painting, keyboard, PC
+Deep	Opens meaningful portfolio content	CandidateX monitor, research shelf
+
+
+We should avoid the terrible version where everything glows on hover.
+Instead the visitor discovers interaction naturally.
+Your character should be the most sophisticated object
+You should feel like a resident of the world, not a button.
+Default state
+You're sitting at the workstation:
+typing → pause → mouse → typing → glance at secondary screen → continue.
+Small breathing animation.
+Maybe occasional chair movement.
+Nothing exaggerated.
+Hover over you
+Don't immediately turn around.
+Instead:
+head shifts slightly.
+As though you noticed something behind you.
+Maybe typing slows.
+This creates anticipation.
+Click you
+Now the full reaction:
+CLICK CHARACTER
+      ↓
+typing stops
+      ↓
+hands pause
+      ↓
+head turns slightly
+      ↓
+chair rotates
+      ↓
+upper body turns
+      ↓
+eye contact
+      ↓
+small smile
+      ↓
+wave / nod
+      ↓
+"Hey."
+      ↓
+wait ~1.5 sec
+      ↓
+turn back
+      ↓
+resume coding
+
+If sound is enabled, there could eventually be an extremely short recorded:
+“Hey.”
+
+Not a speech.
+Click again soon
+Do not replay exactly the same animation.
+Second interaction could produce:
+small look back + eyebrow movement + subtle wave.
+Third:
+perhaps a tiny expression suggesting:
+Aren't you going to explore the room? 😭
+
+Not literal text necessarily.
+That variation is what creates the illusion of intelligence.
+Character attention system
+This is a big one.
+Your character should have an attention model.
+Possible targets:
+MONITOR
+KEYBOARD
+MOUSE
+VISITOR
+SECOND_MONITOR
+PHONE
+PROJECT_OBJECT
+
+Normally:
+attention = MONITOR
+
+Visitor interacts:
+attention = VISITOR
+
+CandidateX activates:
+attention = MONITOR
+
+Phone rings:
+attention = PHONE
+
+This lets the character respond naturally to what's happening in the environment.
+Pointer tracking
+When the camera is reasonably close to you, the head/eyes may follow the visitor slightly.
+Not:
+👀 full creepy eye-tracking.
+Only perhaps:
+±5° head
+±8° eyes
+This is enough for presence.
+Move too far and the character stops following.
+Painting interaction
+Your painting example is exactly right.
+Suppose there is artwork on the wall.
+Hover
+Very tiny physical reaction.
+Maybe:
+- frame moves 1–2 mm
+- reflection changes
+- cursor indicates interactivity
+Click
+The painting physically tilts.
+click
+ ↓
+frame swings slightly
+ ↓
+settles
+ ↓
+something behind it becomes visible
+
+And now we have an opportunity.
+Behind the painting could be an easter egg.
+Perhaps:
+YOR
+iwnl
+
+or a hidden developer message.
+Or even:
+"You found this."
+
+Drag
+On desktop, the visitor could grab the frame and rotate it a few degrees.
+Release → spring physics returns it.
+On mobile:
+tap → preset animation.
+This creates tactile believability.
+Plants
+Plants shouldn't be project buttons.
+They exist for environmental realism.
+But they're reactive.
+Pointer brushes near leaves:
+leaves move slightly.
+Click plant:
+perhaps pot wobbles.
+Nothing opens.
+This distinction is important.
+Some objects exist simply to convince your brain:
+this room has physicality.
+
+Desk lamp
+Click lamp:
+ON / OFF.
+But this isn't merely changing one material.
+It affects:
+- nearby desk illumination
+- shadow intensity
+- keyboard reflections
+- chair edge light
+- wall bounce
+- character illumination
+Now users understand the environment is interconnected.
+Potential extra:
+long press/dial interaction adjusts brightness.
+RGB wall panels
+These can become playful.
+Tap one hexagon:
+it changes state.
+Tap adjacent panels:
+light propagates.
+Example:
+⬡ ⬡ ⬡ ⬡
+    ↓
+
+⬡ ◉ ⬡ ⬡
+    ↓
+
+◉ ◉ ◉ ⬡
+    ↓
+
+◉ ◉ ◉ ◉
+
+One hidden combination might unlock something.
+That gives us an easter egg.
+Keyboard
+Keyboard interaction should be excellent.
+Hover:
+keys subtly react.
+Click:
+camera nudges closer.
+The character types.
+Monitor responds with actual terminal output.
+Potential terminal:
+$ whoami
+
+Ayush Roy
+
+$ ls projects
+
+candidatex
+helios
+zenith
+ai-vs-real
+yor-talks
+
+Then terminal becomes usable.
+Not fully fake.
+Visitors might actually type a limited set of commands.
+For example:
+help
+about
+projects
+skills
+contact
+github
+clear
+
+That's a great developer-specific interaction.
+Mouse
+Clicking it could wake monitor UI.
+Movement might shift cursor on the virtual display.
+No need for full OS emulation.
+Just enough synchronization to feel real.
+Monitor
+This is probably the largest interaction system.
+Default state:
+you're coding.
+Visitor hovers monitor:
+subtle screen distortion / glow.
+Click monitor:
+camera moves toward display
+       ↓
+character moves hand away
+       ↓
+screen changes
+       ↓
+Portfolio OS appears
+
+Something like:
+YOR OS
+
+01 CandidateX
+02 Helios
+03 Zenith
+04 AI vs Real
+05 Yor Talks
+
+Selecting CandidateX then transitions into the real project experience.
+PC case
+This represents systems/backend/Helios.
+Hover:
+internal lights pulse.
+Click:
+glass side panel becomes semi-transparent.
+Suddenly internal components become visible.
+Then:
+network paths appear between components.
+Potential labels:
+API
+Worker
+WebSocket
+Database
+Detection
+
+Click again:
+camera moves into the PC.
+Helios project transition begins.
+That's substantially better than clicking a card saying View Helios.
+Microphone
+Represents Yor Talks.
+Hover:
+very subtle waveform.
+Click:
+microphone LED activates.
+Room sound drops slightly.
+A waveform appears spatially around microphone.
+Maybe short audio visualization.
+Then camera moves into waveform.
+Yor Talks project opens.
+Camera
+Perfect physical metaphor for AI vs Real.
+Visitor clicks camera.
+Lens extends.
+Autofocus sound.
+Camera rotates slightly.
+Then it takes a picture of the room.
+Flash.
+For maybe half a second:
+the world splits:
+REAL              AI
+
+or visual classification overlays.
+Then AI vs Real experience begins.
+That transition would be memorable.
+Zenith object
+We should create a miniature energy object specifically for Zenith.
+Could look like:
+solar panel → building → battery.
+Initially decorative.
+Click:
+energy begins flowing.
+SOLAR
+ ↓
+GRID
+ ↓
+BUILDING
+ ↓
+BATTERY
+
+Room lighting responds.
+Perhaps monitor briefly displays:
+Generation
+Consumption
+Storage
+
+Then camera follows the glowing path into Zenith.
+CandidateX physical object
+CandidateX deserves the primary monitor, but we can add another physical metaphor.
+Perhaps:
+floating evidence cubes/cards.
+When activated:
+GitHub node
+Resume node
+Deployment node
+Certification node
+Database node
+begin orbiting.
+Lines connect.
+Then converge into:
+Candidate Capability Intelligence
+That demonstrates the product concept before someone even reads the case study.
+Books
+Books can contain real information.
+Titles could subtly correspond to:
+Systems
+AI
+Algorithms
+Research
+Design
+
+Click one.
+Book slides outward.
+Camera approaches.
+It opens.
+Instead of rendered tiny text, HTML overlay provides:
+Research / Education / Skills.
+Research paper
+Place a paper/document on the desk.
+Hover:
+corner moves slightly.
+Click:
+it lifts.
+Camera focuses.
+Actual paper title appears.
+Then opens the research section.
+This makes your conference/research work part of the physical world.
+Phone
+Phone becomes Contact.
+Idle:
+screen dark.
+Hover:
+screen wakes.
+Click:
+phone lights up.
+Potential UI:
+AYUSH
+
+Email
+LinkedIn
+GitHub
+Contact
+
+Selecting Contact smoothly brings in the real HTML contact form.
+Could even animate a notification:
+New visitor 👋
+
+without being cheesy.
+Clock
+Clock should display real local time or controlled scene time.
+Click it:
+switch formats:
+07:32
+ ↓
+7:32 AM
+ ↓
+BBSR / IST
+
+Or we use it to control environment lighting.
+Drag/toggle:
+Morning
+Evening
+Night
+
+This is where things can become spectacular.
+Window
+This should be an environmental system.
+Click window/blinds:
+blinds open.
+Now outside:
+cityscape/night sky/rain.
+Closing them alters room lighting.
+Potential states:
+CLEAR NIGHT
+RAIN
+DAWN
+
+But weather doesn't need to be real-world weather in V1.
+It's an artistic environment.
+Curtains / blinds
+User pulls them.
+Light entering room changes.
+Plants and desk shadows respond.
+This is subtle but demonstrates graphics sophistication.
+Chair
+If you are not occupying it during another state:
+chair can rotate.
+If you're sitting:
+visitor cannot yank it away underneath you. 😭
+Instead clicking chair might cause you to shift position or rotate slightly.
+This reinforces object awareness.
+Coffee mug
+Tiny interaction, but useful for life.
+Click mug:
+character reaches for it.
+Takes sip.
+Returns mug.
+Resume typing.
+This becomes a rare animation with cooldown.
+These little moments make the character feel alive.
+Headphones
+Click:
+character puts them on.
+Audio state changes.
+Potentially ambient sound becomes muffled or a music-mode visualization activates.
+Click again:
+headphones removed.
+But this should be later-stage polish.
+Speakers
+Sound toggle can exist physically.
+Click speaker:
+mute/unmute environment.
+Instead of only placing a UI mute icon.
+HTML mute control must still exist for accessibility.
+Drawer system
+A user might open desk drawers.
+Most should contain harmless world-building objects.
+One might contain:
+- old notebook
+- USB
+- easter egg
+- developer joke
+- first project artifact
+Not every interaction has to advertise you.
+Some should reward curiosity.
+Trash bin
+Yes, even this can react.
+Throw something into it?
+Potentially not worth developing initially.
+But a hidden joke could exist.
+Example crumpled paper:
+TODO:
+fix production bug
+
+😁
+These details belong in late polish, not MVP.
+Wall notes / sticky notes
+Click one:
+physically peels forward.
+Could contain:
+BUILD
+BREAK
+LEARN
+REPEAT
+
+Another:
+TODO
+ship CandidateX
+
+Another:
+coffee
+
+World-building rather than résumé content.
+Picture frames
+Different behavior from painting.
+Hover:
+slight depth.
+Click:
+camera moves close.
+Could represent:
+- accomplishments
+- project screenshots
+- timeline moments
+- certifications
+Again, actual readable details should be HTML overlays.
+Door after entering
+The door doesn't become useless after intro.
+Click it later:
+camera looks back toward entrance.
+Potential menu:
+Restart Experience
+Home
+Exit Focus Mode
+
+Maybe even reset the room.
+Environment interaction
+We can make the room itself responsive to visitor activity.
+For example:
+If user hasn't interacted for 30 seconds:
+character stretches.
+After another period:
+monitor dims slightly.
+Move pointer:
+environment wakes.
+That gives the world an idle lifecycle.
+Interaction language
+We should establish strict rules so users learn intuitively.
+Visitor action	Meaning
+Move pointer	environment awareness
+Hover	discoverability
+Click/tap	interact
+Drag	physical manipulation
+Scroll	cinematic/navigation progression
+Escape	return/back
+Keyboard	accessibility + terminal
+Hold	optional secondary interaction
+
+
+Avoid double-click because mobile doesn't translate elegantly.
+Object response model
+Every interactive object should conceptually implement:
+Object {
+    idle
+    hover
+    active
+    selected
+    cooldown
+}
+
+More sophisticated objects:
+Character {
+    idle
+    aware
+    looking
+    greeting
+    reacting
+    returning
+}
+
+That will make the codebase dramatically cleaner.
+Hover should not equal glow
+Important visual principle.
+Different materials should react naturally.
+Metal:
+specular response
+Plant:
+movement
+Painting:
+tilt
+Monitor:
+screen brightness
+Lamp:
+tiny illumination response
+Character:
+attention
+Microphone:
+LED
+PC:
+fans/light
+Keyboard:
+key depression
+That creates material intelligence.
+If every object gets a purple outline, we've built Fortnite inventory UI, not a premium environment.
+Physics
+Selective physics can make this phenomenal.
+Potential physics objects:
+- painting
+- hanging plant
+- chair rotation
+- loose papers
+- keycaps
+- drawer
+- blinds
+- small desk ornaments
+But don't run a full physics simulation for everything.
+Likely use something like Rapier only where it provides value.
+Camera reactions
+Interaction isn't only object animation.
+The camera can respond too.
+Click painting:
+small camera ease toward it.
+Click monitor:
+major dolly.
+Click plant:
+no camera movement.
+Click Character:
+camera subtly reframes.
+We can define:
+micro focus
+medium focus
+full transition
+
+per interaction.
+Object priority system
+If character is greeting the user and they click CandidateX simultaneously, we need arbitration.
+Example:
+CINEMATIC LOCK
+>
+PROJECT TRANSITION
+>
+CHARACTER INTERACTION
+>
+ENVIRONMENT INTERACTION
+>
+DECORATIVE INTERACTION
+
+This prevents animation collisions.
+Interaction cooldowns
+Without cooldowns, users can spam-click and destroy the illusion.
+Character greeting:
+perhaps 5–10 second cooldown.
+Mug drinking:
+30–60 seconds.
+Project transitions:
+locked during transition.
+Painting:
+immediate.
+Lights:
+immediate.
+These states need explicit design.
+Easter eggs
+For a project this ambitious, I absolutely want them.
+Potential examples:
+Trigger	Reward
+Click painting several times	hidden Yor mark
+RGB panel pattern	secret mode
+Terminal whoami	custom response
+Terminal sudo hire ayush	amusing response
+Open specific drawer	old project artifact
+Click clock at a specific sequence	alternate environment
+Inspect keyboard	tiny developer message
+
+
+But maybe 5–8 excellent easter eggs, not 100 mediocre ones.
+Dynamic room states
+Eventually the room could have several moods:
+DEFAULT
+FOCUS
+PROJECT
+NIGHT
+AMBIENT
+IDLE
+
+Example CandidateX activation:
+- general room dims 15%
+- violet node illumination appears
+- monitor becomes brighter
+- character looks toward monitor
+- ambient audio reduces
+- camera focuses
+Every system cooperates.
+That's what makes the interaction feel expensive.
+Interactions must compose
+This is one of the biggest architectural requirements.
+Suppose:
+- blinds are closed
+- lamp is off
+- headphones are on
+- CandidateX activates
+The application should understand the combined state.
+Not reset the room every time.
+We therefore need separation between:
+WORLD STATE
+CHARACTER STATE
+CAMERA STATE
+PROJECT STATE
+AUDIO STATE
+UI STATE
+
+Example:
+world.lamp = false
+world.blinds = closed
+
+character.action = coding
+
+camera.position = HOME
+
+project.active = none
+
+audio.enabled = true
+
+ui.overlay = none
+
+That's much stronger than one giant global currentScene.
+Interaction architecture
+Conceptually:
+Input
+ ↓
+Interaction Manager
+ ↓
+State Machine
+ ↓
+┌──────────┬───────────┬────────────┐
+│          │           │            │
+Camera  Character   Objects      Audio
+│          │           │            │
+└──────────┴───────────┴────────────┘
+                ↓
+              UI
+
+The Interaction Manager becomes one of the most important systems in the project.
+It answers:
+What did the visitor do, what state are we in, and what is allowed to respond?
+
+We need an interactable registry
+Every interactive 3D entity should register metadata.
+Conceptually:
+{
+  id: "wall-painting",
+  type: "environment",
+  actions: ["hover", "click", "drag"],
+  cameraResponse: "micro",
+  priority: 20,
+  cooldown: 0,
+  accessibleLabel: "Interactive wall painting"
+}
+
+Character:
+{
+  id: "ayush-avatar",
+  type: "character",
+  actions: ["hover", "click"],
+  cameraResponse: "medium",
+  priority: 70,
+  cooldown: 7000,
+  accessibleLabel: "Ayush working at his desk"
+}
+
+CandidateX:
+{
+  id: "candidatex-monitor",
+  type: "project",
+  actions: ["hover", "click"],
+  cameraResponse: "transition",
+  priority: 90
+}
+
+This lets interaction scale to dozens of objects without chaos.
+Cursor system
+Even the cursor can communicate depth.
+Possible modes:
+DEFAULT
+LOOK
+TOUCH
+DRAG
+ENTER
+BACK
+
+But keep it subtle.
+Don't replace the cursor with an enormous glowing circle that obscures everything.
+User exploration model
+There should be three ways to navigate.
+Cinematic exploration
+Interact directly with room.
+Conventional navigation
+Home / Work / About / Contact.
+Command navigation
+Keyboard shortcuts or terminal.
+For example:
+P = Projects
+A = About
+C = Contact
+Esc = Back
+
+All routes lead to the same underlying application state.
+That is both cool and usable.
+Accessibility equivalents
+Crucial.
+If painting moves when pointer touches it, that's fun.
+But project access cannot depend on being able to interact with 3D geometry.
+So every meaningful item also exists in normal DOM navigation.
+Example:
+3D microphone
+        ↕
+HTML "Yor Talks" link
+
+Screen-reader users get complete content.
+Keyboard users can focus room objects.
+Reduced-motion visitors receive a shortened response.
+Mobile interactions
+Mobile needs a different interaction vocabulary.
+No hover.
+Therefore:
+desktop:
+hover → preview → click
+mobile:
+tap → preview/select
+tap again/CTA → enter
+or preferably:
+tap object → short animation + contextual button.
+Dragging objects still works with pointer events when appropriate.
+Haptics
+On supported devices, extremely subtle vibration could accompany selected interactions in a native wrapper, but for normal web this isn't something I'd make foundational.
+The visuals need to work without it.
+Interaction analytics
+We'll even learn which pieces people touch.
+For example:
+character_clicked
+painting_touched
+lamp_toggled
+terminal_opened
+easter_egg_found
+candidatex_entered
+
+Then we can find out whether visitors actually explore.
+Imagine discovering that 73% of visitors click the character before opening a project.
+That's useful UX information.
+The final goal
+The user should eventually be able to spend five minutes in the room without opening a single project and still enjoy themselves.
+But someone in a hurry should be able to reach CandidateX in two clicks.
+That's the balance.
+The site needs two simultaneous identities:
+A playground for curious visitors.
+
+and
+A brutally efficient portfolio for recruiters.
+
+That is the interaction standard I would add to the Astra brief. The critical new subsystem is an Interaction Bible covering every significant room object with idle → proximity/hover → click/tap → active behavior → camera response → character response → audio response → content outcome → cooldown → mobile behavior → accessible equivalent. Once we define that matrix for the full room, we will know exactly what has to be modeled, animated and engineered before production begins.
