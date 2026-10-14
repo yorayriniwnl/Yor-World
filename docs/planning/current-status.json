@@ -47,7 +47,7 @@
       "retainedFailure": "final-source default integration failed twice at 285/286 on the unchanged canonical-fixture 60-second timeout; prior pre-final-source 286/286 run is not counted as final-source pass",
       "userChromeGpu": "NOT PROVIDED",
       "physicalDeviceChecks": "NOT RUN",
-      "nextLocalBoundary": "PRE-G7-16 remains not accepted: one post-correction 286/286 default-suite pass was obtained within the original cap; the full unit suite was 326/327. PRE-G7-16-C1 evidence correction is complete and accepted within scope. Parent disposition leaves PRE-G7-16 not accepted; a new packet is required before further full-suite work; G7 remains unaccepted and the instruction is local-only",
+      "nextLocalBoundary": "PRE-G7-16 remains not accepted under its original caps. PRE-G7-16-C1 evidence correction is complete and accepted within scope. PRE-G7-17 is authorized to close the unit boundary and final integration gates; G7 remains unaccepted and the instruction is local-only; user device/GPU evidence remains open",
       "activeEvidenceCorrection": {
         "packet": "PRE-G7-16-C1",
         "packetPath": "docs/planning/reconciliation-packets/2026-10-15-pre-g7-16-evidence-path-correction.md",
@@ -63,6 +63,19 @@
         "integrationGate": "UNRESOLVED - one post-correction 286/286 run; original three-run cap exhausted",
         "fullUnitSuite": "FAIL - 326/327; unchanged boundaries test exceeded its 5-second limit; focused boundaries 18/18",
         "nextBoundary": "PRE-G7-16 remains not accepted. New explicit parent packet required before any further full-suite verification; physical-device and GPU evidence remain open"
+      },
+      "activeVerificationPacket": {
+        "packet": "PRE-G7-17",
+        "packetPath": "docs/planning/reconciliation-packets/2026-10-15-pre-g7-17-unit-and-final-suite-gate.md",
+        "status": "AUTHORIZED - local unit boundary diagnosis and final integration verification only",
+        "sourceBranch": "codex/pre-g7-17-unit-boundary-verification-20261015",
+        "sourceBase": "f71d1df028f80637abb3e427040f0e0f5085179c",
+        "sourceAppTree": "a19c817a7ebfa8962f0b898364ca01e8770e302a",
+        "priorEvidenceHead": "72d159b8e459db39c649d69ad219955ae586395f",
+        "priorDefaultIntegration": "PASS 286/286; PRE-G7-16 attempt-03 may count as the first consecutive pass only if app source/config is unchanged",
+        "priorUnitResult": "FAIL 326/327; boundaries test exceeded 5,000 ms; focused 18/18",
+        "limits": "Unit and integration timeouts unchanged; no retries, skips, weakened coverage or production work",
+        "nextBoundary": "Diagnose and close unit gate; obtain the packet-authorized consecutive default integration pass(es); independent audit and parent acceptance remain separate"
       }
     },
     "priorAcceptedLocalPreparation": {
