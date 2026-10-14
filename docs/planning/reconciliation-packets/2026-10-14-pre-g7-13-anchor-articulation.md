@@ -54,3 +54,5 @@ Return exact base/source/evidence commits, app tree, scoped source patch, final 
 ## Review boundary
 
 After the maker pushes exact source and evidence commits, an independent reviewer performs a read-only source, visual, material, geometry, accessibility, mirror, and checksum audit. The maker implements any correction; the reviewer then performs a delta audit. Parent alone accepts the packet. A local Codex audit is not represented as an external GPT Plus #2 audit. PRE-G7-13 acceptance, if earned, establishes only local visual-composition readiness; it does not accept G7, physical-device behavior, provider access, domain ownership, sender verification, deployment, or rollback readiness.
+
+Parent amendment: [PRE-G7-13A — restore the hexagonal panel silhouette](2026-10-14-pre-g7-13a-hex-panel-geometry.md) authorizes runtime-only geometry replacement for the seven named panel nodes after the frozen GLB audit confirmed cuboid geometry. All other PRE-G7-13 boundaries remain in force.
