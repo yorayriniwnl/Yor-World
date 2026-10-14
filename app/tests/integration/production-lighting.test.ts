@@ -102,7 +102,7 @@ function bindEnvironment(scene: THREE.Object3D, reducedMotion = false) {
 }
 
 describe("Frozen production lighting and runtime controls", () => {
-  it("calibrates the four actual glTF lights while preserving their authored attributes, meshes and asset bytes", async () => {
+  it("calibrates the four actual glTF lights while preserving non-calibrated attributes, meshes and asset bytes", async () => {
     const { scene, bytes } = await loadRoom();
     const lights = productionLights(scene);
     const originalLightStates = new Map([...lights].map(([name, light]) => [name, lightState(light)]));
@@ -115,7 +115,11 @@ describe("Frozen production lighting and runtime controls", () => {
 
     for (const [name, light] of lights) {
       expect(light.intensity).toBe(PRODUCTION_LIGHT_INTENSITIES[name]);
-      expect(lightState(light)).toEqual(originalLightStates.get(name));
+      const authoredState = originalLightStates.get(name);
+      expect(authoredState).toBeDefined();
+      expect(lightState(light)).toEqual(name === "Light_CyanFill"
+        ? { ...authoredState!, position: [0, 0.15, -0.45] }
+        : authoredState);
     }
     expect(meshState(scene)).toEqual(originalMeshes);
     // This also binds the bitmap/emissive texture metadata that Node did not decode.

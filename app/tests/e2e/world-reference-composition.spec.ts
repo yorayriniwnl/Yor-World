@@ -10,6 +10,12 @@ const screenshotDir = path.join(evidenceRoot, "screenshots");
 const measurementDir = path.join(evidenceRoot, "measurements");
 const referencePath = path.resolve(process.cwd(), "../references/images/main-reference.png");
 const evidenceMode = process.env.PRE_G7_13_EVIDENCE_MODE === "1";
+const expectedEvidenceDir = process.env.PRE_G7_13_EXPECTED_EVIDENCE_DIR;
+if (process.env.PRE_G7_13_REQUIRE_ISOLATED_EVIDENCE === "1") {
+  if (!evidenceMode || !process.env.PRE_G7_13_EVIDENCE_DIR || !expectedEvidenceDir || evidenceRoot !== path.resolve(expectedEvidenceDir)) {
+    throw new Error(`PRE-G7-13 isolated evidence env mismatch: mode=${process.env.PRE_G7_13_EVIDENCE_MODE ?? "<unset>"}, root=${evidenceRoot}, expected=${expectedEvidenceDir ?? "<unset>"}`);
+  }
+}
 const testPanelScale = process.env.PRE_G7_13_TEST_PANEL_SCALE;
 const actionSelector = [
   '[data-testid="studio-controls-toggle"]',
@@ -22,6 +28,14 @@ const actionSelector = [
 
 fs.mkdirSync(screenshotDir, { recursive: true });
 fs.mkdirSync(measurementDir, { recursive: true });
+fs.writeFileSync(path.join(evidenceRoot, "test-run-environment.json"), `${JSON.stringify({
+  cwd: process.cwd(),
+  evidenceMode,
+  evidenceRoot,
+  evidenceDirEnv: process.env.PRE_G7_13_EVIDENCE_DIR ?? null,
+  expectedEvidenceDir: expectedEvidenceDir ?? null,
+  testPanelScale: testPanelScale ?? null,
+}, null, 2)}\n`, "utf8");
 
 function recordErrors(page: Page, label: string) {
   const logPath = path.join(evidenceRoot, `${label}-browser.log`);
@@ -230,7 +244,41 @@ type ProjectedSnapshot = {
   camera: { preset: string; position: number[]; target: number[]; fov: number; aspect: number; source: "camera-director" | "preset-fallback" };
   testPanelScale: number | null;
   anchors: ProjectedAnchor[];
-  lights: Array<{ name: string; found: boolean; color?: string; intensity?: number; position?: number[] }>;
+  lights: Array<{
+    name: string;
+    found: boolean;
+    type?: string;
+    color?: string;
+    intensity?: number;
+    position?: number[];
+    distance?: number | null;
+    decay?: number | null;
+  }>;
+  supportContacts: {
+    console: {
+      surfaceNode: string;
+      surfaceTopY: number;
+      baseBottomY: number;
+      contactDeltaY: number;
+      baseBounds: { min: number[]; max: number[] };
+      surfaceBounds: { min: number[]; max: number[] };
+      baseFootprintWithinSurface: boolean;
+      microphoneBounds: { min: number[]; max: number[] } | null;
+      horizontalGapToMicrophoneMeters: number;
+    } | null;
+    shelfCamera: {
+      surfaceNode: string;
+      surfaceTopY: number;
+      verticalToleranceMeters: number;
+      footprintMarginMeters: number;
+      feet: Array<{
+        name: string;
+        contactDeltaY: number;
+        insideFootprintWithMargin: boolean;
+      }>;
+      allFeetSupported: boolean;
+    } | null;
+  };
 };
 
 async function recordVisualAnchorEvidence(
@@ -307,6 +355,22 @@ async function recordVisualAnchorEvidence(
     "desk",
   ];
   const byName = new Map(measured.anchors.map((anchor) => [anchor.name, anchor]));
+  const consoleSupport = measured.supportContacts.console;
+  expect(consoleSupport, `${label} console support placement is measured from the live scene`).not.toBeNull();
+  expect(consoleSupport!.surfaceNode).toBe("desk_top");
+  expect(Math.abs(consoleSupport!.contactDeltaY), `${label} audio console base contacts the actual desktop within 1mm`).toBeLessThanOrEqual(0.001);
+  expect(consoleSupport!.baseFootprintWithinSurface, `${label} audio console footprint stays on the tabletop`).toBe(true);
+  expect(consoleSupport!.microphoneBounds, `${label} microphone is measured beside the console`).not.toBeNull();
+  expect(consoleSupport!.horizontalGapToMicrophoneMeters, `${label} console remains adjacent to the microphone`).toBeLessThanOrEqual(0.5);
+  const cameraSupport = measured.supportContacts.shelfCamera;
+  expect(cameraSupport, `${label} shelf camera support placement is measured from the live scene`).not.toBeNull();
+  expect(cameraSupport!.surfaceNode).toBe("shelf_rear_upper");
+  expect(cameraSupport!.allFeetSupported, `${label} all named shelf-camera feet contact the shelf within footprint margins`).toBe(true);
+  expect(cameraSupport!.feet).toHaveLength(3);
+  for (const foot of cameraSupport!.feet) {
+    expect(Math.abs(foot.contactDeltaY), `${label} ${foot.name} contacts shelf within 1mm`).toBeLessThanOrEqual(0.001);
+    expect(foot.insideFootprintWithMargin, `${label} ${foot.name} footprint has at least 5mm shelf edge margin`).toBe(true);
+  }
   for (const name of required) {
     const anchor = byName.get(name);
     expect(anchor?.found, `${label} GLB/code-native anchor ${name} exists`).toBe(true);
@@ -402,6 +466,107 @@ async function recordVisualAnchorEvidence(
     };
   });
   const warmPixels = countColor(["lightbar_emissive"], (r, g, b) => r > 100 && g > 35 && r > g * 1.18 && g > b * 1.15);
+  const floorRegions = viewport.width === 390
+    ? [
+      { name: "mobile-floor-left", left: 12, top: 610, width: 78, height: 150 },
+      { name: "mobile-floor-center", left: 120, top: 625, width: 150, height: 145 },
+      { name: "mobile-floor-right", left: 294, top: 610, width: 84, height: 150 },
+    ]
+    : [
+      { name: "desktop-floor-left", left: 10, top: 820, width: 420, height: 70 },
+      { name: "desktop-floor-right", left: 1040, top: 820, width: 390, height: 70 },
+    ];
+  const floorFillPixels = floorRegions.map((region) => {
+    const left = Math.max(0, region.left);
+    const top = Math.max(0, region.top);
+    const right = Math.min(viewport.width, region.left + region.width);
+    const bottom = Math.min(viewport.height, region.top + region.height);
+    let red = 0;
+    let green = 0;
+    let blue = 0;
+    let cyan = 0;
+    let sampled = 0;
+    for (let y = top; y < bottom; y += 1) {
+      for (let x = left; x < right; x += 1) {
+        const offset = (y * image.info.width + x) * image.info.channels;
+        const r = image.data[offset] ?? 0;
+        const g = image.data[offset + 1] ?? 0;
+        const b = image.data[offset + 2] ?? 0;
+        red += r;
+        green += g;
+        blue += b;
+        sampled += 1;
+        if (g - r >= 8 && b - r >= 14 && g >= 40 && b >= 45) cyan += 1;
+      }
+    }
+    return {
+      name: region.name,
+      bounds: { left, top, right, bottom },
+      sampled,
+      meanRGB: sampled ? [red / sampled, green / sampled, blue / sampled].map((value) => Number(value.toFixed(2))) : null,
+      cyanPixels: cyan,
+      cyanRatio: sampled ? Number((cyan / sampled).toFixed(5)) : 0,
+      classifier: "G-R >= 8, B-R >= 14, G >= 40, B >= 45",
+    };
+  });
+  const minimumFloorCyanRatio = 0.1;
+  const overlapsBounds = (
+    a: { left: number; top: number; right: number; bottom: number },
+    b: { left: number; top: number; right: number; bottom: number },
+  ) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+  const actorBounds = ["chair-root", "resident"].map((name) => ({
+    name,
+    bounds: byName.get(name)?.pixelBounds,
+  }));
+  for (const actor of actorBounds) {
+    expect(actor.bounds, `${label} ${actor.name} bounds are available to exclude actor pixels from floor evidence`).not.toBeNull();
+  }
+  const exposedFloorRegions = floorFillPixels.filter((region) => actorBounds.every((actor) =>
+    !overlapsBounds(region.bounds, actor.bounds!),
+  ));
+  if (viewport.width === 1440) {
+    const clearFloorPatch = exposedFloorRegions.find((region) => region.name === "desktop-floor-right");
+    expect(clearFloorPatch?.cyanRatio, `${label} has cyan fill in the exposed desktop floor-right ROI outside chair/resident bounds`).toBeGreaterThanOrEqual(minimumFloorCyanRatio);
+  } else {
+    expect(Math.max(...exposedFloorRegions.map((region) => region.cyanRatio)), `${label} has cyan fill in at least one phone floor ROI outside chair/resident bounds`).toBeGreaterThanOrEqual(minimumFloorCyanRatio);
+  }
+  const paleSurfaceRegions = viewport.width === 390
+    ? [{ name: "mobile-workstation-left-tabletop", left: 48, top: 432, width: 68, height: 28 }]
+    : [{ name: "desktop-workstation-left-tabletop", left: 490, top: 500, width: 120, height: 35 }];
+  const paleSurfacePixels = paleSurfaceRegions.map((region) => {
+    let red = 0;
+    let green = 0;
+    let blue = 0;
+    let pale = 0;
+    let sampled = 0;
+    for (let y = region.top; y < Math.min(viewport.height, region.top + region.height); y += 1) {
+      for (let x = region.left; x < Math.min(viewport.width, region.left + region.width); x += 1) {
+        const offset = (y * image.info.width + x) * image.info.channels;
+        const r = image.data[offset] ?? 0;
+        const g = image.data[offset + 1] ?? 0;
+        const b = image.data[offset + 2] ?? 0;
+        red += r;
+        green += g;
+        blue += b;
+        sampled += 1;
+        if (r >= 190 && g >= 190 && b >= 190) pale += 1;
+      }
+    }
+    return {
+      name: region.name,
+      bounds: region,
+      sampled,
+      meanRGB: sampled ? [red / sampled, green / sampled, blue / sampled].map((value) => Number(value.toFixed(2))) : null,
+      brightNeutralPixels: pale,
+      brightNeutralRatio: sampled ? Number((pale / sampled).toFixed(5)) : 0,
+      classifier: "R, G, B >= 190",
+    };
+  });
+  const cyanFillLight = measured.lights.find((light) => light.name === "Light_CyanFill");
+  expect(cyanFillLight?.found, `${label} records the existing cyan point light`).toBe(true);
+  expect(cyanFillLight?.type, `${label} preserves the source point-light type`).toBe("PointLight");
+  expect(cyanFillLight?.intensity, `${label} records the bounded runtime cyan-light intensity`).toBe(1.6);
+  expect(cyanFillLight?.position, `${label} records the calibrated world position of the cyan light`).toEqual([0, 0.15, -0.45]);
   const lilacMaterials = Array.from({ length: 7 }, (_, index) => byName.get(`hex_panel_${index + 1}`)?.materials ?? []).flat();
   const barMaterials = byName.get("lightbar_emissive")?.materials ?? [];
   expect(lilacMaterials.some((material) => material.name === "Hex_LilacEmissive" && (material.emissiveIntensity ?? 0) >= 1)).toBe(true);
@@ -424,7 +589,18 @@ async function recordVisualAnchorEvidence(
     testPanelScale: measured.testPanelScale,
     anchors: measured.anchors,
     lights: measured.lights,
-    colorPixels: { lilac: lilacPixels, lilacPanels: lilacPanelEvidence, warmBar: warmPixels },
+    colorPixels: {
+      lilac: lilacPixels,
+      lilacPanels: lilacPanelEvidence,
+      warmBar: warmPixels,
+      floorFill: floorFillPixels,
+      floorFillThreshold: {
+        minimumCyanRatio: minimumFloorCyanRatio,
+        desktopRegion: "desktop-floor-right; checked disjoint from chair-root and resident bounds",
+        mobileRule: "at least one floor region disjoint from chair-root and resident bounds",
+      },
+      paleWorkstation: paleSurfacePixels,
+    },
     interpretation: "Projected bounds and sampled ray hits measure framing and chair/resident occlusion; they do not replace the required human recognition review.",
   };
   fs.writeFileSync(path.join(measurementDir, `${label}-anchor-visibility.json`), `${JSON.stringify(evidence, null, 2)}\n`, "utf8");
@@ -507,14 +683,24 @@ test.describe("PRE-G7-13 reference composition and compact mobile controls", () 
     const cameraClick = await page.evaluate(() => {
       const diagnosticWindow = window as Window & {
         __PRE_G7_13_REFERENCE_DIAGNOSTICS__?: {
-          refresh: (probePixel?: [number, number] | null) => { anchors: Array<{ name: string; pixelBounds?: { left: number; top: number; width: number; height: number } | null }> };
+          refresh: (probePixel?: [number, number] | null) => { anchors: Array<{
+            name: string;
+            pixelBounds?: { left: number; top: number; width: number; height: number } | null;
+            sampledRegionHits?: { rayTrace?: { firstTargetPixel?: [number, number] | null } | null } | null;
+          }> };
         };
       };
       const snapshot = diagnosticWindow.__PRE_G7_13_REFERENCE_DIAGNOSTICS__?.refresh();
-      const bounds = snapshot?.anchors.find((anchor) => anchor.name === "ai-real-camera")?.pixelBounds;
-      return bounds ? { x: bounds.left + bounds.width / 2, y: bounds.top + bounds.height / 2 } : null;
+      const camera = snapshot?.anchors.find((anchor) => anchor.name === "ai-real-camera");
+      const bounds = camera?.pixelBounds;
+      const targetPixel = camera?.sampledRegionHits?.rayTrace?.firstTargetPixel;
+      const insideBounds = Boolean(bounds && targetPixel &&
+        targetPixel[0] >= bounds.left && targetPixel[0] <= bounds.left + bounds.width &&
+        targetPixel[1] >= bounds.top && targetPixel[1] <= bounds.top + bounds.height);
+      return insideBounds && targetPixel ? { x: targetPixel[0], y: targetPixel[1], insideBounds } : null;
     });
-    expect(cameraClick, "visible shelf camera has projected click bounds").not.toBeNull();
+    expect(cameraClick, "ray-verified visible shelf-camera surface lies inside its projected bounds").not.toBeNull();
+    expect(cameraClick!.insideBounds, "shelf-camera click uses a projected pixel with a real target-mesh ray hit").toBe(true);
     await page.mouse.click(cameraClick!.x, cameraClick!.y);
     await expect(page).toHaveURL(/\/projects\/ai-vs-real\/?$/, { timeout: 15_000 });
   });

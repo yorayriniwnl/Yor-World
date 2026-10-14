@@ -4,7 +4,130 @@ import { CAMERA_PRESETS } from "./CameraDirector";
 import { LOW_BATCH_ORIGINAL_LAYER } from "./LowQualityBatch";
 import { configureReferenceMaterials } from "./ProductionLighting";
 import { applyReferenceComposition } from "./ReferenceComposition";
-import { classifyTargetOcclusionRay } from "./TargetOcclusion";
+
+export interface TargetRayIntersection {
+  object: THREE.Object3D;
+  distance: number;
+}
+
+export type TargetRayClassification = "target" | "chair" | "resident" | null;
+const CAMERA_FOOT_EVIDENCE_NAMES = ["ai_cam_leg_1", "ai_cam_leg_2", "ai_cam_leg_3"] as const;
+
+function isWithin(object: THREE.Object3D, root: THREE.Object3D): boolean {
+  for (let current: THREE.Object3D | null = object; current; current = current.parent) {
+    if (current === root) return true;
+  }
+  return false;
+}
+
+/**
+ * Classify target-region ray intersections against named target geometry.
+ * Actor hits count only when closer than a real target-subtree hit; actor-only
+ * rays through empty projected-box pixels are ignored.
+ */
+export function classifyTargetOcclusionRay(
+  intersections: readonly TargetRayIntersection[],
+  target: THREE.Object3D,
+  chair: THREE.Object3D | null,
+  residentMeshes: readonly THREE.Object3D[],
+): TargetRayClassification {
+  const nearestDistance = (matches: (object: THREE.Object3D) => boolean): number => {
+    let nearest = Number.POSITIVE_INFINITY;
+    for (const intersection of intersections) {
+      if (
+        Number.isFinite(intersection.distance) &&
+        intersection.distance >= 0 &&
+        matches(intersection.object)
+      ) nearest = Math.min(nearest, intersection.distance);
+    }
+    return nearest;
+  };
+
+  const targetDistance = nearestDistance((object) => isWithin(object, target));
+  if (!Number.isFinite(targetDistance)) return null;
+
+  const chairDistance = chair
+    ? nearestDistance((object) => isWithin(object, chair))
+    : Number.POSITIVE_INFINITY;
+  const residentDistance = nearestDistance((object) => residentMeshes.some((root) => isWithin(object, root)));
+  if (chairDistance < targetDistance && chairDistance <= residentDistance) return "chair";
+  if (residentDistance < targetDistance) return "resident";
+  return "target";
+}
+
+function boundsRecord(bounds: THREE.Box3) {
+  return { min: bounds.min.toArray(), max: bounds.max.toArray() };
+}
+
+function boundsFor(object: THREE.Object3D | undefined): THREE.Box3 | null {
+  if (!object) return null;
+  object.updateWorldMatrix(true, true);
+  const bounds = new THREE.Box3().setFromObject(object);
+  return bounds.isEmpty() ? null : bounds;
+}
+
+function collectSupportContacts(scene: THREE.Object3D): PreG7EvidenceSnapshot["supportContacts"] {
+  const deskTop = scene.getObjectByName("desk_top");
+  const console = scene.getObjectByName("console-code-native");
+  const consoleBase = console?.getObjectByName("console-chassis-code-native");
+  const consoleSurfaceBounds = boundsFor(deskTop);
+  const consoleBaseBounds = boundsFor(consoleBase);
+  const microphoneBounds = boundsFor(scene.getObjectByName("talks-microphone"));
+  let consoleContact: Record<string, unknown> | null = null;
+  if (consoleSurfaceBounds && consoleBaseBounds) {
+    const horizontalGapX = Math.max(0, consoleBaseBounds.min.x - (microphoneBounds?.max.x ?? consoleBaseBounds.min.x), (microphoneBounds?.min.x ?? consoleBaseBounds.max.x) - consoleBaseBounds.max.x);
+    const horizontalGapZ = Math.max(0, consoleBaseBounds.min.z - (microphoneBounds?.max.z ?? consoleBaseBounds.min.z), (microphoneBounds?.min.z ?? consoleBaseBounds.max.z) - consoleBaseBounds.max.z);
+    consoleContact = {
+      surfaceNode: deskTop?.name ?? null,
+      surfaceTopY: consoleSurfaceBounds.max.y,
+      baseBottomY: consoleBaseBounds.min.y,
+      contactDeltaY: consoleBaseBounds.min.y - consoleSurfaceBounds.max.y,
+      baseBounds: boundsRecord(consoleBaseBounds),
+      surfaceBounds: boundsRecord(consoleSurfaceBounds),
+      baseFootprintWithinSurface: consoleBaseBounds.min.x >= consoleSurfaceBounds.min.x &&
+        consoleBaseBounds.max.x <= consoleSurfaceBounds.max.x &&
+        consoleBaseBounds.min.z >= consoleSurfaceBounds.min.z &&
+        consoleBaseBounds.max.z <= consoleSurfaceBounds.max.z,
+      microphoneBounds: microphoneBounds ? boundsRecord(microphoneBounds) : null,
+      horizontalGapToMicrophoneMeters: Math.hypot(horizontalGapX, horizontalGapZ),
+      sourcePlacement: console?.userData["supportMetrics"] ?? null,
+    };
+  }
+
+  const shelf = scene.getObjectByName("shelf_rear_upper");
+  const camera = scene.getObjectByName("ai-real-camera");
+  const shelfBounds = boundsFor(shelf);
+  const cameraFeet = CAMERA_FOOT_EVIDENCE_NAMES.map((name) => ({ name, object: scene.getObjectByName(name) }));
+  const footBounds = cameraFeet.map(({ object }) => boundsFor(object));
+  let cameraContact: Record<string, unknown> | null = null;
+  if (camera && shelfBounds && footBounds.every((bounds): bounds is THREE.Box3 => Boolean(bounds))) {
+    const margin = 0.005;
+    const feet = cameraFeet.map(({ name }, index) => {
+      const bounds = footBounds[index]!;
+      return {
+        name,
+        bounds: boundsRecord(bounds),
+        contactDeltaY: bounds.min.y - shelfBounds.max.y,
+        insideFootprintWithMargin: bounds.min.x >= shelfBounds.min.x + margin &&
+          bounds.max.x <= shelfBounds.max.x - margin &&
+          bounds.min.z >= shelfBounds.min.z + margin &&
+          bounds.max.z <= shelfBounds.max.z - margin,
+      };
+    });
+    cameraContact = {
+      surfaceNode: shelf?.name ?? null,
+      surfaceBounds: boundsRecord(shelfBounds),
+      surfaceTopY: shelfBounds.max.y,
+      verticalToleranceMeters: 0.001,
+      footprintMarginMeters: margin,
+      feet,
+      allFeetSupported: feet.every((foot) =>
+        Math.abs(foot.contactDeltaY) <= 0.001 && foot.insideFootprintWithMargin),
+      rootPlacement: camera.userData["referenceSupport"] ?? null,
+    };
+  }
+  return { console: consoleContact, shelfCamera: cameraContact };
+}
 
 export interface IntegratedSceneResult {
   scene: THREE.Group;
@@ -280,7 +403,20 @@ type PreG7EvidenceSnapshot = {
   testPanelScale: number | null;
   diagnosticSpeakerOffsetMeters: number[] | null;
   anchors: PreG7EvidenceAnchor[];
-  lights: Array<{ name: string; found: boolean; color?: string; intensity?: number; position?: number[] }>;
+  lights: Array<{
+    name: string;
+    found: boolean;
+    type?: string;
+    color?: string;
+    intensity?: number;
+    position?: number[];
+    distance?: number | null;
+    decay?: number | null;
+  }>;
+  supportContacts: {
+    console: Record<string, unknown> | null;
+    shelfCamera: Record<string, unknown> | null;
+  };
 };
 
 type PreG7EvidenceWindow = Window & {
@@ -346,6 +482,9 @@ function capturePreG7Evidence(scene: THREE.Object3D): void {
     "headset-stand-code-native",
     "headset-code-native",
     "desk",
+    "desk_top",
+    "shelf_rear_upper",
+    ...CAMERA_FOOT_EVIDENCE_NAMES,
     "chair-root",
     "chair-base",
     "resident",
@@ -766,12 +905,16 @@ function capturePreG7Evidence(scene: THREE.Object3D): void {
     const lights = lightNames.map((name) => {
       const light = scene.getObjectByName(name) as THREE.Light | undefined;
       if (!light) return { name, found: false };
+      const positional = light instanceof THREE.PointLight || light instanceof THREE.SpotLight ? light : null;
       return {
         name,
         found: true,
+        type: light.type,
         color: (light as THREE.Light & { color?: THREE.Color }).color?.getHexString(),
         intensity: light.intensity,
         position: light.getWorldPosition(new THREE.Vector3()).toArray(),
+        distance: positional?.distance ?? null,
+        decay: positional?.decay ?? null,
       };
     });
 
@@ -790,6 +933,7 @@ function capturePreG7Evidence(scene: THREE.Object3D): void {
       diagnosticSpeakerOffsetMeters,
       anchors,
       lights,
+      supportContacts: collectSupportContacts(scene),
     };
     if (evidenceWindow.__PRE_G7_13_REFERENCE_DIAGNOSTICS__) {
       evidenceWindow.__PRE_G7_13_REFERENCE_DIAGNOSTICS__.latest = snapshot;

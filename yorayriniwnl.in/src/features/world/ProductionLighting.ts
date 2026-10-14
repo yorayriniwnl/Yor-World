@@ -4,9 +4,14 @@ import * as THREE from "three";
 // a runtime integration calibration, not a claimed conversion of glTF units.
 export const PRODUCTION_LIGHT_INTENSITIES: Readonly<Record<string, number>> = {
   Light_CeilingAmbient: 0.08,
-  Light_CyanFill: 2.05,
+  Light_CyanFill: 1.6,
   Light_HexWall: 0.06,
   Light_TaskDownlight: 2.5,
+};
+
+/** Move the existing cyan point light toward the exposed foreground floor. */
+export const PRODUCTION_LIGHT_POSITIONS: Readonly<Record<string, readonly [number, number, number]>> = {
+  Light_CyanFill: [0, 0.15, -0.45],
 };
 
 export const REFERENCE_MATERIAL_CALIBRATIONS = {
@@ -23,8 +28,13 @@ export interface ReferenceMaterialCalibrationResult {
 /** Run once before interaction controllers capture their lighting baseline. */
 export function configureProductionLighting(scene: THREE.Object3D): void {
   for (const [name, intensity] of Object.entries(PRODUCTION_LIGHT_INTENSITIES)) {
-    scene.getObjectByName(name)?.traverse((node) => {
-      if (node instanceof THREE.PointLight || node instanceof THREE.SpotLight) node.intensity = intensity;
+    const namedObject = scene.getObjectByName(name);
+    const position = PRODUCTION_LIGHT_POSITIONS[name];
+    namedObject?.traverse((node) => {
+      if (node instanceof THREE.PointLight || node instanceof THREE.SpotLight) {
+        node.intensity = intensity;
+        if (node === namedObject && position) node.position.set(...position);
+      }
     });
   }
 }

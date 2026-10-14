@@ -9,6 +9,7 @@ const HEX_PANEL_NAMES = [
   "hex_panel_6",
   "hex_panel_7",
 ] as const;
+const CAMERA_FOOT_NAMES = ["ai_cam_leg_1", "ai_cam_leg_2", "ai_cam_leg_3"] as const;
 
 export interface ReferenceCompositionResult {
   movedNode: string;
@@ -24,6 +25,79 @@ export interface PixelBounds {
   width: number;
   height: number;
   visibleAreaRatio: number;
+}
+
+function worldBounds(object: THREE.Object3D): THREE.Box3 {
+  object.updateWorldMatrix(true, true);
+  return new THREE.Box3().setFromObject(object);
+}
+
+function translateWorld(object: THREE.Object3D, offset: THREE.Vector3): void {
+  const worldPosition = object.getWorldPosition(new THREE.Vector3()).add(offset);
+  if (object.parent) object.parent.worldToLocal(worldPosition);
+  object.position.copy(worldPosition);
+  object.updateWorldMatrix(true, true);
+}
+
+function alignShelfCameraToSurface(scene: THREE.Object3D, camera: THREE.Object3D): void {
+  const shelf = scene.getObjectByName("shelf_rear_upper");
+  if (!shelf) throw new Error("Reference composition requires shelf_rear_upper to support ai-real-camera");
+  const feet = CAMERA_FOOT_NAMES.map((name) => scene.getObjectByName(name));
+  if (feet.some((foot) => !foot)) {
+    throw new Error("Reference composition requires all three named ai-real-camera feet");
+  }
+
+  scene.updateWorldMatrix(true, true);
+  const surface = worldBounds(shelf);
+  const footBounds = feet.map((foot) => worldBounds(foot!));
+  const footUnion = footBounds.reduce((union, bounds) => union.union(bounds), new THREE.Box3());
+  const margin = 0.005;
+  const usable = {
+    minX: surface.min.x + margin,
+    maxX: surface.max.x - margin,
+    minZ: surface.min.z + margin,
+    maxZ: surface.max.z - margin,
+  };
+  if (footUnion.getSize(new THREE.Vector3()).x > usable.maxX - usable.minX ||
+      footUnion.getSize(new THREE.Vector3()).z > usable.maxZ - usable.minZ) {
+    throw new Error("The named camera feet do not fit within the upper shelf footprint");
+  }
+
+  const fitCenter = (current: number, size: number, min: number, max: number) =>
+    THREE.MathUtils.clamp(current, min + size / 2, max - size / 2);
+  const currentCenter = footUnion.getCenter(new THREE.Vector3());
+  const desiredCenter = new THREE.Vector3(
+    fitCenter(currentCenter.x, footUnion.getSize(new THREE.Vector3()).x, usable.minX, usable.maxX),
+    surface.max.y,
+    fitCenter(surface.getCenter(new THREE.Vector3()).z, footUnion.getSize(new THREE.Vector3()).z, usable.minZ, usable.maxZ),
+  );
+  translateWorld(camera, new THREE.Vector3(
+    desiredCenter.x - currentCenter.x,
+    desiredCenter.y - footUnion.min.y,
+    desiredCenter.z - currentCenter.z,
+  ));
+
+  const finalSurface = worldBounds(shelf);
+  const finalFootBounds = feet.map((foot) => worldBounds(foot!));
+  const supportedFeet = finalFootBounds.map((bounds) => ({
+    min: bounds.min.toArray(),
+    max: bounds.max.toArray(),
+    contactDeltaY: bounds.min.y - finalSurface.max.y,
+    insideFootprint: bounds.min.x >= finalSurface.min.x + margin &&
+      bounds.max.x <= finalSurface.max.x - margin &&
+      bounds.min.z >= finalSurface.min.z + margin &&
+      bounds.max.z <= finalSurface.max.z - margin,
+  }));
+  if (supportedFeet.some((foot) => Math.abs(foot.contactDeltaY) > 0.001 || !foot.insideFootprint)) {
+    throw new Error("Unable to place every named ai-real-camera foot on the supported shelf surface");
+  }
+  camera.userData["referenceSupport"] = {
+    surfaceNode: shelf.name,
+    surfaceTopY: finalSurface.max.y,
+    toleranceMeters: 0.001,
+    footprintMarginMeters: margin,
+    feet: Object.fromEntries(CAMERA_FOOT_NAMES.map((name, index) => [name, supportedFeet[index]])),
+  };
 }
 
 /**
@@ -148,6 +222,8 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
       shelfCamera.position.set(1.7875, -0.91, 1.429);
       shelfCamera.scale.setScalar(1.75);
     }
+    shelfCamera.updateWorldMatrix(true, true);
+    alignShelfCameraToSurface(scene, shelfCamera);
     shelfCamera.userData["referenceCompositionApplied"] = true;
   }
 
@@ -402,13 +478,13 @@ function addHeadsetToStand(scene: THREE.Object3D): boolean {
 function addCompactAudioConsole(scene: THREE.Object3D): boolean {
   if (scene.getObjectByName("console-code-native")) return false;
   const microphone = scene.getObjectByName("talks-microphone");
-  const desk = scene.getObjectByName("desk");
-  if (!microphone || !desk) return false;
+  const deskTop = scene.getObjectByName("desk_top");
+  if (!microphone || !deskTop) return false;
 
   scene.updateMatrixWorld(true);
   const microphoneBounds = new THREE.Box3().setFromObject(microphone);
-  const deskBounds = new THREE.Box3().setFromObject(desk);
-  if (microphoneBounds.isEmpty() || deskBounds.isEmpty()) return false;
+  const deskTopBounds = new THREE.Box3().setFromObject(deskTop);
+  if (microphoneBounds.isEmpty() || deskTopBounds.isEmpty()) return false;
 
   const width = 0.30;
   const depth = 0.19;
@@ -416,20 +492,22 @@ function addCompactAudioConsole(scene: THREE.Object3D): boolean {
   const microphoneCenter = microphoneBounds.getCenter(new THREE.Vector3());
   const centerX = THREE.MathUtils.clamp(
     microphoneCenter.x + 0.23,
-    deskBounds.min.x + width / 2 + 0.035,
-    deskBounds.max.x - width / 2 - 0.035,
+    deskTopBounds.min.x + width / 2 + 0.035,
+    deskTopBounds.max.x - width / 2 - 0.035,
   );
   const centerZ = THREE.MathUtils.clamp(
     microphoneCenter.z + 0.20,
-    deskBounds.min.z + depth / 2 + 0.035,
-    deskBounds.max.z - depth / 2 - 0.035,
+    deskTopBounds.min.z + depth / 2 + 0.035,
+    deskTopBounds.max.z - depth / 2 - 0.035,
   );
 
   const console = new THREE.Group();
   console.name = "console-code-native";
-  console.position.copy(scene.worldToLocal(new THREE.Vector3(centerX, deskBounds.max.y, centerZ)));
+  console.position.copy(scene.worldToLocal(new THREE.Vector3(centerX, deskTopBounds.max.y, centerZ)));
   console.userData["source"] = "PRE-G7-13 code-native compact audio console; frozen GLB inventory has microphone nodes but no audio-console node";
   console.userData["dimensions"] = { width, height, depth };
+  console.userData["supportSurfaceNode"] = deskTop.name;
+  console.userData["supportSurfaceTopY"] = deskTopBounds.max.y;
 
   const chassis = new THREE.MeshStandardMaterial({ color: "#262d3c", metalness: 0.22, roughness: 0.48 });
   const surface = new THREE.MeshStandardMaterial({ color: "#141a27", metalness: 0.12, roughness: 0.56 });
@@ -474,6 +552,21 @@ function addCompactAudioConsole(scene: THREE.Object3D): boolean {
 
   scene.add(console);
   scene.updateMatrixWorld(true);
+  const baseBounds = worldBounds(base);
+  const finalSurfaceBounds = worldBounds(deskTop);
+  console.userData["supportMetrics"] = {
+    surfaceNode: deskTop.name,
+    surfaceTopY: finalSurfaceBounds.max.y,
+    baseBottomY: baseBounds.min.y,
+    contactDeltaY: baseBounds.min.y - finalSurfaceBounds.max.y,
+    baseFootprintWithinSurface: baseBounds.min.x >= finalSurfaceBounds.min.x &&
+      baseBounds.max.x <= finalSurfaceBounds.max.x &&
+      baseBounds.min.z >= finalSurfaceBounds.min.z &&
+      baseBounds.max.z <= finalSurfaceBounds.max.z,
+    baseBounds: { min: baseBounds.min.toArray(), max: baseBounds.max.toArray() },
+    surfaceBounds: { min: finalSurfaceBounds.min.toArray(), max: finalSurfaceBounds.max.toArray() },
+    adjacentMicrophoneBounds: { min: microphoneBounds.min.toArray(), max: microphoneBounds.max.toArray() },
+  };
   return true;
 }
 

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import * as THREE from "three";
 import { vi } from "vitest";
 import { applyReferenceComposition, measureProjectedBounds } from "../../src/features/world/ReferenceComposition";
+import { configureProductionLighting, PRODUCTION_LIGHT_INTENSITIES, PRODUCTION_LIGHT_POSITIONS } from "../../src/features/world/ProductionLighting";
 
 describe("reference room composition", () => {
   it("moves named anchors, preserves all seven panel geometries, and adds the console and headset details once", () => {
@@ -17,6 +18,10 @@ describe("reference room composition", () => {
     desk.name = "desk";
     desk.position.set(0, 0.75, -1);
     scene.add(desk);
+    const deskTop = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.05, 0.8), new THREE.MeshBasicMaterial());
+    deskTop.name = "desk_top";
+    deskTop.position.set(0, 0.725, -1.15);
+    scene.add(deskTop);
 
     const microphone = new THREE.Group();
     microphone.name = "talks-microphone";
@@ -52,11 +57,27 @@ describe("reference room composition", () => {
     const originalSpeakerGeometry = rightSpeakerMesh.geometry;
     const originalSpeakerMaterial = rightSpeakerMesh.material;
 
+    const shelf = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.03, 0.22), new THREE.MeshBasicMaterial());
+    shelf.name = "shelf_rear_upper";
+    shelf.position.set(0, 2.15, -1.68);
+    scene.add(shelf);
+
     const shelfCamera = new THREE.Group();
     shelfCamera.name = "ai-real-camera";
     const cameraMesh = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.06, 0.07), new THREE.MeshBasicMaterial());
     cameraMesh.name = "ai_cam_chassis";
+    cameraMesh.position.set(-1.45, 1.77, -1.68);
     shelfCamera.add(cameraMesh);
+    for (const [name, position] of [
+      ["ai_cam_leg_1", [-1.42, 1.7, -1.68]],
+      ["ai_cam_leg_2", [-1.465, 1.7, -1.654]],
+      ["ai_cam_leg_3", [-1.465, 1.7, -1.706]],
+    ] as const) {
+      const foot = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.04, 0.012), new THREE.MeshBasicMaterial());
+      foot.name = name;
+      foot.position.set(position[0], position[1], position[2]);
+      shelfCamera.add(foot);
+    }
     scene.add(shelfCamera);
 
     const monitor = new THREE.Group();
@@ -108,6 +129,17 @@ describe("reference room composition", () => {
     expect(scene.getObjectByName("speaker_right_driver")).toBe(rightSpeakerMesh);
     expect(rightSpeakerMesh.geometry).toBe(originalSpeakerGeometry);
     expect(rightSpeakerMesh.material).toBe(originalSpeakerMaterial);
+    const cameraSurface = new THREE.Box3().setFromObject(shelf);
+    for (const name of ["ai_cam_leg_1", "ai_cam_leg_2", "ai_cam_leg_3"]) {
+      const foot = scene.getObjectByName(name)!;
+      const footBounds = new THREE.Box3().setFromObject(foot);
+      expect(footBounds.min.y).toBeCloseTo(cameraSurface.max.y, 3);
+      expect(footBounds.min.x).toBeGreaterThanOrEqual(cameraSurface.min.x + 0.005);
+      expect(footBounds.max.x).toBeLessThanOrEqual(cameraSurface.max.x - 0.005);
+      expect(footBounds.min.z).toBeGreaterThanOrEqual(cameraSurface.min.z + 0.005);
+      expect(footBounds.max.z).toBeLessThanOrEqual(cameraSurface.max.z - 0.005);
+    }
+    expect(shelfCamera.userData["referenceSupport"].surfaceNode).toBe("shelf_rear_upper");
     for (const { mesh, geometry, material, position } of originalPlants) {
       expect(mesh.geometry).toBe(geometry);
       expect(mesh.material).toBe(material);
@@ -129,7 +161,9 @@ describe("reference room composition", () => {
         expect(mesh.rotation.toArray()).toEqual([0, 0, 0, "XYZ"]);
       }
     }
-    expect(shelfCamera.position.toArray()).toEqual([1.7875, -0.91, 1.429]);
+    expect(shelfCamera.position.x).toBeCloseTo(1.7875);
+    expect(shelfCamera.position.y).toBeCloseTo(-0.775);
+    expect(shelfCamera.position.z).toBeCloseTo(1.26);
     expect(shelfCamera.scale.toArray()).toEqual([1.75, 1.75, 1.75]);
     expect(scene.getObjectByName("ai-real-camera")).toBe(shelfCamera);
     expect(scene.getObjectByName("ai_cam_chassis")).toBe(cameraMesh);
@@ -206,14 +240,21 @@ describe("reference room composition", () => {
     expect(scene.getObjectByName("headset-earcup-right-code-native")).toBeDefined();
 
     const console = scene.getObjectByName("console-code-native")!;
-    const consoleBounds = new THREE.Box3().setFromObject(console);
-    const deskBounds = new THREE.Box3().setFromObject(desk);
+    const consoleBase = console.getObjectByName("console-chassis-code-native")!;
+    const consoleBaseBounds = new THREE.Box3().setFromObject(consoleBase);
+    const deskTopBounds = new THREE.Box3().setFromObject(deskTop);
+    const microphoneBounds = new THREE.Box3().setFromObject(microphone);
     expect(console.userData["source"]).toContain("PRE-G7-13");
-    expect(consoleBounds.min.y).toBeCloseTo(deskBounds.max.y);
-    expect(consoleBounds.min.x).toBeGreaterThanOrEqual(deskBounds.min.x);
-    expect(consoleBounds.max.x).toBeLessThanOrEqual(deskBounds.max.x);
-    expect(consoleBounds.min.z).toBeGreaterThanOrEqual(deskBounds.min.z);
-    expect(consoleBounds.max.z).toBeLessThanOrEqual(deskBounds.max.z);
+    expect(consoleBaseBounds.min.y).toBeCloseTo(deskTopBounds.max.y, 5);
+    expect(consoleBaseBounds.min.x).toBeGreaterThanOrEqual(deskTopBounds.min.x);
+    expect(consoleBaseBounds.max.x).toBeLessThanOrEqual(deskTopBounds.max.x);
+    expect(consoleBaseBounds.min.z).toBeGreaterThanOrEqual(deskTopBounds.min.z);
+    expect(consoleBaseBounds.max.z).toBeLessThanOrEqual(deskTopBounds.max.z);
+    const gapX = Math.max(0, consoleBaseBounds.min.x - microphoneBounds.max.x, microphoneBounds.min.x - consoleBaseBounds.max.x);
+    const gapZ = Math.max(0, consoleBaseBounds.min.z - microphoneBounds.max.z, microphoneBounds.min.z - consoleBaseBounds.max.z);
+    expect(Math.hypot(gapX, gapZ), "console remains adjacent to talks-microphone").toBeLessThan(0.5);
+    expect(console.userData["supportMetrics"].baseFootprintWithinSurface).toBe(true);
+    expect(console.userData["supportMetrics"].contactDeltaY).toBeCloseTo(0, 5);
     expect(console.getObjectByName("console-display-code-native")).toBeDefined();
     expect(console.getObjectByName("console-fader-1-code-native")).toBeDefined();
     expect(console.getObjectByName("console-knob-1-code-native")).toBeDefined();
@@ -249,11 +290,25 @@ describe("reference room composition", () => {
     scene.add(pc);
     const shelfCamera = new THREE.Group();
     shelfCamera.name = "ai-real-camera";
-    const cameraBody = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.24, 0.198), new THREE.MeshBasicMaterial());
+    const cameraBody = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.06, 0.07), new THREE.MeshBasicMaterial());
     cameraBody.name = "ai_cam_chassis";
     cameraBody.position.set(-1.45, 1.77, -1.67);
     shelfCamera.add(cameraBody);
+    for (const [name, position] of [
+      ["ai_cam_leg_1", [-1.42, 1.7, -1.68]],
+      ["ai_cam_leg_2", [-1.465, 1.7, -1.654]],
+      ["ai_cam_leg_3", [-1.465, 1.7, -1.706]],
+    ] as const) {
+      const foot = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.04, 0.012), new THREE.MeshBasicMaterial());
+      foot.name = name;
+      foot.position.set(position[0], position[1], position[2]);
+      shelfCamera.add(foot);
+    }
     scene.add(shelfCamera);
+    const upperShelf = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.03, 0.22), new THREE.MeshBasicMaterial());
+    upperShelf.name = "shelf_rear_upper";
+    upperShelf.position.set(0, 2.15, -1.68);
+    scene.add(upperShelf);
 
     vi.stubGlobal("window", { innerWidth: 390 });
     try {
@@ -261,9 +316,18 @@ describe("reference room composition", () => {
       expect(controller.scale.toArray()).toEqual([1.9, 1.9, 1.9]);
       expect(shelfCamera.scale.toArray()).toEqual([3, 3, 3]);
       const cameraBounds = new THREE.Box3().setFromObject(shelfCamera);
-      expect(cameraBounds.min.y).toBeCloseTo(2.03);
+      expect(cameraBounds.min.y).toBeCloseTo(new THREE.Box3().setFromObject(upperShelf).max.y, 3);
       expect(cameraBounds.getCenter(new THREE.Vector3()).x).toBeCloseTo(0.7);
-      expect(cameraBounds.getCenter(new THREE.Vector3()).z).toBeCloseTo(-1.48);
+      const cameraShelf = new THREE.Box3().setFromObject(upperShelf);
+      for (const name of ["ai_cam_leg_1", "ai_cam_leg_2", "ai_cam_leg_3"]) {
+        const footBounds = new THREE.Box3().setFromObject(scene.getObjectByName(name)!);
+        expect(footBounds.min.y).toBeCloseTo(cameraShelf.max.y, 3);
+        expect(footBounds.min.x).toBeGreaterThanOrEqual(cameraShelf.min.x + 0.005);
+        expect(footBounds.max.x).toBeLessThanOrEqual(cameraShelf.max.x - 0.005);
+        expect(footBounds.min.z).toBeGreaterThanOrEqual(cameraShelf.min.z + 0.005);
+        expect(footBounds.max.z).toBeLessThanOrEqual(cameraShelf.max.z - 0.005);
+      }
+      expect(shelfCamera.userData["referenceSupport"].surfaceNode).toBe("shelf_rear_upper");
       expect(scene.getObjectByName("ai-real-camera")).toBe(shelfCamera);
       expect(scene.getObjectByName("ai_cam_chassis")).toBe(cameraBody);
       expect(plants.position.toArray()).toEqual([0.68, 0, -1.6]);
@@ -315,5 +379,27 @@ describe("reference room composition", () => {
     expect(bounds!.width).toBeGreaterThan(0);
     expect(bounds!.visibleAreaRatio).toBeGreaterThan(0);
     expect(bounds!.visibleAreaRatio).toBeLessThan(1);
+  });
+});
+
+describe("named production lighting", () => {
+  it("keeps the bounded cyan fill on the existing floor-facing point light only", () => {
+    const scene = new THREE.Group();
+    const cyanFill = new THREE.PointLight(0x00f3ff, 1);
+    cyanFill.name = "Light_CyanFill";
+    cyanFill.position.set(0, 0.4, -1.15);
+    scene.add(cyanFill);
+    const taskLight = new THREE.PointLight(0xffaa55, 1);
+    taskLight.name = "Light_TaskDownlight";
+    taskLight.position.set(1, 2, -1);
+    scene.add(taskLight);
+
+    configureProductionLighting(scene);
+
+    expect(cyanFill.intensity).toBe(PRODUCTION_LIGHT_INTENSITIES.Light_CyanFill);
+    expect(cyanFill.position.toArray()).toEqual(PRODUCTION_LIGHT_POSITIONS.Light_CyanFill);
+    expect(cyanFill.color.getHexString()).toBe("00f3ff");
+    expect(taskLight.intensity).toBe(PRODUCTION_LIGHT_INTENSITIES.Light_TaskDownlight);
+    expect(taskLight.position.toArray()).toEqual([1, 2, -1]);
   });
 });

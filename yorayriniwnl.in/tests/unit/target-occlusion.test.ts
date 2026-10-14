@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { describe, expect, it } from "vitest";
-import { classifyTargetOcclusionRay } from "../../src/features/world/TargetOcclusion";
+import { classifyTargetOcclusionRay } from "../../src/features/world/SceneIntegrator";
 
 describe("target-aware ray occlusion classification", () => {
   it("ignores a chair-only ray through an empty part of the target AABB", () => {
