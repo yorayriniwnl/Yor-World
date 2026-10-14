@@ -1,0 +1,8 @@
+Lint correction rerun interruption record
+
+Command: pnpm lint
+Working directory: app/
+Started: 2026-10-14T02:19:56.5774320Z
+Observation cap: five minutes from start
+At the cap (approximately 2026-10-14T02:24:56Z), the command had emitted only the package script header and had no terminal process exit. It was interrupted with Ctrl-C per parent instruction. The tool session then returned exit code 1 for the interruption; pnpm itself did not produce a terminal exit code. This correction rerun is NOT RUN to completion, not PASS or FAIL.
+Raw command/stdout/stderr are preserved in lint.command.log, lint.stdout.log, and lint.stderr.log. The earlier maker report separately states an earlier completed lint run exited 0; its historical logs remain unchanged.
