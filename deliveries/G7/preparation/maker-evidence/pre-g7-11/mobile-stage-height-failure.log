@@ -1,0 +1,56 @@
+PRE-G7-11 validation: e2e
+Started: 2026-10-14T03:26:49.484Z
+Node: v24.19.0 (C:\Users\ayush\AppData\Local\YorWorldLocalHost\runtime\node-v24.19.0-win-x64\node.exe)
+Command: ["C:\\Users\\ayush\\AppData\\Local\\YorWorldLocalHost\\runtime\\node-v24.19.0-win-x64\\node.exe","C:\\Users\\ayush\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs","exec","playwright","test","tests/e2e/world-fullscreen.spec.ts","--project=chrome"]
+CWD: C:\Users\ayush\COddexxxxxxxxxxxxxxxx\app
+PATH[0]: C:\Users\ayush\AppData\Local\YorWorldLocalHost\runtime\node-v24.19.0-win-x64
+--- raw output ---
+[WebServer] (node:69628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:45404) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [chrome] › tests\e2e\world-fullscreen.spec.ts:215:3 › PRE-G7-11 fullscreen studio › opens a native modal, returns focus on Escape and Exit, and preserves semantic destinations (3.5s)
+  x  2 [chrome] › tests\e2e\world-fullscreen.spec.ts:250:3 › PRE-G7-11 fullscreen studio › fills desktop, mobile, compact, and short-landscape viewports with measurable stage and controls (31.1s)
+(node:46332) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 3 [chrome] › tests\e2e\world-fullscreen.spec.ts:267:3 › PRE-G7-11 fullscreen studio › fallback actions retain behavior, meet text contrast, and expose visible keyboard focus (10.5s)
+
+
+  1) [chrome] › tests\e2e\world-fullscreen.spec.ts:250:3 › PRE-G7-11 fullscreen studio › fills desktop, mobile, compact, and short-landscape viewports with measurable stage and controls 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.screenshot: Test timeout of 30000ms exceeded.
+    Call log:
+      - taking page screenshot
+      - waiting for fonts to load...
+      - fonts loaded
+
+
+      43 | async function capture(page: Page, name: string) {
+      44 |   prepareEvidenceDirectories();
+    > 45 |   await page.screenshot({ path: path.join(screenshotDir, name), fullPage: false });
+         |              ^
+      46 | }
+      47 |
+      48 | function assertInsideViewport(box: { x: number; y: number; width: number; height: number }, viewport: ViewportSize, label: string) {
+        at capture (C:\Users\ayush\COddexxxxxxxxxxxxxxxx\app\tests\e2e\world-fullscreen.spec.ts:45:14)
+        at C:\Users\ayush\COddexxxxxxxxxxxxxxxx\app\tests\e2e\world-fullscreen.spec.ts:261:13
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-fullscreen-PRE-G7-11-a022a-asurable-stage-and-controls-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-fullscreen-PRE-G7-11-a022a-asurable-stage-and-controls-chrome\error-context.md
+
+  1 failed
+    [chrome] › tests\e2e\world-fullscreen.spec.ts:250:3 › PRE-G7-11 fullscreen studio › fills desktop, mobile, compact, and short-landscape viewports with measurable stage and controls 
+  2 passed (59.8s)
+
+--- exit ---
+Exit code: 1
+Signal: none
+Finished: 2026-10-14T03:27:53.917Z

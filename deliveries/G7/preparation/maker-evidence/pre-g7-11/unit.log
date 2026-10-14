@@ -1,0 +1,48 @@
+PRE-G7-11 validation: unit
+Started: 2026-10-14T03:35:11.323Z
+Node: v24.19.0 (C:\Users\ayush\AppData\Local\YorWorldLocalHost\runtime\node-v24.19.0-win-x64\node.exe)
+Command: ["C:\\Users\\ayush\\AppData\\Local\\YorWorldLocalHost\\runtime\\node-v24.19.0-win-x64\\node.exe","C:\\Users\\ayush\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs","run","test:unit"]
+CWD: C:\Users\ayush\COddexxxxxxxxxxxxxxxx\app
+PATH[0]: C:\Users\ayush\AppData\Local\YorWorldLocalHost\runtime\node-v24.19.0-win-x64
+--- raw output ---
+
+> yor-world@1.0.0-rc6 test:unit C:\Users\ayush\COddexxxxxxxxxxxxxxxx\app
+> vitest run --config vitest.config.ts
+
+
+ RUN  v5.0.2 C:/Users/ayush/COddexxxxxxxxxxxxxxxx/app
+
+ ❯ tests/unit/boundaries.test.ts (18 tests | 1 failed) 7730ms
+   × enforces integrated dependency boundaries: HTML shell stays free of 3D and browser features stay free of server imports 5798ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/boundaries.test.ts > enforces integrated dependency boundaries: HTML shell stays free of 3D and browser features stay free of server imports
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/unit/boundaries.test.ts:139:1
+    137| });
+    138|
+    139| it("enforces integrated dependency boundaries: HTML shell stays free o…
+       | ^
+    140|   const packageJson = JSON.parse(readFileSync("package.json", "utf8"))…
+    141|   expect(Object.keys(packageJson.dependencies).sort()).toEqual([
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 22 passed (23)
+      Tests  1 failed | 315 passed (316)
+   Start at  09:05:15
+   Duration  11.19s (transform 43%, import 36%, tests 20%, worker 1%)
+
+  Transform  transforming modules took 25.49s · 43% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+
+ ELIFECYCLE  Command failed with exit code 1.
+
+--- exit ---
+Exit code: 1
+Signal: none
+Finished: 2026-10-14T03:35:27.044Z

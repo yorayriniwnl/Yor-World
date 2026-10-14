@@ -1,0 +1,88 @@
+PRE-G7-11 validation: e2e
+Started: 2026-10-14T03:16:36.299Z
+Node: v24.19.0 (C:\Users\ayush\AppData\Local\YorWorldLocalHost\runtime\node-v24.19.0-win-x64\node.exe)
+Command: ["C:\\Users\\ayush\\AppData\\Local\\YorWorldLocalHost\\runtime\\node-v24.19.0-win-x64\\node.exe","C:\\Users\\ayush\\AppData\\Roaming\\npm\\node_modules\\pnpm\\bin\\pnpm.cjs","exec","playwright","test","tests/e2e/world-fullscreen.spec.ts","--project=chrome"]
+CWD: C:\Users\ayush\COddexxxxxxxxxxxxxxxx\app
+PATH[0]: C:\Users\ayush\AppData\Local\YorWorldLocalHost\runtime\node-v24.19.0-win-x64
+--- raw output ---
+[WebServer] (node:61600) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:41128) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chrome] › tests\e2e\world-fullscreen.spec.ts:129:3 › PRE-G7-11 fullscreen studio › opens a native modal, returns focus on Escape and Exit, and preserves semantic destinations (4.9s)
+(node:38964) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 [chrome] › tests\e2e\world-fullscreen.spec.ts:163:3 › PRE-G7-11 fullscreen studio › fills desktop, mobile, compact, and short-landscape viewports with measurable stage and controls (30.8s)
+(node:17848) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 3 [chrome] › tests\e2e\world-fullscreen.spec.ts:180:3 › PRE-G7-11 fullscreen studio › fallback actions retain behavior, meet text contrast, and expose visible keyboard focus (6.6s)
+
+
+  1) [chrome] › tests\e2e\world-fullscreen.spec.ts:129:3 › PRE-G7-11 fullscreen studio › opens a native modal, returns focus on Escape and Exit, and preserves semantic destinations 
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator: getByTestId('fullscreen-studio-dialog').getByRole('link', { name: 'About', exact: true })
+    Expected: "/about"
+    Error: strict mode violation: getByTestId('fullscreen-studio-dialog').getByRole('link', { name: 'About', exact: true }) resolved to 2 elements:
+        1) <a href="/about" data-testid="a11y-link-about" class="accessibility-controls-module__lOl7oq__navRailLink">About</a> aka getByTestId('a11y-link-about')
+        2) <a href="/about">About</a> aka getByRole('navigation', { name: 'Portfolio destinations and' }).getByRole('link', { name: 'About' })
+
+    Call log:
+      - Expect "toHaveAttribute" getByTestId('fullscreen-studio-dialog').getByRole('link', { name: 'About', exact: true }) with timeout 5000ms
+      - waiting for getByTestId('fullscreen-studio-dialog').getByRole('link', { name: 'About', exact: true })
+
+
+      146 |       ["Résumé", "/resume"],
+      147 |     ] as const) {
+    > 148 |       await expect(dialog.getByRole("link", { name, exact: true })).toHaveAttribute("href", href);
+          |                                                                     ^
+      149 |     }
+      150 |
+      151 |     await page.getByTestId("fullscreen-exit-studio-btn").click();
+        at C:\Users\ayush\COddexxxxxxxxxxxxxxxx\app\tests\e2e\world-fullscreen.spec.ts:148:69
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-fullscreen-PRE-G7-11-d0fe0-erves-semantic-destinations-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-fullscreen-PRE-G7-11-d0fe0-erves-semantic-destinations-chrome\error-context.md
+
+  2) [chrome] › tests\e2e\world-fullscreen.spec.ts:163:3 › PRE-G7-11 fullscreen studio › fills desktop, mobile, compact, and short-landscape viewports with measurable stage and controls 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.scrollIntoViewIfNeeded: Test timeout of 30000ms exceeded.
+    Call log:
+      - attempting scroll into view action
+        - waiting for element to be stable
+
+
+      81 |     const control = controls.nth(index);
+      82 |     if (!(await control.isVisible())) continue;
+    > 83 |     await control.scrollIntoViewIfNeeded();
+         |                   ^
+      84 |     const box = await control.boundingBox();
+      85 |     expect(box, `${label} control ${index} has a bounding box`).not.toBeNull();
+      86 |     const controlLabel =
+        at recordViewportGeometry (C:\Users\ayush\COddexxxxxxxxxxxxxxxx\app\tests\e2e\world-fullscreen.spec.ts:83:19)
+        at C:\Users\ayush\COddexxxxxxxxxxxxxxxx\app\tests\e2e\world-fullscreen.spec.ts:175:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-fullscreen-PRE-G7-11-a022a-asurable-stage-and-controls-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-fullscreen-PRE-G7-11-a022a-asurable-stage-and-controls-chrome\error-context.md
+
+  2 failed
+    [chrome] › tests\e2e\world-fullscreen.spec.ts:129:3 › PRE-G7-11 fullscreen studio › opens a native modal, returns focus on Escape and Exit, and preserves semantic destinations 
+    [chrome] › tests\e2e\world-fullscreen.spec.ts:163:3 › PRE-G7-11 fullscreen studio › fills desktop, mobile, compact, and short-landscape viewports with measurable stage and controls 
+  1 passed (1.1m)
+
+--- exit ---
+Exit code: 1
+Signal: none
+Finished: 2026-10-14T03:18:01.503Z

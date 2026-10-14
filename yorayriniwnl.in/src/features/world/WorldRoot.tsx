@@ -24,6 +24,7 @@ export interface WorldRootProps {
   projects?: readonly PublishedProject[];
   publicationRevision?: number;
   onClose?: (() => void) | undefined;
+  isFullscreen?: boolean | undefined;
   simulateAssetError?: boolean | undefined;
   simulateRendererError?: boolean | undefined;
 }
@@ -32,6 +33,7 @@ export default function WorldRoot({
   projects = publishedProjects,
   publicationRevision = 1,
   onClose,
+  isFullscreen = false,
   simulateAssetError = false,
   simulateRendererError = false,
 }: WorldRootProps) {
@@ -166,6 +168,7 @@ export default function WorldRoot({
     const handleResize = () => runtime.resize();
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
+        if (isFullscreen) return;
         const state = lm.getState();
         if (state === "ENTRANCE" || state === "TRANSITION") {
           runtime.skip();
@@ -213,7 +216,7 @@ export default function WorldRoot({
       lifecycleManagerRef.current = null;
       setExperienceController(null);
     };
-  }, [simulateAssetError, simulateRendererError, onClose, projects, router, runtimeGeneration, runtimeUnavailable]);
+  }, [simulateAssetError, simulateRendererError, onClose, projects, router, runtimeGeneration, runtimeUnavailable, isFullscreen]);
 
   // Synchronize dynamic reducedMotion changes with runtime
   useEffect(() => {
@@ -346,7 +349,7 @@ export default function WorldRoot({
 
   if (effectiveTier === "static") {
     return (
-      <div className={styles.stageContainer} data-testid="world-static-container">
+      <div className={`${styles.stageContainer} ${isFullscreen ? styles.fullscreenStage : ""}`} data-testid="world-static-container">
         <StaticFallback
           projects={projects}
           reason="Accessible Static Presentation active. Interactive 3D graphics are bypassed."
@@ -385,7 +388,7 @@ export default function WorldRoot({
 
   if (lifecycleState === "FAILURE" || error) {
     return (
-      <div className={styles.stageContainer} data-testid="world-failure-container">
+      <div className={`${styles.stageContainer} ${isFullscreen ? styles.fullscreenStage : ""}`} data-testid="world-failure-container">
         <WorldFallback
           reason={error || "Interactive 3D Studio encountered an unrecoverable failure."}
           onRetry={failureRetryExhausted ? undefined : handleRetry}
@@ -429,7 +432,7 @@ export default function WorldRoot({
 
   return (
     <div
-      className={styles.stageContainer}
+      className={`${styles.stageContainer} ${isFullscreen ? styles.fullscreenStage : ""}`}
       data-testid="world-stage-container"
       data-lifecycle-state={lifecycleState}
       role="region"

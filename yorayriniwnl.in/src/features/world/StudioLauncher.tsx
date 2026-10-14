@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useSyncExternalStore } from "react";
+import React, { useCallback, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import styles from "./world.module.css";
 import portfolioStyles from "@/features/portfolio/portfolio.module.css";
 import type { PublishedProject } from "@/contracts/content";
@@ -21,7 +22,7 @@ function getServerSearchSnapshot(): string {
 const DynamicWorldRoot = dynamic(() => import("./WorldRoot"), {
   ssr: false,
   loading: () => (
-    <div className={styles.stageContainer} data-testid="world-loading-placeholder">
+    <div className={`${styles.stageContainer} ${styles.fullscreenStage}`} data-testid="world-loading-placeholder">
       <div style={{ padding: "2rem", color: "#cadbee", textAlign: "center" }}>
         Loading 3D Studio Environment...
       </div>
@@ -46,13 +47,45 @@ export function StudioLauncher({ projects = publishedProjects, publicationRevisi
 
   const [manuallyClosed, setManuallyClosed] = useState<boolean>(false);
   const [manuallyOpened, setManuallyOpened] = useState<boolean>(false);
+  const [disclosureOpen, setDisclosureOpen] = useState(false);
+  const dialogRef = useRef<HTMLDialogElement | null>(null);
+  const launchButtonRef = useRef<HTMLButtonElement | null>(null);
+  const restoreFocusRef = useRef(false);
 
   const isEntered = (autoEnter && !manuallyClosed) || manuallyOpened;
 
+  useLayoutEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    if (isEntered) {
+      if (!dialog.open) dialog.showModal();
+      dialog.focus({ preventScroll: true });
+      return;
+    }
+
+    if (dialog.open) dialog.close();
+    if (restoreFocusRef.current) {
+      restoreFocusRef.current = false;
+      launchButtonRef.current?.focus({ preventScroll: true });
+    }
+  }, [isEntered]);
+
+  const closeStudio = useCallback(() => {
+    restoreFocusRef.current = true;
+    setManuallyClosed(true);
+    setManuallyOpened(false);
+    setDisclosureOpen(true);
+  }, []);
+
   return (
     <div>
-      {!isEntered ? (
-        <details className={portfolioStyles.studioDisclosure} data-testid="studio-disclosure">
+      <details
+        className={portfolioStyles.studioDisclosure}
+        data-testid="studio-disclosure"
+        open={isEntered || disclosureOpen}
+        onToggle={(event) => setDisclosureOpen(event.currentTarget.open)}
+      >
           <summary>Enter studio <span aria-hidden="true">+</span></summary>
           <div className={portfolioStyles.studioMessage}>
             <p>The studio is not yet available.</p>
@@ -64,9 +97,11 @@ export function StudioLauncher({ projects = publishedProjects, publicationRevisi
                 type="button"
                 id="enter-studio-btn"
                 data-testid="enter-studio-btn"
+                ref={launchButtonRef}
                 onClick={() => {
                   setManuallyOpened(true);
                   setManuallyClosed(false);
+                  setDisclosureOpen(true);
                 }}
                 className={portfolioStyles.primaryAction}
                 style={{ cursor: "pointer", border: "none" }}
@@ -75,19 +110,41 @@ export function StudioLauncher({ projects = publishedProjects, publicationRevisi
               </button>
             </div>
           </div>
-        </details>
-      ) : (
-        <DynamicWorldRoot
-          projects={projects}
-          publicationRevision={publicationRevision}
-          onClose={() => {
-            setManuallyClosed(true);
-            setManuallyOpened(false);
-          }}
-          simulateAssetError={simulateAssetError}
-          simulateRendererError={simulateRendererError}
-        />
-      )}
+      </details>
+
+      <dialog
+        ref={dialogRef}
+        className={styles.studioDialog}
+        data-testid="fullscreen-studio-dialog"
+        aria-label="YOR WORLD interactive studio"
+        tabIndex={-1}
+        onCancel={(event) => {
+          event.preventDefault();
+          closeStudio();
+        }}
+      >
+        {isEntered && (
+          <div className={styles.fullscreenStudioShell}>
+            <DynamicWorldRoot
+              projects={projects}
+              publicationRevision={publicationRevision}
+              onClose={closeStudio}
+              simulateAssetError={simulateAssetError}
+              simulateRendererError={simulateRendererError}
+              isFullscreen
+            />
+            <nav className={styles.studioPortfolioNav} aria-label="Portfolio destinations and studio exit">
+              <Link href="/projects" prefetch={false}>Projects</Link>
+              <Link href="/about" prefetch={false}>About</Link>
+              <Link href="/contact" prefetch={false}>Contact</Link>
+              <Link href="/resume" prefetch={false}>Résumé</Link>
+              <button type="button" onClick={closeStudio} data-testid="fullscreen-exit-studio-btn">
+                Exit Studio
+              </button>
+            </nav>
+          </div>
+        )}
+      </dialog>
     </div>
   );
 }
