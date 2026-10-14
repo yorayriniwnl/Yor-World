@@ -47,7 +47,7 @@
       "retainedFailure": "final-source default integration failed twice at 285/286 on the unchanged canonical-fixture 60-second timeout; prior pre-final-source 286/286 run is not counted as final-source pass",
       "userChromeGpu": "NOT PROVIDED",
       "physicalDeviceChecks": "NOT RUN",
-      "nextLocalBoundary": "PRE-G7-16 remains not accepted under its original caps. PRE-G7-16-C1 evidence correction is complete and accepted within scope. PRE-G7-17 is authorized to close the unit boundary and final integration gates; G7 remains unaccepted and the instruction is local-only; user device/GPU evidence remains open",
+      "nextLocalBoundary": "PRE-G7-17 two-pass integration subgate passed, but the default full-unit gate is FAIL/INCOMPLETE and its current source-delivery manifest is stale; PRE-G7-17 is not accepted. No further suite runs under that packet; a new bounded packet is required. G7 remains unaccepted and the instruction is local-only; physical-device checks are NOT RUN and the user's Chrome GPU state is NOT PROVIDED",
       "activeEvidenceCorrection": {
         "packet": "PRE-G7-16-C1",
         "packetPath": "docs/planning/reconciliation-packets/2026-10-15-pre-g7-16-evidence-path-correction.md",
@@ -67,15 +67,29 @@
       "activeVerificationPacket": {
         "packet": "PRE-G7-17",
         "packetPath": "docs/planning/reconciliation-packets/2026-10-15-pre-g7-17-unit-and-final-suite-gate.md",
-        "status": "AUTHORIZED - local unit boundary diagnosis and final integration verification only",
+        "status": "COMPLETE WITH UNRESOLVED REQUIRED GATES - SOURCE NOT ACCEPTED",
         "sourceBranch": "codex/pre-g7-17-unit-boundary-verification-20261015",
         "sourceBase": "f71d1df028f80637abb3e427040f0e0f5085179c",
-        "sourceAppTree": "a19c817a7ebfa8962f0b898364ca01e8770e302a",
-        "priorEvidenceHead": "72d159b8e459db39c649d69ad219955ae586395f",
-        "priorDefaultIntegration": "PASS 286/286; PRE-G7-16 attempt-03 may count as the first consecutive pass only if app source/config is unchanged",
-        "priorUnitResult": "FAIL 326/327; boundaries test exceeded 5,000 ms; focused 18/18",
+        "sourceBaseAppTree": "a19c817a7ebfa8962f0b898364ca01e8770e302a",
+        "sourceCommit": "fc64a18a7ec1d027fb0a33400c2fcd6288d6afbf",
+        "sourceTree": "593f72ad5900dcfe8d5de0f0d0b2483dc8149709",
+        "sourceAppTree": "0804688e4cdd55960e71a19efc8384d4a2f0d071",
+        "evidenceHead": "9c75661bc12d309b0d1fb00d3305179c6f6c3728",
+        "evidenceTree": "3dd349f82160bb8c60f767bf3bf2f9223d8d0b35",
+        "evidenceInventorySha256": "1eb54d6c0bd107210c4d293534b734021c5c7d1442e0b7209f50f7f8a6ecb2df",
+        "sourcePatchSha256": "0c8f639657bcc7e03eecf38c2ed72dd5ca1d29bd58862d47523e61d026b6943c",
+        "parentRulingPath": "docs/planning/reviews/2026-10-15-pre-g7-17-parent-ruling.md",
+        "audit": "Local Codex read-only source/evidence audit PASS for scope, coverage, mirrors and inventory; current source-bound delivery manifest FAIL; external GPT Plus #2 NOT RUN",
+        "integrationGate": "PASS - two consecutive exact default pnpm run test:integration runs, 286/286 each on the final source",
+        "fullUnitSuite": "FAIL/INCOMPLETE - final exact default pnpm run test:unit exited 1 at the unchanged boundary test (8.783 seconds); no aggregate summary or final count captured; required 327/327 not established",
+        "supplementalUnitRun": "327/327 after misrouted focus arguments; non-gate, not the exact default command",
+        "lintTypecheck": "PASS - eslint . --max-warnings=0 and tsc --noEmit",
+        "sourceDeliveryManifest": "FAIL - byte-verified historical PRE-G7-13 manifest binds source 8bc0db9b1572e3603000cbc657a3d04a3dabf0d7/app tree 7e5ca476b9b9b5544942a3f1229f540dd99b9d8e, not PRE-G7-17",
+        "hostChromeGpuProbe": "Isolated Chrome 155.0.8059.40 on Intel Iris Xe reported WebGL hardware accelerated; direct WebGL2 context PASS, version WebGL 2.0 (OpenGL ES 3.0 Chromium); this is not the user's profile or an app WorldRuntime verification",
+        "userChromeGpu": "NOT PROVIDED",
+        "physicalDeviceChecks": "NOT RUN - no iPhone/iPad, Android device, NVDA, or Safari/VoiceOver environment available on this host; mobile soak not run",
         "limits": "Unit and integration timeouts unchanged; no retries, skips, weakened coverage or production work",
-        "nextBoundary": "Diagnose and close unit gate; obtain the packet-authorized consecutive default integration pass(es); independent audit and parent acceptance remain separate"
+        "nextBoundary": "PRE-G7-17 source remains NOT ACCEPTED. No further suite run under this packet. A new bounded parent packet is required before additional unit work and to authorize a current source-delivery manifest correction; G7 remains local-only and NOT ACCEPTED"
       }
     },
     "priorAcceptedLocalPreparation": {
@@ -97,7 +111,7 @@
       "parentRulingPath": "docs/planning/reviews/2026-10-14-pre-g7-13-parent-ruling.md",
       "status": "ACCEPTED - bounded local visual-composition delta only"
     },
-    "physicalAndManualChecks": "NOT RUN",
+    "physicalAndManualChecks": "Physical-device checks NOT RUN; isolated local Chrome GPU probe PASS as recorded under PRE-G7-17; user's Chrome GPU state NOT PROVIDED",
     "branchProtection": {
       "status": "APPLIED AND READBACK VERIFIED",
       "receiptPath": "deliveries/G7/preparation/governance/evidence/apply-20261008T033028291188Z/receipt.json",
