@@ -15,14 +15,14 @@ describe("CameraDirector - Single Camera Owner and Smooth Transitions", () => {
     expect(diag.preset).toBe("home-desktop");
   });
 
-  it("uses the packet's in-room HOME composition and keeps other focus presets stable", () => {
-    expect(CAMERA_PRESETS["home-desktop"].position).toEqual([-0.45, 1.85, 1.3]);
-    expect(CAMERA_PRESETS["home-desktop"].target).toEqual([0.0, 1.27, -1.22]);
-    expect(CAMERA_PRESETS["home-desktop"].fov).toBe(48);
+  it("uses the packet's responsive HOME composition and keeps other focus presets stable", () => {
+    expect(CAMERA_PRESETS["home-desktop"].position).toEqual([0.75, 2.4, 1.3]);
+    expect(CAMERA_PRESETS["home-desktop"].target).toEqual([-0.2, 0.9, -1.2]);
+    expect(CAMERA_PRESETS["home-desktop"].fov).toBe(60);
 
-    expect(CAMERA_PRESETS["home-mobile"].position).toEqual([-0.55, 1.55, 1.45]);
-    expect(CAMERA_PRESETS["home-mobile"].target).toEqual([0.0, 1.1, -1.2]);
-    expect(CAMERA_PRESETS["home-mobile"].fov).toBe(100);
+    expect(CAMERA_PRESETS["home-mobile"].position).toEqual([0.3, 2.22, 1.43]);
+    expect(CAMERA_PRESETS["home-mobile"].target).toEqual([0.06, 0.96, -1.2]);
+    expect(CAMERA_PRESETS["home-mobile"].fov).toBe(110);
 
     expect(CAMERA_PRESETS["monitor"].position).toEqual([0.0, 1.08, -0.5]);
     expect(CAMERA_PRESETS["reverse-doorway"].position).toEqual([0.2, 1.25, -1.0]);

@@ -1,20 +1,7 @@
 # yorayriniwnl.in
 
-This folder is the local YOR WORLD website source for `https://yorayriniwnl.in`.
+This folder mirrors the canonical YOR WORLD application source in app/, with the intentional domain URL override at src/config/public-base-url.ts. The local Node and pnpm versions are Node 24.19.0 and pnpm 9.15.9.
 
-## Run locally
+The current source is a PRE-G7-13 local visual candidate based on failed PRE-G7-12 source 133529868c8c7279831cbbffe35ab23178012b8c, with the seven-panel scope amendment 0a73f307d078cc531f09bbc4ae7a5dfef2eedd01. Attempt-50 desktop/mobile captures are evidence for the current candidate. The maker report records the actual test outcomes and limitations; independent audit and acceptance remain pending.
 
-Use Node.js `24.19.0` and pnpm `9.15.9`. From this folder:
-
-```sh
-pnpm install --frozen-lockfile
-pnpm dev
-```
-
-Copy `.env.example` to `.env.local` before configuring local services. Backend-dependent features need the services documented in `.env.example`.
-
-## Source identity and review status
-
-The frozen accepted input is PRE-G7-11 app source commit `cfdc744f69cd257c8ac0cbaad78b8805c48f20d5`, app tree `915c26f4b9a1fa075614ea64959750f9e486187c`. This local candidate is bound to PRE-G7-12 maker source commit `133529868c8c7279831cbbffe35ab23178012b8c`, app tree `06f2b4ad62f8022bc4f2d410d67ffa197316e6ab`, based on packet/status commit `67026f26bb80d81de4edf632b3038b0239eea4de`. The manifest records the mirrored source and test hashes plus the intentional `https://yorayriniwnl.in` canonical URL override.
-
-PRE-G7-12 remains a maker candidate and is **NOT ACCEPTED**. The visual anchor ledger records material and source-asset limitations; no visual completion is claimed. This source is **NOT DEPLOYED. G7 NOT ACCEPTED.**
+This candidate is not accepted or deployed. G7 remains not accepted. Do not treat the source mirror as a deployment or provider configuration. See source-delivery-manifest.json for source and parity hashes after the source revision is frozen.

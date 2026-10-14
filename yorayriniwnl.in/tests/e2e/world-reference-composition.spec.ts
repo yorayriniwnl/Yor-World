@@ -4,11 +4,13 @@ import path from "node:path";
 import sharp from "sharp";
 
 const evidenceRoot = path.resolve(
-  process.env.PRE_G7_12_EVIDENCE_DIR || "../deliveries/G7/preparation/maker-evidence/pre-g7-12",
+  process.env.PRE_G7_13_EVIDENCE_DIR || "../deliveries/G7/preparation/maker-evidence/pre-g7-13",
 );
 const screenshotDir = path.join(evidenceRoot, "screenshots");
 const measurementDir = path.join(evidenceRoot, "measurements");
 const referencePath = path.resolve(process.cwd(), "../references/images/main-reference.png");
+const evidenceMode = process.env.PRE_G7_13_EVIDENCE_MODE === "1";
+const testPanelScale = process.env.PRE_G7_13_TEST_PANEL_SCALE;
 const actionSelector = [
   '[data-testid="studio-controls-toggle"]',
   "#studio-controls-panel button",
@@ -31,7 +33,10 @@ function recordErrors(page: Page, label: string) {
 
 async function enterHome(page: Page, viewport: ViewportSize) {
   await page.setViewportSize(viewport);
-  await page.goto("/?studio=enter");
+  const evidenceQuery = evidenceMode
+    ? `&pre-g7-evidence=1${testPanelScale ? `&pre-g7-test-panel-scale=${encodeURIComponent(testPanelScale)}` : ""}`
+    : "";
+  await page.goto(`/?studio=enter${evidenceQuery}`);
   const dialog = page.getByTestId("fullscreen-studio-dialog");
   await expect(dialog).toHaveAttribute("open", "", { timeout: 15_000 });
   await expect(page.getByTestId("world-stage-container")).toBeVisible({ timeout: 45_000 });
@@ -122,6 +127,21 @@ async function measureFixedChrome(page: Page, viewport: ViewportSize, label: str
 
 async function recordBrowserEnvironment(page: Page) {
   const environment = await page.evaluate(() => {
+    const diagnostics = (window as Window & {
+      __PRE_G7_13_REFERENCE_DIAGNOSTICS__?: { latest: ProjectedSnapshot; refresh: (probePixel?: [number, number] | null) => ProjectedSnapshot };
+    }).__PRE_G7_13_REFERENCE_DIAGNOSTICS__;
+    const firstComposition = diagnostics?.refresh() ?? diagnostics?.latest ?? null;
+    const repeatedComposition = diagnostics?.refresh() ?? null;
+    const initialCameraAnchor = firstComposition?.anchors.find((anchor) => anchor.name === "ai-real-camera");
+    const summarizeCamera = (snapshot: ProjectedSnapshot | null) => {
+      const cameraAnchor = snapshot?.anchors.find((anchor) => anchor.name === "ai-real-camera");
+      return snapshot && cameraAnchor ? {
+        camera: snapshot.camera,
+        worldBounds: cameraAnchor.worldBounds ?? null,
+        pixelBounds: cameraAnchor.pixelBounds ?? null,
+        sampledRegionHits: cameraAnchor.sampledRegionHits ?? null,
+      } : null;
+    };
     const canvas = document.querySelector<HTMLCanvasElement>("[data-testid='world-canvas']");
     const gl = canvas?.getContext("webgl2") ?? canvas?.getContext("webgl");
     const debugInfo = gl?.getExtension("WEBGL_debug_renderer_info") as
@@ -129,6 +149,11 @@ async function recordBrowserEnvironment(page: Page) {
       | null;
     return {
       browser: "Playwright-managed Chromium; emulated viewport, not a physical mobile device",
+      pageUrl: window.location.href,
+      pageOrigin: window.location.origin,
+      loadedNextChunks: performance.getEntriesByType("resource")
+        .map((entry) => entry.name)
+        .filter((name) => name.includes("/_next/static/chunks/")),
       userAgent: navigator.userAgent,
       platform: navigator.platform,
       devicePixelRatio: window.devicePixelRatio,
@@ -141,11 +166,269 @@ async function recordBrowserEnvironment(page: Page) {
         unmaskedRenderer: debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : null,
         contextLost: gl.isContextLost(),
       } : null,
+      cameraProbePixel: initialCameraAnchor?.sampledRegionHits?.rayTrace?.firstTargetPixel ?? null,
+      referenceComposition: firstComposition,
+      referenceCompositionImmediateRepeat: summarizeCamera(repeatedComposition),
     };
   });
-  fs.writeFileSync(path.join(measurementDir, "browser-environment.json"), `${JSON.stringify(environment, null, 2)}\n`, "utf8");
+  const evidenceRecord = {
+    configuredPort: process.env.PORT ?? "3133 (default)",
+    ...environment,
+  };
+  fs.writeFileSync(
+    path.join(measurementDir, `browser-environment-${environment.viewport.width}x${environment.viewport.height}.json`),
+    `${JSON.stringify(evidenceRecord, null, 2)}\n`,
+    "utf8",
+  );
   expect(environment.webgl, "the focused browser run has a WebGL context").not.toBeNull();
   expect(environment.webgl?.contextLost).toBe(false);
+  if (evidenceMode) {
+    expect(environment.pageOrigin).toBe(`http://127.0.0.1:${process.env.PORT ?? "3133"}`);
+    expect(environment.loadedNextChunks.some((name) => name.includes("/_next/static/chunks/"))).toBe(true);
+    expect(environment.referenceComposition).not.toBeNull();
+    expect(environment.cameraProbePixel, "the initial camera surface rays provide a repeatable screen sample").not.toBeNull();
+  }
+  return evidenceRecord;
+}
+
+type ProjectedAnchor = {
+  name: string;
+  found: boolean;
+  worldScale?: number[];
+  pixelBounds?: {
+    left: number;
+    top: number;
+    right: number;
+    bottom: number;
+    width: number;
+    height: number;
+    visibleAreaRatio: number;
+  } | null;
+  materials?: Array<{ name?: string; color?: string; emissive?: string; emissiveIntensity?: number }>;
+  runtimeGeometry?: { sides: number; width: number; height: number; depth: number } | null;
+  sampledRegionHits?: {
+    samples: number;
+    targetSamples: number;
+    target: number;
+    chair: number;
+    resident: number;
+    other: number;
+    occluderRatio: number | null;
+    rayTrace?: {
+      targetRootUuid: string;
+      targetRaySamples: number;
+      firstHitLineages: Record<string, number>;
+      firstTargetPixel: [number, number] | null;
+      cameraProbe: Record<string, unknown> | null;
+    };
+  } | null;
+  worldBounds?: { min: number[]; max: number[] } | null;
+};
+
+type ProjectedSnapshot = {
+  viewport: { width: number; height: number };
+  camera: { preset: string; position: number[]; target: number[]; fov: number; aspect: number; source: "camera-director" | "preset-fallback" };
+  testPanelScale: number | null;
+  anchors: ProjectedAnchor[];
+  lights: Array<{ name: string; found: boolean; color?: string; intensity?: number; position?: number[] }>;
+};
+
+async function recordVisualAnchorEvidence(
+  page: Page,
+  screenshotPath: string,
+  viewport: ViewportSize,
+  label: string,
+  probePixel: [number, number] | null,
+) {
+  const capture = await page.evaluate((fixedProbePixel) => {
+    const diagnostics = (window as Window & {
+      __PRE_G7_13_REFERENCE_DIAGNOSTICS__?: {
+        latest: ProjectedSnapshot;
+        refresh: (probePixel?: [number, number] | null) => ProjectedSnapshot;
+      };
+    }).__PRE_G7_13_REFERENCE_DIAGNOSTICS__;
+    const snapshot = diagnostics?.refresh(fixedProbePixel) ?? null;
+    const repeated = diagnostics?.refresh(fixedProbePixel) ?? null;
+    const cameraAnchor = repeated?.anchors.find((anchor) => anchor.name === "ai-real-camera");
+    const canvas = document.querySelector<HTMLCanvasElement>("[data-testid='world-canvas']");
+    const gl = canvas?.getContext("webgl2") ?? canvas?.getContext("webgl");
+    return {
+      snapshot,
+      probePixel: fixedProbePixel,
+      webglState: {
+        canvasConnected: canvas?.isConnected ?? false,
+        canvasSize: canvas ? { width: canvas.width, height: canvas.height } : null,
+        contextAvailable: Boolean(gl),
+        contextLost: gl?.isContextLost() ?? null,
+        contextAttributes: gl?.getContextAttributes() ?? null,
+        version: gl ? gl.getParameter(gl.VERSION) : null,
+      },
+      immediateRepeat: repeated && cameraAnchor ? {
+        camera: repeated.camera,
+        worldBounds: cameraAnchor.worldBounds ?? null,
+        pixelBounds: cameraAnchor.pixelBounds ?? null,
+        sampledRegionHits: cameraAnchor.sampledRegionHits ?? null,
+      } : null,
+    };
+  }, probePixel);
+  const snapshot = capture?.snapshot ?? null;
+  expect(snapshot, `${label} captured diagnostics from the live scene`).not.toBeNull();
+  const measured = snapshot as ProjectedSnapshot;
+  fs.mkdirSync(measurementDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(measurementDir, `${label}-projected-anchor-snapshot.json`),
+    `${JSON.stringify({
+      label,
+      screenshot: path.relative(evidenceRoot, screenshotPath),
+      probePixel: capture?.probePixel ?? null,
+      webglState: capture?.webglState ?? null,
+      ...measured,
+      immediateRepeat: capture?.immediateRepeat ?? null,
+    }, null, 2)}\n`,
+    "utf8",
+  );
+  expect(measured.viewport).toEqual(viewport);
+  expect(measured.camera.source, `${label} projection uses the active CameraDirector pose`).toBe("camera-director");
+  const required = [
+    ...Array.from({ length: 7 }, (_, index) => `hex_panel_${index + 1}`),
+    "lightbar_emissive",
+    "ai-real-camera",
+    "plants",
+    "monitor",
+    "speaker_left_cabinet",
+    "speaker_right_cabinet",
+    "talks-microphone",
+    "console-code-native",
+    "helios-pc",
+    "pegboard_system",
+    "peg_controller_body",
+    "headset-stand-code-native",
+    "headset-code-native",
+    "desk",
+  ];
+  const byName = new Map(measured.anchors.map((anchor) => [anchor.name, anchor]));
+  for (const name of required) {
+    const anchor = byName.get(name);
+    expect(anchor?.found, `${label} GLB/code-native anchor ${name} exists`).toBe(true);
+    expect(anchor?.pixelBounds, `${label} ${name} has projected bounds`).not.toBeNull();
+    const bounds = anchor!.pixelBounds!;
+    expect(bounds.left, `${label} ${name} is inside the left edge`).toBeGreaterThanOrEqual(0);
+    expect(bounds.top, `${label} ${name} is inside the top edge`).toBeGreaterThanOrEqual(0);
+    expect(bounds.right, `${label} ${name} is inside the right edge`).toBeLessThanOrEqual(viewport.width);
+    expect(bounds.bottom, `${label} ${name} is inside the bottom edge`).toBeLessThanOrEqual(viewport.height);
+    expect(bounds.visibleAreaRatio, `${label} ${name} is not clipped`).toBeGreaterThanOrEqual(0.98);
+  }
+  for (const name of ["chair-root", "chair-base", "resident"]) {
+    const actor = byName.get(name);
+    expect(actor?.found, `${label} named ${name} is present for occlusion measurements`).toBe(true);
+    expect(actor?.pixelBounds, `${label} ${name} has measurable bounds`).not.toBeNull();
+  }
+
+  if (measured.testPanelScale !== null) {
+    for (let index = 1; index <= 7; index += 1) {
+      expect(byName.get(`hex_panel_${index}`)?.worldScale?.[0]).toBeCloseTo(measured.testPanelScale, 4);
+    }
+    const proof = {
+      label,
+      screenshot: path.relative(evidenceRoot, screenshotPath),
+      viewport,
+      camera: measured.camera,
+      testPanelScale: measured.testPanelScale,
+      anchors: measured.anchors,
+      lights: measured.lights,
+      interpretation: "The temporary panel scale is a test-only source-liveness probe. This view is not final visual-quality evidence.",
+    };
+    fs.writeFileSync(path.join(measurementDir, `${label}-live-source-probe.json`), `${JSON.stringify(proof, null, 2)}\n`, "utf8");
+    return proof;
+  }
+
+  if (viewport.width === 390 && viewport.height === 844) {
+    expect(byName.get("ai-real-camera")!.pixelBounds!.width, "phone camera silhouette is large enough to inspect").toBeGreaterThanOrEqual(28);
+    expect(byName.get("ai-real-camera")!.pixelBounds!.height, "phone camera silhouette is large enough to inspect").toBeGreaterThanOrEqual(20);
+    expect(byName.get("peg_controller_body")!.pixelBounds!.width, "phone controller silhouette is large enough to inspect").toBeGreaterThanOrEqual(24);
+    expect(byName.get("peg_controller_body")!.pixelBounds!.height, "phone controller silhouette is large enough to inspect").toBeGreaterThanOrEqual(18);
+  }
+
+  const occlusionNames = [
+    "ai-real-camera", "plants", "monitor", "speaker_left_cabinet", "speaker_right_cabinet",
+    "talks-microphone", "console-code-native", "helios-pc", "peg_controller_body",
+    "headset-stand-code-native", "headset-code-native",
+  ];
+  for (const name of occlusionNames) {
+    const samples = byName.get(name)?.sampledRegionHits;
+    expect(samples && samples.samples > 0, `${label} ${name} has screen-region occlusion samples`).toBe(true);
+    expect(samples!.target, `${label} ${name} has visible surface samples`).toBeGreaterThan(0);
+    expect(samples!.occluderRatio, `${label} ${name} has measurable chair/resident coverage`).not.toBeNull();
+    expect(samples!.occluderRatio!, `${label} ${name} is not hidden by chair/resident`).toBeLessThanOrEqual(0.1);
+  }
+
+  const image = await sharp(screenshotPath).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  const countColor = (anchorNames: string[], predicate: (r: number, g: number, b: number) => boolean) => {
+    let colored = 0;
+    let sampled = 0;
+    for (const name of anchorNames) {
+      const bounds = byName.get(name)?.pixelBounds;
+      if (!bounds) continue;
+      const left = Math.max(0, Math.floor(bounds.left));
+      const top = Math.max(0, Math.floor(bounds.top));
+      const right = Math.min(viewport.width, Math.ceil(bounds.right));
+      const bottom = Math.min(viewport.height, Math.ceil(bounds.bottom));
+      for (let y = top; y < bottom; y += 1) {
+        for (let x = left; x < right; x += 1) {
+          const offset = (y * image.info.width + x) * image.info.channels;
+          const r = image.data[offset] ?? 0;
+          const g = image.data[offset + 1] ?? 0;
+          const b = image.data[offset + 2] ?? 0;
+          sampled += 1;
+          if (predicate(r, g, b)) colored += 1;
+        }
+      }
+    }
+    return { colored, sampled, ratio: sampled ? colored / sampled : 0 };
+  };
+  const lilacPixels = countColor(
+    Array.from({ length: 7 }, (_, index) => `hex_panel_${index + 1}`),
+    (r, g, b) => r > 65 && b > 65 && r > g * 1.12 && b > g * 1.08,
+  );
+  const lilacPanelEvidence = Array.from({ length: 7 }, (_, index) => {
+    const name = `hex_panel_${index + 1}`;
+    const anchor = byName.get(name)!;
+    const bounds = anchor.pixelBounds!;
+    return {
+      name,
+      bounds,
+      runtimeGeometry: anchor.runtimeGeometry,
+      coloredPixels: countColor([name], (r, g, b) => r > 65 && b > 65 && r > g * 1.12 && b > g * 1.08).colored,
+    };
+  });
+  const warmPixels = countColor(["lightbar_emissive"], (r, g, b) => r > 100 && g > 35 && r > g * 1.18 && g > b * 1.15);
+  const lilacMaterials = Array.from({ length: 7 }, (_, index) => byName.get(`hex_panel_${index + 1}`)?.materials ?? []).flat();
+  const barMaterials = byName.get("lightbar_emissive")?.materials ?? [];
+  expect(lilacMaterials.some((material) => material.name === "Hex_LilacEmissive" && (material.emissiveIntensity ?? 0) >= 1)).toBe(true);
+  expect(lilacPixels.colored, `${label} rendered lilac/pink pixels are present in the seven panel bounds`).toBeGreaterThanOrEqual(viewport.width === 1440 ? 24 : 8);
+  for (const panel of lilacPanelEvidence) {
+    expect(panel.runtimeGeometry?.sides, `${label} ${panel.name} retains its named live six-sided replacement geometry`).toBe(6);
+    expect(panel.runtimeGeometry?.width, `${label} ${panel.name} geometry stays within the authorized width`).toBeLessThanOrEqual(0.22);
+    expect(panel.runtimeGeometry?.height, `${label} ${panel.name} geometry stays within the authorized height`).toBeLessThanOrEqual(0.2);
+    expect(panel.runtimeGeometry?.depth, `${label} ${panel.name} geometry stays within the authorized depth`).toBeLessThanOrEqual(0.015);
+    expect(panel.coloredPixels, `${label} ${panel.name} contributes actual pink/lilac pixels`).toBeGreaterThan(0);
+  }
+  expect(barMaterials.some((material) => material.name === "Lightbar_WarmTask" && material.color?.toLowerCase().startsWith("ff"))).toBe(true);
+  expect(warmPixels.colored, `${label} rendered warm pixels are present in the monitor bar bounds`).toBeGreaterThanOrEqual(viewport.width === 1440 ? 8 : 2);
+
+  const evidence = {
+    label,
+    screenshot: path.relative(evidenceRoot, screenshotPath),
+    viewport,
+    camera: measured.camera,
+    testPanelScale: measured.testPanelScale,
+    anchors: measured.anchors,
+    lights: measured.lights,
+    colorPixels: { lilac: lilacPixels, lilacPanels: lilacPanelEvidence, warmBar: warmPixels },
+    interpretation: "Projected bounds and sampled ray hits measure framing and chair/resident occlusion; they do not replace the required human recognition review.",
+  };
+  fs.writeFileSync(path.join(measurementDir, `${label}-anchor-visibility.json`), `${JSON.stringify(evidence, null, 2)}\n`, "utf8");
+  return evidence;
 }
 
 async function recordMobileSceneState(page: Page, label: string) {
@@ -168,28 +451,40 @@ async function recordMobileSceneState(page: Page, label: string) {
       rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
       computed: { display: getComputedStyle(element).display, visibility: getComputedStyle(element).visibility },
       gl: gl ? { version: gl.getParameter(gl.VERSION), contextLost: gl.isContextLost() } : null,
+      runtimeCamera: element.dataset.preG713RuntimeCamera ? JSON.parse(element.dataset.preG713RuntimeCamera) : null,
     };
   });
+  if (evidenceMode) expect(canvas?.runtimeCamera, `${label} records the CameraDirector position and target`).not.toBeNull();
   const record = { label, viewport: page.viewportSize(), canvas, runtime };
   fs.writeFileSync(path.join(measurementDir, `${label}-runtime-scene.json`), `${JSON.stringify(record, null, 2)}\n`, "utf8");
   await diagnosticsToggle.click();
   if (!wasOpen) await toggle.click();
 }
 
-test.describe("PRE-G7-12 reference composition and compact mobile controls", () => {
+test.describe("PRE-G7-13 reference composition and compact mobile controls", () => {
   test("captures the opening desktop room beside the user reference", async ({ page }) => {
     test.setTimeout(150_000);
     recordErrors(page, "desktop-composition");
     const viewport = { width: 1440, height: 900 };
     const { camera } = await enterHome(page, viewport);
     expect(camera).toBe("home-desktop");
-    await recordBrowserEnvironment(page);
+    const browserEnvironment = await recordBrowserEnvironment(page);
+    const cameraProbePixel = browserEnvironment.cameraProbePixel as [number, number] | null;
 
     const existingControlCount = await page.locator(
       '[data-testid="fullscreen-studio-dialog"] button, [data-testid="fullscreen-studio-dialog"] a[href], [data-testid="fullscreen-studio-dialog"] select',
     ).count();
     expect(existingControlCount - 1).toBe(25);
     const renderMeasurement = await captureAndCompose(page, "studio-reference-desktop-1440x900.png", viewport);
+    if (evidenceMode) {
+      await recordVisualAnchorEvidence(
+        page,
+        path.join(screenshotDir, "studio-reference-desktop-1440x900.png"),
+        viewport,
+        "desktop-1440x900",
+        cameraProbePixel,
+      );
+    }
     expect(renderMeasurement.distinctPixelColors, "desktop GLB frame is visibly rendered").toBeGreaterThan(16);
     const chrome = await measureFixedChrome(page, viewport, "desktop-1440x900");
     expect(chrome.coveredRatio, "closed desktop chrome leaves the room unobscured").toBeLessThanOrEqual(0.2);
@@ -206,9 +501,21 @@ test.describe("PRE-G7-12 reference composition and compact mobile controls", () 
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
     await expect(toggle).toBeFocused();
 
-    // The moved camera mesh remains underneath the frozen ai-real-camera
-    // interaction root; this point is within its visible desktop pixels.
-    await page.mouse.click(410, 110);
+    // Click the center of the visible camera mesh using the build-gated
+    // source-bound projection; a fixed screen coordinate becomes stale when
+    // the permitted home-camera framing changes.
+    const cameraClick = await page.evaluate(() => {
+      const diagnosticWindow = window as Window & {
+        __PRE_G7_13_REFERENCE_DIAGNOSTICS__?: {
+          refresh: (probePixel?: [number, number] | null) => { anchors: Array<{ name: string; pixelBounds?: { left: number; top: number; width: number; height: number } | null }> };
+        };
+      };
+      const snapshot = diagnosticWindow.__PRE_G7_13_REFERENCE_DIAGNOSTICS__?.refresh();
+      const bounds = snapshot?.anchors.find((anchor) => anchor.name === "ai-real-camera")?.pixelBounds;
+      return bounds ? { x: bounds.left + bounds.width / 2, y: bounds.top + bounds.height / 2 } : null;
+    });
+    expect(cameraClick, "visible shelf camera has projected click bounds").not.toBeNull();
+    await page.mouse.click(cameraClick!.x, cameraClick!.y);
     await expect(page).toHaveURL(/\/projects\/ai-vs-real\/?$/, { timeout: 15_000 });
   });
 
@@ -217,6 +524,8 @@ test.describe("PRE-G7-12 reference composition and compact mobile controls", () 
     recordErrors(page, "mobile-drawer");
     const viewport = { width: 390, height: 844 };
     await enterHome(page, viewport);
+    const browserEnvironment = await recordBrowserEnvironment(page);
+    const cameraProbePixel = browserEnvironment.cameraProbePixel as [number, number] | null;
     await recordMobileSceneState(page, "mobile-390x844");
 
     const toggle = page.getByTestId("studio-controls-toggle");
@@ -224,6 +533,15 @@ test.describe("PRE-G7-12 reference composition and compact mobile controls", () 
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
     await measureFixedChrome(page, viewport, "mobile-390x844");
     const renderMeasurement = await captureAndCompose(page, "studio-reference-mobile-390x844.png", viewport);
+    if (evidenceMode) {
+      await recordVisualAnchorEvidence(
+        page,
+        path.join(screenshotDir, "studio-reference-mobile-390x844.png"),
+        viewport,
+        "mobile-390x844",
+        cameraProbePixel,
+      );
+    }
     expect(renderMeasurement.distinctPixelColors, "mobile GLB frame is visibly rendered").toBeGreaterThan(16);
 
     const diagnostics = page.getByTestId("diagnostics-toggle-btn");

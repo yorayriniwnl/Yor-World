@@ -20,7 +20,12 @@ async function enterRenderedHome(page: Page) {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/?studio=1", { waitUntil: "domcontentloaded" });
   await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME", { timeout: 15000 });
-  await page.getByTestId("quality-tier-select").selectOption("low");
+  const controlsToggle = page.getByTestId("studio-controls-toggle");
+  if (await controlsToggle.getAttribute("aria-expanded") !== "true") await controlsToggle.click();
+  await expect(controlsToggle).toHaveAttribute("aria-expanded", "true");
+  const qualityTier = page.getByTestId("quality-tier-select");
+  await expect(qualityTier).toBeVisible();
+  await qualityTier.selectOption("low");
   const canvas = page.getByTestId("world-canvas");
   await expect.poll(async () => Number(await canvas.getAttribute("data-rendered-frames"))).toBeGreaterThan(1);
   return canvas;
@@ -196,9 +201,9 @@ test.describe("C3 Failure Recovery, Context Loss & Mobile Resilience", () => {
     await expect(failureContainer).toBeVisible({ timeout: 10000 });
 
     // Public links (Projects, About) must remain reachable
-    const projectsLink = page.locator('[data-testid="fallback-projects-link"], a[href="/projects"]');
-    await expect(projectsLink.first()).toBeVisible();
-    await projectsLink.first().click();
+    const projectsLink = page.getByTestId("fallback-projects-link");
+    await expect(projectsLink).toBeVisible();
+    await projectsLink.click();
 
     await expect(page).toHaveURL(/\/projects/);
     await saveEvidence(info, "renderer-failure-dialog-safe.json", {

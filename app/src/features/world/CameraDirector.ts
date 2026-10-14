@@ -3,17 +3,19 @@ import type { CameraConfig, CameraPreset } from "./types";
 
 export const CAMERA_PRESETS: Record<CameraPreset, CameraConfig> = {
   "home-desktop": {
-    // Near-frontal framing keeps the workstation props separated and in view.
-    position: [-0.45, 1.85, 1.3],
-    target: [0.0, 1.27, -1.22],
-    fov: 48,
+    // A higher, more oblique opening view exposes the desktop surface and
+    // separates its right-side anchors from the seated figure.
+    position: [0.75, 2.4, 1.3],
+    target: [-0.2, 0.9, -1.2],
+    fov: 60,
   },
   "home-mobile": {
-    // Keep the camera inside the room and near-frontal so the narrow portrait
-    // frustum retains the desk, rear-wall lights, and right-side PC grouping.
-    position: [-0.55, 1.55, 1.45],
-    target: [0.0, 1.1, -1.2],
-    fov: 100,
+    // Preserve the front-room angle that keeps the monitor surface clear of
+    // the resident while the enlarged, shelf-seated GLB camera and controller
+    // remain above the phone-size recognition floor.
+    position: [0.3, 2.22, 1.43],
+    target: [0.06, 0.96, -1.2],
+    fov: 110,
   },
   monitor: {
     position: [0.0, 1.08, -0.5],
@@ -136,6 +138,7 @@ export class CameraDirector {
       this.camera.lookAt(targetVec);
       this.camera.updateProjectionMatrix();
     }
+    this.publishEvidencePose();
   }
 
   public setDirect(pos: [number, number, number], target: [number, number, number], fov: number) {
@@ -144,6 +147,7 @@ export class CameraDirector {
     this.camera.fov = fov;
     this.camera.lookAt(this.currentTarget);
     this.camera.updateProjectionMatrix();
+    this.publishEvidencePose();
   }
 
   public async transitionTo(
@@ -212,6 +216,7 @@ export class CameraDirector {
         this.camera.fov = startFov + (endFov - startFov) * ease;
         this.camera.lookAt(this.currentTarget);
         this.camera.updateProjectionMatrix();
+        this.publishEvidencePose();
 
         if (rawProgress >= 1.0) {
           this.setPreset(preset, true);
@@ -263,6 +268,19 @@ export class CameraDirector {
       reducedMotion: this.reducedMotion,
       ownerId: this.ownerId,
     };
+  }
+
+  /** Publish the active camera pose only for the packet's instrumented evidence build. */
+  private publishEvidencePose() {
+    if (
+      typeof window === "undefined" ||
+      typeof document === "undefined" ||
+      process.env.NEXT_PUBLIC_PRE_G7_13_EVIDENCE !== "1" ||
+      new URLSearchParams(window.location.search).get("pre-g7-evidence") !== "1"
+    ) return;
+    const canvas = document.querySelector<HTMLCanvasElement>("[data-testid='world-canvas']");
+    if (!canvas) return;
+    canvas.dataset.preG713RuntimeCamera = JSON.stringify(this.getDiagnostics());
   }
 
   public dispose() {

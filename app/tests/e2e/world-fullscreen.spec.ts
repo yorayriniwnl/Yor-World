@@ -35,7 +35,12 @@ async function enterStudioAtHome(page: Page) {
   await expect(page.getByTestId("world-stage-container")).toBeVisible({ timeout: 45_000 });
   await expect(page.getByTestId("world-canvas")).toBeVisible({ timeout: 45_000 });
   await expect(page.getByTestId("world-loading-overlay")).toBeHidden({ timeout: 90_000 });
-  await page.getByTestId("skip-motion-btn").click();
+  const controlsToggle = page.getByTestId("studio-controls-toggle");
+  if (await controlsToggle.getAttribute("aria-expanded") !== "true") await controlsToggle.click();
+  await expect(controlsToggle).toHaveAttribute("aria-expanded", "true");
+  const skipMotion = page.getByTestId("skip-motion-btn");
+  await expect(skipMotion).toBeVisible();
+  await skipMotion.click();
   await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME", {
     timeout: 15_000,
   });
