@@ -52,3 +52,5 @@ Results:
 - True|Directory|C:/Users/ayush/AppData/Local/Temp/yor-world-pre-g7-16-diagnostic-lean/app
 
 All four literal-safe paths resolve to the intended local input or diagnostic snapshot.
+
+Evidence documentation uses LF endings so git show --check stays clean under the evidence-local -text policy; archived raw receipts remain byte-exact and unchanged.
