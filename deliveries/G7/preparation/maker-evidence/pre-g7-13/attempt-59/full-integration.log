@@ -1,0 +1,48 @@
+COMMAND=pnpm run test:integration
+npm warn Unknown project config "strict-peer-dependencies". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+v24.19.0
+npm warn Unknown project config "strict-peer-dependencies". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> yor-world@1.0.0-rc6 test:integration C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-13\app
+> vitest run --config vitest.integration.config.ts
+
+
+ RUN  v5.0.2 C:/Users/ayush/COddexxxxxxxxxxxxxxxx/_worktrees/pre-g7-13/app
+
+ ❯ tests/integration/production-camera.test.ts (5 tests | 1 failed) 900ms
+   ❯ Production room camera integration (5)
+     × the actual true-mobile entrance clears every static wall and doorframe 276ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/production-camera.test.ts > Production room camera integration > the actual true-mobile entrance clears every static wall and doorframe
+AssertionError: expected [ 0.30000000000000004, 2.22, 1.43 ] to deeply equal [ 0.3, 2.22, 1.43 ]
+
+- Expected
++ Received
+
+  [
+-   0.3,
++   0.30000000000000004,
+    2.22,
+    1.43,
+  ]
+
+ ❯ tests/integration/production-camera.test.ts:174:55
+    172|     expect(camera.position.toArray()).toEqual(CAMERA_PRESETS[isMobile …
+    173|     expect(entrancePositionAt(0, isMobile).toArray()).toEqual(position…
+    174|     expect(entrancePositionAt(1, isMobile).toArray()).toEqual(camera.p…
+       |                                                       ^
+    175|     expect(entrance.getDiagnostics().phase).toBe("settled");
+    176|     entrance.dispose();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 26 passed (27)
+      Tests  1 failed | 285 passed (286)
+   Start at  22:20:15
+   Duration  59.79s (tests 85%, import 11%, transform 4%)
+
+ ELIFECYCLE  Command failed with exit code 1.
+INTEGRATION_EXIT=1
