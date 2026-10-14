@@ -49,6 +49,8 @@ The first About-link test failure was an ambiguous locator: the dialog intention
 
 The supplied hydration diff lists Dark Reader and Grammarly attributes injected on `<html>`/`<body>`; they are not rendered by the application root layout. No hydration-warning suppression or unrelated layout change was added. The forced WebGL failure test verifies the accessible fallback, while the captured WebGL contexts only describe these headless browser runs.
 
+The scoped `git diff --check` review reports trailing whitespace only in captured terminal output and blank context lines in `scoped-source.patch`; those raw evidence files are preserved verbatim. The source, README, report, and manifest have no whitespace findings.
+
 ## Limits
 
 The default full unit and integration commands retain the failures shown above; diagnostic reruns do not change those results. The domain pre-edit inventory was taken before the maker's domain edits; the final folder contains only `.env.example` as an environment file. It records preservation of `.accepted-source-stage` (241 files / 71 directories), `.next` (741 / 93), `node_modules` (37 top-level entries), and `test-results` (15 files / 1 directory). `scoped-source.patch` is the source diff. `SHA256SUMS.txt` contains 151 SHA-256 hashes over exact Git blob bytes; `verify-delivery-evidence.mjs` checks them against staged blobs before commit and can verify a commit after push. This avoids platform checkout line-ending conversions changing the hashes.

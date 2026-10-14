@@ -2,7 +2,6 @@ import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 
-const sourceCommit = "cfdc744f69cd257c8ac0cbaad78b8805c48f20d5";
 const evidencePrefix = "deliveries/G7/preparation/maker-evidence/pre-g7-11/";
 const committedRevision = process.argv[2];
 const stagedPaths = execFileSync("git", ["diff", "--cached", "--name-only"], { encoding: "utf8" })
@@ -27,7 +26,7 @@ for (const line of sums) {
   const [, expected, path] = match;
   const objectRef = committedRevision
     ? `${committedRevision}:${path}`
-    : staged.has(path) ? `:${path}` : `${sourceCommit}:${path}`;
+    : staged.has(path) ? `:${path}` : `HEAD:${path}`;
   const bytes = execFileSync("git", ["cat-file", "blob", objectRef], { maxBuffer: 64 * 1024 * 1024 });
   const actual = createHash("sha256").update(bytes).digest("hex");
   if (actual !== expected) throw new Error(`SHA-256 mismatch: ${path} expected ${expected} got ${actual}`);
