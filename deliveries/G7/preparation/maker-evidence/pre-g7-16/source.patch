@@ -1,0 +1,22 @@
+diff --git a/app/vitest.integration.config.ts b/app/vitest.integration.config.ts
+index ae3d5f70..6f7724db 100644
+--- a/app/vitest.integration.config.ts
++++ b/app/vitest.integration.config.ts
+@@ -8,5 +8,5 @@ export default defineConfig({
+       "@": path.resolve(import.meta.dirname ?? process.cwd(), "src"),
+     },
+   },
+-  test: { include: ["tests/integration/**/*.test.ts"], environment: "node", passWithNoTests: false, testTimeout: 60_000, hookTimeout: 90_000 },
++  test: { include: ["tests/integration/**/*.test.ts"], environment: "node", passWithNoTests: false, fileParallelism: false, testTimeout: 60_000, hookTimeout: 90_000 },
+ });
+diff --git a/yorayriniwnl.in/vitest.integration.config.ts b/yorayriniwnl.in/vitest.integration.config.ts
+index ae3d5f70..6f7724db 100644
+--- a/yorayriniwnl.in/vitest.integration.config.ts
++++ b/yorayriniwnl.in/vitest.integration.config.ts
+@@ -8,5 +8,5 @@ export default defineConfig({
+       "@": path.resolve(import.meta.dirname ?? process.cwd(), "src"),
+     },
+   },
+-  test: { include: ["tests/integration/**/*.test.ts"], environment: "node", passWithNoTests: false, testTimeout: 60_000, hookTimeout: 90_000 },
++  test: { include: ["tests/integration/**/*.test.ts"], environment: "node", passWithNoTests: false, fileParallelism: false, testTimeout: 60_000, hookTimeout: 90_000 },
+ });
