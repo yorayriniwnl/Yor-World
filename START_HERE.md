@@ -39,6 +39,8 @@ Never run all five accounts on the same problem:
 
 [RC6-R1 source ruling](docs/planning/reviews/2026-10-08-rc6-r1.md) records the independently verified exact source/CI/artifact binding. The project is not yet production-complete.
 
+Current local completion work: [PRE-G7-11-R1](docs/planning/reviews/2026-10-14-pre-g7-11-fullscreen-domain-acceptance.md) accepted fullscreen mechanics and the local source mirror only; [PRE-G7-12](docs/planning/reconciliation-packets/2026-10-14-pre-g7-12-reference-composition.md) corrects the room's reference composition and mobile HUD. No live deployment has occurred, and G7 remains unaccepted.
+
 **CANONICAL APPLICATION ROOT: `app/`.** The accepted [G6-R1](docs/planning/reviews/2026-10-06-g6-r1.md), RC5 source/bundle, maker evidence and [independent audit](docs/planning/reviews/2026-10-06-rc5-independent-full-stack-audit.md) remain immutable. New work is assigned by [PRE-G7-01](docs/planning/reconciliation-packets/2026-10-06-pre-g7-01.md), [PRE-G7-02](docs/planning/reconciliation-packets/2026-10-06-pre-g7-02.md), [PRE-G7-03](docs/planning/reconciliation-packets/2026-10-06-pre-g7-03.md) and [PRE-G7-04](docs/planning/reconciliation-packets/2026-10-07-pre-g7-04.md).
 
 Use [pre-G7 prerequisites](docs/operations/pre-g7-prerequisites.md) for current schema-v2/three-migration hardening and actual production/manual evidence. [RC6 dossier](docs/releases/v1.0.0-rc6.md) describes the successor. Deployment is authorized by the owner, but source acceptance, actual service access/configuration and all ten G7 checks remain required; G7 is not accepted by a publication command.
