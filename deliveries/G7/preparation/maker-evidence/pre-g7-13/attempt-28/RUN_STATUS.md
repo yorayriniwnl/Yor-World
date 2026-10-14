@@ -1,0 +1,3 @@
+# Attempt 28 status
+
+This was an incomplete, failed evidence run. Production build and screenshots used the attempt-28 source patch, but the build did not have `NEXT_PUBLIC_PRE_G7_13_EVIDENCE=1`; the screenshot-side diagnostics therefore recorded `referenceComposition: null` / `snapshot: null`. Playwright ran 4 of 8 tests before the run was stopped to correct the build-time flag. Results: test 1 desktop FAIL, test 2 mobile FAIL, test 3 compact controls PASS, test 4 compact room FAIL. Do not treat this as a complete visual lane or source-bound anchor diagnostics. Raw screenshots, frame JSON, logs, and browser results are preserved as captured.

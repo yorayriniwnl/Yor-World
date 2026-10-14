@@ -1,0 +1,83 @@
+[WebServer] (node:53832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:29540) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\e2e\world-reference-composition.spec.ts:608:3 › PRE-G7-13 reference composition and compact mobile controls › captures the opening desktop room beside the user reference (31.0s)
+(node:57032) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 [chromium] › tests\e2e\world-reference-composition.spec.ts:655:3 › PRE-G7-13 reference composition and compact mobile controls › starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape (21.6s)
+  x  3 [chromium] › tests\e2e\world-reference-composition.spec.ts:738:3 › PRE-G7-13 reference composition and compact mobile controls › keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes (18.4s)
+
+
+  1) [chromium] › tests\e2e\world-reference-composition.spec.ts:608:3 › PRE-G7-13 reference composition and compact mobile controls › captures the opening desktop room beside the user reference 
+
+    Error: desktop-1440x900 hex_panel_1 has visible surface samples
+
+    expect(received).toBeGreaterThan(expected)
+
+    Expected: > 0
+    Received:   0
+
+      498 |     const samples = byName.get(name)?.sampledRegionHits;
+      499 |     expect(samples && samples.samples > 0, `${label} ${name} has screen-region occlusion samples`).toBe(true);
+    > 500 |     expect(samples!.target, `${label} ${name} has visible surface samples`).toBeGreaterThan(0);
+          |                                                                             ^
+      501 |     expect(samples!.occluderRatio, `${label} ${name} has measurable chair/resident coverage`).not.toBeNull();
+      502 |     expect(samples!.occluderRatio!, `${label} ${name} is not hidden by chair/resident`).toBeLessThanOrEqual(0.1);
+      503 |   }
+        at recordVisualAnchorEvidence (C:\p13-iso\app\tests\e2e\world-reference-composition.spec.ts:500:77)
+        at C:\p13-iso\app\tests\e2e\world-reference-composition.spec.ts:626:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-reference-compositio-ab4ca-m-beside-the-user-reference-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-reference-compositio-ab4ca-m-beside-the-user-reference-chromium\error-context.md
+
+  2) [chromium] › tests\e2e\world-reference-composition.spec.ts:738:3 › PRE-G7-13 reference composition and compact mobile controls › keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes 
+
+    Error: strict viewport anchor and visibility assertions pass after all compact captures are saved
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 14
+
+    - Array []
+    + Array [
+    +   "compact-320x600: Error: compact-320x600 hex_panel_1 has visible surface samples
+    +
+    + expect(received).toBeGreaterThan(expected)
+    +
+    + Expected: > 0
+    + Received:   0",
+    +   "compact-landscape-844x390: Error: compact-landscape-844x390 hex_panel_1 has visible surface samples
+    +
+    + expect(received).toBeGreaterThan(expected)
+    +
+    + Expected: > 0
+    + Received:   0",
+    + ]
+
+      799 |       anchorEvidenceFailures,
+      800 |       "strict viewport anchor and visibility assertions pass after all compact captures are saved",
+    > 801 |     ).toEqual([]);
+          |       ^
+      802 |   });
+      803 | });
+      804 |
+        at C:\p13-iso\app\tests\e2e\world-reference-composition.spec.ts:801:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-reference-compositio-07d25-e-and-short-landscape-sizes-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-reference-compositio-07d25-e-and-short-landscape-sizes-chromium\error-context.md
+
+  2 failed
+    [chromium] › tests\e2e\world-reference-composition.spec.ts:608:3 › PRE-G7-13 reference composition and compact mobile controls › captures the opening desktop room beside the user reference 
+    [chromium] › tests\e2e\world-reference-composition.spec.ts:738:3 › PRE-G7-13 reference composition and compact mobile controls › keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes 
+  1 passed (1.3m)

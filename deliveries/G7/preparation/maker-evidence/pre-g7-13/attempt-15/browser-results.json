@@ -1,0 +1,277 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\p13-iso\\app\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "tests/e2e/world-reference-composition.spec.ts"
+    ],
+    "configFile": "C:\\p13-iso\\app\\playwright.config.ts",
+    "rootDir": "C:/p13-iso/app/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/p13-iso/app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/p13-iso/app/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "..\\deliveries\\G7\\preparation\\maker-evidence\\pre-g7-13\\attempt-15\\browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3134",
+      "url": "http://127.0.0.1:3134",
+      "reuseExistingServer": false,
+      "timeout": 60000,
+      "env": {
+        "NEXT_TELEMETRY_DISABLED": "1"
+      },
+      "stdout": "ignore",
+      "stderr": "pipe"
+    }
+  },
+  "suites": [
+    {
+      "title": "world-reference-composition.spec.ts",
+      "file": "world-reference-composition.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "PRE-G7-13 reference composition and compact mobile controls",
+          "file": "world-reference-composition.spec.ts",
+          "line": 536,
+          "column": 6,
+          "specs": [
+            {
+              "title": "captures the opening desktop room beside the user reference",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 150000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 32031,
+                      "error": {
+                        "message": "Error: desktop-1440x900 hex_panel_1 has visible surface samples\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m",
+                        "stack": "Error: desktop-1440x900 hex_panel_1 has visible surface samples\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m\n    at recordVisualAnchorEvidence (C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts:429:77)\n    at C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts:555:7",
+                        "location": {
+                          "file": "C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                          "column": 77,
+                          "line": 429
+                        },
+                        "snippet": "  427 |     const samples = byName.get(name)?.sampledRegionHits;\n  428 |     expect(samples && samples.samples > 0, `${label} ${name} has screen-region occlusion samples`).toBe(true);\n> 429 |     expect(samples!.target, `${label} ${name} has visible surface samples`).toBeGreaterThan(0);\n      |                                                                             ^\n  430 |     expect(samples!.occluderRatio, `${label} ${name} has measurable chair/resident coverage`).not.toBeNull();\n  431 |     expect(samples!.occluderRatio!, `${label} ${name} is not hidden by chair/resident`).toBeLessThanOrEqual(0.1);\n  432 |   }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                            "column": 77,
+                            "line": 429
+                          },
+                          "message": "Error: desktop-1440x900 hex_panel_1 has visible surface samples\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m\n\n  427 |     const samples = byName.get(name)?.sampledRegionHits;\n  428 |     expect(samples && samples.samples > 0, `${label} ${name} has screen-region occlusion samples`).toBe(true);\n> 429 |     expect(samples!.target, `${label} ${name} has visible surface samples`).toBeGreaterThan(0);\n      |                                                                             ^\n  430 |     expect(samples!.occluderRatio, `${label} ${name} has measurable chair/resident coverage`).not.toBeNull();\n  431 |     expect(samples!.occluderRatio!, `${label} ${name} is not hidden by chair/resident`).toBeLessThanOrEqual(0.1);\n  432 |   }\n    at recordVisualAnchorEvidence (C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts:429:77)\n    at C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts:555:7"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-14T10:01:42.898Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\p13-iso\\app\\test-results\\world-reference-compositio-ab4ca-m-beside-the-user-reference-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\p13-iso\\app\\test-results\\world-reference-compositio-ab4ca-m-beside-the-user-reference-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                        "column": 77,
+                        "line": 429
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6952f866f83155538ccf-f547cb409e67ae98a765",
+              "file": "world-reference-composition.spec.ts",
+              "line": 537,
+              "column": 3
+            },
+            {
+              "title": "starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 25364,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-14T10:02:18.089Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6952f866f83155538ccf-4b3a507df003f6bbd251",
+              "file": "world-reference-composition.spec.ts",
+              "line": 584,
+              "column": 3
+            },
+            {
+              "title": "keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 15292,
+                      "error": {
+                        "message": "Error: compact-landscape-844x390 hex_panel_1 has visible surface samples\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m",
+                        "stack": "Error: compact-landscape-844x390 hex_panel_1 has visible surface samples\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m\n    at recordVisualAnchorEvidence (C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts:429:77)\n    at C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts:708:9",
+                        "location": {
+                          "file": "C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                          "column": 77,
+                          "line": 429
+                        },
+                        "snippet": "  427 |     const samples = byName.get(name)?.sampledRegionHits;\n  428 |     expect(samples && samples.samples > 0, `${label} ${name} has screen-region occlusion samples`).toBe(true);\n> 429 |     expect(samples!.target, `${label} ${name} has visible surface samples`).toBeGreaterThan(0);\n      |                                                                             ^\n  430 |     expect(samples!.occluderRatio, `${label} ${name} has measurable chair/resident coverage`).not.toBeNull();\n  431 |     expect(samples!.occluderRatio!, `${label} ${name} is not hidden by chair/resident`).toBeLessThanOrEqual(0.1);\n  432 |   }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                            "column": 77,
+                            "line": 429
+                          },
+                          "message": "Error: compact-landscape-844x390 hex_panel_1 has visible surface samples\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m\n\n  427 |     const samples = byName.get(name)?.sampledRegionHits;\n  428 |     expect(samples && samples.samples > 0, `${label} ${name} has screen-region occlusion samples`).toBe(true);\n> 429 |     expect(samples!.target, `${label} ${name} has visible surface samples`).toBeGreaterThan(0);\n      |                                                                             ^\n  430 |     expect(samples!.occluderRatio, `${label} ${name} has measurable chair/resident coverage`).not.toBeNull();\n  431 |     expect(samples!.occluderRatio!, `${label} ${name} is not hidden by chair/resident`).toBeLessThanOrEqual(0.1);\n  432 |   }\n    at recordVisualAnchorEvidence (C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts:429:77)\n    at C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts:708:9"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-14T10:02:44.125Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\p13-iso\\app\\test-results\\world-reference-compositio-07d25-e-and-short-landscape-sizes-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\p13-iso\\app\\test-results\\world-reference-compositio-07d25-e-and-short-landscape-sizes-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                        "column": 77,
+                        "line": 429
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6952f866f83155538ccf-eb211a33068650bb68ad",
+              "file": "world-reference-composition.spec.ts",
+              "line": 667,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-14T10:01:39.321Z",
+    "duration": 81632.376,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

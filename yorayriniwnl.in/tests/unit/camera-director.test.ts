@@ -21,11 +21,22 @@ describe("CameraDirector - Single Camera Owner and Smooth Transitions", () => {
     expect(CAMERA_PRESETS["home-desktop"].fov).toBe(48);
 
     expect(CAMERA_PRESETS["home-mobile"].position).toEqual([-0.55, 1.55, 1.45]);
-    expect(CAMERA_PRESETS["home-mobile"].target).toEqual([0.0, 1.1, -1.2]);
+    expect(CAMERA_PRESETS["home-mobile"].target).toEqual([0.0, 0.55, -1.2]);
     expect(CAMERA_PRESETS["home-mobile"].fov).toBe(100);
 
     expect(CAMERA_PRESETS["monitor"].position).toEqual([0.0, 1.08, -0.5]);
     expect(CAMERA_PRESETS["reverse-doorway"].position).toEqual([0.2, 1.25, -1.0]);
+  });
+
+  it("adds vertical breathing room in short landscape and restores desktop FOV", () => {
+    const camera = new THREE.PerspectiveCamera(60, 16 / 9, 0.05, 30);
+    const director = new CameraDirector(camera, "home-desktop");
+
+    director.resize(844, 390);
+    expect(camera.fov).toBe(56);
+
+    director.resize(1440, 900);
+    expect(camera.fov).toBe(48);
   });
 
   it("reduced motion makes transitions instantaneous (bypasses camera travel)", async () => {

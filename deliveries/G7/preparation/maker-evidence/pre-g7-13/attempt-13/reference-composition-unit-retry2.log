@@ -1,0 +1,42 @@
+
+ RUN  v5.0.2 C:/p13-iso/app
+
+ ❯ tests/unit/reference-composition.test.ts (2 tests | 1 failed) 57ms
+   ❯ reference room composition (2)
+     × keeps named anchors and materials while isolating six-sided runtime panel geometry 52ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/reference-composition.test.ts > reference room composition > keeps named anchors and materials while isolating six-sided runtime panel geometry
+AssertionError: expected { sides: 6, …(9) } to match object { sides: 6, width: 0.22, …(3) }
+(5 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "depth": 0.015,
++   "depth": 0.014999999664723873,
+    "indexCount": 60,
+    "sides": 6,
+    "vertexCount": 36,
+-   "width": 0.22,
++   "width": 0.2199999988079071,
+  }
+
+ ❯ tests/unit/reference-composition.test.ts:153:60
+    151|       expect(geometryIds.has(panel.geometry.uuid)).toBe(false);
+    152|       geometryIds.add(panel.geometry.uuid);
+    153|       expect(panel.geometry.userData["referenceHexPanel"]).toMatchObje…
+       |                                                            ^
+    154|         sides: 6,
+    155|         width: 0.22,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  15:07:33
+   Duration  731ms (transform 43%, import 34%, tests 19%, worker 4%)
+

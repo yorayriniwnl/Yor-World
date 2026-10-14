@@ -171,7 +171,7 @@ describe("Production room camera integration", () => {
     }
     expect(camera.position.toArray()).toEqual(CAMERA_PRESETS[isMobile ? "home-mobile" : "home-desktop"].position);
     expect(entrancePositionAt(0, isMobile).toArray()).toEqual(positions[0]!.toArray());
-    expect(entrancePositionAt(1, isMobile).toArray()).toEqual(camera.position.toArray());
+    expect(entrancePositionAt(1, isMobile).distanceTo(camera.position)).toBeLessThan(1e-12);
     expect(entrance.getDiagnostics().phase).toBe("settled");
     entrance.dispose();
     director.dispose();

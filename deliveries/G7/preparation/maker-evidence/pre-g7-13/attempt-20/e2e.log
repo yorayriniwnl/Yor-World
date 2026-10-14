@@ -1,0 +1,99 @@
+[WebServer] (node:61372) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:57060) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\e2e\world-reference-composition.spec.ts:673:3 › PRE-G7-13 reference composition and compact mobile controls › captures the opening desktop room beside the user reference (41.5s)
+(node:66980) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 [chromium] › tests\e2e\world-reference-composition.spec.ts:720:3 › PRE-G7-13 reference composition and compact mobile controls › starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape (28.3s)
+(node:57496) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  3 [chromium] › tests\e2e\world-reference-composition.spec.ts:803:3 › PRE-G7-13 reference composition and compact mobile controls › keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes (3.0m)
+
+
+  1) [chromium] › tests\e2e\world-reference-composition.spec.ts:673:3 › PRE-G7-13 reference composition and compact mobile controls › captures the opening desktop room beside the user reference 
+
+    Error: desktop-1440x900 uses the live CameraDirector pose
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "active-runtime-camera"
+    Received: "preset-reconstruction"
+
+      392 |   const measured = snapshot as ProjectedSnapshot;
+      393 |   expect(measured.viewport).toEqual(viewport);
+    > 394 |   expect(measured.camera.source, `${label} uses the live CameraDirector pose`).toBe("active-runtime-camera");
+          |                                                                                ^
+      395 |   expect(measured.camera.activeWorldMatrixMatches, `${label} diagnostic camera transform matches the live runtime matrix`).toBe(true);
+      396 |   expect(measured.camera.activeProjectionMatrixMatches, `${label} diagnostic projection matches the live runtime projection`).toBe(true);
+      397 |   expect(measured.rendererCamera, `${label} records the live renderer camera separately`).not.toBeNull();
+        at recordVisualAnchorEvidence (C:\p13-iso\app\tests\e2e\world-reference-composition.spec.ts:394:80)
+        at C:\p13-iso\app\tests\e2e\world-reference-composition.spec.ts:691:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-reference-compositio-ab4ca-m-beside-the-user-reference-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-reference-compositio-ab4ca-m-beside-the-user-reference-chromium\error-context.md
+
+  2) [chromium] › tests\e2e\world-reference-composition.spec.ts:720:3 › PRE-G7-13 reference composition and compact mobile controls › starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape 
+
+    Error: mobile-390x844 uses the live CameraDirector pose
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "active-runtime-camera"
+    Received: "preset-reconstruction"
+
+      392 |   const measured = snapshot as ProjectedSnapshot;
+      393 |   expect(measured.viewport).toEqual(viewport);
+    > 394 |   expect(measured.camera.source, `${label} uses the live CameraDirector pose`).toBe("active-runtime-camera");
+          |                                                                                ^
+      395 |   expect(measured.camera.activeWorldMatrixMatches, `${label} diagnostic camera transform matches the live runtime matrix`).toBe(true);
+      396 |   expect(measured.camera.activeProjectionMatrixMatches, `${label} diagnostic projection matches the live runtime projection`).toBe(true);
+      397 |   expect(measured.rendererCamera, `${label} records the live renderer camera separately`).not.toBeNull();
+        at recordVisualAnchorEvidence (C:\p13-iso\app\tests\e2e\world-reference-composition.spec.ts:394:80)
+        at C:\p13-iso\app\tests\e2e\world-reference-composition.spec.ts:734:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-reference-compositio-3ce73-th-Diagnostics-first-Escape-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-reference-compositio-3ce73-th-Diagnostics-first-Escape-chromium\error-context.md
+
+  3) [chromium] › tests\e2e\world-reference-composition.spec.ts:803:3 › PRE-G7-13 reference composition and compact mobile controls › keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes 
+
+    Test timeout of 180000ms exceeded.
+
+    Error: locator.click: Test timeout of 180000ms exceeded.
+    Call log:
+      - waiting for getByTestId('studio-controls-toggle')
+        - locator resolved to <button type="button" aria-expanded="true" aria-label="Close studio controls" data-testid="studio-controls-toggle" aria-controls="studio-controls-panel" class="world-module__FC9lxW__studioControlsToggle">Close controls</button>
+      - attempting click action
+        - waiting for element to be visible, enabled and stable
+      - element was detached from the DOM, retrying
+
+
+      667 |   fs.writeFileSync(path.join(measurementDir, `${label}-runtime-scene.json`), `${JSON.stringify(record, null, 2)}\n`, "utf8");
+      668 |   await diagnosticsToggle.click();
+    > 669 |   if (!wasOpen) await toggle.click();
+          |                              ^
+      670 | }
+      671 |
+      672 | test.describe("PRE-G7-13 reference composition and compact mobile controls", () => {
+        at recordMobileSceneState (C:\p13-iso\app\tests\e2e\world-reference-composition.spec.ts:669:30)
+        at C:\p13-iso\app\tests\e2e\world-reference-composition.spec.ts:809:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-reference-compositio-07d25-e-and-short-landscape-sizes-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-reference-compositio-07d25-e-and-short-landscape-sizes-chromium\error-context.md
+
+  3 failed
+    [chromium] › tests\e2e\world-reference-composition.spec.ts:673:3 › PRE-G7-13 reference composition and compact mobile controls › captures the opening desktop room beside the user reference 
+    [chromium] › tests\e2e\world-reference-composition.spec.ts:720:3 › PRE-G7-13 reference composition and compact mobile controls › starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape 
+    [chromium] › tests\e2e\world-reference-composition.spec.ts:803:3 › PRE-G7-13 reference composition and compact mobile controls › keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes 

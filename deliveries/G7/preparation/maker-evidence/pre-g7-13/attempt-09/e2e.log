@@ -1,0 +1,94 @@
+[WebServer] (node:32336) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:432) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\e2e\world-reference-composition.spec.ts:411:3 › PRE-G7-13 reference composition and compact mobile controls › captures the opening desktop room beside the user reference (33.0s)
+(node:70480) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 [chromium] › tests\e2e\world-reference-composition.spec.ts:454:3 › PRE-G7-13 reference composition and compact mobile controls › starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape (17.3s)
+(node:69508) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  3 [chromium] › tests\e2e\world-reference-composition.spec.ts:537:3 › PRE-G7-13 reference composition and compact mobile controls › keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes (16.6s)
+
+
+  1) [chromium] › tests\e2e\world-reference-composition.spec.ts:411:3 › PRE-G7-13 reference composition and compact mobile controls › captures the opening desktop room beside the user reference 
+
+    Error: desktop-1440x900 ai-real-camera is inside the top edge
+
+    expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 0
+    Received:    -11.695223994838354
+
+      259 |     const bounds = anchor!.pixelBounds!;
+      260 |     expect(bounds.left, `${label} ${name} is inside the left edge`).toBeGreaterThanOrEqual(0);
+    > 261 |     expect(bounds.top, `${label} ${name} is inside the top edge`).toBeGreaterThanOrEqual(0);
+          |                                                                   ^
+      262 |     expect(bounds.right, `${label} ${name} is inside the right edge`).toBeLessThanOrEqual(viewport.width);
+      263 |     expect(bounds.bottom, `${label} ${name} is inside the bottom edge`).toBeLessThanOrEqual(viewport.height);
+      264 |     expect(bounds.visibleAreaRatio, `${label} ${name} is not clipped`).toBeGreaterThanOrEqual(0.98);
+        at recordVisualAnchorEvidence (C:\p13-iso\app\tests\e2e\world-reference-composition.spec.ts:261:67)
+        at C:\p13-iso\app\tests\e2e\world-reference-composition.spec.ts:425:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-reference-compositio-ab4ca-m-beside-the-user-reference-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-reference-compositio-ab4ca-m-beside-the-user-reference-chromium\error-context.md
+
+  2) [chromium] › tests\e2e\world-reference-composition.spec.ts:454:3 › PRE-G7-13 reference composition and compact mobile controls › starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape 
+
+    Error: mobile-390x844 headset-stand-code-native is inside the right edge
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 390
+    Received:    408.294491726873
+
+      260 |     expect(bounds.left, `${label} ${name} is inside the left edge`).toBeGreaterThanOrEqual(0);
+      261 |     expect(bounds.top, `${label} ${name} is inside the top edge`).toBeGreaterThanOrEqual(0);
+    > 262 |     expect(bounds.right, `${label} ${name} is inside the right edge`).toBeLessThanOrEqual(viewport.width);
+          |                                                                       ^
+      263 |     expect(bounds.bottom, `${label} ${name} is inside the bottom edge`).toBeLessThanOrEqual(viewport.height);
+      264 |     expect(bounds.visibleAreaRatio, `${label} ${name} is not clipped`).toBeGreaterThanOrEqual(0.98);
+      265 |   }
+        at recordVisualAnchorEvidence (C:\p13-iso\app\tests\e2e\world-reference-composition.spec.ts:262:71)
+        at C:\p13-iso\app\tests\e2e\world-reference-composition.spec.ts:468:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-reference-compositio-3ce73-th-Diagnostics-first-Escape-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-reference-compositio-3ce73-th-Diagnostics-first-Escape-chromium\error-context.md
+
+  3) [chromium] › tests\e2e\world-reference-composition.spec.ts:537:3 › PRE-G7-13 reference composition and compact mobile controls › keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes 
+
+    Error: compact-320x600 resident has measurable bounds
+
+    expect(received).not.toBeNull()
+
+    Received: null
+
+      267 |     const actor = byName.get(name);
+      268 |     expect(actor?.found, `${label} named ${name} is present for occlusion measurements`).toBe(true);
+    > 269 |     expect(actor?.pixelBounds, `${label} ${name} has measurable bounds`).not.toBeNull();
+          |                                                                              ^
+      270 |   }
+      271 |
+      272 |   if (measured.testPanelScale !== null) {
+        at recordVisualAnchorEvidence (C:\p13-iso\app\tests\e2e\world-reference-composition.spec.ts:269:78)
+        at C:\p13-iso\app\tests\e2e\world-reference-composition.spec.ts:546:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-reference-compositio-07d25-e-and-short-landscape-sizes-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-reference-compositio-07d25-e-and-short-landscape-sizes-chromium\error-context.md
+
+  3 failed
+    [chromium] › tests\e2e\world-reference-composition.spec.ts:411:3 › PRE-G7-13 reference composition and compact mobile controls › captures the opening desktop room beside the user reference 
+    [chromium] › tests\e2e\world-reference-composition.spec.ts:454:3 › PRE-G7-13 reference composition and compact mobile controls › starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape 
+    [chromium] › tests\e2e\world-reference-composition.spec.ts:537:3 › PRE-G7-13 reference composition and compact mobile controls › keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes 

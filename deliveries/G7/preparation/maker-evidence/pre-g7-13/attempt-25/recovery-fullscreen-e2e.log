@@ -1,0 +1,328 @@
+[WebServer] (node:55700) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 13 tests using 1 worker
+
+(node:56896) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   1 [chromium] › tests\e2e\renderer-recovery.spec.ts:30:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › WebGL context loss triggers accessible WorldFallback without trapping user (33.0s)
+(node:12776) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   2 [chromium] › tests\e2e\renderer-recovery.spec.ts:80:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Explicit STATIC stops the old renderer and Retry rebuilds a supported AUTO studio (32.1s)
+(node:59096) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  3 [chromium] › tests\e2e\renderer-recovery.spec.ts:103:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Persistent renderer failures exhaust exactly three reconstruction retries (4.4s)
+  x   4 [chromium] › tests\e2e\renderer-recovery.spec.ts:120:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Healthy visibility restoration resumes rendering; a detached canvas never resumes (36.2s)
+(node:34864) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   5 [chromium] › tests\e2e\renderer-recovery.spec.ts:141:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Accessibility toolbar accepts real pointer controls and Projects navigation (45.3s)
+(node:64344) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  6 [chromium] › tests\e2e\renderer-recovery.spec.ts:168:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Asset loading failure renders failure banner with Retry and Continue options (2.7s)
+  x   7 [chromium] › tests\e2e\renderer-recovery.spec.ts:190:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Renderer failure with dialog open preserves dialog interactivity in DOM (30.1s)
+(node:60760) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  8 [chromium] › tests\e2e\renderer-recovery.spec.ts:210:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Mobile portrait (390x844) framing and touch tap interactions (2.2s)
+  ok  9 [chromium] › tests\e2e\renderer-recovery.spec.ts:240:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Mobile landscape (844x390) responsive reflow and orientation change (7.0s)
+  ok 10 [chromium] › tests\e2e\world-fullscreen.spec.ts:334:3 › PRE-G7-11 fullscreen studio › opens a native modal, returns focus on Escape and Exit, and preserves semantic destinations (1.9s)
+  x  11 [chromium] › tests\e2e\world-fullscreen.spec.ts:369:3 › PRE-G7-11 fullscreen studio › fills desktop, mobile, compact, and short-landscape viewports with measurable stage and controls (2.0m)
+(node:60080) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  12 [chromium] › tests\e2e\world-fullscreen.spec.ts:396:3 › PRE-G7-11 fullscreen studio › captures existing room camera presets for reference-anchor inventory (2.0m)
+(node:59680) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 13 [chromium] › tests\e2e\world-fullscreen.spec.ts:420:3 › PRE-G7-11 fullscreen studio › fallback actions retain behavior, meet text contrast, and expose visible keyboard focus (5.3s)
+
+
+  1) [chromium] › tests\e2e\renderer-recovery.spec.ts:30:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › WebGL context loss triggers accessible WorldFallback without trapping user 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.selectOption: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByTestId('quality-tier-select')
+        - locator resolved to <select id="quality-tier-select" aria-label="Visual Quality Tier" data-testid="quality-tier-select" class="accessibility-controls-module__lOl7oq__selectInput">…</select>
+      - attempting select option action
+        2 × waiting for element to be visible and enabled
+          - element is not visible
+        - retrying select option action
+        - waiting 20ms
+        2 × waiting for element to be visible and enabled
+          - element is not visible
+        - retrying select option action
+          - waiting 100ms
+        11 × waiting for element to be visible and enabled
+           - element is not visible
+         - retrying select option action
+           - waiting 500ms
+
+
+      21 |   await page.goto("/?studio=1", { waitUntil: "domcontentloaded" });
+      22 |   await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME", { timeout: 15000 });
+    > 23 |   await page.getByTestId("quality-tier-select").selectOption("low");
+         |                                                 ^
+      24 |   const canvas = page.getByTestId("world-canvas");
+      25 |   await expect.poll(async () => Number(await canvas.getAttribute("data-rendered-frames"))).toBeGreaterThan(1);
+      26 |   return canvas;
+        at enterRenderedHome (C:\p13-iso\app\tests\e2e\renderer-recovery.spec.ts:23:49)
+        at C:\p13-iso\app\tests\e2e\renderer-recovery.spec.ts:31:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\renderer-recovery-C3-Failu-3c469-lback-without-trapping-user-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\renderer-recovery-C3-Failu-3c469-lback-without-trapping-user-chromium\error-context.md
+
+  2) [chromium] › tests\e2e\renderer-recovery.spec.ts:80:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Explicit STATIC stops the old renderer and Retry rebuilds a supported AUTO studio 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.selectOption: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByTestId('quality-tier-select')
+        - locator resolved to <select id="quality-tier-select" aria-label="Visual Quality Tier" data-testid="quality-tier-select" class="accessibility-controls-module__lOl7oq__selectInput">…</select>
+      - attempting select option action
+        2 × waiting for element to be visible and enabled
+          - element is not visible
+        - retrying select option action
+        - waiting 20ms
+        2 × waiting for element to be visible and enabled
+          - element is not visible
+        - retrying select option action
+          - waiting 100ms
+        14 × waiting for element to be visible and enabled
+           - element is not visible
+         - retrying select option action
+           - waiting 500ms
+
+
+      21 |   await page.goto("/?studio=1", { waitUntil: "domcontentloaded" });
+      22 |   await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME", { timeout: 15000 });
+    > 23 |   await page.getByTestId("quality-tier-select").selectOption("low");
+         |                                                 ^
+      24 |   const canvas = page.getByTestId("world-canvas");
+      25 |   await expect.poll(async () => Number(await canvas.getAttribute("data-rendered-frames"))).toBeGreaterThan(1);
+      26 |   return canvas;
+        at enterRenderedHome (C:\p13-iso\app\tests\e2e\renderer-recovery.spec.ts:23:49)
+        at C:\p13-iso\app\tests\e2e\renderer-recovery.spec.ts:81:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\renderer-recovery-C3-Failu-f08d1-lds-a-supported-AUTO-studio-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\renderer-recovery-C3-Failu-f08d1-lds-a-supported-AUTO-studio-chromium\error-context.md
+
+  3) [chromium] › tests\e2e\renderer-recovery.spec.ts:120:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Healthy visibility restoration resumes rendering; a detached canvas never resumes 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.selectOption: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByTestId('quality-tier-select')
+        - locator resolved to <select id="quality-tier-select" aria-label="Visual Quality Tier" data-testid="quality-tier-select" class="accessibility-controls-module__lOl7oq__selectInput">…</select>
+      - attempting select option action
+        2 × waiting for element to be visible and enabled
+          - element is not visible
+        - retrying select option action
+        - waiting 20ms
+        2 × waiting for element to be visible and enabled
+          - element is not visible
+        - retrying select option action
+          - waiting 100ms
+        15 × waiting for element to be visible and enabled
+           - element is not visible
+         - retrying select option action
+           - waiting 500ms
+
+
+      21 |   await page.goto("/?studio=1", { waitUntil: "domcontentloaded" });
+      22 |   await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME", { timeout: 15000 });
+    > 23 |   await page.getByTestId("quality-tier-select").selectOption("low");
+         |                                                 ^
+      24 |   const canvas = page.getByTestId("world-canvas");
+      25 |   await expect.poll(async () => Number(await canvas.getAttribute("data-rendered-frames"))).toBeGreaterThan(1);
+      26 |   return canvas;
+        at enterRenderedHome (C:\p13-iso\app\tests\e2e\renderer-recovery.spec.ts:23:49)
+        at C:\p13-iso\app\tests\e2e\renderer-recovery.spec.ts:121:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\renderer-recovery-C3-Failu-41cf3-tached-canvas-never-resumes-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\renderer-recovery-C3-Failu-41cf3-tached-canvas-never-resumes-chromium\error-context.md
+
+  4) [chromium] › tests\e2e\renderer-recovery.spec.ts:141:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Accessibility toolbar accepts real pointer controls and Projects navigation 
+
+    Test timeout of 45000ms exceeded.
+
+    Error: locator.selectOption: Test timeout of 45000ms exceeded.
+    Call log:
+      - waiting for getByTestId('quality-tier-select')
+        - locator resolved to <select id="quality-tier-select" aria-label="Visual Quality Tier" data-testid="quality-tier-select" class="accessibility-controls-module__lOl7oq__selectInput">…</select>
+      - attempting select option action
+        2 × waiting for element to be visible and enabled
+          - element is not visible
+        - retrying select option action
+        - waiting 20ms
+        2 × waiting for element to be visible and enabled
+          - element is not visible
+        - retrying select option action
+          - waiting 100ms
+        40 × waiting for element to be visible and enabled
+           - element is not visible
+         - retrying select option action
+           - waiting 500ms
+
+
+      21 |   await page.goto("/?studio=1", { waitUntil: "domcontentloaded" });
+      22 |   await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME", { timeout: 15000 });
+    > 23 |   await page.getByTestId("quality-tier-select").selectOption("low");
+         |                                                 ^
+      24 |   const canvas = page.getByTestId("world-canvas");
+      25 |   await expect.poll(async () => Number(await canvas.getAttribute("data-rendered-frames"))).toBeGreaterThan(1);
+      26 |   return canvas;
+        at enterRenderedHome (C:\p13-iso\app\tests\e2e\renderer-recovery.spec.ts:23:49)
+        at C:\p13-iso\app\tests\e2e\renderer-recovery.spec.ts:144:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\renderer-recovery-C3-Failu-07cef-ols-and-Projects-navigation-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\renderer-recovery-C3-Failu-07cef-ols-and-Projects-navigation-chromium\error-context.md
+
+  5) [chromium] › tests\e2e\renderer-recovery.spec.ts:190:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Renderer failure with dialog open preserves dialog interactivity in DOM 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="fallback-projects-link"], a[href="/projects"]').first()
+        - locator resolved to <a href="/projects">Projects</a>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div data-testid="world-failure-container" class="world-module__FC9lxW__stageContainer world-module__FC9lxW__fullscreenStage">…</div> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div data-testid="world-failure-container" class="world-module__FC9lxW__stageContainer world-module__FC9lxW__fullscreenStage">…</div> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+        - retrying click action
+          - waiting 100ms
+        55 × waiting for element to be visible, enabled and stable
+           - element is visible, enabled and stable
+           - scrolling into view if needed
+           - done scrolling
+           - <div data-testid="world-failure-container" class="world-module__FC9lxW__stageContainer world-module__FC9lxW__fullscreenStage">…</div> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+         - retrying click action
+           - waiting 500ms
+
+
+      199 |     const projectsLink = page.locator('[data-testid="fallback-projects-link"], a[href="/projects"]');
+      200 |     await expect(projectsLink.first()).toBeVisible();
+    > 201 |     await projectsLink.first().click();
+          |                                ^
+      202 |
+      203 |     await expect(page).toHaveURL(/\/projects/);
+      204 |     await saveEvidence(info, "renderer-failure-dialog-safe.json", {
+        at C:\p13-iso\app\tests\e2e\renderer-recovery.spec.ts:201:32
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\renderer-recovery-C3-Failu-a4ede-dialog-interactivity-in-DOM-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\renderer-recovery-C3-Failu-a4ede-dialog-interactivity-in-DOM-chromium\error-context.md
+
+  6) [chromium] › tests\e2e\world-fullscreen.spec.ts:369:3 › PRE-G7-11 fullscreen studio › fills desktop, mobile, compact, and short-landscape viewports with measurable stage and controls 
+
+    Test timeout of 120000ms exceeded.
+
+    Error: locator.click: Test timeout of 120000ms exceeded.
+    Call log:
+      - waiting for getByTestId('skip-motion-btn')
+        - locator resolved to <button type="button" data-testid="skip-motion-btn" class="world-module__FC9lxW__hudButton" aria-label="Instant skip to coding pose (Escape)">Skip (Esc)</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not visible
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is not visible
+        - retrying click action
+          - waiting 100ms
+        202 × waiting for element to be visible, enabled and stable
+            - element is not visible
+          - retrying click action
+            - waiting 500ms
+        - waiting for element to be visible, enabled and stable
+
+
+      36 |   await expect(page.getByTestId("world-canvas")).toBeVisible({ timeout: 45_000 });
+      37 |   await expect(page.getByTestId("world-loading-overlay")).toBeHidden({ timeout: 90_000 });
+    > 38 |   await page.getByTestId("skip-motion-btn").click();
+         |                                             ^
+      39 |   await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME", {
+      40 |     timeout: 15_000,
+      41 |   });
+        at enterStudioAtHome (C:\p13-iso\app\tests\e2e\world-fullscreen.spec.ts:38:45)
+        at C:\p13-iso\app\tests\e2e\world-fullscreen.spec.ts:382:9
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-fullscreen-PRE-G7-11-a022a-asurable-stage-and-controls-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-fullscreen-PRE-G7-11-a022a-asurable-stage-and-controls-chromium\error-context.md
+
+  7) [chromium] › tests\e2e\world-fullscreen.spec.ts:396:3 › PRE-G7-11 fullscreen studio › captures existing room camera presets for reference-anchor inventory 
+
+    Test timeout of 120000ms exceeded.
+
+    Error: locator.click: Test timeout of 120000ms exceeded.
+    Call log:
+      - waiting for getByTestId('skip-motion-btn')
+        - locator resolved to <button type="button" data-testid="skip-motion-btn" class="world-module__FC9lxW__hudButton" aria-label="Instant skip to coding pose (Escape)">Skip (Esc)</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not visible
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is not visible
+        - retrying click action
+          - waiting 100ms
+        190 × waiting for element to be visible, enabled and stable
+            - element is not visible
+          - retrying click action
+            - waiting 500ms
+        - waiting for element to be visible, enabled and stable
+
+
+      36 |   await expect(page.getByTestId("world-canvas")).toBeVisible({ timeout: 45_000 });
+      37 |   await expect(page.getByTestId("world-loading-overlay")).toBeHidden({ timeout: 90_000 });
+    > 38 |   await page.getByTestId("skip-motion-btn").click();
+         |                                             ^
+      39 |   await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME", {
+      40 |     timeout: 15_000,
+      41 |   });
+        at enterStudioAtHome (C:\p13-iso\app\tests\e2e\world-fullscreen.spec.ts:38:45)
+        at C:\p13-iso\app\tests\e2e\world-fullscreen.spec.ts:399:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-fullscreen-PRE-G7-11-b8a88--reference-anchor-inventory-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-fullscreen-PRE-G7-11-b8a88--reference-anchor-inventory-chromium\error-context.md
+
+  7 failed
+    [chromium] › tests\e2e\renderer-recovery.spec.ts:30:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › WebGL context loss triggers accessible WorldFallback without trapping user 
+    [chromium] › tests\e2e\renderer-recovery.spec.ts:80:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Explicit STATIC stops the old renderer and Retry rebuilds a supported AUTO studio 
+    [chromium] › tests\e2e\renderer-recovery.spec.ts:120:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Healthy visibility restoration resumes rendering; a detached canvas never resumes 
+    [chromium] › tests\e2e\renderer-recovery.spec.ts:141:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Accessibility toolbar accepts real pointer controls and Projects navigation 
+    [chromium] › tests\e2e\renderer-recovery.spec.ts:190:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Renderer failure with dialog open preserves dialog interactivity in DOM 
+    [chromium] › tests\e2e\world-fullscreen.spec.ts:369:3 › PRE-G7-11 fullscreen studio › fills desktop, mobile, compact, and short-landscape viewports with measurable stage and controls 
+    [chromium] › tests\e2e\world-fullscreen.spec.ts:396:3 › PRE-G7-11 fullscreen studio › captures existing room camera presets for reference-anchor inventory 
+  6 passed (8.7m)

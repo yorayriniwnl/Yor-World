@@ -1,0 +1,37 @@
+[WebServer] (node:71424) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:61280) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\e2e\world-reference-composition.spec.ts:558:3 › PRE-G7-13 reference composition and compact mobile controls › captures the opening desktop room beside the user reference (31.7s)
+
+
+  1) [chromium] › tests\e2e\world-reference-composition.spec.ts:558:3 › PRE-G7-13 reference composition and compact mobile controls › captures the opening desktop room beside the user reference 
+
+    Error: desktop-1440x900 hex_panel_1 has visible surface samples
+
+    expect(received).toBeGreaterThan(expected)
+
+    Expected: > 0
+    Received:   0
+
+      448 |     const samples = byName.get(name)?.sampledRegionHits;
+      449 |     expect(samples && samples.samples > 0, `${label} ${name} has screen-region occlusion samples`).toBe(true);
+    > 450 |     expect(samples!.target, `${label} ${name} has visible surface samples`).toBeGreaterThan(0);
+          |                                                                             ^
+      451 |     expect(samples!.occluderRatio, `${label} ${name} has measurable chair/resident coverage`).not.toBeNull();
+      452 |     expect(samples!.occluderRatio!, `${label} ${name} is not hidden by chair/resident`).toBeLessThanOrEqual(0.1);
+      453 |   }
+        at recordVisualAnchorEvidence (C:\p13-iso\app\tests\e2e\world-reference-composition.spec.ts:450:77)
+        at C:\p13-iso\app\tests\e2e\world-reference-composition.spec.ts:576:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-reference-compositio-ab4ca-m-beside-the-user-reference-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-reference-compositio-ab4ca-m-beside-the-user-reference-chromium\error-context.md
+
+  1 failed
+    [chromium] › tests\e2e\world-reference-composition.spec.ts:558:3 › PRE-G7-13 reference composition and compact mobile controls › captures the opening desktop room beside the user reference 

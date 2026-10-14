@@ -29,6 +29,14 @@ export interface WorldRootProps {
   simulateRendererError?: boolean | undefined;
 }
 
+function isPreG7EvidenceRequested(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    process.env.NEXT_PUBLIC_PRE_G7_13_EVIDENCE === "1" &&
+    new URLSearchParams(window.location.search).get("pre-g7-evidence") === "1"
+  );
+}
+
 export default function WorldRoot({
   projects = publishedProjects,
   publicationRevision = 1,
@@ -240,12 +248,209 @@ export default function WorldRoot({
     window.addEventListener("resize", handleResize);
     window.addEventListener("keydown", handleKeyDown);
 
+    let preG7EvidenceProbesInstalled = false;
     // Diagnostics polling interval for live state
     const interval = setInterval(() => {
       if (runtimeRef.current) {
         const diag = runtimeRef.current.getDiagnostics();
         setDiagnostics(diag);
         setLifecycleState(diag.lifecycleState);
+        if (isPreG7EvidenceRequested()) {
+          preG7EvidenceProbesInstalled = true;
+          const evidenceWindow = window as Window & {
+            __PRE_G7_13_ACTIVE_CAMERA__?: ReturnType<NonNullable<WorldRuntime["cameraDirector"]>["getDiagnostics"]> | null;
+            __PRE_G7_13_RENDERER_CAMERA__?: () => {
+              architecture: "WorldRuntime-WebGLRenderer";
+              rendererCameraUuid: string;
+              rendererCameraType: string;
+              cameraDirectorUuid: string | null;
+              cameraObjectIdentityMatchesDirector: boolean;
+              rendererCameraLayerMask: number;
+              cameraDirectorLayerMask: number | null;
+              rendererCameraSeesPanelMeshLayer: boolean | null;
+              sceneUuid: string;
+              sceneType: string;
+              sceneHasPanelNode: boolean;
+              panelNode: { id: number; uuid: string; name: string; type: string; layerMask: number; isMesh: boolean } | null;
+              panelMesh: { id: number; uuid: string; name: string; type: string; layerMask: number } | null;
+              panelBatchMemberships: Array<{
+                batchObjectId: number;
+                batchUuid: string;
+                batchVisible: boolean;
+                batchLayerMask: number;
+                batchInstanceIndex: number;
+                panelOriginalLayerMask: number;
+              }>;
+              hexPanelBatchMemberships: Array<{
+                panelName: string;
+                panelUuid: string | null;
+                panelLayerMask: number | null;
+                batches: Array<{
+                  batchObjectId: number;
+                  batchUuid: string;
+                  batchVisible: boolean;
+                  batchLayerMask: number;
+                  batchInstanceIndex: number;
+                  panelOriginalLayerMask: number;
+                }>;
+              }>;
+              visibleLowQualityBatches: Array<{ id: number; uuid: string; layerMask: number }>;
+              rendererCanvasMatchesWorldCanvas: boolean;
+              rendererFrame: number | null;
+              rendererCalls: number | null;
+              rendererTriangles: number | null;
+              contextLost: boolean | null;
+              qualityTier: string;
+            } | null;
+            __PRE_G7_13_RENDER_SCENE__?: () => unknown;
+          };
+          evidenceWindow.__PRE_G7_13_ACTIVE_CAMERA__ = runtimeRef.current.cameraDirector?.getDiagnostics() ?? null;
+          evidenceWindow.__PRE_G7_13_RENDERER_CAMERA__ = function rendererCameraProbe() {
+            const currentRuntime = runtimeRef.current;
+            if (!currentRuntime) return null;
+            type ProbeObject = {
+              id: number;
+              uuid: string;
+              name: string;
+              type: string;
+              isMesh?: boolean;
+              visible: boolean;
+              layers: { mask: number };
+              parent: ProbeObject | null;
+              traverse: (visitor: (object: ProbeObject) => void) => void;
+            };
+            const internals = currentRuntime as unknown as {
+              camera: {
+                uuid: string;
+                type: string;
+                layers: { mask: number; test: (layers: { mask: number }) => boolean };
+              };
+              scene: {
+                uuid: string;
+                type: string;
+                getObjectByName: (name: string) => ProbeObject | undefined;
+                traverse: (visitor: (object: ProbeObject) => void) => void;
+              };
+              renderer: {
+                domElement: HTMLCanvasElement;
+                info: { render: { frame: number; calls: number; triangles: number } };
+                getContext: () => { isContextLost: () => boolean };
+              } | null;
+              lowQualityBatch: {
+                entries: Array<{
+                  batch: ProbeObject;
+                  originals: Array<{ mesh: ProbeObject; layerMask: number }>;
+                }>;
+              } | null;
+              qualityTier: string;
+            };
+            const rendererCamera = internals.camera;
+            const cameraDirectorCamera = currentRuntime.cameraDirector?.camera ?? null;
+            const panelNode = internals.scene.getObjectByName("hex_panel_1") ?? null;
+            let panelMesh: ProbeObject | null = panelNode?.isMesh ? panelNode : null;
+            panelNode?.traverse((object) => {
+              if (!panelMesh && object.isMesh) panelMesh = object;
+            });
+            const renderer = internals.renderer;
+            const panelBatchMemberships = (internals.lowQualityBatch?.entries ?? [])
+              .filter((entry) => entry.originals.some((original) => original.mesh === panelMesh))
+              .map((entry) => ({
+                batchObjectId: entry.batch.id,
+                batchUuid: entry.batch.uuid,
+                batchVisible: entry.batch.visible,
+                batchLayerMask: entry.batch.layers.mask,
+                batchInstanceIndex: entry.originals.findIndex((original) => original.mesh === panelMesh),
+                panelOriginalLayerMask: panelMesh?.layers.mask ?? 0,
+              }));
+            const hexPanelBatchMemberships = Array.from({ length: 7 }, (_, index) => {
+              const panelName = `hex_panel_${index + 1}`;
+              const namedPanel = internals.scene.getObjectByName(panelName) ?? null;
+              let namedPanelMesh: ProbeObject | null = namedPanel?.isMesh ? namedPanel : null;
+              namedPanel?.traverse((object) => {
+                if (!namedPanelMesh && object.isMesh) namedPanelMesh = object;
+              });
+              const batches = (internals.lowQualityBatch?.entries ?? [])
+                .filter((entry) => entry.originals.some((original) => original.mesh === namedPanelMesh))
+                .map((entry) => ({
+                  batchObjectId: entry.batch.id,
+                  batchUuid: entry.batch.uuid,
+                  batchVisible: entry.batch.visible,
+                  batchLayerMask: entry.batch.layers.mask,
+                  batchInstanceIndex: entry.originals.findIndex((original) => original.mesh === namedPanelMesh),
+                  panelOriginalLayerMask: namedPanelMesh?.layers.mask ?? 0,
+                }));
+              return {
+                panelName,
+                panelUuid: namedPanelMesh?.uuid ?? null,
+                panelLayerMask: namedPanelMesh?.layers.mask ?? null,
+                batches,
+              };
+            });
+            const visibleLowQualityBatches: Array<{ id: number; uuid: string; layerMask: number }> = [];
+            internals.scene.traverse((object) => {
+              if (object.name === "low-quality-static-batch" && object.visible) {
+                visibleLowQualityBatches.push({ id: object.id, uuid: object.uuid, layerMask: object.layers.mask });
+              }
+            });
+            return {
+              architecture: "WorldRuntime-WebGLRenderer" as const,
+              rendererCameraUuid: rendererCamera.uuid,
+              rendererCameraType: rendererCamera.type,
+              cameraDirectorUuid: cameraDirectorCamera?.uuid ?? null,
+              cameraObjectIdentityMatchesDirector:
+                (rendererCamera as unknown as object) === (cameraDirectorCamera as unknown as object),
+              rendererCameraLayerMask: rendererCamera.layers.mask,
+              cameraDirectorLayerMask: cameraDirectorCamera?.layers.mask ?? null,
+              rendererCameraSeesPanelMeshLayer: panelMesh
+                ? rendererCamera.layers.test(panelMesh.layers)
+                : null,
+              sceneUuid: internals.scene.uuid,
+              sceneType: internals.scene.type,
+              sceneHasPanelNode: panelNode !== null,
+              panelNode: panelNode ? {
+                id: panelNode.id,
+                uuid: panelNode.uuid,
+                name: panelNode.name,
+                type: panelNode.type,
+                layerMask: panelNode.layers.mask,
+                isMesh: panelNode.isMesh === true,
+              } : null,
+              panelMesh: panelMesh ? {
+                id: panelMesh.id,
+                uuid: panelMesh.uuid,
+                name: panelMesh.name,
+                type: panelMesh.type,
+                layerMask: panelMesh.layers.mask,
+              } : null,
+              panelBatchMemberships,
+              hexPanelBatchMemberships,
+              visibleLowQualityBatches,
+              rendererCanvasMatchesWorldCanvas: renderer?.domElement === canvasRef.current,
+              rendererFrame: renderer?.info.render.frame ?? null,
+              rendererCalls: renderer?.info.render.calls ?? null,
+              rendererTriangles: renderer?.info.render.triangles ?? null,
+              contextLost: renderer ? renderer.getContext().isContextLost() : null,
+              qualityTier: currentRuntime.qualityTier,
+            };
+          };
+          evidenceWindow.__PRE_G7_13_RENDER_SCENE__ = function rendererSceneProbe() {
+            const currentRuntime = runtimeRef.current;
+            if (!currentRuntime) return null;
+            const internals = currentRuntime as unknown as {
+              scene: unknown;
+              lowQualityBatch: {
+                entries: Array<{
+                  batch: unknown;
+                  originals: Array<{ mesh: unknown; layerMask: number }>;
+                }>;
+              } | null;
+            };
+            return {
+              scene: internals.scene,
+              batchEntries: internals.lowQualityBatch?.entries ?? [],
+            };
+          };
+        }
       }
     }, 100);
 
@@ -257,6 +462,11 @@ export default function WorldRoot({
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("keydown", handleKeyDown);
       runtime.dispose();
+      if (preG7EvidenceProbesInstalled) {
+        delete (window as Window & { __PRE_G7_13_ACTIVE_CAMERA__?: unknown }).__PRE_G7_13_ACTIVE_CAMERA__;
+        delete (window as Window & { __PRE_G7_13_RENDERER_CAMERA__?: unknown }).__PRE_G7_13_RENDERER_CAMERA__;
+        delete (window as Window & { __PRE_G7_13_RENDER_SCENE__?: unknown }).__PRE_G7_13_RENDER_SCENE__;
+      }
       audioControllerRef.current?.dispose();
       audioControllerRef.current = null;
       qualityControllerRef.current = null;

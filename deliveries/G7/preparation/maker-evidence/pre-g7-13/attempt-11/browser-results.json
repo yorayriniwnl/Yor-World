@@ -1,0 +1,313 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\p13-iso\\app\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "tests/e2e/world-reference-composition.spec.ts",
+      "--project=chromium"
+    ],
+    "configFile": "C:\\p13-iso\\app\\playwright.config.ts",
+    "rootDir": "C:/p13-iso/app/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/p13-iso/app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/p13-iso/app/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "..\\deliveries\\G7\\preparation\\maker-evidence\\pre-g7-13\\attempt-11\\browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3133",
+      "url": "http://127.0.0.1:3133",
+      "reuseExistingServer": false,
+      "timeout": 60000,
+      "env": {
+        "NEXT_TELEMETRY_DISABLED": "1"
+      },
+      "stdout": "ignore",
+      "stderr": "pipe"
+    }
+  },
+  "suites": [
+    {
+      "title": "world-reference-composition.spec.ts",
+      "file": "world-reference-composition.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "PRE-G7-13 reference composition and compact mobile controls",
+          "file": "world-reference-composition.spec.ts",
+          "line": 466,
+          "column": 6,
+          "specs": [
+            {
+              "title": "captures the opening desktop room beside the user reference",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 150000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 44273,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m25\u001b[39m\nReceived: \u001b[31m13\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m25\u001b[39m\nReceived: \u001b[31m13\u001b[39m\n    at C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts:478:38",
+                        "location": {
+                          "file": "C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                          "column": 38,
+                          "line": 478
+                        },
+                        "snippet": "  476 |       '[data-testid=\"fullscreen-studio-dialog\"] button, [data-testid=\"fullscreen-studio-dialog\"] a[href], [data-testid=\"fullscreen-studio-dialog\"] select',\n  477 |     ).count();\n> 478 |     expect(existingControlCount - 1).toBe(25);\n      |                                      ^\n  479 |     const renderMeasurement = await captureAndCompose(page, \"studio-reference-desktop-1440x900.png\", viewport);\n  480 |     if (evidenceMode) {\n  481 |       await recordVisualAnchorEvidence("
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                            "column": 38,
+                            "line": 478
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m25\u001b[39m\nReceived: \u001b[31m13\u001b[39m\n\n  476 |       '[data-testid=\"fullscreen-studio-dialog\"] button, [data-testid=\"fullscreen-studio-dialog\"] a[href], [data-testid=\"fullscreen-studio-dialog\"] select',\n  477 |     ).count();\n> 478 |     expect(existingControlCount - 1).toBe(25);\n      |                                      ^\n  479 |     const renderMeasurement = await captureAndCompose(page, \"studio-reference-desktop-1440x900.png\", viewport);\n  480 |     if (evidenceMode) {\n  481 |       await recordVisualAnchorEvidence(\n    at C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts:478:38"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-14T09:19:36.971Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\p13-iso\\app\\test-results\\world-reference-compositio-ab4ca-m-beside-the-user-reference-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\p13-iso\\app\\test-results\\world-reference-compositio-ab4ca-m-beside-the-user-reference-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                        "column": 38,
+                        "line": 478
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6952f866f83155538ccf-f547cb409e67ae98a765",
+              "file": "world-reference-composition.spec.ts",
+              "line": 467,
+              "column": 3
+            },
+            {
+              "title": "starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 31277,
+                      "error": {
+                        "message": "Error: mobile-390x844 desk is inside the left edge\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m0\u001b[39m\nReceived:    \u001b[31m-3.6635231685621186\u001b[39m",
+                        "stack": "Error: mobile-390x844 desk is inside the left edge\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m0\u001b[39m\nReceived:    \u001b[31m-3.6635231685621186\u001b[39m\n    at recordVisualAnchorEvidence (C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts:279:69)\n    at C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts:524:7",
+                        "location": {
+                          "file": "C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                          "column": 69,
+                          "line": 279
+                        },
+                        "snippet": "  277 |     expect(anchor?.pixelBounds, `${label} ${name} has projected bounds`).not.toBeNull();\n  278 |     const bounds = anchor!.pixelBounds!;\n> 279 |     expect(bounds.left, `${label} ${name} is inside the left edge`).toBeGreaterThanOrEqual(0);\n      |                                                                     ^\n  280 |     expect(bounds.top, `${label} ${name} is inside the top edge`).toBeGreaterThanOrEqual(0);\n  281 |     expect(bounds.right, `${label} ${name} is inside the right edge`).toBeLessThanOrEqual(viewport.width);\n  282 |     expect(bounds.bottom, `${label} ${name} is inside the bottom edge`).toBeLessThanOrEqual(viewport.height);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                            "column": 69,
+                            "line": 279
+                          },
+                          "message": "Error: mobile-390x844 desk is inside the left edge\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m0\u001b[39m\nReceived:    \u001b[31m-3.6635231685621186\u001b[39m\n\n  277 |     expect(anchor?.pixelBounds, `${label} ${name} has projected bounds`).not.toBeNull();\n  278 |     const bounds = anchor!.pixelBounds!;\n> 279 |     expect(bounds.left, `${label} ${name} is inside the left edge`).toBeGreaterThanOrEqual(0);\n      |                                                                     ^\n  280 |     expect(bounds.top, `${label} ${name} is inside the top edge`).toBeGreaterThanOrEqual(0);\n  281 |     expect(bounds.right, `${label} ${name} is inside the right edge`).toBeLessThanOrEqual(viewport.width);\n  282 |     expect(bounds.bottom, `${label} ${name} is inside the bottom edge`).toBeLessThanOrEqual(viewport.height);\n    at recordVisualAnchorEvidence (C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts:279:69)\n    at C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts:524:7"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-14T09:20:32.628Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\p13-iso\\app\\test-results\\world-reference-compositio-3ce73-th-Diagnostics-first-Escape-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\p13-iso\\app\\test-results\\world-reference-compositio-3ce73-th-Diagnostics-first-Escape-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                        "column": 69,
+                        "line": 279
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6952f866f83155538ccf-4b3a507df003f6bbd251",
+              "file": "world-reference-composition.spec.ts",
+              "line": 510,
+              "column": 3
+            },
+            {
+              "title": "keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 26818,
+                      "error": {
+                        "message": "Error: compact-320x600 hex_panel_1 has visible surface samples\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m",
+                        "stack": "Error: compact-320x600 hex_panel_1 has visible surface samples\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m\n    at recordVisualAnchorEvidence (C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts:359:77)\n    at C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts:602:7",
+                        "location": {
+                          "file": "C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                          "column": 77,
+                          "line": 359
+                        },
+                        "snippet": "  357 |     const samples = byName.get(name)?.sampledRegionHits;\n  358 |     expect(samples && samples.samples > 0, `${label} ${name} has screen-region occlusion samples`).toBe(true);\n> 359 |     expect(samples!.target, `${label} ${name} has visible surface samples`).toBeGreaterThan(0);\n      |                                                                             ^\n  360 |     expect(samples!.occluderRatio, `${label} ${name} has measurable chair/resident coverage`).not.toBeNull();\n  361 |     expect(samples!.occluderRatio!, `${label} ${name} is not hidden by chair/resident`).toBeLessThanOrEqual(0.1);\n  362 |   }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                            "column": 77,
+                            "line": 359
+                          },
+                          "message": "Error: compact-320x600 hex_panel_1 has visible surface samples\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m0\u001b[39m\nReceived:   \u001b[31m0\u001b[39m\n\n  357 |     const samples = byName.get(name)?.sampledRegionHits;\n  358 |     expect(samples && samples.samples > 0, `${label} ${name} has screen-region occlusion samples`).toBe(true);\n> 359 |     expect(samples!.target, `${label} ${name} has visible surface samples`).toBeGreaterThan(0);\n      |                                                                             ^\n  360 |     expect(samples!.occluderRatio, `${label} ${name} has measurable chair/resident coverage`).not.toBeNull();\n  361 |     expect(samples!.occluderRatio!, `${label} ${name} is not hidden by chair/resident`).toBeLessThanOrEqual(0.1);\n  362 |   }\n    at recordVisualAnchorEvidence (C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts:359:77)\n    at C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts:602:7"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-14T09:21:09.911Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\p13-iso\\app\\test-results\\world-reference-compositio-07d25-e-and-short-landscape-sizes-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\p13-iso\\app\\test-results\\world-reference-compositio-07d25-e-and-short-landscape-sizes-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\p13-iso\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                        "column": 77,
+                        "line": 359
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6952f866f83155538ccf-eb211a33068650bb68ad",
+              "file": "world-reference-composition.spec.ts",
+              "line": 593,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-14T09:19:27.447Z",
+    "duration": 134199.079,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 3,
+    "flaky": 0
+  }
+}

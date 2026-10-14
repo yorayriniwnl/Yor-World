@@ -20,6 +20,7 @@ async function enterRenderedHome(page: Page) {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/?studio=1", { waitUntil: "domcontentloaded" });
   await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME", { timeout: 15000 });
+  await page.getByTestId("studio-controls-toggle").click();
   await page.getByTestId("quality-tier-select").selectOption("low");
   const canvas = page.getByTestId("world-canvas");
   await expect.poll(async () => Number(await canvas.getAttribute("data-rendered-frames"))).toBeGreaterThan(1);

@@ -1,0 +1,27 @@
+
+ RUN  v5.0.2 C:/p13-iso/app
+
+ ❯ tests/unit/reference-composition.test.ts (2 tests | 1 failed) 31ms
+   ❯ reference room composition (2)
+     × keeps named anchors and materials while isolating six-sided runtime panel geometry 26ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/reference-composition.test.ts > reference room composition > keeps named anchors and materials while isolating six-sided runtime panel geometry
+AssertionError: expected 0.1440000008583069 to be close to 0.1424, received difference is 0.001600000858306888, but expected 0.0005
+ ❯ tests/unit/reference-composition.test.ts:126:68
+    124|     const controllerDetailsBounds = new THREE.Box3().setFromObject(con…
+    125|     expect(controllerDetailsBounds.getSize(new THREE.Vector3()).x).toB…
+    126|     expect(controllerDetailsBounds.getSize(new THREE.Vector3()).y).toB…
+       |                                                                    ^
+    127|     expect(controllerDetailsBounds.getSize(new THREE.Vector3()).z).toB…
+    128|     for (const child of controllerDetails.children as THREE.Mesh[]) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  15:07:21
+   Duration  452ms (transform 44%, import 35%, tests 16%, worker 5%)
+

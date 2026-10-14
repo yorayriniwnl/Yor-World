@@ -60,8 +60,10 @@ describe("Actual frozen production assets and C1 pointer binding", () => {
     expect(result.removedW1Nodes).toContain("chair-root");
     expect(result.discardedW2Nodes).toContain("fixture-static");
     result.scene.updateMatrixWorld(true);
-    expect(result.resident.getWorldPosition(new THREE.Vector3()).x).toBeCloseTo(0.3);
-    expect(result.chairRoot.getWorldPosition(new THREE.Vector3()).z).toBeCloseTo(-0.36);
+    // SceneIntegrator now applies PRE-G7-13's bounded opening-scene placement
+    // after preserving the frozen GLB hierarchy and its interaction roots.
+    expect(result.resident.getWorldPosition(new THREE.Vector3()).x).toBeCloseTo(0.7);
+    expect(result.chairRoot.getWorldPosition(new THREE.Vector3()).z).toBeCloseTo(-1.75);
     expect(result.scene.rotation.toArray().slice(0, 3)).toEqual([0, 0, 0]);
     expect(resident.animations.map((clip) => clip.name)).toContain("attention_glance");
   });

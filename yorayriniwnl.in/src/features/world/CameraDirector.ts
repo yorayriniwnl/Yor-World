@@ -9,10 +9,10 @@ export const CAMERA_PRESETS: Record<CameraPreset, CameraConfig> = {
     fov: 48,
   },
   "home-mobile": {
-    // Keep the camera inside the room and near-frontal so the narrow portrait
-    // frustum retains the desk, rear-wall lights, and right-side PC grouping.
+    // Keep the attempt-29 portrait pose after the measured narrower-lens
+    // experiment placed a nearby wall across the mobile frame.
     position: [-0.55, 1.55, 1.45],
-    target: [0.0, 1.1, -1.2],
+    target: [0.0, 0.55, -1.2],
     fov: 100,
   },
   monitor: {
@@ -93,6 +93,16 @@ export class CameraDirector {
   private transitionRafId: number | null = null;
   private isDisposed: boolean = false;
 
+  private getResponsiveConfig(preset: CameraPreset | string, width: number, height: number): CameraConfig {
+    const config = CAMERA_PRESETS[preset as CameraPreset] || CAMERA_PRESETS["home-desktop"];
+    if (preset === "home-desktop" && width >= 640 && height <= 420) {
+      // Short landscape needs a little more vertical breathing room for the
+      // fixed navigation and controls while retaining the desktop pose.
+      return { ...config, fov: 56 };
+    }
+    return config;
+  }
+
   constructor(camera: THREE.PerspectiveCamera, initialPreset?: CameraPreset, ownerId: string = "primary-camera-director") {
     this.ownerId = ownerId;
     this.camera = camera;
@@ -118,7 +128,9 @@ export class CameraDirector {
   }
 
   public setPreset(preset: CameraPreset | string, immediate: boolean = false) {
-    const config = CAMERA_PRESETS[preset as CameraPreset] || CAMERA_PRESETS["home-desktop"];
+    const width = typeof window !== "undefined" ? window.innerWidth : 0;
+    const height = typeof window !== "undefined" ? window.innerHeight : 0;
+    const config = this.getResponsiveConfig(preset, width, height);
 
     this.currentPreset = preset as CameraPreset;
     const targetVec = new THREE.Vector3(...config.target);
@@ -161,7 +173,9 @@ export class CameraDirector {
       signal = signalOrDuration as AbortSignal;
     }
 
-    const config = CAMERA_PRESETS[preset as CameraPreset] || CAMERA_PRESETS["home-desktop"];
+    const width = typeof window !== "undefined" ? window.innerWidth : 0;
+    const height = typeof window !== "undefined" ? window.innerHeight : 0;
+    const config = this.getResponsiveConfig(preset, width, height);
 
     this.currentPreset = preset as CameraPreset;
 
@@ -243,23 +257,32 @@ export class CameraDirector {
     if (width <= 0 || height <= 0 || this.isDisposed) return;
     this.camera.aspect = width / height;
 
-    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+    const isMobile = width < 640;
     if (isMobile && this.currentPreset === "home-desktop") {
       this.setPreset("home-mobile", true);
     } else if (!isMobile && this.currentPreset === "home-mobile") {
       this.setPreset("home-desktop", true);
+    } else if (this.currentPreset === "home-mobile" || this.currentPreset === "home-desktop") {
+      const config = this.getResponsiveConfig(this.currentPreset, width, height);
+      this.camera.fov = config.fov;
+      this.camera.updateProjectionMatrix();
     } else {
       this.camera.updateProjectionMatrix();
     }
   }
 
   public getDiagnostics() {
+    this.camera.updateMatrixWorld(true);
     return {
       preset: this.currentPreset,
       position: this.camera.position.toArray() as [number, number, number],
       target: this.currentTarget.toArray() as [number, number, number],
+      quaternion: this.camera.quaternion.toArray() as [number, number, number, number],
+      layerMask: this.camera.layers.mask,
       fov: this.camera.fov,
       aspect: this.camera.aspect,
+      projectionMatrix: this.camera.projectionMatrix.toArray(),
+      worldMatrix: this.camera.matrixWorld.toArray(),
       reducedMotion: this.reducedMotion,
       ownerId: this.ownerId,
     };
