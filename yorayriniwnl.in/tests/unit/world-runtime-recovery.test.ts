@@ -16,9 +16,10 @@ type MockRendererInstance = {
   forceContextLossCalls: number;
 };
 
-const { render, rendererInstances } = vi.hoisted(() => ({
+const { render, rendererInstances, rendererConstructionError } = vi.hoisted(() => ({
   render: vi.fn(),
   rendererInstances: [] as MockRendererInstance[],
+  rendererConstructionError: { current: null as Error | null },
 }));
 
 // Keep the scene integration, directors and lifecycle real. Only the GPU and
@@ -35,6 +36,10 @@ vi.mock("three", async (importOriginal) => {
 
       constructor(options: { canvas?: HTMLCanvasElement }) {
         const targetCanvas = options.canvas as MockCanvas | undefined;
+        if (rendererConstructionError.current) {
+          console.error("THREE.WebGLRenderer: Error creating WebGL context.");
+          throw rendererConstructionError.current;
+        }
         if (targetCanvas?.mockContextLost) {
           throw new Error("WebGL context is unavailable because it was lost");
         }
@@ -69,6 +74,7 @@ const runtimes: WorldRuntime[] = [];
 afterEach(() => {
   for (const runtime of runtimes.splice(0)) runtime.dispose();
   rendererInstances.splice(0);
+  rendererConstructionError.current = null;
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
   render.mockClear();
@@ -163,10 +169,16 @@ describe("Production runtime failure retirement", () => {
   it("a failed runtime cannot schedule rendering when visibility resumes", async () => {
     const requestFrame = vi.fn();
     vi.stubGlobal("requestAnimationFrame", requestFrame);
-    vi.spyOn(console, "error").mockImplementation(() => {});
+    const errorLog = vi.spyOn(console, "error").mockImplementation(() => {});
+    const warningLog = vi.spyOn(console, "warn").mockImplementation(() => {});
     const runtime = new WorldRuntime({ canvas: canvas(), simulateRendererError: true });
     await Promise.resolve();
     expect(runtime.lifecycleManager.getState()).toBe("FAILURE");
+    expect(errorLog).not.toHaveBeenCalled();
+    expect(warningLog).toHaveBeenCalledWith(
+      "[WorldRuntime] WebGL renderer startup failed; technical details:",
+      expect.objectContaining({ message: "Simulated WebGL Renderer Context Failure" }),
+    );
     runtime.pause();
     runtime.resume();
     expect(requestFrame).not.toHaveBeenCalled();
@@ -175,10 +187,15 @@ describe("Production runtime failure retirement", () => {
 
   it("renderer creation failure reaches fallback and retry recovers on a replacement canvas", async () => {
     const frames = frameHarness();
-    vi.spyOn(console, "error").mockImplementation(() => {});
+    const errorLog = vi.spyOn(console, "error").mockImplementation(() => {});
+    const warningLog = vi.spyOn(console, "warn").mockImplementation(() => {});
     const failed = startRuntime({ simulateRendererError: true });
     await Promise.resolve();
     expect(failed.lifecycleManager.getState()).toBe("FAILURE");
+    expect(failed.lifecycleManager.getFailureReason()).toContain("Check browser hardware acceleration");
+    expect(failed.lifecycleManager.getFailureReason()).toContain("portfolio links below");
+    expect(errorLog).not.toHaveBeenCalled();
+    expect(warningLog).toHaveBeenCalledTimes(1);
     expect(frames.queued.size).toBe(0);
 
     failed.dispose();
@@ -190,6 +207,33 @@ describe("Production runtime failure retirement", () => {
     frames.tick();
     expect(render).toHaveBeenCalledTimes(1);
     expect(frames.queued.size).toBe(1);
+  });
+
+  it("reports a renderer-constructor context failure as startup with technical warning details", async () => {
+    const technicalError = new Error("Cannot read properties of null (reading 'precision')");
+    const onError = vi.fn();
+    const errorLog = vi.spyOn(console, "error").mockImplementation(() => {});
+    const warningLog = vi.spyOn(console, "warn").mockImplementation(() => {});
+    rendererConstructionError.current = technicalError;
+
+    const runtime = startRuntime({ onError });
+    await Promise.resolve();
+
+    expect(runtime.lifecycleManager.getState()).toBe("FAILURE");
+    expect(runtime.lifecycleManager.getFailureReason()).toBe(
+      "The browser could not create a WebGL context for the 3D studio. Check browser hardware acceleration, or use the portfolio links below.",
+    );
+    expect(warningLog).toHaveBeenCalledWith(
+      "[WorldRuntime] WebGL renderer startup failed; technical details:",
+      expect.objectContaining({
+        message: "THREE.WebGLRenderer: Error creating WebGL context. Cannot read properties of null (reading 'precision')",
+        cause: technicalError,
+      }),
+    );
+    expect(errorLog).not.toHaveBeenCalled();
+    expect(onError).toHaveBeenCalledWith(expect.objectContaining({
+      message: "The browser could not create a WebGL context for the 3D studio. Check browser hardware acceleration, or use the portfolio links below.",
+    }));
   });
 
   it("retired initialization cannot report an obsolete error and repeated disposal does no extra work", async () => {
@@ -296,7 +340,8 @@ describe("Single render loop with delayed assets", () => {
     const frames = frameHarness();
     const failedLoad = delayedLoad();
     const onError = vi.fn();
-    vi.spyOn(console, "error").mockImplementation(() => {});
+    const errorLog = vi.spyOn(console, "error").mockImplementation(() => {});
+    const warningLog = vi.spyOn(console, "warn").mockImplementation(() => {});
     const failed = startRuntime({ onError });
     frames.visibility("hidden");
     frames.visibility("visible");
@@ -305,6 +350,8 @@ describe("Single render loop with delayed assets", () => {
     await Promise.resolve();
     expect(failed.lifecycleManager.getState()).toBe("FAILURE");
     expect(onError).toHaveBeenCalledTimes(1);
+    expect(errorLog).toHaveBeenCalledTimes(1);
+    expect(warningLog).not.toHaveBeenCalled();
     frames.visibility("hidden");
     frames.visibility("visible");
     expect(frames.queued.size).toBe(0);
@@ -375,6 +422,7 @@ describe("Canvas context lifecycle", () => {
 
   it("keeps genuine context-loss fallback behavior and recovers on a replacement canvas", async () => {
     const frames = frameHarness();
+    const warningLog = vi.spyOn(console, "warn").mockImplementation(() => {});
     const lostCanvas = canvas();
     const initialLoad = delayedLoad();
     const failedRuntime = startRuntime({ canvas: lostCanvas });
@@ -388,6 +436,8 @@ describe("Canvas context lifecycle", () => {
     lostCanvas.dispatchEvent(contextLost);
     expect(contextLost.defaultPrevented).toBe(true);
     expect(failedRuntime.lifecycleManager.getState()).toBe("FAILURE");
+    expect(failedRuntime.lifecycleManager.getFailureReason()).toBe("WebGL graphics context was lost.");
+    expect(warningLog).toHaveBeenCalledWith("[WorldRuntime] WebGL context lost.");
     expect(frames.queued.size).toBe(0);
 
     lostCanvas.isConnected = false;

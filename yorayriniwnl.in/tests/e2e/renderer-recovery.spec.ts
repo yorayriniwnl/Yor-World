@@ -122,6 +122,57 @@ test.describe("C3 Failure Recovery, Context Loss & Mobile Resilience", () => {
     await saveEvidence(info, "bounded-retry.json", { reconstructionRetries: 3, retryExhausted: true, continueAvailable: true });
   });
 
+  test("WebGL startup denial shows an accurate accessible fallback without console errors", async ({ page }) => {
+    const consoleErrors: string[] = [];
+    const pageErrors: string[] = [];
+    const startupWarnings: string[] = [];
+    page.on("console", (message) => {
+      if (message.type() === "error") consoleErrors.push(message.text());
+      if (message.type() === "warning" && message.text().includes("WebGL renderer startup failed")) {
+        startupWarnings.push(message.text());
+      }
+    });
+    page.on("pageerror", (error) => pageErrors.push(error.message));
+    await page.addInitScript(() => {
+      const originalGetContext = HTMLCanvasElement.prototype.getContext;
+      Object.defineProperty(HTMLCanvasElement.prototype, "getContext", {
+        configurable: true,
+        value(contextType: string, ...args: unknown[]) {
+          if (/^(webgl2?|experimental-webgl)$/i.test(contextType)) return null;
+          return Reflect.apply(originalGetContext, this, [contextType, ...args]);
+        },
+      });
+    });
+
+    await page.goto("/?studio=1", { waitUntil: "domcontentloaded" });
+    const fallback = page.getByTestId("world-fallback-banner");
+    await expect(fallback).toBeVisible({ timeout: 10000 });
+    await expect(fallback).toContainText("could not create a WebGL context");
+    await expect(fallback).toContainText("Check browser hardware acceleration");
+    await expect(fallback).toContainText("portfolio links below");
+
+    const retry = page.getByTestId("fallback-retry-btn");
+    const continueWithPortfolio = page.getByTestId("fallback-dismiss-btn");
+    const projectsLink = page.getByTestId("fallback-projects-link");
+    await expect(retry).toBeVisible();
+    await expect(continueWithPortfolio).toBeVisible();
+    await expect(projectsLink).toHaveAttribute("href", "/projects");
+    await expect.poll(() => startupWarnings.length).toBe(1);
+    expect(consoleErrors).toEqual([]);
+    expect(pageErrors).toEqual([]);
+
+    await retry.click();
+    await expect.poll(() => startupWarnings.length).toBe(2);
+    await expect(fallback).toContainText("Check browser hardware acceleration");
+    expect(consoleErrors).toEqual([]);
+    expect(pageErrors).toEqual([]);
+
+    await projectsLink.click();
+    await expect(page).toHaveURL(/\/projects$/);
+    expect(consoleErrors).toEqual([]);
+    expect(pageErrors).toEqual([]);
+  });
+
   test("Healthy visibility restoration resumes rendering; a detached canvas never resumes", async ({ page }, info) => {
     const canvas = await enterRenderedHome(page);
     const retainedCanvas = await canvas.elementHandle();

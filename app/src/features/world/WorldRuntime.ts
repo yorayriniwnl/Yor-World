@@ -38,6 +38,18 @@ export interface WorldRuntimeOptions {
   onStateChange?: ((state: WorldLifecycleState) => void) | undefined;
 }
 
+const WEBGL_STARTUP_FAILURE_REASON = "The browser could not create a WebGL context for the 3D studio. Check browser hardware acceleration, or use the portfolio links below.";
+
+class WebGLStartupError extends Error {
+  public readonly technicalCause: unknown;
+
+  constructor(technicalCause: unknown) {
+    super(WEBGL_STARTUP_FAILURE_REASON);
+    this.name = "WebGLStartupError";
+    this.technicalCause = technicalCause;
+  }
+}
+
 export class WorldRuntime {
   public readonly rendererOwnerId: string = "primary-renderer-lifecycle";
   private canvas: HTMLCanvasElement;
@@ -123,10 +135,17 @@ export class WorldRuntime {
 
     this.init(options).catch((err) => {
       if (this.isDisposed || this.lifecycleManager.isStale(this.sessionToken)) return;
-      console.error("[WorldRuntime] Initialization error:", err);
-      this.lifecycleManager.fail(err.message, this.sessionToken);
+      const normalizedError = err instanceof Error ? err : new Error(String(err));
+      const startupFailure = err instanceof WebGLStartupError;
+      if (startupFailure) {
+        console.warn("[WorldRuntime] WebGL renderer startup failed; technical details:", err.technicalCause);
+      } else {
+        console.error("[WorldRuntime] Initialization error:", err);
+      }
+      const failureReason = startupFailure ? WEBGL_STARTUP_FAILURE_REASON : normalizedError.message;
+      this.lifecycleManager.fail(failureReason, this.sessionToken);
       if (options.onError) {
-        options.onError(err instanceof Error ? err : new Error(String(err)));
+        options.onError(new Error(failureReason));
       }
     });
   }
@@ -198,10 +217,19 @@ export class WorldRuntime {
 
     // 1. Renderer initialization with fault simulation support
     if (options.simulateRendererError) {
-      const err = new Error("Simulated WebGL Renderer Context Failure");
-      this.lifecycleManager.fail(err.message, token);
-      throw err;
+      throw new WebGLStartupError(new Error("Simulated WebGL Renderer Context Failure"));
     }
+
+    const originalConsoleError = console.error;
+    const webglContextCreationDiagnostic = "THREE.WebGLRenderer: Error creating WebGL context.";
+    let rendererReportedContextFailure = false;
+    console.error = (...args: Parameters<typeof console.error>) => {
+      if (args.length === 1 && args[0] === webglContextCreationDiagnostic) {
+        rendererReportedContextFailure = true;
+        return;
+      }
+      originalConsoleError.apply(console, args);
+    };
 
     try {
       this.renderer = new THREE.WebGLRenderer({
@@ -210,24 +238,27 @@ export class WorldRuntime {
         // Continuous rendering supplies screenshots; preserving every frame adds GPU copies.
         preserveDrawingBuffer: false,
       });
-      this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      this.renderer.toneMappingExposure = 1.15;
-      this.renderer.shadowMap.enabled = this.qualityTier !== "low" && this.qualityTier !== "static";
-      this.renderer.shadowMap.type = this.qualityTier === "high" ? THREE.PCFSoftShadowMap : THREE.PCFShadowMap;
-
-      const gl = this.renderer.getContext();
-      const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
-      this.webglRendererName = debugInfo
-        ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)
-        : gl.getParameter(gl.RENDERER) || "WebGL";
-      this.softwareRenderer = isSoftwareRenderer(this.webglRendererName);
-      const maxDpr = this.qualityTier === "high" ? 1.5 : this.qualityTier === "medium" ? 1.25 : this.softwareRenderer ? 0.3 : 1;
-      this.renderer.setPixelRatio(Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, maxDpr));
     } catch (e) {
-      const err = new Error(`WebGL context creation failed: ${(e as Error).message}`);
-      this.lifecycleManager.fail(err.message, token);
-      throw err;
+      if (!rendererReportedContextFailure) throw new WebGLStartupError(e);
+      const cause = e instanceof Error ? e : new Error(String(e));
+      throw new WebGLStartupError(new Error(`${webglContextCreationDiagnostic} ${cause.message}`, { cause }));
+    } finally {
+      console.error = originalConsoleError;
     }
+
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.15;
+    this.renderer.shadowMap.enabled = this.qualityTier !== "low" && this.qualityTier !== "static";
+    this.renderer.shadowMap.type = this.qualityTier === "high" ? THREE.PCFSoftShadowMap : THREE.PCFShadowMap;
+
+    const gl = this.renderer.getContext();
+    const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
+    this.webglRendererName = debugInfo
+      ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)
+      : gl.getParameter(gl.RENDERER) || "WebGL";
+    this.softwareRenderer = isSoftwareRenderer(this.webglRendererName);
+    const maxDpr = this.qualityTier === "high" ? 1.5 : this.qualityTier === "medium" ? 1.25 : this.softwareRenderer ? 0.3 : 1;
+    this.renderer.setPixelRatio(Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, maxDpr));
 
     if (this.lifecycleManager.isStale(token)) return;
 
