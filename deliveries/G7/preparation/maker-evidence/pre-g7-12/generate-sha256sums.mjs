@@ -11,7 +11,7 @@ const baseCommit = process.argv[2] || "67026f26bb80d81de4edf632b3038b0239eea4de"
 const sourceCommit = process.argv[3] || "133529868c8c7279831cbbffe35ab23178012b8c";
 const evidenceCommit = process.argv[4] || "HEAD";
 const output = path.join(evidenceDir, "SHA256SUMS.json");
-const run = (args, encoding) => execFileSync("git", args, { cwd: repo, ...(encoding ? { encoding } : {}), stdio: ["ignore", "pipe", "pipe"] });
+const run = (args, encoding = "utf8") => execFileSync("git", args, { cwd: repo, ...(encoding ? { encoding } : {}), stdio: ["ignore", "pipe", "pipe"] });
 const sourceTree = run(["rev-parse", sourceCommit + ":app"]).trim();
 const evidencePaths = run(["ls-tree", "-r", "--name-only", "-z", evidenceCommit]).split("\0").filter(Boolean);
 const sourceAppPaths = run(["diff", "--name-only", "--diff-filter=ACMRT", baseCommit, sourceCommit, "--", "app"]).trim().split(/\r?\n/).filter(Boolean);
@@ -40,7 +40,7 @@ const entries = [...unique.values()].sort((a, b) => a.path.localeCompare(b.path)
 for (const entry of entries) {
   const commit = entry.commit === "source" ? sourceCommit : evidenceCommit;
   const spec = commit + ":" + entry.path;
-  const blob = run(["cat-file", "blob", spec]);
+  const blob = run(["cat-file", "blob", spec], null);
   entry.gitBlob = run(["rev-parse", spec]).trim();
   entry.sha256 = crypto.createHash("sha256").update(blob).digest("hex");
   entry.bytes = blob.length;
@@ -63,3 +63,4 @@ const manifest = {
 };
 fs.writeFileSync(output, JSON.stringify(manifest, null, 2) + "\n", "utf8");
 process.stdout.write(JSON.stringify({ status: "PASS_GENERATED", entries: entries.length, coverage: manifest.coverage, output: path.relative(repo, output) }, null, 2) + "\n");
+
