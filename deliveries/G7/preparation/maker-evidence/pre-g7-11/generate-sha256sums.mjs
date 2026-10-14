@@ -3,7 +3,8 @@ import { createHash } from "node:crypto";
 import { writeFileSync } from "node:fs";
 
 const sourceCommit = "cfdc744f69cd257c8ac0cbaad78b8805c48f20d5";
-const deliveryCommit = "2c3ab02acb25a4d0856ea4573c556db66f5c9eea";
+const requestedDeliveryCommit = process.argv[2] || "HEAD";
+const deliveryCommit = execFileSync("git", ["rev-parse", "--verify", `${requestedDeliveryCommit}^{commit}`], { encoding: "utf8" }).trim();
 const evidencePrefix = "deliveries/G7/preparation/maker-evidence/pre-g7-11/";
 const sourcePaths = execFileSync("git", ["diff-tree", "--no-commit-id", "--name-only", "-r", sourceCommit], { encoding: "utf8" })
   .trim().split(/\r?\n/).filter(Boolean);
@@ -23,11 +24,11 @@ const paths = [...new Set([...sourcePaths, ...deliveryPaths, ...stagedPaths])]
   .sort();
 
 const lines = paths.map((path) => {
-  const objectRef = staged.has(path) ? `:${path}` : `${deliveryCommit}:${path}`;
+  const objectRef = staged.has(path) ? `:${path}` : `HEAD:${path}`;
   const bytes = execFileSync("git", ["cat-file", "blob", objectRef], { maxBuffer: 64 * 1024 * 1024 });
   const digest = createHash("sha256").update(bytes).digest("hex");
   return `${digest}  ${path}`;
 });
 
 writeFileSync(`${evidencePrefix}SHA256SUMS.txt`, `${lines.join("\n")}\n`, "utf8");
-process.stdout.write(`SHA256SUMS generated from ${paths.length} exact Git blob entries.\n`);
+process.stdout.write(`SHA256SUMS generated from ${paths.length} exact Git blob entries (staged paths over base commit ${deliveryCommit}).\n`);

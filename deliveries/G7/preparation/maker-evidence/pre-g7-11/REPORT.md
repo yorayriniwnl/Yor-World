@@ -38,7 +38,7 @@ The fullscreen production browser run used a fresh Playwright context against th
 |---|---:|---:|---:|---:|---:|---:|
 | 1440×900 | 1440×900 | 1440×900 | 1440×900 | 25 | 0 | 0 |
 | 390×844 | 390×844 | 390×844 | 390×844 | 25 | 0 | 0 |
-| 320×600 | 320×600 | 320×600 | 320×600 | 25 | 0 | 20 |
+| 320×600 | 320×600 | 320×600 | 320×600 | 25 | 0 | 9 |
 | 844×390 | 844×390 | 844×390 | 844×390 | 25 | 0 | 0 |
 
 The sibling-worktree browser run records HeadlessChrome 153.0.0, Windows/Win32, DPR 1, WebGL 2, `contextLost=false`, and ANGLE Intel Iris Xe/D3D11. The canonical-worktree capture records HeadlessChrome 154.0.8037.99 on the same ANGLE renderer. Both are desktop browser-emulation runs, not physical-device or physical-GPU evidence. Captures include desktop, mobile, compact, landscape, scrolled compact HUD, modal focus return, fallback focus/contrast, four room camera presets, and desktop/mobile comparisons with the main reference.
@@ -54,5 +54,7 @@ The scoped `git diff --check` review reports trailing whitespace only in capture
 ## Limits
 
 The default full unit and integration commands retain the failures shown above; diagnostic reruns do not change those results. The domain pre-edit inventory was taken before the maker's domain edits; the final folder contains only `.env.example` as an environment file. It records preservation of `.accepted-source-stage` (241 files / 71 directories), `.next` (741 / 93), `node_modules` (37 top-level entries), and `test-results` (15 files / 1 directory). `scoped-source.patch` is the source diff. `SHA256SUMS.txt` contains 151 SHA-256 hashes over exact Git blob bytes; `verify-delivery-evidence.mjs` checks them against staged blobs before commit and can verify a commit after push. This avoids platform checkout line-ending conversions changing the hashes.
+
+At mobile widths, the HUD panels cover much of the room. Control reachability passes, but useful room visibility and discovery and complete reference fidelity remain unestablished; this limitation is tracked in `product-fidelity-follow-up.md`.
 
 Physical iPhone/iPad Safari, Android Chrome with TalkBack, Windows NVDA, VoiceOver with Safari, and the 10-minute mobile soak are **NOT RUN**. Deployment, public DNS/provider state, monitoring, rollback, and G7 acceptance were not performed. This maker report is not an independent audit or acceptance. **NOT DEPLOYED. G7 NOT ACCEPTED.**
