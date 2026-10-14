@@ -74,7 +74,7 @@ Portable Node 24.19.0 was used from `C:\Users\ayush\AppData\Local\Temp\yor-world
 - FAIL — focused recovery/fullscreen E2E after C13C, 24/26 across Chrome and Edge; `attempt-33/recovery-fullscreen-c13c-node2419.log`. The sole failing case on both engines is “Renderer failure with dialog open preserves dialog interactivity in DOM”: clicking the visible Projects link is intercepted by `.world-failure-container` (30-second default timeout). All other recovery/fullscreen checks pass. This pointer-interception failure remains explicit; no renderer/fallback policy or timeout was changed. The prior pre-C13C failure lane is preserved at `attempt-33/recovery-fullscreen-node2419.log`.
 - PASS — `git diff --cached --check -- app yorayriniwnl.in`; no source/mirror whitespace errors (checkout EOL warnings only). A whole staged-tree check reports trailing whitespace in raw captured browser/build logs; these historical evidence files are preserved byte-for-byte.
 - NOT RUN — physical-device verification.
-- NOT RUN — deployment, G7 acceptance, or independent acceptance (parent review remains pending).
+- NOT RUN — deployment or G7 acceptance. Parent review/delta audit is complete and classified this candidate NOT ACCEPTED because the chair seat remains occluded at 390×844.
 
 ## Visual review and remaining caveat
 
@@ -82,11 +82,12 @@ Raw closed-HUD screenshots and same-page measurements for desktop 1440×900, mob
 
 ## Evidence inventory
 
-Attempt-33 holds source-bound logs, screenshots, measurements, browser results, mirror verifier/install/build, CandidateX, smoke artifacts, and recovery/fullscreen traces. Earlier attempts remain append-only. `attempt-33/candidate-tree-hashes.json` binds the candidate source trees; a final sorted file-hash inventory is written at `attempt-33/evidence-file-hashes.json`; it includes this report and all attempt-33 artifacts, and excludes only itself.
+Attempt-33 holds source-bound logs, screenshots, measurements, browser results, mirror verifier/install/build, CandidateX, smoke artifacts, and recovery/fullscreen traces. Earlier attempts remain append-only. `attempt-33/candidate-tree-hashes.json` binds the candidate source trees. The SHA-256 inventory at `attempt-33/evidence-file-hashes.json` is generated from Git index/commit blob bytes by `attempt-33/hash-evidence-blobs.mjs`; it includes this report and the helper, excludes only itself, and is verified against the final evidence commit.
 
 ## Commit state
 
-Parent review/delta audit classified attempt-33 as NOT ACCEPTED because the chair seat remains occluded at 390×844. This evidence package records that failed checkpoint. The reported integration and pointer-interception failures remain explicit. No deployment or G7 acceptance is claimed.
+Source/evidence checkpoint commit: `f457776510b43267971721e6288e201ac904ff93`. `git push` exited 0; origin advanced from `ccb029c6` to `f4577765`. After that push, `git status -sb` showed the branch synchronized with origin and only these parent-owned packet files dirty: modified `docs/planning/reconciliation-packets/2026-10-14-pre-g7-13-anchor-articulation.md`, plus untracked `...pre-g7-13b-integration-regression-assertions.md`, `...pre-g7-13c-open-controls-in-browser-setups.md`, and `...pre-g7-13d-chair-seat-visibility.md`. They are excluded from the source/evidence commit. The restored PRE-G7-11 browser log was clean and excluded. Parent review/delta audit classified attempt-33 as NOT ACCEPTED because the chair seat remains occluded at 390×844. The reported integration and pointer-interception failures remain explicit; no deployment or G7 acceptance is claimed.
+
 
 
 
