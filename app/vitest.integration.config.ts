@@ -8,5 +8,5 @@ export default defineConfig({
       "@": path.resolve(import.meta.dirname ?? process.cwd(), "src"),
     },
   },
-  test: { include: ["tests/integration/**/*.test.ts"], environment: "node", passWithNoTests: false, testTimeout: 60_000, hookTimeout: 90_000 },
+  test: { include: ["tests/integration/**/*.test.ts"], environment: "node", passWithNoTests: false, fileParallelism: false, testTimeout: 60_000, hookTimeout: 90_000 },
 });
