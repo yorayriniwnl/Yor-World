@@ -50,6 +50,16 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
     plants.userData["referenceCompositionApplied"] = true;
   }
 
+  const shelfCamera = scene.getObjectByName("ai-real-camera");
+  if (shelfCamera && shelfCamera.userData["referenceCompositionApplied"] !== true) {
+    // The accepted GLB camera is authored on the far-left lower shelf and its
+    // meshes intersect that shelf. Move the named interaction group toward the
+    // upper-shelf lip and slightly forward of the board so its feet and body
+    // remain visible from both opening presets.
+    shelfCamera.position.set(0.7, 0.35, 0.18);
+    shelfCamera.userData["referenceCompositionApplied"] = true;
+  }
+
   const missingHexPanels: string[] = [];
   for (const name of HEX_PANEL_NAMES) {
     const panel = scene.getObjectByName(name);

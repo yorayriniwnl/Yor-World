@@ -205,6 +205,11 @@ test.describe("PRE-G7-12 reference composition and compact mobile controls", () 
     await page.keyboard.press("Escape");
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
     await expect(toggle).toBeFocused();
+
+    // The moved camera mesh remains underneath the frozen ai-real-camera
+    // interaction root; this point is within its visible desktop pixels.
+    await page.mouse.click(410, 110);
+    await expect(page).toHaveURL(/\/projects\/ai-vs-real\/?$/, { timeout: 15_000 });
   });
 
   test("starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape", async ({ page }) => {

@@ -3,7 +3,7 @@ import * as THREE from "three";
 import { applyReferenceComposition, measureProjectedBounds } from "../../src/features/world/ReferenceComposition";
 
 describe("reference room composition", () => {
-  it("moves the existing named interaction root, scales the seven light panels, and adds only the missing headset stand once", () => {
+  it("moves the named interaction roots, scales the seven light panels, and adds only the missing headset stand once", () => {
     const scene = new THREE.Group();
     const pegboard = new THREE.Group();
     pegboard.name = "pegboard_system";
@@ -15,6 +15,13 @@ describe("reference room composition", () => {
     const plants = new THREE.Group();
     plants.name = "plants";
     scene.add(plants);
+
+    const shelfCamera = new THREE.Group();
+    shelfCamera.name = "ai-real-camera";
+    const cameraMesh = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.06, 0.07), new THREE.MeshBasicMaterial());
+    cameraMesh.name = "ai_cam_chassis";
+    shelfCamera.add(cameraMesh);
+    scene.add(shelfCamera);
 
     const lights = new THREE.Group();
     lights.name = "essential_lights";
@@ -36,6 +43,9 @@ describe("reference room composition", () => {
     expect(second.headsetStandCreated).toBe(false);
     expect(pegboard.position.x).toBeCloseTo(3.0);
     expect(plants.position.x).toBeCloseTo(0.3);
+    expect(shelfCamera.position.toArray()).toEqual([0.7, 0.35, 0.18]);
+    expect(scene.getObjectByName("ai-real-camera")).toBe(shelfCamera);
+    expect(scene.getObjectByName("ai_cam_chassis")).toBe(cameraMesh);
     expect(scene.getObjectByName("peg_controller_body")).toBe(controller);
     expect(firstPanel.position.toArray()).toEqual(panelPosition.toArray());
     expect(firstPanel.scale.toArray()).toEqual(panelScale.toArray());
