@@ -18,6 +18,8 @@ export function entrancePositionAt(progress: number, isMobile = false): THREE.Ve
   const hallway = new THREE.Vector3(...CAMERA_PRESETS.hallway.position);
   const doorway = new THREE.Vector3(-1.2, 1.7, 1.5);
   const home = new THREE.Vector3(...CAMERA_PRESETS[isMobile ? "home-mobile" : "home-desktop"].position);
+  if (travel === 0) return hallway;
+  if (travel === 1) return home;
   return travel <= 0.65
     ? hallway.lerp(doorway, travel / 0.65)
     : doorway.lerp(home, (travel - 0.65) / 0.35);

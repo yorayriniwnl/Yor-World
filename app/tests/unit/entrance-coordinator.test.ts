@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import * as THREE from "three";
-import { EntranceCoordinator } from "../../src/features/world/EntranceCoordinator";
-import { CameraDirector } from "../../src/features/world/CameraDirector";
+import { EntranceCoordinator, entrancePositionAt } from "../../src/features/world/EntranceCoordinator";
+import { CameraDirector, CAMERA_PRESETS } from "../../src/features/world/CameraDirector";
 import { CharacterDirector } from "../../src/features/world/CharacterDirector";
 
 describe("EntranceCoordinator - Single Active Entrance and Bounded Duration", () => {
@@ -118,5 +118,18 @@ describe("EntranceCoordinator - Single Active Entrance and Bounded Duration", ()
 
     coordinator.skip();
     await p;
+  });
+
+  it.each([
+    ["desktop", false, "home-desktop"],
+    ["mobile", true, "home-mobile"],
+  ] as const)("returns exact %s endpoints and clamps out-of-range progress", (_device, isMobile, homePreset) => {
+    const hallwayPosition = CAMERA_PRESETS.hallway.position;
+    const homePosition = CAMERA_PRESETS[homePreset].position;
+
+    expect(entrancePositionAt(0, isMobile).toArray()).toEqual(hallwayPosition);
+    expect(entrancePositionAt(1, isMobile).toArray()).toEqual(homePosition);
+    expect(entrancePositionAt(-1, isMobile).toArray()).toEqual(hallwayPosition);
+    expect(entrancePositionAt(2, isMobile).toArray()).toEqual(homePosition);
   });
 });
