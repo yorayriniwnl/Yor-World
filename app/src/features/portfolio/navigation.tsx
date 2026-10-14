@@ -14,7 +14,7 @@ export function Navigation() {
     <header className={styles.header}>
       <Link href="/" prefetch={false} className={styles.brand} aria-label="Yor World home">
         <span className={styles.brandMark} aria-hidden="true">Y</span>
-        <span>YOR WORLD<span className={styles.brandSub}>A studio in progress</span></span>
+        <span>YOR WORLD<span className={styles.brandSub}>Code, craft & curiosity</span></span>
       </Link>
       <nav aria-label="Primary navigation">
         <ul className={styles.navList}>

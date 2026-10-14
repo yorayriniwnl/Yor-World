@@ -153,18 +153,53 @@ jobs:
           set -o pipefail
           node scripts/release/check-performance-budgets.mjs --benchmark-dir .rc6-ci/performance --output .rc6-ci/budget-validation-receipt.json | tee .rc6-ci/12-budget-regression.log
 
-      - name: 13. Exact committed RC6 manifest/archive validation
+      - name: 13. Exact-source editorial candidate and strict manifest validation
         shell: bash
+        env:
+          YOR_RELEASE_POLICY: scripts/release/rc6-editorial-policy.json
         run: |
           set -o pipefail
-          node scripts/release/validate-release.mjs --strict --receipt "$RC6_DELIVERY_ROOT/ci-release-manifest-validation.receipt.json" | tee .rc6-ci/13-release-manifest-validation.log
-          cp "$RC6_DELIVERY_ROOT/ci-release-manifest-validation.receipt.json" .rc6-ci/release-manifest-validation.receipt.json
+          # The accepted R6 manifest is immutable. This runner creates an
+          # independent successor from the EXACT checked-out CI source.
+          # It repeats every proof in a detached, initially empty worktree.
+          python3 deliveries/G7/preparation/tools/candidate-driver.py \
+            --repository "$GITHUB_WORKSPACE" \
+            --checkout "$RUNNER_TEMP/yorworld-editorial-proof" \
+            --source "$(git rev-parse HEAD)" \
+            --policy "$YOR_RELEASE_POLICY" \
+            --client-date "$(TZ=Asia/Kolkata date +%F)" \
+            --authorized-production-path 'app/src/app/(public)/page.tsx' \
+            --authorized-production-path 'app/src/app/api/contact/route.ts' \
+            --authorized-production-path 'app/src/app/api/health/route.ts' \
+            --authorized-production-path 'app/src/app/layout.tsx' \
+            --authorized-production-path 'app/src/features/portfolio/accessibility-controls.tsx' \
+            --authorized-production-path 'app/src/features/portfolio/navigation.tsx' \
+            --authorized-production-path 'app/src/features/portfolio/portfolio.module.css' \
+          --authorized-production-path 'app/src/features/portfolio/ProjectVisual.tsx' \
+          --authorized-production-path 'app/src/features/portfolio/StudioSceneIllustration.tsx' \
+          --authorized-production-path 'app/src/features/portfolio/home-refined.module.css' \
+            --authorized-production-path 'app/src/features/portfolio/skills-atlas.tsx' \
+            --authorized-production-path 'app/src/features/world/StudioLauncher.tsx' \
+            --authorized-production-path 'app/src/features/world/WorldRoot.tsx' \
+            --authorized-production-path 'app/src/features/world/WorldRuntime.ts' \
+            --authorized-production-path 'app/src/features/world/device-capabilities.ts' \
+            --authorized-production-path 'app/src/features/world/world.module.css' \
+            --authorized-production-path 'app/src/proxy.ts' \
+            --authorized-production-path 'app/src/security/policy.ts' \
+            --authorized-production-path 'app/src/server/contact/client-network.ts' \
+            --authorized-production-path 'app/src/server/health.ts' \
+            --authorized-production-path 'app/src/styles/tokens.css' \
+            --phase all | tee .rc6-ci/13-editorial-source-validation.log
+          test -s deliveries/G7/rc6-editorial-r1/primary-release-manifest-validation.receipt.json
+          node -e 'const fs=require("fs"); const r=JSON.parse(fs.readFileSync("deliveries/G7/rc6-editorial-r1/primary-release-manifest-validation.receipt.json")); if(r.overallStatus!=="PASS") process.exit(1); console.log("PASS exact-source editorial candidate: "+r.sourceCommit)'
 
       - name: Upload fresh CI execution evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: rc6-quality-${{ github.sha }}
-          path: .rc6-ci/
+          path: |
+            .rc6-ci/
+            deliveries/G7/rc6-editorial-r1/
           include-hidden-files: true
           retention-days: 14

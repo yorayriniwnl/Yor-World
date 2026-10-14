@@ -157,9 +157,16 @@ test.describe("C3 Failure Recovery, Context Loss & Mobile Resilience", () => {
 
     const reducedMotion = page.getByTestId("toggle-reduced-motion-btn");
     await expect(reducedMotion).toHaveAttribute("aria-checked", "true");
-    await reducedMotion.click();
-    await expect(reducedMotion).toHaveAttribute("aria-checked", "false");
-    await page.getByTestId("a11y-link-projects").click();
+    // SwiftShader can keep recomputing element stability while rendering.
+    // Dispatch a real pointer click at the observed control center instead
+    // of waiting for Playwright's auto-actionability loop to settle.
+    const bounds = await reducedMotion.boundingBox();
+    expect(bounds).not.toBeNull();
+    if (!bounds) throw new Error("Reduced-motion control has no clickable layout box");
+    await page.mouse.click(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+    await expect(reducedMotion).toHaveAttribute("aria-checked", "false", { timeout: 12000 });
+    // Verify the in-world accessible route while the native fullscreen modal is active.
+    await page.getByTestId("studio-projects-link").click();
     await expect(page).toHaveURL(/\/projects$/);
     await expect(page.locator("canvas")).toHaveCount(0);
     await saveEvidence(info, "toolbar-pointer-controls.json", { pointerQualityControlReached: true, appliedTier: "medium", pointerReducedMotionToggleApplied: true, pointerProjectsNavigationApplied: true });
@@ -196,9 +203,9 @@ test.describe("C3 Failure Recovery, Context Loss & Mobile Resilience", () => {
     await expect(failureContainer).toBeVisible({ timeout: 10000 });
 
     // Public links (Projects, About) must remain reachable
-    const projectsLink = page.locator('[data-testid="fallback-projects-link"], a[href="/projects"]');
-    await expect(projectsLink.first()).toBeVisible();
-    await projectsLink.first().click();
+    const projectsLink = page.getByTestId("studio-projects-link");
+    await expect(projectsLink).toBeVisible();
+    await projectsLink.click();
 
     await expect(page).toHaveURL(/\/projects/);
     await saveEvidence(info, "renderer-failure-dialog-safe.json", {

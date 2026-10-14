@@ -277,8 +277,10 @@ test.describe("C3 Performance Benchmarks & Budget Verification", () => {
       const oldCanvas = await canvas.elementHandle();
       if (!oldCanvas) throw new Error("Missing active production canvas.");
 
-      // SPA navigation retains the old canvas's execution context for teardown proof.
-      await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("link", { name: "Projects", exact: true }).click();
+      // The native fullscreen dialog makes the background navigation inert.
+      // Use the in-studio route so the test exercises the real exit flow and
+      // still retains the old canvas handle for context-loss/teardown proof.
+      await page.getByTestId("studio-projects-link").click();
       await expect(page).toHaveURL(/\/projects$/);
       await expect(page.locator("h1")).toBeVisible();
 

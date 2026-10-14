@@ -4,7 +4,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const routes = [
-  ["/", "A little world."], ["/projects", "Projects"], ["/about", "About"],
+  ["/", "Full-stack"], ["/projects", "Projects"], ["/about", "About"],
   ["/contact", "Contact"], ["/resume", "Résumé"],
 ] as const;
 const worldPattern = /\.(?:glb|gltf|ktx2?|basis|wasm|mp3|ogg|wav)(?:\?|$)|\/(?:world|assets-runtime|draco|basis|api)(?:\/|\?|$)/i;
@@ -66,8 +66,8 @@ test("direct loads, refreshes, route headings, honest empty states and 404", asy
     statuses.push({ route, direct: response?.status(), refresh: 200 });
   }
   await page.goto("/");
-  await expect(page.getByText("Verified identity", { exact: true })).toBeVisible();
-  await expect(page.getByText("Building realtime systems, 3D product interfaces, and applied ML.")).toBeVisible();
+  await expect(page.getByText("Independent developer & engineer", { exact: true })).toBeVisible();
+  await expect(page.getByTestId("studio-direct-entry")).toBeVisible();
   await page.goto("/projects");
   await expect(page.getByText(/verified projects published/i)).toBeVisible();
   await expect(page.locator('a[href^="/projects/"]')).toHaveCount(4);
@@ -95,7 +95,7 @@ test("keyboard skip link and all primary destinations work without pointer input
   await page.keyboard.press("Enter");
   await expect(page.getByRole("main")).toBeFocused();
   await page.keyboard.press("Tab");
-  await expect(page.getByRole("link", { name: "View projects" })).toBeFocused();
+  await expect(page.locator('main a[href="/projects"]').first()).toBeFocused();
   for (const [index, label] of ["Projects", "About", "Contact", "Résumé"].entries()) {
     await page.goto("/");
     // Skip link, home brand, then the four persistent native links.
@@ -108,7 +108,7 @@ test("keyboard skip link and all primary destinations work without pointer input
     await page.keyboard.press("Enter");
     await expect(page.getByRole("main").getByRole("heading", { level: 1 })).toHaveText(label);
   }
-  await save(info, "keyboard.json", { skipFocus: "main-content", firstContentLink: "View projects", sequence });
+  await save(info, "keyboard.json", { skipFocus: "main-content", firstContentLink: "Primary projects CTA", sequence });
 });
 
 test("useful HTML and native navigation remain with JavaScript disabled", async ({ browser, baseURL }, info) => {
@@ -129,7 +129,7 @@ test("useful HTML and native navigation remain with JavaScript disabled", async 
     await page.keyboard.press("Enter");
     await expect(page.getByRole("main")).toBeFocused();
     await page.locator("summary").click();
-    await expect(page.getByText("The studio is not yet available.", { exact: true })).toBeVisible();
+    await expect(page.getByText("The door is ready. Step into the bright interactive studio, meet the resident at the workstation, and explore the objects.", { exact: true })).toBeVisible();
     await screenshot(page, info, "javascript-disabled");
     await page.getByRole("navigation").getByRole("link", { name: "Contact", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Send a Message" })).toBeVisible();
@@ -178,7 +178,7 @@ test("world and backend requests blocked; entry reports unavailable; sound and W
   await page.locator("summary").focus();
   await page.keyboard.press("Enter");
   await expect(page.locator("details")).toHaveAttribute("open", "");
-  await expect(page.getByText("The studio is not yet available.", { exact: true })).toBeVisible();
+  await expect(page.getByText("The door is ready. Step into the bright interactive studio, meet the resident at the workstation, and explore the objects.", { exact: true })).toBeVisible();
   await page.waitForLoadState("networkidle");
   const probe = await page.evaluate(() => (window as unknown as { __w3Probe: object }).__w3Probe);
   expect(probe).toEqual({ webgl: 0, audioContexts: 0, mediaPlay: 0 });
