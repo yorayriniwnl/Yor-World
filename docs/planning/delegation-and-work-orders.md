@@ -18,6 +18,8 @@ Accepted RC5 / [G6-R1](reviews/2026-10-06-g6-r1.md) remains immutable, including
 
 [PRE-G7-08](reconciliation-packets/2026-10-07-pre-g7-08.md) corrects output identity guards. Compatible incoming R5 is retained; [PRE-G7-09](reconciliation-packets/2026-10-08-pre-g7-09.md) completes independently confirmed residuals in a new R6 binding. No preserved proof is relabeled as validation of later source.
 
+[PRE-G7-10-R1](reviews/2026-10-14-pre-g7-10-runtime-acceptance.md) is accepted as a narrow runtime repair. [PRE-G7-11-R1](reviews/2026-10-14-pre-g7-11-fullscreen-domain-acceptance.md) is accepted for fullscreen mechanics, fallback contrast, and the local `yorayriniwnl.in/` source binding. Its visual-fidelity gap remains open: the selected room views do not establish the main-reference anchors, and mobile HUD coverage limits room discovery. A separate bounded art/scene packet is required before claiming visual completion. The local delivery has not been deployed; G7 remains authorized/preparation and not accepted.
+
 Read [current pre-G7 requirements](../operations/pre-g7-prerequisites.md) and the [RC6 dossier](../releases/v1.0.0-rc6.md). Parent continues authorized independent work and obtains missing service/device inputs. No mock, local fixture, emulation, liveness-only response or private preview substitutes for a mandatory production criterion.
 
 ## One specification and a small shared baseline
