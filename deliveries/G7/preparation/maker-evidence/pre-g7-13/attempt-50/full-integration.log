@@ -1,0 +1,60 @@
+npm warn Unknown project config "strict-peer-dependencies". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> yor-world@1.0.0-rc6 test:integration C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-13\app
+> vitest run --config vitest.integration.config.ts
+
+
+ RUN  v5.0.2 C:/Users/ayush/COddexxxxxxxxxxxxxxxx/_worktrees/pre-g7-13/app
+
+ ❯ tests/integration/production-camera.test.ts (5 tests | 1 failed) 1794ms
+   ❯ Production room camera integration (5)
+     × the actual true-mobile entrance clears every static wall and doorframe 799ms
+ ❯ tests/integration/platform/canonical-fixture.test.ts (1 test | 1 failed) 143271ms
+   ❯ Explicit browser fixture connection ownership across Next route bundles (1)
+     × initializes the same file database once across independently loaded route modules 143258ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/production-camera.test.ts > Production room camera integration > the actual true-mobile entrance clears every static wall and doorframe
+AssertionError: expected [ 0.30000000000000004, 2.22, 1.43 ] to deeply equal [ 0.3, 2.22, 1.43 ]
+
+- Expected
++ Received
+
+  [
+-   0.3,
++   0.30000000000000004,
+    2.22,
+    1.43,
+  ]
+
+ ❯ tests/integration/production-camera.test.ts:174:55
+    172|     expect(camera.position.toArray()).toEqual(CAMERA_PRESETS[isMobile …
+    173|     expect(entrancePositionAt(0, isMobile).toArray()).toEqual(position…
+    174|     expect(entrancePositionAt(1, isMobile).toArray()).toEqual(camera.p…
+       |                                                       ^
+    175|     expect(entrance.getDiagnostics().phase).toBe("settled");
+    176|     entrance.dispose();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/integration/platform/canonical-fixture.test.ts > Explicit browser fixture connection ownership across Next route bundles > initializes the same file database once across independently loaded route modules
+Error: Test timed out in 60000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/platform/canonical-fixture.test.ts:10:3
+      8|   afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); });
+      9|
+     10|   it("initializes the same file database once across independently loa…
+       |   ^
+     11|     const directory = await mkdtemp(path.join(os.tmpdir(), "yor-rc3-fi…
+     12|     vi.stubEnv("YOR_E2E_FIXTURE", "1");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 25 passed (27)
+      Tests  2 failed | 284 passed (286)
+   Start at  19:40:42
+   Duration  145.53s (tests 73%, import 22%, transform 5%)
+
+ ELIFECYCLE  Command failed with exit code 1.
