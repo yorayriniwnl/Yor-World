@@ -110,10 +110,10 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
   // crossed the right speaker and covered the resident's torso.
   // Move the resident slightly forward while keeping the monitor/worktop clear.
   const actorShift = new THREE.Vector3(0.4, 0, -1.15);
-  // Place the existing chair groups at the measured workstation position and
-  // preserve the 0.15-unit X offset between the root and base.
+  // Tune the existing seat from its base-anchored bottom; keep the caster
+  // base 0.15m behind the seat to fit it in the desktop frame.
   const chairRootShift = new THREE.Vector3(0.05, 0, -0.735);
-  const chairBaseShift = new THREE.Vector3(0.2, 0, -0.735);
+  const chairBaseShift = new THREE.Vector3(0.2, 0, -0.885);
   const chairYawAdjustment = THREE.MathUtils.degToRad(18);
   for (const name of ["chair-root", "chair-base"]) {
     const chairPart = scene.getObjectByName(name);
@@ -129,7 +129,7 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
         scene.updateMatrixWorld(true);
         const boundsBeforeScale = new THREE.Box3().setFromObject(chairPart);
         const bottomBeforeScale = boundsBeforeScale.isEmpty() ? undefined : boundsBeforeScale.min.y;
-        chairPart.scale.set(0.55, 0.8, 0.55);
+        chairPart.scale.set(0.55, 0.95, 0.55);
         scene.updateMatrixWorld(true);
         if (bottomBeforeScale !== undefined) {
           const boundsAfterScale = new THREE.Box3().setFromObject(chairPart);
@@ -137,7 +137,7 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
             translateObjectWorld(chairPart, new THREE.Vector3(0, bottomBeforeScale - boundsAfterScale.min.y, 0));
           }
         }
-        chairPart.userData["referenceChairScale"] = [0.55, 0.8, 0.55];
+        chairPart.userData["referenceChairScale"] = [0.55, 0.95, 0.55];
         chairPart.userData["referenceChairBottomAnchored"] = bottomBeforeScale !== undefined;
       }
       if (name === "chair-base") {
