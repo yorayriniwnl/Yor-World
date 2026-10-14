@@ -1,0 +1,973 @@
+diff --git a/app/src/features/world/CameraDirector.ts b/app/src/features/world/CameraDirector.ts
+index a8bb885a..28e78ef7 100644
+--- a/app/src/features/world/CameraDirector.ts
++++ b/app/src/features/world/CameraDirector.ts
+@@ -3,16 +3,17 @@ import type { CameraConfig, CameraPreset } from "./types";
+ 
+ export const CAMERA_PRESETS: Record<CameraPreset, CameraConfig> = {
+   "home-desktop": {
+-    // The frozen production room's left wall occupies x=-2.20..-2.10.
+-    // C3's blockout camera at -2.15 was inside that wall.
+-    position: [-1.9, 1.7, 1.55],
+-    target: [0.12, 1.25, -1.15],
+-    fov: 60,
++    // Near-frontal framing keeps the workstation props separated and in view.
++    position: [-0.45, 1.85, 1.3],
++    target: [0.0, 1.27, -1.22],
++    fov: 48,
+   },
+   "home-mobile": {
+-    position: [-1.25, 1.48, 1.15],
+-    target: [0.16, 1.08, -0.95],
+-    fov: 52,
++    // Keep the camera inside the room and near-frontal so the narrow portrait
++    // frustum retains the desk, rear-wall lights, and right-side PC grouping.
++    position: [-0.55, 1.55, 1.45],
++    target: [0.0, 1.1, -1.2],
++    fov: 100,
+   },
+   monitor: {
+     position: [0.0, 1.08, -0.5],
+diff --git a/app/src/features/world/ProductionLighting.ts b/app/src/features/world/ProductionLighting.ts
+index 0e30df6a..e832e9cf 100644
+--- a/app/src/features/world/ProductionLighting.ts
++++ b/app/src/features/world/ProductionLighting.ts
+@@ -3,9 +3,9 @@ import * as THREE from "three";
+ // Bounded browser values from the historical production parity viewer. This is
+ // a runtime integration calibration, not a claimed conversion of glTF units.
+ export const PRODUCTION_LIGHT_INTENSITIES: Readonly<Record<string, number>> = {
+-  Light_CeilingAmbient: 1.2,
+-  Light_CyanFill: 1.8,
+-  Light_HexWall: 2.2,
++  Light_CeilingAmbient: 0.25,
++  Light_CyanFill: 2.0,
++  Light_HexWall: 0.5,
+   Light_TaskDownlight: 2.5,
+ };
+ 
+diff --git a/app/src/features/world/ReferenceComposition.ts b/app/src/features/world/ReferenceComposition.ts
+new file mode 100644
+index 00000000..6a87d195
+--- /dev/null
++++ b/app/src/features/world/ReferenceComposition.ts
+@@ -0,0 +1,172 @@
++import * as THREE from "three";
++
++const HEX_PANEL_NAMES = [
++  "hex_panel_1",
++  "hex_panel_2",
++  "hex_panel_3",
++  "hex_panel_4",
++  "hex_panel_5",
++  "hex_panel_6",
++  "hex_panel_7",
++] as const;
++
++export interface ReferenceCompositionResult {
++  movedNode: string;
++  headsetStandCreated: boolean;
++  missingHexPanels: string[];
++}
++
++export interface PixelBounds {
++  left: number;
++  top: number;
++  right: number;
++  bottom: number;
++  width: number;
++  height: number;
++  visibleAreaRatio: number;
++}
++
++/**
++ * Apply the reference-specific arrangement to the frozen production scene.
++ * Existing named target nodes are moved in place, preserving name based
++ * interaction lookup and every descendant mesh/animation binding.
++ */
++export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompositionResult {
++  const pegboard = scene.getObjectByName("pegboard_system");
++  const hasAnyHexPanel = HEX_PANEL_NAMES.some((name) => Boolean(scene.getObjectByName(name)));
++  // Small unit fixtures intentionally do not include the production GLB.
++  if (!pegboard && !hasAnyHexPanel) {
++    return { movedNode: "none (non-production fixture)", headsetStandCreated: false, missingHexPanels: [] };
++  }
++  if (!pegboard) throw new Error("Reference composition requires the named pegboard_system group");
++  if (pegboard.userData["referenceCompositionApplied"] !== true) {
++    pegboard.position.x = 3.0;
++    pegboard.userData["referenceCompositionApplied"] = true;
++  }
++
++  const plants = scene.getObjectByName("plants");
++  if (plants && plants.userData["referenceCompositionApplied"] !== true) {
++    plants.position.x = 0.3;
++    plants.userData["referenceCompositionApplied"] = true;
++  }
++
++  const shelfCamera = scene.getObjectByName("ai-real-camera");
++  if (shelfCamera && shelfCamera.userData["referenceCompositionApplied"] !== true) {
++    // The accepted GLB camera is authored on the far-left lower shelf and its
++    // meshes intersect that shelf. Move the named interaction group toward the
++    // upper-shelf lip and slightly forward of the board so its feet and body
++    // remain visible from both opening presets.
++    shelfCamera.position.set(0.7, 0.35, 0.18);
++    shelfCamera.userData["referenceCompositionApplied"] = true;
++  }
++
++  const missingHexPanels: string[] = [];
++  for (const name of HEX_PANEL_NAMES) {
++    const panel = scene.getObjectByName(name);
++    if (!panel) {
++      missingHexPanels.push(name);
++      continue;
++    }
++    if (panel.userData["referenceCompositionApplied"] === true) continue;
++
++    // Keep the authored seven-panel diamond silhouette while giving it the
++    // wall scale shown in the supplied reference. Move the flat panels just
++    // forward of the upper shelf so its board cannot occlude their glow.
++    panel.position.x *= 2.4;
++    panel.position.y = 2.10 + (panel.position.y - 1.82) * 1.1;
++    panel.position.z += 0.16;
++    panel.scale.set(2.7, 2.7, 1);
++    panel.userData["referenceCompositionApplied"] = true;
++  }
++
++  if (missingHexPanels.length) {
++    throw new Error(`Reference composition is missing hex panels: ${missingHexPanels.join(", ")}`);
++  }
++
++  const headsetStandCreated = addHeadsetStand(scene);
++  scene.updateMatrixWorld(true);
++  return { movedNode: pegboard.name, headsetStandCreated, missingHexPanels };
++}
++
++function addHeadsetStand(scene: THREE.Object3D): boolean {
++  if (scene.getObjectByName("headset-stand-code-native")) return false;
++
++  const stand = new THREE.Group();
++  stand.name = "headset-stand-code-native";
++  stand.position.set(1.38, 0, -0.83);
++  stand.userData["source"] = "PRE-G7-12 code-native secondary headset stand; GLB inventory confirmed no headset stand node";
++
++  const material = new THREE.MeshStandardMaterial({
++    color: new THREE.Color("#c6c7d5"),
++    metalness: 0.18,
++    roughness: 0.46,
++  });
++  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.068, 0.078, 0.018, 20), material);
++  base.name = "headset-stand-base";
++  base.position.y = 0.765;
++
++  const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.019, 0.19, 12), material);
++  stem.name = "headset-stand-stem";
++  stem.position.y = 0.868;
++
++  const cradle = new THREE.Mesh(new THREE.BoxGeometry(0.19, 0.035, 0.055), material);
++  cradle.name = "headset-stand-cradle";
++  cradle.position.y = 0.976;
++
++  for (const mesh of [base, stem, cradle]) {
++    mesh.castShadow = true;
++    mesh.receiveShadow = true;
++    stand.add(mesh);
++  }
++  scene.add(stand);
++  return true;
++}
++
++/** Project a world-space object box into CSS-pixel coordinates and report the
++ * fraction of its projected rectangle inside the viewport. */
++export function measureProjectedBounds(
++  object: THREE.Object3D,
++  camera: THREE.PerspectiveCamera,
++  viewport: { width: number; height: number },
++): PixelBounds | null {
++  if (viewport.width <= 0 || viewport.height <= 0) return null;
++  object.updateWorldMatrix(true, true);
++  camera.updateMatrixWorld(true);
++  camera.updateProjectionMatrix();
++
++  const bounds = new THREE.Box3().setFromObject(object);
++  if (bounds.isEmpty()) return null;
++  const points: THREE.Vector3[] = [];
++  for (let mask = 0; mask < 8; mask += 1) {
++    points.push(new THREE.Vector3(
++      mask & 1 ? bounds.max.x : bounds.min.x,
++      mask & 2 ? bounds.max.y : bounds.min.y,
++      mask & 4 ? bounds.max.z : bounds.min.z,
++    ));
++  }
++
++  const projected = points
++    .map((point) => point.project(camera))
++    .filter((point) => point.z >= -1 && point.z <= 1);
++  if (!projected.length) return null;
++
++  const left = (Math.min(...projected.map((point) => point.x)) + 1) * viewport.width / 2;
++  const right = (Math.max(...projected.map((point) => point.x)) + 1) * viewport.width / 2;
++  const top = (1 - Math.max(...projected.map((point) => point.y))) * viewport.height / 2;
++  const bottom = (1 - Math.min(...projected.map((point) => point.y))) * viewport.height / 2;
++  const width = Math.max(0, right - left);
++  const height = Math.max(0, bottom - top);
++  const fullArea = width * height;
++  const visibleWidth = Math.max(0, Math.min(viewport.width, right) - Math.max(0, left));
++  const visibleHeight = Math.max(0, Math.min(viewport.height, bottom) - Math.max(0, top));
++
++  return {
++    left,
++    top,
++    right,
++    bottom,
++    width,
++    height,
++    visibleAreaRatio: fullArea > 0 ? (visibleWidth * visibleHeight) / fullArea : 0,
++  };
++}
+diff --git a/app/src/features/world/SceneIntegrator.ts b/app/src/features/world/SceneIntegrator.ts
+index ba9729da..4ebba753 100644
+--- a/app/src/features/world/SceneIntegrator.ts
++++ b/app/src/features/world/SceneIntegrator.ts
+@@ -1,5 +1,6 @@
+ import * as THREE from "three";
+ import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
++import { applyReferenceComposition } from "./ReferenceComposition";
+ 
+ export interface IntegratedSceneResult {
+   scene: THREE.Group;
+@@ -120,6 +121,10 @@ export function integrateScene(
+   avatarScene.scale.set(1, 1, 1);
+   rootGroup.add(avatarScene);
+ 
++  // Preserve the frozen GLB bytes while correcting the visual arrangement at
++  // the integration boundary. Named roots stay intact for raycast bindings.
++  applyReferenceComposition(rootGroup);
++
+   // 4. Verification and Node Count Auditing
+   let residentCount = 0;
+   let chairRootCount = 0;
+diff --git a/app/src/features/world/WorldRoot.tsx b/app/src/features/world/WorldRoot.tsx
+index 207a205c..87207eb5 100644
+--- a/app/src/features/world/WorldRoot.tsx
++++ b/app/src/features/world/WorldRoot.tsx
+@@ -61,6 +61,10 @@ export default function WorldRoot({
+   const [showLauncher, setShowLauncher] = useState<boolean>(false);
+   const [showReplay, setShowReplay] = useState(false);
+   const [experienceController, setExperienceController] = useState<ExperienceController | null>(null);
++  const [studioControlsOpen, setStudioControlsOpen] = useState(false);
++  const studioControlsToggleRef = useRef<HTMLButtonElement | null>(null);
++  const diagnosticsToggleRef = useRef<HTMLButtonElement | null>(null);
++  const focusControlsOnOpenRef = useRef(false);
+   const [reducedMotion, setReducedMotion] = useState<boolean>(() => {
+     return (
+       typeof window !== "undefined" &&
+@@ -73,6 +77,44 @@ export default function WorldRoot({
+   const initialReducedMotionRef = useRef(reducedMotion);
+   const runtimeUnavailable = effectiveTier === "static" || lifecycleState === "FAILURE" || error !== null;
+ 
++  useEffect(() => {
++    if (!studioControlsOpen || !focusControlsOnOpenRef.current) return;
++    focusControlsOnOpenRef.current = false;
++    const frame = window.requestAnimationFrame(() => {
++      document.querySelector<HTMLSelectElement>("#studio-controls-panel [data-testid='quality-tier-select']")?.focus();
++    });
++    return () => window.cancelAnimationFrame(frame);
++  }, [studioControlsOpen]);
++
++  useEffect(() => {
++    if (!studioControlsOpen || showRoomControls || showLauncher || showReplay) return;
++    const closeDrawerBeforeDialog = (event: KeyboardEvent) => {
++      if (event.key !== "Escape") return;
++      event.preventDefault();
++      event.stopPropagation();
++      event.stopImmediatePropagation();
++      if (showDiagnostics) {
++        setShowDiagnostics(false);
++        window.requestAnimationFrame(() => diagnosticsToggleRef.current?.focus({ preventScroll: true }));
++        return;
++      }
++      setStudioControlsOpen(false);
++      window.requestAnimationFrame(() => studioControlsToggleRef.current?.focus({ preventScroll: true }));
++    };
++    document.addEventListener("keydown", closeDrawerBeforeDialog, true);
++    return () => document.removeEventListener("keydown", closeDrawerBeforeDialog, true);
++  }, [showDiagnostics, showLauncher, showReplay, showRoomControls, studioControlsOpen]);
++
++  const handleStudioControlsToggle = useCallback(() => {
++    if (studioControlsOpen) {
++      setStudioControlsOpen(false);
++      studioControlsToggleRef.current?.focus({ preventScroll: true });
++      return;
++    }
++    focusControlsOnOpenRef.current = true;
++    setStudioControlsOpen(true);
++  }, [studioControlsOpen]);
++
+   // Initialize runtime and lifecycle manager
+   useEffect(() => {
+     if (runtimeUnavailable || !canvasRef.current) return;
+@@ -140,6 +182,7 @@ export default function WorldRoot({
+       simulateRendererError,
+       onReady: (diag) => {
+         setDiagnostics(diag);
++        setActiveCamera(diag.cameraPreset);
+       },
+       onError: (err) => {
+         setError(err.message);
+@@ -165,7 +208,12 @@ export default function WorldRoot({
+       }
+     });
+ 
+-    const handleResize = () => runtime.resize();
++    const handleResize = () => {
++      runtime.resize();
++      const nextDiagnostics = runtime.getDiagnostics();
++      setActiveCamera(nextDiagnostics.cameraPreset);
++      setDiagnostics(nextDiagnostics);
++    };
+     const handleKeyDown = (e: KeyboardEvent) => {
+       if (e.key === "Escape") {
+         if (isFullscreen) return;
+@@ -343,7 +391,8 @@ export default function WorldRoot({
+     setShowLauncher(false);
+     setShowReplay(false);
+     setShowDiagnostics(false);
+-    setActiveCamera("home-desktop");
++    setActiveCamera(window.innerWidth < 640 ? "home-mobile" : "home-desktop");
++    setStudioControlsOpen(window.innerWidth > 640 && window.innerHeight > 480);
+     setRuntimeGeneration((generation) => generation + 1);
+   }, [effectiveTier, error, lifecycleState, reducedMotion]);
+ 
+@@ -432,12 +481,25 @@ export default function WorldRoot({
+ 
+   return (
+     <div
+-      className={`${styles.stageContainer} ${isFullscreen ? styles.fullscreenStage : ""}`}
++      className={`${styles.stageContainer} ${isFullscreen ? styles.fullscreenStage : ""} ${studioControlsOpen ? styles.studioControlsOpen : styles.studioControlsClosed}`}
+       data-testid="world-stage-container"
+       data-lifecycle-state={lifecycleState}
++      data-studio-controls-open={studioControlsOpen}
+       role="region"
+       aria-label="Interactive 3D Studio"
+     >
++      <button
++        ref={studioControlsToggleRef}
++        type="button"
++        className={styles.studioControlsToggle}
++        data-testid="studio-controls-toggle"
++        aria-controls="studio-controls-panel"
++        aria-expanded={studioControlsOpen}
++        aria-label={studioControlsOpen ? "Close studio controls" : "Open studio controls"}
++        onClick={handleStudioControlsToggle}
++      >
++        {studioControlsOpen ? "Close controls" : "Studio controls"}
++      </button>
+       <canvas
+         ref={canvasRef}
+         className={styles.canvas}
+@@ -498,7 +560,7 @@ export default function WorldRoot({
+       )}
+ 
+       {/* Standard World HUD Overlay */}
+-      <div className={styles.hudOverlay}>
++      <div id="studio-controls-panel" className={styles.hudOverlay} role="region" aria-label="Studio controls">
+         <div className={styles.accessibilityControls}>
+           <AccessibilityControls
+             currentTier={qualityPreference}
+@@ -628,6 +690,7 @@ export default function WorldRoot({
+               </span>
+             )}
+             <button
++              ref={diagnosticsToggleRef}
+               type="button"
+               onClick={() => setShowDiagnostics((prev) => !prev)}
+               className={styles.hudButton}
+diff --git a/app/src/features/world/world.module.css b/app/src/features/world/world.module.css
+index 3203212a..1564deeb 100644
+--- a/app/src/features/world/world.module.css
++++ b/app/src/features/world/world.module.css
+@@ -104,6 +104,41 @@
+   height: 100%;
+ }
+ 
++.studioControlsToggle {
++  display: inline-flex;
++  position: absolute;
++  z-index: 40;
++  top: max(0.5rem, env(safe-area-inset-top));
++  right: max(0.5rem, env(safe-area-inset-right));
++  min-width: 44px;
++  min-height: 44px;
++  align-items: center;
++  justify-content: center;
++  padding: 0.55rem 0.8rem;
++  color: #ffffff;
++  font: inherit;
++  font-size: 0.875rem;
++  font-weight: 600;
++  background: rgba(12, 16, 23, 0.96);
++  border: 1px solid rgba(255, 255, 255, 0.34);
++  border-radius: 999px;
++  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
++  cursor: pointer;
++}
++
++.studioControlsToggle:focus-visible {
++  outline: 3px solid #78e4ff;
++  outline-offset: 2px;
++}
++
++.studioControlsClosed .studioControlsToggle {
++  display: inline-flex;
++}
++
++.studioControlsClosed .hudOverlay {
++  display: none;
++}
++
+ .hudOverlay {
+   position: absolute;
+   top: 1rem;
+@@ -316,6 +351,43 @@
+     gap: 0.45rem;
+   }
+ 
++  .studioControlsToggle {
++    display: inline-flex;
++  }
++
++  .studioControlsClosed .hudOverlay {
++    display: none;
++  }
++
++  .studioControlsOpen .hudOverlay {
++    top: max(0.5rem, env(safe-area-inset-top));
++    right: max(0.5rem, env(safe-area-inset-right));
++    bottom: max(4.75rem, calc(env(safe-area-inset-bottom) + 4.25rem));
++    left: max(0.5rem, env(safe-area-inset-left));
++    max-height: none;
++    padding: 0.5rem;
++    overflow: auto;
++    background: rgba(12, 16, 23, 0.97);
++    border: 1px solid rgba(255, 255, 255, 0.22);
++    border-radius: 0.75rem;
++    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
++    pointer-events: auto;
++    box-sizing: border-box;
++  }
++
++  .studioControlsOpen .hudTopBar {
++    align-items: stretch;
++    flex-direction: column;
++  }
++
++  .studioControlsOpen .hudControls {
++    align-items: stretch;
++  }
++
++  .studioControlsOpen .hudControls > * {
++    flex: 1 1 auto;
++  }
++
+   .fullscreenStage .fallbackBanner {
+     width: calc(100% - 1rem);
+     max-height: calc(100% - 6.5rem);
+@@ -323,6 +395,26 @@
+   }
+ }
+ 
++@media (max-height: 480px) and (min-width: 641px) {
++  .studioControlsToggle {
++    display: inline-flex;
++  }
++
++  .studioControlsClosed .hudOverlay {
++    display: none;
++  }
++
++  .studioControlsOpen .hudOverlay {
++    max-height: calc(100% - 4.5rem);
++    padding: 0.4rem;
++    overflow: auto;
++    background: rgba(12, 16, 23, 0.97);
++    border: 1px solid rgba(255, 255, 255, 0.22);
++    border-radius: 0.75rem;
++    pointer-events: auto;
++  }
++}
++
+ @media (max-height: 480px) {
+   .fullscreenStage .hudOverlay {
+     max-height: calc(100% - 4rem);
+@@ -334,7 +426,7 @@
+   }
+ 
+   .fullscreenStage .hudButton {
+-    min-height: 40px;
++    min-height: 44px;
+     padding: 0.3rem 0.5rem;
+     font-size: 0.75rem;
+   }
+@@ -430,6 +522,10 @@
+   .hudButton {
+     transition: none;
+   }
++  .studioControlsToggle {
++    transition: none;
++    scroll-behavior: auto;
++  }
+   .progressBarFill {
+     transition: none;
+   }
+diff --git a/app/tests/e2e/world-reference-composition.spec.ts b/app/tests/e2e/world-reference-composition.spec.ts
+new file mode 100644
+index 00000000..0c6872c7
+--- /dev/null
++++ b/app/tests/e2e/world-reference-composition.spec.ts
+@@ -0,0 +1,324 @@
++import { expect, test, type Page, type ViewportSize } from "@playwright/test";
++import fs from "node:fs";
++import path from "node:path";
++import sharp from "sharp";
++
++const evidenceRoot = path.resolve(
++  process.env.PRE_G7_12_EVIDENCE_DIR || "../deliveries/G7/preparation/maker-evidence/pre-g7-12",
++);
++const screenshotDir = path.join(evidenceRoot, "screenshots");
++const measurementDir = path.join(evidenceRoot, "measurements");
++const referencePath = path.resolve(process.cwd(), "../references/images/main-reference.png");
++const actionSelector = [
++  '[data-testid="studio-controls-toggle"]',
++  "#studio-controls-panel button",
++  "#studio-controls-panel a[href]",
++  "#studio-controls-panel select",
++  'nav[aria-label="Portfolio destinations and studio exit"] a[href]',
++  'nav[aria-label="Portfolio destinations and studio exit"] button',
++].join(", ");
++
++fs.mkdirSync(screenshotDir, { recursive: true });
++fs.mkdirSync(measurementDir, { recursive: true });
++
++function recordErrors(page: Page, label: string) {
++  const logPath = path.join(evidenceRoot, `${label}-browser.log`);
++  page.on("console", (message) => {
++    if (message.type() === "error") fs.appendFileSync(logPath, `[console.error] ${message.text()}\n`, "utf8");
++  });
++  page.on("pageerror", (error) => fs.appendFileSync(logPath, `[pageerror] ${error.stack || error.message}\n`, "utf8"));
++}
++
++async function enterHome(page: Page, viewport: ViewportSize) {
++  await page.setViewportSize(viewport);
++  await page.goto("/?studio=enter");
++  const dialog = page.getByTestId("fullscreen-studio-dialog");
++  await expect(dialog).toHaveAttribute("open", "", { timeout: 15_000 });
++  await expect(page.getByTestId("world-stage-container")).toBeVisible({ timeout: 45_000 });
++  await expect(page.getByTestId("world-canvas")).toBeVisible({ timeout: 45_000 });
++  await expect(page.getByTestId("world-loading-overlay")).toBeHidden({ timeout: 90_000 });
++
++  const stage = page.getByTestId("world-stage-container");
++  const toggle = page.getByTestId("studio-controls-toggle");
++  await expect(stage).toHaveAttribute("data-studio-controls-open", "false");
++  await toggle.click();
++  await expect(page.getByTestId("quality-tier-select")).toBeFocused();
++  await page.getByTestId("skip-motion-btn").click();
++  await expect(stage).toHaveAttribute("data-lifecycle-state", "HOME", { timeout: 15_000 });
++  await toggle.click();
++  await expect(toggle).toHaveAttribute("aria-expanded", "false");
++
++  const camera = viewport.width <= 640 ? "home-mobile" : "home-desktop";
++  const cameraButton = camera === "home-mobile" ? "camera-mobile-btn" : "camera-home-btn";
++  await expect(page.getByTestId(cameraButton)).toHaveClass(/hudButtonActive/);
++  await page.waitForTimeout(400);
++  return { dialog, stage, camera };
++}
++
++async function captureAndCompose(page: Page, filename: string, viewport: ViewportSize) {
++  const actualPath = path.join(screenshotDir, filename);
++  await page.screenshot({ path: actualPath, fullPage: false });
++  const center = {
++    left: Math.floor(viewport.width * 0.2),
++    top: Math.floor(viewport.height * 0.2),
++    width: Math.floor(viewport.width * 0.6),
++    height: Math.floor(viewport.height * 0.6),
++  };
++  const pixels = await sharp(actualPath).extract(center).resize(32, 32).removeAlpha().raw().toBuffer();
++  const distinctPixelColors = new Set<string>();
++  for (let offset = 0; offset < pixels.length; offset += 3) {
++    distinctPixelColors.add(`${pixels[offset]},${pixels[offset + 1]},${pixels[offset + 2]}`);
++  }
++  const renderMeasurement = { screenshot: filename, sampleRegion: center, distinctPixelColors: distinctPixelColors.size };
++  fs.writeFileSync(path.join(measurementDir, `${filename.replace(".png", "-scene-pixels.json")}`), `${JSON.stringify(renderMeasurement, null, 2)}\n`, "utf8");
++  const sideBySide = await sharp({
++    create: { width: viewport.width * 2, height: viewport.height, channels: 4, background: "#0c1017" },
++  })
++    .composite([
++      { input: await sharp(referencePath).resize(viewport.width, viewport.height, { fit: "contain", background: "#0c1017" }).png().toBuffer(), left: 0, top: 0 },
++      { input: await sharp(actualPath).resize(viewport.width, viewport.height, { fit: "contain", background: "#0c1017" }).png().toBuffer(), left: viewport.width, top: 0 },
++    ])
++    .png()
++    .toBuffer();
++  await fs.promises.writeFile(path.join(screenshotDir, filename.replace(".png", "-reference-comparison.png")), sideBySide);
++  return renderMeasurement;
++}
++
++async function measureFixedChrome(page: Page, viewport: ViewportSize, label: string) {
++  const measurement = await page.evaluate(() => {
++    const elements = [
++      document.querySelector<HTMLElement>("[data-testid='studio-controls-toggle']"),
++      document.querySelector<HTMLElement>('nav[aria-label="Portfolio destinations and studio exit"]'),
++    ].filter((element): element is HTMLElement => Boolean(element));
++    const boxes = elements.map((element) => {
++      const rect = element.getBoundingClientRect();
++      return { x: rect.x, y: rect.y, width: rect.width, height: rect.height, visible: getComputedStyle(element).display !== "none" };
++    }).filter((box) => box.visible);
++    const area = boxes.reduce((sum, box, index) => {
++      let overlap = 0;
++      for (const previous of boxes.slice(0, index)) {
++        overlap += Math.max(0, Math.min(box.x + box.width, previous.x + previous.width) - Math.max(box.x, previous.x)) *
++          Math.max(0, Math.min(box.y + box.height, previous.y + previous.height) - Math.max(box.y, previous.y));
++      }
++      return sum + box.width * box.height - overlap;
++    }, 0);
++    return {
++      viewport: { width: window.innerWidth, height: window.innerHeight },
++      boxes,
++      coveredArea: area,
++      coveredRatio: area / (window.innerWidth * window.innerHeight),
++      documentWidth: document.documentElement.scrollWidth,
++      stage: (() => {
++        const rect = document.querySelector<HTMLElement>("[data-testid='world-stage-container']")?.getBoundingClientRect();
++        return rect ? { x: rect.x, y: rect.y, width: rect.width, height: rect.height } : null;
++      })(),
++    };
++  });
++  expect(measurement.documentWidth, `${label} has no page horizontal overflow`).toBeLessThanOrEqual(viewport.width);
++  expect(measurement.coveredRatio, `${label} fixed closed-drawer chrome <= 20%`).toBeLessThanOrEqual(0.2);
++  fs.writeFileSync(path.join(measurementDir, `${label}-closed-chrome.json`), `${JSON.stringify(measurement, null, 2)}\n`, "utf8");
++  return measurement;
++}
++
++async function recordBrowserEnvironment(page: Page) {
++  const environment = await page.evaluate(() => {
++    const canvas = document.querySelector<HTMLCanvasElement>("[data-testid='world-canvas']");
++    const gl = canvas?.getContext("webgl2") ?? canvas?.getContext("webgl");
++    const debugInfo = gl?.getExtension("WEBGL_debug_renderer_info") as
++      | { UNMASKED_VENDOR_WEBGL: number; UNMASKED_RENDERER_WEBGL: number }
++      | null;
++    return {
++      browser: "Playwright-managed Chromium; emulated viewport, not a physical mobile device",
++      userAgent: navigator.userAgent,
++      platform: navigator.platform,
++      devicePixelRatio: window.devicePixelRatio,
++      viewport: { width: window.innerWidth, height: window.innerHeight },
++      webgl: gl ? {
++        version: gl.getParameter(gl.VERSION),
++        vendor: gl.getParameter(gl.VENDOR),
++        renderer: gl.getParameter(gl.RENDERER),
++        unmaskedVendor: debugInfo ? gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) : null,
++        unmaskedRenderer: debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : null,
++        contextLost: gl.isContextLost(),
++      } : null,
++    };
++  });
++  fs.writeFileSync(path.join(measurementDir, "browser-environment.json"), `${JSON.stringify(environment, null, 2)}\n`, "utf8");
++  expect(environment.webgl, "the focused browser run has a WebGL context").not.toBeNull();
++  expect(environment.webgl?.contextLost).toBe(false);
++}
++
++async function recordMobileSceneState(page: Page, label: string) {
++  const toggle = page.getByTestId("studio-controls-toggle");
++  const wasOpen = await toggle.getAttribute("aria-expanded") === "true";
++  if (!wasOpen) await toggle.click();
++  const diagnosticsToggle = page.getByTestId("diagnostics-toggle-btn");
++  await diagnosticsToggle.click();
++  const diagnostics = page.getByTestId("world-diagnostics");
++  await expect(diagnostics).toBeVisible();
++  const runtime = JSON.parse((await diagnostics.textContent()) || "{}");
++  const canvas = await page.evaluate(() => {
++    const element = document.querySelector<HTMLCanvasElement>("[data-testid='world-canvas']");
++    if (!element) return null;
++    const rect = element.getBoundingClientRect();
++    const gl = element.getContext("webgl2") ?? element.getContext("webgl");
++    return {
++      width: element.width,
++      height: element.height,
++      rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
++      computed: { display: getComputedStyle(element).display, visibility: getComputedStyle(element).visibility },
++      gl: gl ? { version: gl.getParameter(gl.VERSION), contextLost: gl.isContextLost() } : null,
++    };
++  });
++  const record = { label, viewport: page.viewportSize(), canvas, runtime };
++  fs.writeFileSync(path.join(measurementDir, `${label}-runtime-scene.json`), `${JSON.stringify(record, null, 2)}\n`, "utf8");
++  await diagnosticsToggle.click();
++  if (!wasOpen) await toggle.click();
++}
++
++test.describe("PRE-G7-12 reference composition and compact mobile controls", () => {
++  test("captures the opening desktop room beside the user reference", async ({ page }) => {
++    test.setTimeout(150_000);
++    recordErrors(page, "desktop-composition");
++    const viewport = { width: 1440, height: 900 };
++    const { camera } = await enterHome(page, viewport);
++    expect(camera).toBe("home-desktop");
++    await recordBrowserEnvironment(page);
++
++    const existingControlCount = await page.locator(
++      '[data-testid="fullscreen-studio-dialog"] button, [data-testid="fullscreen-studio-dialog"] a[href], [data-testid="fullscreen-studio-dialog"] select',
++    ).count();
++    expect(existingControlCount - 1).toBe(25);
++    const renderMeasurement = await captureAndCompose(page, "studio-reference-desktop-1440x900.png", viewport);
++    expect(renderMeasurement.distinctPixelColors, "desktop GLB frame is visibly rendered").toBeGreaterThan(16);
++    const chrome = await measureFixedChrome(page, viewport, "desktop-1440x900");
++    expect(chrome.coveredRatio, "closed desktop chrome leaves the room unobscured").toBeLessThanOrEqual(0.2);
++
++    const toggle = page.getByTestId("studio-controls-toggle");
++    const diagnostics = page.getByTestId("diagnostics-toggle-btn");
++    await toggle.click();
++    await diagnostics.click();
++    await expect(page.getByTestId("world-diagnostics")).toBeVisible();
++    await page.keyboard.press("Escape");
++    await expect(page.getByTestId("world-diagnostics")).toBeHidden();
++    await expect(diagnostics).toBeFocused();
++    await page.keyboard.press("Escape");
++    await expect(toggle).toHaveAttribute("aria-expanded", "false");
++    await expect(toggle).toBeFocused();
++
++    // The moved camera mesh remains underneath the frozen ai-real-camera
++    // interaction root; this point is within its visible desktop pixels.
++    await page.mouse.click(410, 110);
++    await expect(page).toHaveURL(/\/projects\/ai-vs-real\/?$/, { timeout: 15_000 });
++  });
++
++  test("starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape", async ({ page }) => {
++    test.setTimeout(180_000);
++    recordErrors(page, "mobile-drawer");
++    const viewport = { width: 390, height: 844 };
++    await enterHome(page, viewport);
++    await recordMobileSceneState(page, "mobile-390x844");
++
++    const toggle = page.getByTestId("studio-controls-toggle");
++    const panel = page.locator("#studio-controls-panel");
++    await expect(toggle).toHaveAttribute("aria-expanded", "false");
++    await measureFixedChrome(page, viewport, "mobile-390x844");
++    const renderMeasurement = await captureAndCompose(page, "studio-reference-mobile-390x844.png", viewport);
++    expect(renderMeasurement.distinctPixelColors, "mobile GLB frame is visibly rendered").toBeGreaterThan(16);
++
++    const diagnostics = page.getByTestId("diagnostics-toggle-btn");
++    await toggle.click();
++    await diagnostics.click();
++    await expect(page.getByTestId("world-diagnostics")).toBeVisible();
++    await page.keyboard.press("Escape");
++    await expect(page.getByTestId("world-diagnostics")).toBeHidden();
++    await expect(panel).toBeVisible();
++    await expect(diagnostics).toBeFocused();
++    await page.keyboard.press("Escape");
++    await expect(panel).toBeHidden();
++    await expect(toggle).toHaveAttribute("aria-expanded", "false");
++    await expect(toggle).toBeFocused();
++
++    await toggle.click();
++    await expect(page.getByTestId("quality-tier-select")).toBeFocused();
++    await page.emulateMedia({ reducedMotion: "reduce" });
++    const reducedMotionDuration = await page.getByTestId("greet-resident-btn").evaluate((element) => getComputedStyle(element).transitionDuration);
++    expect(reducedMotionDuration).toBe("0s");
++
++    const actions = page.locator(actionSelector);
++    const visibleActions = await actions.evaluateAll((elements) => elements
++      .map((element, index) => {
++        const rect = element.getBoundingClientRect();
++        const style = getComputedStyle(element);
++        if (style.display === "none" || style.visibility === "hidden" || !rect.width || !rect.height) return null;
++        return { index, testId: element.getAttribute("data-testid"), text: element.textContent?.trim() ?? "", width: rect.width, height: rect.height };
++      })
++      .filter((item) => item !== null));
++    expect(visibleActions).toHaveLength(26);
++    expect(visibleActions.every((item) => item.height >= 44 && item.width >= 44)).toBe(true);
++
++    const reached = new Set<number>();
++    for (let index = 0; index < visibleActions.length * 2; index += 1) {
++      await page.keyboard.press("Tab");
++      const focusedIndex = await page.evaluate((selector) =>
++        Array.from(document.querySelectorAll(selector)).findIndex((element) => element === document.activeElement), actionSelector,
++      );
++      if (focusedIndex >= 0) reached.add(focusedIndex);
++    }
++    for (const action of visibleActions) expect(reached.has(action.index), `keyboard reaches action ${action.testId || action.text}`).toBe(true);
++
++    for (const href of ["/projects", "/about", "/contact", "/resume"]) {
++      await expect(page.locator('nav[aria-label="Portfolio destinations and studio exit"]').locator(`a[href="${href}"]`)).toHaveAttribute("href", href);
++    }
++    await expect(page.locator('nav[aria-label="Portfolio destinations and studio exit"]').getByRole("button", { name: "Exit Studio" })).toBeVisible();
++
++    await toggle.click();
++    await expect(toggle).toBeFocused();
++    await page.keyboard.press("Escape");
++    await expect(page.getByTestId("fullscreen-studio-dialog")).toBeHidden();
++    await expect(page.getByTestId("enter-studio-btn")).toBeFocused();
++
++    const navigationPage = await page.context().newPage();
++    await navigationPage.goto("/?studio=enter");
++    await expect(navigationPage.getByTestId("fullscreen-studio-dialog")).toHaveAttribute("open", "", { timeout: 15_000 });
++    await navigationPage.locator('nav[aria-label="Portfolio destinations and studio exit"]').getByRole("link", { name: "Projects", exact: true }).click();
++    await expect(navigationPage).toHaveURL(/\/projects\/?$/);
++    await navigationPage.close();
++  });
++
++  test("keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes", async ({ page }) => {
++    test.setTimeout(180_000);
++    recordErrors(page, "compact-viewports");
++    const initial = { width: 320, height: 600 };
++    await enterHome(page, initial);
++    await recordMobileSceneState(page, "compact-320x600");
++    await measureFixedChrome(page, initial, "compact-320x600");
++    const renderMeasurement = await captureAndCompose(page, "studio-reference-compact-320x600.png", initial);
++    expect(renderMeasurement.distinctPixelColors, "compact GLB frame is visibly rendered").toBeGreaterThan(16);
++
++    for (const viewport of [{ width: 320, height: 600 }, { width: 844, height: 390 }]) {
++      await page.setViewportSize(viewport);
++      await page.waitForTimeout(150);
++      await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME");
++      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport.width);
++      const closedChrome = await measureFixedChrome(page, viewport, `${viewport.width}x${viewport.height}`);
++      expect(closedChrome.coveredRatio).toBeLessThanOrEqual(0.2);
++
++      const toggle = page.getByTestId("studio-controls-toggle");
++      if (await toggle.getAttribute("aria-expanded") !== "true") await toggle.click();
++      await expect(page.getByTestId("quality-tier-select")).toBeFocused();
++      const actionBounds = await page.locator(actionSelector).evaluateAll((elements) => elements
++        .map((element) => {
++          const rect = element.getBoundingClientRect();
++          const style = getComputedStyle(element);
++          return { visible: style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0, width: rect.width, height: rect.height };
++        })
++        .filter((item) => item.visible));
++      expect(actionBounds).toHaveLength(26);
++      expect(actionBounds.every((item) => item.width >= 44 && item.height >= 44)).toBe(true);
++      await captureAndCompose(page, `studio-reference-${viewport.width}x${viewport.height}-drawer.png`, viewport);
++      await page.getByTestId("studio-controls-toggle").click();
++      await expect(page.getByTestId("studio-controls-toggle")).toBeFocused();
++    }
++  });
++});
+diff --git a/app/tests/unit/camera-director.test.ts b/app/tests/unit/camera-director.test.ts
+index b804120e..61ee1e09 100644
+--- a/app/tests/unit/camera-director.test.ts
++++ b/app/tests/unit/camera-director.test.ts
+@@ -15,15 +15,14 @@ describe("CameraDirector - Single Camera Owner and Smooth Transitions", () => {
+     expect(diag.preset).toBe("home-desktop");
+   });
+ 
+-  it("keeps accepted framing while placing desktop HOME inside the production room", () => {
+-    // The frozen production wall spans X=-2.2..-2.1; C3's -2.15 camera was inside it.
+-    expect(CAMERA_PRESETS["home-desktop"].position).toEqual([-1.9, 1.7, 1.55]);
+-    expect(CAMERA_PRESETS["home-desktop"].target).toEqual([0.12, 1.25, -1.15]);
+-    expect(CAMERA_PRESETS["home-desktop"].fov).toBe(60);
+-
+-    expect(CAMERA_PRESETS["home-mobile"].position).toEqual([-1.25, 1.48, 1.15]);
+-    expect(CAMERA_PRESETS["home-mobile"].target).toEqual([0.16, 1.08, -0.95]);
+-    expect(CAMERA_PRESETS["home-mobile"].fov).toBe(52);
++  it("uses the packet's in-room HOME composition and keeps other focus presets stable", () => {
++    expect(CAMERA_PRESETS["home-desktop"].position).toEqual([-0.45, 1.85, 1.3]);
++    expect(CAMERA_PRESETS["home-desktop"].target).toEqual([0.0, 1.27, -1.22]);
++    expect(CAMERA_PRESETS["home-desktop"].fov).toBe(48);
++
++    expect(CAMERA_PRESETS["home-mobile"].position).toEqual([-0.55, 1.55, 1.45]);
++    expect(CAMERA_PRESETS["home-mobile"].target).toEqual([0.0, 1.1, -1.2]);
++    expect(CAMERA_PRESETS["home-mobile"].fov).toBe(100);
+ 
+     expect(CAMERA_PRESETS["monitor"].position).toEqual([0.0, 1.08, -0.5]);
+     expect(CAMERA_PRESETS["reverse-doorway"].position).toEqual([0.2, 1.25, -1.0]);
+diff --git a/app/tests/unit/reference-composition.test.ts b/app/tests/unit/reference-composition.test.ts
+new file mode 100644
+index 00000000..4a2a50cb
+--- /dev/null
++++ b/app/tests/unit/reference-composition.test.ts
+@@ -0,0 +1,89 @@
++import { describe, expect, it } from "vitest";
++import * as THREE from "three";
++import { applyReferenceComposition, measureProjectedBounds } from "../../src/features/world/ReferenceComposition";
++
++describe("reference room composition", () => {
++  it("moves the named interaction roots, scales the seven light panels, and adds only the missing headset stand once", () => {
++    const scene = new THREE.Group();
++    const pegboard = new THREE.Group();
++    pegboard.name = "pegboard_system";
++    const controller = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshBasicMaterial());
++    controller.name = "peg_controller_body";
++    pegboard.add(controller);
++    scene.add(pegboard);
++
++    const plants = new THREE.Group();
++    plants.name = "plants";
++    scene.add(plants);
++
++    const shelfCamera = new THREE.Group();
++    shelfCamera.name = "ai-real-camera";
++    const cameraMesh = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.06, 0.07), new THREE.MeshBasicMaterial());
++    cameraMesh.name = "ai_cam_chassis";
++    shelfCamera.add(cameraMesh);
++    scene.add(shelfCamera);
++
++    const lights = new THREE.Group();
++    lights.name = "essential_lights";
++    for (let index = 1; index <= 7; index += 1) {
++      const panel = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.2, 0.015), new THREE.MeshStandardMaterial());
++      panel.name = `hex_panel_${index}`;
++      panel.position.set(index % 2 ? 0 : -0.21, 1.82 + (index - 4) * 0.08, -1.77);
++      lights.add(panel);
++    }
++    scene.add(lights);
++
++    const first = applyReferenceComposition(scene);
++    const firstPanel = scene.getObjectByName("hex_panel_1")!;
++    const panelPosition = firstPanel.position.clone();
++    const panelScale = firstPanel.scale.clone();
++    const second = applyReferenceComposition(scene);
++
++    expect(first).toEqual({ movedNode: "pegboard_system", headsetStandCreated: true, missingHexPanels: [] });
++    expect(second.headsetStandCreated).toBe(false);
++    expect(pegboard.position.x).toBeCloseTo(3.0);
++    expect(plants.position.x).toBeCloseTo(0.3);
++    expect(shelfCamera.position.toArray()).toEqual([0.7, 0.35, 0.18]);
++    expect(scene.getObjectByName("ai-real-camera")).toBe(shelfCamera);
++    expect(scene.getObjectByName("ai_cam_chassis")).toBe(cameraMesh);
++    expect(scene.getObjectByName("peg_controller_body")).toBe(controller);
++    expect(firstPanel.position.toArray()).toEqual(panelPosition.toArray());
++    expect(firstPanel.scale.toArray()).toEqual(panelScale.toArray());
++    expect(firstPanel.scale.x).toBeCloseTo(2.7);
++    expect(firstPanel.position.y).toBeCloseTo(1.836);
++    expect(firstPanel.position.z).toBeCloseTo(-1.61);
++    const leftPanel = scene.getObjectByName("hex_panel_2")!;
++    expect(leftPanel.position.x).toBeCloseTo(-0.504);
++    expect(leftPanel.position.y).toBeCloseTo(1.924);
++
++    const stand = scene.getObjectByName("headset-stand-code-native")!;
++    const standBounds = new THREE.Box3().setFromObject(stand);
++    expect(stand.children.map((child) => child.name)).toEqual([
++      "headset-stand-base",
++      "headset-stand-stem",
++      "headset-stand-cradle",
++    ]);
++    expect(standBounds.getSize(new THREE.Vector3()).x).toBeCloseTo(0.19);
++    expect(standBounds.getSize(new THREE.Vector3()).y).toBeCloseTo(0.237);
++    expect(standBounds.getSize(new THREE.Vector3()).z).toBeCloseTo(0.156);
++  });
++
++  it("projects a rotated and translated group and reports partial viewport clipping", () => {
++    const group = new THREE.Group();
++    group.position.set(2.7, 0, 0);
++    group.rotation.y = Math.PI / 4;
++    group.add(new THREE.Mesh(new THREE.BoxGeometry(2, 0.6, 0.2), new THREE.MeshBasicMaterial()));
++
++    const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 100);
++    camera.position.set(0, 0, 5);
++    camera.lookAt(0, 0, 0);
++    const bounds = measureProjectedBounds(group, camera, { width: 1000, height: 1000 });
++
++    expect(bounds).not.toBeNull();
++    expect(bounds!.left).toBeGreaterThan(0);
++    expect(bounds!.right).toBeGreaterThan(1000);
++    expect(bounds!.width).toBeGreaterThan(0);
++    expect(bounds!.visibleAreaRatio).toBeGreaterThan(0);
++    expect(bounds!.visibleAreaRatio).toBeLessThan(1);
++  });
++});

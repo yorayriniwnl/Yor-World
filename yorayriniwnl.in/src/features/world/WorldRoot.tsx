@@ -61,6 +61,10 @@ export default function WorldRoot({
   const [showLauncher, setShowLauncher] = useState<boolean>(false);
   const [showReplay, setShowReplay] = useState(false);
   const [experienceController, setExperienceController] = useState<ExperienceController | null>(null);
+  const [studioControlsOpen, setStudioControlsOpen] = useState(false);
+  const studioControlsToggleRef = useRef<HTMLButtonElement | null>(null);
+  const diagnosticsToggleRef = useRef<HTMLButtonElement | null>(null);
+  const focusControlsOnOpenRef = useRef(false);
   const [reducedMotion, setReducedMotion] = useState<boolean>(() => {
     return (
       typeof window !== "undefined" &&
@@ -72,6 +76,44 @@ export default function WorldRoot({
 
   const initialReducedMotionRef = useRef(reducedMotion);
   const runtimeUnavailable = effectiveTier === "static" || lifecycleState === "FAILURE" || error !== null;
+
+  useEffect(() => {
+    if (!studioControlsOpen || !focusControlsOnOpenRef.current) return;
+    focusControlsOnOpenRef.current = false;
+    const frame = window.requestAnimationFrame(() => {
+      document.querySelector<HTMLSelectElement>("#studio-controls-panel [data-testid='quality-tier-select']")?.focus();
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [studioControlsOpen]);
+
+  useEffect(() => {
+    if (!studioControlsOpen || showRoomControls || showLauncher || showReplay) return;
+    const closeDrawerBeforeDialog = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      if (showDiagnostics) {
+        setShowDiagnostics(false);
+        window.requestAnimationFrame(() => diagnosticsToggleRef.current?.focus({ preventScroll: true }));
+        return;
+      }
+      setStudioControlsOpen(false);
+      window.requestAnimationFrame(() => studioControlsToggleRef.current?.focus({ preventScroll: true }));
+    };
+    document.addEventListener("keydown", closeDrawerBeforeDialog, true);
+    return () => document.removeEventListener("keydown", closeDrawerBeforeDialog, true);
+  }, [showDiagnostics, showLauncher, showReplay, showRoomControls, studioControlsOpen]);
+
+  const handleStudioControlsToggle = useCallback(() => {
+    if (studioControlsOpen) {
+      setStudioControlsOpen(false);
+      studioControlsToggleRef.current?.focus({ preventScroll: true });
+      return;
+    }
+    focusControlsOnOpenRef.current = true;
+    setStudioControlsOpen(true);
+  }, [studioControlsOpen]);
 
   // Initialize runtime and lifecycle manager
   useEffect(() => {
@@ -140,6 +182,7 @@ export default function WorldRoot({
       simulateRendererError,
       onReady: (diag) => {
         setDiagnostics(diag);
+        setActiveCamera(diag.cameraPreset);
       },
       onError: (err) => {
         setError(err.message);
@@ -165,7 +208,12 @@ export default function WorldRoot({
       }
     });
 
-    const handleResize = () => runtime.resize();
+    const handleResize = () => {
+      runtime.resize();
+      const nextDiagnostics = runtime.getDiagnostics();
+      setActiveCamera(nextDiagnostics.cameraPreset);
+      setDiagnostics(nextDiagnostics);
+    };
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         if (isFullscreen) return;
@@ -343,7 +391,8 @@ export default function WorldRoot({
     setShowLauncher(false);
     setShowReplay(false);
     setShowDiagnostics(false);
-    setActiveCamera("home-desktop");
+    setActiveCamera(window.innerWidth < 640 ? "home-mobile" : "home-desktop");
+    setStudioControlsOpen(window.innerWidth > 640 && window.innerHeight > 480);
     setRuntimeGeneration((generation) => generation + 1);
   }, [effectiveTier, error, lifecycleState, reducedMotion]);
 
@@ -432,12 +481,25 @@ export default function WorldRoot({
 
   return (
     <div
-      className={`${styles.stageContainer} ${isFullscreen ? styles.fullscreenStage : ""}`}
+      className={`${styles.stageContainer} ${isFullscreen ? styles.fullscreenStage : ""} ${studioControlsOpen ? styles.studioControlsOpen : styles.studioControlsClosed}`}
       data-testid="world-stage-container"
       data-lifecycle-state={lifecycleState}
+      data-studio-controls-open={studioControlsOpen}
       role="region"
       aria-label="Interactive 3D Studio"
     >
+      <button
+        ref={studioControlsToggleRef}
+        type="button"
+        className={styles.studioControlsToggle}
+        data-testid="studio-controls-toggle"
+        aria-controls="studio-controls-panel"
+        aria-expanded={studioControlsOpen}
+        aria-label={studioControlsOpen ? "Close studio controls" : "Open studio controls"}
+        onClick={handleStudioControlsToggle}
+      >
+        {studioControlsOpen ? "Close controls" : "Studio controls"}
+      </button>
       <canvas
         ref={canvasRef}
         className={styles.canvas}
@@ -498,7 +560,7 @@ export default function WorldRoot({
       )}
 
       {/* Standard World HUD Overlay */}
-      <div className={styles.hudOverlay}>
+      <div id="studio-controls-panel" className={styles.hudOverlay} role="region" aria-label="Studio controls">
         <div className={styles.accessibilityControls}>
           <AccessibilityControls
             currentTier={qualityPreference}
@@ -628,6 +690,7 @@ export default function WorldRoot({
               </span>
             )}
             <button
+              ref={diagnosticsToggleRef}
               type="button"
               onClick={() => setShowDiagnostics((prev) => !prev)}
               className={styles.hudButton}

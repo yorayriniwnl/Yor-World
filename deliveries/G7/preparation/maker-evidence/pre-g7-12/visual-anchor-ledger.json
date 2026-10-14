@@ -1,0 +1,141 @@
+﻿{
+  "status": "FAIL_NOT_PASS",
+  "decision": "Maker evidence only; parent acceptance is pending and this report does not self-accept the work.",
+  "sourceCommit": "133529868c8c7279831cbbffe35ab23178012b8c",
+  "appTree": "06f2b4ad62f8022bc4f2d410d67ffa197316e6ab",
+  "acceptedInputCommit": "cfdc744f69cd257c8ac0cbaad78b8805c48f20d5",
+  "acceptedInputAppTree": "915c26f4b9a1fa075614ea64959750f9e486187c",
+  "acceptedGlb": {
+    "path": "app/public/models/production-room-full.glb",
+    "sha256": "3a02647d24e474c8a2579b0d277cf02a7841212e961c1554f67b6e032e40a307",
+    "bytes": 861364,
+    "nodes": 222,
+    "modified": false
+  },
+  "screenshots": {
+    "desktop": "attempt-11/screenshots/studio-reference-desktop-1440x900.png",
+    "desktopComparison": "attempt-11/screenshots/studio-reference-desktop-1440x900-reference-comparison.png",
+    "mobile": "attempt-11/screenshots/studio-reference-mobile-390x844.png",
+    "mobileComparison": "attempt-11/screenshots/studio-reference-mobile-390x844-reference-comparison.png",
+    "viewportInterpretation": "Pixel regions below are approximate manual review boxes in the raw live-scene screenshots, origin at upper left. Exact projected bounds are called out where available."
+  },
+  "anchors": [
+    {
+      "id": "desk-and-chair",
+      "requirement": "Recognizable white/ivory desk and blue-and-white chair; keep resident from hiding workstation.",
+      "status": "PASS",
+      "sourceGeometry": ["desk_top", "chair-root", "chair geometry descendants"],
+      "desktopPixelRegion": [130, 585, 1268, 900],
+      "mobilePixelRegion": [8, 390, 383, 640],
+      "desktopObservation": "Desk and blue chair are readily recognizable. Resident and chair back overlap the center-right desk and hide part of the work surface.",
+      "mobileObservation": "Desk and chair are recognizable; chair and resident dominate the foreground and overlap part of the right setup.",
+      "evidence": ["attempt-11/screenshots/studio-reference-desktop-1440x900.png", "attempt-11/screenshots/studio-reference-mobile-390x844.png"]
+    },
+    {
+      "id": "pink-lilac-hex-cluster",
+      "requirement": "Prominent recognizable pink/lilac hex light cluster.",
+      "status": "FAIL",
+      "sourceGeometry": ["hex_panel_1", "hex_panel_2", "hex_panel_3", "hex_panel_4", "hex_panel_5", "hex_panel_6", "hex_panel_7"],
+      "sourceMaterials": ["Hex_LilacEmissive (strength 5.7)", "Hex_VioletEmissive (strength 5.28)"],
+      "desktopPixelRegion": [310, 320, 1020, 580],
+      "mobilePixelRegion": [48, 330, 290, 425],
+      "desktopObservation": "The wall reads as a pale geometric/white patch. No distinct lilac hex silhouettes or pink/lilac grouping are recognizable in the actual rendered pixels.",
+      "mobileObservation": "The wall and hex region wash to near-white; no recognizable lilac cluster.",
+      "limitation": "The packet does not authorize runtime edits to per-material emissive strength, and GLB/material bytes were preserved. Named-light/exposure calibration did not make the required shapes/color recognizable.",
+      "evidence": ["glb-anchor-source-audit.json", "attempt-11/screenshots/studio-reference-desktop-1440x900.png", "attempt-11/screenshots/studio-reference-mobile-390x844.png"]
+    },
+    {
+      "id": "cyan-fill",
+      "requirement": "Visible cyan fill lighting.",
+      "status": "PASS",
+      "sourceGeometry": ["Light_CyanFill and cyan fill light nodes in the accepted scene"],
+      "desktopPixelRegion": [380, 760, 900, 900],
+      "mobilePixelRegion": [85, 620, 260, 760],
+      "desktopObservation": "A cyan pool is visible under the desk on the floor, though dimmer and more localized than the supplied reference.",
+      "mobileObservation": "A cyan floor pool remains visible below the chair/desk.",
+      "evidence": ["glb-anchor-source-audit.json", "attempt-11/screenshots/studio-reference-desktop-1440x900.png", "attempt-11/screenshots/studio-reference-mobile-390x844.png"]
+    },
+    {
+      "id": "monitor-and-speakers",
+      "requirement": "Central monitor with two speakers visible as a workstation grouping.",
+      "status": "FAIL",
+      "sourceGeometry": ["monitor geometry", "speaker_left_cabinet", "speaker_right_cabinet"],
+      "desktopPixelRegion": [380, 415, 875, 675],
+      "mobilePixelRegion": [78, 385, 248, 480],
+      "desktopObservation": "The central monitor is recognizable. Left speaker is visible; the right speaker is obscured/merged with the monitor/resident grouping, so the required two-speaker group is not recognizable.",
+      "mobileObservation": "The monitor is small but recognizable; speakers are tiny and do not read as a clear pair.",
+      "evidence": ["glb-anchor-source-audit.json", "attempt-11/screenshots/studio-reference-desktop-1440x900.png", "attempt-11/screenshots/studio-reference-mobile-390x844.png"]
+    },
+    {
+      "id": "warm-monitor-light-bar",
+      "requirement": "Warm monitor light bar.",
+      "status": "FAIL",
+      "sourceGeometry": ["lightbar_emissive"],
+      "sourceMaterials": ["Lightbar_WarmTask"],
+      "desktopPixelRegion": [620, 420, 810, 450],
+      "mobilePixelRegion": [156, 390, 223, 407],
+      "desktopObservation": "The bar is a narrow dark/neutral horizontal strip above the display; it does not read as warm light.",
+      "mobileObservation": "The bar is too small and appears neutral/dark rather than warm.",
+      "evidence": ["glb-anchor-source-audit.json", "attempt-11/screenshots/studio-reference-desktop-1440x900.png", "attempt-11/screenshots/studio-reference-mobile-390x844.png"]
+    },
+    {
+      "id": "plant-shelf-camera",
+      "requirement": "Plant/shelf grouping with a recognizable camera resting on the shelf.",
+      "status": "FAIL",
+      "sourceGeometry": ["plants root and descendants", "shelf_rear_lower", "ai-real-camera root with 7 mesh descendants: ai_cam_chassis, ai_cam_hub, ai_cam_leg_1, ai_cam_leg_2, ai_cam_leg_3, ai_cam_lens_barrel, ai_cam_status_ring"],
+      "cameraSourceTransform": "The ai-real-camera root is mesh-null at authored origin; descendant geometry is present around authored x=-1.45, y=1.70. Runtime root translation is [0.7, 0.35, 0.18].",
+      "cameraWorldBoundsAfterPlacement": {"min": [-0.79, 2.03, -1.535], "max": [-0.71, 2.15, -1.4355]},
+      "cameraProjectedPixelBounds": {
+        "homeDesktop1440x900": [390.5, 96.7, 430.9, 150.3],
+        "homeMobile390x844": [84.9, 281.6, 97.5, 301.0]
+      },
+      "desktopPixelRegion": [105, 5, 435, 375],
+      "mobilePixelRegion": [0, 245, 110, 385],
+      "desktopObservation": "The left plant is clipped. The shelf is a thin high horizontal line. The camera descendants render but read as a small block hanging immediately below the shelf rather than a convincing shelf camera.",
+      "mobileObservation": "The plant is mostly clipped and the camera projects to about 12.7 x 19.4 pixels; it appears only as a tiny glyph near the shelf line.",
+      "visualStatus": "FAIL: in-frustum and rendered, but not recognizable/convincingly placed at this scale.",
+      "interactionStatus": "PASS: source binding still targets ai-real-camera; clicking the rendered group navigated to /projects/ai-vs-real in the focused production browser test.",
+      "evidence": ["glb-anchor-source-audit.json", "attempt-11/logs/reference-composition-camera-interaction-node24.19.log", "attempt-11/screenshots/studio-reference-desktop-1440x900.png", "attempt-11/screenshots/studio-reference-mobile-390x844.png"]
+    },
+    {
+      "id": "left-console-and-microphone",
+      "requirement": "Console/microphone grouping to the left of the monitor.",
+      "status": "FAIL",
+      "sourceGeometry": ["talks-microphone root with 6 mesh descendants; source audit did not find a named console node"],
+      "desktopPixelRegion": [345, 490, 515, 675],
+      "mobilePixelRegion": [73, 415, 140, 480],
+      "desktopObservation": "The microphone is visible. The required console portion is not identified in the accepted GLB node inventory, so the complete left console/microphone grouping cannot be confirmed.",
+      "mobileObservation": "Microphone/desk detail is small and the console is not recognizable.",
+      "evidence": ["glb-anchor-source-audit.json", "attempt-11/screenshots/studio-reference-desktop-1440x900.png", "attempt-11/screenshots/studio-reference-mobile-390x844.png"]
+    },
+    {
+      "id": "right-pc-and-controller-pegboard",
+      "requirement": "Recognizable PC and controller objects attached to the right-side pegboard.",
+      "status": "FAIL",
+      "sourceGeometry": ["helios-pc root and descendants", "pegboard_system", "one controller assembly: peg_controller_accent, peg_controller_body, peg_controller_mount"],
+      "sourceDimensions": "The source contains one pale controller assembly; its body is approximately 0.16 x 0.10 x 0.04 m. It was not duplicated.",
+      "desktopPixelRegion": [1010, 310, 1235, 690],
+      "mobilePixelRegion": [292, 350, 390, 485],
+      "desktopObservation": "Pegboard holes are visible; the single controller is a tiny pale mark. The PC tower is partly visible but the resident/chair overlaps the workstation grouping.",
+      "mobileObservation": "Pegboard and PC are partially visible at the right edge; controller is too small/unclear to recognize and chair/resident occlude the lower grouping.",
+      "evidence": ["glb-anchor-source-audit.json", "attempt-11/screenshots/studio-reference-desktop-1440x900.png", "attempt-11/screenshots/studio-reference-mobile-390x844.png"]
+    },
+    {
+      "id": "headset-stand",
+      "requirement": "Secondary right-side headset stand, only if none exists in accepted GLB.",
+      "status": "FAIL_VISUAL",
+      "sourceGeometry": "No headset stand node was found in the accepted GLB. Code-native stand added in ReferenceComposition.ts from simple primitives, with bounds 0.19 x 0.237 x 0.156 m near the right PC/pegboard grouping.",
+      "desktopPixelRegion": [1235, 555, 1345, 680],
+      "mobilePixelRegion": [365, 435, 390, 500],
+      "desktopObservation": "Stand geometry is present at far right but is a small bare support and no headset is present; it does not read as a useful secondary headset stand.",
+      "mobileObservation": "The support is partly clipped at the right edge and is not recognizable as a headset stand.",
+      "unitStatus": "PASS: geometry fixture and composition behavior covered by focused unit test.",
+      "evidence": ["app/src/features/world/ReferenceComposition.ts", "attempt-11/screenshots/studio-reference-desktop-1440x900.png", "attempt-11/screenshots/studio-reference-mobile-390x844.png"]
+    }
+  ],
+  "globalFindings": [
+    "No GLB/model bytes, provider/runtime lifecycle, route, configuration, or fallback-policy changes were made.",
+    "Root placement preserves named interaction target ai-real-camera; the direct click-to-project route is tested separately from visual recognizability.",
+    "The application-rendered scene is shown; comparison screenshots put the supplied reference beside the live scene."
+  ]
+}
