@@ -1,0 +1,124 @@
+{
+  "browser": "153.0.8010.12",
+  "profile": "fresh Playwright browser context; no persistent profile or extensions",
+  "chromiumExecutable": "C:/Users/ayush/AppData/Local/ms-playwright/chromium-1243/chrome-win64/chrome.exe",
+  "flags": [
+    "--enable-webgl",
+    "--ignore-gpu-blocklist"
+  ],
+  "stages": [
+    {
+      "name": "production-render",
+      "status": "PASS",
+      "url": "http://127.0.0.1:3200/?studio=1",
+      "httpStatus": 200,
+      "canvas": {
+        "connected": true,
+        "width": 575,
+        "height": 640,
+        "renderedFrames": 17,
+        "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "shadingLanguageVersion": "WebGL GLSL ES 3.00 (OpenGL ES GLSL ES 3.0 Chromium)",
+        "vendor": "Google Inc. (Intel)",
+        "renderer": "ANGLE (Intel, Intel(R) Iris(R) Xe Graphics (0x000046A8) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "loseContextExtensionAvailable": true
+      }
+    },
+    {
+      "name": "production-webgl-context-loss-fallback",
+      "status": "PASS",
+      "trigger": "Called WEBGL_lose_context.loseContext() on the active production renderer's browser WebGL context.",
+      "fallback": {
+        "text": "Accessible Portfolio View (3D Studio Fallback)\n\nWebGL graphics context was lost.\n\nRetry 3D Studio\nContinue with Portfolio\nBrowse Projects\nRead About",
+        "contextLossEvents": [
+          {
+            "isTrusted": true,
+            "cancelable": true
+          }
+        ],
+        "oldContextLost": true,
+        "oldCanvasConnected": false,
+        "renderedFramesAtFallback": 96
+      }
+    },
+    {
+      "name": "production-retry-recovery",
+      "status": "PASS",
+      "recovery": {
+        "oldCanvasDetached": true,
+        "replacementCanvasCount": 1,
+        "fallbackCleared": true,
+        "lifecycleState": "HOME",
+        "replacementCanvas": {
+          "connected": true,
+          "width": 575,
+          "height": 640,
+          "renderedFrames": 206,
+          "contextAvailable": true,
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "vendor": "Google Inc. (Intel)",
+          "renderer": "ANGLE (Intel, Intel(R) Iris(R) Xe Graphics (0x000046A8) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        }
+      }
+    }
+  ],
+  "events": [
+    {
+      "type": "console:error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "type": "requestfailed",
+      "url": "http://127.0.0.1:3200/projects?_rsc=5CB68i4pnAekjehf",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "type": "requestfailed",
+      "url": "http://127.0.0.1:3200/about?_rsc=5CB68i4pnAekjehf",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "type": "requestfailed",
+      "url": "http://127.0.0.1:3200/resume?_rsc=5CB68i4pnAekjehf",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "type": "requestfailed",
+      "url": "http://127.0.0.1:3200/contact?_rsc=5CB68i4pnAekjehf",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "type": "requestfailed",
+      "url": "http://127.0.0.1:3200/projects?_rsc=tXyZJ52UQVBCVsD3",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "type": "requestfailed",
+      "url": "http://127.0.0.1:3200/about?_rsc=tXyZJ52UQVBCVsD3",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "type": "requestfailed",
+      "url": "http://127.0.0.1:3200/resume?_rsc=tXyZJ52UQVBCVsD3",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "type": "requestfailed",
+      "url": "http://127.0.0.1:3200/contact?_rsc=tXyZJ52UQVBCVsD3",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "type": "console:warning",
+      "text": "[WorldRuntime] WebGL context lost."
+    },
+    {
+      "type": "console:log",
+      "text": "THREE.WebGLRenderer: Context Lost."
+    },
+    {
+      "type": "console:warning",
+      "text": "THREE.WebGLRenderer: WEBGL_lose_context extension not supported."
+    }
+  ],
+  "finalUrl": "http://127.0.0.1:3200/?studio=1"
+}

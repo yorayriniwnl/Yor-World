@@ -1,0 +1,36 @@
+
+> yor-world@1.0.0-rc6 test:unit C:\g7c\app
+> vitest run --config vitest.config.ts
+
+
+ RUN  v5.0.2 C:/g7c/app
+
+ ❯ tests/unit/boundaries.test.ts (18 tests | 1 failed) 9378ms
+   × enforces integrated dependency boundaries: HTML shell stays free of 3D and browser features stay free of server imports 7173ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/boundaries.test.ts > enforces integrated dependency boundaries: HTML shell stays free of 3D and browser features stay free of server imports
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/unit/boundaries.test.ts:139:1
+    137| });
+    138|
+    139| it("enforces integrated dependency boundaries: HTML shell stays free o…
+       | ^
+    140|   const packageJson = JSON.parse(readFileSync("package.json", "utf8"))…
+    141|   expect(Object.keys(packageJson.dependencies).sort()).toEqual([
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 22 passed (23)
+      Tests  1 failed | 315 passed (316)
+   Start at  07:20:44
+   Duration  18.80s (transform 46%, import 38%, tests 15%)
+
+  Transform  transforming modules took 56.33s · 46% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+
+ ELIFECYCLE  Command failed with exit code 1.
