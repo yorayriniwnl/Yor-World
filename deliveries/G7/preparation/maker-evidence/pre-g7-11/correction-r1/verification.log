@@ -1,0 +1,22 @@
+PRE-G7-11 audit finding: the pushed 2c3ab02 revision did not include the later staged REPORT.md/checksum correction. The commit-mode verifier also read SHA256SUMS.txt from the worktree instead of the requested commit tree.
+
+Exact-commit isolation check (run using the updated verifier while REPORT.md and SHA256SUMS.txt changes were staged):
+Node: v24.19.0
+Command: node deliveries/G7/preparation/maker-evidence/pre-g7-11/verify-delivery-evidence.mjs 7cea7a316f2cbe5ad825d623518cecccdd8d6a1b
+Output: SHA256SUMS PASS: 151 entries verified against exact commit 7cea7a316f2cbe5ad825d623518cecccdd8d6a1b.
+Exit code: 0
+
+The candidate index contained different REPORT.md and SHA256SUMS.txt blobs than 7cea7a31. Passing this check confirms the verifier loaded the checksum list and payloads from the exact requested commit instead of the index/worktree.
+Staged candidate checksum regeneration and verification (base commit a11af576af8ed193f38f1739aa259c57df44f125):
+Command: node deliveries/G7/preparation/maker-evidence/pre-g7-11/generate-sha256sums.mjs HEAD
+Output: SHA256SUMS generated from 153 exact Git blob entries (staged paths over base commit a11af576af8ed193f38f1739aa259c57df44f125).
+Exit code: 0
+Command: node deliveries/G7/preparation/maker-evidence/pre-g7-11/verify-delivery-evidence.mjs
+Output: Staged scope PASS: 6 paths, no out-of-scope paths.
+Output: SHA256SUMS PASS: 153 entries verified against staged Git blobs.
+Exit code: 0
+Exact-current-base commit-mode isolation check while the candidate r1 report/checksum blobs were staged:
+Node: v24.19.0
+Command: node deliveries/G7/preparation/maker-evidence/pre-g7-11/verify-delivery-evidence.mjs a11af576af8ed193f38f1739aa259c57df44f125
+Output: SHA256SUMS PASS: 151 entries verified against exact commit a11af576af8ed193f38f1739aa259c57df44f125.
+Exit code: 0

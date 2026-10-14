@@ -53,7 +53,9 @@ The scoped `git diff --check` review reports trailing whitespace only in capture
 
 ## Limits
 
-The default full unit and integration commands retain the failures shown above; diagnostic reruns do not change those results. The domain pre-edit inventory was taken before the maker's domain edits; the final folder contains only `.env.example` as an environment file. It records preservation of `.accepted-source-stage` (241 files / 71 directories), `.next` (741 / 93), `node_modules` (37 top-level entries), and `test-results` (15 files / 1 directory). `scoped-source.patch` is the source diff. `SHA256SUMS.txt` contains 151 SHA-256 hashes over exact Git blob bytes; `verify-delivery-evidence.mjs` checks them against staged blobs before commit and can verify a commit after push. This avoids platform checkout line-ending conversions changing the hashes.
+The default full unit and integration commands retain the failures shown above; diagnostic reruns do not change those results. The domain pre-edit inventory was taken before the maker's domain edits; the final folder contains only `.env.example` as an environment file. It records preservation of `.accepted-source-stage` (241 files / 71 directories), `.next` (741 / 93), `node_modules` (37 top-level entries), and `test-results` (15 files / 1 directory). `scoped-source.patch` is the source diff. `SHA256SUMS.txt` contains SHA-256 hashes over exact Git blob bytes; `verify-delivery-evidence.mjs` reads the checksum list and every payload from the specified commit when a revision is supplied, or from staged/HEAD blobs in staged mode. This avoids platform checkout line-ending conversions changing the hashes.
+
+Correction r1 records the audit finding, exact-commit verifier change, checksum regeneration, and raw commit-blob verification in `correction-r1/REPORT.md` and `correction-r1/verification.log`.
 
 At mobile widths, the HUD panels cover much of the room. Control reachability passes, but useful room visibility and discovery and complete reference fidelity remain unestablished; this limitation is tracked in `product-fidelity-follow-up.md`.
 
