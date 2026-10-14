@@ -1,0 +1,10 @@
+# Attempt 36 visual E2E status
+
+- Source: fresh production build from the attempt-36 source; build exit `0` (`build.exit.txt`).
+- Command: `pnpm exec playwright test tests/e2e/world-reference-composition.spec.ts --reporter=line` from `app/`, with `PRE_G7_13_EVIDENCE_MODE=1` and `PRE_G7_13_EVIDENCE_DIR` set to this directory. Playwright config defaults were unchanged.
+- Result: Playwright `.last-run.json` reports `status: failed` and 10 failed test IDs. Ten per-test `error-context.md` files exist (five viewport/render tests in Chrome and the same five in Edge); the remaining six control tests passed. The 10 failures all report `speaker_right_cabinet is not hidden by chair/resident`: desktop, landscape, and low-quality desktop ratio `0.3380281690140845`; mobile and compact ratio `0.6323529411764706`. Assertion threshold remains `0.1`.
+- Runner capture limitation: PowerShell terminated the tee wrapper when the Next webServer emitted `[WebServer] ... Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.` Therefore `visual-e2e.log` contains only its initial newline, and `visual-e2e.exit.txt` was not written. Playwright had reached all 16 tests; this run is recorded as failed based on `.last-run.json` and the 10 failure contexts, with the CLI exit unavailable.
+- Same-frame mobile diagnostic: `measurements/mobile-390x844-anchor-diagnostics.json` reports desk `occluderRatio=0.28125` (23/81 visible samples, 9 chair-root first hits) and chair-root world Y bounds `0.38–1.091`, projected bounds `81.28×113.37` px. The test's earlier failure is on `speaker_right_cabinet`, before the desk assertion is reached.
+- Chair attribution: the sampler classifies hits beneath `chair-root` as chair occlusion. The mobile desk center ray's first hit is the invisible `hit_chair` proxy under `chair-root`; `chair-base` is outside this category.
+- Raw closed-HUD captures: `screenshots/studio-reference-mobile-390x844.png` and `screenshots/studio-reference-desktop-1440x900.png`, plus 320×600, 844×390, and low-quality desktop captures. They remain failed-iteration evidence.
+- No test assertions or timeouts were changed.

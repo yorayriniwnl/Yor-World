@@ -110,22 +110,26 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
   // crossed the right speaker and covered the resident's torso.
   // Move the resident slightly forward while keeping the monitor/worktop clear.
   const actorShift = new THREE.Vector3(0.4, 0, -1.15);
-  // Keep the existing chair behind the seated body, but bring its back closer
-  // to the resident's center and reveal its sides beside the torso.
-  const chairRootShift = new THREE.Vector3(0.2, 0, -1.39);
-  const chairBaseShift = new THREE.Vector3(0.35, 0, -1.39);
+  // Place the existing chair groups at the measured workstation position and
+  // preserve the 0.15-unit X offset between the root and base.
+  const chairRootShift = new THREE.Vector3(0.05, 0, -0.735);
+  const chairBaseShift = new THREE.Vector3(0.2, 0, -0.735);
+  const chairYawAdjustment = THREE.MathUtils.degToRad(18);
   for (const name of ["chair-root", "chair-base"]) {
     const chairPart = scene.getObjectByName(name);
     if (chairPart && chairPart.userData["referenceActorCompositionApplied"] !== true) {
       translateObjectWorld(chairPart, name === "chair-root" ? chairRootShift : chairBaseShift);
+      // Keep the existing chair angled toward the camera and narrow its
+      // horizontal profile without changing the source geometry.
+      chairPart.rotation.y += chairYawAdjustment;
+      chairPart.userData[name === "chair-root" ? "referenceChairYawAdjustmentRadians" : "referenceChairBaseYawAdjustmentRadians"] = chairYawAdjustment;
       if (name === "chair-root") {
-        // The chair back remained hidden behind the resident and desk. Raise
-        // the existing named chair group while keeping its bottom attached to
-        // the unchanged chair base; do not add chair geometry.
+        // Scale the existing named chair group while keeping its bottom
+        // attached to the translated chair base; do not add chair geometry.
         scene.updateMatrixWorld(true);
         const boundsBeforeScale = new THREE.Box3().setFromObject(chairPart);
         const bottomBeforeScale = boundsBeforeScale.isEmpty() ? undefined : boundsBeforeScale.min.y;
-        chairPart.scale.set(0.75, 1.35, 0.9);
+        chairPart.scale.set(0.55, 0.8, 0.55);
         scene.updateMatrixWorld(true);
         if (bottomBeforeScale !== undefined) {
           const boundsAfterScale = new THREE.Box3().setFromObject(chairPart);
@@ -133,8 +137,23 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
             translateObjectWorld(chairPart, new THREE.Vector3(0, bottomBeforeScale - boundsAfterScale.min.y, 0));
           }
         }
-        chairPart.userData["referenceChairScale"] = [0.75, 1.35, 0.9];
+        chairPart.userData["referenceChairScale"] = [0.55, 0.8, 0.55];
         chairPart.userData["referenceChairBottomAnchored"] = bottomBeforeScale !== undefined;
+      }
+      if (name === "chair-base") {
+        scene.updateMatrixWorld(true);
+        const boundsBeforeScale = new THREE.Box3().setFromObject(chairPart);
+        const bottomBeforeScale = boundsBeforeScale.isEmpty() ? undefined : boundsBeforeScale.min.y;
+        chairPart.scale.set(0.75, 1, 0.75);
+        scene.updateMatrixWorld(true);
+        if (bottomBeforeScale !== undefined) {
+          const boundsAfterScale = new THREE.Box3().setFromObject(chairPart);
+          if (!boundsAfterScale.isEmpty()) {
+            translateObjectWorld(chairPart, new THREE.Vector3(0, bottomBeforeScale - boundsAfterScale.min.y, 0));
+          }
+        }
+        chairPart.userData["referenceChairBaseScale"] = [0.75, 1, 0.75];
+        chairPart.userData["referenceChairBaseBottomAnchored"] = bottomBeforeScale !== undefined;
       }
       chairPart.userData["referenceActorCompositionApplied"] = true;
     }

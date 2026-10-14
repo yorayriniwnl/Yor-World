@@ -1,0 +1,26 @@
+﻿import { copyFileSync, readFileSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import path from "node:path";
+
+const root = process.cwd();
+const manifestPath = path.join(root, "yorayriniwnl.in/source-delivery-manifest.json");
+const sourcePath = "app/src/features/world/ReferenceComposition.ts";
+const domainPath = "src/features/world/ReferenceComposition.ts";
+const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+const sourceBytes = readFileSync(path.join(root, sourcePath));
+const domainAbsolute = path.join(root, "yorayriniwnl.in", domainPath);
+copyFileSync(path.join(root, sourcePath), domainAbsolute);
+const domainBytes = readFileSync(domainAbsolute);
+const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
+const normalizeLf = (bytes) => Buffer.from(bytes.toString("utf8").replace(/\r\n/g, "\n"), "utf8");
+const rows = manifest.mirror.sourceFiles;
+const row = rows.find((entry) => entry.sourcePath === sourcePath && entry.domainPath === domainPath);
+if (!row) throw new Error(`Missing source manifest row for ${sourcePath}`);
+row.sourceSha256 = sha256(sourceBytes);
+row.domainSha256 = sha256(domainBytes);
+row.normalizedSha256 = sha256(normalizeLf(sourceBytes));
+row.rawBytesEqual = sourceBytes.equals(domainBytes);
+row.normalizedContentEqual = normalizeLf(sourceBytes).equals(normalizeLf(domainBytes));
+if (!row.rawBytesEqual || !row.normalizedContentEqual) throw new Error("ReferenceComposition mirror parity failed");
+writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+process.stdout.write(`${JSON.stringify({ updated: sourcePath, domainPath, rawBytesEqual: row.rawBytesEqual, normalizedContentEqual: row.normalizedContentEqual, sha256: row.sourceSha256 }, null, 2)}\n`);
