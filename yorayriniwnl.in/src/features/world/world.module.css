@@ -104,6 +104,41 @@
   height: 100%;
 }
 
+.studioControlsToggle {
+  display: inline-flex;
+  position: absolute;
+  z-index: 40;
+  top: max(0.5rem, env(safe-area-inset-top));
+  right: max(0.5rem, env(safe-area-inset-right));
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 0.8rem;
+  color: #ffffff;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background: rgba(12, 16, 23, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 999px;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+.studioControlsToggle:focus-visible {
+  outline: 3px solid #78e4ff;
+  outline-offset: 2px;
+}
+
+.studioControlsClosed .studioControlsToggle {
+  display: inline-flex;
+}
+
+.studioControlsClosed .hudOverlay {
+  display: none;
+}
+
 .hudOverlay {
   position: absolute;
   top: 1rem;
@@ -316,10 +351,67 @@
     gap: 0.45rem;
   }
 
+  .studioControlsToggle {
+    display: inline-flex;
+  }
+
+  .studioControlsClosed .hudOverlay {
+    display: none;
+  }
+
+  .studioControlsOpen .hudOverlay {
+    top: max(0.5rem, env(safe-area-inset-top));
+    right: max(0.5rem, env(safe-area-inset-right));
+    bottom: max(4.75rem, calc(env(safe-area-inset-bottom) + 4.25rem));
+    left: max(0.5rem, env(safe-area-inset-left));
+    max-height: none;
+    padding: 0.5rem;
+    overflow: auto;
+    background: rgba(12, 16, 23, 0.97);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 0.75rem;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+    pointer-events: auto;
+    box-sizing: border-box;
+  }
+
+  .studioControlsOpen .hudTopBar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .studioControlsOpen .hudControls {
+    align-items: stretch;
+  }
+
+  .studioControlsOpen .hudControls > * {
+    flex: 1 1 auto;
+  }
+
   .fullscreenStage .fallbackBanner {
     width: calc(100% - 1rem);
     max-height: calc(100% - 6.5rem);
     padding: 1rem;
+  }
+}
+
+@media (max-height: 480px) and (min-width: 641px) {
+  .studioControlsToggle {
+    display: inline-flex;
+  }
+
+  .studioControlsClosed .hudOverlay {
+    display: none;
+  }
+
+  .studioControlsOpen .hudOverlay {
+    max-height: calc(100% - 4.5rem);
+    padding: 0.4rem;
+    overflow: auto;
+    background: rgba(12, 16, 23, 0.97);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 0.75rem;
+    pointer-events: auto;
   }
 }
 
@@ -334,7 +426,7 @@
   }
 
   .fullscreenStage .hudButton {
-    min-height: 40px;
+    min-height: 44px;
     padding: 0.3rem 0.5rem;
     font-size: 0.75rem;
   }
@@ -429,6 +521,10 @@
 @media (prefers-reduced-motion: reduce) {
   .hudButton {
     transition: none;
+  }
+  .studioControlsToggle {
+    transition: none;
+    scroll-behavior: auto;
   }
   .progressBarFill {
     transition: none;

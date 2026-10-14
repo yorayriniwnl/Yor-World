@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { applyReferenceComposition } from "./ReferenceComposition";
 
 export interface IntegratedSceneResult {
   scene: THREE.Group;
@@ -119,6 +120,10 @@ export function integrateScene(
   avatarScene.rotation.set(0, 0, 0);
   avatarScene.scale.set(1, 1, 1);
   rootGroup.add(avatarScene);
+
+  // Preserve the frozen GLB bytes while correcting the visual arrangement at
+  // the integration boundary. Named roots stay intact for raycast bindings.
+  applyReferenceComposition(rootGroup);
 
   // 4. Verification and Node Count Auditing
   let residentCount = 0;

@@ -13,8 +13,8 @@ pnpm dev
 
 Copy `.env.example` to `.env.local` before configuring local services. Backend-dependent features need the services documented in `.env.example`.
 
-## Source identity and status
+## Source identity and review status
 
-This delivery starts from accepted PRE-G7-10 source commit `95729282af3d84b4e3158158546643935e737b7a`, whose accepted app tree is `e53f3ea9c6c80f471832e46d548206105699c32b`. PRE-G7-11 app source commit `cfdc744f69cd257c8ac0cbaad78b8805c48f20d5` has app tree `915c26f4b9a1fa075614ea64959750f9e486187c`. The source delivery manifest records both identities, mirrored file hashes, and the intentional `https://yorayriniwnl.in` canonical URL override.
+The frozen accepted input is PRE-G7-11 app source commit `cfdc744f69cd257c8ac0cbaad78b8805c48f20d5`, app tree `915c26f4b9a1fa075614ea64959750f9e486187c`. This local candidate is bound to PRE-G7-12 maker source commit `133529868c8c7279831cbbffe35ab23178012b8c`, app tree `06f2b4ad62f8022bc4f2d410d67ffa197316e6ab`, based on packet/status commit `67026f26bb80d81de4edf632b3038b0239eea4de`. The manifest records the mirrored source and test hashes plus the intentional `https://yorayriniwnl.in` canonical URL override.
 
-This is a local source delivery. **NOT DEPLOYED. G7 NOT ACCEPTED.**
+PRE-G7-12 remains a maker candidate and is **NOT ACCEPTED**. The visual anchor ledger records material and source-asset limitations; no visual completion is claimed. This source is **NOT DEPLOYED. G7 NOT ACCEPTED.**

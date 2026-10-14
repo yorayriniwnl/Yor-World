@@ -3,16 +3,17 @@ import type { CameraConfig, CameraPreset } from "./types";
 
 export const CAMERA_PRESETS: Record<CameraPreset, CameraConfig> = {
   "home-desktop": {
-    // The frozen production room's left wall occupies x=-2.20..-2.10.
-    // C3's blockout camera at -2.15 was inside that wall.
-    position: [-1.9, 1.7, 1.55],
-    target: [0.12, 1.25, -1.15],
-    fov: 60,
+    // Near-frontal framing keeps the workstation props separated and in view.
+    position: [-0.45, 1.85, 1.3],
+    target: [0.0, 1.27, -1.22],
+    fov: 48,
   },
   "home-mobile": {
-    position: [-1.25, 1.48, 1.15],
-    target: [0.16, 1.08, -0.95],
-    fov: 52,
+    // Keep the camera inside the room and near-frontal so the narrow portrait
+    // frustum retains the desk, rear-wall lights, and right-side PC grouping.
+    position: [-0.55, 1.55, 1.45],
+    target: [0.0, 1.1, -1.2],
+    fov: 100,
   },
   monitor: {
     position: [0.0, 1.08, -0.5],
