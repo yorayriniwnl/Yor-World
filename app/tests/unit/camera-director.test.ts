@@ -15,15 +15,14 @@ describe("CameraDirector - Single Camera Owner and Smooth Transitions", () => {
     expect(diag.preset).toBe("home-desktop");
   });
 
-  it("keeps accepted framing while placing desktop HOME inside the production room", () => {
-    // The frozen production wall spans X=-2.2..-2.1; C3's -2.15 camera was inside it.
-    expect(CAMERA_PRESETS["home-desktop"].position).toEqual([-1.9, 1.7, 1.55]);
-    expect(CAMERA_PRESETS["home-desktop"].target).toEqual([0.12, 1.25, -1.15]);
-    expect(CAMERA_PRESETS["home-desktop"].fov).toBe(60);
+  it("uses the packet's in-room HOME composition and keeps other focus presets stable", () => {
+    expect(CAMERA_PRESETS["home-desktop"].position).toEqual([-0.45, 1.85, 1.3]);
+    expect(CAMERA_PRESETS["home-desktop"].target).toEqual([0.0, 1.27, -1.22]);
+    expect(CAMERA_PRESETS["home-desktop"].fov).toBe(48);
 
-    expect(CAMERA_PRESETS["home-mobile"].position).toEqual([-1.25, 1.48, 1.15]);
-    expect(CAMERA_PRESETS["home-mobile"].target).toEqual([0.16, 1.08, -0.95]);
-    expect(CAMERA_PRESETS["home-mobile"].fov).toBe(52);
+    expect(CAMERA_PRESETS["home-mobile"].position).toEqual([-0.55, 1.55, 1.45]);
+    expect(CAMERA_PRESETS["home-mobile"].target).toEqual([0.0, 1.1, -1.2]);
+    expect(CAMERA_PRESETS["home-mobile"].fov).toBe(100);
 
     expect(CAMERA_PRESETS["monitor"].position).toEqual([0.0, 1.08, -0.5]);
     expect(CAMERA_PRESETS["reverse-doorway"].position).toEqual([0.2, 1.25, -1.0]);
