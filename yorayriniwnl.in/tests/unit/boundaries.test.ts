@@ -10,6 +10,29 @@ function files(root: string): string[] {
   );
 }
 
+interface SourceFileSnapshot {
+  path: string;
+  normalizedPath: string;
+  text: string;
+}
+
+let sourceFileSnapshots: SourceFileSnapshot[] | undefined;
+let sourceFileSnapshotsByPath: Map<string, SourceFileSnapshot> | undefined;
+
+function getSourceFileSnapshots(): SourceFileSnapshot[] {
+  if (!sourceFileSnapshots) {
+    sourceFileSnapshots = files("src").map((path) => ({
+      path,
+      normalizedPath: path.replace(/\\/g, "/"),
+      text: readFileSync(path, "utf8"),
+    }));
+    sourceFileSnapshotsByPath = new Map(
+      sourceFileSnapshots.map((snapshot) => [snapshot.normalizedPath, snapshot] as const),
+    );
+  }
+  return sourceFileSnapshots;
+}
+
 export interface DiscoveredImport {
   specifier: string;
   kind: "import" | "side-effect-import" | "export-from" | "dynamic-import" | "require" | "import-type";
@@ -17,7 +40,22 @@ export interface DiscoveredImport {
   resolvedPath: string;
 }
 
-export function extractModuleSpecifiers(filePath: string, text: string): DiscoveredImport[] {
+interface ParsedModuleSnapshot {
+  sourceFile: ts.SourceFile;
+  imports: DiscoveredImport[];
+}
+
+const parsedModuleSnapshots = new Map<string, Map<string, ParsedModuleSnapshot>>();
+
+function getParsedModuleSnapshot(filePath: string, text: string): ParsedModuleSnapshot {
+  let snapshotsByText = parsedModuleSnapshots.get(filePath);
+  if (!snapshotsByText) {
+    snapshotsByText = new Map<string, ParsedModuleSnapshot>();
+    parsedModuleSnapshots.set(filePath, snapshotsByText);
+  }
+  const cached = snapshotsByText.get(text);
+  if (cached) return cached;
+
   const sourceFile = ts.createSourceFile(filePath, text, ts.ScriptTarget.Latest, true);
   const results: DiscoveredImport[] = [];
 
@@ -62,7 +100,13 @@ export function extractModuleSpecifiers(filePath: string, text: string): Discove
   }
 
   visit(sourceFile);
-  return results;
+  const snapshot = { sourceFile, imports: results };
+  snapshotsByText.set(text, snapshot);
+  return snapshot;
+}
+
+export function extractModuleSpecifiers(filePath: string, text: string): DiscoveredImport[] {
+  return getParsedModuleSnapshot(filePath, text).imports;
 }
 
 export function validateProductionModule(filePath: string, text: string) {
@@ -73,13 +117,14 @@ export function validateProductionModule(filePath: string, text: string) {
   if (filePath.endsWith(".css")) {
     return;
   }
-  const imports = extractModuleSpecifiers(filePath, text);
+  const snapshot = getParsedModuleSnapshot(filePath, text);
+  const imports = snapshot.imports;
   const forbiddenPatterns = [
     /(?:^|\/)(?:tests|fixtures)(?:\/|$)/,
 
   ];
 
-  const parsed = ts.createSourceFile(filePath, text, ts.ScriptTarget.Latest, true);
+  const parsed = snapshot.sourceFile;
   let clientComponent = false;
   for (const statement of parsed.statements) {
     if (!ts.isExpressionStatement(statement) || !ts.isStringLiteral(statement.expression)) break;
@@ -142,9 +187,8 @@ it("enforces integrated dependency boundaries: HTML shell stays free of 3D and b
     "@supabase/ssr", "@supabase/supabase-js", "next", "pg", "react", "react-dom", "server-only", "sharp", "three", "zod"
   ]);
   for (const version of Object.values(packageJson.dependencies)) expect(version).toMatch(/^\d+\.\d+\.\d+$/);
-  for (const path of files("src")) {
-    const text = readFileSync(path, "utf8");
-    validateProductionModule(path.replace(/\\/g, "/"), text);
+  for (const snapshot of getSourceFileSnapshots()) {
+    validateProductionModule(snapshot.normalizedPath, snapshot.text);
   }
 });
 
@@ -239,10 +283,11 @@ describe("regression: syntax-level import boundary detection", () => {
 
 
 it("keeps privileged server modules and secrets out of every transitive client import", () => {
-  const all = files("src").filter((file) => /\.[cm]?[jt]sx?$/.test(file));
-  const clients = all.filter((file) => /^\s*["']use client["']/.test(readFileSync(file, "utf8")));
+  const all = getSourceFileSnapshots().filter(({ path }) => /\.[cm]?[jt]sx?$/.test(path));
+  const clients = all.filter(({ text }) => /^\s*["']use client["']/.test(text));
   expect(clients.length).toBeGreaterThan(0);
-  for (const client of clients) {
+  for (const clientSnapshot of clients) {
+    const client = clientSnapshot.path;
     const pending = [client];
     const visited = new Set<string>();
     while (pending.length) {
@@ -251,7 +296,7 @@ it("keeps privileged server modules and secrets out of every transitive client i
       visited.add(current);
       const normalized = current.replace(/\\/g, "/");
       expect(normalized, `client ${client} reaches ${current}`).not.toMatch(/src\/server\/|src\/content\/server-publication/);
-      const content = readFileSync(current, "utf8");
+      const content = sourceFileSnapshotsByPath?.get(normalized)?.text ?? readFileSync(current, "utf8");
       expect(content, `privileged secret reachable from ${client}`).not.toMatch(/SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SERVICE_KEY|DATABASE_URL|CONTACT_HASH_SECRET|RESEND_API_KEY|INTERNAL_JOB_KEY|CRON_SECRET/);
       for (const imported of extractModuleSpecifiers(normalized, content)) {
         expect(imported.specifier, `native decoder reachable from client ${client} through ${current}`).not.toMatch(/^sharp(?:\/|$)/);
