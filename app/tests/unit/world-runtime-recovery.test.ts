@@ -1,11 +1,25 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import * as THREE from "three";
 import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { AssetLoader, type LoadedAssets } from "../../src/features/world/AssetLoader";
 import { CLIP_DURATIONS } from "../../src/features/world/SceneIntegrator";
 import { WorldRuntime } from "../../src/features/world/WorldRuntime";
 
-const { render } = vi.hoisted(() => ({ render: vi.fn() }));
+const { render, rendererState } = vi.hoisted(() => ({
+  render: vi.fn(),
+  rendererState: {
+    creationFailure: false,
+    contextLost: false,
+    sharedContext: {
+      getExtension: () => null,
+      getParameter: () => "test-renderer",
+      isContextLost: () => rendererState.contextLost,
+    },
+    contexts: [] as unknown[],
+    disposeCalls: 0,
+    forceContextLossCalls: 0,
+  },
+}));
 
 // Keep the scene integration, directors and lifecycle real. Only the GPU and
 // network timing are adapters; these tests do not establish browser GPU behavior.
@@ -17,18 +31,32 @@ vi.mock("three", async (importOriginal) => {
       shadowMap = {};
       info = { render: { calls: 1, triangles: 1 } };
       render = render;
-      getContext() { return { getExtension: () => null, getParameter: () => "test-renderer" }; }
+      private context = rendererState.sharedContext;
+      constructor() {
+        if (rendererState.creationFailure || rendererState.contextLost) {
+          throw new Error("Error creating WebGL context.");
+        }
+        rendererState.contexts.push(this.context);
+      }
+      getContext() { return this.context; }
       setPixelRatio() {}
       getPixelRatio() { return 1; }
       setSize() {}
-      dispose() {}
-      forceContextLoss() {}
+      dispose() { rendererState.disposeCalls++; }
+      forceContextLoss() {
+        rendererState.forceContextLossCalls++;
+        rendererState.contextLost = true;
+      }
     },
   };
 });
 
 function canvas() {
   return Object.assign(new EventTarget(), { isConnected: true, dataset: {}, style: {} }) as unknown as HTMLCanvasElement;
+}
+
+function setCanvasConnected(target: HTMLCanvasElement, connected: boolean) {
+  Object.defineProperty(target, "isConnected", { configurable: true, value: connected });
 }
 
 const runtimes: WorldRuntime[] = [];
@@ -38,6 +66,14 @@ afterEach(() => {
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
   render.mockClear();
+});
+
+beforeEach(() => {
+  rendererState.creationFailure = false;
+  rendererState.contextLost = false;
+  rendererState.contexts.length = 0;
+  rendererState.disposeCalls = 0;
+  rendererState.forceContextLossCalls = 0;
 });
 
 function loadedAssets(): LoadedAssets {
@@ -95,6 +131,7 @@ function frameHarness(initialVisibility: DocumentVisibilityState = "visible") {
   vi.stubGlobal("cancelAnimationFrame", (id: number) => queued.delete(id));
   return {
     queued,
+    documentAdapter,
     visibility(state: DocumentVisibilityState) {
       documentAdapter.visibilityState = state;
       documentAdapter.dispatchEvent(new Event("visibilitychange"));
@@ -118,6 +155,117 @@ function startRuntime(options: Partial<ConstructorParameters<typeof WorldRuntime
   runtimes.push(runtime);
   return runtime;
 }
+
+describe("Renderer context lifetime", () => {
+  it("connected-canvas setup → cleanup → setup preserves the shared usable context", async () => {
+    const frames = frameHarness();
+    const sharedCanvas = canvas();
+    const retiredLoad = delayedLoad();
+    const retired = startRuntime({ canvas: sharedCanvas });
+
+    expect(retired.lifecycleManager.getState()).toBe("LOADING");
+    expect(rendererState.contexts).toHaveLength(1);
+    retired.dispose();
+    expect(rendererState.forceContextLossCalls).toBe(0);
+    expect(rendererState.contextLost).toBe(false);
+
+    const replacementLoad = delayedLoad();
+    const replacement = startRuntime({ canvas: sharedCanvas });
+    expect(rendererState.contexts).toHaveLength(2);
+    expect(rendererState.contexts[1]).toBe(rendererState.contexts[0]);
+    expect(rendererState.sharedContext.isContextLost()).toBe(false);
+
+    await replacementLoad.complete();
+    await retiredLoad.complete();
+    expect(replacement.lifecycleManager.getState()).toBe("HOME");
+    expect(frames.queued.size).toBe(1);
+    frames.tick();
+    expect(render).toHaveBeenCalledTimes(1);
+    expect(rendererState.forceContextLossCalls).toBe(0);
+
+    setCanvasConnected(sharedCanvas, false);
+    replacement.dispose();
+    expect(rendererState.forceContextLossCalls).toBe(1);
+  });
+
+  it("detached final teardown releases the renderer, frame, and canvas/document listeners", async () => {
+    const frames = frameHarness();
+    const target = canvas();
+    const addCanvasListener = vi.spyOn(target, "addEventListener");
+    const removeCanvasListener = vi.spyOn(target, "removeEventListener");
+    const addDocumentListener = vi.spyOn(frames.documentAdapter, "addEventListener");
+    const removeDocumentListener = vi.spyOn(frames.documentAdapter, "removeEventListener");
+    const onSamplingPause = vi.fn();
+    const load = delayedLoad();
+    const runtime = startRuntime({ canvas: target, onSamplingPause });
+    await load.complete();
+
+    expect(frames.queued.size).toBe(1);
+    expect(addCanvasListener).toHaveBeenCalledWith("webglcontextlost", expect.any(Function));
+    expect(addCanvasListener).toHaveBeenCalledWith("webglcontextrestored", expect.any(Function));
+    expect(addDocumentListener).toHaveBeenCalledTimes(1);
+    setCanvasConnected(target, false);
+    runtime.dispose();
+
+    expect(rendererState.disposeCalls).toBe(1);
+    expect(rendererState.forceContextLossCalls).toBe(1);
+    expect(removeCanvasListener).toHaveBeenCalledWith("webglcontextlost", expect.any(Function));
+    expect(removeCanvasListener).toHaveBeenCalledWith("webglcontextrestored", expect.any(Function));
+    expect(removeCanvasListener).toHaveBeenCalledTimes(addCanvasListener.mock.calls.length);
+    expect(removeDocumentListener).toHaveBeenCalledTimes(1);
+    expect(frames.queued.size).toBe(0);
+    expect(onSamplingPause).toHaveBeenCalledTimes(1);
+
+    const lost = new Event("webglcontextlost", { cancelable: true });
+    target.dispatchEvent(lost);
+    frames.visibility("hidden");
+    frames.visibility("visible");
+    expect(lost.defaultPrevented).toBe(false);
+    expect(onSamplingPause).toHaveBeenCalledTimes(1);
+    expect(frames.queued.size).toBe(0);
+  });
+
+  it("renderer creation failure reaches FAILURE without starting a frame loop", async () => {
+    const frames = frameHarness();
+    rendererState.creationFailure = true;
+    const onError = vi.fn();
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const runtime = startRuntime({ onError });
+    await Promise.resolve();
+
+    expect(runtime.lifecycleManager.getState()).toBe("FAILURE");
+    expect(onError).toHaveBeenCalledTimes(1);
+    expect(rendererState.contexts).toHaveLength(0);
+    expect(frames.queued.size).toBe(0);
+    runtime.dispose();
+    expect(rendererState.forceContextLossCalls).toBe(0);
+  });
+
+  it("genuine context loss cancels the loop and retires the active renderer", async () => {
+    const frames = frameHarness();
+    const target = canvas();
+    const load = delayedLoad();
+    const runtime = startRuntime({ canvas: target });
+    await load.complete();
+    expect(frames.queued.size).toBe(1);
+
+    rendererState.contextLost = true;
+    const lost = new Event("webglcontextlost", { cancelable: true });
+    target.dispatchEvent(lost);
+    expect(lost.defaultPrevented).toBe(true);
+    expect(rendererState.sharedContext.isContextLost()).toBe(true);
+    expect(runtime.lifecycleManager.getState()).toBe("FAILURE");
+    expect(frames.queued.size).toBe(0);
+    frames.visibility("hidden");
+    frames.visibility("visible");
+    expect(frames.queued.size).toBe(0);
+
+    setCanvasConnected(target, false);
+    runtime.dispose();
+    expect(rendererState.disposeCalls).toBe(1);
+    expect(rendererState.forceContextLossCalls).toBe(1);
+  });
+});
 
 describe("Production runtime failure retirement", () => {
   it("a failed runtime cannot schedule rendering when visibility resumes", async () => {

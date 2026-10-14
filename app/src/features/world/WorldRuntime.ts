@@ -685,7 +685,13 @@ export class WorldRuntime {
 
     if (this.renderer) {
       this.renderer.dispose();
-      this.renderer.forceContextLoss();
+      // React Strict Mode replays effects while retaining the same canvas.
+      // Disposing the old renderer releases its resources, but forcing loss on
+      // a connected canvas would poison the context the replacement runtime
+      // immediately needs. Final DOM teardown can release that context.
+      if (!this.canvas.isConnected) {
+        this.renderer.forceContextLoss();
+      }
       this.renderer = null;
     }
   }
