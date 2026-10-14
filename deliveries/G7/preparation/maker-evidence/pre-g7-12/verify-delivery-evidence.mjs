@@ -8,7 +8,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.resolve(here, "../../../../../");
 const manifestPath = path.join(here, "SHA256SUMS.json");
 const evidenceCommit = process.argv[2] || "HEAD";
-const run = (args, encoding = "utf8") => execFileSync("git", args, { cwd: repo, ...(encoding ? { encoding } : {}), stdio: ["ignore", "pipe", "pipe"] });
+const run = (args, encoding = "utf8") => execFileSync("git", args, { cwd: repo, ...(encoding ? { encoding } : {}), maxBuffer: 64 * 1024 * 1024, stdio: ["ignore", "pipe", "pipe"] });
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
 const failures = [];
 for (const entry of manifest.entries) {
@@ -40,4 +40,5 @@ const result = {
 };
 process.stdout.write(JSON.stringify(result, null, 2) + "\n");
 if (failures.length) process.exitCode = 1;
+
 
