@@ -18,13 +18,14 @@ The fullscreen mechanics in PR #5 (`feature/fullscreen-cinematic-entry`, reviewe
 
 The maker owns only these application and delivery paths:
 
-- `app/src/app/page.tsx`
+- `app/src/app/(public)/page.tsx`
 - `app/src/features/world/StudioLauncher.tsx`
 - `app/src/features/world/WorldRoot.tsx`
 - `app/src/features/world/world.module.css`
 - `app/tests/e2e/world-fullscreen.spec.ts` (new focused browser coverage)
 - `app/tests/unit/world-runtime-recovery.test.ts` only if the new lifecycle requires a targeted regression; do not rewrite PRE-G7-10 tests
 - The corresponding source files in `yorayriniwnl.in/src/` that are part of the local domain delivery mirror
+- In particular, mirror `app/src/app/(public)/page.tsx` to `yorayriniwnl.in/src/app/(public)/page.tsx`
 - `yorayriniwnl.in/README.md` and `yorayriniwnl.in/source-delivery-manifest.json`
 - `deliveries/G7/preparation/maker-evidence/pre-g7-11/`
 
