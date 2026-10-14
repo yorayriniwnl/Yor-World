@@ -22,6 +22,8 @@ Accepted RC5 / [G6-R1](reviews/2026-10-06-g6-r1.md) remains immutable, including
 
 [PRE-G7-12](reconciliation-packets/2026-10-14-pre-g7-12-reference-composition.md) is now the active local visual-composition and mobile-HUD correction packet. It consumes PRE-G7-11-R1's frozen app tree and does not authorize service changes, physical-device claims, or deployment.
 
+[PRE-G7-13D](reconciliation-packets/2026-10-14-pre-g7-13d-chair-seat-visibility.md) extended the chair-only correction. Its candidate commit 9e676579 made the chair recognizable, but the exact-commit local Codex audit found a desktop footer/caster obstruction; it remains unaccepted. The audit is archived at deliveries/G7/preparation/audits/pre-g7-13d-9e676579.md. [PRE-G7-13E](reconciliation-packets/2026-10-15-pre-g7-13e-desktop-navigation-clearance.md) is the active bounded follow-on and permits only responsive CSS positioning of the existing fullscreen navigation plus its mirror/manifest entry. It does not authorize scene, runtime, route, provider, test, service, device, or deployment changes.
+
 Read [current pre-G7 requirements](../operations/pre-g7-prerequisites.md) and the [RC6 dossier](../releases/v1.0.0-rc6.md). Parent continues authorized independent work and obtains missing service/device inputs. No mock, local fixture, emulation, liveness-only response or private preview substitutes for a mandatory production criterion.
 
 ## One specification and a small shared baseline
