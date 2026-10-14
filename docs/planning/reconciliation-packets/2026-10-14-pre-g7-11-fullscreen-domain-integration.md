@@ -8,6 +8,8 @@ Use the accepted runtime source from commit `95729282af3d84b4e3158158546643935e7
 
 The current studio entry can collapse into its narrow landing-page CTA wrapper. Integrate a full-viewport studio entry into the accepted app, keep the world controllable on short and mobile viewports, repair the inherited fallback contrast defect, and bring the local `yorayriniwnl.in/` source delivery folder into exact documented alignment with canonical `app/` source. This work does not deploy the site.
 
+The PRE-G7-10 runtime repair is part of the accepted source input. Copy that implementation into the domain-folder runtime mirror unchanged. Parent inspection recorded the prior local `src/` mirror as byte-identical to canonical `app/src/` except `src/config/public-base-url.ts`, which is the one intentional domain-specific override. Verify that boundary against the current folder before edits; preserve that override and stop/report if another unexpected difference appears.
+
 ## Visual and product authority
 
 The user-designated [main reference](../../../references/images/main-reference.png), [reference index](../../../references/README.md), and [product specification, section 7](../../superpowers/specs/2026-09-30-yor-world-design.md) govern the visible world. Preserve the white/ivory desk, blue-and-white chair, pink/lilac hex lights, cyan fill, plant and shelf grouping, monitor, speakers, console/microphone, PC, controller pegboard, and headset stand. Existing 3D room assets remain the source of the studio scene. Branding and navigation may frame the experience without replacing those anchors.
@@ -20,12 +22,15 @@ The maker owns only these application and delivery paths:
 
 - `app/src/app/(public)/page.tsx`
 - `app/src/features/world/StudioLauncher.tsx`
+- `app/src/features/world/WorldRuntime.ts` (mirror the accepted PRE-G7-10 implementation without changing its accepted behavior)
 - `app/src/features/world/WorldRoot.tsx`
 - `app/src/features/world/world.module.css`
 - `app/tests/e2e/world-fullscreen.spec.ts` (new focused browser coverage)
+- `yorayriniwnl.in/tests/e2e/world-fullscreen.spec.ts` (matching local-delivery test)
 - `app/tests/unit/world-runtime-recovery.test.ts` only if the new lifecycle requires a targeted regression; do not rewrite PRE-G7-10 tests
 - The corresponding source files in `yorayriniwnl.in/src/` that are part of the local domain delivery mirror
 - In particular, mirror `app/src/app/(public)/page.tsx` to `yorayriniwnl.in/src/app/(public)/page.tsx`
+- Mirror `app/src/features/world/WorldRuntime.ts` to `yorayriniwnl.in/src/features/world/WorldRuntime.ts` and keep the recovery test in `yorayriniwnl.in/tests/unit/` aligned with canonical `app/tests/unit/`
 - `yorayriniwnl.in/README.md` and `yorayriniwnl.in/source-delivery-manifest.json`
 - `deliveries/G7/preparation/maker-evidence/pre-g7-11/`
 
@@ -40,7 +45,7 @@ Do not edit canonical room geometry, `app/public/` artwork/assets, approved publ
 3. **Responsive controls:** HUD, accessibility settings, dialogs, and bottom navigation remain reachable at desktop, mobile, 320x600, and short landscape (844x390) sizes. Reflow or allow intentional scrolling when necessary; screenshots and browser assertions must measure the stage/canvas and every control, not just the outer dialog.
 4. **Fallback contrast:** Fix the inherited fallback action-label contrast in a scoped, consistent style. Preserve fallback heading, reason, Retry, Continue, Browse Projects, and Read About behavior. Add a source-bound contrast/accessibility check and browser capture.
 5. **Reference fidelity:** Preserve existing room assets and visible anchors. Do not substitute a concept illustration for the live 3D room or add speculative scenery. Show source-bound desktop and mobile captures of the actual world beside the main reference.
-6. **Domain folder binding:** The local domain delivery source must use the accepted app implementation for the corresponding files. `source-delivery-manifest.json` must identify the app source commit/tree, mirrored paths and their hashes, and excluded/generated paths. The README must accurately say local/not deployed and report the accepted source identity. Do not claim the public domain changed.
+6. **Domain folder binding:** The local domain delivery source must use the accepted app implementation for the corresponding files, while preserving its sole recorded `src/config/public-base-url.ts` domain override. `source-delivery-manifest.json` must identify the app source commit/tree, mirrored paths and their hashes, that override and its hash, and excluded/generated paths. The README must accurately say local/not deployed and report the accepted source identity. Do not claim the public domain changed.
 7. **Content and fallback integrity:** Preserve no-JS portfolio links, reduced-motion behavior, project route semantics, the accepted publication boundary, and accessible fallback behavior. CandidateX remains a 404.
 
 ## Evidence and validation
