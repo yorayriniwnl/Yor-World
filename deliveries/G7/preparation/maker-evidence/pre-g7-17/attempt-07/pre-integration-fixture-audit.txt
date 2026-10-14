@@ -1,0 +1,9 @@
+﻿Captured: 2026-10-15 04:57:41 +05:30.
+Process query covered node.exe, chrome.exe, msedge.exe, postgres.exe, and pg_ctl.exe.
+PRE-G7-17 process count: 0; Vitest/test:integration process count: 0; postgres/pg_ctl process count: 0.
+Environment check: YOR_GITHUB_TEST_DATABASE_URL unset; DATABASE_URL unset. The SCP durable integration test therefore uses its default in-memory PGlite backend.
+Test config read-only inspection: fileParallelism=false; testTimeout=60000ms; hookTimeout=90000ms. Local TCP listeners in integration tests use port 0 (OS-assigned ephemeral).
+The canonical fixture creates a unique temp path with mkdtemp("yor-rc3-fixture-"); 38 historical directories were present. No worker is active and the test creates a fresh unique path; none were removed.
+Unrelated ambient host workload: yor-talks-v3 Playwright PID 64136 and worker PID 68268; Vite preview PID 57908. Eight-second CPU deltas: 0s, 1.844s, 0.297s respectively. This process tree is in a different workspace and has no identified DB/port fixture overlap.
+Historical Playwright Chrome process tree was also present; no PRE-G7-17 browser worker is active.
+Raw filtered process details: pre-integration-process-snapshot.json.

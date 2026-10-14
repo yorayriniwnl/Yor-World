@@ -1,0 +1,13 @@
+﻿const fs = require('node:fs');
+const cp = require('node:child_process');
+const crypto = require('node:crypto');
+const base = 'f71d1df028f80637abb3e427040f0e0f5085179c';
+const commit = cp.execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+const paths = ['app/vitest.config.ts','app/tests/unit/boundaries.test.ts','yorayriniwnl.in/vitest.config.ts','yorayriniwnl.in/tests/unit/boundaries.test.ts'];
+const patch = cp.execFileSync('git', ['diff','--binary','--full-index',base,commit,'--',...paths]);
+const patchPath = 'deliveries/G7/preparation/maker-evidence/pre-g7-17/source.patch';
+fs.writeFileSync(patchPath, patch);
+const sha256 = crypto.createHash('sha256').update(patch).digest('hex');
+const out = {command:`git diff --binary --full-index ${base} ${commit} -- ${paths.join(' ')}`,baseCommit:base,sourceCommit:commit,bytes:patch.length,sha256,path:patchPath};
+fs.writeFileSync('deliveries/G7/preparation/maker-evidence/pre-g7-17/attempt-10/source-patch-receipt.json',JSON.stringify(out,null,2)+'\n');
+console.log(JSON.stringify(out,null,2));

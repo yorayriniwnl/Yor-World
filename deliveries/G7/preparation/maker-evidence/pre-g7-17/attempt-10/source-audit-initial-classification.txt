@@ -1,0 +1,4 @@
+﻿Initial audit output is preserved in source-parity-and-protected-audit-initial-miscompare.json (status FAIL).
+The source-path comparison incorrectly decoded a UTF-16LE-before / UTF-8-with-BOM-after text pair as UTF-8 bytes; PowerShell-decoded path lists and their recorded 117-file set hashes had already matched.
+The manifest comparison incorrectly compared the current 64,995-byte source manifest against a separate 108,915-byte archived PRE-G7-16 manifest export. This is not the same file snapshot. The correct lineage check is the current manifest Git blob versus the exact source-base Git blob, preserving raw local SHA separately.
+All 17 protected path hash comparisons were PASS in the initial output. The corrected final audit will use encoding-aware text and Git base/final blob equality; no source or test bytes were changed by this audit correction.
