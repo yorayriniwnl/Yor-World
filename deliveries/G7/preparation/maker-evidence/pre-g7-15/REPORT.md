@@ -1,0 +1,32 @@
+# PRE-G7-15 maker evidence
+
+**Maker role:** Local Codex worker substitute for Gemini #3. This is not Gemini #3, and this report does not accept its own work.
+
+**Result:** Startup failures are classified separately from post-start context loss, with an actionable accessible fallback and retry path. The implementation and evidence are returned for independent audit; parent acceptance remains pending.
+
+The source branch is `codex/pre-g7-15-webgl-startup-fallback-20261015`. It starts from accepted source commit `8056fece5cd0b8113b81313b6d6a22099163bb27` / app tree `fb4881289d618612b580ef2c576103f1d3e2112c`. The PRE-G7-15 authorization packet is in governance commit `315bedb791e9500b898ebe4d1e024f0f477f9d67`. The source-only implementation commit is `8becac4ea3e9decc91ca2807e2004a0aa0407105`, with app tree `26d4885d4c76233168baaea52c5a33aca1ede594`. It changes only `WorldRuntime.ts`, its unit and browser recovery tests, and those three source-mirror files.
+
+During the synchronous `THREE.WebGLRenderer` constructor call, the runtime captures only the exact one-argument message `THREE.WebGLRenderer: Error creating WebGL context.`. It retains that text with the thrown constructor error in the technical warning. Every other `console.error` call is forwarded unchanged. The startup fallback says the browser could not create a WebGL context, recommends checking hardware acceleration, and points to the portfolio links. Errors after construction remain on the existing error path. A genuine post-start `webglcontextlost` event still reports `WebGL graphics context was lost.` at its existing warning severity.
+
+No renderer options, quality thresholds, retry count, timeout policy, camera presets/interpolation, or endpoint behavior were changed. The mirror audit checks 116 source entries and 10 test entries by Git blob bytes, with zero raw or normalized parity mismatches. The declared `src/config/public-base-url.ts` domain override retains its prior raw worktree and Git-blob hashes. All 17 protected GLB, contract, camera, endpoint, and related input hashes match the accepted source base; see `protected-hash-audit.json`. The exact source patch is gzip-compressed as `source.patch.gz`.
+
+Checks used the wrapper `npx.cmd --yes --package=node@24.19.0 --package=pnpm@9.15.9 --call "node --version && pnpm --version && <command>"` from the physical app snapshot at `C:\Users\ayush\AppData\Local\Temp\yor-world-pre-g7-15-verify-ZJUjJJ`. The matching Node and pnpm versions are present in every raw log. Final-source results:
+
+| Check | Result | Raw evidence |
+| --- | --- | --- |
+| Focused runtime recovery unit tests | **PASS**, 14/14 | `attempt-03/focused-unit.log` |
+| Full unit suite | **PASS**, 327/327 across 26 files | `attempt-03/full-unit.log` |
+| Default full integration suite | **FAIL**, 285/286; `canonical-fixture.test.ts` hit its existing 60,000 ms test timeout | `attempt-03/full-integration.log` |
+| One allowed default integration retry | **FAIL**, same single timeout, 285/286; no overrides | `attempt-04/full-integration-retry.log` |
+| Lint | **PASS**, exit 0 | `attempt-03/lint.log` |
+| Typecheck | **PASS**, exit 0 | `attempt-03/typecheck.log` |
+| Production build | **PASS**, exit 0 | `attempt-03/production-build.log` |
+| Renderer recovery browser suite | **PASS**, 20/20 across Chrome and Edge, including denied-context fallback, retry, and no browser console/page errors | `attempt-03/renderer-recovery-browser.log` and `attempt-03/browser-results.json` |
+
+The integration failure is unresolved and is reported as such. A prior run before the final narrow constructor diagnostic capture passed all 286 integration tests (`attempt-01/full-integration.log`); it does not replace the two final-source failures. The first browser run on the initial implementation passed 18/20 and exposed Three.js's exact console error during context denial. That failure is retained in `attempt-01/renderer-recovery-browser.log`; the final Chrome/Edge run passed after the constructor-only capture was added.
+
+Setup and tooling errors are preserved and excluded from passing checks. The first browser runner launch was rejected before process creation because its working directory incorrectly named a nonexistent `app` subdirectory of the physical snapshot; the corrected run used the snapshot root. `attempt-02/focused-unit.log` contains failed relative-path snapshot copies followed by a test run against stale source, so its test result is invalid and not counted. The evidence finalizer's first two local runs also failed before writing outputs (syntax error, then an undefined variable); their raw logs are `finalize-evidence-setup-failure-01.log` and `finalize-evidence-setup-failure-02.log`. The successful finalizer output is `finalize-evidence.log`.
+
+The user's actual Chrome GPU state is **NOT PROVIDED**. Physical iPhone/iPad Safari, Android Chrome/TalkBack, Windows NVDA, VoiceOver/Safari, and mobile-soak checks are **NOT RUN**. Browser automation is not physical-device verification. The reported extension-added hydration attributes remain outside this packet; no `suppressHydrationWarning` was added. No provider configuration, deployment, or public-domain change was performed.
+
+Windows PowerShell captured the final `attempt-03` raw command output as BOM-marked UTF-16LE; those files are retained byte-for-byte. Final validation strict-parses every JSON evidence file, checks six passing command receipts, verifies the final browser JSON has 20 expected and zero unexpected results, and byte-compares all 247 tracked app files in the test snapshot against the source commit with zero mismatches. The SHA-256 inventory covers completed evidence files and excludes itself and the active validation transcript. No self-acceptance is claimed.
