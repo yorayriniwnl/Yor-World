@@ -1,20 +1,22 @@
-﻿const crypto = require("node:crypto");
-const fs = require("node:fs");
-const path = require("node:path");
-const { execFileSync } = require("node:child_process");
+﻿import crypto from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { execFileSync } from "node:child_process";
 
-const repo = path.resolve(__dirname, "../../../../../");
-const manifestPath = path.join(__dirname, "SHA256SUMS.json");
+const here = path.dirname(fileURLToPath(import.meta.url));
+const repo = path.resolve(here, "../../../../../");
+const manifestPath = path.join(here, "SHA256SUMS.json");
 const evidenceCommit = process.argv[2] || "HEAD";
-const run = (args, encoding = "utf8") => execFileSync("git", args, { cwd: repo, encoding, stdio: ["ignore", "pipe", "pipe"] });
+const run = (args, encoding) => execFileSync("git", args, { cwd: repo, ...(encoding ? { encoding } : {}), stdio: ["ignore", "pipe", "pipe"] });
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
 const failures = [];
 for (const entry of manifest.entries) {
   const commit = entry.commit === "source" ? manifest.sourceCommit : evidenceCommit;
   const spec = commit + ":" + entry.path;
   try {
-    const blob = run(["cat-file", "blob", spec], "buffer");
-    const object = run(["rev-parse", spec]).trim();
+    const blob = run(["cat-file", "blob", spec]);
+    const object = run(["rev-parse", spec], "utf8").trim();
     const hash = crypto.createHash("sha256").update(blob).digest("hex");
     if (object !== entry.gitBlob || hash !== entry.sha256 || blob.length !== entry.bytes) {
       failures.push({ path: entry.path, objectMatches: object === entry.gitBlob, sha256Matches: hash === entry.sha256, byteCountMatches: blob.length === entry.bytes });
