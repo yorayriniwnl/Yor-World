@@ -40,7 +40,6 @@ The source patch commit and the evidence/manifest commit are separate. The sourc
 
 This local packet does not address the reported hydration attributes injected by browser extensions, the user's local WebGL context failure, physical-device checks, provider readiness, or deployment. Those remain NOT RUN and unchanged.
 
-\n
 ## Provenance correction (2026-10-15)
 
 The independent audit found that the delivery manifest pointed `visualCandidateEvidence` at PRE-G7-13 attempt-50. This was superseded. The manifest now points to `deliveries/G7/preparation/maker-evidence/pre-g7-13/attempt-60/composition/`, matching the accepted PRE-G7-13 manifest recorded at final evidence head `498d6e1329ce651a816cd17935af5fa25bf01ba2`.
@@ -48,3 +47,7 @@ The independent audit found that the delivery manifest pointed `visualCandidateE
 The manifest's `parentCommit` value `66132297bdcf3f699f07f3e5d5e299ebe558ac2f` was validated and retained. It is the commit that authorizes PRE-G7-14 and contains `docs/planning/reconciliation-packets/2026-10-14-pre-g7-14-production-camera-endpoint.md` (blob `845ba953bd08d6777d1913211d7b10d9a07aac50`). The accepted schema-v1 PRE-G7-13 manifest uses `parentCommit` for the parent authorization lineage (`0a73f307d078cc531f09bbc4ae7a5dfef2eedd01`, which contains the PRE-G7-13 work order); `sourceBaseCommit` separately identifies the accepted app/source base. Here, `sourceBaseCommit` is `a3459c158af880319269196f85c0c922ee86c5d6`, and the implementation commit's Git parent is that same accepted base. Thus `parentCommit` is correct and distinct from the source base.
 
 This correction changes only the delivery manifest pointer and this owned evidence/report. The endpoint implementation and tests remain at source commit `8056fece5cd0b8113b81313b6d6a22099163bb27`; no source or test paths were changed.
+
+## Audit evidence file correction (2026-10-15)
+
+The temporary snapshot audit JSON had a literal backslash-n suffix after its closing brace. I replaced that suffix with a real LF and verified strict JSON parsing and structural equality with the parsed values before correction. The corrected file is 67,037 bytes, SHA-256 `ed9e4c86dfcaa6238d16083e46eef4711dd0755b4033df7a86c0eb37e4c68496`; the validation record is `attempt-01/temp-snapshot-json-validation.json`. Before this correction, a repository search found only a path citation in this report and no checksum inventory reference; this report now records the corrected hash. No other checksum reference required updating.
