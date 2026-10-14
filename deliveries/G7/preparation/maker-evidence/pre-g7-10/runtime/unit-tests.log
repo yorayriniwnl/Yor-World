@@ -1,0 +1,44 @@
+
+ RUN  v5.0.2 C:/Users/ayush/AppData/Local/Temp/pre-g7-10-runtime-local-codex/app
+
+ ❯ tests/unit/boundaries.test.ts (18 tests | 2 failed) 13939ms
+   × enforces integrated dependency boundaries: HTML shell stays free of 3D and browser features stay free of server imports 8036ms
+   × keeps privileged server modules and secrets out of every transitive client import 5457ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/boundaries.test.ts > enforces integrated dependency boundaries: HTML shell stays free of 3D and browser features stay free of server imports
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/unit/boundaries.test.ts:139:1
+    137| });
+    138|
+    139| it("enforces integrated dependency boundaries: HTML shell stays free o…
+       | ^
+    140|   const packageJson = JSON.parse(readFileSync("package.json", "utf8"))…
+    141|   expect(Object.keys(packageJson.dependencies).sort()).toEqual([
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/unit/boundaries.test.ts > keeps privileged server modules and secrets out of every transitive client import
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/unit/boundaries.test.ts:241:1
+    239|
+    240|
+    241| it("keeps privileged server modules and secrets out of every transitiv…
+       | ^
+    242|   const all = files("src").filter((file) => /\.[cm]?[jt]sx?$/.test(fil…
+    243|   const clients = all.filter((file) => /^\s*["']use client["']/.test(r…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 22 passed (23)
+      Tests  2 failed | 314 passed (316)
+   Start at  07:13:48
+   Duration  82.60s (import 46%, tests 30%, transform 23%, worker 1%)
+
+    Isolate  23 workers spawned · ~922ms startup each (spawn + environment, per file)
+             at least ~20.28s faster with isolate: false — reuses workers across files instead of one per file
+
