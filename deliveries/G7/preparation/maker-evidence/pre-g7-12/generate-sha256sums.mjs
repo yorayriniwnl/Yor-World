@@ -6,15 +6,40 @@ import { execFileSync } from "node:child_process";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.resolve(here, "../../../../../");
-const evidenceDir = here;
 const baseCommit = process.argv[2] || "67026f26bb80d81de4edf632b3038b0239eea4de";
 const sourceCommit = process.argv[3] || "133529868c8c7279831cbbffe35ab23178012b8c";
 const evidenceCommit = process.argv[4] || "HEAD";
-const output = path.join(evidenceDir, "SHA256SUMS.json");
-const run = (args, encoding = "utf8") => execFileSync("git", args, { cwd: repo, ...(encoding ? { encoding } : {}), maxBuffer: 64 * 1024 * 1024, stdio: ["ignore", "pipe", "pipe"] });
-const sourceTree = run(["rev-parse", sourceCommit + ":app"]).trim();
-const evidencePaths = run(["ls-tree", "-r", "--name-only", "-z", evidenceCommit]).split("\0").filter(Boolean);
-const sourceAppPaths = run(["diff", "--name-only", "--diff-filter=ACMRT", baseCommit, sourceCommit, "--", "app"]).trim().split(/\r?\n/).filter(Boolean);
+const output = path.join(here, "SHA256SUMS.json");
+const gitText = args => execFileSync("git", args, { cwd: repo, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+function readBlobs(commit, paths) {
+  if (!paths.length) return new Map();
+  const specs = paths.map(p => commit + ":" + p);
+  const bytes = execFileSync("git", ["cat-file", "--batch"], {
+    cwd: repo,
+    input: specs.join("\n") + "\n",
+    maxBuffer: 512 * 1024 * 1024
+  });
+  const result = new Map();
+  let cursor = 0;
+  for (const spec of specs) {
+    const newline = bytes.indexOf(10, cursor);
+    if (newline < 0) throw new Error("Missing git cat-file header for " + spec);
+    const [object, kind, sizeText] = bytes.subarray(cursor, newline).toString("utf8").split(" ");
+    const size = Number(sizeText);
+    if (kind !== "blob" || !Number.isSafeInteger(size)) throw new Error("Invalid blob header for " + spec);
+    const start = newline + 1;
+    const end = start + size;
+    if (end >= bytes.length || bytes[end] !== 10) throw new Error("Truncated git blob for " + spec);
+    result.set(spec, { object, blob: bytes.subarray(start, end) });
+    cursor = end + 1;
+  }
+  if (cursor !== bytes.length) throw new Error("Unexpected trailing bytes from git cat-file");
+  return result;
+}
+
+const sourceTree = gitText(["rev-parse", sourceCommit + ":app"]).trim();
+const evidencePaths = gitText(["ls-tree", "-r", "--name-only", "-z", evidenceCommit]).split("\0").filter(Boolean);
+const sourceAppPaths = gitText(["diff", "--name-only", "--diff-filter=ACMRT", baseCommit, sourceCommit, "--", "app"]).trim().split(/\r?\n/).filter(Boolean);
 const requiredInputs = [
   "AGENTS.md",
   "START_HERE.md",
@@ -37,13 +62,16 @@ for (const p of evidencePaths) {
   }
 }
 const entries = [...unique.values()].sort((a, b) => a.path.localeCompare(b.path));
+const sourceEntries = entries.filter(e => e.commit === "source");
+const evidenceEntries = entries.filter(e => e.commit === "evidence");
+const sourceBlobs = readBlobs(sourceCommit, sourceEntries.map(e => e.path));
+const evidenceBlobs = readBlobs(evidenceCommit, evidenceEntries.map(e => e.path));
 for (const entry of entries) {
-  const commit = entry.commit === "source" ? sourceCommit : evidenceCommit;
-  const spec = commit + ":" + entry.path;
-  const blob = run(["cat-file", "blob", spec], null);
-  entry.gitBlob = run(["rev-parse", spec]).trim();
-  entry.sha256 = crypto.createHash("sha256").update(blob).digest("hex");
-  entry.bytes = blob.length;
+  const spec = (entry.commit === "source" ? sourceCommit : evidenceCommit) + ":" + entry.path;
+  const item = (entry.commit === "source" ? sourceBlobs : evidenceBlobs).get(spec);
+  entry.gitBlob = item.object;
+  entry.sha256 = crypto.createHash("sha256").update(item.blob).digest("hex");
+  entry.bytes = item.blob.length;
 }
 const manifest = {
   format: "SHA-256 over exact Git blob content",
@@ -63,5 +91,3 @@ const manifest = {
 };
 fs.writeFileSync(output, JSON.stringify(manifest, null, 2) + "\n", "utf8");
 process.stdout.write(JSON.stringify({ status: "PASS_GENERATED", entries: entries.length, coverage: manifest.coverage, output: path.relative(repo, output) }, null, 2) + "\n");
-
-
