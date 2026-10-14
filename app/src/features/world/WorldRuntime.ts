@@ -684,9 +684,19 @@ export class WorldRuntime {
     this.scene.clear();
 
     if (this.renderer) {
-      this.renderer.dispose();
-      this.renderer.forceContextLoss();
+      const renderer = this.renderer;
+      const canvas = this.canvas;
       this.renderer = null;
+      renderer.dispose();
+
+      // React Strict Mode replays effects while the same canvas remains in the
+      // document. Keep its context alive for the replacement runtime, then
+      // release it once the canvas has actually been removed.
+      const releaseDetachedContext = () => {
+        if (!canvas.isConnected) renderer.forceContextLoss();
+      };
+      if (canvas.isConnected) queueMicrotask(releaseDetachedContext);
+      else releaseDetachedContext();
     }
   }
 
