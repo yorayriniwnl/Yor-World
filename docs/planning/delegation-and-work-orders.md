@@ -2,6 +2,8 @@
 
 **Latest local gate:** [PRE-G7-21](reviews/2026-10-15-pre-g7-21-parent-acceptance.md) accepts only the exact-source local production build after its [read-only audit](reviews/2026-10-15-pre-g7-21-independent-audit.md). See the [authorizing packet](reconciliation-packets/2026-10-15-pre-g7-21-current-source-build-evidence.md) and maker evidence commit `8d88a324a25d14a3a19a1957e680692f7043a008` on branch `codex/pre-g7-21-current-source-build-evidence-20261015`. Real-device and assistive-technology checks are NOT RUN, the browser GPU state is NOT PROVIDED, and G7 remains unaccepted and local-only.
 
+**Next authorized local packet:** [PRE-G7-22](reconciliation-packets/2026-10-15-pre-g7-22-home-scene-reference-fidelity.md) assigns a bounded home-scene reference-fidelity correction against the accepted `fc64a18a7ec1d027fb0a33400c2fcd6288d6afbf` source. Implementation and independent review must remain separate; no external Gemini/GPT account access has been verified.
+
 **Current candidate: v1.0.0-rc6 — R6 SOURCE ACCEPTED under RC6-R1 for production preparation.** Accepted baseline **G6-R1 / RC5** remains immutable. **G7 AUTHORIZED / PREPARATION** under **G7-OWNER-AUTH-20261006**; actual production/manual evidence and separate G7 acceptance remain required.
 
 [RC6-R1 source ruling](reviews/2026-10-08-rc6-r1.md) records the independently verified exact source/CI/artifact binding. The project is not yet production-complete.
