@@ -1,0 +1,50 @@
+
+> yor-world@1.0.0-rc6 test:unit C:\p13-iso\app
+> vitest run --config vitest.config.ts
+
+
+ RUN  v5.0.2 C:/p13-iso/app
+
+ ❯ tests/unit/reference-composition.test.ts (2 tests | 1 failed) 202ms
+   ❯ reference room composition (2)
+     × keeps named anchors and materials while isolating six-sided runtime panel geometry 180ms
+ ❯ tests/unit/boundaries.test.ts (18 tests | 1 failed) 9006ms
+   × enforces integrated dependency boundaries: HTML shell stays free of 3D and browser features stay free of server imports 5433ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/boundaries.test.ts > enforces integrated dependency boundaries: HTML shell stays free of 3D and browser features stay free of server imports
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/unit/boundaries.test.ts:139:1
+    137| });
+    138|
+    139| it("enforces integrated dependency boundaries: HTML shell stays free o…
+       | ^
+    140|   const packageJson = JSON.parse(readFileSync("package.json", "utf8"))…
+    141|   expect(Object.keys(packageJson.dependencies).sort()).toEqual([
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/unit/reference-composition.test.ts > reference room composition > keeps named anchors and materials while isolating six-sided runtime panel geometry
+AssertionError: expected 0.35 to be close to 0.5, received difference is 0.15000000000000002, but expected 0.005
+ ❯ tests/unit/reference-composition.test.ts:123:34
+    121|     expect(scene.getObjectByName("ai-real-camera")).toBe(shelfCamera);
+    122|     expect(scene.getObjectByName("ai_cam_chassis")).toBe(cameraMesh);
+    123|     expect(chairRoot.position.x).toBeCloseTo(0.5);
+       |                                  ^
+    124|     expect(chairRoot.position.z).toBeCloseTo(-1.75);
+    125|     expect(chairRoot.scale.toArray()).toEqual([0.75, 1.35, 0.9]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 23 passed (25)
+      Tests  2 failed | 319 passed (321)
+   Start at  05:29:51
+   Duration  18.00s (import 65%, transform 20%, tests 13%, worker 1%)
+
+    Isolate  25 workers spawned · ~1.34s startup each (spawn + environment, per file)
+             at least ~1.70s faster with isolate: false — reuses workers across files instead of one per file
+
+ ELIFECYCLE  Command failed with exit code 1.
