@@ -381,6 +381,8 @@ describe("reference room composition", () => {
       applyReferenceComposition(scene);
       expect(mobileSpeakerLeft.position.toArray()).toEqual([-0.93, 0.88, -0.9]);
       expect(mobileSpeakerRight.position.toArray()).toEqual([0.5, 0.88, -0.9]);
+      expect(pc.position.x).toBeCloseTo(0.21);
+      expect(pc.position.z).toBeCloseTo(-0.15);
       expect(controller.scale.toArray()).toEqual([1.9, 1.9, 1.9]);
       expect(shelfCamera.scale.toArray()).toEqual([3, 3, 3]);
       expect(chairRoot.position.toArray()).toEqual([1, 0, -0.36]);

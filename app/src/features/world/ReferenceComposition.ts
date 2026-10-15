@@ -190,6 +190,9 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
     pc.updateWorldMatrix(true, false);
     const worldPosition = pc.getWorldPosition(new THREE.Vector3());
     worldPosition.x += isMobileOpening ? 0.21 : -0.14;
+    // Keep the narrow-view tower on the rear desk strip where the resident's
+    // shoulder no longer covers its visible front face.
+    worldPosition.z -= isMobileOpening ? 0.15 : 0;
     if (pc.parent) pc.parent.worldToLocal(worldPosition);
     pc.position.copy(worldPosition);
     pc.userData["referenceCompositionApplied"] = true;
