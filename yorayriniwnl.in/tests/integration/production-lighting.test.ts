@@ -5,7 +5,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { describe, expect, it } from "vitest";
 import { ExperienceController } from "@/features/experience/controller";
-import { configureProductionLighting, PRODUCTION_LIGHT_INTENSITIES } from "@/features/world/ProductionLighting";
+import { configureProductionLighting, PRODUCTION_HEX_EMISSIVE_COLORS, PRODUCTION_HEX_EMISSIVE_INTENSITY, PRODUCTION_LIGHT_INTENSITIES } from "@/features/world/ProductionLighting";
 import { RuntimeMaterialQuality } from "@/features/world/RuntimeMaterialQuality";
 import { WorldInteractionBinding } from "@/features/world/WorldInteractionBinding";
 
@@ -69,7 +69,7 @@ function lightState(light: THREE.PointLight | THREE.SpotLight, includeIntensity 
   };
 }
 
-function meshState(scene: THREE.Object3D) {
+function meshState(scene: THREE.Object3D, normalizeHexMaterials = false) {
   const meshes: unknown[] = [];
   scene.traverse((node) => {
     if (!(node instanceof THREE.Mesh)) return;
@@ -84,7 +84,15 @@ function meshState(scene: THREE.Object3D) {
       index: node.geometry.index ? Array.from(node.geometry.index.array) : null,
       position: node.position.toArray(), quaternion: node.quaternion.toArray(), scale: node.scale.toArray(),
       matrixWorld: node.matrixWorld.toArray(),
-      materials: (Array.isArray(node.material) ? node.material : [node.material]).map((material) => material.toJSON()),
+      materials: (Array.isArray(node.material) ? node.material : [node.material]).map((material) => {
+        const serialized = material.toJSON() as unknown as Record<string, unknown>;
+        if (normalizeHexMaterials && (material.name === "Hex_LilacEmissive" || material.name === "Hex_VioletEmissive")) {
+          delete serialized["emissive"];
+          delete serialized["emissiveIntensity"];
+          delete serialized["userData"];
+        }
+        return serialized;
+      }),
     });
   });
   return meshes;
@@ -102,11 +110,11 @@ function bindEnvironment(scene: THREE.Object3D, reducedMotion = false) {
 }
 
 describe("Frozen production lighting and runtime controls", () => {
-  it("calibrates the four actual glTF lights while preserving their authored attributes, meshes and asset bytes", async () => {
+  it("calibrates actual glTF lights and named hex materials while preserving mesh data and asset bytes", async () => {
     const { scene, bytes } = await loadRoom();
     const lights = productionLights(scene);
     const originalLightStates = new Map([...lights].map(([name, light]) => [name, lightState(light)]));
-    const originalMeshes = meshState(scene);
+    const originalMeshes = meshState(scene, true);
     expect([...lights.values()].filter((light) => light instanceof THREE.PointLight)).toHaveLength(3);
     expect([...lights.values()].filter((light) => light instanceof THREE.SpotLight)).toHaveLength(1);
     for (const light of lights.values()) expect(light.intensity).toBeGreaterThan(1_000);
@@ -117,7 +125,21 @@ describe("Frozen production lighting and runtime controls", () => {
       expect(light.intensity).toBe(PRODUCTION_LIGHT_INTENSITIES[name]);
       expect(lightState(light)).toEqual(originalLightStates.get(name));
     }
-    expect(meshState(scene)).toEqual(originalMeshes);
+    expect(meshState(scene, true)).toEqual(originalMeshes);
+    const hexMaterials = new Map<string, THREE.MeshStandardMaterial>();
+    scene.traverse((node) => {
+      if (!(node as THREE.Mesh).isMesh) return;
+      const mesh = node as THREE.Mesh;
+      for (const material of (Array.isArray(mesh.material) ? mesh.material : [mesh.material])) {
+        if (material.name in PRODUCTION_HEX_EMISSIVE_COLORS) hexMaterials.set(material.name, material as THREE.MeshStandardMaterial);
+      }
+    });
+    expect([...hexMaterials.keys()].sort()).toEqual(Object.keys(PRODUCTION_HEX_EMISSIVE_COLORS).sort());
+    for (const [name, material] of hexMaterials) {
+      expect(material.emissiveIntensity).toBe(PRODUCTION_HEX_EMISSIVE_INTENSITY);
+      expect(material.emissive.getHex()).toBe(PRODUCTION_HEX_EMISSIVE_COLORS[name]);
+      expect(material.userData["referenceHexClipApplied"]).toBe(true);
+    }
     // This also binds the bitmap/emissive texture metadata that Node did not decode.
     expect(readFileSync(assetPath).equals(bytes)).toBe(true);
   });
@@ -143,26 +165,27 @@ describe("Frozen production lighting and runtime controls", () => {
     expect([lightState(fill, true), lightState(spot, true)]).toEqual(externalBefore);
   });
 
-  it("the real environment binding eases the task lamp off and on using its calibrated 2.5 baseline", async () => {
+  it("the real environment binding eases the task lamp off and on using its calibrated 1.25 baseline", async () => {
     const { scene } = await loadRoom();
     configureProductionLighting(scene);
     const lights = productionLights(scene);
     const lamp = lights.get("Light_TaskDownlight")!;
+    const taskLampBaseline = PRODUCTION_LIGHT_INTENSITIES.Light_TaskDownlight!;
     const otherIntensities = [...lights].filter(([name]) => name !== "Light_TaskDownlight")
       .map(([name, light]) => [name, light.intensity]);
     const { controller, binding } = bindEnvironment(scene);
     try {
-      expect(lamp.intensity).toBe(2.5);
+      expect(lamp.intensity).toBe(PRODUCTION_LIGHT_INTENSITIES.Light_TaskDownlight);
       await controller.send({ type: "SET_LAMP", enabled: false });
       controller.advance(0.125);
-      expect(lamp.intensity).toBeCloseTo(1.25);
+      expect(lamp.intensity).toBeCloseTo(taskLampBaseline / 2);
       controller.advance(0.125);
       expect(lamp.intensity).toBe(0);
       await controller.send({ type: "SET_LAMP", enabled: true });
       controller.advance(0.125);
-      expect(lamp.intensity).toBeCloseTo(1.25);
+      expect(lamp.intensity).toBeCloseTo(taskLampBaseline / 2);
       controller.advance(0.125);
-      expect(lamp.intensity).toBe(2.5);
+      expect(lamp.intensity).toBe(PRODUCTION_LIGHT_INTENSITIES.Light_TaskDownlight);
       expect([...lights].filter(([name]) => name !== "Light_TaskDownlight")
         .map(([name, light]) => [name, light.intensity])).toEqual(otherIntensities);
     } finally {
@@ -186,7 +209,7 @@ describe("Frozen production lighting and runtime controls", () => {
       quality.apply("low");
       expect(points.map((light) => light.layers.mask)).toEqual([0, 0, 0]);
       expect(lamp.layers.mask).toBe(lampMask);
-      expect(lamp.intensity).toBe(2.5);
+      expect(lamp.intensity).toBe(PRODUCTION_LIGHT_INTENSITIES.Light_TaskDownlight);
       await controller.send({ type: "SET_LAMP", enabled: false });
       expect(lamp.intensity).toBe(0);
       quality.apply("high");
@@ -196,7 +219,7 @@ describe("Frozen production lighting and runtime controls", () => {
       expect(lamp.intensity).toBe(0);
       quality.apply("low");
       await controller.send({ type: "SET_LAMP", enabled: true });
-      expect(lamp.intensity).toBe(2.5);
+      expect(lamp.intensity).toBe(PRODUCTION_LIGHT_INTENSITIES.Light_TaskDownlight);
       quality.dispose();
       expect(points.map((light) => light.layers.mask)).toEqual(masks);
       for (const [name, light] of lights) expect(light.intensity).toBe(PRODUCTION_LIGHT_INTENSITIES[name]);

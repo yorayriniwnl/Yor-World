@@ -8,14 +8,15 @@ const root = path.resolve(evidenceRoot, "../../../../..");
 const manifestPath = path.join(root, "yorayriniwnl.in/source-delivery-manifest.json");
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
 const parentCommit = "67026f26bb80d81de4edf632b3038b0239eea4de";
-const sourceCommit = "133529868c8c7279831cbbffe35ab23178012b8c";
-const resultingAppTree = "06f2b4ad62f8022bc4f2d410d67ffa197316e6ab";
+const sourceCommit = "4e29c166e3b32a91c9339eb42132ac30141e512c";
+const resultingAppTree = "d572f4ff370d668f8cb65305a1d3ef9a43a03f7e";
 
 const sourcePaths = [
   "app/src/features/world/CameraDirector.ts",
   "app/src/features/world/ProductionLighting.ts",
   "app/src/features/world/ReferenceComposition.ts",
   "app/src/features/world/SceneIntegrator.ts",
+  "app/src/features/world/WorldRuntime.ts",
   "app/src/features/world/WorldRoot.tsx",
   "app/src/features/world/world.module.css",
 ];
@@ -23,6 +24,7 @@ const testPaths = [
   "app/tests/e2e/world-reference-composition.spec.ts",
   "app/tests/unit/camera-director.test.ts",
   "app/tests/unit/reference-composition.test.ts",
+  "app/tests/integration/production-lighting.test.ts",
 ];
 
 function normalizedHash(bytes) {
@@ -68,6 +70,18 @@ for (const sourcePath of testPaths) {
   testRows.set(sourcePath, syncRow(sourcePath, domainPath));
 }
 manifest.mirror.testFiles = [...testRows.values()].sort((a, b) => a.sourcePath.localeCompare(b.sourcePath));
+for (const row of [...manifest.mirror.sourceFiles, ...manifest.mirror.testFiles]) {
+  const sourceBytes = readFileSync(path.join(root, row.sourcePath));
+  const domainBytes = readFileSync(path.join(root, "yorayriniwnl.in", row.domainPath));
+  const sourceSha256 = normalizedHash(sourceBytes);
+  const domainSha256 = normalizedHash(domainBytes);
+  if (sourceSha256 !== domainSha256) throw new Error(`Mirror audit mismatch: ${row.sourcePath} -> ${row.domainPath}`);
+  row.sourceSha256 = sourceSha256;
+  row.domainSha256 = domainSha256;
+  row.normalizedSha256 = sourceSha256;
+  row.rawBytesEqual = sourceBytes.equals(domainBytes);
+  row.normalizedContentEqual = true;
+}
 manifest.sourceIdentity = {
   parentCommit,
   sourceCommit,
@@ -89,5 +103,7 @@ writeFileSync(path.join(evidenceRoot, "mirror-sync-result.json"), `${JSON.string
   manifestSourceFiles: manifest.mirror.sourceFiles.length,
   syncedTestFiles: testPaths.length,
   manifestTestRows: manifest.mirror.testFiles.length,
+  normalizedMirrorPairsVerified: manifest.mirror.sourceFiles.length + manifest.mirror.testFiles.length,
+  rawByteDifferences: [...manifest.mirror.sourceFiles, ...manifest.mirror.testFiles].filter((row) => !row.rawBytesEqual).length,
   domainOverride: { path: override.path, sha256: currentOverrideHash },
 }, null, 2)}\n`, "utf8");
