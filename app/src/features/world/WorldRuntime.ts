@@ -211,7 +211,8 @@ export class WorldRuntime {
         preserveDrawingBuffer: false,
       });
       this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      this.renderer.toneMappingExposure = 1.15;
+      // Lower the ACES exposure within PRE-G7-12 to preserve the GLB light colors and desk edges.
+      this.renderer.toneMappingExposure = 0.85;
       this.renderer.shadowMap.enabled = this.qualityTier !== "low" && this.qualityTier !== "static";
       this.renderer.shadowMap.type = this.qualityTier === "high" ? THREE.PCFSoftShadowMap : THREE.PCFShadowMap;
 
@@ -352,20 +353,24 @@ export class WorldRuntime {
   }
 
   private setupLighting() {
-    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x687c9a, 2.1);
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x687c9a, 0.85);
+    hemiLight.name = "World_HemisphereAmbient";
     this.scene.add(hemiLight);
 
-    const whiteDir = new THREE.DirectionalLight(0xfff5e8, 3.1);
+    const whiteDir = new THREE.DirectionalLight(0xfff5e8, 1.1);
+    whiteDir.name = "World_Key";
     whiteDir.position.set(-2, 4, 3);
     whiteDir.castShadow = true;
     whiteDir.shadow.mapSize.set(1024, 1024);
     this.scene.add(whiteDir);
 
-    const cyanLight = new THREE.PointLight(0x78e4ff, 15, 8);
+    const cyanLight = new THREE.PointLight(0x78e4ff, 12, 8);
+    cyanLight.name = "World_CyanFill";
     cyanLight.position.set(2, 2, -1);
     this.scene.add(cyanLight);
 
-    const pinkLight = new THREE.PointLight(0xffa4e6, 14, 8);
+    const pinkLight = new THREE.PointLight(0xffa4e6, 11, 8);
+    pinkLight.name = "World_PinkFill";
     pinkLight.position.set(-1, 2.1, -1.6);
     this.scene.add(pinkLight);
   }

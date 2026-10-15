@@ -1,5 +1,31 @@
 import * as THREE from "three";
 
+const HEX_PANEL_POSITIONS: Readonly<Record<string, { x: number; y: number }>> = {
+  hex_panel_1: { x: -0.2235, y: 1.87 },
+  hex_panel_2: { x: 0, y: 1.87 },
+  hex_panel_3: { x: 0.2235, y: 1.87 },
+  hex_panel_4: { x: -0.33525, y: 1.6675 },
+  hex_panel_5: { x: -0.11175, y: 1.6675 },
+  hex_panel_6: { x: 0.11175, y: 1.6675 },
+  hex_panel_7: { x: 0.33525, y: 1.6675 },
+};
+
+const FLOOR_PLANT_NODE_NAMES = [
+  "monstera_leaf_1",
+  "monstera_leaf_2",
+  "monstera_leaf_3",
+  "monstera_leaf_4",
+  "monstera_stand_leg_1",
+  "monstera_stand_leg_2",
+  "monstera_stand_leg_3",
+  "pot_monstera",
+] as const;
+
+const RIGHT_SPEAKER_NODE_NAMES = [
+  "speaker_right_cabinet",
+  "speaker_right_tweeter",
+  "speaker_right_woofer",
+] as const;
 const HEX_PANEL_NAMES = [
   "hex_panel_1",
   "hex_panel_2",
@@ -46,17 +72,42 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
 
   const plants = scene.getObjectByName("plants");
   if (plants && plants.userData["referenceCompositionApplied"] !== true) {
-    plants.position.x = 0.3;
+    // The accepted plant leaves extend beyond the left side of the opening
+    // frusta. Move the existing group toward the shelf center without adding
+    // or removing any GLB geometry.
+    plants.position.x = 0.72;
     plants.userData["referenceCompositionApplied"] = true;
   }
 
+  for (const name of FLOOR_PLANT_NODE_NAMES) {
+    const plantPart = scene.getObjectByName(name);
+    if (!plantPart || plantPart.userData["referenceCompositionApplied"] === true) continue;
+    plantPart.position.z -= 0.85;
+    plantPart.userData["referenceCompositionApplied"] = true;
+  }
+
+  for (const name of RIGHT_SPEAKER_NODE_NAMES) {
+    const speakerPart = scene.getObjectByName(name);
+    if (!speakerPart || speakerPart.userData["referenceCompositionApplied"] === true) continue;
+    // Move only the existing right speaker above and beside the monitor so the
+    // seated resident cannot completely hide the matched pair in either home view.
+    speakerPart.position.x -= 0.2;
+    speakerPart.position.y += 0.5;
+    speakerPart.userData["referenceCompositionApplied"] = true;
+  }
+
+
   const shelfCamera = scene.getObjectByName("ai-real-camera");
   if (shelfCamera && shelfCamera.userData["referenceCompositionApplied"] !== true) {
-    // The accepted GLB camera is authored on the far-left lower shelf and its
-    // meshes intersect that shelf. Move the named interaction group toward the
-    // upper-shelf lip and slightly forward of the board so its feet and body
-    // remain visible from both opening presets.
-    shelfCamera.position.set(0.7, 0.35, 0.18);
+    // The camera meshes are authored around (-1.45, 1.7, -1.48), while the
+    // adjacent shelf is centered at (-1.45, 1.65, -1.68). Scale about the
+    // camera's authored center, then settle its feet on the shelf lip. The
+    // root name stays intact for the accepted interaction binding.
+    const cameraCenter = new THREE.Vector3(-1.45, 1.7, -1.48);
+    const cameraScale = 1.8;
+    const cameraTarget = new THREE.Vector3(-1.45, 1.78, -1.32);
+    shelfCamera.scale.setScalar(cameraScale);
+    shelfCamera.position.copy(cameraTarget).sub(cameraCenter.multiplyScalar(cameraScale));
     shelfCamera.userData["referenceCompositionApplied"] = true;
   }
 
@@ -69,13 +120,14 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
     }
     if (panel.userData["referenceCompositionApplied"] === true) continue;
 
-    // Keep the authored seven-panel diamond silhouette while giving it the
-    // wall scale shown in the supplied reference. Move the flat panels just
-    // forward of the upper shelf so its board cannot occlude their glow.
-    panel.position.x *= 2.4;
-    panel.position.y = 2.10 + (panel.position.y - 1.82) * 1.1;
-    panel.position.z += 0.16;
-    panel.scale.set(2.7, 2.7, 1);
+    // The named box faces are arranged as two close, offset rows so the
+    // existing six-sided material treatment reads as one honeycomb cluster.
+
+    const panelPosition = HEX_PANEL_POSITIONS[name];
+    if (!panelPosition) throw new Error(`Reference composition has no layout for ${name}`);
+    panel.position.set(panelPosition.x, panelPosition.y, -1.61);
+
+    panel.scale.set(1.35, 1.35, 1);
     panel.userData["referenceCompositionApplied"] = true;
   }
 
@@ -93,7 +145,7 @@ function addHeadsetStand(scene: THREE.Object3D): boolean {
 
   const stand = new THREE.Group();
   stand.name = "headset-stand-code-native";
-  stand.position.set(1.38, 0, -0.83);
+  stand.position.set(1.12, 0, -0.68);
   stand.userData["source"] = "PRE-G7-12 code-native secondary headset stand; GLB inventory confirmed no headset stand node";
 
   const material = new THREE.MeshStandardMaterial({

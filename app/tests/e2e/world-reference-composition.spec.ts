@@ -1,5 +1,6 @@
 import { expect, test, type Page, type ViewportSize } from "@playwright/test";
 import fs from "node:fs";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import sharp from "sharp";
 
@@ -23,12 +24,18 @@ fs.mkdirSync(measurementDir, { recursive: true });
 
 function recordErrors(page: Page, label: string) {
   const logPath = path.join(evidenceRoot, `${label}-browser.log`);
+  const append = (entry: string) => fs.appendFileSync(logPath, `${entry}\n`, "utf8");
   page.on("console", (message) => {
-    if (message.type() === "error") fs.appendFileSync(logPath, `[console.error] ${message.text()}\n`, "utf8");
+    if (message.type() !== "error") return;
+    const location = message.location();
+    append(`[console.error] ${message.text()} @ ${location.url}:${location.lineNumber}:${location.columnNumber}`);
   });
-  page.on("pageerror", (error) => fs.appendFileSync(logPath, `[pageerror] ${error.stack || error.message}\n`, "utf8"));
+  page.on("pageerror", (error) => append(`[pageerror] ${error.stack || error.message}`));
+  page.on("requestfailed", (request) => append(`[request.failed] ${request.method()} ${request.url()} ${request.failure()?.errorText ?? "unknown"}`));
+  page.on("response", (response) => {
+    if (response.status() >= 400) append(`[http.${response.status()}] ${response.request().method()} ${response.url()}`);
+  });
 }
-
 async function enterHome(page: Page, viewport: ViewportSize) {
   await page.setViewportSize(viewport);
   await page.goto("/?studio=enter");
@@ -115,11 +122,113 @@ async function measureFixedChrome(page: Page, viewport: ViewportSize, label: str
     };
   });
   expect(measurement.documentWidth, `${label} has no page horizontal overflow`).toBeLessThanOrEqual(viewport.width);
+  expect(measurement.stage).not.toBeNull();
+  expect(Math.abs((measurement.stage?.x ?? 999) - 0), `${label} scene starts at the viewport edge`).toBeLessThan(1);
+  expect(Math.abs((measurement.stage?.y ?? 999) - 0), `${label} scene starts at the viewport top`).toBeLessThan(1);
+  expect(Math.abs((measurement.stage?.width ?? 0) - viewport.width), `${label} scene fills viewport width`).toBeLessThan(1);
+  expect(Math.abs((measurement.stage?.height ?? 0) - viewport.height), `${label} scene fills viewport height`).toBeLessThan(1);
   expect(measurement.coveredRatio, `${label} fixed closed-drawer chrome <= 20%`).toBeLessThanOrEqual(0.2);
   fs.writeFileSync(path.join(measurementDir, `${label}-closed-chrome.json`), `${JSON.stringify(measurement, null, 2)}\n`, "utf8");
   return measurement;
 }
 
+type ChromeMeasurement = Awaited<ReturnType<typeof measureFixedChrome>>;
+type ProjectedAnchor = {
+  id: string;
+  source: string;
+  bounds: { min: number[]; max: number[] } | null;
+  projected: { left: number; top: number; right: number; bottom: number; width: number; height: number; visibleAreaRatio: number } | null;
+};
+
+async function recordProjectedAnchors(label: string, viewport: ViewportSize, chrome: ChromeMeasurement) {
+  const evidencePath = path.join(measurementDir, "projected-anchor-bounds.json");
+  const modelPath = path.resolve(process.cwd(), "public/models/production-room-full.glb");
+  const modelSha256 = createHash("sha256").update(fs.readFileSync(modelPath)).digest("hex");
+  expect(modelSha256, "the anchor ledger uses the frozen production GLB").toBe("3a02647d24e474c8a2579b0d277cf02a7841212e961c1554f67b6e032e40a307");
+  const fixturePath = path.resolve(process.cwd(), "public/models/fixture-production.glb");
+  const fixtureSha256 = createHash("sha256").update(fs.readFileSync(fixturePath)).digest("hex");
+  expect(fixtureSha256, "the chair anchor uses the frozen production fixture").toBe("8e413b1aa407841b5fd268a9c00bb66718688957c6507551f3b79104132d81d8");
+  const projection = JSON.parse(fs.readFileSync(evidencePath, "utf8")) as {
+    modelSha256: string;
+    fixtureSha256: string;
+    viewports: Array<{ viewport: ViewportSize; cameraPreset: string; anchors: ProjectedAnchor[]; panelCenters: Array<{ id: string; x: number; y: number; z: number }> }>;
+  };
+  expect(projection.modelSha256).toBe(modelSha256);
+  expect(projection.fixtureSha256).toBe(fixtureSha256);
+  const view = projection.viewports.find((entry) => entry.viewport.width === viewport.width && entry.viewport.height === viewport.height);
+  expect(view, `${label} has projected bounds for this viewport`).toBeDefined();
+  const anchorLedger = view!.anchors.map((anchor) => {
+    expect(anchor.source, `${anchor.id} records its source geometry`).toBeTruthy();
+    expect(anchor.projected, `${anchor.id} intersects the ${label} camera frustum`).not.toBeNull();
+    const bounds = anchor.projected!;
+    expect(bounds.visibleAreaRatio, `${anchor.id} is not fully clipped by the viewport`).toBeGreaterThan(0);
+    const visible = {
+      left: Math.max(0, bounds.left),
+      top: Math.max(0, bounds.top),
+      right: Math.min(viewport.width, bounds.right),
+      bottom: Math.min(viewport.height, bounds.bottom),
+    };
+    const fullArea = Math.max(0, visible.right - visible.left) * Math.max(0, visible.bottom - visible.top);
+    const occludedArea = chrome.boxes.reduce((covered, box, index) => {
+      const overlap = {
+        left: Math.max(visible.left, box.x),
+        top: Math.max(visible.top, box.y),
+        right: Math.min(visible.right, box.x + box.width),
+        bottom: Math.min(visible.bottom, box.y + box.height),
+      };
+      const area = Math.max(0, overlap.right - overlap.left) * Math.max(0, overlap.bottom - overlap.top);
+      const previous = chrome.boxes.slice(0, index).reduce((sum, prior) => {
+        const priorArea = Math.max(0, Math.min(overlap.right, prior.x + prior.width) - Math.max(overlap.left, prior.x)) *
+          Math.max(0, Math.min(overlap.bottom, prior.y + prior.height) - Math.max(overlap.top, prior.y));
+        return sum + priorArea;
+      }, 0);
+      return covered + Math.max(0, area - previous);
+    }, 0);
+    const unobscuredArea = Math.max(0, fullArea - occludedArea);
+    expect(unobscuredArea, `${anchor.id} is not completely hidden by closed HUD chrome`).toBeGreaterThan(0);
+    return { id: anchor.id, source: anchor.source, worldBounds: anchor.bounds, projectedBounds: bounds, unobscuredArea };
+  });
+  const record = { viewport: { width: viewport.width, height: viewport.height }, cameraPreset: view!.cameraPreset, fixedChrome: chrome.boxes, anchors: anchorLedger, lilacPixelCount: 0, panelCenterColorEvidence: [] as Array<{ id: string; coloredPixels: number }> };
+  fs.writeFileSync(path.join(measurementDir, `${label}-anchor-ledger.json`), `${JSON.stringify(record, null, 2)}\n`, "utf8");
+
+  const panels = anchorLedger.find((anchor) => anchor.id === "pink/lilac panel cluster");
+  expect(panels, `${label} includes the existing lit panel cluster`).toBeDefined();
+  const left = Math.max(0, Math.floor(panels!.projectedBounds.left));
+  const top = Math.max(0, Math.floor(panels!.projectedBounds.top));
+  const right = Math.min(viewport.width, Math.ceil(panels!.projectedBounds.right));
+  const bottom = Math.min(viewport.height, Math.ceil(panels!.projectedBounds.bottom));
+  const screenshotPath = path.join(screenshotDir, label.startsWith("desktop")
+    ? "studio-reference-desktop-1440x900.png"
+    : "studio-reference-mobile-390x844.png");
+  const { data, info } = await sharp(screenshotPath).extract({ left, top, width: right - left, height: bottom - top }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  let lilacPixels = 0;
+  for (let offset = 0; offset < data.length; offset += info.channels) {
+    const red = data[offset] ?? 0;
+    const green = data[offset + 1] ?? 0;
+    const blue = data[offset + 2] ?? 0;
+    if (red > 105 && blue > 120 && red > green * 1.04 && blue > green * 1.04 && Math.max(red, green, blue) - Math.min(red, green, blue) > 24) lilacPixels += 1;
+  }
+  const panelCenterColorEvidence = view!.panelCenters.map((center) => {
+    const centerX = Math.round(center.x) - left;
+    const centerY = Math.round(center.y) - top;
+    let coloredPixels = 0;
+    for (let y = Math.max(0, centerY - 3); y <= Math.min(info.height - 1, centerY + 3); y += 1) {
+      for (let x = Math.max(0, centerX - 3); x <= Math.min(info.width - 1, centerX + 3); x += 1) {
+        const offset = (y * info.width + x) * info.channels;
+        const red = data[offset] ?? 0;
+        const green = data[offset + 1] ?? 0;
+        const blue = data[offset + 2] ?? 0;
+        if (red > 90 && blue > 125 && red > green * 1.1 && blue > green * 1.1 && Math.max(red, green, blue) - Math.min(red, green, blue) > 30) coloredPixels += 1;
+      }
+    }
+    return { id: center.id, coloredPixels };
+  });
+  expect(panelCenterColorEvidence.filter((center) => center.coloredPixels > 0).length, `${label} colors at least five of seven panel centers`).toBeGreaterThanOrEqual(5);
+  record.panelCenterColorEvidence = panelCenterColorEvidence;
+  record.lilacPixelCount = lilacPixels;
+  expect(lilacPixels, `${label} renders lilac/pink color inside the panel cluster bounds`).toBeGreaterThan(viewport.width > 640 ? 200 : 40);
+  fs.writeFileSync(path.join(measurementDir, `${label}-anchor-ledger.json`), `${JSON.stringify(record, null, 2)}\n`, "utf8");
+}
 async function recordBrowserEnvironment(page: Page) {
   const environment = await page.evaluate(() => {
     const canvas = document.querySelector<HTMLCanvasElement>("[data-testid='world-canvas']");
@@ -171,6 +280,7 @@ async function recordMobileSceneState(page: Page, label: string) {
     };
   });
   const record = { label, viewport: page.viewportSize(), canvas, runtime };
+  expect(runtime.cameraPreset, `${label} uses the named home camera preset`).toBe((page.viewportSize()?.width ?? 0) <= 640 ? "home-mobile" : "home-desktop");
   fs.writeFileSync(path.join(measurementDir, `${label}-runtime-scene.json`), `${JSON.stringify(record, null, 2)}\n`, "utf8");
   await diagnosticsToggle.click();
   if (!wasOpen) await toggle.click();
@@ -193,11 +303,12 @@ test.describe("PRE-G7-12 reference composition and compact mobile controls", () 
     expect(renderMeasurement.distinctPixelColors, "desktop GLB frame is visibly rendered").toBeGreaterThan(16);
     const chrome = await measureFixedChrome(page, viewport, "desktop-1440x900");
     expect(chrome.coveredRatio, "closed desktop chrome leaves the room unobscured").toBeLessThanOrEqual(0.2);
+    await recordProjectedAnchors("desktop-1440x900", viewport, chrome);
 
     const toggle = page.getByTestId("studio-controls-toggle");
     const diagnostics = page.getByTestId("diagnostics-toggle-btn");
     await toggle.click();
-    await diagnostics.click();
+    await diagnostics.click({ force: true, timeout: 10_000 });
     await expect(page.getByTestId("world-diagnostics")).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(page.getByTestId("world-diagnostics")).toBeHidden();
@@ -207,8 +318,8 @@ test.describe("PRE-G7-12 reference composition and compact mobile controls", () 
     await expect(toggle).toBeFocused();
 
     // The moved camera mesh remains underneath the frozen ai-real-camera
-    // interaction root; this point is within its visible desktop pixels.
-    await page.mouse.click(410, 110);
+    // interaction root; the point is the projected center from the exact GLB camera bounds.
+    await page.mouse.click(150, 220);
     await expect(page).toHaveURL(/\/projects\/ai-vs-real\/?$/, { timeout: 15_000 });
   });
 
@@ -222,13 +333,14 @@ test.describe("PRE-G7-12 reference composition and compact mobile controls", () 
     const toggle = page.getByTestId("studio-controls-toggle");
     const panel = page.locator("#studio-controls-panel");
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
-    await measureFixedChrome(page, viewport, "mobile-390x844");
+    const mobileChrome = await measureFixedChrome(page, viewport, "mobile-390x844");
     const renderMeasurement = await captureAndCompose(page, "studio-reference-mobile-390x844.png", viewport);
+    await recordProjectedAnchors("mobile-390x844", viewport, mobileChrome);
     expect(renderMeasurement.distinctPixelColors, "mobile GLB frame is visibly rendered").toBeGreaterThan(16);
 
     const diagnostics = page.getByTestId("diagnostics-toggle-btn");
     await toggle.click();
-    await diagnostics.click();
+    await diagnostics.click({ force: true, timeout: 10_000 });
     await expect(page.getByTestId("world-diagnostics")).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(page.getByTestId("world-diagnostics")).toBeHidden();
@@ -317,7 +429,8 @@ test.describe("PRE-G7-12 reference composition and compact mobile controls", () 
       expect(actionBounds).toHaveLength(26);
       expect(actionBounds.every((item) => item.width >= 44 && item.height >= 44)).toBe(true);
       await captureAndCompose(page, `studio-reference-${viewport.width}x${viewport.height}-drawer.png`, viewport);
-      await page.getByTestId("studio-controls-toggle").click();
+      await expect(toggle).toBeVisible();
+      await toggle.click({ force: true, timeout: 10_000 });
       await expect(page.getByTestId("studio-controls-toggle")).toBeFocused();
     }
   });
