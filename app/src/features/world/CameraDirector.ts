@@ -3,10 +3,10 @@ import type { CameraConfig, CameraPreset } from "./types";
 
 export const CAMERA_PRESETS: Record<CameraPreset, CameraConfig> = {
   "home-desktop": {
-    // A higher, more oblique opening view exposes the desktop surface and
-    // separates its right-side anchors from the seated figure.
-    position: [0.75, 2.4, 1.3],
-    target: [-0.2, 0.9, -1.2],
+    // A centered opening view gives the matched desk speakers equal scale and
+    // keeps the upper shelf and seated workstation anchors inside the frame.
+    position: [0, 2.4, 1.3],
+    target: [0, 1, -1.2],
     fov: 60,
   },
   "home-mobile": {

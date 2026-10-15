@@ -16,8 +16,8 @@ describe("CameraDirector - Single Camera Owner and Smooth Transitions", () => {
   });
 
   it("uses the packet's responsive HOME composition and keeps other focus presets stable", () => {
-    expect(CAMERA_PRESETS["home-desktop"].position).toEqual([0.75, 2.4, 1.3]);
-    expect(CAMERA_PRESETS["home-desktop"].target).toEqual([-0.2, 0.9, -1.2]);
+    expect(CAMERA_PRESETS["home-desktop"].position).toEqual([0, 2.4, 1.3]);
+    expect(CAMERA_PRESETS["home-desktop"].target).toEqual([0, 1, -1.2]);
     expect(CAMERA_PRESETS["home-desktop"].fov).toBe(60);
 
     expect(CAMERA_PRESETS["home-mobile"].position).toEqual([0.3, 2.22, 1.43]);

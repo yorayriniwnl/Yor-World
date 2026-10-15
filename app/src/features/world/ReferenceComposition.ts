@@ -208,10 +208,14 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
       if (driver && driver.parent !== cabinet) cabinet.attach(driver);
     }
     const side = cabinetName.startsWith("speaker_left_") ? -0.93 : 0.93;
+    // At phone width the seated resident overlaps the right speaker's projected
+    // silhouette. Bring that existing interaction root inboard while keeping
+    // both cabinets at a shared desktop height and depth.
+    const openingX = isMobileOpening && cabinetName === "speaker_right_cabinet" ? 0.15 : side;
     const worldPosition = cabinet.getWorldPosition(new THREE.Vector3());
     // Bring the pair to the clear front portion of the desk so the right
     // cabinet stays in front of the desktop PC in both wide opening views.
-    translateWorld(cabinet, new THREE.Vector3(side - worldPosition.x, 0.88 - worldPosition.y, -0.9 - worldPosition.z));
+    translateWorld(cabinet, new THREE.Vector3(openingX - worldPosition.x, 0.88 - worldPosition.y, -0.9 - worldPosition.z));
     cabinet.userData["referenceCompositionApplied"] = true;
   }
 

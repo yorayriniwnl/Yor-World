@@ -4,6 +4,7 @@ import {
   configureProductionLighting,
   configureReferenceMaterials,
   PRODUCTION_LIGHT_INTENSITIES,
+  PRODUCTION_LIGHT_POSITIONS,
   REFERENCE_MATERIAL_CALIBRATIONS,
 } from "../../src/features/world/ProductionLighting";
 
@@ -69,6 +70,7 @@ describe("named reference lighting and material calibration", () => {
 
     expect(ambient.intensity).toBe(PRODUCTION_LIGHT_INTENSITIES.Light_CeilingAmbient);
     expect(cyan.intensity).toBe(PRODUCTION_LIGHT_INTENSITIES.Light_CyanFill);
+    expect(cyan.position.toArray()).toEqual(PRODUCTION_LIGHT_POSITIONS.Light_CyanFill);
     expect(hex.intensity).toBe(PRODUCTION_LIGHT_INTENSITIES.Light_HexWall);
     expect(downlight.intensity).toBe(2.5);
   });

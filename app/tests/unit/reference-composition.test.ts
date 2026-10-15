@@ -328,6 +328,14 @@ describe("reference room composition", () => {
       panel.name = `hex_panel_${index}`;
       scene.add(panel);
     }
+    const mobileSpeakerLeft = new THREE.Group();
+    mobileSpeakerLeft.name = "speaker_left_cabinet";
+    mobileSpeakerLeft.position.set(-0.93, 0.88, -0.9);
+    scene.add(mobileSpeakerLeft);
+    const mobileSpeakerRight = new THREE.Group();
+    mobileSpeakerRight.name = "speaker_right_cabinet";
+    mobileSpeakerRight.position.set(0.93, 0.88, -0.9);
+    scene.add(mobileSpeakerRight);
     const pc = new THREE.Group();
     pc.name = "helios-pc";
     const pcBody = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.48, 0.48), new THREE.MeshBasicMaterial());
@@ -371,6 +379,8 @@ describe("reference room composition", () => {
     vi.stubGlobal("window", { innerWidth: 390 });
     try {
       applyReferenceComposition(scene);
+      expect(mobileSpeakerLeft.position.toArray()).toEqual([-0.93, 0.88, -0.9]);
+      expect(mobileSpeakerRight.position.toArray()).toEqual([0.15, 0.88, -0.9]);
       expect(controller.scale.toArray()).toEqual([1.9, 1.9, 1.9]);
       expect(shelfCamera.scale.toArray()).toEqual([3, 3, 3]);
       expect(chairRoot.position.toArray()).toEqual([0.75, 0, -0.36]);
