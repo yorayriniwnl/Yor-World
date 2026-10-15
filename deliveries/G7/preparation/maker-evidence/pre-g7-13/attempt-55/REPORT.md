@@ -43,7 +43,7 @@ The two unit failures are retained without changing tests or timeouts. `tests/un
 
 The all-row verifier confirms 125 normalized source/test pairs, with 14 currently byte-identical in this checkout. The changed CSS source/mirror pair is byte-identical and its raw hashes match the manifest. All other manifest rows are unchanged from the committed baseline. The domain public-base override remains untouched and tracked-clean; its worktree bytes differ from the committed blob only by checkout EOL conversion, while normalized content and committed hash remain preserved.
 
-`evidence-file-hashes.json` was generated from the staged Git index blobs using one `git cat-file --batch` pass. It records 182 staged source/evidence entries (excluding the inventory file itself), their blob OIDs, raw byte counts, and SHA-256 values; the only other staged path is the inventory file itself. The inventory helper rejects paths outside the three owned source/manifest files and `attempt-55/`.
+`evidence-file-hashes.json` is generated from Git index blobs using one `git cat-file --batch` pass. It records 182 source/evidence entries (excluding the inventory file itself), their blob OIDs, raw byte counts, and SHA-256 values; staged paths are constrained to the three owned source/manifest files and `attempt-55/`.
 
 ## Changed-path boundary and disposition
 
@@ -53,4 +53,4 @@ The intended product-source paths are exactly:
 - `yorayriniwnl.in/src/features/world/world.module.css`
 - `yorayriniwnl.in/source-delivery-manifest.json`
 
-All other intended changes are confined to this `attempt-55/` evidence directory. Parent-owned packet files and earlier attempt evidence are excluded. This is a maker checkpoint only; no PRE-G7-13E or G7 acceptance is claimed. Commit and remote result will be added after the scoped source/evidence commit.
+All other intended changes are confined to this `attempt-55/` evidence directory. Parent-owned packet files and earlier attempt evidence are excluded. Source and attempt-55 evidence were committed as `4e439d8a87f21855251919b5d705e6a81120756d` and pushed to `origin/codex/pre-g7-13-anchor-articulation-isolated-20261014`; local and remote refs matched after push. This is a maker checkpoint only; no PRE-G7-13E or G7 acceptance is claimed.

@@ -13,8 +13,7 @@ const allowedExact = new Set([
 ]);
 const stagedOutput = execFileSync("git", ["diff", "--cached", "--name-only", "-z"], { cwd: root });
 const stagedPaths = stagedOutput.toString("utf8").split("\0").filter(Boolean);
-const includedPaths = stagedPaths.filter((file) => file !== inventoryPath).sort();
-const outOfScope = includedPaths.filter((file) => !allowedExact.has(file) && !file.startsWith(evidencePrefix));
+const outOfScope = stagedPaths.filter((file) => !allowedExact.has(file) && !file.startsWith(evidencePrefix));
 if (outOfScope.length) throw new Error(`staged path outside PRE-G7-13E scope: ${outOfScope.join(", ")}`);
 
 const indexOutput = execFileSync("git", ["ls-files", "-s", "-z"], { cwd: root, maxBuffer: 64 * 1024 * 1024 });
@@ -25,6 +24,9 @@ for (const entry of indexOutput.toString("utf8").split("\0").filter(Boolean)) {
   const file = entry.slice(tab + 1);
   if (meta[2] === "0") indexEntries.set(file, { mode: meta[0], oid: meta[1] });
 }
+const includedPaths = [...indexEntries.keys()]
+  .filter((file) => file !== inventoryPath && (allowedExact.has(file) || file.startsWith(evidencePrefix)))
+  .sort();
 const missing = includedPaths.filter((file) => !indexEntries.has(file));
 if (missing.length) throw new Error(`staged path missing index blob: ${missing.join(", ")}`);
 
@@ -57,10 +59,11 @@ for (let index = 0; index < includedPaths.length; index += 1) {
 const result = {
   status: "PASS",
   sourceCheckpoint: execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim(),
-  stagedPathCount: includedPaths.length,
+  scopeEntryCount: includedPaths.length,
+  stagedPathCount: stagedPaths.length,
   excludedSelf: inventoryPath,
   outOfScopePaths: outOfScope,
   entries: rows,
 };
 writeFileSync(path.join(root, inventoryPath), `${JSON.stringify(result, null, 2)}\n`, "utf8");
-process.stdout.write(`status=PASS\nstagedPathCount=${includedPaths.length}\ninventory=${inventoryPath}\n`);
+process.stdout.write(`status=PASS\nscopeEntryCount=${includedPaths.length}\nstagedPathCount=${stagedPaths.length}\ninventory=${inventoryPath}\n`);
