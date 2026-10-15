@@ -380,12 +380,12 @@ describe("reference room composition", () => {
     try {
       applyReferenceComposition(scene);
       expect(mobileSpeakerLeft.position.toArray()).toEqual([-0.93, 0.88, -0.9]);
-      expect(mobileSpeakerRight.position.toArray()).toEqual([0.15, 0.88, -0.9]);
+      expect(mobileSpeakerRight.position.toArray()).toEqual([0.5, 0.88, -0.9]);
       expect(controller.scale.toArray()).toEqual([1.9, 1.9, 1.9]);
       expect(shelfCamera.scale.toArray()).toEqual([3, 3, 3]);
-      expect(chairRoot.position.toArray()).toEqual([0.75, 0, -0.36]);
-      expect(chairBase.position.toArray()).toEqual([0.75, 0, -0.36]);
-      expect(resident.position.toArray()).toEqual([0.75, 0, -0.36]);
+      expect(chairRoot.position.toArray()).toEqual([1, 0, -0.36]);
+      expect(chairBase.position.toArray()).toEqual([1, 0, -0.36]);
+      expect(resident.position.toArray()).toEqual([1, 0, -0.36]);
       expect(chairRoot.scale.toArray()).toEqual([0.85, 0.85, 0.85]);
       expect(chairBase.scale.toArray()).toEqual([0.85, 0.85, 0.85]);
       expect(resident.scale.toArray()).toEqual([0.85, 0.85, 0.85]);

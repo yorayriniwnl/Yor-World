@@ -9,9 +9,9 @@ export const PRODUCTION_LIGHT_INTENSITIES: Readonly<Record<string, number>> = {
   Light_TaskDownlight: 2.5,
 };
 
-/** Place the existing cyan point light just in front of the desk edge. */
+/** Keep the existing cyan point light at the visible foreground-floor patch. */
 export const PRODUCTION_LIGHT_POSITIONS: Readonly<Record<string, readonly [number, number, number]>> = {
-  Light_CyanFill: [0, 0.15, -0.65],
+  Light_CyanFill: [0, 0.15, -0.45],
 };
 
 export const REFERENCE_MATERIAL_CALIBRATIONS = {

@@ -211,7 +211,7 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
     // At phone width the seated resident overlaps the right speaker's projected
     // silhouette. Bring that existing interaction root inboard while keeping
     // both cabinets at a shared desktop height and depth.
-    const openingX = isMobileOpening && cabinetName === "speaker_right_cabinet" ? 0.15 : side;
+    const openingX = isMobileOpening && cabinetName === "speaker_right_cabinet" ? 0.5 : side;
     const worldPosition = cabinet.getWorldPosition(new THREE.Vector3());
     // Bring the pair to the clear front portion of the desk so the right
     // cabinet stays in front of the desktop PC in both wide opening views.
@@ -235,7 +235,7 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
     // Keep the paired seated actor intact while moving it out of the expanded
     // monitor/right-prop sightline. The smaller phone placement preserves the
     // full chair and resident silhouettes in narrow emulated viewports.
-    const lateralOffset = isMobileOpening ? 0.45 : 1.2;
+    const lateralOffset = isMobileOpening ? 0.7 : 1.2;
     const forwardOffset = isMobileOpening ? 0 : -0.55;
     const actorScale = isMobileOpening ? 0.85 : 0.82;
     translateWorld(actorRoot, new THREE.Vector3(lateralOffset, 0, forwardOffset));

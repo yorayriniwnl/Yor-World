@@ -534,7 +534,7 @@ async function recordVisualAnchorEvidence(
   });
   const warmPixels = countColor(["lightbar_emissive"], (r, g, b) => r > 100 && g > 35 && r > g * 1.18 && g > b * 1.15);
   const floorRegion = viewport.width === 1440
-    ? { name: "desktop-underdesk-cyan-floor", left: Math.round(viewport.width * 0.45), top: Math.round(viewport.height * 0.79), width: Math.round(viewport.width * 0.1), height: Math.round(viewport.height * 0.1) }
+    ? { name: "desktop-foreground-cyan-floor", left: Math.round(viewport.width * 0.45), top: Math.round(viewport.height * 0.82), width: Math.round(viewport.width * 0.1), height: Math.round(viewport.height * 0.1) }
     : viewport.width === 844
       ? { name: "landscape-floor-classifier-sample", left: Math.round(viewport.width * 0.85), top: Math.round(viewport.height * 0.62), width: Math.round(viewport.width * 0.1), height: Math.round(viewport.height * 0.1) }
       : { name: "portrait-underdesk-cyan-floor", left: Math.round(viewport.width * 0.45), top: Math.round(viewport.height * 0.64), width: Math.round(viewport.width * 0.1), height: Math.round(viewport.height * 0.1) };
@@ -590,7 +590,7 @@ async function recordVisualAnchorEvidence(
   expect(exposedFloorRegions.length, `${label} floor-color ROI is outside chair/resident projected bounds`).toBeGreaterThan(0);
   const floorClassifierApplies = !(viewport.width === 844 && viewport.height === 390);
   if (floorClassifierApplies) {
-    expect(exposedFloorRegions[0]!.cyanRatio, `${label} has cyan fill in the measured underdesk floor ROI outside chair/resident bounds`).toBeGreaterThanOrEqual(minimumFloorCyanRatio);
+    expect(exposedFloorRegions[0]!.cyanRatio, `${label} has cyan fill in the measured floor ROI outside chair/resident bounds`).toBeGreaterThanOrEqual(minimumFloorCyanRatio);
   }
   const paleSurfaceRegions = viewport.height > viewport.width
     ? [{ name: "portrait-workstation-left-tabletop", left: Math.round(viewport.width * 0.12), top: Math.round(viewport.height * 0.51), width: Math.round(viewport.width * 0.18), height: Math.max(1, Math.round(viewport.height * 0.04)) }]
@@ -628,7 +628,7 @@ async function recordVisualAnchorEvidence(
   expect(cyanFillLight?.found, `${label} records the existing cyan point light`).toBe(true);
   expect(cyanFillLight?.type, `${label} preserves the source point-light type`).toBe("PointLight");
   expect(cyanFillLight?.intensity, `${label} records the bounded runtime cyan-light intensity`).toBe(1.6);
-  expect(cyanFillLight?.position, `${label} records the calibrated world position of the cyan light`).toEqual([0, 0.15, -0.65]);
+  expect(cyanFillLight?.position, `${label} records the calibrated world position of the cyan light`).toEqual([0, 0.15, -0.45]);
   const lilacMaterials = Array.from({ length: 7 }, (_, index) => byName.get(`hex_panel_${index + 1}`)?.materials ?? []).flat();
   const barMaterials = byName.get("lightbar_emissive")?.materials ?? [];
   expect(lilacMaterials.some((material) => material.name === "Hex_LilacEmissive" && (material.emissiveIntensity ?? 0) >= 1)).toBe(true);
@@ -687,7 +687,7 @@ async function recordVisualAnchorEvidence(
         minimumCyanRatio: minimumFloorCyanRatio,
         status: floorClassifierApplies ? "APPLICABLE" : "NOT APPLICABLE; landscape raw frame retained for human review",
         region: viewport.width === 1440
-          ? "10% by 10% underdesk scene tile at x=45%, y=79%"
+          ? "10% by 10% clear foreground-floor tile at x=45%, y=82%, below the desk apron and above fixed studio actions"
           : viewport.width === 844
             ? "10% by 10% clear floor sample at x=85%, y=62%; current landscape HUD can hide or color-shift saturated floor pixels, so no automated cyan threshold is applied"
             : "10% by 10% underdesk scene tile at x=45%, y=64%",
