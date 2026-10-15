@@ -1,0 +1,10 @@
+command=node.exe pnpm.cjs run test:unit (exact default, no args)
+The wrapper used `2>&1 | Tee-Object` while PowerShell `$ErrorActionPreference='Stop'` was active. The process emitted the boundary failure and returned exit 1; PowerShell then surfaced a NativeCommandError before the wrapper wrote the final receipt or drained a suite summary.
+Captured PowerShell excerpt:
+node.exe :
+At line:2 char:822
++ ... x\_worktrees\pre-g7-17\app'; & $node $pnpm run test:unit 2>&1 | Tee-O ...
++                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+Classification: preserve as FAIL/INCOMPLETE. The visible Vitest output records the intended boundary test failed in 8.783s (file 9.594s); the aggregate total is unavailable and is not inferred. No rerun was authorized.

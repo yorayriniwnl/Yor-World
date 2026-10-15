@@ -1,0 +1,16 @@
+# Diagnostic attempt history
+
+This log lists standalone diagnostics only. None of these commands invokes Vitest or consumes a full-suite/focused-test allowance.
+
+| Probe | Initial outcome | Recovery / retained evidence |
+| --- | --- | --- |
+| Initial algorithm profiler | First Node launch could not resolve `typescript` because the profiler lived below the evidence directory and dependency resolution was relative to that location. | Re-ran from `app/` with `NODE_PATH=app/node_modules`; the successful output is `boundary-profiler.stdout.log`. The first failure's raw stderr was not retained before the same output path was reused; this row records the observed launch error. |
+| Profiler failure-note path | A helper attempted to write beneath `app/deliveries/...` while its current directory was `app/`; that nested location did not exist and PowerShell returned `DirectoryNotFoundException`. | No artifact landed in `app/`; the corrected output went to worktree-root `deliveries/...`. The failed command output was visible in the tool result but not separately archived. |
+| First split-timing script generation | The replacement inserted literal `\n` characters into JavaScript, causing `SyntaxError: Invalid or unexpected token` at `boundary-profiler-split.cjs:42`. | Rebuilt the script with real line breaks. The original stderr path was then reused by the successful run, so the error is transcribed here from the tool result. |
+| First split-timing measurement | The timing insertion did not match the file's LF line endings, so `astVisit` was reported as `0`; parse timing was `1.428s`. This was an invalid/incomplete measurement. | Corrected the insertion using a newline-tolerant expression and reran. The final successful separated profile is in `boundary-profiler-split.stdout.log`, with its run metadata in `boundary-profiler-split-run.json`. |
+| First expect microprobe | Script below the evidence folder could not resolve package `vitest` from its own module location. | Attempted an inline Node evaluation; the PowerShell `Start-Process` argument construction clipped the multi-line source to `import`, yielding `SyntaxError: Unexpected end of input`. |
+| Inline expect microprobe | Direct PowerShell native argument passing stripped JavaScript quote characters and yielded `SyntaxError: Unexpected identifier 'vitest'`. | A final direct package-location probe could not resolve `@vitest/expect` at `app/node_modules/@vitest/expect/dist/index.js`; its raw stderr is retained as `expect-perf-probe.stderr.log`. No expect-performance result was obtained, and it was not used to justify or reject a source edit. |
+| Source path audit | First launch ran with worktree root as current directory, so `src/` was absent and Node returned `ENOENT`. | Reran from `app/`; the successful JSON is `../deliveries/.../source-path-audit.json`. |
+| Parity audit helper | First PowerShell helper failed before writing output because this PowerShell/.NET runtime lacks `SHA256.HashData`. | Switched to `SHA256.Create().ComputeHash`; `mirror-parity.json` is the successful result. No source file was touched. |
+
+The successful algorithm profile remains useful but did not establish a direct implementation bottleneck matching the 68.215-second Vitest body time. The failed unit receipt is preserved separately and remains the only unit-suite invocation in PRE-G7-18.

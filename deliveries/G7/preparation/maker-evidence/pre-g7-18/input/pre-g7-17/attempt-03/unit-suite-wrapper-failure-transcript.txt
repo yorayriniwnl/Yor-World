@@ -1,0 +1,26 @@
+﻿PRE-G7-17 UNIT WRAPPER FAILURE TRANSCRIPT
+Classification: setup/output-capture failure; the required full-unit result is NOT RUN/UNVERIFIED. No test summary was captured. The wrapper returned -1 after 13.859 seconds. A post-exit process scan found no surviving pnpm.cjs run test:unit, Vitest, or unit-process-observer process. This does not count as a passing or complete full-suite result.
+
+Captured exec output, initial chunk:
+RUN_START_UTC=2026-10-14T22:59:24.8902894Z
+COMMAND="C:\Users\ayush\AppData\Local\Temp\yor-world-node-24.19.0\unpacked\node-v24.19.0-win-x64\node.exe" "C:\Users\ayush\AppData\Local\pnpm\store\v11\links\@\pnpm\9.15.9\3d51f653a61d6f9b811790f44bb80b908ca8d24c424e6e53e491ea81b7f96a43\node_modules\pnpm\bin\pnpm.cjs" run test:unit
+NODE=v24.19.0 PNPM=9.15.9
+
+Captured exec output, completion chunk:
+out-file : Could not find a part of the path 'C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-17\app\deliveries\G7\preparation\maker-evidence\pre-g7-17\attempt-03\unit-suite-final.log'.
+At line:17 char:1
++ & $node $pnpm run test:unit 2>&1 | Tee-Object -FilePath $log
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OpenError: (:) [Out-File], DirectoryNotFoundException
+    + FullyQualifiedErrorId : System.IO.DirectoryNotFoundException
+
+Set-Content : Could not find a part of the path 'C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-17\app\deliveries\G7\preparation\maker-evidence\pre-g7-17\attempt-03\unit-suite-final-run.txt'.
+At line:21 char:371
++ ... ver.Id)") | Set-Content -LiteralPath (Join-Path $base 'unit-suite-final-run.txt') -Encoding UTF8
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (C:\Users\ayush\...e-final-run.txt:String) [Set-Content], DirectoryNotFoundException
+    + FullyQualifiedErrorId : PathNotFound
+
+RUN_END_UTC=2026-10-14T22:59:38.7493594Z ELAPSED_SECONDS=13.859 EXIT_CODE=-1
+
+The evidence path was built relative to app instead of the worktree root. Tee-Object could not create the log. The unit result is unknown and must not be treated as a suite attempt with an observed test outcome. No retry, timeout override, or test argument was used.
