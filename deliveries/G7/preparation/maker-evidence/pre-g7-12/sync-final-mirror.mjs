@@ -8,8 +8,8 @@ const root = path.resolve(evidenceRoot, "../../../../..");
 const manifestPath = path.join(root, "yorayriniwnl.in/source-delivery-manifest.json");
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
 const parentCommit = "67026f26bb80d81de4edf632b3038b0239eea4de";
-const sourceCommit = "4e29c166e3b32a91c9339eb42132ac30141e512c";
-const resultingAppTree = "d572f4ff370d668f8cb65305a1d3ef9a43a03f7e";
+const sourceCommit = "43d3c0289fd5afe5970d799c77f9a701b4d71d0e";
+const resultingAppTree = "77f3af861ffe4d6b96154fcfba792490b3cc45dc";
 
 const sourcePaths = [
   "app/src/features/world/CameraDirector.ts",

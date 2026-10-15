@@ -4,7 +4,7 @@ import type { CameraConfig, CameraPreset } from "./types";
 export const CAMERA_PRESETS: Record<CameraPreset, CameraConfig> = {
   "home-desktop": {
     // Near-frontal framing keeps the workstation props separated and in view.
-    position: [-0.45, 1.85, 1.3],
+    position: [-0.5, 1.85, 1.3],
     target: [0.0, 1.27, -1.22],
     fov: 48,
   },
