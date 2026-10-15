@@ -53,7 +53,7 @@ const inventory = {
   sourceCommit: "7b63604979db4426d334b16f049bd1be3b84f16e",
   sourceTree: "46ece6472248ee768418d4030e52022932605873",
   appTree: "8ef938d8fbfb048b6f98020819b5fb9997e3c3c0",
-  bindingCommit: "97fa25769eb46c12347bbc0cb37bc98ec79667cb",
+  bindingCommit: "07204a66cebbcdef353e4b266ff9b430687075e9",
   inventoryExclusion: "delta-07/delta-evidence-inventory.json (self-reference is impossible; all other evidence files are listed)",
   entryCount: entries.length,
   entries,
