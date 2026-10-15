@@ -1,0 +1,143 @@
+
+Running 6 tests using 1 worker
+
+  x  1 [chrome] › tests\e2e\world-reference-composition.spec.ts:760:3 › PRE-G7-22 reference composition and compact mobile controls › captures the opening desktop room beside the user reference (42.9s)
+  x  2 [chrome] › tests\e2e\world-reference-composition.spec.ts:830:3 › PRE-G7-22 reference composition and compact mobile controls › starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape (27.4s)
+  x  3 [chrome] › tests\e2e\world-reference-composition.spec.ts:917:3 › PRE-G7-22 reference composition and compact mobile controls › keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes (25.1s)
+  x  4 [edge] › tests\e2e\world-reference-composition.spec.ts:760:3 › PRE-G7-22 reference composition and compact mobile controls › captures the opening desktop room beside the user reference (44.8s)
+  x  5 [edge] › tests\e2e\world-reference-composition.spec.ts:830:3 › PRE-G7-22 reference composition and compact mobile controls › starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape (24.6s)
+  ok 6 [edge] › tests\e2e\world-reference-composition.spec.ts:917:3 › PRE-G7-22 reference composition and compact mobile controls › keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes (37.0s)
+
+
+  1) [chrome] › tests\e2e\world-reference-composition.spec.ts:760:3 › PRE-G7-22 reference composition and compact mobile controls › captures the opening desktop room beside the user reference 
+
+    Error: desktop-1440x900-chrome has cyan fill in the measured floor ROI outside chair/resident bounds
+
+    expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 0.1
+    Received:    0
+
+      591 |   const floorClassifierApplies = !(viewport.width === 844 && viewport.height === 390);
+      592 |   if (floorClassifierApplies) {
+    > 593 |     expect(exposedFloorRegions[0]!.cyanRatio, `${label} has cyan fill in the measured floor ROI outside chair/resident bounds`).toBeGreaterThanOrEqual(minimumFloorCyanRatio);
+          |                                                                                                                                 ^
+      594 |   }
+      595 |   const paleSurfaceRegions = viewport.height > viewport.width
+      596 |     ? [{ name: "portrait-workstation-left-tabletop", left: Math.round(viewport.width * 0.12), top: Math.round(viewport.height * 0.51), width: Math.round(viewport.width * 0.18), height: Math.max(1, Math.round(viewport.height * 0.04)) }]
+        at recordVisualAnchorEvidence (C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-22\app\tests\e2e\world-reference-composition.spec.ts:593:129)
+        at C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-22\app\tests\e2e\world-reference-composition.spec.ts:778:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-reference-compositio-acedc-m-beside-the-user-reference-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-reference-compositio-acedc-m-beside-the-user-reference-chrome\error-context.md
+
+  2) [chrome] › tests\e2e\world-reference-composition.spec.ts:830:3 › PRE-G7-22 reference composition and compact mobile controls › starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape 
+
+    Error: mobile-390x844-chrome has cyan fill in the measured floor ROI outside chair/resident bounds
+
+    expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 0.1
+    Received:    0
+
+      591 |   const floorClassifierApplies = !(viewport.width === 844 && viewport.height === 390);
+      592 |   if (floorClassifierApplies) {
+    > 593 |     expect(exposedFloorRegions[0]!.cyanRatio, `${label} has cyan fill in the measured floor ROI outside chair/resident bounds`).toBeGreaterThanOrEqual(minimumFloorCyanRatio);
+          |                                                                                                                                 ^
+      594 |   }
+      595 |   const paleSurfaceRegions = viewport.height > viewport.width
+      596 |     ? [{ name: "portrait-workstation-left-tabletop", left: Math.round(viewport.width * 0.12), top: Math.round(viewport.height * 0.51), width: Math.round(viewport.width * 0.18), height: Math.max(1, Math.round(viewport.height * 0.04)) }]
+        at recordVisualAnchorEvidence (C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-22\app\tests\e2e\world-reference-composition.spec.ts:593:129)
+        at C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-22\app\tests\e2e\world-reference-composition.spec.ts:847:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-reference-compositio-e757b-th-Diagnostics-first-Escape-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-reference-compositio-e757b-th-Diagnostics-first-Escape-chrome\error-context.md
+
+  3) [chrome] › tests\e2e\world-reference-composition.spec.ts:917:3 › PRE-G7-22 reference composition and compact mobile controls › keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes 
+
+    Error: 320x600-chrome has cyan fill in the measured floor ROI outside chair/resident bounds
+
+    expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 0.1
+    Received:    0
+
+      591 |   const floorClassifierApplies = !(viewport.width === 844 && viewport.height === 390);
+      592 |   if (floorClassifierApplies) {
+    > 593 |     expect(exposedFloorRegions[0]!.cyanRatio, `${label} has cyan fill in the measured floor ROI outside chair/resident bounds`).toBeGreaterThanOrEqual(minimumFloorCyanRatio);
+          |                                                                                                                                 ^
+      594 |   }
+      595 |   const paleSurfaceRegions = viewport.height > viewport.width
+      596 |     ? [{ name: "portrait-workstation-left-tabletop", left: Math.round(viewport.width * 0.12), top: Math.round(viewport.height * 0.51), width: Math.round(viewport.width * 0.18), height: Math.max(1, Math.round(viewport.height * 0.04)) }]
+        at recordVisualAnchorEvidence (C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-22\app\tests\e2e\world-reference-composition.spec.ts:593:129)
+        at C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-22\app\tests\e2e\world-reference-composition.spec.ts:936:25
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-reference-compositio-5278b-e-and-short-landscape-sizes-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-reference-compositio-5278b-e-and-short-landscape-sizes-chrome\error-context.md
+
+  4) [edge] › tests\e2e\world-reference-composition.spec.ts:760:3 › PRE-G7-22 reference composition and compact mobile controls › captures the opening desktop room beside the user reference 
+
+    Error: desktop-1440x900-edge has cyan fill in the measured floor ROI outside chair/resident bounds
+
+    expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 0.1
+    Received:    0
+
+      591 |   const floorClassifierApplies = !(viewport.width === 844 && viewport.height === 390);
+      592 |   if (floorClassifierApplies) {
+    > 593 |     expect(exposedFloorRegions[0]!.cyanRatio, `${label} has cyan fill in the measured floor ROI outside chair/resident bounds`).toBeGreaterThanOrEqual(minimumFloorCyanRatio);
+          |                                                                                                                                 ^
+      594 |   }
+      595 |   const paleSurfaceRegions = viewport.height > viewport.width
+      596 |     ? [{ name: "portrait-workstation-left-tabletop", left: Math.round(viewport.width * 0.12), top: Math.round(viewport.height * 0.51), width: Math.round(viewport.width * 0.18), height: Math.max(1, Math.round(viewport.height * 0.04)) }]
+        at recordVisualAnchorEvidence (C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-22\app\tests\e2e\world-reference-composition.spec.ts:593:129)
+        at C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-22\app\tests\e2e\world-reference-composition.spec.ts:778:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-reference-compositio-acedc-m-beside-the-user-reference-edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-reference-compositio-acedc-m-beside-the-user-reference-edge\error-context.md
+
+  5) [edge] › tests\e2e\world-reference-composition.spec.ts:830:3 › PRE-G7-22 reference composition and compact mobile controls › starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape 
+
+    Error: mobile-390x844-edge has cyan fill in the measured floor ROI outside chair/resident bounds
+
+    expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 0.1
+    Received:    0
+
+      591 |   const floorClassifierApplies = !(viewport.width === 844 && viewport.height === 390);
+      592 |   if (floorClassifierApplies) {
+    > 593 |     expect(exposedFloorRegions[0]!.cyanRatio, `${label} has cyan fill in the measured floor ROI outside chair/resident bounds`).toBeGreaterThanOrEqual(minimumFloorCyanRatio);
+          |                                                                                                                                 ^
+      594 |   }
+      595 |   const paleSurfaceRegions = viewport.height > viewport.width
+      596 |     ? [{ name: "portrait-workstation-left-tabletop", left: Math.round(viewport.width * 0.12), top: Math.round(viewport.height * 0.51), width: Math.round(viewport.width * 0.18), height: Math.max(1, Math.round(viewport.height * 0.04)) }]
+        at recordVisualAnchorEvidence (C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-22\app\tests\e2e\world-reference-composition.spec.ts:593:129)
+        at C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-22\app\tests\e2e\world-reference-composition.spec.ts:847:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-reference-compositio-e757b-th-Diagnostics-first-Escape-edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-reference-compositio-e757b-th-Diagnostics-first-Escape-edge\error-context.md
+
+  5 failed
+    [chrome] › tests\e2e\world-reference-composition.spec.ts:760:3 › PRE-G7-22 reference composition and compact mobile controls › captures the opening desktop room beside the user reference 
+    [chrome] › tests\e2e\world-reference-composition.spec.ts:830:3 › PRE-G7-22 reference composition and compact mobile controls › starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape 
+    [chrome] › tests\e2e\world-reference-composition.spec.ts:917:3 › PRE-G7-22 reference composition and compact mobile controls › keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes 
+    [edge] › tests\e2e\world-reference-composition.spec.ts:760:3 › PRE-G7-22 reference composition and compact mobile controls › captures the opening desktop room beside the user reference 
+    [edge] › tests\e2e\world-reference-composition.spec.ts:830:3 › PRE-G7-22 reference composition and compact mobile controls › starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape 
+  1 passed (4.6m)
