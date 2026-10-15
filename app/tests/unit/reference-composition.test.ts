@@ -155,11 +155,11 @@ describe("reference room composition", () => {
     expect(pc.position.toArray()).toEqual([0.26, 0.8, -0.9]);
     expect(pc.getObjectByName("helios-pc")).toBe(pc);
     expect(pc.getObjectByName(pcMesh.name)).toBe(pcMesh);
-    expect(rightSpeaker.position.toArray()).toEqual([0.93, 0.88, -1.25]);
+    expect(rightSpeaker.position.toArray()).toEqual([0.93, 0.88, -0.9]);
     expect(rightSpeaker.userData["referenceCompositionApplied"]).toBe(true);
     expect(scene.getObjectByName("speaker_right_cabinet")).toBe(rightSpeaker);
     expect(scene.getObjectByName("speaker_right_driver")).toBe(rightSpeakerMesh);
-    expect(leftSpeaker.position.toArray()).toEqual([-0.93, 0.88, -1.25]);
+    expect(leftSpeaker.position.toArray()).toEqual([-0.93, 0.88, -0.9]);
     expect(leftDrivers.map((driver) => driver.parent)).toEqual([leftSpeaker, leftSpeaker]);
     expect(speakerDrivers.map((driver) => driver.parent)).toEqual([rightSpeaker, rightSpeaker]);
     expect(rightSpeakerMesh.geometry).toBe(originalSpeakerGeometry);

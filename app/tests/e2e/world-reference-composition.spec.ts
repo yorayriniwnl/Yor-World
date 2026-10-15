@@ -427,6 +427,7 @@ async function recordVisualAnchorEvidence(
   const rightSpeaker = byName.get("speaker_right_cabinet")!;
   const minimumSpeakerPixels = viewport.width >= 1200 ? 24 : viewport.width === 390 ? 16 : 12;
   expect(leftSpeaker.worldPosition?.[1], `${label} left round speaker shares the matched desk height`).toBeCloseTo(rightSpeaker.worldPosition?.[1] ?? Number.NaN, 4);
+  expect(leftSpeaker.worldPosition?.[2], `${label} left round speaker shares the front desk depth`).toBeCloseTo(rightSpeaker.worldPosition?.[2] ?? Number.NaN, 4);
   expect(leftSpeaker.pixelBounds!.width, `${label} left speaker has a rendered desktop-scale silhouette`).toBeGreaterThanOrEqual(minimumSpeakerPixels);
   expect(rightSpeaker.pixelBounds!.width, `${label} right speaker has a rendered desktop-scale silhouette`).toBeGreaterThanOrEqual(minimumSpeakerPixels);
   expect(leftSpeaker.pixelBounds!.height, `${label} left speaker shows its paired round-driver assembly`).toBeGreaterThanOrEqual(minimumSpeakerPixels);

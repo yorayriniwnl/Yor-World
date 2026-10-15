@@ -209,7 +209,9 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
     }
     const side = cabinetName.startsWith("speaker_left_") ? -0.93 : 0.93;
     const worldPosition = cabinet.getWorldPosition(new THREE.Vector3());
-    translateWorld(cabinet, new THREE.Vector3(side - worldPosition.x, 0.88 - worldPosition.y, -1.25 - worldPosition.z));
+    // Bring the pair to the clear front portion of the desk so the right
+    // cabinet stays in front of the desktop PC in both wide opening views.
+    translateWorld(cabinet, new THREE.Vector3(side - worldPosition.x, 0.88 - worldPosition.y, -0.9 - worldPosition.z));
     cabinet.userData["referenceCompositionApplied"] = true;
   }
 
