@@ -13,7 +13,7 @@ export const CAMERA_PRESETS: Record<CameraPreset, CameraConfig> = {
     // Preserve the front-room angle that keeps the monitor surface clear of
     // the resident while the enlarged, shelf-seated GLB camera and controller
     // remain above the phone-size recognition floor.
-    position: [0.3, 2.22, 1.43],
+    position: [0.3125, 2.22, 1.43],
     target: [0.06, 0.96, -1.2],
     fov: 110,
   },

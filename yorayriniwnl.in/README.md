@@ -1,7 +1,7 @@
 # yorayriniwnl.in
 
-This folder mirrors the canonical YOR WORLD application source in app/, with the intentional domain URL override at src/config/public-base-url.ts. The local Node and pnpm versions are Node 24.19.0 and pnpm 9.15.9.
+This folder mirrors the canonical YOR WORLD application source in `app/`, with the intentional domain URL override at `src/config/public-base-url.ts`. The local runtime is Node 24.19.0 with pnpm 9.15.9.
 
-The current source is a PRE-G7-13 local visual candidate based on failed PRE-G7-12 source 133529868c8c7279831cbbffe35ab23178012b8c, with the seven-panel scope amendment 0a73f307d078cc531f09bbc4ae7a5dfef2eedd01. Attempt-50 desktop/mobile captures are evidence for the current candidate. The maker report records the actual test outcomes and limitations; independent audit and acceptance remain pending.
+The current PRE-G7-13 local candidate is bound to source commit `034d87951555731ff03d413b380556471e4ad73a` and app tree `0ea10ae3cadb00526e13293248fbef3b3007537e`. Attempt-60 desktop and mobile captures document the scene candidate; attempt-61 records the mobile camera endpoint precision correction and its verification.
 
-This candidate is not accepted or deployed. G7 remains not accepted. Do not treat the source mirror as a deployment or provider configuration. See source-delivery-manifest.json for source and parity hashes after the source revision is frozen.
+This candidate is not accepted or deployed. Independent delta audit and parent acceptance remain pending; G7 remains not accepted. See `source-delivery-manifest.json` for source identity and parity hashes.

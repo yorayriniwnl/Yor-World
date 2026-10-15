@@ -20,7 +20,7 @@ describe("CameraDirector - Single Camera Owner and Smooth Transitions", () => {
     expect(CAMERA_PRESETS["home-desktop"].target).toEqual([-0.2, 0.9, -1.2]);
     expect(CAMERA_PRESETS["home-desktop"].fov).toBe(60);
 
-    expect(CAMERA_PRESETS["home-mobile"].position).toEqual([0.3, 2.22, 1.43]);
+    expect(CAMERA_PRESETS["home-mobile"].position).toEqual([0.3125, 2.22, 1.43]);
     expect(CAMERA_PRESETS["home-mobile"].target).toEqual([0.06, 0.96, -1.2]);
     expect(CAMERA_PRESETS["home-mobile"].fov).toBe(110);
 

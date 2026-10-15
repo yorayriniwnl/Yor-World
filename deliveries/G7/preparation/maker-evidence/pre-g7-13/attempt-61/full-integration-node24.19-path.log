@@ -1,0 +1,33 @@
+
+> yor-world@1.0.0-rc6 test:integration C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-13\app
+> vitest run --config vitest.integration.config.ts
+
+
+ RUN  v5.0.2 C:/Users/ayush/COddexxxxxxxxxxxxxxxx/_worktrees/pre-g7-13/app
+
+ ❯ tests/integration/platform/canonical-fixture.test.ts (1 test | 1 failed) 95856ms
+   ❯ Explicit browser fixture connection ownership across Next route bundles (1)
+     × initializes the same file database once across independently loaded route modules 95847ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/platform/canonical-fixture.test.ts > Explicit browser fixture connection ownership across Next route bundles > initializes the same file database once across independently loaded route modules
+Error: Test timed out in 60000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/integration/platform/canonical-fixture.test.ts:10:3
+      8|   afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); });
+      9|
+     10|   it("initializes the same file database once across independently loa…
+       |   ^
+     11|     const directory = await mkdtemp(path.join(os.tmpdir(), "yor-rc3-fi…
+     12|     vi.stubEnv("YOR_E2E_FIXTURE", "1");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 26 passed (27)
+      Tests  1 failed | 285 passed (286)
+   Start at  02:49:04
+   Duration  98.46s (tests 88%, import 8%, transform 5%)
+
+ ELIFECYCLE  Command failed with exit code 1.
