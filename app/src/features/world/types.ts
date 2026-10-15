@@ -68,6 +68,15 @@ export interface Diagnostics {
   renderedTriangles?: number | undefined;
   renderPixelRatio?: number | undefined;
   interactions?: { boundProductionTargets: number; frozenHitProxyCount: number; lastActivatedId: string | null } | undefined;
+  staticBatch?: {
+    totalMeshes: number;
+    eligibleMeshes: number;
+    layoutRejectedMeshes: number;
+    batchedMeshes: number;
+    batchCount: number;
+    singletonGroups: number;
+    singletonMeshes: number;
+  } | null | undefined;
   lifecycleState: WorldLifecycleState;
   residentCount: number;
   chairCount: number;

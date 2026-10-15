@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { describe, expect, it, vi } from "vitest";
-import { LOW_BATCH_ORIGINAL_LAYER, LowQualityBatch } from "../../src/features/world/LowQualityBatch";
+import { STATIC_BATCH_ORIGINAL_LAYER, StaticSceneBatch } from "../../src/features/world/LowQualityBatch";
 import { RuntimeMaterialQuality } from "../../src/features/world/RuntimeMaterialQuality";
 
 function geometry(size = 1): THREE.BufferGeometry {
@@ -30,7 +30,7 @@ function expectMatrix(actual: THREE.Matrix4, expected: THREE.Matrix4): void {
   actual.elements.forEach((value, index) => expect(value).toBeCloseTo(expected.elements[index]!, 5));
 }
 
-describe("reversible LOW batching of original frozen meshes", () => {
+describe("reversible static batching of original frozen meshes", () => {
   it("copies buffers and uses relative instance matrices without changing original identity or transforms", () => {
     const scene = new THREE.Group();
     scene.position.set(1.2, -0.5, 2.5);
@@ -50,12 +50,21 @@ describe("reversible LOW batching of original frozen meshes", () => {
       index: Array.from(mesh.geometry.index!.array), box: mesh.geometry.boundingBox, sphere: mesh.geometry.boundingSphere,
     }));
 
-    const quality = new LowQualityBatch(scene);
+    const quality = new StaticSceneBatch(scene);
     const batch = batches(scene)[0]!;
     expect(batch).toBeInstanceOf(THREE.BatchedMesh);
     expect(batch.visible).toBe(false);
     expect(batch.material).toBe(meshes[0].material);
     expect(batch.instanceCount).toBe(2);
+    expect(quality.getDiagnostics()).toEqual({
+      totalMeshes: 2,
+      eligibleMeshes: 2,
+      layoutRejectedMeshes: 0,
+      batchedMeshes: 2,
+      batchCount: 1,
+      singletonGroups: 0,
+      singletonMeshes: 0,
+    });
     expect(batch.geometry.getAttribute("position").array).not.toBe(meshes[0].geometry.getAttribute("position").array);
     expect(batch.boundingBox).not.toBeNull();
     expect(batch.boundingSphere).not.toBeNull();
@@ -92,7 +101,7 @@ describe("reversible LOW batching of original frozen meshes", () => {
     const material = new THREE.MeshLambertMaterial();
     const shared = geometry();
     scene.add(new THREE.Mesh(shared, material), new THREE.Mesh(shared, material));
-    const quality = new LowQualityBatch(scene);
+    const quality = new StaticSceneBatch(scene);
     const batch = batches(scene)[0]!;
     expect(batch.getGeometryIdAt(0)).toBe(batch.getGeometryIdAt(1));
     expect(batch.geometry.getAttribute("position").count).toBe(shared.getAttribute("position").count);
@@ -100,19 +109,22 @@ describe("reversible LOW batching of original frozen meshes", () => {
     quality.dispose();
   });
 
-  it.each(["high", "medium"] as const)("restores exact original layer masks at %s, with batches hidden", (tier) => {
+  it.each(["high", "medium"] as const)("keeps source meshes raycastable at %s while static batches render", (tier) => {
     const scene = new THREE.Group();
     const meshes = pair();
     for (const mesh of meshes) mesh.layers.enable(4);
     const masks = meshes.map((mesh) => mesh.layers.mask);
     scene.add(...meshes);
-    const quality = new LowQualityBatch(scene);
+    const quality = new StaticSceneBatch(scene);
     const batch = batches(scene)[0]!;
     for (let index = 0; index < 3; index++) {
       quality.apply("low");
-      expect(meshes.map((mesh) => mesh.layers.mask)).toEqual([1 << LOW_BATCH_ORIGINAL_LAYER, 1 << LOW_BATCH_ORIGINAL_LAYER]);
+      expect(meshes.map((mesh) => mesh.layers.mask)).toEqual([18, 18]);
       expect(batch.visible).toBe(true);
       quality.apply(tier);
+      expect(meshes.map((mesh) => mesh.layers.mask)).toEqual([18, 18]);
+      expect(batch.visible).toBe(true);
+      quality.apply("static");
       expect(meshes.map((mesh) => mesh.layers.mask)).toEqual(masks);
       expect(batch.visible).toBe(false);
     }
@@ -127,15 +139,15 @@ describe("reversible LOW batching of original frozen meshes", () => {
     const raycaster = new THREE.Raycaster(new THREE.Vector3(0, 0, 5), new THREE.Vector3(0, 0, -1));
     const before = raycaster.intersectObject(scene, true);
     expect(before[0]!.object).toBe(meshes[0]);
-    const quality = new LowQualityBatch(scene);
-    quality.apply("low");
+    const quality = new StaticSceneBatch(scene);
+    quality.apply("medium");
     expect(raycaster.intersectObject(scene, true)).toHaveLength(0);
-    raycaster.layers.enable(LOW_BATCH_ORIGINAL_LAYER);
-    const low = raycaster.intersectObject(scene, true);
-    expect(low).toHaveLength(before.length);
-    expect(low[0]!.object).toBe(meshes[0]);
-    expect(low[0]!.point.equals(before[0]!.point)).toBe(true);
-    expect(low[0]!.distance).toBe(before[0]!.distance);
+    raycaster.layers.enable(STATIC_BATCH_ORIGINAL_LAYER);
+    const active = raycaster.intersectObject(scene, true);
+    expect(active).toHaveLength(before.length);
+    expect(active[0]!.object).toBe(meshes[0]);
+    expect(active[0]!.point.equals(before[0]!.point)).toBe(true);
+    expect(active[0]!.distance).toBe(before[0]!.distance);
     expect(raycaster.intersectObject(batches(scene)[0]!, false)).toHaveLength(0);
     quality.dispose();
   });
@@ -146,18 +158,17 @@ describe("reversible LOW batching of original frozen meshes", () => {
     const meshes = pair(original);
     scene.add(...meshes);
     const materials = new RuntimeMaterialQuality(scene);
-    materials.apply("low");
-    const lowMaterial = meshes[0].material;
-    const quality = new LowQualityBatch(scene);
+    const quality = new StaticSceneBatch(scene, (material, tier) => materials.materialForTier(material, tier));
     const batch = batches(scene)[0]!;
+    const lowMaterial = materials.materialForTier(original, "low");
     expect(lowMaterial).toBeInstanceOf(THREE.MeshLambertMaterial);
-    expect(batch.material).toBe(lowMaterial);
-    for (const tier of ["low", "medium", "low", "high"] as const) {
+    expect(batch.material).toBe(original);
+    for (const tier of ["low", "medium", "low", "high", "static"] as const) {
       materials.apply(tier);
       quality.apply(tier);
       expect(meshes[0].material).toBe(tier === "low" ? lowMaterial : original);
-      expect(batch.material).toBe(lowMaterial);
-      expect(batch.visible).toBe(tier === "low");
+      expect(batch.material).toBe(tier === "low" ? lowMaterial : original);
+      expect(batch.visible).toBe(tier !== "static");
     }
     quality.dispose();
     materials.dispose();
@@ -181,7 +192,7 @@ describe("reversible LOW batching of original frozen meshes", () => {
     differentLayer.layers.enable(3);
     const excluded = [otherMaterial, differentAttribute, differentNormalization, nonIndexed, differentShadow, differentCull, differentLayer];
     scene.add(...accepted, ...excluded);
-    const quality = new LowQualityBatch(scene);
+    const quality = new StaticSceneBatch(scene);
     quality.apply("low");
     expect(batches(scene)).toHaveLength(1);
     expect(batches(scene)[0]!.instanceCount).toBe(2);
@@ -194,7 +205,7 @@ describe("reversible LOW batching of original frozen meshes", () => {
     const meshes = pair();
     for (const mesh of meshes) mesh.geometry = mesh.geometry.toNonIndexed();
     scene.add(...meshes);
-    const quality = new LowQualityBatch(scene);
+    const quality = new StaticSceneBatch(scene);
     expect(batches(scene)).toHaveLength(1);
     expect(batches(scene)[0]!.geometry.index).toBeNull();
     quality.dispose();
@@ -207,7 +218,7 @@ describe("reversible LOW batching of original frozen meshes", () => {
     const meshes = pair();
     dynamic.add(...meshes);
     scene.add(dynamic);
-    const quality = new LowQualityBatch(scene);
+    const quality = new StaticSceneBatch(scene);
     quality.apply("low");
     expect(batches(scene)).toHaveLength(0);
     expect(meshes.map((mesh) => mesh.layers.mask)).toEqual([1, 1]);
@@ -228,7 +239,7 @@ describe("reversible LOW batching of original frozen meshes", () => {
       new THREE.VectorKeyframeTrack(`${uuidMeshes[0].uuid}.scale`, [0, 1], [1, 1, 1, 2, 2, 2]),
       new THREE.BooleanKeyframeTrack(`${uuidMeshes[1].uuid}.visible`, [0, 1], [true, false]),
     ])];
-    const quality = new LowQualityBatch(scene);
+    const quality = new StaticSceneBatch(scene);
     quality.apply("low");
     expect(batches(scene)).toHaveLength(1);
     expect(batches(scene)[0]!.instanceCount).toBe(2);
@@ -244,19 +255,18 @@ describe("reversible LOW batching of original frozen meshes", () => {
       new THREE.NumberKeyframeTrack("missing-node.position[x]", [0, 1], [0, 1]),
     ])];
     scene.add(animated);
-    const quality = new LowQualityBatch(scene);
+    const quality = new StaticSceneBatch(scene);
     expect(batches(scene)).toHaveLength(0);
     quality.dispose();
   });
 
-  it.each(["transparent", "cutout", "wireframe", "stencil", "partial", "groups", "array", "morph", "instanced", "instanced-attribute", "skinned", "callback", "shader-callback", "material-callback", "custom-raycast", "order", "parent-order", "hidden", "negative", "parent-negative", "singular", "shear", "dynamic-buffer", "half-float"])("leaves %s meshes untouched", (condition) => {
+  it.each(["transparent", "cutout", "wireframe", "stencil", "partial", "groups", "array", "morph", "instanced", "instanced-attribute", "skinned", "callback", "material-callback", "order", "parent-order", "hidden", "negative", "parent-negative", "singular", "shear", "dynamic-buffer", "half-float"])("leaves %s meshes untouched", (condition) => {
     const scene = new THREE.Group();
     const meshes = pair();
     if (condition === "transparent") (meshes[0].material as THREE.Material).transparent = true;
     if (condition === "cutout") (meshes[0].material as THREE.Material).alphaTest = 0.1;
     if (condition === "wireframe") (meshes[0].material as THREE.MeshLambertMaterial).wireframe = true;
     if (condition === "stencil") (meshes[0].material as THREE.Material).stencilWrite = true;
-    if (condition === "shader-callback") (meshes[0].material as THREE.Material).onBeforeCompile = () => {};
     if (condition === "material-callback") (meshes[0].material as THREE.Material).onBeforeRender = () => {};
     for (const mesh of meshes) {
       if (condition === "partial") mesh.geometry.setDrawRange(3, 3);
@@ -264,7 +274,6 @@ describe("reversible LOW batching of original frozen meshes", () => {
       if (condition === "array") mesh.material = [mesh.material as THREE.Material];
       if (condition === "morph") mesh.geometry.morphAttributes.position = [mesh.geometry.getAttribute("position").clone()];
       if (condition === "callback") mesh.onBeforeRender = () => {};
-      if (condition === "custom-raycast") mesh.raycast = () => {};
       if (condition === "order") mesh.renderOrder = 1;
       if (condition === "hidden") mesh.visible = false;
       if (condition === "negative") mesh.scale.x = -1;
@@ -283,7 +292,7 @@ describe("reversible LOW batching of original frozen meshes", () => {
     } else scene.add(...meshes);
     if (condition === "parent-order") scene.renderOrder = 1;
     if (condition === "parent-negative") scene.scale.set(-1, -1, 1);
-    const quality = new LowQualityBatch(scene);
+    const quality = new StaticSceneBatch(scene);
     quality.apply("low");
     expect(batches(scene)).toHaveLength(0);
     for (const mesh of meshes) expect(mesh.layers.mask).toBe(1);
@@ -297,7 +306,7 @@ describe("reversible LOW batching of original frozen meshes", () => {
     const meshes = pair(material);
     meshes.forEach((mesh) => mesh.layers.enable(5));
     scene.add(...meshes);
-    const quality = new LowQualityBatch(scene);
+    const quality = new StaticSceneBatch(scene);
     const batch = batches(scene)[0]!;
     const internal = batch as unknown as { _matricesTexture: THREE.DataTexture; _indirectTexture: THREE.DataTexture };
     const batchGeometryDispose = vi.spyOn(batch.geometry, "dispose");
@@ -320,5 +329,26 @@ describe("reversible LOW batching of original frozen meshes", () => {
     expect(batches(scene)).toHaveLength(0);
     expect(batch.parent).toBeNull();
     vi.restoreAllMocks();
+  });
+
+  it("preserves custom raycasts on source meshes and same-material shader hooks on their render batch", () => {
+    const scene = new THREE.Group();
+    const material = new THREE.MeshStandardMaterial();
+    material.onBeforeCompile = () => {};
+    const meshes = pair(material);
+    const originalRaycast = meshes[0].raycast.bind(meshes[0]);
+    const raycast = vi.fn((raycaster: THREE.Raycaster, intersections: THREE.Intersection[]) => originalRaycast(raycaster, intersections));
+    meshes[0].raycast = raycast;
+    scene.add(...meshes);
+    scene.updateMatrixWorld(true);
+    const quality = new StaticSceneBatch(scene);
+    quality.apply("medium");
+    expect(batches(scene)).toHaveLength(1);
+    expect(batches(scene)[0]!.material).toBe(material);
+    const raycaster = new THREE.Raycaster(new THREE.Vector3(0, 0, 5), new THREE.Vector3(0, 0, -1));
+    raycaster.layers.enable(STATIC_BATCH_ORIGINAL_LAYER);
+    raycaster.intersectObject(scene, true);
+    expect(raycast).toHaveBeenCalled();
+    quality.dispose();
   });
 });

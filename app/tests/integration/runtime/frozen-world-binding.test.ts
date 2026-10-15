@@ -7,7 +7,7 @@ import { integrateScene } from "@/features/world/SceneIntegrator";
 import { WorldInteractionBinding } from "@/features/world/WorldInteractionBinding";
 import { ExperienceController } from "@/features/experience/controller";
 import { RuntimeMaterialQuality } from "@/features/world/RuntimeMaterialQuality";
-import { LowQualityBatch } from "@/features/world/LowQualityBatch";
+import { StaticSceneBatch } from "@/features/world/LowQualityBatch";
 
 /** Parse the shipped GLB's actual mesh/skin/animation/node data. Omit bitmap decoding
  * only in this Node test; no production asset is changed or written by the test.
@@ -68,7 +68,7 @@ describe("Actual frozen production assets and C1 pointer binding", () => {
     expect(resident.animations.map((clip) => clip.name)).toContain("attention_glance");
   });
 
-  it.each(["high", "low"] as const)("%s real production phone raycast dispatches contact; disposal detaches events", async (tier) => {
+  it.each(["high", "medium", "low"] as const)("%s real production phone raycast dispatches contact; disposal detaches events", async (tier) => {
     const [room, interactions] = await Promise.all([parseFrozenModel("production-room-full.glb"), parseFrozenModel("interaction-assets.glb")]);
     const phone = room.scene.getObjectByName("contact_phone_body")!;
     const center = new THREE.Box3().setFromObject(phone).getCenter(new THREE.Vector3());
@@ -85,15 +85,13 @@ describe("Actual frozen production assets and C1 pointer binding", () => {
     expect(binding.getDiagnostics().frozenHitProxyCount).toBe(25);
     expect(binding.getDiagnostics().boundProductionTargets).toBeGreaterThanOrEqual(25);
     const materials = new RuntimeMaterialQuality(room.scene);
+    const batches = new StaticSceneBatch(room.scene, (material, requestedTier) => materials.materialForTier(material, requestedTier));
     materials.apply(tier);
-    const batches = tier === "low" ? new LowQualityBatch(room.scene) : null;
-    batches?.apply(tier);
-    if (batches) {
-      const renderedBatches: THREE.BatchedMesh[] = [];
-      room.scene.traverse((node) => { if (node instanceof THREE.BatchedMesh) renderedBatches.push(node); });
-      expect(renderedBatches.length, "production geometry must actually batch").toBeGreaterThan(0);
-      expect(room.scene.getObjectByName("contact_phone_body")).toBe(phone);
-    }
+    batches.apply(tier);
+    const renderedBatches: THREE.BatchedMesh[] = [];
+    room.scene.traverse((node) => { if (node instanceof THREE.BatchedMesh) renderedBatches.push(node); });
+    expect(renderedBatches.length, "production geometry must actually batch").toBeGreaterThan(0);
+    expect(room.scene.getObjectByName("contact_phone_body")).toBe(phone);
     pointer(canvas, "pointerdown"); pointer(canvas, "pointerup");
     await Promise.resolve();
     expect(openRoute).toHaveBeenCalledExactlyOnceWith("/contact");
@@ -103,7 +101,7 @@ describe("Actual frozen production assets and C1 pointer binding", () => {
     openRoute.mockClear();
     pointer(canvas, "pointerdown"); pointer(canvas, "pointerup");
     expect(openRoute).not.toHaveBeenCalled();
-    batches?.dispose();
+    batches.dispose();
     materials.dispose();
   });
 

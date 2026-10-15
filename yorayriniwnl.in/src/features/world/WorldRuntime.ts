@@ -15,7 +15,7 @@ import { publishedProjects } from "../portfolio/public-content";
 import { WorldInteractionBinding } from "./WorldInteractionBinding";
 import { saveReturnSnapshot } from "../experience/return-snapshot";
 import { RuntimeMaterialQuality } from "./RuntimeMaterialQuality";
-import { LowQualityBatch } from "./LowQualityBatch";
+import { StaticSceneBatch } from "./LowQualityBatch";
 import { isSoftwareRenderer } from "./device-capabilities";
 import { configureProductionLighting } from "./ProductionLighting";
 
@@ -69,7 +69,7 @@ export class WorldRuntime {
   private integratedResult: IntegratedSceneResult | null = null;
   private interactionBinding: WorldInteractionBinding | null = null;
   private materialQuality: RuntimeMaterialQuality | null = null;
-  private lowQualityBatch: LowQualityBatch | null = null;
+  private staticSceneBatch: StaticSceneBatch | null = null;
   private readonly onFrameDuration: WorldRuntimeOptions["onFrameDuration"];
   private readonly onSamplingPause: WorldRuntimeOptions["onSamplingPause"];
 
@@ -553,13 +553,16 @@ export class WorldRuntime {
   }
 
   private applySceneQuality(tier: QualityTier): void {
-    this.materialQuality?.apply(tier);
     // Three's fallback submits each instance separately without this extension.
-    if (tier === "low" && this.materialQuality && !this.lowQualityBatch
+    if (this.materialQuality && !this.staticSceneBatch
       && this.renderer?.getContext().getExtension("WEBGL_multi_draw")) {
-      this.lowQualityBatch = new LowQualityBatch(this.scene);
+      this.staticSceneBatch = new StaticSceneBatch(
+        this.scene,
+        (material, requestedTier) => this.materialQuality?.materialForTier(material, requestedTier) ?? material,
+      );
     }
-    this.lowQualityBatch?.apply(tier);
+    this.materialQuality?.apply(tier);
+    this.staticSceneBatch?.apply(tier);
   }
 
   public setDecorativePaused(paused: boolean) {
@@ -631,6 +634,7 @@ export class WorldRuntime {
       canvasCount: typeof document !== "undefined" ? document.querySelectorAll("canvas").length : 1,
       experienceSnapshot: this.experienceController?.getSnapshot(),
       interactions: this.interactionBinding?.getDiagnostics(),
+      staticBatch: this.staticSceneBatch?.getDiagnostics() ?? null,
     };
   }
 
@@ -644,8 +648,8 @@ export class WorldRuntime {
     this.loadingAbort.abort();
     this.interactionBinding?.dispose();
     this.interactionBinding = null;
-    this.lowQualityBatch?.dispose();
-    this.lowQualityBatch = null;
+    this.staticSceneBatch?.dispose();
+    this.staticSceneBatch = null;
     this.materialQuality?.dispose();
     this.materialQuality = null;
     this.sessionToken++; // Invalidate stale async operations

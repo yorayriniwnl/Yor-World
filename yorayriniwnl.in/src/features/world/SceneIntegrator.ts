@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { CAMERA_PRESETS } from "./CameraDirector";
-import { LOW_BATCH_ORIGINAL_LAYER } from "./LowQualityBatch";
+import { STATIC_BATCH_ORIGINAL_LAYER } from "./LowQualityBatch";
 import { configureReferenceMaterials } from "./ProductionLighting";
 import { applyReferenceComposition } from "./ReferenceComposition";
 
@@ -503,9 +503,9 @@ function capturePreG7Evidence(scene: THREE.Object3D): void {
     "headset-code-native",
   ]);
   const raycaster = new THREE.Raycaster();
-  // LOW keeps original meshes on this reserved layer for interaction geometry;
-  // the evidence raycaster must sample those sources while retaining layer 0.
-  raycaster.layers.enable(LOW_BATCH_ORIGINAL_LAYER);
+  // Static batches keep original meshes on this reserved layer for interaction
+  // geometry and diagnostics raycasts.
+  raycaster.layers.enable(STATIC_BATCH_ORIGINAL_LAYER);
   const isBelow = (object: THREE.Object3D, root: THREE.Object3D): boolean => {
     for (let current: THREE.Object3D | null = object; current; current = current.parent) {
       if (current === root) return true;

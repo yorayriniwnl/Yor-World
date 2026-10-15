@@ -53,9 +53,13 @@ export class RuntimeMaterialQuality {
     for (const [light, mask] of this.ambientPoints) light.layers.mask = tier === "low" ? 0 : mask;
     for (const [mesh, original] of this.originals) {
       mesh.material = tier === "low"
-        ? Array.isArray(original) ? original.map((material) => this.simplified.get(material) ?? material) : this.simplified.get(original) ?? original
+        ? Array.isArray(original) ? original.map((material) => this.materialForTier(material, tier)) : this.materialForTier(original, tier)
         : original;
     }
+  }
+
+  public materialForTier(material: THREE.Material, tier: QualityTier): THREE.Material {
+    return tier === "low" ? this.simplified.get(material) ?? material : material;
   }
 
   public dispose(): void {

@@ -1,15 +1,28 @@
 import * as THREE from "three";
 import type { QualityTier } from "../../contracts/experience";
 
-/** Reserved for the original meshes, which remain the interaction geometry. */
-export const LOW_BATCH_ORIGINAL_LAYER = 1;
+/** Reserved for source meshes, which remain the interaction and diagnostics geometry. */
+export const STATIC_BATCH_ORIGINAL_LAYER = 1;
+/** @deprecated Use STATIC_BATCH_ORIGINAL_LAYER. */
+export const LOW_BATCH_ORIGINAL_LAYER = STATIC_BATCH_ORIGINAL_LAYER;
 
 const dynamicNames = /^(resident|chair-root|chair-base|body-turn|door-hinge|painting-pivot|blind_slat_\d+|hidden-yor-mark)$/;
 const epsilon = 1e-6;
 
 interface BatchEntry {
   batch: THREE.BatchedMesh;
+  sourceMaterial: THREE.Material;
   originals: Array<{ mesh: THREE.Mesh; layerMask: number }>;
+}
+
+export interface StaticSceneBatchDiagnostics {
+  totalMeshes: number;
+  eligibleMeshes: number;
+  layoutRejectedMeshes: number;
+  batchedMeshes: number;
+  batchCount: number;
+  singletonGroups: number;
+  singletonMeshes: number;
 }
 
 function positiveOrthogonalTransform(matrix: THREE.Matrix4): boolean {
@@ -81,15 +94,13 @@ function eligible(mesh: THREE.Mesh, animationTargets: Set<THREE.Object3D>): bool
     || mesh.onAfterRender !== THREE.Object3D.prototype.onAfterRender
     || mesh.onBeforeShadow !== THREE.Object3D.prototype.onBeforeShadow
     || mesh.onAfterShadow !== THREE.Object3D.prototype.onAfterShadow
-    || mesh.raycast !== THREE.Mesh.prototype.raycast || !(mesh.layers.mask & 1)) return false;
+    || !(mesh.layers.mask & 1)) return false;
   const material = mesh.material;
   const transmitting = material as THREE.MeshPhysicalMaterial;
   if (!material.visible || material.transparent || material.opacity !== 1 || material.alphaTest !== 0
     || material.alphaHash || material.alphaToCoverage || material.stencilWrite || transmitting.transmission > 0
     || (material as THREE.MeshLambertMaterial).wireframe
-    || material.blending !== THREE.NormalBlending || material.onBeforeCompile !== THREE.Material.prototype.onBeforeCompile
-    || material.onBeforeRender !== THREE.Material.prototype.onBeforeRender
-    || material.customProgramCacheKey !== THREE.Material.prototype.customProgramCacheKey
+    || material.blending !== THREE.NormalBlending || material.onBeforeRender !== THREE.Material.prototype.onBeforeRender
     || (material as THREE.ShaderMaterial).isShaderMaterial) return false;
   const count = mesh.geometry.index?.count ?? mesh.geometry.getAttribute("position")?.count;
   if (!count || mesh.geometry.drawRange.start !== 0
@@ -102,24 +113,38 @@ function eligible(mesh: THREE.Mesh, animationTargets: Set<THREE.Object3D>): bool
   return true;
 }
 
-/** LOW-only draw batching. Construct after LOW materials are installed, and only
- * when the renderer reports WEBGL_multi_draw. Original mesh identity, buffers,
- * materials, hierarchy and transforms remain owned by the original world.
+/** Reversible static draw batching. Construct before quality materials are
+ * applied and only when the renderer reports WEBGL_multi_draw. Source mesh
+ * identity, buffers, hierarchy and transforms remain owned by the original world.
  */
-export class LowQualityBatch {
+export class StaticSceneBatch {
   private readonly entries: BatchEntry[] = [];
   private disposed = false;
+  private totalMeshes = 0;
+  private eligibleMeshes = 0;
+  private layoutRejectedMeshes = 0;
+  private batchedMeshes = 0;
+  private singletonGroups = 0;
+  private singletonMeshes = 0;
 
-  constructor(private readonly scene: THREE.Object3D) {
+  constructor(
+    private readonly scene: THREE.Object3D,
+    private readonly materialForTier: (material: THREE.Material, tier: QualityTier) => THREE.Material = (material) => material,
+  ) {
     scene.updateWorldMatrix(true, true);
     const animationTargets = animatedNodes(scene);
     const byMaterial = new Map<THREE.Material, Map<string, THREE.Mesh[]>>();
     scene.traverse((object) => {
       if (!(object as THREE.Mesh).isMesh) return;
+      this.totalMeshes += 1;
       const mesh = object as THREE.Mesh;
       if (!eligible(mesh, animationTargets) || Array.isArray(mesh.material)) return;
+      this.eligibleMeshes += 1;
       const layout = attributeLayout(mesh.geometry);
-      if (!layout) return;
+      if (!layout) {
+        this.layoutRejectedMeshes += 1;
+        return;
+      }
       const key = JSON.stringify([layout, mesh.castShadow, mesh.receiveShadow, mesh.frustumCulled, mesh.layers.mask]);
       let groups = byMaterial.get(mesh.material);
       if (!groups) byMaterial.set(mesh.material, groups = new Map());
@@ -131,7 +156,12 @@ export class LowQualityBatch {
     const inverseWorld = scene.matrixWorld.clone().invert();
     for (const [material, groups] of byMaterial) {
       for (const meshes of groups.values()) {
-        if (meshes.length < 2) continue;
+        if (meshes.length < 2) {
+          this.singletonGroups += 1;
+          this.singletonMeshes += meshes.length;
+          continue;
+        }
+        this.batchedMeshes += meshes.length;
         const geometries = [...new Set(meshes.map((mesh) => mesh.geometry))];
         const vertices = geometries.reduce((total, geometry) => total + geometry.getAttribute("position").count, 0);
         const indices = geometries.reduce((total, geometry) => total + (geometry.index?.count ?? 0), 0);
@@ -141,7 +171,7 @@ export class LowQualityBatch {
         batch.receiveShadow = meshes[0]!.receiveShadow;
         batch.frustumCulled = meshes[0]!.frustumCulled;
         batch.perObjectFrustumCulled = batch.frustumCulled;
-        batch.layers.mask = meshes[0]!.layers.mask & ~(1 << LOW_BATCH_ORIGINAL_LAYER);
+        batch.layers.mask = meshes[0]!.layers.mask & ~(1 << STATIC_BATCH_ORIGINAL_LAYER);
         batch.visible = false;
         batch.raycast = () => {};
         const geometryIds = new Map<THREE.BufferGeometry, number>();
@@ -154,30 +184,53 @@ export class LowQualityBatch {
         batch.computeBoundingSphere();
         scene.add(batch);
         batch.updateWorldMatrix(true, false);
-        this.entries.push({ batch, originals: meshes.map((mesh) => ({ mesh, layerMask: mesh.layers.mask })) });
+        this.entries.push({
+          batch,
+          sourceMaterial: material,
+          originals: meshes.map((mesh) => ({ mesh, layerMask: mesh.layers.mask })),
+        });
       }
     }
   }
 
   public apply(tier: QualityTier): void {
     if (this.disposed) return;
-    const low = tier === "low";
-    for (const { batch, originals } of this.entries) {
-      batch.visible = low;
+    const renderBatches = tier !== "static";
+    for (const { batch, sourceMaterial, originals } of this.entries) {
+      batch.visible = renderBatches;
+      batch.material = this.materialForTier(sourceMaterial, tier);
       for (const { mesh, layerMask } of originals) {
-        mesh.layers.mask = low ? 1 << LOW_BATCH_ORIGINAL_LAYER : layerMask;
+        mesh.layers.mask = renderBatches
+          ? (layerMask & ~(1 << 0)) | (1 << STATIC_BATCH_ORIGINAL_LAYER)
+          : layerMask;
       }
     }
   }
 
+  public getDiagnostics(): StaticSceneBatchDiagnostics {
+    return {
+      totalMeshes: this.totalMeshes,
+      eligibleMeshes: this.eligibleMeshes,
+      layoutRejectedMeshes: this.layoutRejectedMeshes,
+      batchedMeshes: this.batchedMeshes,
+      batchCount: this.entries.length,
+      singletonGroups: this.singletonGroups,
+      singletonMeshes: this.singletonMeshes,
+    };
+  }
+
   public dispose(): void {
     if (this.disposed) return;
-    this.apply("high");
     this.disposed = true;
-    for (const { batch } of this.entries) {
+    for (const { batch, originals } of this.entries) {
+      batch.visible = false;
+      for (const { mesh, layerMask } of originals) mesh.layers.mask = layerMask;
       batch.removeFromParent();
       batch.dispose();
     }
     this.entries.length = 0;
   }
 }
+
+/** Backward-compatible name for callers that used the LOW-only implementation. */
+export { StaticSceneBatch as LowQualityBatch };
