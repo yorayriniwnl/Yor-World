@@ -26,6 +26,8 @@ SHA-256 values bind the files inspected in this checkpoint:
 | `app/tests/unit/reference-composition.test.ts` | `69748dc26f7acb6219d57ebcd81d31ecbd589c3d3a314b6d5c103bd74a513d26` |
 | `attempt-12/iteration-01/screenshots/studio-desktop-1440x900.png` | `362954b631a69bd8ca94058dad7646b2dd5e3edd86633f1ae025801c888b903a` |
 | `attempt-12/iteration-01/screenshots/studio-mobile-390x844.png` | `ee063ab8b84ddd516575cee2ffed4a222a76e1efadc5cf0e7353d8a6da2df6b5` |
+| `attempt-12/iteration-01/screenshots/studio-compact-320x600.png` | `9603dcca5d10859fbdfc091a188f94c7845595bbd1854fab5fa9ee7c802d8070` |
+| `attempt-12/iteration-01/screenshots/studio-landscape-844x390.png` | `c8bc89d13c4872c953003652bb33b46be6031ca8c029df2c1eebbe4167fef8ee` |
 | `attempt-12/iteration-01/browser-errors.log` | `1b0134da3331ce6e2e7bf287a247bf7f26b4afa57f4e1b1e2816af97bf0ec31d` |
 
 ## Findings
@@ -36,7 +38,7 @@ The current `ReferenceComposition.ts` sets the plant root to `x=0.72`, scales th
 
 ### F2 — P1: captures do not establish the required visual composition
 
-The inspected desktop and mobile captures remain dominated by pale, washed-out wall surfaces. The pink/lilac hex-light cluster is not recognizable. The plant/shelf camera and several required left/right peripheral groups are not independently recognizable in the opening views; the desktop resident also overlaps the central monitor area. No per-anchor evidence ledger or projected anchor bounds are supplied. The capture script records HUD boxes and pixel diversity, not required object visibility. The capture-to-source relationship is unproven because the source is uncommitted.
+The inspected desktop, portrait-mobile, compact and short-landscape captures remain dominated by pale, washed-out wall surfaces. The pink/lilac hex-light cluster is not recognizable at any of the four viewports. The plant/shelf camera and several required left/right peripheral groups are not independently recognizable in the opening views; the desktop resident also overlaps the central monitor area. The compact and short-landscape bottom navigation occupies a prominent band, but its measurements do not establish whether any required anchor is obscured. No per-anchor evidence ledger or projected anchor bounds are supplied. The capture script records HUD boxes and pixel diversity, not required object visibility. The capture-to-source relationship is unproven because the source is uncommitted.
 
 ### F3 — P1: application source and local-domain mirror diverge
 
