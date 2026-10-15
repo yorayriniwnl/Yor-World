@@ -1,0 +1,15 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/integration/runtime/frozen-world-binding.test.ts > Actual frozen production assets and C1 pointer binding > parses real production rigs, prunes duplicate chair/proof furniture, and keeps F1 anchors
+AssertionError: expected 1.500000011920929 to be close to 0.3, received difference is 1.2000000119209289, but expected 0.005
+ ❯ tests/integration/runtime/frozen-world-binding.test.ts:63:69
+     61|     expect(result.discardedW2Nodes).toContain("fixture-static");
+     62|     result.scene.updateMatrixWorld(true);
+     63|     expect(result.resident.getWorldPosition(new THREE.Vector3()).x).to…
+       |                                                                     ^
+     64|     expect(result.chairRoot.getWorldPosition(new THREE.Vector3()).z).t…
+     65|     expect(result.scene.rotation.toArray().slice(0, 3)).toEqual([0, 0,…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

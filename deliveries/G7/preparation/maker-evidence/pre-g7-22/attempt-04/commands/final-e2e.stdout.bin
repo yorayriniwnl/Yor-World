@@ -1,0 +1,143 @@
+
+Running 6 tests using 1 worker
+
+  x  1 [chrome] › tests\e2e\world-reference-composition.spec.ts:759:3 › PRE-G7-22 reference composition and compact mobile controls › captures the opening desktop room beside the user reference (52.7s)
+  x  2 [chrome] › tests\e2e\world-reference-composition.spec.ts:829:3 › PRE-G7-22 reference composition and compact mobile controls › starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape (36.2s)
+  x  3 [chrome] › tests\e2e\world-reference-composition.spec.ts:916:3 › PRE-G7-22 reference composition and compact mobile controls › keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes (32.4s)
+  ok 4 [edge] › tests\e2e\world-reference-composition.spec.ts:759:3 › PRE-G7-22 reference composition and compact mobile controls › captures the opening desktop room beside the user reference (55.5s)
+  x  5 [edge] › tests\e2e\world-reference-composition.spec.ts:829:3 › PRE-G7-22 reference composition and compact mobile controls › starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape (28.0s)
+  x  6 [edge] › tests\e2e\world-reference-composition.spec.ts:916:3 › PRE-G7-22 reference composition and compact mobile controls › keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes (31.8s)
+
+
+  1) [chrome] › tests\e2e\world-reference-composition.spec.ts:759:3 › PRE-G7-22 reference composition and compact mobile controls › captures the opening desktop room beside the user reference 
+
+    Error: desktop-1440x900-chrome has cyan fill in the measured floor ROI outside chair/resident bounds
+
+    expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 0.1
+    Received:    0
+
+      591 |   const floorClassifierApplies = !(viewport.width === 844 && viewport.height === 390);
+      592 |   if (floorClassifierApplies) {
+    > 593 |     expect(exposedFloorRegions[0]!.cyanRatio, `${label} has cyan fill in the measured floor ROI outside chair/resident bounds`).toBeGreaterThanOrEqual(minimumFloorCyanRatio);
+          |                                                                                                                                 ^
+      594 |   }
+      595 |   const paleSurfaceRegions = viewport.height > viewport.width
+      596 |     ? [{ name: "portrait-workstation-left-tabletop", left: Math.round(viewport.width * 0.12), top: Math.round(viewport.height * 0.51), width: Math.round(viewport.width * 0.18), height: Math.max(1, Math.round(viewport.height * 0.04)) }]
+        at recordVisualAnchorEvidence (C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-22\app\tests\e2e\world-reference-composition.spec.ts:593:129)
+        at C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-22\app\tests\e2e\world-reference-composition.spec.ts:777:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-reference-compositio-acedc-m-beside-the-user-reference-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-reference-compositio-acedc-m-beside-the-user-reference-chrome\error-context.md
+
+  2) [chrome] › tests\e2e\world-reference-composition.spec.ts:829:3 › PRE-G7-22 reference composition and compact mobile controls › starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape 
+
+    Error: mobile-390x844-chrome helios-pc is not hidden by chair/resident
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 0.1
+    Received:    0.13178294573643412
+
+      481 |     expect(samples!.target, `${label} ${name} has visible surface samples`).toBeGreaterThan(0);
+      482 |     expect(samples!.occluderRatio, `${label} ${name} has measurable chair/resident coverage`).not.toBeNull();
+    > 483 |     expect(samples!.occluderRatio!, `${label} ${name} is not hidden by chair/resident`).toBeLessThanOrEqual(0.1);
+          |                                                                                         ^
+      484 |   }
+      485 |   const occlusionEvidence = [...required, "chair-root", "chair-base", "resident"].map((name) => {
+      486 |     const anchor = byName.get(name);
+        at recordVisualAnchorEvidence (C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-22\app\tests\e2e\world-reference-composition.spec.ts:483:89)
+        at C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-22\app\tests\e2e\world-reference-composition.spec.ts:846:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-reference-compositio-e757b-th-Diagnostics-first-Escape-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-reference-compositio-e757b-th-Diagnostics-first-Escape-chrome\error-context.md
+
+  3) [chrome] › tests\e2e\world-reference-composition.spec.ts:916:3 › PRE-G7-22 reference composition and compact mobile controls › keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes 
+
+    Error: 320x600-chrome helios-pc is not hidden by chair/resident
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 0.1
+    Received:    0.13178294573643412
+
+      481 |     expect(samples!.target, `${label} ${name} has visible surface samples`).toBeGreaterThan(0);
+      482 |     expect(samples!.occluderRatio, `${label} ${name} has measurable chair/resident coverage`).not.toBeNull();
+    > 483 |     expect(samples!.occluderRatio!, `${label} ${name} is not hidden by chair/resident`).toBeLessThanOrEqual(0.1);
+          |                                                                                         ^
+      484 |   }
+      485 |   const occlusionEvidence = [...required, "chair-root", "chair-base", "resident"].map((name) => {
+      486 |     const anchor = byName.get(name);
+        at recordVisualAnchorEvidence (C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-22\app\tests\e2e\world-reference-composition.spec.ts:483:89)
+        at C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-22\app\tests\e2e\world-reference-composition.spec.ts:935:25
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-reference-compositio-5278b-e-and-short-landscape-sizes-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-reference-compositio-5278b-e-and-short-landscape-sizes-chrome\error-context.md
+
+  4) [edge] › tests\e2e\world-reference-composition.spec.ts:829:3 › PRE-G7-22 reference composition and compact mobile controls › starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape 
+
+    Error: mobile-390x844-edge helios-pc is not hidden by chair/resident
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 0.1
+    Received:    0.13178294573643412
+
+      481 |     expect(samples!.target, `${label} ${name} has visible surface samples`).toBeGreaterThan(0);
+      482 |     expect(samples!.occluderRatio, `${label} ${name} has measurable chair/resident coverage`).not.toBeNull();
+    > 483 |     expect(samples!.occluderRatio!, `${label} ${name} is not hidden by chair/resident`).toBeLessThanOrEqual(0.1);
+          |                                                                                         ^
+      484 |   }
+      485 |   const occlusionEvidence = [...required, "chair-root", "chair-base", "resident"].map((name) => {
+      486 |     const anchor = byName.get(name);
+        at recordVisualAnchorEvidence (C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-22\app\tests\e2e\world-reference-composition.spec.ts:483:89)
+        at C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-22\app\tests\e2e\world-reference-composition.spec.ts:846:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-reference-compositio-e757b-th-Diagnostics-first-Escape-edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-reference-compositio-e757b-th-Diagnostics-first-Escape-edge\error-context.md
+
+  5) [edge] › tests\e2e\world-reference-composition.spec.ts:916:3 › PRE-G7-22 reference composition and compact mobile controls › keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes 
+
+    Error: 320x600-edge helios-pc is not hidden by chair/resident
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 0.1
+    Received:    0.13178294573643412
+
+      481 |     expect(samples!.target, `${label} ${name} has visible surface samples`).toBeGreaterThan(0);
+      482 |     expect(samples!.occluderRatio, `${label} ${name} has measurable chair/resident coverage`).not.toBeNull();
+    > 483 |     expect(samples!.occluderRatio!, `${label} ${name} is not hidden by chair/resident`).toBeLessThanOrEqual(0.1);
+          |                                                                                         ^
+      484 |   }
+      485 |   const occlusionEvidence = [...required, "chair-root", "chair-base", "resident"].map((name) => {
+      486 |     const anchor = byName.get(name);
+        at recordVisualAnchorEvidence (C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-22\app\tests\e2e\world-reference-composition.spec.ts:483:89)
+        at C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-22\app\tests\e2e\world-reference-composition.spec.ts:935:25
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\world-reference-compositio-5278b-e-and-short-landscape-sizes-edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\world-reference-compositio-5278b-e-and-short-landscape-sizes-edge\error-context.md
+
+  5 failed
+    [chrome] › tests\e2e\world-reference-composition.spec.ts:759:3 › PRE-G7-22 reference composition and compact mobile controls › captures the opening desktop room beside the user reference 
+    [chrome] › tests\e2e\world-reference-composition.spec.ts:829:3 › PRE-G7-22 reference composition and compact mobile controls › starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape 
+    [chrome] › tests\e2e\world-reference-composition.spec.ts:916:3 › PRE-G7-22 reference composition and compact mobile controls › keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes 
+    [edge] › tests\e2e\world-reference-composition.spec.ts:829:3 › PRE-G7-22 reference composition and compact mobile controls › starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape 
+    [edge] › tests\e2e\world-reference-composition.spec.ts:916:3 › PRE-G7-22 reference composition and compact mobile controls › keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes 
+  1 passed (5.0m)

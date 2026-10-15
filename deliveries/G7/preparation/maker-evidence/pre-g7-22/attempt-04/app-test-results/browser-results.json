@@ -1,0 +1,500 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\ayush\\AppData\\Local\\Temp\\yor-world-node-24.19.0\\unpacked\\node-v24.19.0-win-x64\\node.exe",
+      "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "tests/e2e/world-reference-composition.spec.ts"
+    ],
+    "configFile": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\playwright.config.ts",
+    "rootDir": "C:/Users/ayush/COddexxxxxxxxxxxxxxxx/_worktrees/pre-g7-22/app/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/ayush/COddexxxxxxxxxxxxxxxx/_worktrees/pre-g7-22/app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chrome",
+        "name": "chrome",
+        "testDir": "C:/Users/ayush/COddexxxxxxxxxxxxxxxx/_worktrees/pre-g7-22/app/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/ayush/COddexxxxxxxxxxxxxxxx/_worktrees/pre-g7-22/app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "edge",
+        "name": "edge",
+        "testDir": "C:/Users/ayush/COddexxxxxxxxxxxxxxxx/_worktrees/pre-g7-22/app/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results\\browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3133",
+      "url": "http://127.0.0.1:3133",
+      "reuseExistingServer": false,
+      "timeout": 60000,
+      "env": {
+        "NEXT_TELEMETRY_DISABLED": "1"
+      },
+      "stdout": "ignore",
+      "stderr": "pipe"
+    }
+  },
+  "suites": [
+    {
+      "title": "world-reference-composition.spec.ts",
+      "file": "world-reference-composition.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "PRE-G7-22 reference composition and compact mobile controls",
+          "file": "world-reference-composition.spec.ts",
+          "line": 758,
+          "column": 6,
+          "specs": [
+            {
+              "title": "captures the opening desktop room beside the user reference",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 150000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chrome",
+                  "projectName": "chrome",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 52718,
+                      "error": {
+                        "message": "Error: desktop-1440x900-chrome has cyan fill in the measured floor ROI outside chair/resident bounds\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m0.1\u001b[39m\nReceived:    \u001b[31m0\u001b[39m",
+                        "stack": "Error: desktop-1440x900-chrome has cyan fill in the measured floor ROI outside chair/resident bounds\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m0.1\u001b[39m\nReceived:    \u001b[31m0\u001b[39m\n    at recordVisualAnchorEvidence (C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts:593:129)\n    at C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts:777:7",
+                        "location": {
+                          "file": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                          "column": 129,
+                          "line": 593
+                        },
+                        "snippet": "  591 |   const floorClassifierApplies = !(viewport.width === 844 && viewport.height === 390);\n  592 |   if (floorClassifierApplies) {\n> 593 |     expect(exposedFloorRegions[0]!.cyanRatio, `${label} has cyan fill in the measured floor ROI outside chair/resident bounds`).toBeGreaterThanOrEqual(minimumFloorCyanRatio);\n      |                                                                                                                                 ^\n  594 |   }\n  595 |   const paleSurfaceRegions = viewport.height > viewport.width\n  596 |     ? [{ name: \"portrait-workstation-left-tabletop\", left: Math.round(viewport.width * 0.12), top: Math.round(viewport.height * 0.51), width: Math.round(viewport.width * 0.18), height: Math.max(1, Math.round(viewport.height * 0.04)) }]"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                            "column": 129,
+                            "line": 593
+                          },
+                          "message": "Error: desktop-1440x900-chrome has cyan fill in the measured floor ROI outside chair/resident bounds\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: >= \u001b[32m0.1\u001b[39m\nReceived:    \u001b[31m0\u001b[39m\n\n  591 |   const floorClassifierApplies = !(viewport.width === 844 && viewport.height === 390);\n  592 |   if (floorClassifierApplies) {\n> 593 |     expect(exposedFloorRegions[0]!.cyanRatio, `${label} has cyan fill in the measured floor ROI outside chair/resident bounds`).toBeGreaterThanOrEqual(minimumFloorCyanRatio);\n      |                                                                                                                                 ^\n  594 |   }\n  595 |   const paleSurfaceRegions = viewport.height > viewport.width\n  596 |     ? [{ name: \"portrait-workstation-left-tabletop\", left: Math.round(viewport.width * 0.12), top: Math.round(viewport.height * 0.51), width: Math.round(viewport.width * 0.18), height: Math.max(1, Math.round(viewport.height * 0.04)) }]\n    at recordVisualAnchorEvidence (C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts:593:129)\n    at C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts:777:7"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-15T18:17:11.210Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\test-results\\world-reference-compositio-acedc-m-beside-the-user-reference-chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\test-results\\world-reference-compositio-acedc-m-beside-the-user-reference-chrome\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                        "column": 129,
+                        "line": 593
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6952f866f83155538ccf-aaff5aec40fda10d40e1",
+              "file": "world-reference-composition.spec.ts",
+              "line": 759,
+              "column": 3
+            },
+            {
+              "title": "starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chrome",
+                  "projectName": "chrome",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 36168,
+                      "error": {
+                        "message": "Error: mobile-390x844-chrome helios-pc is not hidden by chair/resident\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m0.1\u001b[39m\nReceived:    \u001b[31m0.13178294573643412\u001b[39m",
+                        "stack": "Error: mobile-390x844-chrome helios-pc is not hidden by chair/resident\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m0.1\u001b[39m\nReceived:    \u001b[31m0.13178294573643412\u001b[39m\n    at recordVisualAnchorEvidence (C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts:483:89)\n    at C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts:846:7",
+                        "location": {
+                          "file": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                          "column": 89,
+                          "line": 483
+                        },
+                        "snippet": "  481 |     expect(samples!.target, `${label} ${name} has visible surface samples`).toBeGreaterThan(0);\n  482 |     expect(samples!.occluderRatio, `${label} ${name} has measurable chair/resident coverage`).not.toBeNull();\n> 483 |     expect(samples!.occluderRatio!, `${label} ${name} is not hidden by chair/resident`).toBeLessThanOrEqual(0.1);\n      |                                                                                         ^\n  484 |   }\n  485 |   const occlusionEvidence = [...required, \"chair-root\", \"chair-base\", \"resident\"].map((name) => {\n  486 |     const anchor = byName.get(name);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                            "column": 89,
+                            "line": 483
+                          },
+                          "message": "Error: mobile-390x844-chrome helios-pc is not hidden by chair/resident\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m0.1\u001b[39m\nReceived:    \u001b[31m0.13178294573643412\u001b[39m\n\n  481 |     expect(samples!.target, `${label} ${name} has visible surface samples`).toBeGreaterThan(0);\n  482 |     expect(samples!.occluderRatio, `${label} ${name} has measurable chair/resident coverage`).not.toBeNull();\n> 483 |     expect(samples!.occluderRatio!, `${label} ${name} is not hidden by chair/resident`).toBeLessThanOrEqual(0.1);\n      |                                                                                         ^\n  484 |   }\n  485 |   const occlusionEvidence = [...required, \"chair-root\", \"chair-base\", \"resident\"].map((name) => {\n  486 |     const anchor = byName.get(name);\n    at recordVisualAnchorEvidence (C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts:483:89)\n    at C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts:846:7"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-15T18:18:11.481Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\test-results\\world-reference-compositio-e757b-th-Diagnostics-first-Escape-chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\test-results\\world-reference-compositio-e757b-th-Diagnostics-first-Escape-chrome\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                        "column": 89,
+                        "line": 483
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6952f866f83155538ccf-412fb9bcee37bdf1bffd",
+              "file": "world-reference-composition.spec.ts",
+              "line": 829,
+              "column": 3
+            },
+            {
+              "title": "keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chrome",
+                  "projectName": "chrome",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 32430,
+                      "error": {
+                        "message": "Error: 320x600-chrome helios-pc is not hidden by chair/resident\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m0.1\u001b[39m\nReceived:    \u001b[31m0.13178294573643412\u001b[39m",
+                        "stack": "Error: 320x600-chrome helios-pc is not hidden by chair/resident\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m0.1\u001b[39m\nReceived:    \u001b[31m0.13178294573643412\u001b[39m\n    at recordVisualAnchorEvidence (C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts:483:89)\n    at C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts:935:25",
+                        "location": {
+                          "file": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                          "column": 89,
+                          "line": 483
+                        },
+                        "snippet": "  481 |     expect(samples!.target, `${label} ${name} has visible surface samples`).toBeGreaterThan(0);\n  482 |     expect(samples!.occluderRatio, `${label} ${name} has measurable chair/resident coverage`).not.toBeNull();\n> 483 |     expect(samples!.occluderRatio!, `${label} ${name} is not hidden by chair/resident`).toBeLessThanOrEqual(0.1);\n      |                                                                                         ^\n  484 |   }\n  485 |   const occlusionEvidence = [...required, \"chair-root\", \"chair-base\", \"resident\"].map((name) => {\n  486 |     const anchor = byName.get(name);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                            "column": 89,
+                            "line": 483
+                          },
+                          "message": "Error: 320x600-chrome helios-pc is not hidden by chair/resident\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m0.1\u001b[39m\nReceived:    \u001b[31m0.13178294573643412\u001b[39m\n\n  481 |     expect(samples!.target, `${label} ${name} has visible surface samples`).toBeGreaterThan(0);\n  482 |     expect(samples!.occluderRatio, `${label} ${name} has measurable chair/resident coverage`).not.toBeNull();\n> 483 |     expect(samples!.occluderRatio!, `${label} ${name} is not hidden by chair/resident`).toBeLessThanOrEqual(0.1);\n      |                                                                                         ^\n  484 |   }\n  485 |   const occlusionEvidence = [...required, \"chair-root\", \"chair-base\", \"resident\"].map((name) => {\n  486 |     const anchor = byName.get(name);\n    at recordVisualAnchorEvidence (C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts:483:89)\n    at C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts:935:25"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-15T18:19:00.219Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\test-results\\world-reference-compositio-5278b-e-and-short-landscape-sizes-chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\test-results\\world-reference-compositio-5278b-e-and-short-landscape-sizes-chrome\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                        "column": 89,
+                        "line": 483
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6952f866f83155538ccf-7a6e3d4b587f08c492bc",
+              "file": "world-reference-composition.spec.ts",
+              "line": 916,
+              "column": 3
+            },
+            {
+              "title": "captures the opening desktop room beside the user reference",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 150000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "edge",
+                  "projectName": "edge",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 55495,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-15T18:19:39.907Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6952f866f83155538ccf-cb88ef95451236bb321d",
+              "file": "world-reference-composition.spec.ts",
+              "line": 759,
+              "column": 3
+            },
+            {
+              "title": "starts compact on a fresh phone-sized view and preserves every action with Diagnostics-first Escape",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "edge",
+                  "projectName": "edge",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 28025,
+                      "error": {
+                        "message": "Error: mobile-390x844-edge helios-pc is not hidden by chair/resident\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m0.1\u001b[39m\nReceived:    \u001b[31m0.13178294573643412\u001b[39m",
+                        "stack": "Error: mobile-390x844-edge helios-pc is not hidden by chair/resident\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m0.1\u001b[39m\nReceived:    \u001b[31m0.13178294573643412\u001b[39m\n    at recordVisualAnchorEvidence (C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts:483:89)\n    at C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts:846:7",
+                        "location": {
+                          "file": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                          "column": 89,
+                          "line": 483
+                        },
+                        "snippet": "  481 |     expect(samples!.target, `${label} ${name} has visible surface samples`).toBeGreaterThan(0);\n  482 |     expect(samples!.occluderRatio, `${label} ${name} has measurable chair/resident coverage`).not.toBeNull();\n> 483 |     expect(samples!.occluderRatio!, `${label} ${name} is not hidden by chair/resident`).toBeLessThanOrEqual(0.1);\n      |                                                                                         ^\n  484 |   }\n  485 |   const occlusionEvidence = [...required, \"chair-root\", \"chair-base\", \"resident\"].map((name) => {\n  486 |     const anchor = byName.get(name);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                            "column": 89,
+                            "line": 483
+                          },
+                          "message": "Error: mobile-390x844-edge helios-pc is not hidden by chair/resident\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m0.1\u001b[39m\nReceived:    \u001b[31m0.13178294573643412\u001b[39m\n\n  481 |     expect(samples!.target, `${label} ${name} has visible surface samples`).toBeGreaterThan(0);\n  482 |     expect(samples!.occluderRatio, `${label} ${name} has measurable chair/resident coverage`).not.toBeNull();\n> 483 |     expect(samples!.occluderRatio!, `${label} ${name} is not hidden by chair/resident`).toBeLessThanOrEqual(0.1);\n      |                                                                                         ^\n  484 |   }\n  485 |   const occlusionEvidence = [...required, \"chair-root\", \"chair-base\", \"resident\"].map((name) => {\n  486 |     const anchor = byName.get(name);\n    at recordVisualAnchorEvidence (C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts:483:89)\n    at C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts:846:7"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-15T18:20:37.292Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\test-results\\world-reference-compositio-e757b-th-Diagnostics-first-Escape-edge\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\test-results\\world-reference-compositio-e757b-th-Diagnostics-first-Escape-edge\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                        "column": 89,
+                        "line": 483
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6952f866f83155538ccf-f4b3e05ebbdda4a9ebb3",
+              "file": "world-reference-composition.spec.ts",
+              "line": 829,
+              "column": 3
+            },
+            {
+              "title": "keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "edge",
+                  "projectName": "edge",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 31765,
+                      "error": {
+                        "message": "Error: 320x600-edge helios-pc is not hidden by chair/resident\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m0.1\u001b[39m\nReceived:    \u001b[31m0.13178294573643412\u001b[39m",
+                        "stack": "Error: 320x600-edge helios-pc is not hidden by chair/resident\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m0.1\u001b[39m\nReceived:    \u001b[31m0.13178294573643412\u001b[39m\n    at recordVisualAnchorEvidence (C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts:483:89)\n    at C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts:935:25",
+                        "location": {
+                          "file": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                          "column": 89,
+                          "line": 483
+                        },
+                        "snippet": "  481 |     expect(samples!.target, `${label} ${name} has visible surface samples`).toBeGreaterThan(0);\n  482 |     expect(samples!.occluderRatio, `${label} ${name} has measurable chair/resident coverage`).not.toBeNull();\n> 483 |     expect(samples!.occluderRatio!, `${label} ${name} is not hidden by chair/resident`).toBeLessThanOrEqual(0.1);\n      |                                                                                         ^\n  484 |   }\n  485 |   const occlusionEvidence = [...required, \"chair-root\", \"chair-base\", \"resident\"].map((name) => {\n  486 |     const anchor = byName.get(name);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                            "column": 89,
+                            "line": 483
+                          },
+                          "message": "Error: 320x600-edge helios-pc is not hidden by chair/resident\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m0.1\u001b[39m\nReceived:    \u001b[31m0.13178294573643412\u001b[39m\n\n  481 |     expect(samples!.target, `${label} ${name} has visible surface samples`).toBeGreaterThan(0);\n  482 |     expect(samples!.occluderRatio, `${label} ${name} has measurable chair/resident coverage`).not.toBeNull();\n> 483 |     expect(samples!.occluderRatio!, `${label} ${name} is not hidden by chair/resident`).toBeLessThanOrEqual(0.1);\n      |                                                                                         ^\n  484 |   }\n  485 |   const occlusionEvidence = [...required, \"chair-root\", \"chair-base\", \"resident\"].map((name) => {\n  486 |     const anchor = byName.get(name);\n    at recordVisualAnchorEvidence (C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts:483:89)\n    at C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts:935:25"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-15T18:21:14.933Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\test-results\\world-reference-compositio-5278b-e-and-short-landscape-sizes-edge\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\test-results\\world-reference-compositio-5278b-e-and-short-landscape-sizes-edge\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\tests\\e2e\\world-reference-composition.spec.ts",
+                        "column": 89,
+                        "line": 483
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6952f866f83155538ccf-d0b26c512a434b3c8013",
+              "file": "world-reference-composition.spec.ts",
+              "line": 916,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-15T18:16:54.324Z",
+    "duration": 300659.153,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 5,
+    "flaky": 0
+  }
+}
