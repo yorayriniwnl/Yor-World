@@ -86,7 +86,7 @@ const baseAudit = {
   normalizedParityFailures: missingOrDifferent.length,
   baseCommit: sourceCommit,
   readmeSha256: sha256(fs.readFileSync(readmePath)),
-  evidence: "deliveries/G7/preparation/maker-evidence/pre-g7-22/source/mirror-parity-audit.json",
+  evidence: "deliveries/G7/preparation/maker-evidence/pre-g7-22/delta-07/source/mirror-parity-audit.json",
 };
 manifest.mirror.audit = {
   ...manifest.mirror.audit,
