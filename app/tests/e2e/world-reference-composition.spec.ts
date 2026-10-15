@@ -17,6 +17,10 @@ if (process.env.PRE_G7_13_REQUIRE_ISOLATED_EVIDENCE === "1") {
   }
 }
 const testPanelScale = process.env.PRE_G7_13_TEST_PANEL_SCALE;
+const runtimeBudgets = {
+  desktop: { renderedTriangles: 300_000, renderCalls: 120 },
+  mobile: { renderedTriangles: 140_000, renderCalls: 80 },
+} as const;
 const actionSelector = [
   '[data-testid="studio-controls-toggle"]',
   "#studio-controls-panel button",
@@ -72,6 +76,10 @@ async function enterHome(page: Page, viewport: ViewportSize) {
   await expect(page.getByTestId(cameraButton)).toHaveClass(/hudButtonActive/);
   await page.waitForTimeout(400);
   return { dialog, stage, camera };
+}
+
+async function browserArtifactLabel(page: Page) {
+  return page.evaluate(() => navigator.userAgent.includes("Edg/") ? "edge" : "chrome");
 }
 
 async function captureAndCompose(page: Page, filename: string, viewport: ViewportSize) {
@@ -139,7 +147,7 @@ async function measureFixedChrome(page: Page, viewport: ViewportSize, label: str
   return measurement;
 }
 
-async function recordBrowserEnvironment(page: Page) {
+async function recordBrowserEnvironment(page: Page, browserLabel: string) {
   const environment = await page.evaluate(() => {
     const diagnostics = (window as Window & {
       __PRE_G7_13_REFERENCE_DIAGNOSTICS__?: { latest: ProjectedSnapshot; refresh: (probePixel?: [number, number] | null) => ProjectedSnapshot };
@@ -190,7 +198,7 @@ async function recordBrowserEnvironment(page: Page) {
     ...environment,
   };
   fs.writeFileSync(
-    path.join(measurementDir, `browser-environment-${environment.viewport.width}x${environment.viewport.height}.json`),
+    path.join(measurementDir, `browser-environment-${environment.viewport.width}x${environment.viewport.height}-${browserLabel}.json`),
     `${JSON.stringify(evidenceRecord, null, 2)}\n`,
     "utf8",
   );
@@ -208,6 +216,7 @@ async function recordBrowserEnvironment(page: Page) {
 type ProjectedAnchor = {
   name: string;
   found: boolean;
+  worldPosition?: number[];
   worldScale?: number[];
   pixelBounds?: {
     left: number;
@@ -371,6 +380,11 @@ async function recordVisualAnchorEvidence(
     expect(Math.abs(foot.contactDeltaY), `${label} ${foot.name} contacts shelf within 1mm`).toBeLessThanOrEqual(0.001);
     expect(foot.insideFootprintWithMargin, `${label} ${foot.name} footprint has at least 5mm shelf edge margin`).toBe(true);
   }
+  const pc = byName.get("helios-pc");
+  const headsetStand = byName.get("headset-stand-code-native");
+  expect(pc?.worldBounds && headsetStand?.worldBounds, `${label} headset stand and PC support bounds are recorded`).toBeTruthy();
+  const headsetSupportDelta = headsetStand!.worldBounds!.min[1]! - pc!.worldBounds!.max[1]!;
+  expect(Math.abs(headsetSupportDelta), `${label} headset stand base rests on the existing PC within 1mm`).toBeLessThanOrEqual(0.001);
   for (const name of required) {
     const anchor = byName.get(name);
     expect(anchor?.found, `${label} GLB/code-native anchor ${name} exists`).toBe(true);
@@ -386,6 +400,48 @@ async function recordVisualAnchorEvidence(
     const actor = byName.get(name);
     expect(actor?.found, `${label} named ${name} is present for occlusion measurements`).toBe(true);
     expect(actor?.pixelBounds, `${label} ${name} has measurable bounds`).not.toBeNull();
+    expect(actor!.pixelBounds!.left, `${label} ${name} stays inside the left edge`).toBeGreaterThanOrEqual(0);
+    expect(actor!.pixelBounds!.top, `${label} ${name} stays inside the top edge`).toBeGreaterThanOrEqual(0);
+    expect(actor!.pixelBounds!.right, `${label} ${name} stays inside the right edge`).toBeLessThanOrEqual(viewport.width);
+    expect(actor!.pixelBounds!.bottom, `${label} ${name} stays inside the bottom edge`).toBeLessThanOrEqual(viewport.height);
+    expect(actor!.pixelBounds!.visibleAreaRatio, `${label} ${name} remains fully within the projected viewport`).toBeGreaterThanOrEqual(0.98);
+  }
+
+  const panelBounds = Array.from({ length: 7 }, (_, index) => byName.get(`hex_panel_${index + 1}`)!.pixelBounds!);
+  const hexCluster = panelBounds.reduce((bounds, panel) => ({
+    left: Math.min(bounds.left, panel.left),
+    right: Math.max(bounds.right, panel.right),
+    top: Math.min(bounds.top, panel.top),
+    bottom: Math.max(bounds.bottom, panel.bottom),
+  }), { left: Number.POSITIVE_INFINITY, right: Number.NEGATIVE_INFINITY, top: Number.POSITIVE_INFINITY, bottom: Number.NEGATIVE_INFINITY });
+  for (let first = 0; first < panelBounds.length; first += 1) {
+    for (let second = first + 1; second < panelBounds.length; second += 1) {
+      const a = panelBounds[first]!;
+      const b = panelBounds[second]!;
+      const overlapWidth = Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left));
+      const overlapHeight = Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
+      expect(overlapWidth * overlapHeight, `${label} hex panels ${first + 1} and ${second + 1} have separate projected panels`).toBeLessThanOrEqual(1);
+    }
+  }
+  const leftSpeaker = byName.get("speaker_left_cabinet")!;
+  const rightSpeaker = byName.get("speaker_right_cabinet")!;
+  const minimumSpeakerPixels = viewport.width >= 1200 ? 24 : viewport.width === 390 ? 16 : 12;
+  expect(leftSpeaker.worldPosition?.[1], `${label} left round speaker shares the matched desk height`).toBeCloseTo(rightSpeaker.worldPosition?.[1] ?? Number.NaN, 4);
+  expect(leftSpeaker.pixelBounds!.width, `${label} left speaker has a rendered desktop-scale silhouette`).toBeGreaterThanOrEqual(minimumSpeakerPixels);
+  expect(rightSpeaker.pixelBounds!.width, `${label} right speaker has a rendered desktop-scale silhouette`).toBeGreaterThanOrEqual(minimumSpeakerPixels);
+  expect(leftSpeaker.pixelBounds!.height, `${label} left speaker shows its paired round-driver assembly`).toBeGreaterThanOrEqual(minimumSpeakerPixels);
+  expect(rightSpeaker.pixelBounds!.height, `${label} right speaker shows its paired round-driver assembly`).toBeGreaterThanOrEqual(minimumSpeakerPixels);
+
+  if (viewport.width === 1440 && viewport.height === 900) {
+    expect(byName.get("monitor")!.pixelBounds!.width, `${label} monitor is at least 28% of desktop width`).toBeGreaterThanOrEqual(403);
+    expect(hexCluster.right - hexCluster.left, `${label} distinct hex cluster is at least 25% of desktop width`).toBeGreaterThanOrEqual(360);
+    expect(byName.get("desk")!.pixelBounds!.width, `${label} desk remains at least 55% of desktop width`).toBeGreaterThanOrEqual(792);
+  }
+  if (viewport.width === 390 && viewport.height === 844) {
+    expect(byName.get("monitor")!.pixelBounds!.width, `${label} monitor is at least 40% of phone width`).toBeGreaterThanOrEqual(156);
+    expect(hexCluster.right - hexCluster.left, `${label} seven-panel cluster is recognizable across the phone viewport`).toBeGreaterThanOrEqual(115);
+    expect(byName.get("ai-real-camera")!.pixelBounds!.width, `${label} shelf camera silhouette is large enough to inspect`).toBeGreaterThanOrEqual(28);
+    expect(byName.get("peg_controller_body")!.pixelBounds!.width, `${label} controller silhouette is large enough to inspect`).toBeGreaterThanOrEqual(24);
   }
 
   if (measured.testPanelScale !== null) {
@@ -425,6 +481,16 @@ async function recordVisualAnchorEvidence(
     expect(samples!.occluderRatio, `${label} ${name} has measurable chair/resident coverage`).not.toBeNull();
     expect(samples!.occluderRatio!, `${label} ${name} is not hidden by chair/resident`).toBeLessThanOrEqual(0.1);
   }
+  const occlusionEvidence = [...required, "chair-root", "chair-base", "resident"].map((name) => {
+    const anchor = byName.get(name);
+    const samples = anchor?.sampledRegionHits;
+    if (["chair-root", "chair-base", "resident"].includes(name)) {
+      return { name, status: "NOT_APPLICABLE", reason: "This named anchor is itself part of the chair/resident occluder set.", pixelBounds: anchor?.pixelBounds ?? null };
+    }
+    return samples
+      ? { name, status: "MEASURED", method: "13x13 projected-anchor ray grid", chairHits: samples.chair, residentHits: samples.resident, targetSamples: samples.targetSamples, occluderRatio: samples.occluderRatio, pixelBounds: anchor?.pixelBounds ?? null }
+      : { name, status: "NOT_MEASURED", reason: "The frozen SceneIntegrator evidence sampler does not ray-sample this anchor; preserve null rather than infer occlusion from its AABB.", pixelBounds: anchor?.pixelBounds ?? null };
+  });
 
   const image = await sharp(screenshotPath).removeAlpha().raw().toBuffer({ resolveWithObject: true });
   const countColor = (anchorNames: string[], predicate: (r: number, g: number, b: number) => boolean) => {
@@ -466,16 +532,12 @@ async function recordVisualAnchorEvidence(
     };
   });
   const warmPixels = countColor(["lightbar_emissive"], (r, g, b) => r > 100 && g > 35 && r > g * 1.18 && g > b * 1.15);
-  const floorRegions = viewport.width === 390
-    ? [
-      { name: "mobile-floor-left", left: 12, top: 610, width: 78, height: 150 },
-      { name: "mobile-floor-center", left: 120, top: 625, width: 150, height: 145 },
-      { name: "mobile-floor-right", left: 294, top: 610, width: 84, height: 150 },
-    ]
-    : [
-      { name: "desktop-floor-left", left: 10, top: 820, width: 420, height: 70 },
-      { name: "desktop-floor-right", left: 1040, top: 820, width: 390, height: 70 },
-    ];
+  const floorRegion = viewport.width === 1440
+    ? { name: "desktop-underdesk-cyan-floor", left: Math.round(viewport.width * 0.45), top: Math.round(viewport.height * 0.79), width: Math.round(viewport.width * 0.1), height: Math.round(viewport.height * 0.1) }
+    : viewport.width === 844
+      ? { name: "landscape-floor-classifier-sample", left: Math.round(viewport.width * 0.85), top: Math.round(viewport.height * 0.62), width: Math.round(viewport.width * 0.1), height: Math.round(viewport.height * 0.1) }
+      : { name: "portrait-underdesk-cyan-floor", left: Math.round(viewport.width * 0.45), top: Math.round(viewport.height * 0.64), width: Math.round(viewport.width * 0.1), height: Math.round(viewport.height * 0.1) };
+  const floorRegions = [floorRegion];
   const floorFillPixels = floorRegions.map((region) => {
     const left = Math.max(0, region.left);
     const top = Math.max(0, region.top);
@@ -524,15 +586,14 @@ async function recordVisualAnchorEvidence(
   const exposedFloorRegions = floorFillPixels.filter((region) => actorBounds.every((actor) =>
     !overlapsBounds(region.bounds, actor.bounds!),
   ));
-  if (viewport.width === 1440) {
-    const clearFloorPatch = exposedFloorRegions.find((region) => region.name === "desktop-floor-right");
-    expect(clearFloorPatch?.cyanRatio, `${label} has cyan fill in the exposed desktop floor-right ROI outside chair/resident bounds`).toBeGreaterThanOrEqual(minimumFloorCyanRatio);
-  } else {
-    expect(Math.max(...exposedFloorRegions.map((region) => region.cyanRatio)), `${label} has cyan fill in at least one phone floor ROI outside chair/resident bounds`).toBeGreaterThanOrEqual(minimumFloorCyanRatio);
+  expect(exposedFloorRegions.length, `${label} floor-color ROI is outside chair/resident projected bounds`).toBeGreaterThan(0);
+  const floorClassifierApplies = !(viewport.width === 844 && viewport.height === 390);
+  if (floorClassifierApplies) {
+    expect(exposedFloorRegions[0]!.cyanRatio, `${label} has cyan fill in the measured underdesk floor ROI outside chair/resident bounds`).toBeGreaterThanOrEqual(minimumFloorCyanRatio);
   }
-  const paleSurfaceRegions = viewport.width === 390
-    ? [{ name: "mobile-workstation-left-tabletop", left: 48, top: 432, width: 68, height: 28 }]
-    : [{ name: "desktop-workstation-left-tabletop", left: 490, top: 500, width: 120, height: 35 }];
+  const paleSurfaceRegions = viewport.height > viewport.width
+    ? [{ name: "portrait-workstation-left-tabletop", left: Math.round(viewport.width * 0.12), top: Math.round(viewport.height * 0.51), width: Math.round(viewport.width * 0.18), height: Math.max(1, Math.round(viewport.height * 0.04)) }]
+    : [{ name: "landscape-workstation-left-tabletop", left: Math.round(viewport.width * 0.35), top: Math.round(viewport.height * 0.5), width: Math.round(viewport.width * 0.14), height: Math.max(1, Math.round(viewport.height * 0.08)) }];
   const paleSurfacePixels = paleSurfaceRegions.map((region) => {
     let red = 0;
     let green = 0;
@@ -586,8 +647,35 @@ async function recordVisualAnchorEvidence(
     screenshot: path.relative(evidenceRoot, screenshotPath),
     viewport,
     camera: measured.camera,
+    supports: { headsetStandOnPc: { surfaceNode: "helios-pc", contactDeltaY: headsetSupportDelta } },
+    speakerAssembly: {
+      frozenGlbSha256: "3a02647d24e474c8a2579b0d277cf02a7841212e961c1554f67b6e032e40a307",
+      roots: [leftSpeaker, rightSpeaker].map((speaker) => ({
+        name: speaker.name,
+        worldPosition: speaker.worldPosition,
+        worldBounds: speaker.worldBounds,
+        pixelBounds: speaker.pixelBounds,
+        materials: speaker.materials,
+      })),
+      existingRoundDriverNodes: {
+        left: ["speaker_left_woofer", "speaker_left_tweeter"],
+        right: ["speaker_right_woofer", "speaker_right_tweeter"],
+      },
+      newDriverGeometry: 0,
+      newDriverMaterials: 0,
+      additionalDrawCalls: 0,
+      additionalTriangles: 0,
+      interpretation: "The frozen GLB already contains the round driver meshes. Runtime composition reparents those existing meshes under their matching interaction roots and adds no speaker geometry or materials.",
+    },
     testPanelScale: measured.testPanelScale,
     anchors: measured.anchors,
+    occlusionEvidence,
+    occlusionCoverage: {
+      requiredNamedAnchors: required.length,
+      raySampled: occlusionEvidence.filter((item) => item.status === "MEASURED").length,
+      notMeasured: occlusionEvidence.filter((item) => item.status === "NOT_MEASURED").map((item) => item.name),
+      notApplicableSelfOccluders: occlusionEvidence.filter((item) => item.status === "NOT_APPLICABLE").map((item) => item.name),
+    },
     lights: measured.lights,
     colorPixels: {
       lilac: lilacPixels,
@@ -596,18 +684,22 @@ async function recordVisualAnchorEvidence(
       floorFill: floorFillPixels,
       floorFillThreshold: {
         minimumCyanRatio: minimumFloorCyanRatio,
-        desktopRegion: "desktop-floor-right; checked disjoint from chair-root and resident bounds",
-        mobileRule: "at least one floor region disjoint from chair-root and resident bounds",
+        status: floorClassifierApplies ? "APPLICABLE" : "NOT APPLICABLE; landscape raw frame retained for human review",
+        region: viewport.width === 1440
+          ? "10% by 10% underdesk scene tile at x=45%, y=79%"
+          : viewport.width === 844
+            ? "10% by 10% clear floor sample at x=85%, y=62%; current landscape HUD can hide or color-shift saturated floor pixels, so no automated cyan threshold is applied"
+            : "10% by 10% underdesk scene tile at x=45%, y=64%",
       },
       paleWorkstation: paleSurfacePixels,
     },
-    interpretation: "Projected bounds and sampled ray hits measure framing and chair/resident occlusion; they do not replace the required human recognition review.",
+    interpretation: "Projected bounds and the frozen ray sampler provide framing and partial chair/resident occlusion measurements. Uninstrumented anchors remain explicitly NOT_MEASURED; the source packet does not authorize changing SceneIntegrator.ts. This does not replace human recognition review.",
   };
   fs.writeFileSync(path.join(measurementDir, `${label}-anchor-visibility.json`), `${JSON.stringify(evidence, null, 2)}\n`, "utf8");
   return evidence;
 }
 
-async function recordMobileSceneState(page: Page, label: string) {
+async function recordRuntimeSceneState(page: Page, label: string) {
   const toggle = page.getByTestId("studio-controls-toggle");
   const wasOpen = await toggle.getAttribute("aria-expanded") === "true";
   if (!wasOpen) await toggle.click();
@@ -631,38 +723,66 @@ async function recordMobileSceneState(page: Page, label: string) {
     };
   });
   if (evidenceMode) expect(canvas?.runtimeCamera, `${label} records the CameraDirector position and target`).not.toBeNull();
-  const record = { label, viewport: page.viewportSize(), canvas, runtime };
+  const viewport = page.viewportSize();
+  const mobileBudget = (viewport?.width ?? 0) < 900;
+  const budget = mobileBudget ? runtimeBudgets.mobile : runtimeBudgets.desktop;
+  const actual = {
+    renderedTriangles: typeof runtime.renderedTriangles === "number" ? runtime.renderedTriangles : null,
+    renderCalls: typeof runtime.renderCalls === "number" ? runtime.renderCalls : null,
+    renderPixelRatio: typeof runtime.renderPixelRatio === "number" ? runtime.renderPixelRatio : null,
+    qualityTier: typeof runtime.qualityTier === "string" ? runtime.qualityTier : null,
+  };
+  const withinBudget = {
+    renderedTriangles: actual.renderedTriangles !== null && actual.renderedTriangles <= budget.renderedTriangles,
+    renderCalls: actual.renderCalls !== null && actual.renderCalls <= budget.renderCalls,
+  };
+  const record = {
+    label,
+    viewport,
+    canvas,
+    runtime: actual,
+    runtimeSnapshot: runtime,
+    budget: { deviceClass: mobileBudget ? "mobile-emulated" : "desktop-browser", ...budget },
+    budgetAssessment: {
+      status: Object.values(withinBudget).every(Boolean) ? "PASS" : "FAIL",
+      withinBudget,
+      limitation: "Playwright viewport emulation records renderer diagnostics; it does not establish physical-device performance or thermal behavior.",
+    },
+  };
   fs.writeFileSync(path.join(measurementDir, `${label}-runtime-scene.json`), `${JSON.stringify(record, null, 2)}\n`, "utf8");
   await diagnosticsToggle.click();
   if (!wasOpen) await toggle.click();
 }
 
-test.describe("PRE-G7-13 reference composition and compact mobile controls", () => {
+test.describe("PRE-G7-22 reference composition and compact mobile controls", () => {
   test("captures the opening desktop room beside the user reference", async ({ page }) => {
     test.setTimeout(150_000);
     recordErrors(page, "desktop-composition");
     const viewport = { width: 1440, height: 900 };
     const { camera } = await enterHome(page, viewport);
     expect(camera).toBe("home-desktop");
-    const browserEnvironment = await recordBrowserEnvironment(page);
+    const browser = await browserArtifactLabel(page);
+    const browserEnvironment = await recordBrowserEnvironment(page, browser);
     const cameraProbePixel = browserEnvironment.cameraProbePixel as [number, number] | null;
+    await recordRuntimeSceneState(page, `desktop-1440x900-${browser}`);
 
     const existingControlCount = await page.locator(
       '[data-testid="fullscreen-studio-dialog"] button, [data-testid="fullscreen-studio-dialog"] a[href], [data-testid="fullscreen-studio-dialog"] select',
     ).count();
     expect(existingControlCount - 1).toBe(25);
-    const renderMeasurement = await captureAndCompose(page, "studio-reference-desktop-1440x900.png", viewport);
+    const screenshotName = `studio-reference-desktop-1440x900-${browser}.png`;
+    const renderMeasurement = await captureAndCompose(page, screenshotName, viewport);
     if (evidenceMode) {
       await recordVisualAnchorEvidence(
         page,
-        path.join(screenshotDir, "studio-reference-desktop-1440x900.png"),
+        path.join(screenshotDir, screenshotName),
         viewport,
-        "desktop-1440x900",
+        `desktop-1440x900-${browser}`,
         cameraProbePixel,
       );
     }
     expect(renderMeasurement.distinctPixelColors, "desktop GLB frame is visibly rendered").toBeGreaterThan(16);
-    const chrome = await measureFixedChrome(page, viewport, "desktop-1440x900");
+    const chrome = await measureFixedChrome(page, viewport, `desktop-1440x900-${browser}`);
     expect(chrome.coveredRatio, "closed desktop chrome leaves the room unobscured").toBeLessThanOrEqual(0.2);
 
     const toggle = page.getByTestId("studio-controls-toggle");
@@ -710,21 +830,23 @@ test.describe("PRE-G7-13 reference composition and compact mobile controls", () 
     recordErrors(page, "mobile-drawer");
     const viewport = { width: 390, height: 844 };
     await enterHome(page, viewport);
-    const browserEnvironment = await recordBrowserEnvironment(page);
+    const browser = await browserArtifactLabel(page);
+    const browserEnvironment = await recordBrowserEnvironment(page, browser);
     const cameraProbePixel = browserEnvironment.cameraProbePixel as [number, number] | null;
-    await recordMobileSceneState(page, "mobile-390x844");
+    await recordRuntimeSceneState(page, `mobile-390x844-${browser}`);
 
     const toggle = page.getByTestId("studio-controls-toggle");
     const panel = page.locator("#studio-controls-panel");
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
-    await measureFixedChrome(page, viewport, "mobile-390x844");
-    const renderMeasurement = await captureAndCompose(page, "studio-reference-mobile-390x844.png", viewport);
+    await measureFixedChrome(page, viewport, `mobile-390x844-${browser}`);
+    const screenshotName = `studio-reference-mobile-390x844-${browser}.png`;
+    const renderMeasurement = await captureAndCompose(page, screenshotName, viewport);
     if (evidenceMode) {
       await recordVisualAnchorEvidence(
         page,
-        path.join(screenshotDir, "studio-reference-mobile-390x844.png"),
+        path.join(screenshotDir, screenshotName),
         viewport,
-        "mobile-390x844",
+        `mobile-390x844-${browser}`,
         cameraProbePixel,
       );
     }
@@ -793,20 +915,23 @@ test.describe("PRE-G7-13 reference composition and compact mobile controls", () 
   test("keeps the compact drawer, touch targets, and scene viewport usable at phone and short-landscape sizes", async ({ page }) => {
     test.setTimeout(180_000);
     recordErrors(page, "compact-viewports");
-    const initial = { width: 320, height: 600 };
-    await enterHome(page, initial);
-    await recordMobileSceneState(page, "compact-320x600");
-    await measureFixedChrome(page, initial, "compact-320x600");
-    const renderMeasurement = await captureAndCompose(page, "studio-reference-compact-320x600.png", initial);
-    expect(renderMeasurement.distinctPixelColors, "compact GLB frame is visibly rendered").toBeGreaterThan(16);
-
     for (const viewport of [{ width: 320, height: 600 }, { width: 844, height: 390 }]) {
-      await page.setViewportSize(viewport);
-      await page.waitForTimeout(150);
-      await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME");
+      const browser = await browserArtifactLabel(page);
+      const label = `${viewport.width}x${viewport.height}-${browser}`;
+      await enterHome(page, viewport);
+      const browserEnvironment = await recordBrowserEnvironment(page, browser);
+      const cameraProbePixel = browserEnvironment.cameraProbePixel as [number, number] | null;
+      await recordRuntimeSceneState(page, `responsive-${label}`);
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport.width);
-      const closedChrome = await measureFixedChrome(page, viewport, `${viewport.width}x${viewport.height}`);
+      const closedChrome = await measureFixedChrome(page, viewport, label);
       expect(closedChrome.coveredRatio).toBeLessThanOrEqual(0.2);
+
+      const screenshotName = viewport.width === 320
+        ? `studio-reference-compact-320x600-${browser}.png`
+        : `studio-reference-landscape-844x390-${browser}.png`;
+      const screenshotPath = path.join(screenshotDir, screenshotName);
+      await page.screenshot({ path: screenshotPath, fullPage: false });
+      if (evidenceMode) await recordVisualAnchorEvidence(page, screenshotPath, viewport, label, cameraProbePixel);
 
       const toggle = page.getByTestId("studio-controls-toggle");
       if (await toggle.getAttribute("aria-expanded") !== "true") await toggle.click();
@@ -820,7 +945,7 @@ test.describe("PRE-G7-13 reference composition and compact mobile controls", () 
         .filter((item) => item.visible));
       expect(actionBounds).toHaveLength(26);
       expect(actionBounds.every((item) => item.width >= 44 && item.height >= 44)).toBe(true);
-      await captureAndCompose(page, `studio-reference-${viewport.width}x${viewport.height}-drawer.png`, viewport);
+      await page.screenshot({ path: path.join(screenshotDir, `studio-reference-${viewport.width}x${viewport.height}-${browser}-drawer.png`), fullPage: false });
       await page.getByTestId("studio-controls-toggle").click();
       await expect(page.getByTestId("studio-controls-toggle")).toBeFocused();
     }

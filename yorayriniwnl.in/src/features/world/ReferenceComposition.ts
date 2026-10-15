@@ -9,7 +9,20 @@ const HEX_PANEL_NAMES = [
   "hex_panel_6",
   "hex_panel_7",
 ] as const;
+const HEX_PANEL_LAYOUT: ReadonlyArray<readonly [number, number]> = [
+  [-0.57, 1.82],
+  [-0.38, 1.54],
+  [-0.19, 1.82],
+  [0, 1.54],
+  [0.19, 1.82],
+  [0.38, 1.54],
+  [0.57, 1.82],
+];
 const CAMERA_FOOT_NAMES = ["ai_cam_leg_1", "ai_cam_leg_2", "ai_cam_leg_3"] as const;
+const SPEAKER_ASSEMBLIES = [
+  ["speaker_left_cabinet", "speaker_left_woofer", "speaker_left_tweeter"],
+  ["speaker_right_cabinet", "speaker_right_woofer", "speaker_right_tweeter"],
+] as const;
 
 export interface ReferenceCompositionResult {
   movedNode: string;
@@ -113,6 +126,7 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
     return { movedNode: "none (non-production fixture)", headsetStandCreated: false, missingHexPanels: [] };
   }
   if (!pegboard) throw new Error("Reference composition requires the named pegboard_system group");
+  const isMobileOpening = typeof window !== "undefined" && window.innerWidth < 640;
   if (pegboard.userData["referenceCompositionApplied"] !== true) {
     pegboard.position.x = 2.45;
     pegboard.userData["referenceCompositionApplied"] = true;
@@ -126,7 +140,6 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
     // bay in front of the desk apron.
     plants.position.set(0.68, plants.position.y, -1.6);
     plants.scale.set(0.7, 1, 0.4);
-    const isMobileOpening = typeof window !== "undefined" && window.innerWidth < 640;
     const monsteraOffset = new THREE.Vector3(isMobileOpening ? -0.15 : -0.65, 0, 0.62);
     const monsteraPartNames = [
       "monstera_leaf_1",
@@ -174,7 +187,6 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
   if (pc && pc.userData["referenceCompositionApplied"] !== true) {
     // Move the mobile PC slightly right of the foreground chair silhouette;
     // desktop retains its prior small left correction.
-    const isMobileOpening = typeof window !== "undefined" && window.innerWidth < 640;
     pc.updateWorldMatrix(true, false);
     const worldPosition = pc.getWorldPosition(new THREE.Vector3());
     worldPosition.x += isMobileOpening ? 0.21 : -0.14;
@@ -183,12 +195,46 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
     pc.userData["referenceCompositionApplied"] = true;
   }
 
-  const rightSpeaker = scene.getObjectByName("speaker_right_cabinet");
-  if (rightSpeaker && rightSpeaker.userData["referenceCompositionApplied"] !== true) {
-    // A bounded quarter-meter lift tests a sightline above the seated figure
-    // while keeping the existing speaker within the monitor/desk composition.
-    rightSpeaker.position.y += 0.25;
-    rightSpeaker.userData["referenceCompositionApplied"] = true;
+  scene.updateMatrixWorld(true);
+  for (const [cabinetName, wooferName, tweeterName] of SPEAKER_ASSEMBLIES) {
+    const cabinet = scene.getObjectByName(cabinetName);
+    if (!cabinet || cabinet.userData["referenceCompositionApplied"] === true) continue;
+    // The frozen GLB authors each round driver as a sibling of its cuboid
+    // cabinet. Parent the existing meshes under their cabinet without
+    // changing their world transforms so the named interaction root now
+    // represents the complete, movable desktop speaker.
+    for (const driverName of [wooferName, tweeterName]) {
+      const driver = scene.getObjectByName(driverName);
+      if (driver && driver.parent !== cabinet) cabinet.attach(driver);
+    }
+    const side = cabinetName.startsWith("speaker_left_") ? -0.93 : 0.93;
+    const worldPosition = cabinet.getWorldPosition(new THREE.Vector3());
+    translateWorld(cabinet, new THREE.Vector3(side - worldPosition.x, 0.88 - worldPosition.y, -1.25 - worldPosition.z));
+    cabinet.userData["referenceCompositionApplied"] = true;
+  }
+
+  const monitor = scene.getObjectByName("monitor");
+  if (monitor && monitor.userData["referenceCompositionApplied"] !== true) {
+    // The authored triptych is too narrow to establish a workstation focal
+    // point at the required desktop and phone entry widths. A centered
+    // horizontal scale enlarges the existing display assembly while keeping
+    // its stand, height, mesh identities, and interaction root intact.
+    monitor.scale.x = 1.68;
+    monitor.userData["referenceCompositionApplied"] = true;
+  }
+
+  for (const name of ["chair-root", "chair-base", "resident"] as const) {
+    const actorRoot = scene.getObjectByName(name);
+    if (!actorRoot || actorRoot.userData["referenceCompositionApplied"] === true) continue;
+    // Keep the paired seated actor intact while moving it out of the expanded
+    // monitor/right-prop sightline. The smaller phone placement preserves the
+    // full chair and resident silhouettes in narrow emulated viewports.
+    const lateralOffset = isMobileOpening ? 0.45 : 1.2;
+    const forwardOffset = isMobileOpening ? 0 : -0.55;
+    const actorScale = isMobileOpening ? 0.85 : 0.82;
+    translateWorld(actorRoot, new THREE.Vector3(lateralOffset, 0, forwardOffset));
+    actorRoot.scale.multiplyScalar(actorScale);
+    actorRoot.userData["referenceCompositionApplied"] = true;
   }
 
   const shelfCamera = scene.getObjectByName("ai-real-camera");
@@ -200,7 +246,6 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
     // The named GLB root is offset from its mesh by about (-1.45, 1.74, -1.67).
     // Compensate that local origin while enlarging the camera so it stays on
     // the upper shelf and clears the phone-size recognition floor.
-    const isMobileOpening = typeof window !== "undefined" && window.innerWidth < 640;
     if (isMobileOpening) {
       // Enlarge the existing camera silhouette, then solve the named root's
       // translation from its actual transformed child bounds. Its authored
@@ -253,12 +298,13 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
     }
     if (panel.userData["referenceCompositionApplied"] === true) continue;
 
-    // Keep the authored panel geometry immutable; this bounded transform only
-    // adjusts the existing named wall-panel placement and scale.
-    // The prior 2.7x scale caused adjacent emissive panels to merge into large
-    // rectangles. A 1.1x scale gives each named panel a separate outline.
-    panel.position.x *= 1.2;
-    panel.position.y = 1.98 + (panel.position.y - 1.82) * 1.1;
+    // Retain the authorized code-native six-sided silhouette and arrange four
+    // panels over three in a wider, lower profile. This makes each panel read
+    // separately while meeting the measured desktop workstation-focal width.
+    const panelIndex = HEX_PANEL_NAMES.indexOf(name as (typeof HEX_PANEL_NAMES)[number]);
+    const [x, y] = HEX_PANEL_LAYOUT[panelIndex]!;
+    panel.position.x = x;
+    panel.position.y = y;
     panel.position.z += 0.16;
     panel.scale.set(1.1, 1.1, 1);
     panel.userData["referenceCompositionApplied"] = true;
@@ -313,26 +359,19 @@ function addHeadsetStand(scene: THREE.Object3D): boolean {
 
   const stand = new THREE.Group();
   stand.name = "headset-stand-code-native";
-  const isMobileOpening = typeof window !== "undefined" && window.innerWidth < 640;
-  if (isMobileOpening) {
-    const pc = scene.getObjectByName("helios-pc");
-    scene.updateMatrixWorld(true);
-    const pcBounds = pc ? new THREE.Box3().setFromObject(pc) : null;
-    const pcTop = pcBounds && !pcBounds.isEmpty() ? pcBounds.max.y : 1.24;
-    const pcCenter = pcBounds && !pcBounds.isEmpty()
-      ? pcBounds.getCenter(new THREE.Vector3())
-      : new THREE.Vector3(0.9, 0, -1.15);
-    const standScale = 1.0;
-    const worldPosition = new THREE.Vector3(pcCenter.x, pcTop - 0.756 * standScale, pcCenter.z);
-    scene.worldToLocal(worldPosition);
-    stand.position.copy(worldPosition);
-    stand.scale.setScalar(standScale);
-    stand.userData["placement"] = "PRE-G7-13 mobile secondary stand resting on helios-pc top";
-  } else {
-    // Preserve the approved desktop placement; only the phone preset uses the
-    // PC-top placement to keep the headset above the chair silhouette.
-    stand.position.set(1.0, 0, -0.83);
-  }
+  const pc = scene.getObjectByName("helios-pc");
+  scene.updateMatrixWorld(true);
+  const pcBounds = pc ? new THREE.Box3().setFromObject(pc) : null;
+  const pcTop = pcBounds && !pcBounds.isEmpty() ? pcBounds.max.y : 1.24;
+  const pcCenter = pcBounds && !pcBounds.isEmpty()
+    ? pcBounds.getCenter(new THREE.Vector3())
+    : new THREE.Vector3(0.9, 0, -1.15);
+  const standScale = 1.0;
+  const worldPosition = new THREE.Vector3(pcCenter.x, pcTop - 0.756 * standScale, pcCenter.z);
+  scene.worldToLocal(worldPosition);
+  stand.position.copy(worldPosition);
+  stand.scale.setScalar(standScale);
+  stand.userData["placement"] = "PRE-G7-22 headset stand resting on the existing helios-pc top in both home presets";
   stand.userData["source"] = "PRE-G7-13 code-native secondary headset stand; frozen GLB inventory contains no headset stand node";
 
   const material = new THREE.MeshStandardMaterial({

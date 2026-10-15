@@ -56,6 +56,37 @@ describe("reference room composition", () => {
     scene.add(rightSpeaker);
     const originalSpeakerGeometry = rightSpeakerMesh.geometry;
     const originalSpeakerMaterial = rightSpeakerMesh.material;
+    const speakerDrivers = ["speaker_right_woofer", "speaker_right_tweeter"].map((name, index) => {
+      const driver = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.01, 16), new THREE.MeshStandardMaterial());
+      driver.name = name;
+      driver.position.set(0.72, index === 0 ? 0.84 : 0.94, -1.168);
+      scene.add(driver);
+      return driver;
+    });
+    const leftSpeaker = new THREE.Group();
+    leftSpeaker.name = "speaker_left_cabinet";
+    leftSpeaker.position.set(-0.72, 0.88, -1.25);
+    const leftDrivers = ["speaker_left_woofer", "speaker_left_tweeter"].map((name, index) => {
+      const driver = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.01, 16), new THREE.MeshStandardMaterial());
+      driver.name = name;
+      driver.position.set(-0.72, index === 0 ? 0.84 : 0.94, -1.168);
+      scene.add(driver);
+      return driver;
+    });
+    scene.add(leftSpeaker);
+
+    const chairRoot = new THREE.Group();
+    chairRoot.name = "chair-root";
+    chairRoot.position.set(0.3, 0, -0.36);
+    scene.add(chairRoot);
+    const chairBase = new THREE.Group();
+    chairBase.name = "chair-base";
+    chairBase.position.set(0.3, 0, -0.36);
+    scene.add(chairBase);
+    const resident = new THREE.Group();
+    resident.name = "resident";
+    resident.position.set(0.3, 0, -0.36);
+    scene.add(resident);
 
     const shelf = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.03, 0.22), new THREE.MeshBasicMaterial());
     shelf.name = "shelf_rear_upper";
@@ -81,6 +112,7 @@ describe("reference room composition", () => {
     scene.add(shelfCamera);
 
     const monitor = new THREE.Group();
+    monitor.name = "monitor";
     const lightbar = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.008, 0.015), new THREE.MeshStandardMaterial());
     lightbar.name = "lightbar_emissive";
     lightbar.position.set(0, 1.275, -1.305);
@@ -123,12 +155,22 @@ describe("reference room composition", () => {
     expect(pc.position.toArray()).toEqual([0.26, 0.8, -0.9]);
     expect(pc.getObjectByName("helios-pc")).toBe(pc);
     expect(pc.getObjectByName(pcMesh.name)).toBe(pcMesh);
-    expect(rightSpeaker.position.toArray()).toEqual([0.72, 1.13, -1.25]);
+    expect(rightSpeaker.position.toArray()).toEqual([0.93, 0.88, -1.25]);
     expect(rightSpeaker.userData["referenceCompositionApplied"]).toBe(true);
     expect(scene.getObjectByName("speaker_right_cabinet")).toBe(rightSpeaker);
     expect(scene.getObjectByName("speaker_right_driver")).toBe(rightSpeakerMesh);
+    expect(leftSpeaker.position.toArray()).toEqual([-0.93, 0.88, -1.25]);
+    expect(leftDrivers.map((driver) => driver.parent)).toEqual([leftSpeaker, leftSpeaker]);
+    expect(speakerDrivers.map((driver) => driver.parent)).toEqual([rightSpeaker, rightSpeaker]);
     expect(rightSpeakerMesh.geometry).toBe(originalSpeakerGeometry);
     expect(rightSpeakerMesh.material).toBe(originalSpeakerMaterial);
+    expect(chairRoot.position.toArray()).toEqual([1.5, 0, -0.91]);
+    expect(chairBase.position.toArray()).toEqual([1.5, 0, -0.91]);
+    expect(resident.position.toArray()).toEqual([1.5, 0, -0.91]);
+    expect(chairRoot.scale.toArray()).toEqual([0.82, 0.82, 0.82]);
+    expect(chairBase.scale.toArray()).toEqual([0.82, 0.82, 0.82]);
+    expect(resident.scale.toArray()).toEqual([0.82, 0.82, 0.82]);
+    expect(monitor.scale.toArray()).toEqual([1.68, 1, 1]);
     const cameraSurface = new THREE.Box3().setFromObject(shelf);
     for (const name of ["ai_cam_leg_1", "ai_cam_leg_2", "ai_cam_leg_3"]) {
       const foot = scene.getObjectByName(name)!;
@@ -186,11 +228,11 @@ describe("reference room composition", () => {
     expect(firstPanel.geometry).toBe(generatedPanelGeometry);
     expect(pc.position.toArray()).toEqual([0.26, 0.8, -0.9]);
     expect(firstPanel.scale.x).toBeCloseTo(1.1);
-    expect(firstPanel.position.y).toBeCloseTo(1.716);
+    expect(firstPanel.position.toArray()).toEqual([-0.57, 1.82, -1.61]);
     expect(firstPanel.position.z).toBeCloseTo(-1.61);
     const leftPanel = scene.getObjectByName("hex_panel_2")!;
-    expect(leftPanel.position.x).toBeCloseTo(-0.252);
-    expect(leftPanel.position.y).toBeCloseTo(1.804);
+    expect(leftPanel.position.x).toBeCloseTo(-0.38);
+    expect(leftPanel.position.y).toBeCloseTo(1.54);
 
     for (let index = 1; index <= 7; index += 1) {
       const panel = scene.getObjectByName(`hex_panel_${index}`) as THREE.Mesh;
@@ -221,8 +263,12 @@ describe("reference room composition", () => {
     }
 
     const stand = scene.getObjectByName("headset-stand-code-native")!;
-    expect(stand.position.x).toBeCloseTo(1.0);
-    expect(stand.position.z).toBeCloseTo(-0.83);
+    const desktopPcBounds = new THREE.Box3().setFromObject(pc);
+    const desktopStandBaseBounds = new THREE.Box3().setFromObject(stand.getObjectByName("headset-stand-base")!);
+    expect(stand.position.x).toBeCloseTo(desktopPcBounds.getCenter(new THREE.Vector3()).x);
+    expect(stand.position.z).toBeCloseTo(desktopPcBounds.getCenter(new THREE.Vector3()).z);
+    expect(desktopStandBaseBounds.min.y).toBeCloseTo(desktopPcBounds.max.y);
+    expect(stand.userData["placement"]).toContain("PRE-G7-22");
     expect(stand.scale.toArray()).toEqual([1, 1, 1]);
     const standBounds = new THREE.Box3().setFromObject(stand);
     expect(stand.children.map((child) => child.name)).toEqual([
@@ -305,6 +351,18 @@ describe("reference room composition", () => {
       shelfCamera.add(foot);
     }
     scene.add(shelfCamera);
+    const chairRoot = new THREE.Group();
+    chairRoot.name = "chair-root";
+    chairRoot.position.set(0.3, 0, -0.36);
+    scene.add(chairRoot);
+    const chairBase = new THREE.Group();
+    chairBase.name = "chair-base";
+    chairBase.position.set(0.3, 0, -0.36);
+    scene.add(chairBase);
+    const resident = new THREE.Group();
+    resident.name = "resident";
+    resident.position.set(0.3, 0, -0.36);
+    scene.add(resident);
     const upperShelf = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.03, 0.22), new THREE.MeshBasicMaterial());
     upperShelf.name = "shelf_rear_upper";
     upperShelf.position.set(0, 2.15, -1.68);
@@ -315,6 +373,12 @@ describe("reference room composition", () => {
       applyReferenceComposition(scene);
       expect(controller.scale.toArray()).toEqual([1.9, 1.9, 1.9]);
       expect(shelfCamera.scale.toArray()).toEqual([3, 3, 3]);
+      expect(chairRoot.position.toArray()).toEqual([0.75, 0, -0.36]);
+      expect(chairBase.position.toArray()).toEqual([0.75, 0, -0.36]);
+      expect(resident.position.toArray()).toEqual([0.75, 0, -0.36]);
+      expect(chairRoot.scale.toArray()).toEqual([0.85, 0.85, 0.85]);
+      expect(chairBase.scale.toArray()).toEqual([0.85, 0.85, 0.85]);
+      expect(resident.scale.toArray()).toEqual([0.85, 0.85, 0.85]);
       const cameraBounds = new THREE.Box3().setFromObject(shelfCamera);
       expect(cameraBounds.min.y).toBeCloseTo(new THREE.Box3().setFromObject(upperShelf).max.y, 3);
       expect(cameraBounds.getCenter(new THREE.Vector3()).x).toBeCloseTo(0.7);
@@ -352,7 +416,7 @@ describe("reference room composition", () => {
       const pcBounds = new THREE.Box3().setFromObject(pc);
       const standBase = stand.getObjectByName("headset-stand-base")!;
       const standBaseBounds = new THREE.Box3().setFromObject(standBase);
-      expect(stand.userData["placement"]).toBe("PRE-G7-13 mobile secondary stand resting on helios-pc top");
+      expect(stand.userData["placement"]).toBe("PRE-G7-22 headset stand resting on the existing helios-pc top in both home presets");
       expect(stand.scale.toArray()).toEqual([1, 1, 1]);
       expect(standBaseBounds.min.y).toBeCloseTo(pcBounds.max.y);
       expect(scene.getObjectByName("headset-stand-code-native")).toBe(stand);
