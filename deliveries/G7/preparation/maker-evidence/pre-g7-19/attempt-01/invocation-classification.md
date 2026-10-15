@@ -1,0 +1,9 @@
+# Diagnostic invocation 01 classification
+
+The only instrumented Vitest invocation exited 0, but it did **not** execute as a focused test. `pnpm run test:unit -- ...` forwarded the literal `--` into the script command; the captured expanded command was `vitest run --config vitest.config.ts "--" "tests/unit/boundaries.test.ts" ...`. Vitest consequently ran all 26 unit files and reported 327/327 passing. This is retained as a misrouted supplemental run, not as the PRE-G7-19 focused diagnostic result and not as the required default gate. No second focused invocation is authorized or planned.
+
+The runner process used Node 24.19.0 and pnpm 9.15.9, but the instrumented Vitest worker reported Node `v24.14.0`; the script PATH had resolved the host Node for the child. The measurements therefore do not establish the timing behavior under the packet's pinned runtime and are not treated as a pinned focused pass.
+
+The available instrumentation still measured the boundary body at 773 ms: source discovery/read 260 ms, TypeScript parsing 338 ms, AST traversal 159 ms, import-path resolution 15 ms, and inclusive module validation 510 ms. The module-validation total includes the nested parse, traversal, and import-resolution measurements, so these numbers overlap and must not be summed. They show no direct 68-second bottleneck in the test implementation. Combined with the all-suite routing and worker-version issues, they do not justify a source correction or a causal claim about the earlier 68.215-second result.
+
+The exact invocation, stdout/stderr, instrumented timing record, process samples, environment/version receipt, and temporary source patch are preserved beside this classification. The test and domain-mirror files were restored byte-for-byte from the saved PRE-G7-17 base snapshots before the final default gate.

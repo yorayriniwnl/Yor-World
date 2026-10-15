@@ -1,0 +1,350 @@
+diff --git a/app/tests/unit/boundaries.test.ts b/app/tests/unit/boundaries.test.ts
+index c2353be8..9df33de3 100644
+--- a/app/tests/unit/boundaries.test.ts
++++ b/app/tests/unit/boundaries.test.ts
+@@ -1,4 +1,5 @@
+-import { readdirSync, readFileSync, existsSync } from "node:fs";
++import { appendFileSync, readdirSync, readFileSync, existsSync } from "node:fs";
++import { performance } from "node:perf_hooks";
+ import { dirname, join, normalize } from "node:path";
+ import { describe, expect, it } from "vitest";
+ import ts from "typescript";
+@@ -16,21 +17,86 @@ interface SourceFileSnapshot {
+   text: string;
+ }
+ 
++interface DiagnosticTimingStart {
++  wallStart: number;
++  cpuStart: NodeJS.CpuUsage;
++}
++
++interface DiagnosticTimingTotal {
++  calls: number;
++  wallMs: number;
++  userCpuMicroseconds: number;
++  systemCpuMicroseconds: number;
++}
++
++const diagnosticTimingEnabled = process.env.PRE_G7_19_BOUNDARY_TIMING === "1";
++const diagnosticTimingFile = process.env.PRE_G7_19_BOUNDARY_TIMING_FILE;
++const diagnosticTimingTotals = new Map<string, DiagnosticTimingTotal>();
++
++function beginDiagnosticTiming(): DiagnosticTimingStart | undefined {
++  if (!diagnosticTimingEnabled) return undefined;
++  return { wallStart: performance.now(), cpuStart: process.cpuUsage() };
++}
++
++function endDiagnosticTiming(name: string, start: DiagnosticTimingStart | undefined) {
++  if (!start) return;
++  const wallMs = performance.now() - start.wallStart;
++  const cpu = process.cpuUsage(start.cpuStart);
++  const total = diagnosticTimingTotals.get(name) ?? {
++    calls: 0,
++    wallMs: 0,
++    userCpuMicroseconds: 0,
++    systemCpuMicroseconds: 0,
++  };
++  total.calls += 1;
++  total.wallMs += wallMs;
++  total.userCpuMicroseconds += cpu.user;
++  total.systemCpuMicroseconds += cpu.system;
++  diagnosticTimingTotals.set(name, total);
++}
++
++function measureDiagnosticTiming<T>(name: string, operation: () => T): T {
++  const start = beginDiagnosticTiming();
++  try {
++    return operation();
++  } finally {
++    endDiagnosticTiming(name, start);
++  }
++}
++
++function flushDiagnosticTiming(testName: string) {
++  if (!diagnosticTimingEnabled || !diagnosticTimingFile) return;
++  const report = {
++    packet: "PRE-G7-19",
++    testName,
++    pid: process.pid,
++    node: process.version,
++    phases: Object.fromEntries(diagnosticTimingTotals),
++    note: "moduleValidation is inclusive of nested parse, AST traversal, and import-resolution phases; phase totals overlap.",
++  };
++  appendFileSync(diagnosticTimingFile, JSON.stringify(report) + "\n", "utf8");
++}
++
+ let sourceFileSnapshots: SourceFileSnapshot[] | undefined;
+ let sourceFileSnapshotsByPath: Map<string, SourceFileSnapshot> | undefined;
+ 
+ function getSourceFileSnapshots(): SourceFileSnapshot[] {
+-  if (!sourceFileSnapshots) {
+-    sourceFileSnapshots = files("src").map((path) => ({
+-      path,
+-      normalizedPath: path.replace(/\\/g, "/"),
+-      text: readFileSync(path, "utf8"),
+-    }));
+-    sourceFileSnapshotsByPath = new Map(
+-      sourceFileSnapshots.map((snapshot) => [snapshot.normalizedPath, snapshot] as const),
+-    );
++  const timingStart = beginDiagnosticTiming();
++  try {
++    if (!sourceFileSnapshots) {
++      sourceFileSnapshots = files("src").map((path) => ({
++        path,
++        normalizedPath: path.replace(/\\/g, "/"),
++        text: readFileSync(path, "utf8"),
++      }));
++      sourceFileSnapshotsByPath = new Map(
++        sourceFileSnapshots.map((snapshot) => [snapshot.normalizedPath, snapshot] as const),
++      );
++    }
++    return sourceFileSnapshots;
++  } finally {
++    endDiagnosticTiming("sourceDiscoveryRead", timingStart);
+   }
+-  return sourceFileSnapshots;
+ }
+ 
+ export interface DiscoveredImport {
+@@ -56,16 +122,23 @@ function getParsedModuleSnapshot(filePath: string, text: string): ParsedModuleSn
+   const cached = snapshotsByText.get(text);
+   if (cached) return cached;
+ 
+-  const sourceFile = ts.createSourceFile(filePath, text, ts.ScriptTarget.Latest, true);
++  const sourceFile = measureDiagnosticTiming("typescriptParsing", () =>
++    ts.createSourceFile(filePath, text, ts.ScriptTarget.Latest, true),
++  );
+   const results: DiscoveredImport[] = [];
+ 
+   function record(specifier: string, kind: DiscoveredImport["kind"], node: ts.Node) {
+     const line = sourceFile.getLineAndCharacterOfPosition(node.getStart()).line + 1;
+     let resolved = specifier;
+-    if (specifier.startsWith("@/")) {
+-      resolved = normalize(join("src", specifier.slice(2))).replace(/\\/g, "/");
+-    } else if (specifier.startsWith(".")) {
+-      resolved = normalize(join(dirname(filePath), specifier)).replace(/\\/g, "/");
++    const timingStart = beginDiagnosticTiming();
++    try {
++      if (specifier.startsWith("@/")) {
++        resolved = normalize(join("src", specifier.slice(2))).replace(/\\/g, "/");
++      } else if (specifier.startsWith(".")) {
++        resolved = normalize(join(dirname(filePath), specifier)).replace(/\\/g, "/");
++      }
++    } finally {
++      endDiagnosticTiming("importResolution", timingStart);
+     }
+     results.push({ specifier, kind, line, resolvedPath: resolved });
+   }
+@@ -99,7 +172,7 @@ function getParsedModuleSnapshot(filePath: string, text: string): ParsedModuleSn
+     ts.forEachChild(node, visit);
+   }
+ 
+-  visit(sourceFile);
++  measureDiagnosticTiming("astTraversal", () => visit(sourceFile));
+   const snapshot = { sourceFile, imports: results };
+   snapshotsByText.set(text, snapshot);
+   return snapshot;
+@@ -182,13 +255,21 @@ it("validates published projects are structurally sound and identity is verified
+ });
+ 
+ it("enforces integrated dependency boundaries: HTML shell stays free of 3D and browser features stay free of server imports", () => {
+-  const packageJson = JSON.parse(readFileSync("package.json", "utf8")) as { dependencies: Record<string, string> };
+-  expect(Object.keys(packageJson.dependencies).sort()).toEqual([
+-    "@supabase/ssr", "@supabase/supabase-js", "next", "pg", "react", "react-dom", "server-only", "sharp", "three", "zod"
+-  ]);
+-  for (const version of Object.values(packageJson.dependencies)) expect(version).toMatch(/^\d+\.\d+\.\d+$/);
+-  for (const snapshot of getSourceFileSnapshots()) {
+-    validateProductionModule(snapshot.normalizedPath, snapshot.text);
++  const bodyTimingStart = beginDiagnosticTiming();
++  try {
++    const packageJson = JSON.parse(readFileSync("package.json", "utf8")) as { dependencies: Record<string, string> };
++    expect(Object.keys(packageJson.dependencies).sort()).toEqual([
++      "@supabase/ssr", "@supabase/supabase-js", "next", "pg", "react", "react-dom", "server-only", "sharp", "three", "zod"
++    ]);
++    for (const version of Object.values(packageJson.dependencies)) expect(version).toMatch(/^\d+\.\d+\.\d+$/);
++    for (const snapshot of getSourceFileSnapshots()) {
++      measureDiagnosticTiming("moduleValidation", () =>
++        validateProductionModule(snapshot.normalizedPath, snapshot.text),
++      );
++    }
++  } finally {
++    endDiagnosticTiming("boundaryTestBodyTotal", bodyTimingStart);
++    flushDiagnosticTiming("enforces integrated dependency boundaries: HTML shell stays free of 3D and browser features stay free of server imports");
+   }
+ });
+ 
+diff --git a/yorayriniwnl.in/tests/unit/boundaries.test.ts b/yorayriniwnl.in/tests/unit/boundaries.test.ts
+index c2353be8..9df33de3 100644
+--- a/yorayriniwnl.in/tests/unit/boundaries.test.ts
++++ b/yorayriniwnl.in/tests/unit/boundaries.test.ts
+@@ -1,4 +1,5 @@
+-import { readdirSync, readFileSync, existsSync } from "node:fs";
++import { appendFileSync, readdirSync, readFileSync, existsSync } from "node:fs";
++import { performance } from "node:perf_hooks";
+ import { dirname, join, normalize } from "node:path";
+ import { describe, expect, it } from "vitest";
+ import ts from "typescript";
+@@ -16,21 +17,86 @@ interface SourceFileSnapshot {
+   text: string;
+ }
+ 
++interface DiagnosticTimingStart {
++  wallStart: number;
++  cpuStart: NodeJS.CpuUsage;
++}
++
++interface DiagnosticTimingTotal {
++  calls: number;
++  wallMs: number;
++  userCpuMicroseconds: number;
++  systemCpuMicroseconds: number;
++}
++
++const diagnosticTimingEnabled = process.env.PRE_G7_19_BOUNDARY_TIMING === "1";
++const diagnosticTimingFile = process.env.PRE_G7_19_BOUNDARY_TIMING_FILE;
++const diagnosticTimingTotals = new Map<string, DiagnosticTimingTotal>();
++
++function beginDiagnosticTiming(): DiagnosticTimingStart | undefined {
++  if (!diagnosticTimingEnabled) return undefined;
++  return { wallStart: performance.now(), cpuStart: process.cpuUsage() };
++}
++
++function endDiagnosticTiming(name: string, start: DiagnosticTimingStart | undefined) {
++  if (!start) return;
++  const wallMs = performance.now() - start.wallStart;
++  const cpu = process.cpuUsage(start.cpuStart);
++  const total = diagnosticTimingTotals.get(name) ?? {
++    calls: 0,
++    wallMs: 0,
++    userCpuMicroseconds: 0,
++    systemCpuMicroseconds: 0,
++  };
++  total.calls += 1;
++  total.wallMs += wallMs;
++  total.userCpuMicroseconds += cpu.user;
++  total.systemCpuMicroseconds += cpu.system;
++  diagnosticTimingTotals.set(name, total);
++}
++
++function measureDiagnosticTiming<T>(name: string, operation: () => T): T {
++  const start = beginDiagnosticTiming();
++  try {
++    return operation();
++  } finally {
++    endDiagnosticTiming(name, start);
++  }
++}
++
++function flushDiagnosticTiming(testName: string) {
++  if (!diagnosticTimingEnabled || !diagnosticTimingFile) return;
++  const report = {
++    packet: "PRE-G7-19",
++    testName,
++    pid: process.pid,
++    node: process.version,
++    phases: Object.fromEntries(diagnosticTimingTotals),
++    note: "moduleValidation is inclusive of nested parse, AST traversal, and import-resolution phases; phase totals overlap.",
++  };
++  appendFileSync(diagnosticTimingFile, JSON.stringify(report) + "\n", "utf8");
++}
++
+ let sourceFileSnapshots: SourceFileSnapshot[] | undefined;
+ let sourceFileSnapshotsByPath: Map<string, SourceFileSnapshot> | undefined;
+ 
+ function getSourceFileSnapshots(): SourceFileSnapshot[] {
+-  if (!sourceFileSnapshots) {
+-    sourceFileSnapshots = files("src").map((path) => ({
+-      path,
+-      normalizedPath: path.replace(/\\/g, "/"),
+-      text: readFileSync(path, "utf8"),
+-    }));
+-    sourceFileSnapshotsByPath = new Map(
+-      sourceFileSnapshots.map((snapshot) => [snapshot.normalizedPath, snapshot] as const),
+-    );
++  const timingStart = beginDiagnosticTiming();
++  try {
++    if (!sourceFileSnapshots) {
++      sourceFileSnapshots = files("src").map((path) => ({
++        path,
++        normalizedPath: path.replace(/\\/g, "/"),
++        text: readFileSync(path, "utf8"),
++      }));
++      sourceFileSnapshotsByPath = new Map(
++        sourceFileSnapshots.map((snapshot) => [snapshot.normalizedPath, snapshot] as const),
++      );
++    }
++    return sourceFileSnapshots;
++  } finally {
++    endDiagnosticTiming("sourceDiscoveryRead", timingStart);
+   }
+-  return sourceFileSnapshots;
+ }
+ 
+ export interface DiscoveredImport {
+@@ -56,16 +122,23 @@ function getParsedModuleSnapshot(filePath: string, text: string): ParsedModuleSn
+   const cached = snapshotsByText.get(text);
+   if (cached) return cached;
+ 
+-  const sourceFile = ts.createSourceFile(filePath, text, ts.ScriptTarget.Latest, true);
++  const sourceFile = measureDiagnosticTiming("typescriptParsing", () =>
++    ts.createSourceFile(filePath, text, ts.ScriptTarget.Latest, true),
++  );
+   const results: DiscoveredImport[] = [];
+ 
+   function record(specifier: string, kind: DiscoveredImport["kind"], node: ts.Node) {
+     const line = sourceFile.getLineAndCharacterOfPosition(node.getStart()).line + 1;
+     let resolved = specifier;
+-    if (specifier.startsWith("@/")) {
+-      resolved = normalize(join("src", specifier.slice(2))).replace(/\\/g, "/");
+-    } else if (specifier.startsWith(".")) {
+-      resolved = normalize(join(dirname(filePath), specifier)).replace(/\\/g, "/");
++    const timingStart = beginDiagnosticTiming();
++    try {
++      if (specifier.startsWith("@/")) {
++        resolved = normalize(join("src", specifier.slice(2))).replace(/\\/g, "/");
++      } else if (specifier.startsWith(".")) {
++        resolved = normalize(join(dirname(filePath), specifier)).replace(/\\/g, "/");
++      }
++    } finally {
++      endDiagnosticTiming("importResolution", timingStart);
+     }
+     results.push({ specifier, kind, line, resolvedPath: resolved });
+   }
+@@ -99,7 +172,7 @@ function getParsedModuleSnapshot(filePath: string, text: string): ParsedModuleSn
+     ts.forEachChild(node, visit);
+   }
+ 
+-  visit(sourceFile);
++  measureDiagnosticTiming("astTraversal", () => visit(sourceFile));
+   const snapshot = { sourceFile, imports: results };
+   snapshotsByText.set(text, snapshot);
+   return snapshot;
+@@ -182,13 +255,21 @@ it("validates published projects are structurally sound and identity is verified
+ });
+ 
+ it("enforces integrated dependency boundaries: HTML shell stays free of 3D and browser features stay free of server imports", () => {
+-  const packageJson = JSON.parse(readFileSync("package.json", "utf8")) as { dependencies: Record<string, string> };
+-  expect(Object.keys(packageJson.dependencies).sort()).toEqual([
+-    "@supabase/ssr", "@supabase/supabase-js", "next", "pg", "react", "react-dom", "server-only", "sharp", "three", "zod"
+-  ]);
+-  for (const version of Object.values(packageJson.dependencies)) expect(version).toMatch(/^\d+\.\d+\.\d+$/);
+-  for (const snapshot of getSourceFileSnapshots()) {
+-    validateProductionModule(snapshot.normalizedPath, snapshot.text);
++  const bodyTimingStart = beginDiagnosticTiming();
++  try {
++    const packageJson = JSON.parse(readFileSync("package.json", "utf8")) as { dependencies: Record<string, string> };
++    expect(Object.keys(packageJson.dependencies).sort()).toEqual([
++      "@supabase/ssr", "@supabase/supabase-js", "next", "pg", "react", "react-dom", "server-only", "sharp", "three", "zod"
++    ]);
++    for (const version of Object.values(packageJson.dependencies)) expect(version).toMatch(/^\d+\.\d+\.\d+$/);
++    for (const snapshot of getSourceFileSnapshots()) {
++      measureDiagnosticTiming("moduleValidation", () =>
++        validateProductionModule(snapshot.normalizedPath, snapshot.text),
++      );
++    }
++  } finally {
++    endDiagnosticTiming("boundaryTestBodyTotal", bodyTimingStart);
++    flushDiagnosticTiming("enforces integrated dependency boundaries: HTML shell stays free of 3D and browser features stay free of server imports");
+   }
+ });
+ 
