@@ -8,6 +8,8 @@ const repoRoot = path.resolve(evidenceRoot, "../../../../..");
 const inventoryPath = path.join(evidenceRoot, "evidence-inventory.json");
 const inventoryRepoPath = path.relative(repoRoot, inventoryPath).replace(/\\/g, "/");
 const manifestRepoPath = "yorayriniwnl.in/source-delivery-manifest.json";
+const evidencePrefix = "deliveries/G7/preparation/maker-evidence/pre-g7-19/";
+const candidateSourceCommit = "fc64a18a7ec1d027fb0a33400c2fcd6288d6afbf";
 const sha256 = (bytes) => crypto.createHash("sha256").update(bytes).digest("hex");
 const gitBlob = (repoPath) => {
   const result = spawnSync("git", ["hash-object", `--path=${repoPath}`, "--", repoPath], {
@@ -50,9 +52,9 @@ const base = {
   packet: "PRE-G7-19",
   sourceIdentity: {
     branch: gitOutput(["branch", "--show-current"]),
-    commit: gitOutput(["rev-parse", "HEAD"]),
-    sourceTree: gitOutput(["rev-parse", "HEAD^{tree}"]),
-    appTree: gitOutput(["rev-parse", "HEAD:app"]),
+    commit: candidateSourceCommit,
+    sourceTree: gitOutput(["rev-parse", `${candidateSourceCommit}^{tree}`]),
+    appTree: gitOutput(["rev-parse", `${candidateSourceCommit}:app`]),
   },
   scope: "deliveries/G7/preparation/maker-evidence/pre-g7-19/",
 };
@@ -131,10 +133,20 @@ if (!manifest) {
   }
 }
 
-const baseCommit = "fc64a18a7ec1d027fb0a33400c2fcd6288d6afbf";
-if (base.sourceIdentity.commit !== baseCommit) errors.push("candidate commit is not the packet source base; no source delta was expected");
+if (base.sourceIdentity.commit !== candidateSourceCommit) errors.push("candidate commit is not the packet source base; no source delta was expected");
 const expectedAppTree = "0804688e4cdd55960e71a19efc8384d4a2f0d071";
 if (base.sourceIdentity.appTree !== expectedAppTree) errors.push("candidate app tree differs from the packet source base");
+if (gitOutput(["rev-parse", "HEAD:app"]) !== expectedAppTree) errors.push("current HEAD app tree differs from the packet source base");
+const committedPaths = gitOutput(["diff", "--name-only", candidateSourceCommit, "HEAD"])
+  .split(/\r?\n/).filter(Boolean);
+if (committedPaths.some((repoPath) => !repoPath.startsWith(evidencePrefix))) {
+  errors.push("committed delta includes a path outside PRE-G7-19 evidence scope");
+}
+const worktreePaths = gitOutput(["status", "--porcelain", "--untracked-files=all"])
+  .split(/\r?\n/).filter(Boolean).map((line) => line.slice(3));
+if (worktreePaths.some((repoPath) => !repoPath.startsWith(evidencePrefix))) {
+  errors.push("working tree contains a change outside PRE-G7-19 evidence scope");
+}
 const sourceTestPaths = ["app/tests/unit/boundaries.test.ts", "yorayriniwnl.in/tests/unit/boundaries.test.ts"];
 const sourceTestBlobs = sourceTestPaths.map((sourcePath) => gitBlob(sourcePath));
 if (sourceTestBlobs[0] !== "c2353be846e7c34d2e0d7305f6240245db7f9078" || sourceTestBlobs[0] !== sourceTestBlobs[1]) {
