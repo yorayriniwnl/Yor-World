@@ -1,0 +1,71 @@
+SOURCE_HEAD=e21901eff03097ab0ecda2278e2949aa2eba5db9
+SOURCE_COMMIT=034d87951555731ff03d413b380556471e4ad73a
+APP_TREE=0ea10ae3cadb00526e13293248fbef3b3007537e
+BUILD_ID_EXPECTED=7fiIu3DKa8U_TUYczP3uR
+BUILD_ID_ACTUAL=7fiIu3DKa8U_TUYczP3uR
+COMMAND=node pnpm.mjs exec playwright test tests/e2e/renderer-recovery.spec.ts tests/e2e/world-fullscreen.spec.ts --project=chrome --workers=1
+NODE_EXE=C:\Users\ayush\AppData\Local\Temp\pre-g7-13-npm-cache\_npx\09ae5d3560c7b1f2\node_modules\node\bin\node.exe
+v24.19.0
+PORT=3174
+B5_EVIDENCE_DIR=C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-13\deliveries\G7\preparation\maker-evidence\pre-g7-13\attempt-66\recovery-fullscreen-results
+PRE_G7_11_EVIDENCE_DIR=C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-13\deliveries\G7\preparation\maker-evidence\pre-g7-13\attempt-66\recovery-fullscreen-evidence
+[WebServer] (node:2868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 13 tests using 1 worker
+
+(node:8992) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   1 [chrome] › tests\e2e\renderer-recovery.spec.ts:35:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › WebGL context loss triggers accessible WorldFallback without trapping user (22.7s)
+(node:35916) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  2 [chrome] › tests\e2e\renderer-recovery.spec.ts:85:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Explicit STATIC stops the old renderer and Retry rebuilds a supported AUTO studio (29.1s)
+  ok  3 [chrome] › tests\e2e\renderer-recovery.spec.ts:108:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Persistent renderer failures exhaust exactly three reconstruction retries (4.1s)
+  ok  4 [chrome] › tests\e2e\renderer-recovery.spec.ts:125:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Healthy visibility restoration resumes rendering; a detached canvas never resumes (10.0s)
+  ok  5 [chrome] › tests\e2e\renderer-recovery.spec.ts:146:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Accessibility toolbar accepts real pointer controls and Projects navigation (24.6s)
+  ok  6 [chrome] › tests\e2e\renderer-recovery.spec.ts:173:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Asset loading failure renders failure banner with Retry and Continue options (3.1s)
+  ok  7 [chrome] › tests\e2e\renderer-recovery.spec.ts:195:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Renderer failure with dialog open preserves dialog interactivity in DOM (2.9s)
+  ok  8 [chrome] › tests\e2e\renderer-recovery.spec.ts:215:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Mobile portrait (390x844) framing and touch tap interactions (2.6s)
+  ok  9 [chrome] › tests\e2e\renderer-recovery.spec.ts:245:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › Mobile landscape (844x390) responsive reflow and orientation change (4.3s)
+  ok 10 [chrome] › tests\e2e\world-fullscreen.spec.ts:339:3 › PRE-G7-11 fullscreen studio › opens a native modal, returns focus on Escape and Exit, and preserves semantic destinations (5.0s)
+  ok 11 [chrome] › tests\e2e\world-fullscreen.spec.ts:374:3 › PRE-G7-11 fullscreen studio › fills desktop, mobile, compact, and short-landscape viewports with measurable stage and controls (28.6s)
+  ok 12 [chrome] › tests\e2e\world-fullscreen.spec.ts:401:3 › PRE-G7-11 fullscreen studio › captures existing room camera presets for reference-anchor inventory (24.1s)
+  ok 13 [chrome] › tests\e2e\world-fullscreen.spec.ts:425:3 › PRE-G7-11 fullscreen studio › fallback actions retain behavior, meet text contrast, and expose visible keyboard focus (4.5s)
+
+
+  1) [chrome] › tests\e2e\renderer-recovery.spec.ts:35:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › WebGL context loss triggers accessible WorldFallback without trapping user 
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator:  getByTestId('world-stage-container')
+    Expected: "HOME"
+    Received: "LOADING"
+    Timeout:  15000ms
+
+    Call log:
+      - Expect "toHaveAttribute" getByTestId('world-stage-container') with timeout 15000ms
+      - waiting for getByTestId('world-stage-container')
+        - locator resolved to <div role="region" data-lifecycle-state="LOADING" data-studio-controls-open="false" aria-label="Interactive 3D Studio" data-testid="world-stage-container" class="world-module__FC9lxW__stageContainer world-module__FC9lxW__fullscreenStage world-module__FC9lxW__studioControlsClosed">…</div>
+        - unexpected value "LOADING"
+
+
+      20 |   await page.emulateMedia({ reducedMotion: "reduce" });
+      21 |   await page.goto("/?studio=1", { waitUntil: "domcontentloaded" });
+    > 22 |   await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME", { timeout: 15000 });
+         |                                                           ^
+      23 |   const controlsToggle = page.getByTestId("studio-controls-toggle");
+      24 |   if (await controlsToggle.getAttribute("aria-expanded") !== "true") await controlsToggle.click();
+      25 |   await expect(controlsToggle).toHaveAttribute("aria-expanded", "true");
+        at enterRenderedHome (C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-13\app\tests\e2e\renderer-recovery.spec.ts:22:59)
+        at C:\Users\ayush\COddexxxxxxxxxxxxxxxx\_worktrees\pre-g7-13\app\tests\e2e\renderer-recovery.spec.ts:36:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\renderer-recovery-C3-Failu-3c469-lback-without-trapping-user-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\renderer-recovery-C3-Failu-3c469-lback-without-trapping-user-chrome\error-context.md
+
+  1 failed
+    [chrome] › tests\e2e\renderer-recovery.spec.ts:35:3 › C3 Failure Recovery, Context Loss & Mobile Resilience › WebGL context loss triggers accessible WorldFallback without trapping user 
+  12 passed (3.4m)
+PLAYWRIGHT_EXIT=1
