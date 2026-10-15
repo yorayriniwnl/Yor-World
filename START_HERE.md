@@ -2,6 +2,8 @@
 
 Project folder: `C:\Users\yoray\Projects\Yor World`.
 
+**Latest local gate:** [PRE-G7-21](docs/planning/reviews/2026-10-15-pre-g7-21-parent-acceptance.md) accepts the exact-source production build only; see its [read-only audit](docs/planning/reviews/2026-10-15-pre-g7-21-independent-audit.md). Real-device and assistive-technology checks are NOT RUN, the browser GPU state is NOT PROVIDED, and G7 remains unaccepted and local-only.
+
 The user selected local coding tools with project-folder access for GPT/Gemini and browser-based Claude accounts for review. Resources: 2 GPT Plus, 3 Gemini AI Pro and 15 Claude free browser accounts; the coordinator is not an extra GPT account.
 
 This is the shared entry point for the user and workers with actual local or connected workspace access. Read [AGENTS.md](AGENTS.md), then the assigned packet; only load the document sections that packet needs.
