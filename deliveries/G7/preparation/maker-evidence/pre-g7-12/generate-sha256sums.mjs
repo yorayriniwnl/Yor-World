@@ -1,4 +1,4 @@
-﻿import crypto from "node:crypto";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -7,7 +7,7 @@ import { execFileSync } from "node:child_process";
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.resolve(here, "../../../../../");
 const baseCommit = process.argv[2] || "67026f26bb80d81de4edf632b3038b0239eea4de";
-const sourceCommit = process.argv[3] || "133529868c8c7279831cbbffe35ab23178012b8c";
+const sourceCommit = process.argv[3] || "43d3c0289fd5afe5970d799c77f9a701b4d71d0e";
 const evidenceCommit = process.argv[4] || "HEAD";
 const output = path.join(here, "SHA256SUMS.json");
 const gitText = args => execFileSync("git", args, { cwd: repo, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });

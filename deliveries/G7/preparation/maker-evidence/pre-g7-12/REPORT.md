@@ -1,53 +1,54 @@
-﻿# PRE-G7-12 maker report: reference composition and mobile controls
+# PRE-G7-12 maker report: reference composition and mobile controls
 
-**Result: FAIL / NOT PASS. Not accepted, not deployed, and G7 is not accepted.** This is the maker’s source-bound report, not an acceptance decision. Parent review remains pending.
+**Result: FAIL / NOT ACCEPTED. No deployment was performed; G7 is not accepted.** This report records the maker result and source-bound evidence. Parent acceptance remains pending.
 
-## Revision and scope
+## Revisions and scope
 
-- Packet/base status commit: 67026f26bb80d81de4edf632b3038b0239eea4de.
-- Accepted PRE-G7-11 input source: cfdc744f69cd257c8ac0cbaad78b8805c48f20d5, app tree 915c26f4b9a1fa075614ea64959750f9e486187c.
-- PRE-G7-12 final source commit: 133529868c8c7279831cbbffe35ab23178012b8c; resulting app tree 06f2b4ad62f8022bc4f2d410d67ffa197316e6ab.
-- Evidence commit: exact SHA is reported to the parent alongside this file.
-- Source diff: [scoped-source.patch](scoped-source.patch); nine owned app files changed.
-- Source/model evidence: [GLB inventory and anchor audit](glb-anchor-source-audit.json); [visual anchor ledger](visual-anchor-ledger.json).
-- Domain mirror audit: [final-mirror-audit.json](final-mirror-audit.json), PASS for source commit 1335298…, app tree 06f2b4…; 116 manifest source files, 96 tests mirrored, exact tracked Git-blob parity, and the intended yorayriniwnl.in base-URL override preserved.
-- No deployment, DNS, provider configuration, model/GLB bytes, runtime lifecycle, route, or configuration changes.
+- Packet/base status commit: `67026f26bb80d81de4edf632b3038b0239eea4de`.
+- Accepted PRE-G7-11 source input: `cfdc744f69cd257c8ac0cbaad78b8805c48f20d5`; app tree `915c26f4b9a1fa075614ea64959750f9e486187c`.
+- PRE-G7-12 source: `43d3c0289fd5afe5970d799c77f9a701b4d71d0e`; app tree `77f3af861ffe4d6b96154fcfba792490b3cc45dc`.
+- Source was pushed in `4e29c166e3b32a91c9339eb42132ac30141e512c` and endpoint correction `43d3c0289fd5afe5970d799c77f9a701b4d71d0e`.
+- Domain mirror was pushed in `aac69fe9d46d360f7aedea2b7bc90fee4bd71bd9` and final correction sync `11fe035800ed877e1b4a556c7663e8aafb57124c`.
+- The final evidence snapshot and checksum-only commit are identified by `evidenceSnapshotCommit` in [SHA256SUMS.json](SHA256SUMS.json) and the final Git handoff. The checksum file is excluded from hashing itself.
+- Eleven canonical app files changed relative to the packet base. The accepted production GLB and chair fixture bytes are unchanged. The domain keeps its intentional `https://yorayriniwnl.in` base URL override.
+- The final desktop camera x-coordinate is `-0.5`. This binary-exact endpoint avoids the one-bit `-0.44999999999999996` result from the existing entrance interpolation.
 
-The implementation updates scene-group placement and bounded light values, adds the authorized code-native secondary stand, adds a compact mobile control drawer while preserving existing semantics/focus/navigation, and adds focused unit/browser coverage. The final scoped placement moves the existing ai-real-camera root by [0.7, 0.35, 0.18]; its name and WorldInteractionBinding target are unchanged. ReferenceComposition guards repeated application to avoid compounding transforms.
+The source updates the existing scene framing and named lighting, repositions authorized named groups, adds a simple code-native headset stand after the inventory confirmed none exists, and makes the mobile control surface a compact drawer. The existing control actions and route semantics remain available. No routes, GLB/model files, dependencies, provider settings, runtime lifecycle/retry policy, DNS, or production configuration were changed.
 
-## Visual findings
+## Visual review
 
-The accepted GLB remains unchanged at 861,364 bytes with SHA-256 3a02647d24e474c8a2579b0d277cf02a7841212e961c1554f67b6e032e40a307. The final live renders are [desktop 1440×900](attempt-11/screenshots/studio-reference-desktop-1440x900.png), [desktop/reference comparison](attempt-11/screenshots/studio-reference-desktop-1440x900-reference-comparison.png), [mobile 390×844](attempt-11/screenshots/studio-reference-mobile-390x844.png), and [mobile/reference comparison](attempt-11/screenshots/studio-reference-mobile-390x844-reference-comparison.png). These are the actual GLB/runtime scene, not a replacement illustration.
+The exact-source captures are [desktop 1440 by 900 beside the reference](attempt-18/screenshots/studio-reference-desktop-1440x900-reference-comparison.png) and [mobile 390 by 844 beside the reference](attempt-18/screenshots/studio-reference-mobile-390x844-reference-comparison.png). The scene is the accepted production GLB/runtime, not an illustration.
 
-The visual target fails. The desk and blue chair are recognizable and the cyan floor pool is visible. The monitor is recognizable, but the two-speaker grouping is not; the left microphone renders, while the source inventory contains no named console node. The seven existing hex panels render as a washed-out pale wall patch rather than recognizable lilac hexes. The warm light bar reads neutral/dark. The left plant is clipped. The PC and pegboard are partly present but the resident/chair overlap them, and the single pale controller assembly is too small to recognize. The camera root is mesh-null in the GLB but has seven real mesh descendants; the new transform renders them in-frustum, at projected bounds about 40×53 pixels desktop and 13×19 pixels mobile. The result looks like a small hanging object/glyph rather than a recognizable camera seated on the shelf. Its interaction target remains reachable: clicking it navigated to /projects/ai-vs-real. Camera interaction PASS and camera visual recognition FAIL are separate findings.
+**Visual acceptance FAIL.** The arrangement is recognizable, with the desk, chair, resident, monitor, speakers, microphone, shelf/plant group, PC and pegboard in the opening view. In the current final capture the room reads flat gray compared with the bright reference, the lilac panels read as rectangular blocks rather than a clear honeycomb, the warm monitor bar and cyan fill are weak, and the low-poly assets do not approach the reference's richness. The mobile view exposes the workstation, but the room remains modest in scale within the portrait frame. The frozen model was not edited; geometry/export changes require a separate packet.
 
-The code-native stand is covered by a meaningful unit test but remains visually secondary/unclear; no headset model was added. Runtime emissive-strength rewriting was outside the packet and was not attempted. The per-anchor descriptions, source nodes, approximate screenshot regions, projected camera bounds, and limitations are in visual-anchor-ledger.json.
+The source-bound projected-anchor ledger uses production GLB SHA-256 `3a02647d24e474c8a2579b0d277cf02a7841212e961c1554f67b6e032e40a307` and fixture SHA-256 `8e413b1aa407841b5fd268a9c00bb66718688957c6507551f3b79104132d81d8`: [projected bounds](attempt-18/measurements/projected-anchor-bounds.json), [desktop ledger](attempt-18/measurements/desktop-1440x900-anchor-ledger.json), [mobile ledger](attempt-18/measurements/mobile-390x844-anchor-ledger.json). All recorded anchors intersect the measured frusta and none is fully covered by closed HUD chrome; this does not establish visual recognition.
 
-The closed compact HUD passed measured coverage: 2.21% at 1440×900, 8.01% at 390×844, 11.65% at 320×600, and 8.70% at 844×390; document width matched each viewport. The drawer kept all 25 prior semantic actions available, tested all controls for reachability/44px touch size, exercised keyboard traversal, Diagnostics-first Escape behavior and return focus, reduced motion, and portfolio navigation. This establishes responsive control mechanics, not visual composition acceptance. Measurements are under attempt-11/measurements/.
+The closed-drawer fixed-chrome ratios are 2.21% at 1440 by 900, 8.01% at 390 by 844, 11.65% at 320 by 600, and 8.70% at 844 by 390. The scene stage fills each viewport and the document width matches it. The new browser test opened and closed the drawer, checked all 25 existing semantic controls (26 visible actions including the drawer toggle), keyboard reachability, focus return, Diagnostics-first Escape behavior, reduced motion, route links, and minimum 44-pixel targets.
 
 ## Validation
 
-Host: Node 24.19.0, pnpm 9.15.9. Browser: Playwright-managed HeadlessChrome 154 on Windows 10/Win32, emulated viewports, DPR 1, WebGL 2 on ANGLE Intel Iris Xe / D3D11. The phone dimensions are browser emulation, not physical devices.
+Host: Node 24.14.0, pnpm 9.15.9. The package requires Node `>=24.19.0 <25`; commands emitted that engine warning. Browser: Playwright-managed headless Chromium 155 on Windows/Win32, DPR 1, WebGL 2, unmasked Intel Iris Xe / Direct3D11. Phone and landscape sizes are emulated viewports, not physical devices.
 
-| Check | Result and source provenance | Evidence / limitation |
-|---|---|---|
-| Focused composition and camera interaction browser test | PASS, 3/3 on final source 1335298… | attempt-11/logs/reference-composition-camera-interaction-node24.19.log; direct camera click reached /projects/ai-vs-real; responsive assertions covered 1440×900, 390×844, 320×600, 844×390. |
-| Focused unit tests | PASS, 7/7 on final source 1335298… | attempt-11/logs/focused-unit-node24.19.log; composition behavior/idempotency and camera placement cases. |
-| ESLint | PASS on final source 1335298… | attempt-11/logs/full-lint-node24.19.log. |
-| TypeScript check | PASS on final source 1335298… | attempt-11/logs/typecheck-node24.19.log. |
-| Production build | PASS on final source 1335298… | attempt-11/logs/production-build-node24.19.log. |
-| Focused world recovery | PASS, 13/13 on prior packet source eceaabf4bcec60e399c42d8bfec4caddffad8bea (app tree f118cefabc1383b679c567e4cb57fb8a502d77af) | attempt-08/logs/focused-world-recovery.log; not rerun after the final camera-only delta, per parent direction. |
-| Default full unit suite | FAIL, 317/318 on eceaabf4bcec60e399c42d8bfec4caddffad8bea | attempt-08/logs/full-unit-node24.19.log; unchanged tests/unit/boundaries.test.ts:139 exceeded its configured 5,000ms timeout. Project timeout was not changed. Not rerun after the final camera-only source delta. |
-| Default full integration suite | FAIL, 284/286 on eceaabf4bcec60e399c42d8bfec4caddffad8bea | attempt-08/logs/full-integration-node24.19.log; unchanged production-camera.test.ts:174 failed exact float equality (-0.44999999999999996 vs -0.45) in the actual false-mobile entrance case, and unchanged canonical-fixture.test.ts exceeded its 60,000ms timeout. Tests/timeouts were not altered. Not rerun after the final camera-only delta. |
-| Combined fullscreen/browser run | FAIL / remainder NOT RUN on prior packet source ecea… | attempt-08/logs/world-browser-e2e.log; first fullscreen test passed, next viewport case reached the existing 2-minute suite timeout and remaining cases were cancelled. The separate PRE-G7-12 responsive production run passed 3/3. |
-| CandidateX production 404 guard | PASS, 1/1 on ecea… | attempt-08/logs/candidatex-404-production.log; no route change followed. |
-| Clean-profile production browser smoke | PASS, 8/8 on ecea… | attempt-08/logs/clean-profile-production-smoke.log; no changes after this run affecting that shell. |
-| Domain source mirror | PASS, audited against final source commit 1335298… | final-mirror-audit.json; exact Git blob parity and preserved URL override. |
-| Physical iPhone/iPad Safari, Android Chrome/TalkBack, Windows NVDA, VoiceOver/Safari, ten-minute mobile soak | NOT RUN | Requires real-device sessions; browser emulation is not substituted. |
-| Provider checks, production domain/DNS, sender-domain verification, deployment | NOT RUN | Explicitly outside this packet; no production changes were made. |
+| Check | Result | Command and exit | Evidence and limitation |
+|---|---|---|---|
+| Full unit suite | PASS, 321/321 | `corepack pnpm test:unit`, exit 0 | [log](attempt-18/full-unit-suite.log). |
+| Full integration suite | PASS, 286/286 | `corepack pnpm test:integration`, exit 0 | [log](attempt-18/full-integration-suite.log); includes production camera and lighting integration. |
+| Focused production camera | PASS, 5/5 | `corepack pnpm exec vitest run --config vitest.integration.config.ts tests/integration/production-camera.test.ts`, exit 0 | [log](attempt-18/focused-production-camera.log); exact endpoint regression is covered. |
+| Focused production lighting | PASS, 4/4 | `corepack pnpm exec vitest run --config vitest.integration.config.ts tests/integration/production-lighting.test.ts`, exit 0 | [log](attempt-18/focused-production-lighting.log). |
+| Reference composition and mobile drawer | PASS, 3/3 | `corepack pnpm exec playwright test tests/e2e/world-reference-composition.spec.ts --project=chrome`, exit 0 | [Playwright result](attempt-18/e2e-results/browser-results.json), [run log](attempt-18/composition-browser.log), screenshots and measurements above. Automated pixel checks pass; visual comparison still fails as described. |
+| Lint | PASS | `corepack pnpm lint`, exit 0 | [log](attempt-18/full-lint.log). |
+| TypeScript | PASS | `corepack pnpm typecheck`, exit 0 | [log](attempt-18/typecheck.log). |
+| Production build | PASS | `corepack pnpm build`, exit 0 | [log](attempt-18/production-build.log). |
+| CandidateX production 404 guard | PASS, 1/1 | `corepack pnpm exec playwright test tests/e2e/room-project-navigation.spec.ts --project=chrome --grep candidatex`, exit 0 | [log](attempt-18/candidatex/candidatex-404-guard.log). |
+| Clean-profile public shell | PASS, 8/8 | `corepack pnpm exec playwright test tests/e2e/public-shell.spec.ts --project=chrome`, exit 0 | [log](attempt-18/clean-profile/clean-profile-production-smoke.log); automated public routes/accessibility/reflow only, not the 3D visual target. |
+| Focused legacy recovery/fullscreen | FAIL, 6/13 | `corepack pnpm exec playwright test tests/e2e/world-fullscreen.spec.ts tests/e2e/renderer-recovery.spec.ts --project=chrome`, exit 1 on source `4e29c166...`; not rerun after the final `-0.05` camera endpoint correction | [log](attempt-17/focused-recovery-fullscreen.log), [results](attempt-17/recovery-fullscreen/browser-results.json). Seven failures use old helpers that expect controls visible before opening the new drawer, or hit a navigation intercept. New drawer mechanics are covered by the final-source 3/3 test above. |
+| Domain source mirror | PASS | `node deliveries/G7/preparation/maker-evidence/pre-g7-12/sync-final-mirror.mjs`, exit 0 | [result](mirror-sync-result.json); 122 normalized source/test pairs verified, with 111 raw line-ending differences. Override SHA-256 remains `415e2f1291d4adcf6d1bf4927668339c332e0ee85be602d97c6b23d269e4b4ca`. |
+| Physical Safari/iOS, Android/TalkBack, Windows/NVDA, VoiceOver/Safari and device soak | NOT RUN | Requires physical-device sessions | Browser emulation is not substituted. |
+| Formal independent GPT Plus #2 audit and parent acceptance | NOT RUN | No independent audit report for this exact final source/evidence revision was available in this workspace | This maker report is not an independent review or acceptance. |
+| Deployment, DNS and provider checks | NOT RUN | Explicitly outside PRE-G7-12 | No live change was made. |
 
-## Remaining status
+The desktop browser log also records a missing `/favicon.ico` and aborted in-flight RSC requests during navigation; the latter occurred as navigation replaced requests. No route or favicon changes were in this packet.
 
-Parent is the acceptance authority and must inspect this exact source/evidence revision. The visual anchors fail, so this maker result is not accepted and does not imply G7 readiness or deployment. Physical-device, provider, and deployment items remain NOT RUN.
+## Handoff
 
-The checksum tooling hashes exact Git blob content. After the checksum file is added, the verifier checks every listed source, mirror, input and evidence blob against the final evidence commit; the self-referential SHA256SUMS.json file is intentionally excluded from its own hash list.
+The exact source and mirror commits are pushed to `codex/pre-g7-12-reference-composition-20261014`. This result is not accepted: visual fidelity remains below the reference and the legacy recovery/fullscreen suite has the disclosed failures. Physical-device checks, formal independent audit, parent acceptance, deployment, and G7 remain open.
