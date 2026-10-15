@@ -47,7 +47,7 @@
       "retainedFailure": "final-source default integration failed twice at 285/286 on the unchanged canonical-fixture 60-second timeout; prior pre-final-source 286/286 run is not counted as final-source pass",
       "userChromeGpu": "NOT PROVIDED",
       "physicalDeviceChecks": "NOT RUN",
-      "nextLocalBoundary": "PRE-G7-17 two-pass integration subgate passed, but the default full-unit gate is FAIL/INCOMPLETE and its current source-delivery manifest is stale; PRE-G7-17 is not accepted. No further suite runs under that packet; a new bounded packet is required. G7 remains unaccepted and the instruction is local-only; physical-device checks are NOT RUN and the user's Chrome GPU state is NOT PROVIDED",
+      "nextLocalBoundary": "PRE-G7-17 remains not accepted because the required default full-unit gate is FAIL/INCOMPLETE; its root delivery manifest is historical PRE-G7-13 provenance, not a current candidate pointer per PRE-G7-17-C1. PRE-G7-18 authorizes at most two bounded default unit attempts and one justified test correction. G7 remains unaccepted and work is local-only; physical-device checks are NOT RUN and the user's Chrome GPU state is NOT PROVIDED",
       "activeEvidenceCorrection": {
         "packet": "PRE-G7-16-C1",
         "packetPath": "docs/planning/reconciliation-packets/2026-10-15-pre-g7-16-evidence-path-correction.md",
@@ -64,7 +64,7 @@
         "fullUnitSuite": "FAIL - 326/327; unchanged boundaries test exceeded its 5-second limit; focused boundaries 18/18",
         "nextBoundary": "PRE-G7-16 remains not accepted. New explicit parent packet required before any further full-suite verification; physical-device and GPU evidence remain open"
       },
-      "activeVerificationPacket": {
+      "completedVerificationPacket": {
         "packet": "PRE-G7-17",
         "packetPath": "docs/planning/reconciliation-packets/2026-10-15-pre-g7-17-unit-and-final-suite-gate.md",
         "status": "COMPLETE WITH UNRESOLVED REQUIRED GATES - SOURCE NOT ACCEPTED",
@@ -79,17 +79,32 @@
         "evidenceInventorySha256": "1eb54d6c0bd107210c4d293534b734021c5c7d1442e0b7209f50f7f8a6ecb2df",
         "sourcePatchSha256": "0c8f639657bcc7e03eecf38c2ed72dd5ca1d29bd58862d47523e61d026b6943c",
         "parentRulingPath": "docs/planning/reviews/2026-10-15-pre-g7-17-parent-ruling.md",
-        "audit": "Local Codex read-only source/evidence audit PASS for scope, coverage, mirrors and inventory; current source-bound delivery manifest FAIL; external GPT Plus #2 NOT RUN",
+        "audit": "Local Codex read-only source/evidence audit PASS for scope, coverage, mirrors and inventory; auditor identified historical PRE-G7-13 manifest identity, parent C1 classifies it as non-gate; external GPT Plus #2 NOT RUN",
         "integrationGate": "PASS - two consecutive exact default pnpm run test:integration runs, 286/286 each on the final source",
         "fullUnitSuite": "FAIL/INCOMPLETE - final exact default pnpm run test:unit exited 1 at the unchanged boundary test (8.783 seconds); no aggregate summary or final count captured; required 327/327 not established",
         "supplementalUnitRun": "327/327 after misrouted focus arguments; non-gate, not the exact default command",
         "lintTypecheck": "PASS - eslint . --max-warnings=0 and tsc --noEmit",
-        "sourceDeliveryManifest": "FAIL - byte-verified historical PRE-G7-13 manifest binds source 8bc0db9b1572e3603000cbc657a3d04a3dabf0d7/app tree 7e5ca476b9b9b5544942a3f1229f540dd99b9d8e, not PRE-G7-17",
+        "sourceDeliveryManifest": "HISTORICAL / PRESERVED - PRE-G7-13 provenance, same Git blob across accepted PRE-G7-14/15 and PRE-G7-16/17; not a current candidate pointer; exact PRE-G7-17 source identity is separately bound by its evidence",
         "hostChromeGpuProbe": "Isolated Chrome 155.0.8059.40 on Intel Iris Xe reported WebGL hardware accelerated; direct WebGL2 context PASS, version WebGL 2.0 (OpenGL ES 3.0 Chromium); this is not the user's profile or an app WorldRuntime verification",
         "userChromeGpu": "NOT PROVIDED",
         "physicalDeviceChecks": "NOT RUN - no iPhone/iPad, Android device, NVDA, or Safari/VoiceOver environment available on this host; mobile soak not run",
         "limits": "Unit and integration timeouts unchanged; no retries, skips, weakened coverage or production work",
-        "nextBoundary": "PRE-G7-17 source remains NOT ACCEPTED. No further suite run under this packet. A new bounded parent packet is required before additional unit work and to authorize a current source-delivery manifest correction; G7 remains local-only and NOT ACCEPTED"
+        "parentClarificationPath": "docs/planning/reviews/2026-10-15-pre-g7-17-manifest-clarification.md",
+        "nextBoundary": "PRE-G7-17 source remains NOT ACCEPTED because its required full default unit suite did not pass; the integration subgate passed. PRE-G7-17-C1 classifies the root manifest as historical rather than a current candidate pointer"
+      },
+      "activeVerificationPacket": {
+        "packet": "PRE-G7-18",
+        "packetPath": "docs/planning/reconciliation-packets/2026-10-15-pre-g7-18-unit-boundary-closeout.md",
+        "status": "AUTHORIZED - bounded unit-boundary diagnosis, at most one justified test correction, and exact default verification",
+        "sourceBranch": "codex/pre-g7-18-unit-boundary-closeout-20261015",
+        "sourceBase": "fc64a18a7ec1d027fb0a33400c2fcd6288d6afbf",
+        "sourceBaseAppTree": "0804688e4cdd55960e71a19efc8384d4a2f0d071",
+        "priorEvidenceHead": "9c75661bc12d309b0d1fb00d3305179c6f6c3728",
+        "priorIntegrationGate": "PASS - two consecutive exact default 286/286 runs on PRE-G7-17; may carry forward only for a unit-test-only delta with unchanged runtime and integration paths",
+        "requiredUnitGate": "One exact default pnpm run test:unit pass at 327/327 on the final source",
+        "limits": "At most two full default unit invocations: unchanged-source attempt 01; if it fails, one justified test-only correction and attempt 02; no third run; unchanged 5,000 ms unit timeout",
+        "manifestDisposition": "Preserve historical PRE-G7-13 source-delivery-manifest.json; bind current PRE-G7-18 source and all mirrors in the evidence bundle",
+        "nextBoundary": "Finish PRE-G7-18 within its exact paths and caps; independent read-only audit and parent acceptance remain separate; G7 remains local-only and NOT ACCEPTED"
       }
     },
     "priorAcceptedLocalPreparation": {
