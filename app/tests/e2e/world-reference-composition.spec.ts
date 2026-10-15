@@ -627,8 +627,8 @@ async function recordVisualAnchorEvidence(
   const cyanFillLight = measured.lights.find((light) => light.name === "Light_CyanFill");
   expect(cyanFillLight?.found, `${label} records the existing cyan point light`).toBe(true);
   expect(cyanFillLight?.type, `${label} preserves the source point-light type`).toBe("PointLight");
-  expect(cyanFillLight?.intensity, `${label} records the bounded runtime cyan-light intensity`).toBe(2.4);
-  expect(cyanFillLight?.position, `${label} records the calibrated world position of the cyan light`).toEqual([0, 0.3, -0.6]);
+  expect(cyanFillLight?.intensity, `${label} records the bounded runtime cyan-light intensity`).toBe(1.6);
+  expect(cyanFillLight?.position, `${label} records the calibrated world position of the cyan light`).toEqual([0, 0.15, -0.45]);
   const lilacMaterials = Array.from({ length: 7 }, (_, index) => byName.get(`hex_panel_${index + 1}`)?.materials ?? []).flat();
   const barMaterials = byName.get("lightbar_emissive")?.materials ?? [];
   expect(lilacMaterials.some((material) => material.name === "Hex_LilacEmissive" && (material.emissiveIntensity ?? 0) >= 1)).toBe(true);

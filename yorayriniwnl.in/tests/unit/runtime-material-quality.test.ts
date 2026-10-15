@@ -14,19 +14,24 @@ function glassMaterial() {
 }
 
 describe("runtime material quality on frozen world meshes", () => {
-  it("reduces optional ambient point lights without changing task lighting or authored light state", () => {
+  it("reduces optional ambient point lights while retaining the cyan reference fill and task lighting", () => {
     const scene = new THREE.Group();
     const point = new THREE.PointLight(0x78e4ff, 1195, 8);
     point.position.set(2, 1.2, -1);
     point.layers.enable(4);
     const mask = point.layers.mask;
+    const cyanFill = new THREE.PointLight(0x78e4ff, 1.6);
+    cyanFill.name = "Light_CyanFill";
+    cyanFill.position.set(0, 0.15, -0.45);
+    const cyanFillMask = cyanFill.layers.mask;
     const task = new THREE.SpotLight(0xffeed0, 1902);
     const hemisphere = new THREE.HemisphereLight();
     const directional = new THREE.DirectionalLight();
-    scene.add(point, task, hemisphere, directional);
+    scene.add(point, cyanFill, task, hemisphere, directional);
     const quality = new RuntimeMaterialQuality(scene);
     quality.apply("low");
     expect(point.layers.mask).toBe(0);
+    expect(cyanFill.layers.mask).toBe(cyanFillMask);
     expect(point.visible).toBe(true);
     expect(point.position.toArray()).toEqual([2, 1.2, -1]);
     expect(point.intensity).toBe(1195);
@@ -35,10 +40,12 @@ describe("runtime material quality on frozen world meshes", () => {
     task.intensity = 0;
     quality.apply("medium");
     expect(point.layers.mask).toBe(mask);
+    expect(cyanFill.layers.mask).toBe(cyanFillMask);
     expect(task.intensity).toBe(0);
     quality.apply("low");
     quality.dispose();
     expect(point.layers.mask).toBe(mask);
+    expect(cyanFill.layers.mask).toBe(cyanFillMask);
     expect(point.intensity).toBe(1195);
   });
   it("approximates transmitting glass at LOW while preserving its original material and texture", () => {

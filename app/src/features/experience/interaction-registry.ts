@@ -114,8 +114,8 @@ export const FROZEN_V1_CATALOG: ReadonlyArray<InteractiveCatalogEntry> = Object.
     accessibleControlType: "link",
     cameraPreset: "scanner",
     cooldownMs: 0,
-    reducedMotionBehavior: "Direct navigation to /projects/ai-camera",
-    destinationRoute: "/projects/ai-camera",
+    reducedMotionBehavior: "Direct navigation to /projects/ai-vs-real",
+    destinationRoute: "/projects/ai-vs-real",
     createIntent: (): ExperienceIntent => ({ type: "OPEN_PROJECT", projectId: "ai-vs-real", source: "room" }),
   },
   {

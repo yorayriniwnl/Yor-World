@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import type { QualityTier } from "../../contracts/experience";
 
+const REQUIRED_REFERENCE_POINT_LIGHTS = new Set(["Light_CyanFill"]);
+
 /** LOW uses vertex-lit surfaces and alpha glass without extra transmission passes.
  * Frozen geometry, transforms, textures and the original materials stay intact.
  */
@@ -11,9 +13,12 @@ export class RuntimeMaterialQuality {
 
   constructor(private readonly scene: THREE.Object3D) {
     scene.traverse((object) => {
-      // Hemisphere/directional fill and the interactive task spotlight remain.
-      // Optional ambient points add five per-vertex light loops in software LOW.
-      if (object instanceof THREE.PointLight) this.ambientPoints.set(object, object.layers.mask);
+      // Hemisphere/directional fill, the required cyan reference fill, and the
+      // interactive task spotlight remain. Other ambient points add extra
+      // per-vertex light loops in software LOW.
+      if (object instanceof THREE.PointLight && !REQUIRED_REFERENCE_POINT_LIGHTS.has(object.name)) {
+        this.ambientPoints.set(object, object.layers.mask);
+      }
       if (!(object as THREE.Mesh).isMesh) return;
       const mesh = object as THREE.Mesh;
       const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];

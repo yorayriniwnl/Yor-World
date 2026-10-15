@@ -205,9 +205,6 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
         );
         part.userData["ivyScaleRestored"] = true;
       }
-      const ivyMound = scene.getObjectByName("ivy_mound");
-      ivyMound?.scale.multiplyScalar(1.5);
-
       // First undo the shared root's X/Z compression on the existing ivy
       // meshes, then solve the pot's actual contact on the upper-shelf bay.
       const shelfBounds = worldBounds(upperShelf);
@@ -242,6 +239,23 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
       };
       if (Math.abs(contactDeltaY) > 0.001 || !insideFootprint) {
         throw new Error("Unable to place the existing ivy pot on the upper-shelf surface");
+      }
+
+      ivyPot.updateWorldMatrix(true, false);
+      const ivyAnchor = ivyPot.getWorldPosition(new THREE.Vector3());
+      const shelfFoliage = [
+        ["monstera_leaf_1", -0.08, -0.02, 0.07, -0.5, -0.28],
+        ["monstera_leaf_2", 0.12, -0.13, 0.12, 0.5, 0.3],
+      ] as const;
+      for (const [name, offsetX, offsetY, offsetZ, yaw, roll] of shelfFoliage) {
+        const leaf = scene.getObjectByName(name);
+        if (!leaf || leaf.userData["shelfFoliagePlacementApplied"] === true) continue;
+        leaf.rotation.set(Math.PI / 2, yaw, roll);
+        leaf.scale.setScalar(0.45);
+        const target = ivyAnchor.clone().add(new THREE.Vector3(offsetX, offsetY, offsetZ));
+        const current = leaf.getWorldPosition(new THREE.Vector3());
+        translateWorld(leaf, target.sub(current));
+        leaf.userData["shelfFoliagePlacementApplied"] = true;
       }
     }
     plants.userData["referenceCompositionApplied"] = true;
@@ -347,6 +361,10 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
     } else {
       shelfCamera.position.set(1.7875, -0.91, 1.429);
       shelfCamera.scale.setScalar(1.75);
+      const cameraCenter = worldBounds(shelfCamera).getCenter(new THREE.Vector3());
+      // Keep the camera visibly right of the left-shelf ivy while staying in
+      // the open upper-shelf bay before the existing books.
+      translateWorld(shelfCamera, new THREE.Vector3(-0.3 - cameraCenter.x, 0, 0));
     }
     shelfCamera.updateWorldMatrix(true, true);
     alignShelfCameraToSurface(scene, shelfCamera);

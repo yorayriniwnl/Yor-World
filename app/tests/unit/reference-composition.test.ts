@@ -203,7 +203,7 @@ describe("reference room composition", () => {
         expect(mesh.rotation.toArray()).toEqual([0, 0, 0, "XYZ"]);
       }
     }
-    expect(shelfCamera.position.x).toBeCloseTo(1.7875);
+    expect(shelfCamera.position.x).toBeCloseTo(2.2375);
     expect(shelfCamera.position.y).toBeCloseTo(-0.775);
     expect(shelfCamera.position.z).toBeCloseTo(1.26);
     expect(shelfCamera.scale.toArray()).toEqual([1.75, 1.75, 1.75]);
@@ -284,6 +284,7 @@ describe("reference room composition", () => {
     expect(scene.getObjectByName("headset-band-code-native")).toBeDefined();
     expect(scene.getObjectByName("headset-earcup-left-code-native")).toBeDefined();
     expect(scene.getObjectByName("headset-earcup-right-code-native")).toBeDefined();
+    expect(new THREE.Box3().setFromObject(shelfCamera).getCenter(new THREE.Vector3()).x).toBeCloseTo(-0.3);
 
     const console = scene.getObjectByName("console-code-native")!;
     const consoleBase = console.getObjectByName("console-chassis-code-native")!;
@@ -438,7 +439,14 @@ describe("reference room composition", () => {
         expect(scene.getObjectByName(part.name)).toBe(part);
         expect(part.geometry).toBeDefined();
         expect(part.material).toBeDefined();
-        if (part.name.startsWith("ivy_")) {
+        if (part.name === "monstera_leaf_1" || part.name === "monstera_leaf_2") {
+          const expected = part.name === "monstera_leaf_1"
+            ? ivyAnchor.clone().add(new THREE.Vector3(-0.08, -0.02, 0.07))
+            : ivyAnchor.clone().add(new THREE.Vector3(0.12, -0.13, 0.12));
+          expect(part.userData["shelfFoliagePlacementApplied"]).toBe(true);
+          expect(part.scale.toArray()).toEqual([0.45, 0.45, 0.45]);
+          expect(part.getWorldPosition(new THREE.Vector3()).distanceTo(expected)).toBeLessThan(1e-6);
+        } else if (part.name.startsWith("ivy_")) {
           const authored = authoredIvyPositions[part.name]!;
           const expected = ivyAnchor.clone().add(new THREE.Vector3(
             (authored[0] - -1.7) * plants.scale.x,
@@ -446,9 +454,7 @@ describe("reference room composition", () => {
             (authored[2] - -1.68) * plants.scale.z,
           ));
           expect(part.userData["ivyScaleRestored"]).toBe(true);
-          expect(part.scale.toArray()).toEqual(part.name === "ivy_mound"
-            ? [1.5 / 0.7, 1.5, 1.5 / 0.4]
-            : [1 / 0.7, 1, 1 / 0.4]);
+          expect(part.scale.toArray()).toEqual([1 / 0.7, 1, 1 / 0.4]);
           expect(part.getWorldPosition(new THREE.Vector3()).distanceTo(expected)).toBeLessThan(1e-6);
         } else if (part.name.startsWith("monstera_") || part.name === "pot_monstera") {
           expect(part.position.x).toBeCloseTo(-0.15 / 0.7);

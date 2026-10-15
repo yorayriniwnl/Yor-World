@@ -185,7 +185,7 @@ export function RoomControls({ controller, snapshot: initialSnapshot, onClose }:
             Zenith Energy
           </Link>
           <Link
-            href="/projects/ai-camera"
+            href="/projects/ai-vs-real"
             className={styles.projectLink}
             data-testid="rail-ai-camera"
             onClick={(e) => {

@@ -61,9 +61,9 @@ describe("Actual frozen production assets and C1 pointer binding", () => {
     expect(result.discardedW2Nodes).toContain("fixture-static");
     result.scene.updateMatrixWorld(true);
     // integrateScene applies the authorized desktop home composition after
-    // retaining the frozen resident asset's original anchor at x=0.3.
+    // retaining the frozen actor anchors at x=0.3 and z=-0.36.
     expect(result.resident.getWorldPosition(new THREE.Vector3()).x).toBeCloseTo(1.5);
-    expect(result.chairRoot.getWorldPosition(new THREE.Vector3()).z).toBeCloseTo(-0.36);
+    expect(result.chairRoot.getWorldPosition(new THREE.Vector3()).z).toBeCloseTo(-0.91);
     expect(result.scene.rotation.toArray().slice(0, 3)).toEqual([0, 0, 0]);
     expect(resident.animations.map((clip) => clip.name)).toContain("attention_glance");
   });

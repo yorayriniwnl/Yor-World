@@ -189,13 +189,16 @@ describe("Frozen production lighting and runtime controls", () => {
     const points = [...lights.values()].filter((light): light is THREE.PointLight => light instanceof THREE.PointLight);
     points[0]!.layers.enable(4);
     const masks = points.map((light) => light.layers.mask);
+    const cyanFillIndex = points.indexOf(lights.get("Light_CyanFill") as THREE.PointLight);
     const lamp = lights.get("Light_TaskDownlight")!;
     const lampMask = lamp.layers.mask;
     const { controller, binding } = bindEnvironment(scene, true);
     const quality = new RuntimeMaterialQuality(scene);
     try {
       quality.apply("low");
-      expect(points.map((light) => light.layers.mask)).toEqual([0, 0, 0]);
+      expect(points.map((light) => light.layers.mask)).toEqual(
+        masks.map((mask, index) => index === cyanFillIndex ? mask : 0),
+      );
       expect(lamp.layers.mask).toBe(lampMask);
       expect(lamp.intensity).toBe(2.5);
       await controller.send({ type: "SET_LAMP", enabled: false });

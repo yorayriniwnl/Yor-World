@@ -57,7 +57,7 @@ describe("InteractionRegistry & Frozen V1 Catalog Mapping (Task C1)", () => {
       { id: "candidatex-launcher", route: "/projects/candidatex" },
       { id: "helios-pc", route: "/projects/helios" },
       { id: "zenith-model", route: "/projects/zenith" },
-      { id: "ai-real-camera", route: "/projects/ai-camera" },
+      { id: "ai-real-camera", route: "/projects/ai-vs-real" },
       { id: "talks-microphone", route: "/projects/yor-talks" },
     ];
 
