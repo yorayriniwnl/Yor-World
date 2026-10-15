@@ -22,6 +22,8 @@ Accepted RC5 / [G6-R1](reviews/2026-10-06-g6-r1.md) remains immutable, including
 
 [PRE-G7-12](reconciliation-packets/2026-10-14-pre-g7-12-reference-composition.md) is now the active local visual-composition and mobile-HUD correction packet. It consumes PRE-G7-11-R1's frozen app tree and does not authorize service changes, physical-device claims, or deployment.
 
+The PRE-G7-12 attempt-12 worktree currently has an uncommitted lighting/composition delta and draft captures, not a reviewable candidate. The parent checkpoint review is archived at [attempt-12 review](../../deliveries/G7/preparation/audits/pre-g7-12-attempt12-checkpoint.md): it records stale unit expectations against the new transforms, incomplete reference anchors, app/mirror divergence, and missing exact-source validation evidence. This is a maker rework return, not the formal exact-commit audit or packet acceptance. Preserve the active worktree; the maker must return exact source/evidence commits and fresh proof before formal review.
+
 Read [current pre-G7 requirements](../operations/pre-g7-prerequisites.md) and the [RC6 dossier](../releases/v1.0.0-rc6.md). Parent continues authorized independent work and obtains missing service/device inputs. No mock, local fixture, emulation, liveness-only response or private preview substitutes for a mandatory production criterion.
 
 ## One specification and a small shared baseline
