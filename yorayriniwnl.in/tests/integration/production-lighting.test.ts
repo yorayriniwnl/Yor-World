@@ -5,7 +5,11 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { describe, expect, it } from "vitest";
 import { ExperienceController } from "@/features/experience/controller";
-import { configureProductionLighting, PRODUCTION_LIGHT_INTENSITIES } from "@/features/world/ProductionLighting";
+import {
+  configureProductionLighting,
+  PRODUCTION_LIGHT_INTENSITIES,
+  PRODUCTION_LIGHT_POSITIONS,
+} from "@/features/world/ProductionLighting";
 import { RuntimeMaterialQuality } from "@/features/world/RuntimeMaterialQuality";
 import { WorldInteractionBinding } from "@/features/world/WorldInteractionBinding";
 
@@ -118,7 +122,10 @@ describe("Frozen production lighting and runtime controls", () => {
       const authoredState = originalLightStates.get(name);
       expect(authoredState).toBeDefined();
       expect(lightState(light)).toEqual(name === "Light_CyanFill"
-        ? { ...authoredState!, position: [0, 0.15, -0.45] }
+        ? {
+          ...authoredState!,
+          position: PRODUCTION_LIGHT_POSITIONS.Light_CyanFill,
+        }
         : authoredState);
     }
     expect(meshState(scene)).toEqual(originalMeshes);

@@ -316,12 +316,27 @@ describe("reference room composition", () => {
     scene.add(pegboard);
     const plants = new THREE.Group();
     plants.name = "plants";
-    const mobilePlantParts = ["monstera_leaf_1", "monstera_leaf_2", "monstera_leaf_3", "monstera_leaf_4", "monstera_stand_leg_1", "monstera_stand_leg_2", "monstera_stand_leg_3", "pot_monstera", "ivy_mound"].map((name) => {
+    const mobilePlantParts = ["monstera_leaf_1", "monstera_leaf_2", "monstera_leaf_3", "monstera_leaf_4", "monstera_stand_leg_1", "monstera_stand_leg_2", "monstera_stand_leg_3", "pot_monstera", "ivy_mound", "ivy_vine_1", "ivy_vine_2", "ivy_vine_3", "ivy_vine_4"].map((name) => {
       const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.015, 0.15), new THREE.MeshStandardMaterial());
       mesh.name = name;
       plants.add(mesh);
       return mesh;
     });
+    const authoredIvyPositions: Record<string, readonly [number, number, number]> = {
+      "ivy_mound": [-1.7, 2.29, -1.68],
+      "ivy_vine_1": [-1.68, 2.05, -1.62],
+      "ivy_vine_2": [-1.72, 1.88, -1.6],
+      "ivy_vine_3": [-1.64, 1.75, -1.63],
+      "ivy_vine_4": [-1.75, 1.62, -1.61],
+    };
+    for (const part of mobilePlantParts) {
+      const authoredPosition = authoredIvyPositions[part.name];
+      if (authoredPosition) part.position.set(...authoredPosition);
+    }
+    const ivyPot = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.12, 0.16), new THREE.MeshBasicMaterial());
+    ivyPot.name = "pot_ivy";
+    ivyPot.position.set(-1.7, 2.22, -1.68);
+    plants.add(ivyPot);
     scene.add(plants);
     for (let index = 1; index <= 7; index += 1) {
       const panel = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.2, 0.015), new THREE.MeshStandardMaterial());
@@ -384,7 +399,8 @@ describe("reference room composition", () => {
       expect(pc.position.x).toBeCloseTo(0.21);
       expect(pc.position.z).toBeCloseTo(-0.15);
       expect(controller.scale.toArray()).toEqual([1.9, 1.9, 1.9]);
-      expect(shelfCamera.scale.toArray()).toEqual([3, 3, 3]);
+      expect(shelfCamera.scale.toArray()).toEqual([3.2, 3.2, 3.2]);
+      expect(cameraBody.scale.toArray()).toEqual([1.45, 1, 1.45]);
       expect(chairRoot.position.toArray()).toEqual([1, 0, -0.36]);
       expect(chairBase.position.toArray()).toEqual([1, 0, -0.36]);
       expect(resident.position.toArray()).toEqual([1, 0, -0.36]);
@@ -408,11 +424,33 @@ describe("reference room composition", () => {
       expect(scene.getObjectByName("ai_cam_chassis")).toBe(cameraBody);
       expect(plants.position.toArray()).toEqual([0.68, 0, -1.6]);
       expect(plants.scale.toArray()).toEqual([0.7, 1, 0.4]);
+      const ivyShelfBounds = new THREE.Box3().setFromObject(upperShelf);
+      const ivyPotBounds = new THREE.Box3().setFromObject(ivyPot);
+      expect(ivyPotBounds.min.y).toBeCloseTo(ivyShelfBounds.max.y, 5);
+      expect(ivyPotBounds.min.x).toBeGreaterThanOrEqual(ivyShelfBounds.min.x + 0.01);
+      expect(ivyPotBounds.max.x).toBeLessThanOrEqual(ivyShelfBounds.max.x - 0.01);
+      expect(ivyPotBounds.min.z).toBeGreaterThanOrEqual(ivyShelfBounds.min.z + 0.01);
+      expect(ivyPotBounds.max.z).toBeLessThanOrEqual(ivyShelfBounds.max.z - 0.01);
+      expect(ivyPotBounds.getCenter(new THREE.Vector3()).x).toBeCloseTo(-0.8, 5);
+      expect(ivyPot.userData["referenceSupport"].surfaceNode).toBe("shelf_rear_upper");
+      const ivyAnchor = ivyPot.getWorldPosition(new THREE.Vector3());
       for (const part of mobilePlantParts) {
         expect(scene.getObjectByName(part.name)).toBe(part);
         expect(part.geometry).toBeDefined();
         expect(part.material).toBeDefined();
-        if (part.name.startsWith("monstera_") || part.name === "pot_monstera") {
+        if (part.name.startsWith("ivy_")) {
+          const authored = authoredIvyPositions[part.name]!;
+          const expected = ivyAnchor.clone().add(new THREE.Vector3(
+            (authored[0] - -1.7) * plants.scale.x,
+            authored[1] - 2.22,
+            (authored[2] - -1.68) * plants.scale.z,
+          ));
+          expect(part.userData["ivyScaleRestored"]).toBe(true);
+          expect(part.scale.toArray()).toEqual(part.name === "ivy_mound"
+            ? [1.5 / 0.7, 1.5, 1.5 / 0.4]
+            : [1 / 0.7, 1, 1 / 0.4]);
+          expect(part.getWorldPosition(new THREE.Vector3()).distanceTo(expected)).toBeLessThan(1e-6);
+        } else if (part.name.startsWith("monstera_") || part.name === "pot_monstera") {
           expect(part.position.x).toBeCloseTo(-0.15 / 0.7);
           expect(part.position.z).toBeCloseTo(0.62 / 0.4);
           if (part.name.startsWith("monstera_leaf_")) {

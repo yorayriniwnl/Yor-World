@@ -4,14 +4,14 @@ import * as THREE from "three";
 // a runtime integration calibration, not a claimed conversion of glTF units.
 export const PRODUCTION_LIGHT_INTENSITIES: Readonly<Record<string, number>> = {
   Light_CeilingAmbient: 0.08,
-  Light_CyanFill: 1.6,
+  Light_CyanFill: 2.4,
   Light_HexWall: 0.06,
   Light_TaskDownlight: 2.5,
 };
 
-/** Keep the existing cyan point light at the visible foreground-floor patch. */
+/** Lift the named cyan point light into the room to spread its existing fill. */
 export const PRODUCTION_LIGHT_POSITIONS: Readonly<Record<string, readonly [number, number, number]>> = {
-  Light_CyanFill: [0, 0.15, -0.45],
+  Light_CyanFill: [0, 0.3, -0.6],
 };
 
 export const REFERENCE_MATERIAL_CALIBRATIONS = {

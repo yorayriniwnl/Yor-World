@@ -180,6 +180,70 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
       leaf.position.y -= 0.12;
       leaf.userData["referenceUprightApplied"] = true;
     }
+
+    // The frozen GLB already contains a potted ivy and four trailing-vine
+    // meshes. Restore that existing cluster to the upper shelf after moving
+    // the shared plants root for the floor monstera. Keep every named mesh
+    // and its authored vertical relationship intact.
+    const ivyPot = scene.getObjectByName("pot_ivy");
+    const upperShelf = scene.getObjectByName("shelf_rear_upper");
+    if (ivyPot && upperShelf) {
+      const ivyParts = [
+        ivyPot,
+        scene.getObjectByName("ivy_mound"),
+        scene.getObjectByName("ivy_vine_1"),
+        scene.getObjectByName("ivy_vine_2"),
+        scene.getObjectByName("ivy_vine_3"),
+        scene.getObjectByName("ivy_vine_4"),
+      ].filter((part): part is THREE.Object3D => Boolean(part));
+      for (const part of ivyParts) {
+        if (part.userData["ivyScaleRestored"] === true) continue;
+        part.scale.set(
+          part.scale.x / plants.scale.x,
+          part.scale.y / plants.scale.y,
+          part.scale.z / plants.scale.z,
+        );
+        part.userData["ivyScaleRestored"] = true;
+      }
+      const ivyMound = scene.getObjectByName("ivy_mound");
+      ivyMound?.scale.multiplyScalar(1.5);
+
+      // First undo the shared root's X/Z compression on the existing ivy
+      // meshes, then solve the pot's actual contact on the upper-shelf bay.
+      const shelfBounds = worldBounds(upperShelf);
+      const potBounds = worldBounds(ivyPot);
+      const potSize = potBounds.getSize(new THREE.Vector3());
+      const margin = 0.01;
+      if (potBounds.isEmpty() || potSize.x > shelfBounds.getSize(new THREE.Vector3()).x - 2 * margin ||
+          potSize.z > shelfBounds.getSize(new THREE.Vector3()).z - 2 * margin) {
+        throw new Error("The existing ivy pot does not fit on the upper shelf");
+      }
+      const currentCenter = potBounds.getCenter(new THREE.Vector3());
+      const desiredCenter = new THREE.Vector3(
+        THREE.MathUtils.clamp(shelfBounds.getCenter(new THREE.Vector3()).x - 0.8,
+          shelfBounds.min.x + potSize.x / 2 + margin, shelfBounds.max.x - potSize.x / 2 - margin),
+        currentCenter.y + shelfBounds.max.y - potBounds.min.y,
+        shelfBounds.max.z - potSize.z / 2 - margin,
+      );
+      const ivyOffset = desiredCenter.sub(currentCenter);
+      for (const part of ivyParts) translateWorld(part, ivyOffset);
+      const supportedPot = worldBounds(ivyPot);
+      const contactDeltaY = supportedPot.min.y - shelfBounds.max.y;
+      const insideFootprint = supportedPot.min.x >= shelfBounds.min.x + margin &&
+        supportedPot.max.x <= shelfBounds.max.x - margin &&
+        supportedPot.min.z >= shelfBounds.min.z + margin &&
+        supportedPot.max.z <= shelfBounds.max.z - margin;
+      ivyPot.userData["referenceSupport"] = {
+        surfaceNode: upperShelf.name,
+        contactDeltaY,
+        insideFootprint,
+        toleranceMeters: 0.001,
+        edgeMarginMeters: margin,
+      };
+      if (Math.abs(contactDeltaY) > 0.001 || !insideFootprint) {
+        throw new Error("Unable to place the existing ivy pot on the upper-shelf surface");
+      }
+    }
     plants.userData["referenceCompositionApplied"] = true;
   }
 
@@ -256,12 +320,20 @@ export function applyReferenceComposition(scene: THREE.Object3D): ReferenceCompo
     // Compensate that local origin while enlarging the camera so it stays on
     // the upper shelf and clears the phone-size recognition floor.
     if (isMobileOpening) {
-      // Enlarge the existing camera silhouette, then solve the named root's
-      // translation from its actual transformed child bounds. Its authored
-      // meshes sit around local (-1.45, 1.70, -1.67), so preserving the root's
-      // origin would move the camera off the shelf after scaling.
+      // Enlarge the supported camera and its actual body details, then solve
+      // the named root's translation from transformed child bounds. Its
+      // authored meshes sit around local (-1.45, 1.70, -1.67), so preserving
+      // the root origin would move the camera off the shelf after scaling.
       shelfCamera.position.set(0, 0, 0);
-      shelfCamera.scale.setScalar(3);
+      shelfCamera.scale.setScalar(3.2);
+      for (const name of ["ai_cam_chassis", "ai_cam_hub", "ai_cam_lens_barrel", "ai_cam_status_ring"] as const) {
+        const detail = scene.getObjectByName(name);
+        if (!detail || detail.userData["mobileCameraDetailScaleApplied"] === true) continue;
+        // Widen the lens/body details without expanding the named feet's
+        // footprint beyond the narrow supported upper shelf.
+        detail.scale.set(1.45, 1, 1.45);
+        detail.userData["mobileCameraDetailScaleApplied"] = true;
+      }
       shelfCamera.updateWorldMatrix(true, true);
       const scaledBounds = new THREE.Box3().setFromObject(shelfCamera);
       const scaledCenter = scaledBounds.getCenter(new THREE.Vector3());
