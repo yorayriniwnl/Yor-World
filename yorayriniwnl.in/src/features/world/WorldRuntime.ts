@@ -353,11 +353,27 @@ export class WorldRuntime {
     this.resize();
 
     // 7. Start Animation Loop
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
     this.lastTime = performance.now();
     this.scheduleAnimationFrame();
 
+    // Interaction hit proxies are enhancements; production meshes and DOM controls
+    // are already active, so this fetch/parse must never hold up world entry.
+    void this.assetLoader.loadOptionalInteractionAssets({
+      signal: this.loadingAbort.signal,
+      mobile: isMobile,
+      onProgress: (progress) => this.lifecycleManager.updateLoadingProgress(token, progress),
+    }).then((interactionGltf) => {
+      if (!interactionGltf) return;
+      if (this.isDisposed || this.lifecycleManager.isStale(token) || !this.interactionBinding) {
+        this.assetLoader.disposeLoadedGltf(interactionGltf);
+        return;
+      }
+      this.interactionBinding.addInteractionScene(interactionGltf.scene);
+      this.scene.add(interactionGltf.scene);
+    });
+
     // 8. Start Entrance Choreography
-    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
     this.lifecycleManager.startEntrance(token, this.reducedMotion);
 
     if (this.reducedMotion) {

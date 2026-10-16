@@ -52,13 +52,7 @@ export class WorldInteractionBinding {
     }
     // IA supplies its accepted IDs/proxies. Visible art remains the frozen production environment.
     if (options.interactionScene) {
-      options.interactionScene.updateMatrixWorld(true);
-      options.interactionScene.traverse((node) => {
-        node.visible = false;
-        if (node.userData["isHitProxy"] === true && typeof node.userData["assetId"] === "string") {
-          this.hitProxies.push(node);
-        }
-      });
+      this.addInteractionScene(options.interactionScene);
     }
     this.painting = options.scene.getObjectByName("painting-pivot");
     this.paintingRotation = this.painting?.rotation.x ?? 0;
@@ -174,6 +168,17 @@ export class WorldInteractionBinding {
     return { boundProductionTargets: this.targets.size, frozenHitProxyCount: this.hitProxies.length, lastActivatedId: this.lastActivatedId };
   }
 
+  public addInteractionScene(interactionScene: THREE.Object3D): void {
+    if (this.disposed) return;
+    interactionScene.updateMatrixWorld(true);
+    interactionScene.traverse((node) => {
+      node.visible = false;
+      if (node.userData["isHitProxy"] === true && typeof node.userData["assetId"] === "string" && !this.hitProxies.includes(node)) {
+        this.hitProxies.push(node);
+      }
+    });
+  }
+
   public dispose(): void {
     this.disposed = true;
     for (const type of ["pointerdown", "pointermove", "pointerup", "pointercancel", "lostpointercapture"] as const) this.options.canvas.removeEventListener(type, this.handlePointer);
@@ -182,5 +187,6 @@ export class WorldInteractionBinding {
     if (this.painting) this.painting.rotation.x = this.paintingRotation;
     this.options.canvas.style.cursor = "";
     this.targets.clear();
+    this.hitProxies.length = 0;
   }
 }

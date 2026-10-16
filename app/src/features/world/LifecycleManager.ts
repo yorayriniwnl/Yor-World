@@ -114,7 +114,7 @@ export class LifecycleManager {
       requiredLoaded: 0,
       requiredTotal: 3,
       optionalLoaded: 0,
-      optionalTotal: 2,
+      optionalTotal: 1,
       retryCount: this.retryCount,
       maxRetries: this.maxRetries,
     };
