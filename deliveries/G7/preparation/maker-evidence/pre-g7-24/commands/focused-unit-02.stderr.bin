@@ -1,0 +1,22 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/low-quality-batch.test.ts > reversible static batching of original frozen meshes > synchronizes instances from a playing transform and visibility clip before render
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/unit/low-quality-batch.test.ts:367:30
+    365|     mixer.setTime(1);
+    366|     quality.syncDynamicInstances();
+    367|     expect(resident.visible).toBe(false);
+       |                              ^
+    368|     expect(meshes.map((mesh, index) => batch.getVisibleAt(index))).toE…
+    369|     quality.dispose();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
