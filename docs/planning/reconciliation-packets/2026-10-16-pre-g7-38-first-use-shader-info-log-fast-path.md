@@ -54,3 +54,8 @@ PRE-G7-31, PRE-G7-35, P37's inherited candidate, and the new P38 candidate remai
 The first authorized offline frozen install completed with exit code 1 after 13.589 seconds. It reused 401 packages, downloaded zero, and stopped because the locked Next.js 16.3.8 tarball was absent from the local pnpm store. The exact receipt and stdout/stderr are preserved in deliveries/G7/preparation/maker-evidence/pre-g7-38/commands/offline-install.receipt.json and the adjacent binary logs.
 
 This delta authorizes one network-enabled frozen-lockfile install with prefer-offline enabled, using the existing registry configuration to hydrate dependencies already fixed by pnpm-lock.yaml. Capture every package download. No dependency version, lockfile resolution, or registry configuration change is authorized.
+
+
+## 2026-10-16 post-patch install delta
+
+The network-enabled frozen install above hydrated the locked Next.js and SWC packages before the Three.js patch existed. After pnpm patch-commit updates the lockfile with the P38 patch, this packet authorizes one additional offline frozen install to apply that exact patched dependency to node_modules before lint/typecheck/build. This install must remain offline; if it fails, preserve the failure and stop without another network install.
