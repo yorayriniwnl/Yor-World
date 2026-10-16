@@ -1,0 +1,2504 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: world.spec.ts >> C3 Performance Benchmarks & Budget Verification >> Enter/exit resource stability over multiple studio cycles
+- Location: tests\performance\world.spec.ts:263:3
+
+# Error details
+
+```
+Test timeout of 180000ms exceeded.
+```
+
+```
+Error: locator.click: Test timeout of 180000ms exceeded.
+Call log:
+  - waiting for getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name: 'Projects', exact: true })
+    - locator resolved to <a href="/projects">Projects</a>
+  - attempting click action
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="198" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="200" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 20ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="204" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 100ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="213" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 100ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="222" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="255" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="288" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="322" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="355" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="389" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="421" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="454" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="487" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="520" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="553" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="586" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="619" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="651" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="684" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="717" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="750" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="783" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="815" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="847" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="883" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="917" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="952" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-rendered-frames="987" data-engine="three.js r180" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1020" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1053" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1086" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1119" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1152" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1185" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1217" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1250" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1283" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1317" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1350" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1383" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1416" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1449" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1481" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1515" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1549" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1582" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1615" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1648" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1681" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1714" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1747" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1781" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1813" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1846" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1879" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1911" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1943" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="1976" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2009" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2042" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2075" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2107" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2141" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2175" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2208" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2241" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2274" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2307" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2340" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2374" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2408" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2442" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2475" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2508" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2541" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2574" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2608" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2642" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2676" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2710" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2744" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2778" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2813" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2846" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2885" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2921" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2955" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="2988" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3021" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3054" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3087" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3120" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3153" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3186" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3219" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3252" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3284" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3317" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3351" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3384" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3418" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3451" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3484" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3516" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3549" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3582" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3615" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3648" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3681" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3714" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3747" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3779" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3811" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3844" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3878" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3911" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3944" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="3978" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4011" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4043" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4075" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4108" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4141" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4173" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4206" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4239" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4273" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4306" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4339" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4372" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4405" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4438" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4471" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4503" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4537" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4571" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4604" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4638" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4670" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4703" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4736" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4768" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4801" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4833" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4866" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4899" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4931" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4964" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="4997" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5029" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5061" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5094" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5128" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5161" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5195" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5228" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5261" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5294" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5329" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5363" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5396" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5429" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5462" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5494" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5527" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5559" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5592" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5626" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5659" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5692" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5724" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5757" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5789" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5821" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5854" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5888" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5921" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5954" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="5987" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6019" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6051" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6084" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6117" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6150" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6183" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6215" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6248" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6281" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6313" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6347" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6379" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6412" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6444" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6476" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6508" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6541" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6574" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6608" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6641" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6674" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6707" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6740" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6772" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6805" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6838" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6870" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6903" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6936" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="6970" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7003" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7036" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7071" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7104" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7137" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7170" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7203" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7235" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7268" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7301" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7334" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7366" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7399" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7432" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7464" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7497" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7530" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7563" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7596" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7628" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7661" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7695" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7728" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7760" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7793" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7825" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7857" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7889" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7922" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7954" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="7986" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8018" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8051" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8084" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8116" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8149" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8182" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8215" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8248" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8281" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8314" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8347" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8379" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8411" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8443" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8476" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8508" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8541" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8574" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8607" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8639" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8672" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8705" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8737" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8770" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8803" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8836" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8868" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8900" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8933" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8966" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="8998" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9031" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9064" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9097" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9129" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9162" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9195" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9227" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9259" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9292" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9325" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9357" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9390" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9423" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9455" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9487" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9519" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9552" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9585" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9617" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9650" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9682" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9715" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9748" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9780" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9813" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9846" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9878" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9911" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9944" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="9978" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="10011" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="10044" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="10076" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="10109" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="10142" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="10174" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="10207" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="10241" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="10274" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="10307" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="10340" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="10373" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="10406" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="10439" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+    - element is visible, enabled and stable
+    - scrolling into view if needed
+    - done scrolling
+    - <canvas width="1440" height="900" data-testid="world-canvas" data-engine="three.js r180" data-rendered-frames="10472" class="world-module__FC9lxW__canvas" aria-label="3D Room view showing resident, workstation, and moving chair"></canvas> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+  - retrying click action
+    - waiting 500ms
+    - waiting for element to be visible, enabled and stable
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - link "Skip to content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - link "Yor World home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [aria-hidden] [ref=e6]: "Y"
+        - generic [ref=e7]:
+          - text: YOR WORLD
+          - generic [ref=e8]: A studio in progress
+      - navigation "Primary navigation" [ref=e9]:
+        - list [ref=e10]:
+          - listitem [ref=e11]:
+            - link "Projects" [ref=e12] [cursor=pointer]:
+              - /url: /projects
+          - listitem [ref=e13]:
+            - link "About" [ref=e14] [cursor=pointer]:
+              - /url: /about
+          - listitem [ref=e15]:
+            - link "Contact" [ref=e16] [cursor=pointer]:
+              - /url: /contact
+          - listitem [ref=e17]:
+            - link "Résumé" [ref=e18] [cursor=pointer]:
+              - /url: /resume
+    - main [ref=e19]:
+      - region [ref=e20]:
+        - generic [ref=e21]:
+          - paragraph [ref=e22]: The door is taking shape
+          - heading [level=1] [ref=e23]:
+            - text: A little world.
+            - emphasis [ref=e24]: A closer look.
+          - paragraph [ref=e25]: A personal studio for exploring the work, the thinking, and the person behind it.
+          - generic [ref=e26]:
+            - paragraph [ref=e27]:
+              - text: Ayush Roy
+              - generic [ref=e28]: Verified identity
+            - paragraph [ref=e29]: Full-Stack & Systems Developer
+            - paragraph [ref=e30]: Building realtime systems, 3D product interfaces, and applied ML.
+          - generic [ref=e31]:
+            - link "View projects" [ref=e32] [cursor=pointer]:
+              - /url: /projects
+              - text: View projects
+              - generic [aria-hidden] [ref=e33]: ↗
+            - generic [ref=e34]:
+              - group [ref=e35]:
+                - generic "Enter studio" [ref=e36] [cursor=pointer]:
+                  - text: Enter studio
+                  - generic [aria-hidden] [ref=e37]: +
+                - generic [ref=e38]:
+                  - paragraph [ref=e39]: The studio is not yet available.
+                  - paragraph [ref=e40]:
+                    - text: Launch the
+                    - strong [ref=e41]: G1 Interactive 3D Studio Feasibility Proof
+                    - text: "to experience the integrated bright white workstation, blue moving chair, resident, and ambient lighting:"
+                  - button "Launch 3D Studio" [ref=e43] [cursor=pointer]
+              - dialog "YOR WORLD interactive studio" [ref=e44]:
+                - generic [ref=e45]:
+                  - region "Interactive 3D Studio" [ref=e46]:
+                    - button "Open studio controls" [active] [ref=e47] [cursor=pointer]: Studio controls
+                    - generic "3D Room view showing resident, workstation, and moving chair" [ref=e48]
+                  - navigation "Portfolio destinations and studio exit" [ref=e49]:
+                    - link "Projects" [ref=e50] [cursor=pointer]:
+                      - /url: /projects
+                    - link "About" [ref=e51] [cursor=pointer]:
+                      - /url: /about
+                    - link "Contact" [ref=e52] [cursor=pointer]:
+                      - /url: /contact
+                    - link "Résumé" [ref=e53] [cursor=pointer]:
+                      - /url: /resume
+                    - button "Exit Studio" [ref=e54] [cursor=pointer]
+          - paragraph [ref=e55]: Four verified project case studies. Explore the studio whenever you like.
+        - complementary "Studio status" [ref=e56]:
+          - generic [ref=e57]:
+            - generic [ref=e58]: YOR / 01
+            - generic [ref=e59]: In the making
+          - generic [ref=e62]: "Y"
+          - generic [ref=e66]:
+            - paragraph [ref=e67]:
+              - text: A space for
+              - strong [ref=e68]: curiosity.
+            - generic [ref=e69]: Interactive studioPortfolio pages below
+      - region [ref=e70]:
+        - generic [ref=e71]:
+          - paragraph [ref=e72]: Take a look around
+          - heading "Start anywhere." [level=2] [ref=e73]
+        - list [ref=e74]:
+          - listitem [ref=e75]:
+            - link "01 Projects Verified software case studies" [ref=e76] [cursor=pointer]:
+              - /url: /projects
+              - generic [ref=e77]: "01"
+              - generic [ref=e78]:
+                - strong [ref=e79]: Projects
+                - text: Verified software case studies
+              - generic [aria-hidden] [ref=e80]: ↗
+          - listitem [ref=e81]:
+            - link "02 About Background, education, and technical skills" [ref=e82] [cursor=pointer]:
+              - /url: /about
+              - generic [ref=e83]: "02"
+              - generic [ref=e84]:
+                - strong [ref=e85]: About
+                - text: Background, education, and technical skills
+              - generic [aria-hidden] [ref=e86]: ↗
+          - listitem [ref=e87]:
+            - link "03 Contact Send a message or use direct channels" [ref=e88] [cursor=pointer]:
+              - /url: /contact
+              - generic [ref=e89]: "03"
+              - generic [ref=e90]:
+                - strong [ref=e91]: Contact
+                - text: Send a message or use direct channels
+              - generic [aria-hidden] [ref=e92]: ↗
+    - contentinfo [ref=e93]:
+      - paragraph [ref=e94]: YOR WORLD / Ayush Roy Portfolio
+      - paragraph [ref=e95]: Sound off · Explore at your pace
+  - alert [ref=e97]
+```
+
+# Test source
+
+```ts
+  190 |           tierCounts[frame.qualityTier] = (tierCounts[frame.qualityTier] ?? 0) + 1;
+  191 |           if (!checkRenderState()) return;
+  192 |           if (!["HOME", "TRANSITION"].includes(frame.lifecycleState)) { finish("OTHER_RENDER_STATE_FAILURE", `Unexpected rendered lifecycle: ${frame.lifecycleState}`); return; }
+  193 |           if (frame.renderCalls <= 0) { finish("ZERO_RENDER_CALLS", "A production frame had no render calls."); return; }
+  194 |           if (frame.renderedTriangles <= 0) { finish("ZERO_RENDERED_TRIANGLES", "A production frame rendered no triangles."); return; }
+  195 |           if (frame.durationMs > 0) frameTimes.push(frame.durationMs);
+  196 |           maxRenderCalls = Math.max(maxRenderCalls, frame.renderCalls);
+  197 |           maxRenderedTriangles = Math.max(maxRenderedTriangles, frame.renderedTriangles);
+  198 |           if (pending && pending.step.accepts(frame)) {
+  199 |             actions.push({ action: pending.step.id, latencyMs: lastRenderedAt - pending.sentAt });
+  200 |             pending = null;
+  201 |           }
+  202 |           if (pending && lastRenderedAt - pending.sentAt > 900) {
+  203 |             finish("ACTION_TIMEOUT", `World action was not acknowledged within 900 ms: ${pending.step.id}`);
+  204 |             return;
+  205 |           }
+  206 |           if (!pending && lastRenderedAt - startTime >= nextAction * 1000 && nextAction < 60) {
+  207 |             const step = steps[nextAction % steps.length];
+  208 |             if (!step) { finish("MISSING_ACTION", "No interaction route step exists."); return; }
+  209 |             currentAction = step.id;
+  210 |             const button = document.querySelector<HTMLButtonElement>(`[data-testid="${step.id}"]`);
+  211 |             if (!button || button.disabled) { finish("MISSING_ACTION", `Missing or disabled live action: ${step.id}`); return; }
+  212 |             pending = { step, sentAt: performance.now() };
+  213 |             button.click();
+  214 |             nextAction++;
+  215 |           }
+  216 |         };
+  217 |         const watchdog = setInterval(() => {
+  218 |           if (!checkRenderState()) return;
+  219 |           if (performance.now() - lastRenderedAt > 1000) {
+  220 |             finish("NO_RENDER_FRAME", "The production renderer emitted no completed frame for more than one second.");
+  221 |           } else if (pending && performance.now() - pending.sentAt > 900) {
+  222 |             finish("ACTION_TIMEOUT", `World action was not acknowledged within 900 ms: ${pending.step.id}`);
+  223 |           }
+  224 |         }, 100);
+  225 |         const deadline = setTimeout(() => {
+  226 |           if (!checkRenderState()) return;
+  227 |           if (performance.now() - lastRenderedAt > 1000) { finish("NO_RENDER_FRAME", "The production renderer stopped before route completion."); return; }
+  228 |           if (pending) { finish("ACTION_TIMEOUT", `World action remained unacknowledged at route completion: ${pending.step.id}`); return; }
+  229 |           if (actions.length !== 60) { finish("MISSING_ACTION", `Only ${actions.length} of 60 actions were acknowledged.`); return; }
+  230 |           finish(null);
+  231 |         }, 60_000);
+  232 |         worldCanvas.addEventListener("yor-world-rendered-frame", onFrame);
+  233 |       });
+  234 |     }, { rendererIdentity, initialRenderState });
+  235 | 
+  236 |     // Write failures even when the renderer never supplies a timing sample.
+  237 |     const stats = framePacingData.frameTimes.length > 0 ? calculateStats(framePacingData.frameTimes) : { samples: [], median: null, p95: null };
+  238 |     await savePerformanceReport("active-route-frame-pacing.json", {
+  239 |       ...framePacingData,
+  240 |       rendererIdentity,
+  241 |       observedTierCounts: framePacingData.tierCounts,
+  242 |       measurementSource: "Completed production WebGLRenderer renders and acknowledged world actions",
+  243 |       frameTimes: undefined,
+  244 |       totalFramesSampled: framePacingData.frameTimes.length,
+  245 |       medianFrameTimeMs: stats.median,
+  246 |       p95FrameTimeMs: stats.p95,
+  247 |       rawSamples: stats.samples,
+  248 |     });
+  249 | 
+  250 |     expect(framePacingData.failureReason, JSON.stringify(framePacingData.failureDiagnostic)).toBeNull();
+  251 |     expect(framePacingData.worldContinuouslyActive).toBe(true);
+  252 |     expect(framePacingData.frameTimes.length).toBeGreaterThan(0);
+  253 |     expect(framePacingData.maxRenderCalls).toBeGreaterThan(0);
+  254 |     expect(framePacingData.maxRenderedTriangles).toBeGreaterThan(0);
+  255 |     expect(Object.keys(framePacingData.tierCounts)).toEqual(["low"]);
+  256 |     await expect(qualitySelect).toHaveValue("low");
+  257 |     expect(framePacingData.routeDurationMs).toBeGreaterThanOrEqual(60_000);
+  258 |     expect(framePacingData.interactionsCompleted).toBe(60);
+  259 |     expect(stats.median).toBeLessThanOrEqual(33.3);
+  260 |     expect(stats.p95).toBeLessThanOrEqual(45.0);
+  261 |   });
+  262 | 
+  263 |   test("Enter/exit resource stability over multiple studio cycles", async ({ page }) => {
+  264 |     await page.setViewportSize({ width: 1440, height: 900 });
+  265 | 
+  266 |     const cycles = [];
+  267 | 
+  268 |     for (let c = 1; c <= 4; c++) {
+  269 |       const t0 = Date.now();
+  270 |       await page.goto("/?studio=1", { waitUntil: "domcontentloaded" });
+  271 |       await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME", { timeout: 15000 });
+  272 |       const qualitySelect = page.getByTestId("quality-tier-select");
+  273 |       await page.getByTestId("studio-controls-toggle").click();
+  274 |       await expect(qualitySelect).toBeVisible();
+  275 |       await qualitySelect.selectOption("low");
+  276 |       const canvas = page.getByTestId("world-canvas");
+  277 |       await expect.poll(async () => Number(await canvas.getAttribute("data-rendered-frames"))).toBeGreaterThan(1);
+  278 |       await page.getByTestId("diagnostics-toggle-btn").click();
+  279 |       const activeDiagnostics = JSON.parse((await page.getByTestId("world-diagnostics").textContent())!) as Diagnostics;
+  280 |       expect(activeDiagnostics.renderCalls).toBeGreaterThan(0);
+  281 |       expect(activeDiagnostics.renderedTriangles).toBeGreaterThan(0);
+  282 |       await page.getByTestId("diagnostics-toggle-btn").click();
+  283 |       const controlsToggle = page.getByTestId("studio-controls-toggle");
+  284 |       await controlsToggle.click();
+  285 |       await expect(controlsToggle).toHaveAttribute("aria-expanded", "false");
+  286 |       const oldCanvas = await canvas.elementHandle();
+  287 |       if (!oldCanvas) throw new Error("Missing active production canvas.");
+  288 | 
+  289 |       // SPA navigation retains the old canvas's execution context for teardown proof.
+> 290 |       await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("link", { name: "Projects", exact: true }).click();
+      |                                                                                                                               ^ Error: locator.click: Test timeout of 180000ms exceeded.
+  291 |       await expect(page).toHaveURL(/\/projects$/);
+  292 |       await expect(page.locator("h1")).toBeVisible();
+  293 | 
+  294 |       await expect.poll(async () => oldCanvas.evaluate((element) => (element as HTMLCanvasElement).getContext("webgl2")?.isContextLost())).toBe(true);
+  295 |       const stoppedFrames = await oldCanvas.evaluate((element) => Number(element.dataset.renderedFrames));
+  296 |       await page.evaluate(() => {
+  297 |         for (const state of ["hidden", "visible"]) {
+  298 |           Object.defineProperty(document, "visibilityState", { configurable: true, value: state });
+  299 |           document.dispatchEvent(new Event("visibilitychange"));
+  300 |         }
+  301 |         Reflect.deleteProperty(document, "visibilityState");
+  302 |       });
+  303 |       await page.waitForTimeout(1200);
+  304 |       const afterExit = await oldCanvas.evaluate((element) => ({
+  305 |         canvasConnected: element.isConnected,
+  306 |         renderedFrames: Number(element.dataset.renderedFrames),
+  307 |         contextLost: (element as HTMLCanvasElement).getContext("webgl2")?.isContextLost() ?? null,
+  308 |       }));
+  309 | 
+  310 |       const canvasCount = await page.locator("canvas").count();
+  311 |       const durationMs = Date.now() - t0;
+  312 |       cycles.push({ cycle: c, durationMs, canvasCount, activeDiagnostics, stoppedFrames, afterExit });
+  313 | 
+  314 |       // Assert canvas is cleanly torn down on route exit
+  315 |       expect(canvasCount).toBe(0);
+  316 |       expect(afterExit.canvasConnected).toBe(false);
+  317 |       expect(afterExit.renderedFrames).toBe(stoppedFrames);
+  318 |       expect(afterExit.contextLost).toBe(true);
+  319 |     }
+  320 | 
+  321 |     await savePerformanceReport("enter-exit-stability.json", {
+  322 |       cycles,
+  323 |       domAndRenderCleanupObserved: cycles.every((cycle) => cycle.canvasCount === 0 && !cycle.afterExit.canvasConnected && cycle.afterExit.renderedFrames === cycle.stoppedFrames && cycle.afterExit.contextLost),
+  324 |       heapLeakAbsence: "UNKNOWN",
+  325 |       gpuMemoryLeakAbsence: "UNKNOWN",
+  326 |       visibilityProof: "simulated document visibility events after SPA exit",
+  327 |     });
+  328 |   });
+  329 | });
+  330 | 
+```
