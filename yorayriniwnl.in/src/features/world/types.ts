@@ -65,6 +65,8 @@ export interface Diagnostics {
   renderedFrames?: number | undefined;
   lastRenderedAt?: number | undefined;
   renderCalls?: number | undefined;
+  shadowRenderCalls?: number | undefined;
+  mainRenderCalls?: number | undefined;
   renderedTriangles?: number | undefined;
   renderPixelRatio?: number | undefined;
   interactions?: { boundProductionTargets: number; frozenHitProxyCount: number; lastActivatedId: string | null } | undefined;
@@ -109,6 +111,8 @@ export interface RenderedWorldFrame {
   cameraPreset: CameraPreset;
   lifecycleState: WorldLifecycleState;
   renderCalls: number;
+  shadowRenderCalls: number;
+  mainRenderCalls: number;
   renderedTriangles: number;
 }
 

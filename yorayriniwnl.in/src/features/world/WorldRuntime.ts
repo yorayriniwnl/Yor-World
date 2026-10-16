@@ -72,6 +72,8 @@ export class WorldRuntime {
   private staticSceneBatch: StaticSceneBatch | null = null;
   private readonly onFrameDuration: WorldRuntimeOptions["onFrameDuration"];
   private readonly onSamplingPause: WorldRuntimeOptions["onSamplingPause"];
+  private isMeasuringRendererPasses = false;
+  private shadowRenderCalls = 0;
 
   public soundEnabled: boolean;
   public reducedMotion: boolean;
@@ -246,8 +248,14 @@ export class WorldRuntime {
       console.error = originalConsoleError;
     }
 
-    // Keep shadow-map and main-pass calls in one per-frame renderer.info sample.
-    this.renderer.info.autoReset = false;
+    // Three resets renderer.info between the shadow and main passes. Capture the
+    // shadow count at that existing boundary while preserving main-pass triangles.
+    const rendererInfo = this.renderer.info;
+    const resetRendererInfo = rendererInfo.reset.bind(rendererInfo);
+    rendererInfo.reset = () => {
+      if (this.isMeasuringRendererPasses) this.shadowRenderCalls = rendererInfo.render.calls;
+      resetRendererInfo();
+    };
 
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.15;
@@ -425,7 +433,13 @@ export class WorldRuntime {
     if (this.renderer && this.integratedResult) {
       this.staticSceneBatch?.syncDynamicInstances();
       this.renderer.info.reset();
-      this.renderer.render(this.scene, this.camera);
+      this.shadowRenderCalls = 0;
+      this.isMeasuringRendererPasses = true;
+      try {
+        this.renderer.render(this.scene, this.camera);
+      } finally {
+        this.isMeasuringRendererPasses = false;
+      }
       this.renderedFrames++;
       this.lastRenderedAt = currentTime;
       this.canvas.dataset.renderedFrames = String(this.renderedFrames);
@@ -433,7 +447,10 @@ export class WorldRuntime {
         frame: this.renderedFrames, timestamp: currentTime, durationMs, qualityTier: this.qualityTier,
         activeClip: this.characterDirector?.currentClip ?? "none", characterMode: this.characterDirector?.mode ?? "unmounted",
         cameraPreset: this.cameraDirector?.getCurrentPreset() ?? "home-desktop", lifecycleState: this.lifecycleManager.getState(),
-        renderCalls: this.renderer.info.render.calls, renderedTriangles: this.renderer.info.render.triangles,
+        renderCalls: this.shadowRenderCalls + this.renderer.info.render.calls,
+        shadowRenderCalls: this.shadowRenderCalls,
+        mainRenderCalls: this.renderer.info.render.calls,
+        renderedTriangles: this.renderer.info.render.triangles,
       };
       this.canvas.dispatchEvent(new CustomEvent(WORLD_RENDERED_FRAME_EVENT, { detail: frame }));
     }
@@ -603,7 +620,9 @@ export class WorldRuntime {
     return {
       renderedFrames: this.renderedFrames,
       lastRenderedAt: this.lastRenderedAt,
-      renderCalls: this.renderer?.info.render.calls ?? 0,
+      renderCalls: this.renderer ? this.shadowRenderCalls + this.renderer.info.render.calls : 0,
+      shadowRenderCalls: this.renderer ? this.shadowRenderCalls : 0,
+      mainRenderCalls: this.renderer?.info.render.calls ?? 0,
       renderedTriangles: this.renderer?.info.render.triangles ?? 0,
       renderPixelRatio: this.renderer?.getPixelRatio() ?? 0,
       lifecycleState: this.lifecycleManager.getState(),
