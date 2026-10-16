@@ -44,6 +44,8 @@ PRE-G7-30 completed its authorized single trace recapture against the exact PRE-
 
 [PRE-G7-40](reconciliation-packets/2026-10-16-pre-g7-40-production-shader-diagnostics-gate.md) responds to P39's 14.012 seconds in LINK_STATUS reads. It explicitly supersedes P38's no-disable clause for the production runtime only: automatic shader checks stay enabled in development and can be enabled in a production session with `?shaderDiagnostics=1`. It authorizes the mirrored WorldRuntime setting, lint/typecheck/build, and one source-bound runtime capture; tests and the full performance suite are not authorized.
 
+[PRE-G7-41](reconciliation-packets/2026-10-17-pre-g7-41-restore-shader-diagnostics-and-trace-first-use.md) restores Three.js's default shader diagnostics after P40 recorded no performance gain from the production opt-out. It authorizes the mirrored WorldRuntime correction, lint/typecheck/build, and one source-bound Chrome capture recording shader-program creation/link/first-use identity and caller stacks. Tests and the full performance suite are not authorized.
+
 Read [current pre-G7 requirements](../operations/pre-g7-prerequisites.md) and the [RC6 dossier](../releases/v1.0.0-rc6.md). Parent continues authorized independent work and obtains missing service/device inputs. No mock, local fixture, emulation, liveness-only response or private preview substitutes for a mandatory production criterion.
 
 ## One specification and a small shared baseline
