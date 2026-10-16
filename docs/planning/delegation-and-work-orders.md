@@ -32,6 +32,8 @@ PRE-G7-30 completed its authorized single trace recapture against the exact PRE-
 
 [PRE-G7-34](reconciliation-packets/2026-10-16-pre-g7-34-startup-cpu-attribution.md) follows PRE-G7-33's unresolved long tasks with one CPU-profiled browser capture against the same frozen production build. It authorizes no application or test source edit, suite run, acceptance, merge, or deployment.
 
+[PRE-G7-35](reconciliation-packets/2026-10-16-pre-g7-35-async-shader-prewarm.md) targets the PRE-G7-34 shader-program first-use path with bounded main-scene `compileAsync` prewarming. It authorizes only the canonical/mirrored `WorldRuntime.ts` correction and build/lint/typecheck evidence; tests, browser runtime capture, acceptance, merge, and deployment are not authorized.
+
 Read [current pre-G7 requirements](../operations/pre-g7-prerequisites.md) and the [RC6 dossier](../releases/v1.0.0-rc6.md). Parent continues authorized independent work and obtains missing service/device inputs. No mock, local fixture, emulation, liveness-only response or private preview substitutes for a mandatory production criterion.
 
 ## One specification and a small shared baseline
