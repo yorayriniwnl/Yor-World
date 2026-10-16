@@ -9,7 +9,7 @@ const baselineCommit = "ffd4635242362774c7981f8d54405fd0ccb2b0c9";
 const acceptedVisualRoot = "500d10fa5901be48d4ff877e608d65ba0e271bb9";
 const taskBranchParentCommit = "f2a9c4e8b7fd4ed17633ffb31a161ac25f792f2a";
 const manifestPath = path.join(root, "yorayriniwnl.in", "source-delivery-manifest.json");
-const auditPath = path.join(root, "deliveries/G7/preparation/maker-evidence/pre-g7-27/source/mirror-parity-audit.json");
+const auditPath = path.join(root, "deliveries/G7/preparation/maker-evidence/pre-g7-28/source/mirror-parity-audit.json");
 const sha256 = (value) => createHash("sha256").update(value).digest("hex");
 const normalize = (buffer) => buffer.includes(0) ? buffer : Buffer.from(buffer.toString("utf8").replace(/\r\n?/g, "\n"));
 const git = (...args) => execFileSync("git", args, { cwd: root, encoding: "utf8", maxBuffer: 32 * 1024 * 1024 }).trim();
@@ -90,7 +90,7 @@ const readmeSha256 = sha256(fs.readFileSync(path.join(root, "yorayriniwnl.in", "
 
 manifest.sourceIdentity = {
   ...manifest.sourceIdentity,
-  packet: "PRE-G7-27",
+  packet: "PRE-G7-28",
   parentCommit: baselineCommit,
   taskBranchParentCommit,
   sourceCommit,
@@ -103,7 +103,8 @@ manifest.sourceIdentity = {
   productionRuntimeAppTree: baselineAppTree,
   testSupportCommits: [sourceCommit],
   governingPackets: [
-    "docs/planning/reconciliation-packets/2026-10-16-pre-g7-27-modal-navigation-performance-harness.md",
+    "docs/planning/reconciliation-packets/2026-10-16-pre-g7-27-isolated-render-attribution.md",
+    "docs/planning/reconciliation-packets/2026-10-16-pre-g7-28-modal-navigation-performance-harness.md",
     "docs/planning/reconciliation-packets/2026-10-16-pre-g7-26-nonblocking-optional-assets.md",
     "docs/planning/reconciliation-packets/2026-10-16-pre-g7-25-surface-parity-correction.md",
     "docs/planning/reconciliation-packets/2026-10-16-pre-g7-24-surface-parameter-batching.md",
@@ -112,9 +113,9 @@ manifest.sourceIdentity = {
     "docs/planning/reconciliation-packets/2026-10-15-pre-g7-22-c1-evidence-build-flag.md",
     "docs/planning/validation-and-production.md",
   ],
-  visualCandidateEvidence: "deliveries/G7/preparation/maker-evidence/pre-g7-27/",
-  validationReport: "deliveries/G7/preparation/maker-evidence/pre-g7-27/REPORT.md",
-  formalAcceptance: "PRE-G7-27 source candidate failed its complete performance-suite gate and remains unaccepted pending correction, independent audit, and parent ruling",
+  visualCandidateEvidence: "deliveries/G7/preparation/maker-evidence/pre-g7-28/",
+  validationReport: "deliveries/G7/preparation/maker-evidence/pre-g7-28/REPORT.md",
+  formalAcceptance: "PRE-G7-28 test candidate failed its complete performance-suite gate and remains unaccepted pending correction, independent audit, and parent ruling",
 };
 
 manifest.mirror.sourceFiles = sourceFiles.map((relative) => describePair(relative).entry);
@@ -138,12 +139,12 @@ manifest.mirror.audit = {
   normalizedParityFailures: mismatches.length,
   baseCommit: sourceCommit,
   readmeSha256,
-  evidence: "deliveries/G7/preparation/maker-evidence/pre-g7-27/source/mirror-parity-audit.json",
+  evidence: "deliveries/G7/preparation/maker-evidence/pre-g7-28/source/mirror-parity-audit.json",
 };
 
 const audit = {
   schemaVersion: 1,
-  packet: "PRE-G7-27",
+  packet: "PRE-G7-28",
   taskBranchParentCommit,
   sourceBaseCommit: baselineCommit,
   sourceCommit,

@@ -7,7 +7,7 @@ const root = execFileSync("git", ["rev-parse", "--show-toplevel"], { cwd: proces
 const sourceCommit = process.argv[2] || "d86d3d68c34fcdff6319c7945c7d74e87ce81946";
 const baselineCommit = "ffd4635242362774c7981f8d54405fd0ccb2b0c9";
 const taskBranchParentCommit = "f2a9c4e8b7fd4ed17633ffb31a161ac25f792f2a";
-const outputPath = path.join(root, "deliveries/G7/preparation/maker-evidence/pre-g7-27/source/source-binding.json");
+const outputPath = path.join(root, "deliveries/G7/preparation/maker-evidence/pre-g7-28/source/source-binding.json");
 const sha256 = (value) => createHash("sha256").update(value).digest("hex");
 const git = (...args) => execFileSync("git", args, { cwd: root, encoding: "utf8", maxBuffer: 32 * 1024 * 1024 }).trim();
 const hashFile = (relative) => sha256(fs.readFileSync(path.join(root, relative)));
@@ -41,7 +41,7 @@ const productionRoom = "app/public/models/production-room-full.glb";
 const expectedRoomSha256 = "3a02647d24e474c8a2579b0d277cf02a7841212e961c1554f67b6e032e40a307";
 const productionRoomSha256 = hashFile(productionRoom);
 const assetManifestSha256 = hashFile("app/public/asset-manifest.json");
-const assetHashesSha256 = hashFile("deliveries/G7/preparation/maker-evidence/pre-g7-27/source/asset-hashes.json");
+const assetHashesSha256 = hashFile("deliveries/G7/preparation/maker-evidence/pre-g7-28/source/asset-hashes.json");
 const parityFailures = changedBlobs.filter((entry) => !entry.candidateMirrorBlobEqual);
 const expectedChangedPaths = ["app/tests/performance/world.spec.ts"];
 const expectedPathDelta = changedCanonicalPaths.length === expectedChangedPaths.length
@@ -49,7 +49,7 @@ const expectedPathDelta = changedCanonicalPaths.length === expectedChangedPaths.
 
 const binding = {
   schemaVersion: 1,
-  packet: "PRE-G7-27",
+  packet: "PRE-G7-28",
   taskBranchParentCommit,
   baselineCommit,
   sourceParentCommit,
@@ -68,14 +68,14 @@ const binding = {
     productionRoomPreserved: productionRoomSha256 === expectedRoomSha256,
     assetManifest: "app/public/asset-manifest.json",
     assetManifestSha256,
-    assetHashes: "deliveries/G7/preparation/maker-evidence/pre-g7-27/source/asset-hashes.json",
+    assetHashes: "deliveries/G7/preparation/maker-evidence/pre-g7-28/source/asset-hashes.json",
     assetHashesSha256,
   },
   evidence: {
-    mirrorParityAudit: "deliveries/G7/preparation/maker-evidence/pre-g7-27/source/mirror-parity-audit.json",
+    mirrorParityAudit: "deliveries/G7/preparation/maker-evidence/pre-g7-28/source/mirror-parity-audit.json",
     previousCandidateReport: "deliveries/G7/preparation/maker-evidence/pre-g7-25/REPORT.md",
-    performanceResults: "deliveries/G7/preparation/maker-evidence/pre-g7-27/performance/full-retry/performance-results.json",
-    evidenceInventory: "deliveries/G7/preparation/maker-evidence/pre-g7-27/source/evidence-inventory.json",
+    performanceResults: "deliveries/G7/preparation/maker-evidence/pre-g7-28/performance/full-retry/performance-results.json",
+    evidenceInventory: "deliveries/G7/preparation/maker-evidence/pre-g7-28/source/evidence-inventory.json",
   },
   status: parityFailures.length === 0 && productionRoomSha256 === expectedRoomSha256 && workingTreeAppMatchesSource && expectedPathDelta ? "PASS_SOURCE_BINDING" : "FAIL_SOURCE_BINDING",
 };

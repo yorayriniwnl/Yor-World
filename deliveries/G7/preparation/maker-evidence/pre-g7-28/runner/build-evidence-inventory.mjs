@@ -4,7 +4,7 @@ import path from "node:path";
 import { execFileSync } from "node:child_process";
 
 const root = execFileSync("git", ["rev-parse", "--show-toplevel"], { cwd: process.cwd(), encoding: "utf8" }).trim();
-const evidenceRelative = "deliveries/G7/preparation/maker-evidence/pre-g7-27";
+const evidenceRelative = "deliveries/G7/preparation/maker-evidence/pre-g7-28";
 const evidenceRoot = path.join(root, ...evidenceRelative.split("/"));
 const inventoryRelative = `${evidenceRelative}/source/evidence-inventory.json`;
 const inventoryPath = path.join(root, ...inventoryRelative.split("/"));
@@ -29,7 +29,7 @@ const artifacts = walk(evidenceRoot)
   });
 const inventory = {
   schemaVersion: 1,
-  packet: "PRE-G7-27",
+  packet: "PRE-G7-28",
   generatedAtUtc: new Date().toISOString(),
   selfExclusion: "source/evidence-inventory.json is excluded because an inventory cannot hash itself",
   artifactCount: artifacts.length,
@@ -39,4 +39,4 @@ const inventory = {
 
 fs.mkdirSync(path.dirname(inventoryPath), { recursive: true });
 fs.writeFileSync(inventoryPath, `${JSON.stringify(inventory, null, 2)}\n`, "utf8");
-process.stdout.write(`PRE-G7-27 inventory: ${artifacts.length} artifacts, ${inventory.totalBytes} bytes\n`);
+process.stdout.write(`PRE-G7-28 inventory: ${artifacts.length} artifacts, ${inventory.totalBytes} bytes\n`);
