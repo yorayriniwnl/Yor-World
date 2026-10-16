@@ -38,7 +38,7 @@ PRE-G7-30 completed its authorized single trace recapture against the exact PRE-
 
 [PRE-G7-37](reconciliation-packets/2026-10-16-pre-g7-37-shader-extension-capability-probe.md) measures WebGL parallel-compile support and first-use GL-call cost on the same frozen PRE-G7-35 build. It authorizes no application-source edit, tests or full performance suite, acceptance, merge, or deployment.
 
-[PRE-G7-38](reconciliation-packets/2026-10-16-pre-g7-38-first-use-shader-info-log-fast-path.md) targets the measured successful-link getProgramInfoLog stall. It authorizes a pinned Three.js patch in the app/domain mirror, offline install, lint/typecheck/build, and one source-bound instrumented capture; tests and the full performance suite are not authorized.
+[PRE-G7-38](reconciliation-packets/2026-10-16-pre-g7-38-first-use-shader-info-log-fast-path.md) targets the measured successful-link getProgramInfoLog stall. It authorizes a pinned Three.js patch in the app/domain mirror, offline-first frozen install with one locked network fallback for a missing cache, lint/typecheck/build, and one source-bound instrumented capture; tests and the full performance suite are not authorized.
 
 Read [current pre-G7 requirements](../operations/pre-g7-prerequisites.md) and the [RC6 dossier](../releases/v1.0.0-rc6.md). Parent continues authorized independent work and obtains missing service/device inputs. No mock, local fixture, emulation, liveness-only response or private preview substitutes for a mandatory production criterion.
 
