@@ -1,0 +1,3 @@
+# Runner correction before freeze
+
+Initial controlled probes passed for the runner that supplied PATH only in `ProcessStartInfo.EnvironmentVariables`. Packet §4 requires the pinned Node directory to be prepended in the same PowerShell process that launches each install, preflight, build, and capture command. The runner now also sets its own `$env:PATH` from the request before starting the child. The original runner and its two passing probe receipts/streams remain preserved in `runner-probes/` and `runner/run-child.probe-01.ps1`; the corrected runner is being tested once with a fresh pair under `runner-probes-attempt-02/`. No source worktree or build was touched.

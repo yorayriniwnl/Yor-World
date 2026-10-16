@@ -1,0 +1,3 @@
+# Source overlay identity report attempts 01 and 02
+
+Attempt 01 wrote a null-entry JSON result because the inline PowerShell generator used an invalid `if` expression inside interpolation; that output is preserved as `source-overlay-identity.attempt-01-invalid.json`. Attempt 02 failed its assertion because it staged only `WorldRuntime.ts` when comparing against the P28 temporary app tree. P28's expected tree also contains the canonical observer, harness spec, and config. The source identity inputs were correct; no source file contents changed after applying the canonical patch/copies. The corrected verifier stages all four measurement-only files solely to compute the Git tree and compares that tree with P28's frozen temporary app tree.

@@ -1,0 +1,3 @@
+# Source binding manifest generation failure 01
+
+The first inline PowerShell manifest generator reached `ConvertTo-Json` but did not write `current-binding-before-build.json`. PowerShell rejected the numeric keys `3291` and `3292` in an `OrderedDictionary` (`NonStringKeyInDictionary`). The follow-up `Get-Content`, `Get-FileHash`, and `Get-Item` calls consequently reported the target absent. No source worktree, command receipt, or build/capture was changed or launched. The correction uses string port keys and writes to a new successful manifest path; this failure is preserved as packaging-only evidence.

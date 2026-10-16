@@ -1,0 +1,3 @@
+# Resolver matrix generation failure 01
+
+The first derived matrix generator used a nonexistent nested donor resolver directory (`commands/p25-donor-28fb-runtime-resolver/runtime-resolver.json`). The actual preserved donor raw resolver is the flat file `commands/p25-donor-28fb-runtime-resolver.json`. The generator emitted an incomplete matrix with a null donor record after the read error. That JSON is retained byte-for-byte as `runtime-resolver-corrected-matrix.attempt-01-invalid.json` (4625 bytes; SHA-256 585f573d0e2f897738d7752000719b2477b1f850b15330a00abe77fc56cb0b0c). This was evidence-packaging only; it launched no resolver, install, source build, or browser.
