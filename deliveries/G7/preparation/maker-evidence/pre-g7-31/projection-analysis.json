@@ -1,0 +1,678 @@
+{
+  "status": "GEOMETRIC PROJECTION PASS",
+  "purpose": "Offline projection of existing AABB world bounds under the PRE-G7-31 candidate mobile camera; this is not a browser test or a visual acceptance.",
+  "candidate": {
+    "sourceCommit": "bd01478617b4166866f3f44196c56fc5add94acd",
+    "appTree": "3975e40c59a04b8696efa2ca3605eb37a0617165",
+    "domainTree": "8c34adf791c678a4e9e8bfe90f92426026994e68",
+    "camera": {
+      "position": [
+        0.3,
+        2.22,
+        1.43
+      ],
+      "target": [
+        0.06,
+        0.55,
+        -1.2
+      ],
+      "fov": 110,
+      "aspect": 0.46208530805687204
+    }
+  },
+  "baseline": {
+    "sourceCandidate": "PRE-G7-25 attempt-02 capture; snapshot does not embed its exact source commit",
+    "evidenceCommit": "848463d6d5c44e2575ada644baedb327176dc356",
+    "originalSnapshotPath": "deliveries/G7/preparation/maker-evidence/pre-g7-25/attempt-02/composition-e2e/measurements/mobile-390x844-chrome-projected-anchor-snapshot.json",
+    "originalSnapshotGitBlob": "e56309b7d13239a65ea12e8d427586c287c94bd2",
+    "snapshotSha256": "d5c644887e18b33e6113a047dcc2c88206196d1d68a660e36e92a58409462321",
+    "screenshotPath": "deliveries/G7/preparation/maker-evidence/pre-g7-25/attempt-02/composition-e2e/screenshots/studio-reference-mobile-390x844-chrome.png",
+    "screenshotGitBlob": "9b59d3246cf7015c3d287742e8eacac6d95a971e",
+    "screenshotSha256": "f8c529f80cb80b5ea264917f06bd1ac4e154f123ff335d269ae904a824252968",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "recordedCamera": {
+      "position": [
+        0.3,
+        2.22,
+        1.43
+      ],
+      "target": [
+        0.06,
+        0.96,
+        -1.2
+      ],
+      "fov": 110,
+      "aspect": 0.46208530805687204
+    },
+    "relevantCameraAndSceneFilesMatchCurrentBase": [
+      {
+        "path": "app/src/features/world/CameraDirector.ts",
+        "blob": "bd5d4d73ff2f4606fab01333750314faa85054f4"
+      },
+      {
+        "path": "app/src/features/world/ReferenceComposition.ts",
+        "blob": "7bab6b6c72458f29b66c050af2820e0cc5de5032"
+      },
+      {
+        "path": "app/src/features/world/SceneIntegrator.ts",
+        "blob": "53b389409d2fcffef4423000376b38264b0ea6b8"
+      },
+      {
+        "path": "app/src/features/world/ProductionLighting.ts",
+        "blob": "b90fd4636a5cf3a60861a961c11a11f7d02ce6b6"
+      }
+    ],
+    "sourceBindingLimitation": "The copied snapshot contains no source commit field. PRE-G7-25 reports it under attempt-02; the camera and listed scene files are identical between that candidate and PRE-G7-28. This prior capture is diagnostic input only, not PRE-G7-31 browser evidence."
+  },
+  "method": {
+    "projection": "Project all eight corners of each measured world-space AABB through a perspective camera using the stored 390x844 viewport, aspect, and FOV.",
+    "requiredAnchorNames": [
+      "hex_panel_1",
+      "hex_panel_2",
+      "hex_panel_3",
+      "hex_panel_4",
+      "hex_panel_5",
+      "hex_panel_6",
+      "hex_panel_7",
+      "lightbar_emissive",
+      "ai-real-camera",
+      "plants",
+      "monitor",
+      "speaker_left_cabinet",
+      "speaker_right_cabinet",
+      "talks-microphone",
+      "console-code-native",
+      "helios-pc",
+      "pegboard_system",
+      "peg_controller_body",
+      "headset-stand-code-native",
+      "headset-code-native",
+      "desk"
+    ],
+    "metrics": {
+      "requiredAnchorCount": 21,
+      "projectedAnchorsInsideViewport": 21,
+      "minimumProjectedEdgeMargin": {
+        "name": "plants",
+        "edge": "left",
+        "margin": 12.914717255154908
+      },
+      "monitorWidth": 163.9338143548074,
+      "sevenPanelClusterWidth": 148.7457579831611,
+      "shelfCameraWidth": 58.703184529576646,
+      "controllerWidth": 47.73563249115989,
+      "leftSpeaker": {
+        "width": 26.637351140776147,
+        "height": 31.71236905340953
+      },
+      "rightSpeaker": {
+        "width": 18.65604321717973,
+        "height": 33.082938623760526
+      },
+      "existingMobileMinimums": {
+        "monitorAtLeast156px": true,
+        "hexClusterAtLeast115px": true,
+        "shelfCameraAtLeast28px": true,
+        "controllerAtLeast24px": true,
+        "speakersAtLeast16px": true
+      }
+    },
+    "anchors": {
+      "hex_panel_1": {
+        "baseline": {
+          "left": 123.36315059641656,
+          "top": 313.81202358933484,
+          "right": 149.08418893435424,
+          "bottom": 336.02881578005116,
+          "width": 25.721038337937685,
+          "height": 22.21679219071632,
+          "visibleAreaRatio": 1
+        },
+        "candidate": {
+          "left": 119.56604385680694,
+          "top": 272.0212250019392,
+          "right": 147.09160320237265,
+          "bottom": 296.42989573198633,
+          "width": 27.52555934556571,
+          "height": 24.408670730047163,
+          "edgeMargins": {
+            "left": 119.56604385680694,
+            "top": 272.0212250019392,
+            "right": 242.90839679762735,
+            "bottom": 547.5701042680137
+          },
+          "insideViewport": true
+        }
+      },
+      "hex_panel_2": {
+        "baseline": {
+          "left": 144.23543905484237,
+          "top": 342.7156467716351,
+          "right": 168.5311676214872,
+          "bottom": 363.6532607258228,
+          "width": 24.29572856664484,
+          "height": 20.937613954187725,
+          "visibleAreaRatio": 1
+        },
+        "candidate": {
+          "left": 142.19157231648214,
+          "top": 303.6879006861661,
+          "right": 167.69665101441424,
+          "bottom": 326.15445351677243,
+          "width": 25.505078697932106,
+          "height": 22.46655283060636,
+          "edgeMargins": {
+            "left": 142.19157231648214,
+            "top": 303.6879006861661,
+            "right": 222.30334898558576,
+            "bottom": 517.8455464832275
+          },
+          "insideViewport": true
+        }
+      },
+      "hex_panel_3": {
+        "baseline": {
+          "left": 161.11483850829217,
+          "top": 314.1624654300014,
+          "right": 186.04407610253472,
+          "bottom": 336.6054408104865,
+          "width": 24.92923759424255,
+          "height": 22.44297538048511,
+          "visibleAreaRatio": 1
+        },
+        "candidate": {
+          "left": 159.3240828280528,
+          "top": 272.4097936648347,
+          "right": 185.65765284880766,
+          "bottom": 297.0573734293666,
+          "width": 26.33357002075485,
+          "height": 24.647579764531883,
+          "edgeMargins": {
+            "left": 159.3240828280528,
+            "top": 272.4097936648347,
+            "right": 204.34234715119234,
+            "bottom": 546.9426265706334
+          },
+          "insideViewport": true
+        }
+      },
+      "hex_panel_4": {
+        "baseline": {
+          "left": 180.88572296283596,
+          "top": 343.3520779476232,
+          "right": 204.71564468630098,
+          "bottom": 364.4899213032737,
+          "width": 23.82992172346502,
+          "height": 21.137843355650546,
+          "visibleAreaRatio": 1
+        },
+        "candidate": {
+          "left": 180.32138804642827,
+          "top": 304.3765855481233,
+          "right": 205.10354861144285,
+          "bottom": 327.04413246895973,
+          "width": 24.78216056501458,
+          "height": 22.667546920836458,
+          "edgeMargins": {
+            "left": 180.32138804642827,
+            "top": 304.3765855481233,
+            "right": 184.89645138855715,
+            "bottom": 516.9558675310402
+          },
+          "insideViewport": true
+        }
+      },
+      "hex_panel_5": {
+        "baseline": {
+          "left": 199.54322130268832,
+          "top": 314.5204787096343,
+          "right": 224.69003488585565,
+          "bottom": 337.1942830558995,
+          "width": 25.14681358316733,
+          "height": 22.67380434626523,
+          "visibleAreaRatio": 1
+        },
+        "candidate": {
+          "left": 199.73833086905898,
+          "top": 272.80663885289954,
+          "right": 226.25333556470432,
+          "bottom": 297.69783367029305,
+          "width": 26.51500469564533,
+          "height": 24.89119481739351,
+          "edgeMargins": {
+            "left": 199.73833086905898,
+            "top": 272.80663885289954,
+            "right": 163.74666443529568,
+            "bottom": 546.302166329707
+          },
+          "insideViewport": true
+        }
+      },
+      "hex_panel_6": {
+        "baseline": {
+          "left": 217.61779322443638,
+          "top": 344.0017766976435,
+          "right": 242.54387661940962,
+          "bottom": 365.3436978189431,
+          "width": 24.926083394973233,
+          "height": 21.341921121299606,
+          "visibleAreaRatio": 1
+        },
+        "candidate": {
+          "left": 218.31642005926471,
+          "top": 305.0792504863661,
+          "right": 244.42258300854186,
+          "bottom": 327.9513780350966,
+          "width": 26.10616294927715,
+          "height": 22.872127548730475,
+          "edgeMargins": {
+            "left": 218.31642005926471,
+            "top": 305.0792504863661,
+            "right": 145.57741699145814,
+            "bottom": 516.0486219649034
+          },
+          "insideViewport": true
+        }
+      },
+      "hex_panel_7": {
+        "baseline": {
+          "left": 237.6866111135876,
+          "top": 314.8863114839485,
+          "right": 264.66041329215915,
+          "bottom": 337.7957349511155,
+          "width": 26.97380217857156,
+          "height": 22.909423467167016,
+          "visibleAreaRatio": 1
+        },
+        "candidate": {
+          "left": 239.5135602002317,
+          "top": 273.2120278480741,
+          "right": 268.31180183996804,
+          "bottom": 298.3516835806622,
+          "width": 28.798241639736347,
+          "height": 25.139655732588096,
+          "edgeMargins": {
+            "left": 239.5135602002317,
+            "top": 273.2120278480741,
+            "right": 121.68819816003196,
+            "bottom": 545.6483164193378
+          },
+          "insideViewport": true
+        }
+      },
+      "lightbar_emissive": {
+        "baseline": {
+          "left": 151.88181309107915,
+          "top": 388.48814893305274,
+          "right": 227.8423008970747,
+          "bottom": 392.093798498755,
+          "width": 75.96048780599554,
+          "height": 3.605649565702265,
+          "visibleAreaRatio": 1
+        },
+        "candidate": {
+          "left": 150.98984700625294,
+          "top": 352.30379581739203,
+          "right": 228.48999622433183,
+          "bottom": 356.05617069858636,
+          "width": 77.50014921807889,
+          "height": 3.752374881194328,
+          "edgeMargins": {
+            "left": 150.98984700625294,
+            "top": 352.30379581739203,
+            "right": 161.51000377566817,
+            "bottom": 487.94382930141364
+          },
+          "insideViewport": true
+        }
+      },
+      "ai-real-camera": {
+        "baseline": {
+          "left": 246.2204049794137,
+          "top": 232.96906911755264,
+          "right": 298.87890153589774,
+          "bottom": 287.98609699705514,
+          "width": 52.65849655648404,
+          "height": 55.01702787950251,
+          "visibleAreaRatio": 1
+        },
+        "candidate": {
+          "left": 249.55308653477326,
+          "top": 179.20260403603723,
+          "right": 308.2562710643499,
+          "bottom": 243.06568042066277,
+          "width": 58.703184529576646,
+          "height": 63.86307638462554,
+          "edgeMargins": {
+            "left": 249.55308653477326,
+            "top": 179.20260403603723,
+            "right": 81.7437289356501,
+            "bottom": 600.9343195793372
+          },
+          "insideViewport": true
+        }
+      },
+      "plants": {
+        "baseline": {
+          "left": 85.39134824739038,
+          "top": 261.074497219072,
+          "right": 206.0604543119808,
+          "bottom": 534.9792959709638,
+          "width": 120.66910606459042,
+          "height": 273.9047987518918,
+          "visibleAreaRatio": 1
+        },
+        "candidate": {
+          "left": 12.914717255154908,
+          "top": 199.47690328911614,
+          "right": 209.5013663752725,
+          "bottom": 503.5320248326744,
+          "width": 196.5866491201176,
+          "height": 304.05512154355824,
+          "edgeMargins": {
+            "left": 12.914717255154908,
+            "top": 199.47690328911614,
+            "right": 180.4986336247275,
+            "bottom": 340.4679751673256
+          },
+          "insideViewport": true
+        }
+      },
+      "monitor": {
+        "baseline": {
+          "left": 111.03897833230612,
+          "top": 374.9785056041699,
+          "right": 271.377327989009,
+          "bottom": 440.45301347017465,
+          "width": 160.33834965670292,
+          "height": 65.47450786600473,
+          "visibleAreaRatio": 1
+        },
+        "candidate": {
+          "left": 109.07831629331292,
+          "top": 338.1453988536161,
+          "right": 273.0121306481203,
+          "bottom": 405.33550402290336,
+          "width": 163.9338143548074,
+          "height": 67.19010516928728,
+          "edgeMargins": {
+            "left": 109.07831629331292,
+            "top": 338.1453988536161,
+            "right": 116.98786935187968,
+            "bottom": 438.66449597709664
+          },
+          "insideViewport": true
+        }
+      },
+      "speaker_left_cabinet": {
+        "baseline": {
+          "left": 73.27998523740625,
+          "top": 423.769870428528,
+          "right": 99.2781254491635,
+          "bottom": 455.4826791796836,
+          "width": 25.998140211757246,
+          "height": 31.712808751155592,
+          "visibleAreaRatio": 1
+        },
+        "candidate": {
+          "left": 72.90333428851041,
+          "top": 388.55213626680137,
+          "right": 99.54068542928655,
+          "bottom": 420.2645053202109,
+          "width": 26.637351140776147,
+          "height": 31.71236905340953,
+          "edgeMargins": {
+            "left": 72.90333428851041,
+            "top": 388.55213626680137,
+            "right": 290.45931457071345,
+            "bottom": 423.7354946797891
+          },
+          "insideViewport": true
+        }
+      },
+      "speaker_right_cabinet": {
+        "baseline": {
+          "left": 231.98456708678626,
+          "top": 430.01533275148927,
+          "right": 250.447028962526,
+          "bottom": 463.2851257334021,
+          "width": 18.462461875739734,
+          "height": 33.269792981912815,
+          "visibleAreaRatio": 1
+        },
+        "candidate": {
+          "left": 231.7906909784402,
+          "top": 394.8615027184607,
+          "right": 250.44673419561994,
+          "bottom": 427.94444134222124,
+          "width": 18.65604321717973,
+          "height": 33.082938623760526,
+          "edgeMargins": {
+            "left": 231.7906909784402,
+            "top": 394.8615027184607,
+            "right": 139.55326580438006,
+            "bottom": 416.05555865777876
+          },
+          "insideViewport": true
+        }
+      },
+      "talks-microphone": {
+        "baseline": {
+          "left": 83.20019264650698,
+          "top": 393.43840065967044,
+          "right": 138.80244873993934,
+          "bottom": 447.5737097712476,
+          "width": 55.60225609343236,
+          "height": 54.13530911157716,
+          "visibleAreaRatio": 1
+        },
+        "candidate": {
+          "left": 81.67561188692008,
+          "top": 357.4526604803341,
+          "right": 138.62327546431575,
+          "bottom": 412.430856073227,
+          "width": 56.94766357739567,
+          "height": 54.97819559289292,
+          "edgeMargins": {
+            "left": 81.67561188692008,
+            "top": 357.4526604803341,
+            "right": 251.37672453568425,
+            "bottom": 431.569143926773
+          },
+          "insideViewport": true
+        }
+      },
+      "console-code-native": {
+        "baseline": {
+          "left": 112.26518979108738,
+          "top": 435.29537150350416,
+          "right": 148.73408447180918,
+          "bottom": 453.1714147322295,
+          "width": 36.4688946807218,
+          "height": 17.876043228725337,
+          "visibleAreaRatio": 1
+        },
+        "candidate": {
+          "left": 112.43686359790628,
+          "top": 400.17088581635267,
+          "right": 148.8026346562617,
+          "bottom": 417.9803599397007,
+          "width": 36.365771058355406,
+          "height": 17.809474123348025,
+          "edgeMargins": {
+            "left": 112.43686359790628,
+            "top": 400.17088581635267,
+            "right": 241.1973653437383,
+            "bottom": 426.0196400602993
+          },
+          "insideViewport": true
+        }
+      },
+      "helios-pc": {
+        "baseline": {
+          "left": 295.8208526692267,
+          "top": 387.1597948519776,
+          "right": 344.8450546619216,
+          "bottom": 453.4134376850819,
+          "width": 49.024201992694884,
+          "height": 66.25364283310427,
+          "visibleAreaRatio": 1
+        },
+        "candidate": {
+          "left": 296.24824445894313,
+          "top": 350.9185944832662,
+          "right": 346.8843744840136,
+          "bottom": 418.2197403962255,
+          "width": 50.636130025070486,
+          "height": 67.30114591295933,
+          "edgeMargins": {
+            "left": 296.24824445894313,
+            "top": 350.9185944832662,
+            "right": 43.11562551598638,
+            "bottom": 425.7802596037745
+          },
+          "insideViewport": true
+        }
+      },
+      "pegboard_system": {
+        "baseline": {
+          "left": 245.57149387709998,
+          "top": 350.698469600617,
+          "right": 334.22080445677665,
+          "bottom": 420.85817660490574,
+          "width": 88.64931057967667,
+          "height": 70.15970700428875,
+          "visibleAreaRatio": 1
+        },
+        "candidate": {
+          "left": 246.15607288523523,
+          "top": 312.2997739911077,
+          "right": 339.0147381657415,
+          "bottom": 385.599772830605,
+          "width": 92.85866528050627,
+          "height": 73.29999883949728,
+          "edgeMargins": {
+            "left": 246.15607288523523,
+            "top": 312.2997739911077,
+            "right": 50.985261834258495,
+            "bottom": 458.400227169395
+          },
+          "insideViewport": true
+        }
+      },
+      "peg_controller_body": {
+        "baseline": {
+          "left": 255.78435369281854,
+          "top": 365.96130230438365,
+          "right": 301.84033001061414,
+          "bottom": 392.3023846233114,
+          "width": 46.0559763177956,
+          "height": 26.34108231892776,
+          "visibleAreaRatio": 1
+        },
+        "candidate": {
+          "left": 257.1159163614508,
+          "top": 328.6072621624703,
+          "right": 304.8515488526107,
+          "bottom": 356.27290660985375,
+          "width": 47.73563249115989,
+          "height": 27.665644447383443,
+          "edgeMargins": {
+            "left": 257.1159163614508,
+            "top": 328.6072621624703,
+            "right": 85.14845114738932,
+            "bottom": 487.72709339014625
+          },
+          "insideViewport": true
+        }
+      },
+      "headset-stand-code-native": {
+        "baseline": {
+          "left": 306.43989622686956,
+          "top": 347.30230598850375,
+          "right": 349.27190705983344,
+          "bottom": 399.23556615642644,
+          "width": 42.832010832963874,
+          "height": 51.9332601679227,
+          "visibleAreaRatio": 1
+        },
+        "candidate": {
+          "left": 308.57621110120874,
+          "top": 308.64298454111474,
+          "right": 354.9144780448723,
+          "bottom": 363.4560194301967,
+          "width": 46.33826694366354,
+          "height": 54.81303488908196,
+          "edgeMargins": {
+            "left": 308.57621110120874,
+            "top": 308.64298454111474,
+            "right": 35.08552195512772,
+            "bottom": 480.5439805698033
+          },
+          "insideViewport": true
+        }
+      },
+      "headset-code-native": {
+        "baseline": {
+          "left": 312.327381424829,
+          "top": 348.72909942466987,
+          "right": 346.71448489226924,
+          "bottom": 372.2956892395269,
+          "width": 34.38710346744023,
+          "height": 23.566589814857025,
+          "visibleAreaRatio": 1
+        },
+        "candidate": {
+          "left": 315.66319242984855,
+          "top": 310.1805302766619,
+          "right": 352.358265374451,
+          "bottom": 335.3149973382853,
+          "width": 36.69507294460243,
+          "height": 25.13446706162341,
+          "edgeMargins": {
+            "left": 315.66319242984855,
+            "top": 310.1805302766619,
+            "right": 37.64173462554902,
+            "bottom": 508.6850026617147
+          },
+          "insideViewport": true
+        }
+      },
+      "desk": {
+        "baseline": {
+          "left": 22.767456579961294,
+          "top": 351.6928200405103,
+          "right": 356.70001520930526,
+          "bottom": 537.961542965898,
+          "width": 333.932558629344,
+          "height": 186.26872292538775,
+          "visibleAreaRatio": 1
+        },
+        "candidate": {
+          "left": 18.51177092383444,
+          "top": 313.36847937777776,
+          "right": 360.04354011903234,
+          "bottom": 499.11075248599695,
+          "width": 341.5317691951979,
+          "height": 185.7422731082192,
+          "edgeMargins": {
+            "left": 18.51177092383444,
+            "top": 313.36847937777776,
+            "right": 29.956459880967657,
+            "bottom": 344.88924751400305
+          },
+          "insideViewport": true
+        }
+      }
+    }
+  },
+  "limitations": [
+    "The calculation projects bounding boxes, not rendered pixels or visible mesh fragments.",
+    "It does not recalculate occlusion, identify human recognition, sample materials or lights, or model fixed HUD overlap.",
+    "The baseline capture is from an earlier PRE-G7-25 run and its snapshot does not embed a source commit.",
+    "No PRE-G7-31 browser capture, test, build, or independent visual review was run."
+  ]
+}
