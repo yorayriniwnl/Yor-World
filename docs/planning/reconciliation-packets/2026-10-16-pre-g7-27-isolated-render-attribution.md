@@ -16,10 +16,12 @@ The P26 invocation is closed and must not be resumed or repeated. PRE-G7-27 is a
 
 - Accepted source: commit 500d10fa5901be48d4ff877e608d65ba0e271bb9; app tree ba0b709192367e1d12a796618f97801a8fcd5a70; mirror tree 34f7ac0731984e50cbb06cf02039911ba65f59a9.
 - P25 patch donor only: commit 28fb4187445206bcc62e2ef0ae2678e44ac6604b; app tree f68074b41b8d2eea228d7fa964d3db8358a9fea4; mirror tree be03089ce9abae0f487bd829b4f24ddac9bb3dfd. Do not use another P25 revision as the donor.
-- P25 attempt-03 report: deliveries/G7/preparation/maker-evidence/pre-g7-25/attempt-03/REPORT.md, SHA-256 b0a5d18ba09019eb3aee332fe60d129c56a88e47821952a403d438bacabfe751.
+- P25 attempt-03 report: deliveries/G7/preparation/maker-evidence/pre-g7-25/attempt-03/REPORT.md, Git blob 4c7d90c896d8ce5da152434d6be5fbbeeeca8a72 at this packet's parent commit, 12,996 bytes, SHA-256 06e62728c1db7c70f1f8342d54ad49e59526641533cb9ab3ce733038f379bd3d.
 - P26 report: deliveries/G7/preparation/maker-evidence/pre-g7-26/REPORT.md, SHA-256 24720e046a755ba474866c2025fcc05cc37b262d5904f962d1082401617e0fa0.
-- P26 archived observer source: deliveries/G7/preparation/maker-evidence/pre-g7-26/attempt-01/attribution/instrumentation-source/P26RenderAttribution.ts, SHA-256 11b064a5b4500b3d3ed2c989d7f35ea509685c346de745fad7951b4578a8695f. It may be reused only as temporary measurement code, outside committed app source.
+- P26 archived observer source: deliveries/G7/preparation/maker-evidence/pre-g7-26/attempt-01/attribution/instrumentation-source/P26RenderAttribution.ts, Git blob 44c7b223db407671c9a56914517e67d0e07589f9 at this packet's parent commit, 18,794 bytes, SHA-256 dc7970702073e91e78243b81ace8b712fcb117e1e30855dedbcbbf3c18da99d9. It may be reused only as temporary measurement code, outside committed app source.
 - Frozen product, engineering, and validation contracts remain those named and hashed in PRE-G7-26: product spec 9a05f7c0485fd46299e96706d3d7c4195eb30b2ae33710b37d67f2763aceff05; engineering contract 9a382f0c45e50c59862728f88a8ef7af77c1ed814a5c71a9fe4f59baac1e8b4a; validation and production contract 01d9df1de83cede37a9efbc5ca3cdfe760403404a8b1929029a05067c7551290.
+
+The file digests above are SHA-256 over the exact Git blob bytes at parent commit `3fcd5fe8086d39c573dc4b885d3501b30d3f8364`, not over a checkout's working-tree bytes. Windows `core.autocrlf` changes line endings in these two files; the earlier P25/P26 worktree digests are not canonical source bindings. Read the frozen inputs with `git cat-file blob <commit>:<path>` and verify both the blob ID and byte-level SHA-256 before use.
 
 ## Authorized work
 
