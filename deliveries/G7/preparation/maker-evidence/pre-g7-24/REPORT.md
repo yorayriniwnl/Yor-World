@@ -78,12 +78,25 @@ All recorded commands used Node 24.19.0 and the project-pinned pnpm 9.15.9. The 
 | Windows with NVDA | NOT RUN | No device session |
 | Safari with VoiceOver | NOT RUN | No device session |
 | 10-minute mobile soak | NOT RUN | No physical-device run |
-| Provider/database setup, production domain, deployment, independent audit, parent acceptance | NOT RUN | Outside this local maker run |
+| Provider/database setup, production domain, deployment | NOT RUN | Outside this local maker run |
+| Local Codex substitute audit | COMPLETE; recommends FAIL / retain unaccepted | Reviewed source `017bead7` and evidence commits `806a26e9` / `edd0ab05` |
+| External GPT Plus #2 audit | NOT RUN | Independent audit has not been performed |
+| Parent acceptance | PENDING | No acceptance claim is made |
 
 The two qualifying integration invocations ran sequentially with no other test/build process during either invocation. Earlier successful integration receipts remain preserved but do not qualify as a clean pair: integration-01 overlapped visual-e2e-final; integration-clean-01 overlapped integration-final-01; integration-seq-01/02 overlapped performance-final; integration-final-clean-01 overlapped baseline-build; and integration-final-clean-02 overlapped baseline-e2e. The baseline-e2e is an extra run, not the required candidate E2E.
 
 Earlier diagnostics also remain unchanged: focused-unit-02 failed the dynamic visibility assertion (resident.visible expected false, received true); later focused runs and focused-source-final passed. focused-unit-04 passed 49 tests but emitted the existing 10-second Vite teardown timeout warning; this warning occurred in one of three P24 paired runs. typecheck-01 failed with two TypeScript errors; typecheck-02/03 passed. performance-final overlapped integration-seq runs; performance-suite-01 was a separate rerun. Both performance failures are recorded above. No timeouts, retries, thresholds, or test filters were changed.
 
+## Receipt capture and committed-blob binding
+
+The three stdout captures below are preserved unchanged. Their local working-copy bytes contain CRLF pairs that Git normalized to LF when committing. At verification, `core.autocrlf=true`; `text` and `eol` attributes are unspecified for each path. Replacing only each `0D 0A` pair with `0A` (leaving existing LF bytes unchanged) produced bytes identical to the committed blob. For each path, `git hash-object --path=<path> <path>` also returned the same object ID as `git rev-parse HEAD:<path>`. Exact raw and normalized SHA-256 values, byte counts, LF counts, and blob object IDs are recorded in [`receipt-capture-git-blob-normalization.json`](commands/receipt-capture-git-blob-normalization.json).
+
+| Preserved capture | Local bytes / SHA-256 | Committed blob bytes / SHA-256 | Normalization verification |
+|---|---|---|---|
+| `commands/baseline-build.stdout.bin` | 1,339 / `05b9c3d8d388d752b29233b6eab80d0c9202e47749d0ced908638f362a7255bc` | 1,336 / `7a58dad67dce8cd78bcf50b39b2564465cd6843562cc4014e105abf42b6d879b` | 3 CRLF pairs converted; exact byte match |
+| `commands/build-01.stdout.bin` | 1,345 / `79be1aa0269cfd13fd309b33f332118c12a8fdee440165a98d98b859299fea77` | 1,342 / `f64775ba0d47850eefc8e46d9af45c891e482fd5d779f2a09725affaa5ee0c33` | 3 CRLF pairs converted; exact byte match |
+| `commands/typecheck-01.stdout.bin` | 1,019 / `5f4655756993b0ab6bc39d1d368bbf675f2394701f4968201c57022cfaab64c9` | 1,015 / `073eeb71153f0961e305191fd9de96a7d40feb4b64d687ff731a787119cac3ec` | 4 CRLF pairs converted; exact byte match |
+
 ## Follow-up and review boundary
 
-A follow-up should first explain and correct the upper-left foliage/stem discrepancy while preserving material, transform, visibility, raycast, and shadow semantics. It should then count submissions across both main and shadow passes without relying on renderer.info’s reset counter and capture every required viewport at the unchanged original tier. Preserve this source, all receipts, and all thresholds until a separately bound correction is ready. The maker has not accepted this candidate; independent audit and parent acceptance remain pending.
+A follow-up should first explain and correct the upper-left foliage/stem discrepancy while preserving material, transform, visibility, raycast, and shadow semantics. It should then count submissions across both main and shadow passes without relying on renderer.info’s reset counter and capture every required viewport at the unchanged original tier. Preserve this source, all receipts, and all thresholds until a separately bound correction is ready. The local Codex substitute audit of source `017bead7` and evidence commits `806a26e9` / `edd0ab05` is complete and recommends FAIL / retain unaccepted. External GPT Plus #2 audit is NOT RUN, and parent acceptance is PENDING. The maker has not accepted this candidate.

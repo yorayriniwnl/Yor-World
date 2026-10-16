@@ -1,0 +1,84 @@
+{
+  "title": "PRE-G7-24 stdout capture to committed blob normalization check",
+  "verifiedAtHead": "edd0ab0536f2abe82df68cab770156c9c318fe08",
+  "branch": "codex/pre-g7-24-surface-batching-20261016",
+  "normalizationBasis": {
+    "core.autocrlf": true,
+    "gitAttributes": {
+      "text": "unspecified",
+      "eol": "unspecified"
+    },
+    "operation": "Replace each CRLF byte pair (0D 0A) with one LF byte (0A); preserve all other bytes.",
+    "proof": [
+      "The normalized local capture bytes were compared byte-for-byte with git cat-file blob HEAD:<path>.",
+      "For each path, git hash-object --path=<path> <path> returned the same Git object ID as git rev-parse HEAD:<path>.",
+      "All original command receipts and stdout captures were preserved without modification."
+    ]
+  },
+  "captures": [
+    {
+      "path": "deliveries/G7/preparation/maker-evidence/pre-g7-24/commands/baseline-build.stdout.bin",
+      "localCapture": {
+        "bytes": 1339,
+        "sha256": "05b9c3d8d388d752b29233b6eab80d0c9202e47749d0ced908638f362a7255bc",
+        "crlfPairs": 3,
+        "bareLfBytes": 50,
+        "bareCrBytes": 0
+      },
+      "normalizedCapture": {
+        "bytes": 1336,
+        "sha256": "7a58dad67dce8cd78bcf50b39b2564465cd6843562cc4014e105abf42b6d879b"
+      },
+      "committedGitBlob": {
+        "bytes": 1336,
+        "sha256": "7a58dad67dce8cd78bcf50b39b2564465cd6843562cc4014e105abf42b6d879b",
+        "objectId": "02ea029af707d6af059c5410218ba51c1fb870e3"
+      },
+      "normalizedMatchesBlobByteForByte": true,
+      "gitCleanFilterObjectIdMatchesHead": true
+    },
+    {
+      "path": "deliveries/G7/preparation/maker-evidence/pre-g7-24/commands/build-01.stdout.bin",
+      "localCapture": {
+        "bytes": 1345,
+        "sha256": "79be1aa0269cfd13fd309b33f332118c12a8fdee440165a98d98b859299fea77",
+        "crlfPairs": 3,
+        "bareLfBytes": 50,
+        "bareCrBytes": 0
+      },
+      "normalizedCapture": {
+        "bytes": 1342,
+        "sha256": "f64775ba0d47850eefc8e46d9af45c891e482fd5d779f2a09725affaa5ee0c33"
+      },
+      "committedGitBlob": {
+        "bytes": 1342,
+        "sha256": "f64775ba0d47850eefc8e46d9af45c891e482fd5d779f2a09725affaa5ee0c33",
+        "objectId": "0e6b8cfc5bd15aed248ab748731c898991cc2f60"
+      },
+      "normalizedMatchesBlobByteForByte": true,
+      "gitCleanFilterObjectIdMatchesHead": true
+    },
+    {
+      "path": "deliveries/G7/preparation/maker-evidence/pre-g7-24/commands/typecheck-01.stdout.bin",
+      "localCapture": {
+        "bytes": 1019,
+        "sha256": "5f4655756993b0ab6bc39d1d368bbf675f2394701f4968201c57022cfaab64c9",
+        "crlfPairs": 4,
+        "bareLfBytes": 5,
+        "bareCrBytes": 0
+      },
+      "normalizedCapture": {
+        "bytes": 1015,
+        "sha256": "073eeb71153f0961e305191fd9de96a7d40feb4b64d687ff731a787119cac3ec"
+      },
+      "committedGitBlob": {
+        "bytes": 1015,
+        "sha256": "073eeb71153f0961e305191fd9de96a7d40feb4b64d687ff731a787119cac3ec",
+        "objectId": "18f9c72bcd3f878e9a120de5675d11e96ec266ae"
+      },
+      "normalizedMatchesBlobByteForByte": true,
+      "gitCleanFilterObjectIdMatchesHead": true
+    }
+  ],
+  "result": "All three local captures normalize to byte-for-byte identical committed blobs; the original captures remain unchanged."
+}
