@@ -5,7 +5,7 @@
 - **Status:** Authorized, source-bound diagnosis-only packet
 - **Branch:** `codex/pre-g7-33-startup-readiness-20261016`
 - **Branch parent:** `b26368cab80270e686e69b0ba29e80b87d7bde63`
-- **Frozen application source:** PRE-G7-31 commit `bd01478617f2186866f3f44196c56fc5add94acd`
+- **Frozen application source:** PRE-G7-31 commit `bd01478617b4166866f3f44196c56fc5add94acd`
 - **Frozen app tree:** `3975e40c59a04b8696efa2ca3605eb37a0617165`
 - **Output owner:** `deliveries/G7/preparation/maker-evidence/pre-g7-33/`
 - **Boundary:** Local read-only diagnosis. No product-source, test-source, asset, dependency, threshold, timeout, deployment, or acceptance changes.
@@ -28,6 +28,6 @@ Do not change any product or test source, model asset, performance budget, asser
 
 ## Evidence and exit boundary
 
-Preserve the preflight, optional offline-install receipt if needed, build receipt/output, diagnostic script, browser trace, screenshots, JSON timeline, console/page errors, and a strict SHA-256 / byte-length / Git-blob inventory. Bind every capture to source commit `bd01478617f2186866f3f44196c56fc5add94acd` and app tree `3975e40c59a04b8696efa2ca3605eb37a0617165`.
+Preserve the preflight, optional offline-install receipt if needed, build receipt/output, diagnostic script, browser trace, screenshots, JSON timeline, console/page errors, and a strict SHA-256 / byte-length / Git-blob inventory. Bind every capture to source commit `bd01478617b4166866f3f44196c56fc5add94acd` and app tree `3975e40c59a04b8696efa2ca3605eb37a0617165`.
 
 The PRE-G7-31 source candidate remains unaccepted and undeployed. This packet authorizes no correction, independent account review, visual acceptance, merge, domain operation, deployment, or G7 completion. Parent diagnosis is not a substitute for the separate GPT Plus #2 audit or human visual review.
