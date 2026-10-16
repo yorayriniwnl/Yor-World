@@ -352,7 +352,17 @@ export class WorldRuntime {
     // 6. Viewport Sizing
     this.resize();
 
-    // 7. Start Animation Loop
+    // 7. Prewarm visible-scene shaders before the first rendered frame.
+    const renderer = this.renderer;
+    if (!renderer) return;
+    try {
+      await renderer.compileAsync(this.scene, this.camera);
+    } catch (err) {
+      console.warn("[WorldRuntime] Shader prewarm failed; continuing renderer startup:", err);
+    }
+    if (this.isDisposed || this.lifecycleManager.isStale(token)) return;
+
+    // 8. Start Animation Loop
     const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
     this.lastTime = performance.now();
     this.scheduleAnimationFrame();
