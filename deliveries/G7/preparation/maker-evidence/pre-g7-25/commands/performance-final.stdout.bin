@@ -1,0 +1,90 @@
+
+> yor-world@1.0.0-rc6 test:performance C:\p25\app
+> playwright test --config playwright.performance.config.ts
+
+
+Running 6 tests using 1 worker
+
+  ok 1 [chrome] › tests\performance\world.spec.ts:37:3 › C3 Performance Benchmarks & Budget Verification › captures actual dynamic public HTML payloads for the current production build (364ms)
+  ok 2 [chrome] › tests\performance\world.spec.ts:54:5 › C3 Performance Benchmarks & Budget Verification › Five cold loads on desktop-1440x900 (3.8s)
+  ok 3 [chrome] › tests\performance\world.spec.ts:54:5 › C3 Performance Benchmarks & Budget Verification › Five cold loads on mobile-390x844 (2.9s)
+  ok 4 [chrome] › tests\performance\world.spec.ts:54:5 › C3 Performance Benchmarks & Budget Verification › Five cold loads on narrow-320x600 (4.6s)
+  ok 5 [chrome] › tests\performance\world.spec.ts:87:3 › C3 Performance Benchmarks & Budget Verification › 60-second active interaction route and frame pacing (1.3m)
+  x  6 [chrome] › tests\performance\world.spec.ts:263:3 › C3 Performance Benchmarks & Budget Verification › Enter/exit resource stability over multiple studio cycles (3.0m)
+
+
+  1) [chrome] › tests\performance\world.spec.ts:263:3 › C3 Performance Benchmarks & Budget Verification › Enter/exit resource stability over multiple studio cycles 
+
+    Test timeout of 180000ms exceeded.
+
+    Error: locator.click: Test timeout of 180000ms exceeded.
+    Call log:
+      - waiting for getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name: 'Projects', exact: true })
+        - locator resolved to <a href="/projects">Projects</a>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <a href="/about" data-testid="a11y-link-about" class="accessibility-controls-module__lOl7oq__navRailLink">About</a> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+        - retrying click action
+        - waiting 20ms
+        - waiting for element to be visible, enabled and stable
+        - element is visible, enabled and stable
+        - scrolling into view if needed
+        - done scrolling
+        - <a href="/about" data-testid="a11y-link-about" class="accessibility-controls-module__lOl7oq__navRailLink">About</a> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+      2 × retrying click action
+          - waiting 100ms
+          - waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <aside role="region" data-testid="accessibility-controls-toolbar" aria-label="Accessibility and Studio Presentation Controls" class="accessibility-controls-module__lOl7oq__controlsToolbar">…</aside> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+      71 × retrying click action
+           - waiting 500ms
+           - waiting for element to be visible, enabled and stable
+           - element is visible, enabled and stable
+           - scrolling into view if needed
+           - done scrolling
+           - <a href="/about" data-testid="a11y-link-about" class="accessibility-controls-module__lOl7oq__navRailLink">About</a> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+         - retrying click action
+           - waiting 500ms
+           - waiting for element to be visible, enabled and stable
+           - element is visible, enabled and stable
+           - scrolling into view if needed
+           - done scrolling
+           - <a href="/about" data-testid="a11y-link-about" class="accessibility-controls-module__lOl7oq__navRailLink">About</a> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+         - retrying click action
+           - waiting 500ms
+           - waiting for element to be visible, enabled and stable
+           - element is visible, enabled and stable
+           - scrolling into view if needed
+           - done scrolling
+           - <aside role="region" data-testid="accessibility-controls-toolbar" aria-label="Accessibility and Studio Presentation Controls" class="accessibility-controls-module__lOl7oq__controlsToolbar">…</aside> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+         - retrying click action
+           - waiting 500ms
+           - waiting for element to be visible, enabled and stable
+           - element is visible, enabled and stable
+           - scrolling into view if needed
+           - done scrolling
+           - <aside role="region" data-testid="accessibility-controls-toolbar" aria-label="Accessibility and Studio Presentation Controls" class="accessibility-controls-module__lOl7oq__controlsToolbar">…</aside> from <main tabindex="-1" id="main-content" class="portfolio-module__YTKhJW__main">…</main> subtree intercepts pointer events
+      - retrying click action
+        - waiting 500ms
+
+
+      284 |
+      285 |       // SPA navigation retains the old canvas's execution context for teardown proof.
+    > 286 |       await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("link", { name: "Projects", exact: true }).click();
+          |                                                                                                                               ^
+      287 |       await expect(page).toHaveURL(/\/projects$/);
+      288 |       await expect(page.locator("h1")).toBeVisible();
+      289 |
+        at C:\p25\app\tests\performance\world.spec.ts:286:127
+
+    Error Context: test-results\world-C3-Performance-Bench-934f4-over-multiple-studio-cycles-chrome\error-context.md
+
+  1 failed
+    [chrome] › tests\performance\world.spec.ts:263:3 › C3 Performance Benchmarks & Budget Verification › Enter/exit resource stability over multiple studio cycles 
+  5 passed (4.9m)
+ ELIFECYCLE  Command failed with exit code 1.

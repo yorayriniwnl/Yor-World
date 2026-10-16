@@ -1,0 +1,33 @@
+
+> yor-world@1.0.0-rc6 test:unit C:\p25\app
+> vitest run --config vitest.config.ts
+
+
+ RUN  v5.0.2 C:/p25/app
+
+ ❯ tests/unit/world-runtime-recovery.test.ts (14 tests | 9 failed) 218ms
+   ❯ Production runtime failure retirement (4)
+     × renderer creation failure reaches fallback and retry recovers on a replacement canvas 47ms
+   ❯ Single render loop with delayed assets (7)
+     × initialization starts one chain and each browser tick renders once 22ms
+     × hide/show during loading and repeated resume cannot create a second chain 15ms
+     × completion stays paused when initially hidden 10ms
+     × completion stays paused when hidden during loading 10ms
+     × a failed asset load remains retired while a replacement retry owns one chain 14ms
+   ❯ Canvas context lifecycle (3)
+     × keeps a connected canvas usable through Strict Mode setup, cleanup, setup replay 19ms
+     × releases a detached canvas context and removes listeners and pending frames 9ms
+     × keeps genuine context-loss fallback behavior and recovers on a replacement canvas 11ms
+ ❯ tests/unit/boundaries.test.ts (18 tests | 1 failed) 9249ms
+   × enforces integrated dependency boundaries: HTML shell stays free of 3D and browser features stay free of server imports 8902ms
+
+ Test Files  2 failed | 25 passed (27)
+      Tests  10 failed | 323 passed (333)
+     Errors  1 error
+   Start at  12:07:20
+   Duration  90.16s (import 50%, tests 26%, transform 22%, worker 2%)
+
+    Isolate  27 workers spawned · ~924ms startup each (spawn + environment, per file)
+             at least ~24.03s faster with isolate: false — reuses workers across files instead of one per file
+
+ ELIFECYCLE  Command failed with exit code 1.

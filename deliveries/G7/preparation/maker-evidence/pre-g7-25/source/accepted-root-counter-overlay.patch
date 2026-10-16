@@ -1,0 +1,89 @@
+﻿diff --git a/app/src/features/world/WorldRuntime.ts b/app/src/features/world/WorldRuntime.ts
+index 7816b55e..ad5727a1 100644
+--- a/app/src/features/world/WorldRuntime.ts
++++ b/app/src/features/world/WorldRuntime.ts
+@@ -86,6 +86,8 @@ export class WorldRuntime {
+   private sessionToken: number = 0;
+   private renderedFrames = 0;
+   private lastRenderedAt = 0;
++  private shadowRenderCalls = 0;
++  private isMeasuringRendererPasses = false;
+   private readonly loadingAbort = new AbortController();
+ 
+   constructor(options: WorldRuntimeOptions) {
+@@ -246,6 +248,14 @@ export class WorldRuntime {
+       console.error = originalConsoleError;
+     }
+ 
++    // Measurement-only overlay: capture Three's shadow/main reset boundary.
++    const rendererInfo = this.renderer.info;
++    const resetRendererInfo = rendererInfo.reset.bind(rendererInfo);
++    rendererInfo.reset = () => {
++      if (this.isMeasuringRendererPasses) this.shadowRenderCalls = rendererInfo.render.calls;
++      resetRendererInfo();
++    };
++
+     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+     this.renderer.toneMappingExposure = 1.15;
+     this.renderer.shadowMap.enabled = this.qualityTier !== "low" && this.qualityTier !== "static";
+@@ -420,7 +430,14 @@ export class WorldRuntime {
+     }
+ 
+     if (this.renderer && this.integratedResult) {
+-      this.renderer.render(this.scene, this.camera);
++      this.renderer.info.reset();
++      this.shadowRenderCalls = 0;
++      this.isMeasuringRendererPasses = true;
++      try {
++        this.renderer.render(this.scene, this.camera);
++      } finally {
++        this.isMeasuringRendererPasses = false;
++      }
+       this.renderedFrames++;
+       this.lastRenderedAt = currentTime;
+       this.canvas.dataset.renderedFrames = String(this.renderedFrames);
+@@ -428,7 +445,10 @@ export class WorldRuntime {
+         frame: this.renderedFrames, timestamp: currentTime, durationMs, qualityTier: this.qualityTier,
+         activeClip: this.characterDirector?.currentClip ?? "none", characterMode: this.characterDirector?.mode ?? "unmounted",
+         cameraPreset: this.cameraDirector?.getCurrentPreset() ?? "home-desktop", lifecycleState: this.lifecycleManager.getState(),
+-        renderCalls: this.renderer.info.render.calls, renderedTriangles: this.renderer.info.render.triangles,
++        renderCalls: this.shadowRenderCalls + this.renderer.info.render.calls,
++        shadowRenderCalls: this.shadowRenderCalls,
++        mainRenderCalls: this.renderer.info.render.calls,
++        renderedTriangles: this.renderer.info.render.triangles,
+       };
+       this.canvas.dispatchEvent(new CustomEvent(WORLD_RENDERED_FRAME_EVENT, { detail: frame }));
+     }
+@@ -595,7 +615,9 @@ export class WorldRuntime {
+     return {
+       renderedFrames: this.renderedFrames,
+       lastRenderedAt: this.lastRenderedAt,
+-      renderCalls: this.renderer?.info.render.calls ?? 0,
++        renderCalls: this.renderer ? this.shadowRenderCalls + this.renderer.info.render.calls : 0,
++        shadowRenderCalls: this.renderer ? this.shadowRenderCalls : 0,
++        mainRenderCalls: this.renderer?.info.render.calls ?? 0,
+       renderedTriangles: this.renderer?.info.render.triangles ?? 0,
+       renderPixelRatio: this.renderer?.getPixelRatio() ?? 0,
+       lifecycleState: this.lifecycleManager.getState(),
+diff --git a/app/src/features/world/types.ts b/app/src/features/world/types.ts
+index e3d7116f..38271c59 100644
+--- a/app/src/features/world/types.ts
++++ b/app/src/features/world/types.ts
+@@ -65,6 +65,8 @@ export interface Diagnostics {
+   renderedFrames?: number | undefined;
+   lastRenderedAt?: number | undefined;
+   renderCalls?: number | undefined;
++  shadowRenderCalls?: number | undefined;
++  mainRenderCalls?: number | undefined;
+   renderedTriangles?: number | undefined;
+   renderPixelRatio?: number | undefined;
+   interactions?: { boundProductionTargets: number; frozenHitProxyCount: number; lastActivatedId: string | null } | undefined;
+@@ -108,6 +110,8 @@ export interface RenderedWorldFrame {
+   cameraPreset: CameraPreset;
+   lifecycleState: WorldLifecycleState;
+   renderCalls: number;
++  shadowRenderCalls: number;
++  mainRenderCalls: number;
+   renderedTriangles: number;
+ }
+ 
