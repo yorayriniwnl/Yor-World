@@ -30,7 +30,13 @@ vi.mock("three", async (importOriginal) => {
     ...actual,
     WebGLRenderer: class {
       shadowMap = {};
-      info = { render: { calls: 1, triangles: 1 } };
+      info = {
+        render: { calls: 1, triangles: 1 },
+        reset() {
+          this.render.calls = 0;
+          this.render.triangles = 0;
+        },
+      };
       render = render;
       private readonly instance: MockRendererInstance;
 
