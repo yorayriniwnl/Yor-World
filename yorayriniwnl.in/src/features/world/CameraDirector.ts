@@ -10,11 +10,10 @@ export const CAMERA_PRESETS: Record<CameraPreset, CameraConfig> = {
     fov: 60,
   },
   "home-mobile": {
-    // Preserve the front-room angle that keeps the monitor surface clear of
-    // the resident while the enlarged, shelf-seated GLB camera and controller
-    // remain above the phone-size recognition floor.
+    // Lower the aim so the rear wall fills the phone's upper edge while the
+    // desktop, shelf camera, controller, and seated resident stay in frame.
     position: [0.3, 2.22, 1.43],
-    target: [0.06, 0.96, -1.2],
+    target: [0.06, 0.55, -1.2],
     fov: 110,
   },
   monitor: {
