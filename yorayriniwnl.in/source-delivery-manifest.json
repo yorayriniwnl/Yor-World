@@ -2,13 +2,15 @@
   "schemaVersion": 1,
   "sourceIdentity": {
     "parentCommit": "bd01478617b4166866f3f44196c56fc5add94acd",
-    "sourceCommit": "ae0412fb4bfcf81b807ecd492a96cbd773c5005c",
+    "sourceCommit": "4c3908b61d728babeaf67419d225c1f3978bb779",
     "acceptedInputCommit": "500d10fa5901be48d4ff877e608d65ba0e271bb9",
     "acceptedInputAppTree": "ba0b709192367e1d12a796618f97801a8fcd5a70",
-    "resultingAppTree": "7572fd8d082659251762ddb81416219a37800680",
+    "resultingAppTree": "c0ba382dae8bd05f0cee339e40f98a24db40347d",
     "sourceBaseCommit": "bd01478617b4166866f3f44196c56fc5add94acd",
     "sourceBaseAppTree": "3975e40c59a04b8696efa2ca3605eb37a0617165",
     "governingPackets": [
+      "docs/planning/reconciliation-packets/2026-10-16-pre-g7-40-production-shader-diagnostics-gate.md",
+      "docs/planning/reconciliation-packets/2026-10-16-pre-g7-39-program-parameter-query-diagnostic.md",
       "docs/planning/reconciliation-packets/2026-10-16-pre-g7-38-first-use-shader-info-log-fast-path.md",
       "docs/planning/reconciliation-packets/2026-10-16-pre-g7-37-shader-extension-capability-probe.md",
       "docs/planning/reconciliation-packets/2026-10-16-pre-g7-31-mobile-home-framing.md",
@@ -25,32 +27,32 @@
       "docs/planning/validation-and-production.md"
     ],
     "visualCandidateEvidence": "deliveries/G7/preparation/maker-evidence/pre-g7-31/",
-    "formalAcceptance": "PRE-G7-38 remains unaccepted and undeployed. Its single 40-second source-bound capture recorded zero successful-link program and shader info-log reads, but three long tasks of 4.050, 6.673, and 1.277 seconds remain. getProgramParameter calls totaled 11.731 seconds; because PRE-G7-38 moves LINK_STATUS before info-log reads, the wait may have shifted to the status query, but the capture did not record query enums. This does not pass the full performance gate. Unit, integration, end-to-end, and full performance tests were not run. Independent GPT Plus #2 audit, human visual review, and Parent ruling remain pending.",
-    "taskBranchParentCommit": "1d39670b102b2ef240ff587f184da68c8dfa84f5",
+    "formalAcceptance": "PRE-G7-40 remains unaccepted and undeployed. The production shader-check opt-out did not improve startup: LINK_STATUS calls were absent, but ACTIVE_UNIFORMS calls took 11.7063 seconds, with long tasks totaling 13.566 seconds. A follow-up packet will restore automatic diagnostics while addressing first-use shader preparation. Tests and the full performance suite were not run. Independent audit, human visual review, and Parent ruling remain pending.",
+    "taskBranchParentCommit": "90b985477f1ee2580fdc0cdc963a614927310142",
     "productionRuntimeSourceCommit": "ffd4635242362774c7981f8d54405fd0ccb2b0c9",
     "productionRuntimeAppTree": "9895fcc5c09ba695674fc5ff0342f5afb35b3d0c",
     "testSupportCommits": [
       "d86d3d68c34fcdff6319c7945c7d74e87ce81946",
       "bd01478617b4166866f3f44196c56fc5add94acd"
     ],
-    "validationReport": "deliveries/G7/preparation/maker-evidence/pre-g7-38/REPORT.md",
-    "packet": "PRE-G7-38",
-    "priorValidationReport": "deliveries/G7/preparation/maker-evidence/pre-g7-35/REPORT.md",
+    "validationReport": "deliveries/G7/preparation/maker-evidence/pre-g7-40/REPORT.md",
+    "packet": "PRE-G7-40",
+    "priorValidationReport": "deliveries/G7/preparation/maker-evidence/pre-g7-38/REPORT.md",
     "latestValidation": {
-      "packet": "PRE-G7-38",
-      "sourceCommit": "ae0412fb4bfcf81b807ecd492a96cbd773c5005c",
-      "appTree": "7572fd8d082659251762ddb81416219a37800680",
-      "sourceCommitDomainTree": "58721ce1ae7e8c3c84c0b959566c975932871f8c",
+      "packet": "PRE-G7-40",
+      "sourceCommit": "4c3908b61d728babeaf67419d225c1f3978bb779",
+      "appTree": "c0ba382dae8bd05f0cee339e40f98a24db40347d",
+      "sourceCommitDomainTree": "e9861f48ed2fdf96e7cf7f3dd495679d958f30e6",
       "status": "PASS",
       "passingChecks": [
         "pinned Node 24.19.0 and pnpm 9.15.9",
-        "offline frozen install after applying the Three.js patch with zero package fetches",
         "lint",
         "typecheck",
         "production build with PRE-G7-13 evidence flag",
-        "source/mirror parity for 116 source files, 14 test files, and three dependency files"
+        "source/mirror parity for 116 source files, 14 test files, and three dependency files",
+        "runtime source Git-blob parity"
       ],
-      "failedCheck": "none within the post-patch install, lint, typecheck, build, and parity scope; the initial offline install failed because the locked Next.js tarball was absent, then the authorized frozen network install passed",
+      "failedCheck": "none within authorized lint/typecheck/build/parity scope; the single runtime capture retained long tasks and failed to improve the shader wait",
       "notRunChecks": [
         "unit tests",
         "integration tests",
@@ -59,13 +61,145 @@
         "independent audit",
         "human visual review"
       ],
-      "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-38/",
-      "report": "deliveries/G7/preparation/maker-evidence/pre-g7-38/REPORT.md",
-      "buildId": "ZU5S4uDGagmUivvV4xDKh",
-      "buildIdSha256": "9a2f517f64d3d460f4d800276ea7a46bb9bb63740c5ea85ca0b77d1b74432240",
+      "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-40/",
+      "report": "deliveries/G7/preparation/maker-evidence/pre-g7-40/REPORT.md",
+      "buildId": "FX_IbnDTG8Oe7r-ftVmDq",
+      "buildIdSha256": "b6100686bbdc641413e41f9ce8610745885dc6af8c645e36c39df63118cc86c4",
       "acceptance": "unaccepted; undeployed"
     },
     "latestRuntimeDiagnostic": {
+      "packet": "PRE-G7-40",
+      "sourceCommit": "4c3908b61d728babeaf67419d225c1f3978bb779",
+      "appTree": "c0ba382dae8bd05f0cee339e40f98a24db40347d",
+      "sourceCommitDomainTree": "e9861f48ed2fdf96e7cf7f3dd495679d958f30e6",
+      "status": "CAPTURED; automatic LINK_STATUS reads were absent, but ACTIVE_UNIFORMS calls took 11.706 seconds and long tasks remained",
+      "buildId": "FX_IbnDTG8Oe7r-ftVmDq",
+      "buildIdSha256": "b6100686bbdc641413e41f9ce8610745885dc6af8c645e36c39df63118cc86c4",
+      "browserVersion": "155.0.8059.84",
+      "finalLifecycleState": "HOME",
+      "homeAtMs": 8050.5,
+      "khrParallelShaderCompile": true,
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "renderer": "ANGLE (Intel, Intel(R) Iris(R) Xe Graphics (0x000046A8) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "longTaskCount": 14,
+      "longTaskDurationsMs": [
+        3749,
+        6871,
+        1384
+      ],
+      "accumulatedLongTaskMs": 13566,
+      "maxAnimationFrameGapMs": 6876.9,
+      "getProgramInfoLog": {
+        "count": 0,
+        "totalMs": 0,
+        "maxMs": 0
+      },
+      "getShaderInfoLog": {
+        "count": 0,
+        "totalMs": 0,
+        "maxMs": 0
+      },
+      "getProgramParameter": {
+        "count": 646,
+        "totalMs": 11709,
+        "maxMs": 475.8
+      },
+      "getProgramParameterByEnum": {
+        "ACTIVE_UNIFORMS": {
+          "numericPname": 35718,
+          "count": 60,
+          "totalMs": 11706.3,
+          "maxMs": 475.8
+        },
+        "COMPLETION_STATUS_KHR": {
+          "numericPname": 37297,
+          "count": 526,
+          "totalMs": 2.4,
+          "maxMs": 0.1
+        },
+        "ACTIVE_ATTRIBUTES": {
+          "numericPname": 35721,
+          "count": 60,
+          "totalMs": 0.3,
+          "maxMs": 0.1
+        },
+        "LINK_STATUS": {
+          "numericPname": 35714,
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        }
+      },
+      "getUniformLocation": {
+        "count": 2814,
+        "totalMs": 7.8,
+        "maxMs": 0.2
+      },
+      "getAttribLocation": {
+        "count": 176,
+        "totalMs": 0.5,
+        "maxMs": 0.1
+      },
+      "consoleErrors": 1,
+      "consoleErrorSummary": "One generic resource 404 console message; no URL attribution in the event.",
+      "pageErrors": 0,
+      "requestFailures": 0,
+      "instrumentationErrors": 0,
+      "requiredAndOptionalModelResponses": 4,
+      "modelResponseFailures": 0,
+      "productionShaderDiagnosticsDefault": "disabled; development remains enabled and production query ?shaderDiagnostics=1 opts in",
+      "report": "deliveries/G7/preparation/maker-evidence/pre-g7-40/REPORT.md",
+      "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-40/",
+      "acceptance": "unaccepted; undeployed",
+      "waitShiftInference": "In P39, LINK_STATUS queries accounted for 14.012 seconds and ACTIVE_UNIFORMS for 0.6 ms. In P40, LINK_STATUS calls were absent and ACTIVE_UNIFORMS accounted for 11.7063 seconds. The captured wait moved to the first program-introspection query; this conclusion is bounded to the sampled environment."
+    },
+    "previousRuntimeDiagnostic": {
+      "packet": "PRE-G7-39",
+      "sourceCommit": "ae0412fb4bfcf81b807ecd492a96cbd773c5005c",
+      "appTree": "7572fd8d082659251762ddb81416219a37800680",
+      "sourceCommitDomainTree": "58721ce1ae7e8c3c84c0b959566c975932871f8c",
+      "status": "CAPTURED; LINK_STATUS queries accounted for 14.012 seconds, with 0.6 ms in ACTIVE_UNIFORMS",
+      "buildId": "ZU5S4uDGagmUivvV4xDKh",
+      "browserVersion": "155.0.8059.84",
+      "finalLifecycleState": "HOME",
+      "homeAtMs": 7334.4,
+      "khrParallelShaderCompile": true,
+      "longTaskCount": 16,
+      "longTaskDurationsMs": [
+        3943,
+        8964,
+        1441
+      ],
+      "accumulatedLongTaskMs": 16157,
+      "maxAnimationFrameGapMs": 8975.9,
+      "getProgramParameterByEnum": {
+        "LINK_STATUS": {
+          "count": 60,
+          "totalMs": 14012,
+          "maxMs": 758.6
+        },
+        "ACTIVE_UNIFORMS": {
+          "count": 60,
+          "totalMs": 0.6,
+          "maxMs": 0.2
+        },
+        "ACTIVE_ATTRIBUTES": {
+          "count": 60,
+          "totalMs": 0.4,
+          "maxMs": 0.3
+        },
+        "COMPLETION_STATUS_KHR": {
+          "count": 174,
+          "totalMs": 1.9,
+          "maxMs": 0.7
+        }
+      },
+      "report": "deliveries/G7/preparation/maker-evidence/pre-g7-39/REPORT.md",
+      "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-39/",
+      "acceptance": "unaccepted; undeployed"
+    },
+    "previousTaskBranchParentCommit": "4757af073cc64f1eab93ff56bf49a824405d79cd",
+    "earlierRuntimeDiagnostic": {
       "packet": "PRE-G7-38",
       "sourceCommit": "ae0412fb4bfcf81b807ecd492a96cbd773c5005c",
       "appTree": "7572fd8d082659251762ddb81416219a37800680",
@@ -125,55 +259,327 @@
       "acceptance": "unaccepted; undeployed",
       "waitShiftInference": "The patch checks LINK_STATUS before reading info logs. getProgramParameter took 11,730.9 ms in this capture; query enums were not recorded, so attribution to LINK_STATUS is unconfirmed."
     },
-    "previousRuntimeDiagnostic": {
-      "packet": "PRE-G7-37",
-      "sourceCommit": "5c1e6aedb71d89d46ffc0ada8de522526290131c",
-      "status": "CAPTURED; KHR_parallel_shader_compile available; synchronous getProgramInfoLog calls remain the leading measured stall candidate",
-      "buildId": "YeuUJsHpZHf4H1-GP30nT",
-      "browserVersion": "155.0.8059.84",
-      "finalLifecycleState": "HOME",
-      "homeAtMs": 9841.3,
-      "khrParallelShaderCompile": true,
-      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
-      "renderer": "ANGLE (Intel, Intel(R) Iris(R) Xe Graphics (0x000046A8) Direct3D11 vs_5_0 ps_5_0, D3D11)",
-      "longTaskCount": 21,
-      "longTaskDurationsMs": [
-        5716,
-        8528,
-        1664
+    "priorTaskBranchParentCommit": "1d39670b102b2ef240ff587f184da68c8dfa84f5",
+    "previousValidation": {
+      "packet": "PRE-G7-38",
+      "sourceCommit": "ae0412fb4bfcf81b807ecd492a96cbd773c5005c",
+      "appTree": "7572fd8d082659251762ddb81416219a37800680",
+      "sourceCommitDomainTree": "58721ce1ae7e8c3c84c0b959566c975932871f8c",
+      "status": "PASS",
+      "passingChecks": [
+        "pinned Node 24.19.0 and pnpm 9.15.9",
+        "offline frozen install after applying the Three.js patch with zero package fetches",
+        "lint",
+        "typecheck",
+        "production build with PRE-G7-13 evidence flag",
+        "source/mirror parity for 116 source files, 14 test files, and three dependency files"
       ],
-      "accumulatedLongTaskMs": 19179,
-      "maxAnimationFrameGapMs": 8525.7,
-      "getProgramInfoLog": {
-        "count": 60,
-        "totalMs": 15441.8,
-        "maxMs": 713.2
-      },
-      "uniformAndAttributeQueryTotalMs": 10.5,
-      "report": "deliveries/G7/preparation/maker-evidence/pre-g7-37/REPORT.md",
-      "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-37/",
+      "failedCheck": "none within the post-patch install, lint, typecheck, build, and parity scope; the initial offline install failed because the locked Next.js tarball was absent, then the authorized frozen network install passed",
+      "notRunChecks": [
+        "unit tests",
+        "integration tests",
+        "e2e tests",
+        "full performance suite",
+        "independent audit",
+        "human visual review"
+      ],
+      "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-38/",
+      "report": "deliveries/G7/preparation/maker-evidence/pre-g7-38/REPORT.md",
+      "buildId": "ZU5S4uDGagmUivvV4xDKh",
+      "buildIdSha256": "9a2f517f64d3d460f4d800276ea7a46bb9bb63740c5ea85ca0b77d1b74432240",
       "acceptance": "unaccepted; undeployed"
     },
-    "previousTaskBranchParentCommit": "4757af073cc64f1eab93ff56bf49a824405d79cd",
-    "earlierRuntimeDiagnostic": {
-      "packet": "PRE-G7-36",
-      "sourceCommit": "5c1e6aedb71d89d46ffc0ada8de522526290131c",
-      "status": "CAPTURED; residual shader stalls remain",
-      "buildId": "YeuUJsHpZHf4H1-GP30nT",
-      "browserVersion": "155.0.8059.84",
-      "finalLifecycleState": "HOME",
-      "homeAtMs": 9266.7,
-      "longTasksMs": [
-        5260,
-        9284,
-        1812
-      ],
-      "maxAnimationFrameGapMs": 9292.2,
-      "profileSamples": 23504,
-      "report": "deliveries/G7/preparation/maker-evidence/pre-g7-36/REPORT.md",
-      "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-36/",
-      "acceptance": "unaccepted; undeployed"
-    }
+    "runtimeDiagnosticHistory": [
+      {
+        "packet": "PRE-G7-40",
+        "sourceCommit": "4c3908b61d728babeaf67419d225c1f3978bb779",
+        "appTree": "c0ba382dae8bd05f0cee339e40f98a24db40347d",
+        "sourceCommitDomainTree": "e9861f48ed2fdf96e7cf7f3dd495679d958f30e6",
+        "status": "CAPTURED; automatic LINK_STATUS reads were absent, but ACTIVE_UNIFORMS calls took 11.706 seconds and long tasks remained",
+        "buildId": "FX_IbnDTG8Oe7r-ftVmDq",
+        "buildIdSha256": "b6100686bbdc641413e41f9ce8610745885dc6af8c645e36c39df63118cc86c4",
+        "browserVersion": "155.0.8059.84",
+        "finalLifecycleState": "HOME",
+        "homeAtMs": 8050.5,
+        "khrParallelShaderCompile": true,
+        "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "renderer": "ANGLE (Intel, Intel(R) Iris(R) Xe Graphics (0x000046A8) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "longTaskCount": 14,
+        "longTaskDurationsMs": [
+          3749,
+          6871,
+          1384
+        ],
+        "accumulatedLongTaskMs": 13566,
+        "maxAnimationFrameGapMs": 6876.9,
+        "getProgramInfoLog": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "getShaderInfoLog": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "getProgramParameter": {
+          "count": 646,
+          "totalMs": 11709,
+          "maxMs": 475.8
+        },
+        "getProgramParameterByEnum": {
+          "ACTIVE_UNIFORMS": {
+            "numericPname": 35718,
+            "count": 60,
+            "totalMs": 11706.3,
+            "maxMs": 475.8
+          },
+          "COMPLETION_STATUS_KHR": {
+            "numericPname": 37297,
+            "count": 526,
+            "totalMs": 2.4,
+            "maxMs": 0.1
+          },
+          "ACTIVE_ATTRIBUTES": {
+            "numericPname": 35721,
+            "count": 60,
+            "totalMs": 0.3,
+            "maxMs": 0.1
+          },
+          "LINK_STATUS": {
+            "numericPname": 35714,
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          }
+        },
+        "getUniformLocation": {
+          "count": 2814,
+          "totalMs": 7.8,
+          "maxMs": 0.2
+        },
+        "getAttribLocation": {
+          "count": 176,
+          "totalMs": 0.5,
+          "maxMs": 0.1
+        },
+        "consoleErrors": 1,
+        "consoleErrorSummary": "One generic resource 404 console message; no URL attribution in the event.",
+        "pageErrors": 0,
+        "requestFailures": 0,
+        "instrumentationErrors": 0,
+        "requiredAndOptionalModelResponses": 4,
+        "modelResponseFailures": 0,
+        "productionShaderDiagnosticsDefault": "disabled; development remains enabled and production query ?shaderDiagnostics=1 opts in",
+        "report": "deliveries/G7/preparation/maker-evidence/pre-g7-40/REPORT.md",
+        "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-40/",
+        "acceptance": "unaccepted; undeployed",
+        "waitShiftInference": "In P39, LINK_STATUS queries accounted for 14.012 seconds and ACTIVE_UNIFORMS for 0.6 ms. In P40, LINK_STATUS calls were absent and ACTIVE_UNIFORMS accounted for 11.7063 seconds. The captured wait moved to the first program-introspection query; this conclusion is bounded to the sampled environment."
+      },
+      {
+        "packet": "PRE-G7-39",
+        "sourceCommit": "ae0412fb4bfcf81b807ecd492a96cbd773c5005c",
+        "appTree": "7572fd8d082659251762ddb81416219a37800680",
+        "sourceCommitDomainTree": "58721ce1ae7e8c3c84c0b959566c975932871f8c",
+        "status": "CAPTURED; LINK_STATUS queries accounted for 14.012 seconds, with 0.6 ms in ACTIVE_UNIFORMS",
+        "buildId": "ZU5S4uDGagmUivvV4xDKh",
+        "browserVersion": "155.0.8059.84",
+        "finalLifecycleState": "HOME",
+        "homeAtMs": 7334.4,
+        "khrParallelShaderCompile": true,
+        "longTaskCount": 16,
+        "longTaskDurationsMs": [
+          3943,
+          8964,
+          1441
+        ],
+        "accumulatedLongTaskMs": 16157,
+        "maxAnimationFrameGapMs": 8975.9,
+        "getProgramParameterByEnum": {
+          "LINK_STATUS": {
+            "count": 60,
+            "totalMs": 14012,
+            "maxMs": 758.6
+          },
+          "ACTIVE_UNIFORMS": {
+            "count": 60,
+            "totalMs": 0.6,
+            "maxMs": 0.2
+          },
+          "ACTIVE_ATTRIBUTES": {
+            "count": 60,
+            "totalMs": 0.4,
+            "maxMs": 0.3
+          },
+          "COMPLETION_STATUS_KHR": {
+            "count": 174,
+            "totalMs": 1.9,
+            "maxMs": 0.7
+          }
+        },
+        "report": "deliveries/G7/preparation/maker-evidence/pre-g7-39/REPORT.md",
+        "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-39/",
+        "acceptance": "unaccepted; undeployed"
+      },
+      {
+        "packet": "PRE-G7-38",
+        "sourceCommit": "ae0412fb4bfcf81b807ecd492a96cbd773c5005c",
+        "appTree": "7572fd8d082659251762ddb81416219a37800680",
+        "sourceCommitDomainTree": "58721ce1ae7e8c3c84c0b959566c975932871f8c",
+        "status": "CAPTURED; successful-link program/shader info-log reads were absent, but long stalls remain and getProgramParameter timing may indicate the wait shifted to LINK_STATUS",
+        "buildId": "ZU5S4uDGagmUivvV4xDKh",
+        "browserVersion": "155.0.8059.84",
+        "finalLifecycleState": "HOME",
+        "homeAtMs": 7696.8,
+        "khrParallelShaderCompile": true,
+        "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "renderer": "ANGLE (Intel, Intel(R) Iris(R) Xe Graphics (0x000046A8) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "longTaskCount": 10,
+        "longTaskDurationsMs": [
+          4050,
+          6673,
+          1277
+        ],
+        "accumulatedLongTaskMs": 13471,
+        "maxAnimationFrameGapMs": 6660.9,
+        "getProgramInfoLog": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "getShaderInfoLog": {
+          "count": 0,
+          "totalMs": 0,
+          "maxMs": 0
+        },
+        "getProgramParameter": {
+          "count": 457,
+          "totalMs": 11730.9,
+          "maxMs": 609.1
+        },
+        "getUniformLocation": {
+          "count": 2814,
+          "totalMs": 6.5,
+          "maxMs": 0.1
+        },
+        "getAttribLocation": {
+          "count": 176,
+          "totalMs": 0.4,
+          "maxMs": 0.1
+        },
+        "consoleErrors": 1,
+        "consoleErrorSummary": "One generic resource 404 console message; no URL attribution in the event.",
+        "pageErrors": 0,
+        "requestFailures": 0,
+        "instrumentationErrors": 0,
+        "requiredAndOptionalModelResponses": 4,
+        "modelResponseFailures": 0,
+        "screenshot": "captured",
+        "wrapperTiming": "performance.now() timing with per-call bookkeeping; overhead was not independently quantified and is included in measured durations.",
+        "report": "deliveries/G7/preparation/maker-evidence/pre-g7-38/REPORT.md",
+        "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-38/",
+        "acceptance": "unaccepted; undeployed",
+        "waitShiftInference": "The patch checks LINK_STATUS before reading info logs. getProgramParameter took 11,730.9 ms in this capture; query enums were not recorded, so attribution to LINK_STATUS is unconfirmed."
+      },
+      {
+        "packet": "PRE-G7-37",
+        "sourceCommit": "5c1e6aedb71d89d46ffc0ada8de522526290131c",
+        "status": "CAPTURED; KHR_parallel_shader_compile available; synchronous getProgramInfoLog calls remain the leading measured stall candidate",
+        "buildId": "YeuUJsHpZHf4H1-GP30nT",
+        "browserVersion": "155.0.8059.84",
+        "finalLifecycleState": "HOME",
+        "homeAtMs": 9841.3,
+        "khrParallelShaderCompile": true,
+        "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "renderer": "ANGLE (Intel, Intel(R) Iris(R) Xe Graphics (0x000046A8) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "longTaskCount": 21,
+        "longTaskDurationsMs": [
+          5716,
+          8528,
+          1664
+        ],
+        "accumulatedLongTaskMs": 19179,
+        "maxAnimationFrameGapMs": 8525.7,
+        "getProgramInfoLog": {
+          "count": 60,
+          "totalMs": 15441.8,
+          "maxMs": 713.2
+        },
+        "uniformAndAttributeQueryTotalMs": 10.5,
+        "report": "deliveries/G7/preparation/maker-evidence/pre-g7-37/REPORT.md",
+        "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-37/",
+        "acceptance": "unaccepted; undeployed"
+      },
+      {
+        "packet": "PRE-G7-36",
+        "sourceCommit": "5c1e6aedb71d89d46ffc0ada8de522526290131c",
+        "status": "CAPTURED; residual shader stalls remain",
+        "buildId": "YeuUJsHpZHf4H1-GP30nT",
+        "browserVersion": "155.0.8059.84",
+        "finalLifecycleState": "HOME",
+        "homeAtMs": 9266.7,
+        "longTasksMs": [
+          5260,
+          9284,
+          1812
+        ],
+        "maxAnimationFrameGapMs": 9292.2,
+        "profileSamples": 23504,
+        "report": "deliveries/G7/preparation/maker-evidence/pre-g7-36/REPORT.md",
+        "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-36/",
+        "acceptance": "unaccepted; undeployed"
+      }
+    ],
+    "historicalRuntimeDiagnostics": [
+      {
+        "packet": "PRE-G7-37",
+        "sourceCommit": "5c1e6aedb71d89d46ffc0ada8de522526290131c",
+        "status": "CAPTURED; KHR_parallel_shader_compile available; synchronous getProgramInfoLog calls remain the leading measured stall candidate",
+        "buildId": "YeuUJsHpZHf4H1-GP30nT",
+        "browserVersion": "155.0.8059.84",
+        "finalLifecycleState": "HOME",
+        "homeAtMs": 9841.3,
+        "khrParallelShaderCompile": true,
+        "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "renderer": "ANGLE (Intel, Intel(R) Iris(R) Xe Graphics (0x000046A8) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "longTaskCount": 21,
+        "longTaskDurationsMs": [
+          5716,
+          8528,
+          1664
+        ],
+        "accumulatedLongTaskMs": 19179,
+        "maxAnimationFrameGapMs": 8525.7,
+        "getProgramInfoLog": {
+          "count": 60,
+          "totalMs": 15441.8,
+          "maxMs": 713.2
+        },
+        "uniformAndAttributeQueryTotalMs": 10.5,
+        "report": "deliveries/G7/preparation/maker-evidence/pre-g7-37/REPORT.md",
+        "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-37/",
+        "acceptance": "unaccepted; undeployed"
+      },
+      {
+        "packet": "PRE-G7-36",
+        "sourceCommit": "5c1e6aedb71d89d46ffc0ada8de522526290131c",
+        "status": "CAPTURED; residual shader stalls remain",
+        "buildId": "YeuUJsHpZHf4H1-GP30nT",
+        "browserVersion": "155.0.8059.84",
+        "finalLifecycleState": "HOME",
+        "homeAtMs": 9266.7,
+        "longTasksMs": [
+          5260,
+          9284,
+          1812
+        ],
+        "maxAnimationFrameGapMs": 9292.2,
+        "profileSamples": 23504,
+        "report": "deliveries/G7/preparation/maker-evidence/pre-g7-36/REPORT.md",
+        "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-36/",
+        "acceptance": "unaccepted; undeployed"
+      }
+    ]
   },
   "mirror": {
     "sourceRoot": "app/",
@@ -965,10 +1371,10 @@
       {
         "sourcePath": "app/src/features/world/WorldRuntime.ts",
         "domainPath": "src/features/world/WorldRuntime.ts",
-        "sourceSha256": "db21c91b52877e89a05833210934794082de90db134027c1131772cc387e8e2c",
-        "domainSha256": "b6b5906485a74ca9bbe9c46c2f3e47cf047d5d610d76cac8c4199675cbd01c1b",
+        "sourceSha256": "930280f399c407ab0014cfd3e905d1ff5fa1d0450a44c9ec7be7124bfcac3e44",
+        "domainSha256": "1c63bfba56ffb9b4232bc7a47b599a6a1c5a66352690f7e8e5788ac1df6f8e5b",
         "rawBytesEqual": false,
-        "normalizedSha256": "db21c91b52877e89a05833210934794082de90db134027c1131772cc387e8e2c",
+        "normalizedSha256": "930280f399c407ab0014cfd3e905d1ff5fa1d0450a44c9ec7be7124bfcac3e44",
         "normalizedContentEqual": true
       },
       {
@@ -1388,15 +1794,15 @@
       "sourceFiles": 116,
       "testFiles": 14,
       "rawParityFailures": 130,
-      "baseCommit": "ae0412fb4bfcf81b807ecd492a96cbd773c5005c",
-      "readmeSha256": "75938919ed5fb31eb7fa4aee96df36d5b9c0f3c46e9bff12e3c263249f9de21c",
-      "evidence": "deliveries/G7/preparation/maker-evidence/pre-g7-38/source-mirror-parity-audit.json",
+      "baseCommit": "4c3908b61d728babeaf67419d225c1f3978bb779",
+      "readmeSha256": "986c6aca1c2b29c092032836de164c34815ea488ea656d03f616bb325166bbd9",
+      "evidence": "deliveries/G7/preparation/maker-evidence/pre-g7-40/source-mirror-parity-audit.json",
       "normalizedParityFailures": 0,
       "gitBlobParityFailures": 0,
       "dependencyFiles": 3,
       "dependencyFileByteMismatches": 0,
       "dependencyFileBlobMismatches": 0
     },
-    "resultingTree": "58721ce1ae7e8c3c84c0b959566c975932871f8c"
+    "resultingTree": "e9861f48ed2fdf96e7cf7f3dd495679d958f30e6"
   }
 }
