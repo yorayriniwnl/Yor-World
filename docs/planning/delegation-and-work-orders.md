@@ -40,6 +40,8 @@ PRE-G7-30 completed its authorized single trace recapture against the exact PRE-
 
 [PRE-G7-38](reconciliation-packets/2026-10-16-pre-g7-38-first-use-shader-info-log-fast-path.md) targets the measured successful-link getProgramInfoLog stall. It authorizes a pinned Three.js patch in the app/domain mirror, offline-first frozen install with one locked network fallback for missing cache plus one offline post-patch install, lint/typecheck/build, with unrelated peer-lock rewrites explicitly reverted, and one source-bound instrumented capture; tests and the full performance suite are not authorized.
 
+[PRE-G7-39](reconciliation-packets/2026-10-16-pre-g7-39-program-parameter-query-diagnostic.md) follows the P38 capture's zero successful-link info-log calls and 11.731 seconds measured in getProgramParameter. It authorizes one argument-aware WebGL query diagnostic against the frozen P38 build, with no application-source edit, install, build, tests, or full performance suite.
+
 Read [current pre-G7 requirements](../operations/pre-g7-prerequisites.md) and the [RC6 dossier](../releases/v1.0.0-rc6.md). Parent continues authorized independent work and obtains missing service/device inputs. No mock, local fixture, emulation, liveness-only response or private preview substitutes for a mandatory production criterion.
 
 ## One specification and a small shared baseline
