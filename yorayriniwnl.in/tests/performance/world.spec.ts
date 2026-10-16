@@ -279,6 +279,10 @@ test.describe("C3 Performance Benchmarks & Budget Verification", () => {
       const activeDiagnostics = JSON.parse((await page.getByTestId("world-diagnostics").textContent())!) as Diagnostics;
       expect(activeDiagnostics.renderCalls).toBeGreaterThan(0);
       expect(activeDiagnostics.renderedTriangles).toBeGreaterThan(0);
+      await page.getByTestId("diagnostics-toggle-btn").click();
+      const controlsToggle = page.getByTestId("studio-controls-toggle");
+      await controlsToggle.click();
+      await expect(controlsToggle).toHaveAttribute("aria-expanded", "false");
       const oldCanvas = await canvas.elementHandle();
       if (!oldCanvas) throw new Error("Missing active production canvas.");
 
