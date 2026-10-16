@@ -248,6 +248,12 @@ export class WorldRuntime {
       console.error = originalConsoleError;
     }
 
+    // Three's default link-status check can synchronously stall the main thread in production.
+    // Keep automatic diagnostics in development and expose an explicit production opt-in.
+    const shaderDiagnosticsRequested = typeof window !== "undefined"
+      && new URLSearchParams(window.location.search).get("shaderDiagnostics") === "1";
+    this.renderer.debug.checkShaderErrors = process.env.NODE_ENV !== "production" || shaderDiagnosticsRequested;
+
     // Three resets renderer.info between the shadow and main passes. Capture the
     // shadow count at that existing boundary while preserving main-pass triangles.
     const rendererInfo = this.renderer.info;
