@@ -420,6 +420,7 @@ export class WorldRuntime {
     }
 
     if (this.renderer && this.integratedResult) {
+      this.staticSceneBatch?.syncDynamicInstances();
       this.renderer.render(this.scene, this.camera);
       this.renderedFrames++;
       this.lastRenderedAt = currentTime;

@@ -61,9 +61,13 @@ describe("reversible static batching of original frozen meshes", () => {
       eligibleMeshes: 2,
       layoutRejectedMeshes: 0,
       batchedMeshes: 2,
+      dynamicMeshes: 0,
+      dynamicBatchedMeshes: 0,
       batchCount: 1,
       singletonGroups: 0,
       singletonMeshes: 0,
+      rejectedByReason: {},
+      excludedMeshes: [],
     });
     expect(batch.geometry.getAttribute("position").array).not.toBe(meshes[0].geometry.getAttribute("position").array);
     expect(batch.boundingBox).not.toBeNull();
@@ -200,6 +204,47 @@ describe("reversible static batching of original frozen meshes", () => {
     quality.dispose();
   });
 
+  it("reports a path, material and precise reason for every mesh that stays on the source render path", () => {
+    const scene = new THREE.Group();
+    scene.name = "world";
+    const accepted = pair();
+    const transparentMaterial = new THREE.MeshBasicMaterial({ transparent: true });
+    const transparent = new THREE.Mesh(geometry(), transparentMaterial);
+    transparent.name = "transparent-panel";
+    const grouped = new THREE.Mesh(geometry(), new THREE.MeshBasicMaterial());
+    grouped.name = "grouped-trim";
+    grouped.geometry.addGroup(0, 3, 0);
+    const groupedSibling = new THREE.Mesh(geometry(), grouped.material as THREE.Material);
+    groupedSibling.name = "grouped-trim-sibling";
+    groupedSibling.geometry.addGroup(0, 3, 0);
+    const hiddenParent = new THREE.Group();
+    hiddenParent.name = "closed-drawer";
+    hiddenParent.visible = false;
+    const hidden = new THREE.Mesh(geometry(), new THREE.MeshBasicMaterial());
+    hidden.name = "hidden-detail";
+    hiddenParent.add(hidden);
+    const singleton = new THREE.Mesh(geometry(), new THREE.MeshBasicMaterial());
+    singleton.name = "unique-metal-part";
+    scene.add(...accepted, transparent, grouped, groupedSibling, hiddenParent, singleton);
+
+    const quality = new StaticSceneBatch(scene);
+    const diagnostics = quality.getDiagnostics();
+    expect(diagnostics.totalMeshes).toBe(7);
+    expect(diagnostics.batchedMeshes).toBe(4);
+    expect(diagnostics.excludedMeshes).toEqual([
+      expect.objectContaining({ path: "world/transparent-panel", material: "MeshBasicMaterial", reason: "material-transparent-or-blended" }),
+      expect.objectContaining({ path: "world/closed-drawer/hidden-detail", material: "MeshBasicMaterial", reason: "hidden-ancestor" }),
+      expect.objectContaining({ path: "world/unique-metal-part", material: "MeshBasicMaterial", reason: "singleton-compatible-group" }),
+    ]);
+    expect(diagnostics.rejectedByReason).toEqual({
+      "hidden-ancestor": 1,
+      "material-transparent-or-blended": 1,
+      "singleton-compatible-group": 1,
+    });
+    expect(diagnostics.totalMeshes).toBe(diagnostics.batchedMeshes + diagnostics.excludedMeshes.length);
+    quality.dispose();
+  });
+
   it("supports non-indexed geometry when both original layouts match", () => {
     const scene = new THREE.Group();
     const meshes = pair();
@@ -211,7 +256,7 @@ describe("reversible static batching of original frozen meshes", () => {
     quality.dispose();
   });
 
-  it.each(["resident", "chair-root", "chair-base", "body-turn", "door-hinge", "painting-pivot", "blind_slat_1", "blind_slat_12", "hidden-yor-mark"])("excludes all descendants of dynamic %s", (name) => {
+  it.each(["resident", "chair-root", "chair-base", "body-turn", "door-hinge", "painting-pivot", "blind_slat_1", "blind_slat_12", "hidden-yor-mark"])("tracks every descendant transform beneath dynamic %s", (name) => {
     const scene = new THREE.Group();
     const dynamic = new THREE.Group();
     dynamic.name = name;
@@ -220,12 +265,55 @@ describe("reversible static batching of original frozen meshes", () => {
     scene.add(dynamic);
     const quality = new StaticSceneBatch(scene);
     quality.apply("low");
-    expect(batches(scene)).toHaveLength(0);
+    const batch = batches(scene)[0]!;
+    expect(batch.instanceCount).toBe(2);
+    expect(batch.frustumCulled).toBe(false);
+    expect(batch.perObjectFrustumCulled).toBe(true);
+    expect(quality.getDiagnostics().dynamicMeshes).toBe(2);
+    expect(quality.getDiagnostics().dynamicBatchedMeshes).toBe(2);
+    expect(meshes.map((mesh) => mesh.layers.mask)).toEqual([2, 2]);
+    dynamic.position.set(1.2, 0.5, -0.7);
+    dynamic.rotation.y = 0.4;
+    dynamic.updateWorldMatrix(true, true);
+    quality.syncDynamicInstances();
+    for (let index = 0; index < meshes.length; index += 1) {
+      const instance = batch.getMatrixAt(index, new THREE.Matrix4());
+      expectMatrix(new THREE.Matrix4().multiplyMatrices(batch.matrixWorld, instance), meshes[index]!.matrixWorld);
+    }
+    expect(batch.getVisibleAt(0)).toBe(true);
+    dynamic.visible = false;
+    quality.syncDynamicInstances();
+    expect(batch.getVisibleAt(0)).toBe(false);
+    dynamic.visible = true;
+    dynamic.scale.x = -1;
+    quality.syncDynamicInstances();
+    expect(batch.getVisibleAt(0)).toBe(false);
+    expect(meshes.map((mesh) => mesh.layers.mask)).toEqual([3, 3]);
+    dynamic.scale.x = 1;
+    quality.syncDynamicInstances();
+    expect(batch.getVisibleAt(0)).toBe(true);
+    expect(meshes.map((mesh) => mesh.layers.mask)).toEqual([2, 2]);
+    quality.dispose();
     expect(meshes.map((mesh) => mesh.layers.mask)).toEqual([1, 1]);
+  });
+
+  it("batches grouped geometry when a single material owns the whole mesh", () => {
+    const scene = new THREE.Group();
+    const meshes = pair();
+    for (const mesh of meshes) {
+      mesh.geometry.addGroup(0, 6, 0);
+      mesh.geometry.addGroup(6, mesh.geometry.index!.count - 6, 0);
+    }
+    scene.add(...meshes);
+    const quality = new StaticSceneBatch(scene);
+    expect(batches(scene)).toHaveLength(1);
+    expect(batches(scene)[0]!.instanceCount).toBe(2);
+    expect(batches(scene)[0]!.geometry.getAttribute("position").count)
+      .toBe(meshes[0]!.geometry.getAttribute("position").count + meshes[1]!.geometry.getAttribute("position").count);
     quality.dispose();
   });
 
-  it("excludes actual named and UUID animation targets and their descendants", () => {
+  it("updates instances for actual named and UUID animation targets and their descendants", () => {
     const scene = new THREE.Group();
     const animatedParent = new THREE.Group();
     animatedParent.name = "animated-custom-root";
@@ -242,12 +330,51 @@ describe("reversible static batching of original frozen meshes", () => {
     const quality = new StaticSceneBatch(scene);
     quality.apply("low");
     expect(batches(scene)).toHaveLength(1);
-    expect(batches(scene)[0]!.instanceCount).toBe(2);
-    for (const mesh of [...animatedChildren, ...uuidMeshes]) expect(mesh.layers.mask).toBe(1);
+    expect(batches(scene)[0]!.instanceCount).toBe(6);
+    expect(quality.getDiagnostics().dynamicBatchedMeshes).toBe(4);
+    for (const mesh of [...animatedChildren, ...uuidMeshes]) expect(mesh.layers.mask).toBe(2);
     quality.dispose();
   });
 
-  it("conservatively excludes a nested animation subtree when a track cannot be resolved", () => {
+  it("synchronizes instances from a playing transform and visibility clip before render", () => {
+    const scene = new THREE.Group();
+    const resident = new THREE.Group();
+    resident.name = "resident";
+    const meshes = pair(new THREE.MeshStandardMaterial({ color: 0x3a8ed4 }));
+    resident.add(...meshes);
+    scene.add(resident);
+    const clip = new THREE.AnimationClip("resident-turn", 1, [
+      new THREE.VectorKeyframeTrack("resident.position", [0, 1], [0, 0, 0, 1.25, 0.4, -0.6]),
+      new THREE.BooleanKeyframeTrack("resident.visible", [0, 1], [true, false]),
+    ]);
+    scene.animations = [clip];
+    scene.updateWorldMatrix(true, true);
+    const quality = new StaticSceneBatch(scene);
+    quality.apply("high");
+    const batch = batches(scene)[0]!;
+    const mixer = new THREE.AnimationMixer(scene);
+    const action = mixer.clipAction(clip);
+    action.setLoop(THREE.LoopOnce, 1);
+    action.clampWhenFinished = true;
+    action.play();
+    mixer.setTime(0.5);
+    quality.syncDynamicInstances();
+    for (let index = 0; index < meshes.length; index += 1) {
+      const instance = batch.getMatrixAt(index, new THREE.Matrix4());
+      expectMatrix(new THREE.Matrix4().multiplyMatrices(batch.matrixWorld, instance), meshes[index]!.matrixWorld);
+      expect(batch.getVisibleAt(index)).toBe(true);
+    }
+    expect(resident.position.x).toBeCloseTo(0.625);
+    mixer.setTime(1);
+    quality.syncDynamicInstances();
+    expect(resident.visible).toBe(false);
+    expect(meshes.map((mesh, index) => batch.getVisibleAt(index))).toEqual([false, false]);
+    quality.dispose();
+    mixer.stopAllAction();
+    (batch.material as THREE.Material).dispose();
+  });
+
+  it("tracks a nested animation subtree conservatively when a track cannot be resolved", () => {
     const scene = new THREE.Group();
     const animated = new THREE.Group();
     animated.add(...pair());
@@ -256,11 +383,28 @@ describe("reversible static batching of original frozen meshes", () => {
     ])];
     scene.add(animated);
     const quality = new StaticSceneBatch(scene);
-    expect(batches(scene)).toHaveLength(0);
+    expect(batches(scene)).toHaveLength(1);
+    expect(quality.getDiagnostics().dynamicBatchedMeshes).toBe(2);
     quality.dispose();
   });
 
-  it.each(["transparent", "cutout", "wireframe", "stencil", "partial", "groups", "array", "morph", "instanced", "instanced-attribute", "skinned", "callback", "material-callback", "order", "parent-order", "hidden", "negative", "parent-negative", "singular", "shear", "dynamic-buffer", "half-float"])("leaves %s meshes untouched", (condition) => {
+  it("reports hidden transparent semantic proxies as hidden while preserving their raycast source", () => {
+    const scene = new THREE.Group();
+    const parent = new THREE.Group();
+    const proxy = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 }));
+    parent.visible = false;
+    parent.add(proxy);
+    scene.add(parent);
+    const quality = new StaticSceneBatch(scene);
+    const diagnostics = quality.getDiagnostics();
+    expect(diagnostics.totalMeshes).toBe(1);
+    expect(diagnostics.batchedMeshes).toBe(0);
+    expect(diagnostics.rejectedByReason["hidden-ancestor"]).toBe(1);
+    expect(proxy.geometry).toBeInstanceOf(THREE.BoxGeometry);
+    quality.dispose();
+  });
+
+  it.each(["transparent", "cutout", "wireframe", "stencil", "partial", "array", "morph", "instanced", "instanced-attribute", "skinned", "callback", "material-callback", "order", "parent-order", "hidden", "negative", "parent-negative", "singular", "shear", "dynamic-buffer", "half-float"])("leaves %s meshes untouched", (condition) => {
     const scene = new THREE.Group();
     const meshes = pair();
     if (condition === "transparent") (meshes[0].material as THREE.Material).transparent = true;
@@ -270,7 +414,6 @@ describe("reversible static batching of original frozen meshes", () => {
     if (condition === "material-callback") (meshes[0].material as THREE.Material).onBeforeRender = () => {};
     for (const mesh of meshes) {
       if (condition === "partial") mesh.geometry.setDrawRange(3, 3);
-      if (condition === "groups") mesh.geometry.addGroup(0, 3, 0);
       if (condition === "array") mesh.material = [mesh.material as THREE.Material];
       if (condition === "morph") mesh.geometry.morphAttributes.position = [mesh.geometry.getAttribute("position").clone()];
       if (condition === "callback") mesh.onBeforeRender = () => {};
@@ -331,7 +474,7 @@ describe("reversible static batching of original frozen meshes", () => {
     vi.restoreAllMocks();
   });
 
-  it("preserves custom raycasts on source meshes and same-material shader hooks on their render batch", () => {
+  it("keeps custom shader hooks on the original source render path", () => {
     const scene = new THREE.Group();
     const material = new THREE.MeshStandardMaterial();
     material.onBeforeCompile = () => {};
@@ -343,12 +486,123 @@ describe("reversible static batching of original frozen meshes", () => {
     scene.updateMatrixWorld(true);
     const quality = new StaticSceneBatch(scene);
     quality.apply("medium");
-    expect(batches(scene)).toHaveLength(1);
-    expect(batches(scene)[0]!.material).toBe(material);
+    expect(batches(scene)).toHaveLength(0);
+    expect(quality.getDiagnostics().rejectedByReason["material-custom-shader-hook"]).toBe(2);
     const raycaster = new THREE.Raycaster(new THREE.Vector3(0, 0, 5), new THREE.Vector3(0, 0, -1));
-    raycaster.layers.enable(STATIC_BATCH_ORIGINAL_LAYER);
     raycaster.intersectObject(scene, true);
     expect(raycast).toHaveBeenCalled();
     quality.dispose();
+  });
+
+  it("batches standard material variants through copied per-surface attributes", () => {
+    const scene = new THREE.Group();
+    const firstMaterial = new THREE.MeshStandardMaterial({
+      color: 0xd23b62,
+      emissive: 0x331122,
+      emissiveIntensity: 0.4,
+      roughness: 0.3,
+      metalness: 0.15,
+    });
+    const secondMaterial = firstMaterial.clone();
+    secondMaterial.color.set(0x2d8fce);
+    secondMaterial.emissive.set(0x112244);
+    secondMaterial.emissiveIntensity = 1.25;
+    secondMaterial.roughness = 0.82;
+    secondMaterial.metalness = 0.65;
+    const first = new THREE.Mesh(geometry(), firstMaterial);
+    const second = new THREE.Mesh(geometry(2), secondMaterial);
+    second.position.x = 3;
+    scene.add(first, second);
+
+    const materials = new RuntimeMaterialQuality(scene);
+    const quality = new StaticSceneBatch(scene, (material, tier) => materials.materialForTier(material, tier));
+    quality.apply("high");
+    const batch = batches(scene)[0]!;
+    expect(batches(scene)).toHaveLength(1);
+    expect(batch.instanceCount).toBe(2);
+    expect(batch.material).not.toBe(firstMaterial);
+    const batchMaterial = batch.material as THREE.MeshStandardMaterial;
+    expect(batchMaterial.color.getHex()).toBe(0xffffff);
+    expect(batchMaterial.emissive.getHex()).toBe(0xffffff);
+    expect(batchMaterial.emissiveIntensity).toBe(1);
+    expect(batchMaterial.roughness).toBe(1);
+    expect(batchMaterial.metalness).toBe(1);
+
+    const firstRange = batch.getGeometryRangeAt(batch.getGeometryIdAt(0))!;
+    const secondRange = batch.getGeometryRangeAt(batch.getGeometryIdAt(1))!;
+    const colors = batch.geometry.getAttribute("yorSurfaceColor");
+    const emissive = batch.geometry.getAttribute("yorSurfaceEmissive");
+    const factors = batch.geometry.getAttribute("yorSurfaceFactors");
+    expect(new THREE.Color().fromBufferAttribute(colors, firstRange.vertexStart).getHex()).toBe(firstMaterial.color.getHex());
+    expect(new THREE.Color().fromBufferAttribute(colors, secondRange.vertexStart).getHex()).toBe(secondMaterial.color.getHex());
+    expect(new THREE.Color().fromBufferAttribute(emissive, firstRange.vertexStart).getHex()).toBe(firstMaterial.emissive.getHex());
+    expect(new THREE.Color().fromBufferAttribute(emissive, secondRange.vertexStart).getHex()).toBe(secondMaterial.emissive.getHex());
+    expect(factors.getX(firstRange.vertexStart)).toBeCloseTo(firstMaterial.roughness);
+    expect(factors.getY(firstRange.vertexStart)).toBeCloseTo(firstMaterial.metalness);
+    expect(factors.getZ(firstRange.vertexStart)).toBeCloseTo(firstMaterial.emissiveIntensity);
+    expect(factors.getX(secondRange.vertexStart)).toBeCloseTo(secondMaterial.roughness);
+    expect(factors.getY(secondRange.vertexStart)).toBeCloseTo(secondMaterial.metalness);
+    expect(factors.getZ(secondRange.vertexStart)).toBeCloseTo(secondMaterial.emissiveIntensity);
+
+    const shader = {
+      ...THREE.ShaderLib.standard,
+      uniforms: { ...THREE.ShaderLib.standard.uniforms },
+    } as Parameters<typeof batchMaterial.onBeforeCompile>[0];
+    batchMaterial.onBeforeCompile(shader, {} as THREE.WebGLRenderer);
+    expect(shader.vertexShader).toContain("vYorSurfaceColor = yorSurfaceColor;");
+    expect(shader.fragmentShader).toContain("diffuseColor.rgb *= vYorSurfaceColor;");
+    expect(shader.fragmentShader).toContain("roughnessFactor *= vYorSurfaceFactors.x;");
+    expect(shader.fragmentShader).toContain("metalnessFactor *= vYorSurfaceFactors.y;");
+    expect(shader.fragmentShader).toContain("totalEmissiveRadiance *= vYorSurfaceEmissive * vYorSurfaceFactors.z;");
+
+    materials.apply("low");
+    quality.apply("low");
+    const lowMaterial = batch.material as THREE.MeshLambertMaterial;
+    expect(lowMaterial).toBeInstanceOf(THREE.MeshLambertMaterial);
+    expect(lowMaterial.color.getHex()).toBe(0xffffff);
+    expect(lowMaterial.emissive.getHex()).toBe(0xffffff);
+    expect(lowMaterial.emissiveIntensity).toBe(1);
+    const lowShader = {
+      ...THREE.ShaderLib.lambert,
+      uniforms: { ...THREE.ShaderLib.lambert.uniforms },
+    } as Parameters<typeof lowMaterial.onBeforeCompile>[0];
+    lowMaterial.onBeforeCompile(lowShader, {} as THREE.WebGLRenderer);
+    expect(lowShader.fragmentShader).toContain("diffuseColor.rgb *= vYorSurfaceColor;");
+    expect(lowShader.fragmentShader).toContain("totalEmissiveRadiance *= vYorSurfaceEmissive * vYorSurfaceFactors.z;");
+
+    const sourceGeometry = first.geometry;
+    const ownedMaterialDispose = vi.spyOn(lowMaterial, "dispose");
+    quality.dispose();
+    materials.dispose();
+    expect(ownedMaterialDispose).toHaveBeenCalledOnce();
+    expect(first.geometry).toBe(sourceGeometry);
+    expect(sourceGeometry.hasAttribute("yorSurfaceColor")).toBe(false);
+    expect(first.material).toBe(firstMaterial);
+    expect(second.material).toBe(secondMaterial);
+    firstMaterial.dispose();
+    secondMaterial.dispose();
+  });
+
+  it("does not combine scalar variants when texture identity or material class differs", () => {
+    const scene = new THREE.Group();
+    const firstMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000, map: new THREE.Texture() });
+    const secondMaterial = firstMaterial.clone();
+    secondMaterial.color.set(0x0000ff);
+    secondMaterial.map = new THREE.Texture();
+    const physicalMaterial = new THREE.MeshPhysicalMaterial({ color: 0x00ff00 });
+    scene.add(
+      new THREE.Mesh(geometry(), firstMaterial),
+      new THREE.Mesh(geometry(), secondMaterial),
+      new THREE.Mesh(geometry(), physicalMaterial),
+    );
+
+    const quality = new StaticSceneBatch(scene);
+    expect(batches(scene)).toHaveLength(0);
+    expect(quality.getDiagnostics().singletonMeshes).toBe(3);
+    expect(quality.getDiagnostics().rejectedByReason["singleton-compatible-group"]).toBe(3);
+    quality.dispose();
+    firstMaterial.dispose();
+    secondMaterial.dispose();
+    physicalMaterial.dispose();
   });
 });
