@@ -2,13 +2,15 @@
   "schemaVersion": 1,
   "sourceIdentity": {
     "parentCommit": "bd01478617b4166866f3f44196c56fc5add94acd",
-    "sourceCommit": "5c1e6aedb71d89d46ffc0ada8de522526290131c",
+    "sourceCommit": "ae0412fb4bfcf81b807ecd492a96cbd773c5005c",
     "acceptedInputCommit": "500d10fa5901be48d4ff877e608d65ba0e271bb9",
     "acceptedInputAppTree": "ba0b709192367e1d12a796618f97801a8fcd5a70",
-    "resultingAppTree": "62a08db251ef15254523bfb08b926ce7c6954ebc",
+    "resultingAppTree": "7572fd8d082659251762ddb81416219a37800680",
     "sourceBaseCommit": "bd01478617b4166866f3f44196c56fc5add94acd",
     "sourceBaseAppTree": "3975e40c59a04b8696efa2ca3605eb37a0617165",
     "governingPackets": [
+      "docs/planning/reconciliation-packets/2026-10-16-pre-g7-38-first-use-shader-info-log-fast-path.md",
+      "docs/planning/reconciliation-packets/2026-10-16-pre-g7-37-shader-extension-capability-probe.md",
       "docs/planning/reconciliation-packets/2026-10-16-pre-g7-31-mobile-home-framing.md",
       "docs/planning/reconciliation-packets/2026-10-16-pre-g7-30-perf-suite-trace-recapture.md",
       "docs/planning/reconciliation-packets/2026-10-16-pre-g7-29-full-suite-startup-trace.md",
@@ -23,44 +25,107 @@
       "docs/planning/validation-and-production.md"
     ],
     "visualCandidateEvidence": "deliveries/G7/preparation/maker-evidence/pre-g7-31/",
-    "formalAcceptance": "PRE-G7-35 remains unaccepted and undeployed. PRE-G7-36 and PRE-G7-37 captured source-bound runtime diagnostics on its exact build. P37 recorded KHR_parallel_shader_compile support but 15.442 seconds across getProgramInfoLog calls, with 5.716-, 8.528-, and 1.664-second long tasks. The first-use shader path remains unresolved. Tests and the full performance suite were not run. Independent audit, human visual review, and Parent ruling remain pending.",
-    "taskBranchParentCommit": "4757af073cc64f1eab93ff56bf49a824405d79cd",
+    "formalAcceptance": "PRE-G7-38 remains unaccepted and undeployed. Its single 40-second source-bound capture recorded zero successful-link program and shader info-log reads, but three long tasks of 4.050, 6.673, and 1.277 seconds remain. getProgramParameter calls totaled 11.731 seconds; because PRE-G7-38 moves LINK_STATUS before info-log reads, the wait may have shifted to the status query, but the capture did not record query enums. This does not pass the full performance gate. Unit, integration, end-to-end, and full performance tests were not run. Independent GPT Plus #2 audit, human visual review, and Parent ruling remain pending.",
+    "taskBranchParentCommit": "1d39670b102b2ef240ff587f184da68c8dfa84f5",
     "productionRuntimeSourceCommit": "ffd4635242362774c7981f8d54405fd0ccb2b0c9",
     "productionRuntimeAppTree": "9895fcc5c09ba695674fc5ff0342f5afb35b3d0c",
     "testSupportCommits": [
       "d86d3d68c34fcdff6319c7945c7d74e87ce81946",
       "bd01478617b4166866f3f44196c56fc5add94acd"
     ],
-    "validationReport": "deliveries/G7/preparation/maker-evidence/pre-g7-35/REPORT.md",
-    "packet": "PRE-G7-35",
-    "priorValidationReport": "deliveries/G7/preparation/maker-evidence/pre-g7-34/REPORT.md",
+    "validationReport": "deliveries/G7/preparation/maker-evidence/pre-g7-38/REPORT.md",
+    "packet": "PRE-G7-38",
+    "priorValidationReport": "deliveries/G7/preparation/maker-evidence/pre-g7-35/REPORT.md",
     "latestValidation": {
-      "packet": "PRE-G7-35",
-      "sourceCommit": "5c1e6aedb71d89d46ffc0ada8de522526290131c",
+      "packet": "PRE-G7-38",
+      "sourceCommit": "ae0412fb4bfcf81b807ecd492a96cbd773c5005c",
+      "appTree": "7572fd8d082659251762ddb81416219a37800680",
+      "sourceCommitDomainTree": "58721ce1ae7e8c3c84c0b959566c975932871f8c",
       "status": "PASS",
       "passingChecks": [
         "pinned Node 24.19.0 and pnpm 9.15.9",
-        "offline frozen install with zero package downloads",
+        "offline frozen install after applying the Three.js patch with zero package fetches",
         "lint",
         "typecheck",
         "production build with PRE-G7-13 evidence flag",
-        "source/mirror parity and frozen model hash inventory"
+        "source/mirror parity for 116 source files, 14 test files, and three dependency files"
       ],
-      "failedCheck": "none within the authorized install, lint, typecheck, and build scope",
+      "failedCheck": "none within the post-patch install, lint, typecheck, build, and parity scope; the initial offline install failed because the locked Next.js tarball was absent, then the authorized frozen network install passed",
       "notRunChecks": [
         "unit tests",
         "integration tests",
         "e2e tests",
-        "browser runtime capture",
         "full performance suite",
         "independent audit",
         "human visual review"
       ],
-      "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-35/",
-      "buildId": "YeuUJsHpZHf4H1-GP30nT",
+      "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-38/",
+      "report": "deliveries/G7/preparation/maker-evidence/pre-g7-38/REPORT.md",
+      "buildId": "ZU5S4uDGagmUivvV4xDKh",
+      "buildIdSha256": "9a2f517f64d3d460f4d800276ea7a46bb9bb63740c5ea85ca0b77d1b74432240",
       "acceptance": "unaccepted; undeployed"
     },
     "latestRuntimeDiagnostic": {
+      "packet": "PRE-G7-38",
+      "sourceCommit": "ae0412fb4bfcf81b807ecd492a96cbd773c5005c",
+      "appTree": "7572fd8d082659251762ddb81416219a37800680",
+      "sourceCommitDomainTree": "58721ce1ae7e8c3c84c0b959566c975932871f8c",
+      "status": "CAPTURED; successful-link program/shader info-log reads were absent, but long stalls remain and getProgramParameter timing may indicate the wait shifted to LINK_STATUS",
+      "buildId": "ZU5S4uDGagmUivvV4xDKh",
+      "browserVersion": "155.0.8059.84",
+      "finalLifecycleState": "HOME",
+      "homeAtMs": 7696.8,
+      "khrParallelShaderCompile": true,
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "renderer": "ANGLE (Intel, Intel(R) Iris(R) Xe Graphics (0x000046A8) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "longTaskCount": 10,
+      "longTaskDurationsMs": [
+        4050,
+        6673,
+        1277
+      ],
+      "accumulatedLongTaskMs": 13471,
+      "maxAnimationFrameGapMs": 6660.9,
+      "getProgramInfoLog": {
+        "count": 0,
+        "totalMs": 0,
+        "maxMs": 0
+      },
+      "getShaderInfoLog": {
+        "count": 0,
+        "totalMs": 0,
+        "maxMs": 0
+      },
+      "getProgramParameter": {
+        "count": 457,
+        "totalMs": 11730.9,
+        "maxMs": 609.1
+      },
+      "getUniformLocation": {
+        "count": 2814,
+        "totalMs": 6.5,
+        "maxMs": 0.1
+      },
+      "getAttribLocation": {
+        "count": 176,
+        "totalMs": 0.4,
+        "maxMs": 0.1
+      },
+      "consoleErrors": 1,
+      "consoleErrorSummary": "One generic resource 404 console message; no URL attribution in the event.",
+      "pageErrors": 0,
+      "requestFailures": 0,
+      "instrumentationErrors": 0,
+      "requiredAndOptionalModelResponses": 4,
+      "modelResponseFailures": 0,
+      "screenshot": "captured",
+      "wrapperTiming": "performance.now() timing with per-call bookkeeping; overhead was not independently quantified and is included in measured durations.",
+      "report": "deliveries/G7/preparation/maker-evidence/pre-g7-38/REPORT.md",
+      "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-38/",
+      "acceptance": "unaccepted; undeployed",
+      "waitShiftInference": "The patch checks LINK_STATUS before reading info logs. getProgramParameter took 11,730.9 ms in this capture; query enums were not recorded, so attribution to LINK_STATUS is unconfirmed."
+    },
+    "previousRuntimeDiagnostic": {
       "packet": "PRE-G7-37",
       "sourceCommit": "5c1e6aedb71d89d46ffc0ada8de522526290131c",
       "status": "CAPTURED; KHR_parallel_shader_compile available; synchronous getProgramInfoLog calls remain the leading measured stall candidate",
@@ -89,7 +154,8 @@
       "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-37/",
       "acceptance": "unaccepted; undeployed"
     },
-    "previousRuntimeDiagnostic": {
+    "previousTaskBranchParentCommit": "4757af073cc64f1eab93ff56bf49a824405d79cd",
+    "earlierRuntimeDiagnostic": {
       "packet": "PRE-G7-36",
       "sourceCommit": "5c1e6aedb71d89d46ffc0ada8de522526290131c",
       "status": "CAPTURED; residual shader stalls remain",
@@ -1322,12 +1388,15 @@
       "sourceFiles": 116,
       "testFiles": 14,
       "rawParityFailures": 130,
-      "baseCommit": "5c1e6aedb71d89d46ffc0ada8de522526290131c",
-      "readmeSha256": "0bc288a3f88b640c9a9371bdd096862648c0484fb255c558ee197833575798be",
-      "evidence": "deliveries/G7/preparation/maker-evidence/pre-g7-35/source-mirror-parity-audit.json",
+      "baseCommit": "ae0412fb4bfcf81b807ecd492a96cbd773c5005c",
+      "readmeSha256": "75938919ed5fb31eb7fa4aee96df36d5b9c0f3c46e9bff12e3c263249f9de21c",
+      "evidence": "deliveries/G7/preparation/maker-evidence/pre-g7-38/source-mirror-parity-audit.json",
       "normalizedParityFailures": 0,
-      "gitBlobParityFailures": 0
+      "gitBlobParityFailures": 0,
+      "dependencyFiles": 3,
+      "dependencyFileByteMismatches": 0,
+      "dependencyFileBlobMismatches": 0
     },
-    "resultingTree": "89ca7d46f790f062e63fcae2368c24ae557e03ab"
+    "resultingTree": "58721ce1ae7e8c3c84c0b959566c975932871f8c"
   }
 }

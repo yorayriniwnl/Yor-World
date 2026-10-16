@@ -2,7 +2,15 @@
 
 This folder mirrors the canonical YOR WORLD application in `app/`, with the intentional domain URL override at `src/config/public-base-url.ts`. It is a local source candidate and has not been deployed. The local validation toolchain uses Node 24.19.0 and pnpm 9.15.9.
 
-## Current source candidate: PRE-G7-35
+## Current source candidate: PRE-G7-38
+
+Source commit `ae0412fb4bfcf81b807ecd492a96cbd773c5005c` binds app tree `7572fd8d082659251762ddb81416219a37800680` and source-commit domain mirror tree `58721ce1ae7e8c3c84c0b959566c975932871f8c`. PRE-G7-38 patches the pinned Three.js 0.180.0 dependency so successful program links skip shader and program info-log reads; failed links retain the original diagnostics and callback. The package metadata, lockfile, and patch are byte-identical in `app/` and this mirror. The domain URL override remains in `src/config/public-base-url.ts`.
+
+The frozen install, lint, typecheck, and production build passed with Node 24.19.0 and pnpm 9.15.9. Build ID: `ZU5S4uDGagmUivvV4xDKh`. One instrumented 40-second capture reached `HOME` at 7.697 seconds and recorded zero `getProgramInfoLog` and `getShaderInfoLog` calls. It still recorded three long tasks of 4.050, 6.673, and 1.277 seconds; `getProgramParameter` calls totaled 11.731 seconds, and the largest animation-frame gap was 6.661 seconds. Since the patch moves the `LINK_STATUS` query before those log reads, this may mean the wait shifted to the status query; the probe did not record query enums, so that attribution remains unconfirmed. The capture also recorded one generic console 404. This is a bounded diagnostic result, not a full performance pass. Tests and the full performance suite were **NOT RUN**. See the [PRE-G7-38 report](../deliveries/G7/preparation/maker-evidence/pre-g7-38/REPORT.md) and [evidence inventory](../deliveries/G7/preparation/maker-evidence/pre-g7-38/evidence-inventory.json).
+
+PRE-G7-38 remains **unaccepted and undeployed**. Independent audit, human visual review against `references/images/main-reference.png`, Parent ruling, and the full performance suite remain pending.
+
+## PRE-G7-35 source baseline and runtime history
 
 Source commit `5c1e6aedb71d89d46ffc0ada8de522526290131c` binds app tree `62a08db251ef15254523bfb08b926ce7c6954ebc` and source-commit domain mirror tree `89ca7d46f790f062e63fcae2368c24ae557e03ab`. The candidate is based on frozen PRE-G7-31 source commit `bd01478617b4166866f3f44196c56fc5add94acd`, app tree `3975e40c59a04b8696efa2ca3605eb37a0617165`; PRE-G7-33 and PRE-G7-34 added diagnostic evidence without changing product source.
 

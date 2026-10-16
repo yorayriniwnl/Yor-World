@@ -1,0 +1,28 @@
+{
+  "packet": "PRE-G7-38",
+  "command": "pnpm patch-commit D:/p38/scratch/three-0180",
+  "classification": "Unexpected package-manager side effect; patch output was generated, but the command also ran resolution/import work.",
+  "observedProgressDownloadCount": 7,
+  "observedPackageIdentities": "Not available from the partial command output captured by the wrapper.",
+  "observedOutputLines": [
+    "Progress: resolved 0, reused 2, downloaded 0, added 0",
+    "Progress: resolved 22, reused 23, downloaded 0, added 0",
+    "Progress: resolved 65, reused 66, downloaded 0, added 0",
+    "Progress: resolved 173, reused 158, downloaded 0, added 0",
+    "Progress: resolved 274, reused 241, downloaded 0, added 0",
+    "Progress: resolved 387, reused 340, downloaded 0, added 0",
+    "Progress: resolved 450, reused 392, downloaded 5, added 0",
+    "Progress: resolved 456, reused 398, downloaded 7, added 0",
+    "Progress: resolved 479, reused 404, downloaded 7, added 0",
+    "Already up to date",
+    "Progress: resolved 488, reused 405, downloaded 7, added 2, done"
+  ],
+  "exitCode": "NOT CAPTURED; command session returned after the visible progress, and its process later exited",
+  "observedSideEffects": [
+    "app/package.json gained the patchedDependencies mapping for three@0.180.0.",
+    "app/patches/three@0.180.0.patch was generated.",
+    "app/pnpm-lock.yaml gained the Three patch identity and also re-resolved two eslint-plugin-import peer-context entries.",
+    "The installed Three source and production ESM reflected the patch."
+  ],
+  "resolution": "The two unrelated peer-context lock rewrites are being removed by restoring the P37 lockfile and applying only the Three patchedDependencies hash, importer version, and snapshot identity. No further network install is authorized."
+}

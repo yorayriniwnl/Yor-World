@@ -1,0 +1,41 @@
+{
+  "packet": "PRE-G7-38",
+  "preservedBeforeSuccessfulInstall": true,
+  "events": [
+    {
+      "attempt": 1,
+      "command": "pnpm patch three@0.180.0 --edit-dir D:/p38/scratch/three-0180",
+      "exitCode": 1,
+      "status": "BLOCKED_BEFORE_PATCH",
+      "output": "ERR_PNPM_PATCH_NO_LOCKFILE: The modules directory is not ready for patching. Run pnpm install first.",
+      "classification": "Expected pnpm precondition; no files changed."
+    },
+    {
+      "attempt": 2,
+      "command": "P38 offline install wrapper preflight",
+      "exitCode": 1,
+      "status": "FAILED_BEFORE_PNPM",
+      "cause": "Temporary helper derived the project root from D:/p38/scratch instead of process.cwd(), so its pnpm-version preflight used a nonexistent app directory. No pnpm install process started.",
+      "output": "ReferenceError: Unable to read pinned pnpm version: undefined; Node.js v24.19.0",
+      "classification": "Harness path error; corrected wrapper used for the preserved offline install receipt."
+    },
+    {
+      "attempt": 3,
+      "command": "Write and run PRE-G7-38 validation wrapper",
+      "exitCode": 1,
+      "status": "FAILED_BEFORE_VALIDATION",
+      "cause": "The helper embedded a Windows path in JavaScript without preserving its backslashes and resolved a nonexistent output path.",
+      "output": "ENOENT opening D:\\\\p38\\\\p38deliveriesG7preparationmaker-evidencepre-g7-38\\\\run-validation.mjs",
+      "classification": "No lint, typecheck, build, install, or browser capture started; corrected writer was used for the successful validation run."
+    },
+    {
+      "attempt": 4,
+      "command": "Adapt PRE-G7-37 WebGL probe to PRE-G7-38",
+      "exitCode": 1,
+      "status": "FAILED_BEFORE_CAPTURE",
+      "cause": "A replacement-map helper escaped single quotes incorrectly, so the temporary adapter script failed Node syntax parsing.",
+      "output": "SyntaxError: Invalid or unexpected token in D:/p38/scratch/pre-g7-38-adapt-probe.mjs; no browser capture started.",
+      "classification": "No source or product files changed; corrected adapter generated the P38-owned probe scripts."
+    }
+  ]
+}
