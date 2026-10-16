@@ -2,13 +2,17 @@
 
 This folder mirrors the canonical YOR WORLD application in `app/`, with the intentional domain URL override at `src/config/public-base-url.ts`. It is a local source candidate and has not been deployed. The local validation toolchain uses Node 24.19.0 and pnpm 9.15.9.
 
-## Current source candidate: PRE-G7-31
+## Current source candidate: PRE-G7-35
 
-Source commit `bd01478617b4166866f3f44196c56fc5add94acd` binds app tree `3975e40c59a04b8696efa2ca3605eb37a0617165` and domain mirror tree `8c34adf791c678a4e9e8bfe90f92426026994e68`. PRE-G7-31 is based on the unaccepted PRE-G7-28 source candidate `d86d3d68c34fcdff6319c7945c7d74e87ce81946`, app tree `6ab180f831661e43cc035fe9d70eec67372dd708`, following PRE-G7-30 diagnostic evidence commit `848463d6d5c44e2575ada644baedb327176dc356`.
+Source commit `5c1e6aedb71d89d46ffc0ada8de522526290131c` binds app tree `62a08db251ef15254523bfb08b926ce7c6954ebc` and source-commit domain mirror tree `89ca7d46f790f062e63fcae2368c24ae557e03ab`. The candidate is based on frozen PRE-G7-31 source commit `bd01478617b4166866f3f44196c56fc5add94acd`, app tree `3975e40c59a04b8696efa2ca3605eb37a0617165`; PRE-G7-33 and PRE-G7-34 added diagnostic evidence without changing product source.
 
-The only product-source adjustment is the `home-mobile` camera target Y value, from `0.96` to `0.55`; the position, FOV, desktop camera, world assets, and interaction behavior are unchanged. PRE-G7-32 validation passed unit, lint, typecheck, both integration runs, build, and the composition browser suite. Its single full performance suite failed 5 of 6 checks because the active interaction route stayed in `LOADING` instead of reaching `HOME` within the existing 15-second assertion. The run was not retried and no source correction was made. See [the PRE-G7-32 report](../deliveries/G7/preparation/maker-evidence/pre-g7-32/REPORT.md) and its evidence inventory.
+PRE-G7-35 awaits `renderer.compileAsync(this.scene, this.camera)` after required-scene integration, quality setup, and viewport sizing, before the first animation frame and entrance choreography. A shader-prewarm error is logged and regular startup continues. Optional interaction assets remain asynchronous. The pinned offline frozen install, lint, typecheck, and production build passed with Node 24.19.0 and pnpm 9.15.9. Build ID: `YeuUJsHpZHf4H1-GP30nT`. See [the PRE-G7-35 report](../deliveries/G7/preparation/maker-evidence/pre-g7-35/REPORT.md) and its evidence inventory.
 
-PRE-G7-31 remains **unaccepted and undeployed**. Independent GPT Plus #2 audit, human visual review beside `references/images/main-reference.png`, and Parent ruling remain pending. The fresh browser screenshots are evidence for that review; they are not a visual acceptance.
+PRE-G7-35 remains **unaccepted and undeployed**. Unit, integration, e2e, browser runtime capture, and the full performance suite were **NOT RUN** under this packet. The build result does not verify that the startup stall is fixed. Independent audit, human visual review beside `references/images/main-reference.png`, and Parent ruling remain pending.
+
+## PRE-G7-31 history
+
+Source commit `bd01478617b4166866f3f44196c56fc5add94acd` binds app tree `3975e40c59a04b8696efa2ca3605eb37a0617165` and domain mirror tree `8c34adf791c678a4e9e8bfe90f92426026994e68`. Its only product-source adjustment was the `home-mobile` camera target Y value, from `0.96` to `0.55`; the position, FOV, desktop camera, world assets, and interaction behavior were unchanged. PRE-G7-32 passed unit, lint, typecheck, both integration runs, build, and composition browser checks. Its single full performance suite failed 5 of 6 checks because the active interaction route stayed in `LOADING` instead of reaching `HOME` within the existing 15-second assertion. See [the PRE-G7-32 report](../deliveries/G7/preparation/maker-evidence/pre-g7-32/REPORT.md). PRE-G7-31 remains an unaccepted historical candidate.
 
 ## PRE-G7-28 history
 

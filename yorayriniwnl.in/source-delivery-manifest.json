@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "sourceIdentity": {
-    "parentCommit": "d86d3d68c34fcdff6319c7945c7d74e87ce81946",
-    "sourceCommit": "bd01478617b4166866f3f44196c56fc5add94acd",
+    "parentCommit": "bd01478617b4166866f3f44196c56fc5add94acd",
+    "sourceCommit": "5c1e6aedb71d89d46ffc0ada8de522526290131c",
     "acceptedInputCommit": "500d10fa5901be48d4ff877e608d65ba0e271bb9",
     "acceptedInputAppTree": "ba0b709192367e1d12a796618f97801a8fcd5a70",
-    "resultingAppTree": "3975e40c59a04b8696efa2ca3605eb37a0617165",
-    "sourceBaseCommit": "d86d3d68c34fcdff6319c7945c7d74e87ce81946",
-    "sourceBaseAppTree": "6ab180f831661e43cc035fe9d70eec67372dd708",
+    "resultingAppTree": "62a08db251ef15254523bfb08b926ce7c6954ebc",
+    "sourceBaseCommit": "bd01478617b4166866f3f44196c56fc5add94acd",
+    "sourceBaseAppTree": "3975e40c59a04b8696efa2ca3605eb37a0617165",
     "governingPackets": [
       "docs/planning/reconciliation-packets/2026-10-16-pre-g7-31-mobile-home-framing.md",
       "docs/planning/reconciliation-packets/2026-10-16-pre-g7-30-perf-suite-trace-recapture.md",
@@ -23,34 +23,41 @@
       "docs/planning/validation-and-production.md"
     ],
     "visualCandidateEvidence": "deliveries/G7/preparation/maker-evidence/pre-g7-31/",
-    "formalAcceptance": "PRE-G7-31 remains an unaccepted mobile-camera candidate. PRE-G7-32 passed unit, lint, typecheck, both integration runs, build, and composition browser checks; its single performance-suite invocation failed when the active route remained LOADING instead of reaching HOME within the existing 15-second assertion. Independent audit, read-only human visual review, and Parent ruling remain pending.",
-    "taskBranchParentCommit": "074ccbcb7fa5d8c5f89eb98aab9315cebb9100fb",
+    "formalAcceptance": "PRE-G7-35 is an unaccepted, undeployed source candidate. Its offline frozen install, lint, typecheck, and production build passed. Runtime startup performance is unverified because browser capture and the full performance suite were not run under the packet. PRE-G7-32 performance failure and PRE-G7-34 CPU attribution remain unresolved evidence; independent audit, human visual review, and Parent ruling remain pending.",
+    "taskBranchParentCommit": "4757af073cc64f1eab93ff56bf49a824405d79cd",
     "productionRuntimeSourceCommit": "ffd4635242362774c7981f8d54405fd0ccb2b0c9",
     "productionRuntimeAppTree": "9895fcc5c09ba695674fc5ff0342f5afb35b3d0c",
     "testSupportCommits": [
       "d86d3d68c34fcdff6319c7945c7d74e87ce81946",
       "bd01478617b4166866f3f44196c56fc5add94acd"
     ],
-    "validationReport": "deliveries/G7/preparation/maker-evidence/pre-g7-32/REPORT.md",
-    "packet": "PRE-G7-31",
-    "priorValidationReport": "deliveries/G7/preparation/maker-evidence/pre-g7-31/REPORT.md",
+    "validationReport": "deliveries/G7/preparation/maker-evidence/pre-g7-35/REPORT.md",
+    "packet": "PRE-G7-35",
+    "priorValidationReport": "deliveries/G7/preparation/maker-evidence/pre-g7-34/REPORT.md",
     "latestValidation": {
-      "packet": "PRE-G7-32",
-      "sourceCommit": "bd01478617b4166866f3f44196c56fc5add94acd",
-      "status": "FAIL",
+      "packet": "PRE-G7-35",
+      "sourceCommit": "5c1e6aedb71d89d46ffc0ada8de522526290131c",
+      "status": "PASS",
       "passingChecks": [
-        "pinned toolchain and source/mirror preflight",
-        "offline frozen install",
-        "unit",
+        "pinned Node 24.19.0 and pnpm 9.15.9",
+        "offline frozen install with zero package downloads",
         "lint",
         "typecheck",
-        "integration run 1",
-        "integration run 2",
-        "build",
-        "composition browser suite"
+        "production build with PRE-G7-13 evidence flag",
+        "source/mirror parity and frozen model hash inventory"
       ],
-      "failedCheck": "full performance suite: 5 of 6 checks passed; active route remained LOADING instead of reaching HOME within the existing 15-second assertion",
-      "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-32/",
+      "failedCheck": "none within the authorized install, lint, typecheck, and build scope",
+      "notRunChecks": [
+        "unit tests",
+        "integration tests",
+        "e2e tests",
+        "browser runtime capture",
+        "full performance suite",
+        "independent audit",
+        "human visual review"
+      ],
+      "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-35/",
+      "buildId": "YeuUJsHpZHf4H1-GP30nT",
       "acceptance": "unaccepted; undeployed"
     }
   },
@@ -844,10 +851,10 @@
       {
         "sourcePath": "app/src/features/world/WorldRuntime.ts",
         "domainPath": "src/features/world/WorldRuntime.ts",
-        "sourceSha256": "a298298bf42e6e6657d854d531959478b47e6040daf0c9f3631dd2ae87627633",
-        "domainSha256": "c9351cc1d7beac825f6e576ae9068415a5247ceeedeae128a73d697c53441f8f",
+        "sourceSha256": "db21c91b52877e89a05833210934794082de90db134027c1131772cc387e8e2c",
+        "domainSha256": "b6b5906485a74ca9bbe9c46c2f3e47cf047d5d610d76cac8c4199675cbd01c1b",
         "rawBytesEqual": false,
-        "normalizedSha256": "a298298bf42e6e6657d854d531959478b47e6040daf0c9f3631dd2ae87627633",
+        "normalizedSha256": "db21c91b52877e89a05833210934794082de90db134027c1131772cc387e8e2c",
         "normalizedContentEqual": true
       },
       {
@@ -1267,12 +1274,12 @@
       "sourceFiles": 116,
       "testFiles": 14,
       "rawParityFailures": 130,
-      "baseCommit": "bd01478617b4166866f3f44196c56fc5add94acd",
-      "readmeSha256": "d315f72dc48ff34d5777585e9429c74d4cfc4b5da946a6da3cb71d8e8e3ef62c",
-      "evidence": "deliveries/G7/preparation/maker-evidence/pre-g7-31/source-mirror-parity-audit.json",
+      "baseCommit": "5c1e6aedb71d89d46ffc0ada8de522526290131c",
+      "readmeSha256": "136110993ecdd793b38ff2f34925373027d9f5d5f812721cc026ea620c9cb4a9",
+      "evidence": "deliveries/G7/preparation/maker-evidence/pre-g7-35/source-mirror-parity-audit.json",
       "normalizedParityFailures": 0,
       "gitBlobParityFailures": 0
     },
-    "resultingTree": "8c34adf791c678a4e9e8bfe90f92426026994e68"
+    "resultingTree": "89ca7d46f790f062e63fcae2368c24ae557e03ab"
   }
 }

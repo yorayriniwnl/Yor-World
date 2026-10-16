@@ -1,0 +1,12 @@
+{
+  "name": "evidence-commit-preflight-attempt-01",
+  "requestedCommand": "git diff --cached --check",
+  "exitCode": 2,
+  "classification": "Evidence-only whitespace check failed before commit. Report hard-line-break trailing spaces and terminal progress whitespace/newline details were detected; canonical and mirrored source files were not implicated. No commit or push was attempted.",
+  "findings": [
+    "REPORT.md lines 3-6 had Markdown hard-line-break trailing spaces.",
+    "lint/typecheck stdout had a final blank line.",
+    "production-build stdout had progress-line trailing spaces and a final blank line."
+  ],
+  "followUp": "Report trailing spaces were removed. Captured command stdout/stderr are being preserved byte-for-byte as wrapped Base64 with raw byte length and SHA-256 recorded."
+}
