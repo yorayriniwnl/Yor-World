@@ -36,6 +36,8 @@ PRE-G7-30 completed its authorized single trace recapture against the exact PRE-
 
 [PRE-G7-36](reconciliation-packets/2026-10-16-pre-g7-36-shader-prewarm-runtime-capture.md) measures the pushed PRE-G7-35 production build with one source-bound CPU-profiled Chrome capture. It authorizes no application-source edit, tests or full performance suite, acceptance, merge, or deployment.
 
+[PRE-G7-37](reconciliation-packets/2026-10-16-pre-g7-37-shader-extension-capability-probe.md) measures WebGL parallel-compile support and first-use GL-call cost on the same frozen PRE-G7-35 build. It authorizes no application-source edit, tests or full performance suite, acceptance, merge, or deployment.
+
 Read [current pre-G7 requirements](../operations/pre-g7-prerequisites.md) and the [RC6 dossier](../releases/v1.0.0-rc6.md). Parent continues authorized independent work and obtains missing service/device inputs. No mock, local fixture, emulation, liveness-only response or private preview substitutes for a mandatory production criterion.
 
 ## One specification and a small shared baseline
