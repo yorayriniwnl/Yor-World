@@ -1,0 +1,93 @@
+﻿{
+    "recordType":  "external-test preflight blocker and focused-unit-01 overlap qualification",
+    "capturedAtUtc":  "2026-10-16T07:32:18.9125437Z",
+    "focusedUnit01":  {
+                          "receipt":  "focused-unit-01.metadata.json",
+                          "sourceHead":  "0ad635b8ac8d893b19cde08dd712ea993c54411b",
+                          "candidateRootTree":  "0b5c99cfa718c2c767f2f861208fc81fdbd50fe1",
+                          "candidateAppTree":  "60a5b936a8d0f7ee9ead4e74492859af975da878",
+                          "candidateMirrorTree":  "f82e85753363b5f125134723c9d180cdb5a88de9",
+                          "startedAtUtc":  "2026-10-16T07:30:13.8817151Z",
+                          "finishedAtUtc":  "2026-10-16T07:30:32.1034241Z",
+                          "exitCode":  1,
+                          "command":  "C:\\Users\\ayush\\AppData\\Local\\Temp\\yor-world-node-24.19.0\\unpacked\\node-v24.19.0-win-x64\\node.exe C:\\Users\\ayush\\AppData\\Local\\pnpm\\store\\v11\\links\\@\\pnpm\\9.15.9\\3d51f653a61d6f9b811790f44bb80b908ca8d24c424e6e53e491ea81b7f96a43\\node_modules\\pnpm\\bin\\pnpm.cjs exec vitest run --config vitest.config.ts tests/unit/low-quality-batch.test.ts tests/unit/inclusive-render-call-counter.test.ts tests/unit/static-batch-production-report.test.ts tests/unit/world-runtime-recovery.test.ts",
+                          "externalProcessBeganDuringRun":  true
+                      },
+    "blockedAttempt":  {
+                           "name":  "focused-unit-02",
+                           "wrapperExitCode":  1,
+                           "commandNotLaunched":  true,
+                           "pinnedNode":  "v24.19.0",
+                           "pinnedPnpm":  "9.15.9",
+                           "processTree":  {
+                                               "before":  [
+                                                              {
+                                                                  "processId":  29332,
+                                                                  "parentProcessId":  21088,
+                                                                  "name":  "powershell.exe",
+                                                                  "executablePath":  "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+                                                                  "creationUtc":  "2026-10-16T07:30:21.0192940Z",
+                                                                  "commandClass":  "external PowerShell launcher; env values omitted",
+                                                                  "cpuSeconds":  1.484375,
+                                                                  "workingSetBytes":  80883712
+                                                              },
+                                                              {
+                                                                  "processId":  2720,
+                                                                  "parentProcessId":  29332,
+                                                                  "name":  "node.exe",
+                                                                  "executablePath":  "C:\\Program Files\\nodejs\\node.exe",
+                                                                  "creationUtc":  "2026-10-16T07:30:22.3002740Z",
+                                                                  "commandClass":  "node --import tsx --test --test-concurrency=1 src/__tests__/*.test.ts",
+                                                                  "cpuSeconds":  0.65625,
+                                                                  "workingSetBytes":  53346304
+                                                              },
+                                                              {
+                                                                  "processId":  21088,
+                                                                  "parentProcessId":  31920,
+                                                                  "name":  "codex.exe",
+                                                                  "executablePath":  "c:\\Users\\ayush\\.vscode\\extensions\\openai.chatgpt-26.1007.21434-win32-x64\\bin\\windows-x86_64\\codex.exe",
+                                                                  "creationUtc":  "2026-10-15T20:52:23.8360230Z",
+                                                                  "commandClass":  "Codex parent process",
+                                                                  "cpuSeconds":  399.328125,
+                                                                  "workingSetBytes":  146206720
+                                                              }
+                                                          ],
+                                               "activeAfterSample":  true,
+                                               "sampleIntervalSeconds":  10,
+                                               "after":  [
+                                                             {
+                                                                 "processId":  29332,
+                                                                 "parentProcessId":  21088,
+                                                                 "name":  "powershell.exe",
+                                                                 "executablePath":  "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+                                                                 "creationUtc":  "2026-10-16T07:30:21.0192940Z",
+                                                                 "commandClass":  "external PowerShell launcher; env values omitted",
+                                                                 "cpuSeconds":  1.484375,
+                                                                 "workingSetBytes":  80949248
+                                                             },
+                                                             {
+                                                                 "processId":  2720,
+                                                                 "parentProcessId":  29332,
+                                                                 "name":  "node.exe",
+                                                                 "executablePath":  "C:\\Program Files\\nodejs\\node.exe",
+                                                                 "creationUtc":  "2026-10-16T07:30:22.3002740Z",
+                                                                 "commandClass":  "node --import tsx --test --test-concurrency=1 src/__tests__/*.test.ts",
+                                                                 "cpuSeconds":  0.6875,
+                                                                 "workingSetBytes":  53346304
+                                                             },
+                                                             {
+                                                                 "processId":  21088,
+                                                                 "parentProcessId":  31920,
+                                                                 "name":  "codex.exe",
+                                                                 "executablePath":  "c:\\Users\\ayush\\.vscode\\extensions\\openai.chatgpt-26.1007.21434-win32-x64\\bin\\windows-x86_64\\codex.exe",
+                                                                 "creationUtc":  "2026-10-15T20:52:23.8360230Z",
+                                                                 "commandClass":  "Codex parent process",
+                                                                 "cpuSeconds":  399.34375,
+                                                                 "workingSetBytes":  146206720
+                                                             }
+                                                         ]
+                                           },
+                           "classification":  "Preflight caught an unrelated external Node API test runner; its environment command line included secrets, so only a sanitized command class and process identity are retained.",
+                           "secretsCaptured":  false
+                       }
+}

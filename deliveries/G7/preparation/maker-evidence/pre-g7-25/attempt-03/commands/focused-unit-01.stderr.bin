@@ -1,0 +1,34 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/low-quality-batch.test.ts > reversible LOW batching of original frozen meshes > batches actual named and UUID animation targets and tracks their state
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/unit/low-quality-batch.test.ts:375:35
+    373|     quality.syncDynamicInstances();
+    374|     expect(uuidMeshes[1]!.visible).toBe(false);
+    375|     expect(batch.getVisibleAt(2)).toBe(false);
+       |                                   ^
+    376|     expect(batch.getVisibleAt(3)).toBe(false);
+    377|     quality.dispose();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/unit/world-runtime-recovery.test.ts > runtime multi-draw batching contract > synchronizes dynamic source transforms before the renderer submits a frame
+ReferenceError: expectMatrix is not defined
+ ❯ tests/unit/world-runtime-recovery.test.ts:582:5
+    580|
+    581|     expect(submittedWorldMatrices).toHaveLength(1);
+    582|     expectMatrix(submittedWorldMatrices[0]!, sources.first.matrixWorld…
+       |     ^
+    583|     runtime.dispose();
+    584|     expect(sources.first.layers.mask).toBe(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
