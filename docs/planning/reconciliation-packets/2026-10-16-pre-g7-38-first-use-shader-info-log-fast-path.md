@@ -59,3 +59,8 @@ This delta authorizes one network-enabled frozen-lockfile install with prefer-of
 ## 2026-10-16 post-patch install delta
 
 The network-enabled frozen install above hydrated the locked Next.js and SWC packages before the Three.js patch existed. After pnpm patch-commit updates the lockfile with the P38 patch, this packet authorizes one additional offline frozen install to apply that exact patched dependency to node_modules before lint/typecheck/build. This install must remain offline; if it fails, preserve the failure and stop without another network install.
+
+
+## 2026-10-16 patch-commit resolution delta
+
+The pnpm patch-commit command generated the Three patch but also reported seven downloaded packages and changed two unrelated eslint-plugin-import peer-context entries in pnpm-lock.yaml. The command output was only partially captured and did not include a final exit code; the observed progress and resulting side effects are preserved in deliveries/G7/preparation/maker-evidence/pre-g7-38/commands/patch-commit-observation.json. Restore the P37 lockfile and keep only the patchedDependencies record, Three importer patch hash, and Three snapshot patch hash. No further network operation is authorized. Then run the single offline frozen install already authorized above; if it fails, stop and preserve it.
