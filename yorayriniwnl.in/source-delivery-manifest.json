@@ -23,7 +23,7 @@
       "docs/planning/validation-and-production.md"
     ],
     "visualCandidateEvidence": "deliveries/G7/preparation/maker-evidence/pre-g7-31/",
-    "formalAcceptance": "PRE-G7-35 remains unaccepted and undeployed. PRE-G7-36 captured one runtime diagnostic on its exact build and reached HOME at 9.267 seconds, but three long tasks remained (5.260, 9.284, and 1.812 seconds); the same WebGLProgram.onFirstUse path is still present. The full performance suite was not run. Independent audit, human visual review, and Parent ruling remain pending.",
+    "formalAcceptance": "PRE-G7-35 remains unaccepted and undeployed. PRE-G7-36 and PRE-G7-37 captured source-bound runtime diagnostics on its exact build. P37 recorded KHR_parallel_shader_compile support but 15.442 seconds across getProgramInfoLog calls, with 5.716-, 8.528-, and 1.664-second long tasks. The first-use shader path remains unresolved. Tests and the full performance suite were not run. Independent audit, human visual review, and Parent ruling remain pending.",
     "taskBranchParentCommit": "4757af073cc64f1eab93ff56bf49a824405d79cd",
     "productionRuntimeSourceCommit": "ffd4635242362774c7981f8d54405fd0ccb2b0c9",
     "productionRuntimeAppTree": "9895fcc5c09ba695674fc5ff0342f5afb35b3d0c",
@@ -61,6 +61,35 @@
       "acceptance": "unaccepted; undeployed"
     },
     "latestRuntimeDiagnostic": {
+      "packet": "PRE-G7-37",
+      "sourceCommit": "5c1e6aedb71d89d46ffc0ada8de522526290131c",
+      "status": "CAPTURED; KHR_parallel_shader_compile available; synchronous getProgramInfoLog calls remain the leading measured stall candidate",
+      "buildId": "YeuUJsHpZHf4H1-GP30nT",
+      "browserVersion": "155.0.8059.84",
+      "finalLifecycleState": "HOME",
+      "homeAtMs": 9841.3,
+      "khrParallelShaderCompile": true,
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "renderer": "ANGLE (Intel, Intel(R) Iris(R) Xe Graphics (0x000046A8) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "longTaskCount": 21,
+      "longTaskDurationsMs": [
+        5716,
+        8528,
+        1664
+      ],
+      "accumulatedLongTaskMs": 19179,
+      "maxAnimationFrameGapMs": 8525.7,
+      "getProgramInfoLog": {
+        "count": 60,
+        "totalMs": 15441.8,
+        "maxMs": 713.2
+      },
+      "uniformAndAttributeQueryTotalMs": 10.5,
+      "report": "deliveries/G7/preparation/maker-evidence/pre-g7-37/REPORT.md",
+      "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-37/",
+      "acceptance": "unaccepted; undeployed"
+    },
+    "previousRuntimeDiagnostic": {
       "packet": "PRE-G7-36",
       "sourceCommit": "5c1e6aedb71d89d46ffc0ada8de522526290131c",
       "status": "CAPTURED; residual shader stalls remain",
