@@ -18,7 +18,7 @@ Prior evidence is mixed. PRE-G7-30 reached `HOME` 12.675 seconds after its obser
 
 ## Authorized work
 
-1. Confirm the pinned Node 24.19.0 / pnpm 9.15.9 toolchain and frozen source tree. Install with `pnpm install --offline --frozen-lockfile` only if `app/node_modules` is absent.
+1. Confirm the pinned Node 24.19.0 / pnpm 9.15.9 toolchain and frozen source tree. Install with `pnpm install --offline --frozen-lockfile` only if `app/node_modules` is absent. If the worktree-volume-local pnpm store is incomplete, it is permitted to point `npm_config_store_dir` at the already populated C: user-level pnpm store used by PRE-G7-32; keep offline mode and the frozen lockfile, and record the store path. Do not download packages.
 2. Build the exact frozen app source once with `NEXT_PUBLIC_PRE_G7_13_EVIDENCE=1` set only for `pnpm run build`.
 3. Add one packet-owned standalone Playwright diagnostic script under `deliveries/G7/preparation/maker-evidence/pre-g7-33/`. It may observe the `/?studio=1` startup route, DOM lifecycle changes, browser long tasks, animation-frame gaps, console/page errors, model request timing, and screenshots. It must not patch application code or tests.
 4. Run that diagnostic once in headless Chrome against the packet's production build on port `3221`. Start observation before navigation, capture a Playwright trace, and allow up to 40 seconds for the route to settle so delayed completion is visible. Record the actual browser channel/version, toolchain, request timings, and exit status. Do not repeat the run if it stalls or fails.

@@ -27,6 +27,8 @@ const environment = { ...process.env };
 for (const key of ['CI', 'NODE_OPTIONS', 'NEXT_TELEMETRY_DISABLED', 'NEXT_PUBLIC_PRE_G7_13_EVIDENCE', 'PORT', 'C3_EVIDENCE_DIR']) delete environment[key];
 environment.PATH = `${path.dirname(node24)}${path.delimiter}${environment.PATH ?? ''}`;
 Object.assign(environment, check.env);
+const inheritedPnpmStore = process.env.npm_config_store_dir ?? process.env.NPM_CONFIG_STORE_DIR;
+if (inheritedPnpmStore) environment.npm_config_store_dir = inheritedPnpmStore;
 
 const startedAt = new Date().toISOString();
 const started = Date.now();
@@ -52,7 +54,7 @@ const receipt = {
   nodeVersion: nodeVersion.stdout.trim(),
   corepackPath: corepack,
   pnpmVersion: pnpmVersion.stdout.trim(),
-  environment: check.env,
+  environment: { ...check.env, ...(inheritedPnpmStore ? { npm_config_store_dir: inheritedPnpmStore } : {}) },
   startedAt,
   endedAt,
   elapsedMs,
