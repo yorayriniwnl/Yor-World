@@ -30,7 +30,7 @@ This is an explicit production diagnostics tradeoff, not a claim that link failu
 
 ## Authorized work
 
-1. Change only the canonical and mirrored `WorldRuntime.ts` files to set `renderer.debug.checkShaderErrors` before `compileAsync` or any material first use. Enable it in development and when the production query parameter is exactly `shaderDiagnostics=1`; otherwise disable it in production. Keep the domain override untouched and preserve byte parity for this runtime file.
+1. Change only the canonical and mirrored `WorldRuntime.ts` files to set `renderer.debug.checkShaderErrors` before `compileAsync` or any material first use. Enable it in development and when the production query parameter is exactly `shaderDiagnostics=1`; otherwise disable it in production. Keep the domain override untouched and preserve normalized source/mirror content and exact committed Git-blob parity for this runtime file.
 2. Keep the P38 Three.js package patch, lockfile, and package metadata unchanged. Do not set any shader-check property after materials are initialized.
 3. Use Node 24.19.0 and pnpm 9.15.9. Run lint, typecheck, and a production build on the source commit. Use `NEXT_PUBLIC_PRE_G7_13_EVIDENCE=1` only if required by the existing build workflow. Clear it from the diagnostic server environment.
 4. After source/build identity is frozen, run exactly one headless Chrome 155.0.8059.84 / Playwright 1.63.0 capture at 1440×900 on `/?studio=1` for 40 seconds, using the P39 argument-aware GL wrappers. Do not pass the opt-in query for this capture. Bind it to the P40 source/app/domain trees, build ID and hash. Record the `LINK_STATUS` count, other enum timings, lifecycle/HOME time, long tasks, frame gaps, errors, GLB statuses, screenshot, and server logs.
