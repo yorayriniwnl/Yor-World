@@ -96,6 +96,8 @@ test.describe("C3 Performance Benchmarks & Budget Verification", () => {
     // AUTO may legitimately remove WebGL after sustained slow windows. This route
     // measures active 3D at an explicit supported tier through the real user control.
     const qualitySelect = page.getByTestId("quality-tier-select");
+    await page.getByTestId("studio-controls-toggle").click();
+    await expect(qualitySelect).toBeVisible();
     await qualitySelect.selectOption("low");
     await expect(qualitySelect).toHaveValue("low");
     await page.getByTestId("diagnostics-toggle-btn").click();
@@ -267,7 +269,10 @@ test.describe("C3 Performance Benchmarks & Budget Verification", () => {
       const t0 = Date.now();
       await page.goto("/?studio=1", { waitUntil: "domcontentloaded" });
       await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME", { timeout: 15000 });
-      await page.getByTestId("quality-tier-select").selectOption("low");
+      const qualitySelect = page.getByTestId("quality-tier-select");
+      await page.getByTestId("studio-controls-toggle").click();
+      await expect(qualitySelect).toBeVisible();
+      await qualitySelect.selectOption("low");
       const canvas = page.getByTestId("world-canvas");
       await expect.poll(async () => Number(await canvas.getAttribute("data-rendered-frames"))).toBeGreaterThan(1);
       await page.getByTestId("diagnostics-toggle-btn").click();

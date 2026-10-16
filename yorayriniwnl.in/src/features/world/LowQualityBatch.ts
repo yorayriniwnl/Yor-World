@@ -465,15 +465,17 @@ export class StaticSceneBatch {
     if (renderBatches) this.syncDynamicInstances();
   }
 
-  /** Synchronize transform-animated source meshes before each renderer pass. */
+  /** Synchronize source visibility and transform-animated meshes before each renderer pass. */
   public syncDynamicInstances(): void {
     if (this.disposed || !this.rendering) return;
     this.scene.updateWorldMatrix(true, true);
     const inverseWorld = this.scene.matrixWorld.clone().invert();
     for (const { batch, originals } of this.entries) {
       for (const source of originals) {
-        if (!source.dynamic) continue;
         const { mesh, instanceId, layerMask } = source;
+        const visible = effectivelyVisible(mesh, this.scene);
+        if (batch.getVisibleAt(instanceId) !== visible) batch.setVisibleAt(instanceId, visible);
+        if (!source.dynamic) continue;
         if (!positiveOrthogonalTransform(mesh.matrixWorld)) {
           if (source.inBatch) {
             batch.setVisibleAt(instanceId, false);
@@ -489,8 +491,6 @@ export class StaticSceneBatch {
         this.localMatrix.multiplyMatrices(inverseWorld, mesh.matrixWorld);
         batch.getMatrixAt(instanceId, this.existingMatrix);
         if (!this.localMatrix.equals(this.existingMatrix)) batch.setMatrixAt(instanceId, this.localMatrix);
-        const visible = effectivelyVisible(mesh, this.scene);
-        if (batch.getVisibleAt(instanceId) !== visible) batch.setVisibleAt(instanceId, visible);
       }
     }
   }

@@ -245,6 +245,28 @@ describe("reversible static batching of original frozen meshes", () => {
     quality.dispose();
   });
 
+  it("tracks static instance visibility when a parent is hidden after batching", () => {
+    const scene = new THREE.Group();
+    const shelf = new THREE.Group();
+    const meshes = pair();
+    shelf.add(...meshes);
+    scene.add(shelf);
+
+    const quality = new StaticSceneBatch(scene);
+    quality.apply("low");
+    const batch = batches(scene)[0]!;
+    expect([batch.getVisibleAt(0), batch.getVisibleAt(1)]).toEqual([true, true]);
+
+    shelf.visible = false;
+    quality.syncDynamicInstances();
+    expect([batch.getVisibleAt(0), batch.getVisibleAt(1)]).toEqual([false, false]);
+
+    shelf.visible = true;
+    quality.syncDynamicInstances();
+    expect([batch.getVisibleAt(0), batch.getVisibleAt(1)]).toEqual([true, true]);
+    quality.dispose();
+  });
+
   it("supports non-indexed geometry when both original layouts match", () => {
     const scene = new THREE.Group();
     const meshes = pair();

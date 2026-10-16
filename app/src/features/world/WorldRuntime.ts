@@ -246,6 +246,9 @@ export class WorldRuntime {
       console.error = originalConsoleError;
     }
 
+    // Keep shadow-map and main-pass calls in one per-frame renderer.info sample.
+    this.renderer.info.autoReset = false;
+
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.15;
     this.renderer.shadowMap.enabled = this.qualityTier !== "low" && this.qualityTier !== "static";
@@ -421,6 +424,7 @@ export class WorldRuntime {
 
     if (this.renderer && this.integratedResult) {
       this.staticSceneBatch?.syncDynamicInstances();
+      this.renderer.info.reset();
       this.renderer.render(this.scene, this.camera);
       this.renderedFrames++;
       this.lastRenderedAt = currentTime;
