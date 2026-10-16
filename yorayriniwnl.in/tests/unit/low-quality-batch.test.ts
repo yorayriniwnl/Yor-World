@@ -100,7 +100,7 @@ describe("reversible LOW batching of original frozen meshes", () => {
     quality.dispose();
   });
 
-  it.each(["high", "medium"] as const)("keeps static batches active at %s while preserving original raycast layers", (tier) => {
+  it.each(["high", "medium"] as const)("restores exact original layer masks at %s, with batches hidden", (tier) => {
     const scene = new THREE.Group();
     const meshes = pair();
     for (const mesh of meshes) mesh.layers.enable(4);
@@ -110,15 +110,12 @@ describe("reversible LOW batching of original frozen meshes", () => {
     const batch = batches(scene)[0]!;
     for (let index = 0; index < 3; index++) {
       quality.apply("low");
-      expect(meshes.map((mesh) => mesh.layers.mask)).toEqual(masks.map((mask) => (mask & ~1) | (1 << LOW_BATCH_ORIGINAL_LAYER)));
+      expect(meshes.map((mesh) => mesh.layers.mask)).toEqual([1 << LOW_BATCH_ORIGINAL_LAYER, 1 << LOW_BATCH_ORIGINAL_LAYER]);
       expect(batch.visible).toBe(true);
       quality.apply(tier);
-      expect(meshes.map((mesh) => mesh.layers.mask)).toEqual(masks.map((mask) => (mask & ~1) | (1 << LOW_BATCH_ORIGINAL_LAYER)));
-      expect(batch.visible).toBe(true);
+      expect(meshes.map((mesh) => mesh.layers.mask)).toEqual(masks);
+      expect(batch.visible).toBe(false);
     }
-    quality.apply("static");
-    expect(meshes.map((mesh) => mesh.layers.mask)).toEqual(masks);
-    expect(batch.visible).toBe(false);
     quality.dispose();
   });
 
@@ -149,105 +146,21 @@ describe("reversible LOW batching of original frozen meshes", () => {
     const meshes = pair(original);
     scene.add(...meshes);
     const materials = new RuntimeMaterialQuality(scene);
+    materials.apply("low");
+    const lowMaterial = meshes[0].material;
     const quality = new LowQualityBatch(scene);
     const batch = batches(scene)[0]!;
-    materials.apply("low");
-    quality.apply("low");
-    const lowMaterial = meshes[0].material;
     expect(lowMaterial).toBeInstanceOf(THREE.MeshLambertMaterial);
     expect(batch.material).toBe(lowMaterial);
     for (const tier of ["low", "medium", "low", "high"] as const) {
       materials.apply(tier);
       quality.apply(tier);
       expect(meshes[0].material).toBe(tier === "low" ? lowMaterial : original);
-      expect(batch.material).toBe(meshes[0].material);
-      expect(batch.visible).toBe(true);
+      expect(batch.material).toBe(lowMaterial);
+      expect(batch.visible).toBe(tier === "low");
     }
     quality.dispose();
     materials.dispose();
-  });
-
-  it("parameterizes compatible standard materials while preserving their surface values at every tier", () => {
-    const scene = new THREE.Group();
-    const firstMaterial = new THREE.MeshStandardMaterial({
-      name: "warm-surface",
-      color: 0xc08040,
-      emissive: 0x301008,
-      emissiveIntensity: 0.35,
-      roughness: 0.28,
-      metalness: 0.12,
-    });
-    const secondMaterial = new THREE.MeshStandardMaterial({
-      name: "cool-surface",
-      color: 0x5070c0,
-      emissive: 0x081020,
-      emissiveIntensity: 0.8,
-      roughness: 0.76,
-      metalness: 0.62,
-    });
-    const first = new THREE.Mesh(geometry(), firstMaterial);
-    const second = new THREE.Mesh(geometry(2), secondMaterial);
-    first.castShadow = second.castShadow = true;
-    first.receiveShadow = second.receiveShadow = true;
-    second.position.x = 3;
-    scene.add(first, second);
-    const materials = new RuntimeMaterialQuality(scene);
-    const quality = new LowQualityBatch(scene);
-    const batch = batches(scene)[0]!;
-
-    expect(quality.getDiagnostics().batchedMeshes).toBe(2);
-    expect(quality.getDiagnostics().batchCount).toBe(1);
-    expect(batch.castShadow).toBe(true);
-    expect(batch.receiveShadow).toBe(true);
-    expect(batch.instanceCount).toBe(2);
-
-    const expected = [firstMaterial, secondMaterial];
-    for (let index = 0; index < expected.length; index += 1) {
-      const source = expected[index]!;
-      const geometryId = batch.getGeometryIdAt(index);
-      const range = batch.getGeometryRangeAt(geometryId)!;
-      const vertex = range.vertexStart;
-      expect(batch.geometry.getAttribute("yorSurfaceColor").getX(vertex)).toBeCloseTo(source.color.r, 6);
-      expect(batch.geometry.getAttribute("yorSurfaceColor").getY(vertex)).toBeCloseTo(source.color.g, 6);
-      expect(batch.geometry.getAttribute("yorSurfaceColor").getZ(vertex)).toBeCloseTo(source.color.b, 6);
-      expect(batch.geometry.getAttribute("yorSurfaceEmissive").getX(vertex)).toBeCloseTo(source.emissive.r, 6);
-      expect(batch.geometry.getAttribute("yorSurfaceEmissive").getY(vertex)).toBeCloseTo(source.emissive.g, 6);
-      expect(batch.geometry.getAttribute("yorSurfaceEmissive").getZ(vertex)).toBeCloseTo(source.emissive.b, 6);
-      expect(batch.geometry.getAttribute("yorSurfaceFactors").getX(vertex)).toBeCloseTo(source.roughness, 6);
-      expect(batch.geometry.getAttribute("yorSurfaceFactors").getY(vertex)).toBeCloseTo(source.metalness, 6);
-      expect(batch.geometry.getAttribute("yorSurfaceFactors").getZ(vertex)).toBeCloseTo(source.emissiveIntensity, 6);
-    }
-
-    for (const tier of ["high", "medium", "low", "high"] as const) {
-      materials.apply(tier);
-      quality.apply(tier);
-      expect(batch.visible).toBe(true);
-      expect(batch.material).not.toBe(expected[0]);
-      expect(batch.material.onBeforeCompile).not.toBe(THREE.Material.prototype.onBeforeCompile);
-      if (tier === "low") {
-        expect(batch.material).toBeInstanceOf(THREE.MeshLambertMaterial);
-        expect((batch.material as THREE.MeshLambertMaterial).color.getHex()).toBe(0xffffff);
-      } else {
-        expect(batch.material).toBeInstanceOf(THREE.MeshStandardMaterial);
-        const standard = batch.material as THREE.MeshStandardMaterial;
-        expect(standard.color.getHex()).toBe(0xffffff);
-        expect(standard.emissive.getHex()).toBe(0xffffff);
-        expect(standard.emissiveIntensity).toBe(1);
-        expect(standard.roughness).toBe(1);
-        expect(standard.metalness).toBe(1);
-      }
-      if (tier === "low") {
-        expect(first.material).toBeInstanceOf(THREE.MeshLambertMaterial);
-        expect(second.material).toBeInstanceOf(THREE.MeshLambertMaterial);
-      } else {
-        expect(first.material).toBe(firstMaterial);
-        expect(second.material).toBe(secondMaterial);
-      }
-    }
-    quality.dispose();
-    materials.dispose();
-    expect(first.material).toBe(firstMaterial);
-    expect(second.material).toBe(secondMaterial);
   });
 
   it("requires identical material identity, attribute layout, indexedness and render state", () => {
@@ -287,7 +200,7 @@ describe("reversible LOW batching of original frozen meshes", () => {
     quality.dispose();
   });
 
-  it.each(["resident", "chair-root", "chair-base", "body-turn", "door-hinge", "painting-pivot", "blind_slat_1", "blind_slat_12", "hidden-yor-mark"])("tracks every descendant transform beneath dynamic %s", (name) => {
+  it.each(["resident", "chair-root", "chair-base", "body-turn", "door-hinge", "painting-pivot", "blind_slat_1", "blind_slat_12", "hidden-yor-mark"])("excludes all descendants of dynamic %s", (name) => {
     const scene = new THREE.Group();
     const dynamic = new THREE.Group();
     dynamic.name = name;
@@ -296,43 +209,12 @@ describe("reversible LOW batching of original frozen meshes", () => {
     scene.add(dynamic);
     const quality = new LowQualityBatch(scene);
     quality.apply("low");
-    const batch = batches(scene)[0]!;
-    expect(batches(scene)).toHaveLength(1);
-    expect(batch.instanceCount).toBe(2);
-    expect(batch.frustumCulled).toBe(false);
-    expect(batch.perObjectFrustumCulled).toBe(true);
-    expect(quality.getDiagnostics().dynamicMeshes).toBe(2);
-    expect(quality.getDiagnostics().dynamicBatchedMeshes).toBe(2);
-    expect(meshes.map((mesh) => mesh.layers.mask)).toEqual([2, 2]);
-
-    dynamic.position.set(1.2, 0.5, -0.7);
-    dynamic.rotation.y = 0.4;
-    dynamic.updateWorldMatrix(true, true);
-    quality.syncDynamicInstances();
-    for (let index = 0; index < meshes.length; index += 1) {
-      const instance = batch.getMatrixAt(index, new THREE.Matrix4());
-      expectMatrix(new THREE.Matrix4().multiplyMatrices(batch.matrixWorld, instance), meshes[index]!.matrixWorld);
-    }
-    expect([batch.getVisibleAt(0), batch.getVisibleAt(1)]).toEqual([true, true]);
-
-    dynamic.visible = false;
-    quality.syncDynamicInstances();
-    expect([batch.getVisibleAt(0), batch.getVisibleAt(1)]).toEqual([false, false]);
-    dynamic.visible = true;
-    dynamic.scale.x = -1;
-    quality.syncDynamicInstances();
-    expect([batch.getVisibleAt(0), batch.getVisibleAt(1)]).toEqual([false, false]);
-    expect(meshes.map((mesh) => mesh.layers.mask)).toEqual([3, 3]);
-
-    dynamic.scale.x = 1;
-    quality.syncDynamicInstances();
-    expect([batch.getVisibleAt(0), batch.getVisibleAt(1)]).toEqual([true, true]);
-    expect(meshes.map((mesh) => mesh.layers.mask)).toEqual([2, 2]);
-    quality.dispose();
+    expect(batches(scene)).toHaveLength(0);
     expect(meshes.map((mesh) => mesh.layers.mask)).toEqual([1, 1]);
+    quality.dispose();
   });
 
-  it("batches actual named and UUID animation targets and tracks their state", () => {
+  it("excludes actual named and UUID animation targets and their descendants", () => {
     const scene = new THREE.Group();
     const animatedParent = new THREE.Group();
     animatedParent.name = "animated-custom-root";
@@ -348,37 +230,13 @@ describe("reversible LOW batching of original frozen meshes", () => {
     ])];
     const quality = new LowQualityBatch(scene);
     quality.apply("low");
-    const batch = batches(scene)[0]!;
     expect(batches(scene)).toHaveLength(1);
-    expect(batch.instanceCount).toBe(6);
-    expect(quality.getDiagnostics().dynamicMeshes).toBe(4);
-    expect(quality.getDiagnostics().dynamicBatchedMeshes).toBe(4);
-    for (const mesh of [...animatedChildren, ...uuidMeshes]) expect(mesh.layers.mask).toBe(2);
-    expect(accepted.map((mesh) => mesh.layers.mask)).toEqual([2, 2]);
-
-    const mixer = new THREE.AnimationMixer(scene);
-    const action = mixer.clipAction(scene.animations[0]!);
-    action.setLoop(THREE.LoopOnce, 1);
-    action.clampWhenFinished = true;
-    action.play();
-    mixer.setTime(0.5);
-    quality.syncDynamicInstances();
-    const allMeshes = [...animatedChildren, ...uuidMeshes, ...accepted];
-    for (let index = 0; index < batch.instanceCount; index += 1) {
-      const instance = batch.getMatrixAt(index, new THREE.Matrix4());
-      expectMatrix(new THREE.Matrix4().multiplyMatrices(batch.matrixWorld, instance), allMeshes[index]!.matrixWorld);
-    }
-    expect(animatedParent.position.x).toBeCloseTo(0.5);
-    mixer.setTime(1);
-    quality.syncDynamicInstances();
-    expect(uuidMeshes[1]!.visible).toBe(false);
-    expect(batch.getVisibleAt(2)).toBe(true);
-    expect(batch.getVisibleAt(3)).toBe(false);
+    expect(batches(scene)[0]!.instanceCount).toBe(2);
+    for (const mesh of [...animatedChildren, ...uuidMeshes]) expect(mesh.layers.mask).toBe(1);
     quality.dispose();
-    mixer.stopAllAction();
   });
 
-  it("conservatively tracks a nested animation subtree when a track cannot be resolved", () => {
+  it("conservatively excludes a nested animation subtree when a track cannot be resolved", () => {
     const scene = new THREE.Group();
     const animated = new THREE.Group();
     animated.add(...pair());
@@ -387,9 +245,7 @@ describe("reversible LOW batching of original frozen meshes", () => {
     ])];
     scene.add(animated);
     const quality = new LowQualityBatch(scene);
-    expect(batches(scene)).toHaveLength(1);
-    expect(batches(scene)[0]!.instanceCount).toBe(2);
-    expect(quality.getDiagnostics().dynamicBatchedMeshes).toBe(2);
+    expect(batches(scene)).toHaveLength(0);
     quality.dispose();
   });
 

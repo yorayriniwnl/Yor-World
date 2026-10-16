@@ -1,4 +1,4 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 import { mkdir, writeFile, readFile } from "node:fs/promises";
 import path from "node:path";
 import type { Diagnostics, RenderedWorldFrame } from "../../src/features/world/types";
@@ -24,15 +24,6 @@ function calculateStats(samples: number[]): { samples: number[]; median: number;
   const p95Index = Math.min(Math.floor(sorted.length * 0.95), sorted.length - 1);
   const p95 = sorted[p95Index] ?? median;
   return { samples, median: Number(median.toFixed(2)), p95: Number(p95.toFixed(2)) };
-}
-
-async function selectLowQualityThroughStudioControls(page: Page): Promise<void> {
-  const toggle = page.getByTestId("studio-controls-toggle");
-  if (await toggle.getAttribute("aria-expanded") !== "true") await toggle.click();
-  const qualitySelect = page.getByTestId("quality-tier-select");
-  await expect(qualitySelect).toBeVisible();
-  await qualitySelect.selectOption("low");
-  await expect(qualitySelect).toHaveValue("low");
 }
 
 async function savePerformanceReport(filename: string, data: unknown) {
@@ -105,7 +96,7 @@ test.describe("C3 Performance Benchmarks & Budget Verification", () => {
     // AUTO may legitimately remove WebGL after sustained slow windows. This route
     // measures active 3D at an explicit supported tier through the real user control.
     const qualitySelect = page.getByTestId("quality-tier-select");
-    await selectLowQualityThroughStudioControls(page);
+    await qualitySelect.selectOption("low");
     await expect(qualitySelect).toHaveValue("low");
     await page.getByTestId("diagnostics-toggle-btn").click();
     const diagnostics = page.getByTestId("world-diagnostics");
@@ -276,7 +267,7 @@ test.describe("C3 Performance Benchmarks & Budget Verification", () => {
       const t0 = Date.now();
       await page.goto("/?studio=1", { waitUntil: "domcontentloaded" });
       await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME", { timeout: 15000 });
-      await selectLowQualityThroughStudioControls(page);
+      await page.getByTestId("quality-tier-select").selectOption("low");
       const canvas = page.getByTestId("world-canvas");
       await expect.poll(async () => Number(await canvas.getAttribute("data-rendered-frames"))).toBeGreaterThan(1);
       await page.getByTestId("diagnostics-toggle-btn").click();

@@ -3,12 +3,7 @@ import * as THREE from "three";
 import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { AssetLoader, type LoadedAssets } from "../../src/features/world/AssetLoader";
 import { CLIP_DURATIONS } from "../../src/features/world/SceneIntegrator";
-import { LOW_BATCH_ORIGINAL_LAYER } from "../../src/features/world/LowQualityBatch";
 import { WorldRuntime } from "../../src/features/world/WorldRuntime";
-
-function expectMatrix(actual: THREE.Matrix4, expected: THREE.Matrix4): void {
-  actual.elements.forEach((value, index) => expect(value).toBeCloseTo(expected.elements[index]!, 5));
-}
 
 type MockCanvas = Omit<HTMLCanvasElement, "isConnected"> & {
   isConnected: boolean;
@@ -21,11 +16,10 @@ type MockRendererInstance = {
   forceContextLossCalls: number;
 };
 
-const { render, rendererInstances, rendererConstructionError, rendererMultiDrawAvailable } = vi.hoisted(() => ({
+const { render, rendererInstances, rendererConstructionError } = vi.hoisted(() => ({
   render: vi.fn(),
   rendererInstances: [] as MockRendererInstance[],
   rendererConstructionError: { current: null as Error | null },
-  rendererMultiDrawAvailable: { current: false },
 }));
 
 // Keep the scene integration, directors and lifecycle real. Only the GPU and
@@ -53,12 +47,7 @@ vi.mock("three", async (importOriginal) => {
         rendererInstances.push(this.instance);
       }
 
-      getContext() {
-        return {
-          getExtension: (name: string) => name === "WEBGL_multi_draw" && rendererMultiDrawAvailable.current ? {} : null,
-          getParameter: () => "test-renderer",
-        };
-      }
+      getContext() { return { getExtension: () => null, getParameter: () => "test-renderer" }; }
       setPixelRatio() {}
       getPixelRatio() { return 1; }
       setSize() {}
@@ -86,7 +75,6 @@ afterEach(() => {
   for (const runtime of runtimes.splice(0)) runtime.dispose();
   rendererInstances.splice(0);
   rendererConstructionError.current = null;
-  rendererMultiDrawAvailable.current = false;
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
   render.mockClear();
@@ -128,8 +116,8 @@ function delayedLoad() {
   return {
     reject,
     get signal() { return signal; },
-    async complete(assets: LoadedAssets = loadedAssets()) {
-      resolve(assets);
+    async complete() {
+      resolve(loadedAssets());
       await promise;
       await Promise.resolve();
     },
@@ -175,42 +163,6 @@ function startRuntime(options: Partial<ConstructorParameters<typeof WorldRuntime
   const runtime = new WorldRuntime({ canvas: canvas(), reducedMotion: true, initialTier: "low", ...options });
   runtimes.push(runtime);
   return runtime;
-}
-
-function withStaticPair(assets: LoadedAssets) {
-  const group = new THREE.Group();
-  group.name = "static-batch-test-group";
-  const material = new THREE.MeshStandardMaterial({ color: 0x8a7458 });
-  const firstGeometry = new THREE.BoxGeometry();
-  const secondGeometry = new THREE.BoxGeometry();
-  firstGeometry.clearGroups();
-  secondGeometry.clearGroups();
-  const first = new THREE.Mesh(firstGeometry, material);
-  const second = new THREE.Mesh(secondGeometry, material);
-  first.name = "static-batch-test-first";
-  second.name = "static-batch-test-second";
-  first.castShadow = second.castShadow = true;
-  first.receiveShadow = second.receiveShadow = true;
-  second.position.x = 2;
-  group.add(first, second);
-  assets.w1Gltf.scene.add(group);
-  return { first, second };
-}
-
-function withDynamicPair(assets: LoadedAssets) {
-  const resident = assets.avatarGltf.scene.getObjectByName("resident")!;
-  const material = new THREE.MeshStandardMaterial({ color: 0x8a7458 });
-  const firstGeometry = new THREE.BoxGeometry();
-  const secondGeometry = new THREE.BoxGeometry();
-  firstGeometry.clearGroups();
-  secondGeometry.clearGroups();
-  const first = new THREE.Mesh(firstGeometry, material);
-  const second = new THREE.Mesh(secondGeometry, material);
-  first.name = "dynamic-batch-test-first";
-  second.name = "dynamic-batch-test-second";
-  second.position.x = 2;
-  resident.add(first, second);
-  return { resident, first, second };
 }
 
 describe("Production runtime failure retirement", () => {
@@ -500,92 +452,5 @@ describe("Canvas context lifecycle", () => {
     frames.tick();
     expect(render).toHaveBeenCalledTimes(2);
     expect(frames.queued.size).toBe(1);
-  });
-});
-
-describe("runtime multi-draw batching contract", () => {
-  it("preserves the original per-mesh path when WEBGL_multi_draw is unavailable", async () => {
-    frameHarness();
-    const load = delayedLoad();
-    const assets = loadedAssets();
-    const sources = withStaticPair(assets);
-    const originalMaterial = sources.first.material;
-    const runtime = startRuntime({ initialTier: "high" });
-
-    await load.complete(assets);
-
-    const scene = (runtime as unknown as { scene: THREE.Scene }).scene;
-    const batches: THREE.BatchedMesh[] = [];
-    scene.traverse((object) => { if ((object as THREE.BatchedMesh).isBatchedMesh) batches.push(object as THREE.BatchedMesh); });
-    expect(batches).toHaveLength(0);
-    expect(sources.first.layers.mask).toBe(1);
-    expect(sources.second.layers.mask).toBe(1);
-    expect(sources.first.material).toBe(originalMaterial);
-    expect(sources.first.visible).toBe(true);
-    expect(sources.second.visible).toBe(true);
-  });
-
-  it("batches static meshes with WEBGL_multi_draw and restores their source layers on teardown", async () => {
-    frameHarness();
-    rendererMultiDrawAvailable.current = true;
-    const load = delayedLoad();
-    const assets = loadedAssets();
-    const sources = withStaticPair(assets);
-    const runtime = startRuntime({ initialTier: "high" });
-
-    await load.complete(assets);
-
-    const scene = (runtime as unknown as { scene: THREE.Scene }).scene;
-    const batches: THREE.BatchedMesh[] = [];
-    scene.traverse((object) => { if ((object as THREE.BatchedMesh).isBatchedMesh) batches.push(object as THREE.BatchedMesh); });
-    expect(batches).toHaveLength(1);
-    const batch = batches[0]!;
-    expect(batch.visible).toBe(true);
-    expect(batch.castShadow).toBe(true);
-    expect(batch.receiveShadow).toBe(true);
-    expect(sources.first.layers.mask).toBe(1 << LOW_BATCH_ORIGINAL_LAYER);
-    expect(sources.second.layers.mask).toBe(1 << LOW_BATCH_ORIGINAL_LAYER);
-
-    runtime.setQualityTier("medium");
-    expect(batch.visible).toBe(true);
-    expect(sources.first.layers.mask).toBe(1 << LOW_BATCH_ORIGINAL_LAYER);
-
-    runtime.dispose();
-    expect(batch.parent).toBeNull();
-    expect(sources.first.layers.mask).toBe(1);
-    expect(sources.second.layers.mask).toBe(1);
-  });
-
-  it("synchronizes dynamic source transforms before the renderer submits a frame", async () => {
-    const frames = frameHarness();
-    rendererMultiDrawAvailable.current = true;
-    const load = delayedLoad();
-    const assets = loadedAssets();
-    const sources = withDynamicPair(assets);
-    const runtime = startRuntime({ initialTier: "high" });
-
-    await load.complete(assets);
-
-    const scene = (runtime as unknown as { scene: THREE.Scene }).scene;
-    const batches: THREE.BatchedMesh[] = [];
-    scene.traverse((object) => { if ((object as THREE.BatchedMesh).isBatchedMesh) batches.push(object as THREE.BatchedMesh); });
-    expect(batches).toHaveLength(1);
-    const batch = batches[0]!;
-    expect(sources.first.layers.mask).toBe(1 << LOW_BATCH_ORIGINAL_LAYER);
-
-    sources.resident.position.x = 1.75;
-    sources.resident.updateWorldMatrix(true, true);
-    const submittedWorldMatrices: THREE.Matrix4[] = [];
-    render.mockImplementationOnce(() => {
-      const instance = batch.getMatrixAt(0, new THREE.Matrix4());
-      submittedWorldMatrices.push(new THREE.Matrix4().multiplyMatrices(batch.matrixWorld, instance));
-    });
-    frames.tick();
-
-    expect(submittedWorldMatrices).toHaveLength(1);
-    expectMatrix(submittedWorldMatrices[0]!, sources.first.matrixWorld);
-    runtime.dispose();
-    expect(sources.first.layers.mask).toBe(1);
-    expect(sources.second.layers.mask).toBe(1);
   });
 });
