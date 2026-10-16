@@ -1,0 +1,5 @@
+﻿# PRE-G7-28 maker evidence
+
+**Status: FAIL / NONCONFORMING; captures NOT RUN.** Both one-shot `next build` commands exited 0, but neither qualifies for the pinned-runtime gate. The donor build directly showed Next and its workers using system Node v24.14.0. The accepted build ran with the same unchanged PATH, but its child runtime was not sampled directly. The parent ruling classifies both runs as nonconforming and prohibits retries. All 16 capture rows are **NOT RUN**.
+
+Pinned dependency installs and both-source no-emit / eight-row Playwright-list preflights passed. `--list` only enumerated tests; no browser context or capture was launched. Exact receipts, runtime qualification, preserved build-output inventories, source restoration, and the complete row matrix are in [attempt-01/REPORT.md](attempt-01/REPORT.md). Source worktrees are clean at their pinned commits; no app or mirror commit was made. External GPT Plus #2 audit is **NOT RUN** and parent acceptance is **PENDING**. Physical-device, screen-reader, mobile-soak, deployment, and `chrome://gpu` checks are **NOT RUN**.

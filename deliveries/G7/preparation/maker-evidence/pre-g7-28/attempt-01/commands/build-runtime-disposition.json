@@ -1,0 +1,52 @@
+{
+    "schemaVersion":  1,
+    "taskFlags":  {
+                      "NEXT_PUBLIC_PRE_G7_13_EVIDENCE":  "1",
+                      "NEXT_TELEMETRY_DISABLED":  "1"
+                  },
+    "pinnedLauncher":  {
+                           "path":  "C:\\Users\\ayush\\AppData\\Local\\Temp\\yor-world-node-24.19.0\\unpacked\\node-v24.19.0-win-x64\\node.exe",
+                           "version":  "v24.19.0",
+                           "sha256":  "3602f2bb1a10f2cbab4c36886218a33c1ab3db87290e73b033c46c77147d0237",
+                           "pnpmEntry":  "C:\\Users\\ayush\\AppData\\Local\\node\\corepack\\v1\\pnpm\\9.15.9\\bin\\pnpm.cjs",
+                           "pnpmVersion":  "9.15.9",
+                           "pnpmSha256":  "98e6b99a881d64a1cc982c3e60aa260bf02160386b12e74475e06486dc74b090"
+                       },
+    "systemPathNode":  {
+                           "path":  "C:\\Program Files\\nodejs\\node.exe",
+                           "version":  "v24.14.0",
+                           "sha256":  "63c259c81e5d472b5f11c8d506070130cb04a1ecf84b80377a34ed6ec9048088"
+                       },
+    "acceptedBuild":  {
+                          "exitCode":  0,
+                          "receipt":  "accepted-build-01.receipt.json",
+                          "startedAtUtc":  "2026-10-16T14:22:20.6997172Z",
+                          "endedAtUtc":  "2026-10-16T14:23:33.7527523Z",
+                          "taskFlagsSet":  true,
+                          "nextWorkerSample":  "Not directly captured. The process environment/PATH was the same unchanged launcher environment later observed on the donor build; system node is v24.14.0. Child runtime is not proven pinned."
+                      },
+    "donorBuild":  {
+                       "exitCode":  0,
+                       "receipt":  "donor-build-01.receipt.json",
+                       "startedAtUtc":  "2026-10-16T14:23:45.3170089Z",
+                       "endedAtUtc":  "2026-10-16T14:26:10.0076574Z",
+                       "taskFlagsSet":  true,
+                       "observedNextBuildCommand":  "node ...\\\\next\\\\dist\\\\bin\\\\next build",
+                       "observedWorkerExecutable":  "C:\\Program Files\\nodejs\\node.exe",
+                       "observedWorkerVersion":  "v24.14.0",
+                       "observedWorkerPids":  [
+                                                  31336,
+                                                  17376,
+                                                  33764,
+                                                  32624,
+                                                  10276,
+                                                  13160,
+                                                  11564,
+                                                  29868,
+                                                  30916
+                                              ]
+                   },
+    "pathResolution":  "The build runner used the pinned node.exe to start pnpm.cjs, but did not prepend the pinned Node directory to PATH. The pnpm run build script launched bare node; during the donor build, the Next build process and worker children resolved to C:\\Program Files\\nodejs\\node.exe v24.14.0. Accepted used the same unchanged PATH; no accepted worker process snapshot was saved.",
+    "disposition":  "FAIL / NONCONFORMING: the build runner/pnpm versions were pinned, but the Next build process/worker runtime was not verified as Node 24.19.0; donor directly used v24.14.0 and accepted inherited the same PATH. No retry is permitted.",
+    "captures":  "NOT RUN for both sources; all 16 rows held because builds do not meet the pinned runtime gate."
+}
