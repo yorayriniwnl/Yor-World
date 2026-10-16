@@ -30,6 +30,8 @@ PRE-G7-30 completed its authorized single trace recapture against the exact PRE-
 
 [PRE-G7-33](reconciliation-packets/2026-10-16-pre-g7-33-startup-stall-diagnosis.md) follows PRE-G7-32's preserved active-route `HOME` timeout with one instrumented, source-bound browser diagnosis. Its main-thread optional-asset hypothesis is unconfirmed. No application or test source edit, retry, performance-suite rerun, acceptance, merge, or deployment is authorized.
 
+[PRE-G7-34](reconciliation-packets/2026-10-16-pre-g7-34-startup-cpu-attribution.md) follows PRE-G7-33's unresolved long tasks with one CPU-profiled browser capture against the same frozen production build. It authorizes no application or test source edit, suite run, acceptance, merge, or deployment.
+
 Read [current pre-G7 requirements](../operations/pre-g7-prerequisites.md) and the [RC6 dossier](../releases/v1.0.0-rc6.md). Parent continues authorized independent work and obtains missing service/device inputs. No mock, local fixture, emulation, liveness-only response or private preview substitutes for a mandatory production criterion.
 
 ## One specification and a small shared baseline
