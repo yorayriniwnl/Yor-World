@@ -17,8 +17,8 @@ Governing contracts are [PRE-G7-24](2026-10-16-pre-g7-24-surface-parameter-batch
 
 Own only:
 
-- `app/src/features/world/LowQualityBatch.ts`, and `WorldRuntime.ts` only if needed for the bounded batching correction
-- directly related tests under `app/tests/unit/` and `app/tests/performance/world.spec.ts`
+- `app/src/features/world/LowQualityBatch.ts`, `RuntimeMaterialQuality.ts`, `SceneIntegrator.ts`, `WorldInteractionBinding.ts`, `WorldRuntime.ts`, and `types.ts`, only for porting the already authorized batch path onto the accepted source
+- directly related tests under `app/tests/unit/`, `app/tests/integration/runtime/frozen-world-binding.test.ts`, and `app/tests/performance/world.spec.ts`
 - the corresponding changed files under `yorayriniwnl.in/`, plus that mirror's `README.md` and `source-delivery-manifest.json`
 - `deliveries/G7/preparation/maker-evidence/pre-g7-25/`
 - this packet and its narrowly related delegation index entry
@@ -27,7 +27,7 @@ Keep `app/` canonical. Confirm the app/mirror boundary and exact source tree bef
 
 ## Authorized correction
 
-1. Port the PRE-G7-24 in-memory batching approach onto the accepted PRE-G7-22 root source without losing the root scene composition. Preserve the authored materials, transforms, lighting, shadows, visible objects, and tier policy. Do not carry the upper-left foliage/stem objects absent from the accepted root scene.
+1. Port the PRE-G7-24 in-memory batching approach onto the accepted PRE-G7-22 root source without losing the root scene composition. Preserve authored materials, transforms, lighting, shadows, visible objects, and tier policy. Correct the batch's visibility handling so the foliage and stems hidden in the settled accepted-root capture remain hidden; preserve their source geometry and do not omit it.
 2. Measure inclusive calls across both shadow and main render passes. The PRE-G7-24 `renderer.info` reading resets after shadow rendering and is not sufficient. Add a source-bound measurement that counts both passes without changing the renderer policy or acceptance ceilings.
 3. Preserve all existing exclusions, source objects, interaction raycasts, transforms, animation, visibility, layer masks, render order, shadow flags, bounds/culling, teardown, `WEBGL_multi_draw` behavior, and its existing fallback. Do not remove other visible geometry or change materials, lights, tier policy, tone mapping, shadows, camera, DPR, renderer extensions, thresholds, or content to make the measurements pass.
 4. Repair the performance test setup at the two quality-tier selections by opening the existing Studio controls drawer and waiting for the control to be visible before selecting LOW. Do not alter the product UI, assertions, test filters, retry policy, timeout, or performance thresholds.
