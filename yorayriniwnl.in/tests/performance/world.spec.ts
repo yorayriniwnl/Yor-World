@@ -287,7 +287,7 @@ test.describe("C3 Performance Benchmarks & Budget Verification", () => {
       if (!oldCanvas) throw new Error("Missing active production canvas.");
 
       // SPA navigation retains the old canvas's execution context for teardown proof.
-      await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("link", { name: "Projects", exact: true }).click();
+      await page.getByRole("navigation", { name: "Portfolio destinations and studio exit" }).getByRole("link", { name: "Projects", exact: true }).click();
       await expect(page).toHaveURL(/\/projects$/);
       await expect(page.locator("h1")).toBeVisible();
 
