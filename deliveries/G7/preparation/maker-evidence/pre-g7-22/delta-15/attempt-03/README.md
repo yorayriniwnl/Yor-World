@@ -1,0 +1,9 @@
+# Attempt 03: bounded diagnostics, no usable corrected profile
+
+This is a distinct, fresh diagnostic attempt. Attempt 02 remains preserved. Its raw WebGL sample `attempt-02/diagnostics/chrome-1440x900-pass-counts-rerun.json` is marked failed for raw-call attribution: repeated `getExtension("WEBGL_multi_draw")` access wrapped the same extension object repeatedly, so those extension-call counts are overcounted and are not final evidence. The separate `renderer.info` values in that profile remain useful for recording the auto-tier confound, but this raw extension-call sample must not be used as a budget result.
+
+Attempt 03 corrected the wrapper to wrap each extension object only once. The pinned Node 24.19.0 run then failed before capturing a profile: Playwright could locate `enter-studio-btn`, but the launch button was not visible, and the run exited 1 after the click timeout. The receipt and stderr are preserved under `commands/`; this is an entry failure (FAIL), not a corrected render-call measurement.
+
+The source-group inspection completed successfully. It checked the frozen GLBs (196 room meshes, 7 resident meshes, 59 fixture meshes): no inspected source mesh had `geometry.groups`. The proposed group-range canonicalization cannot affect these assets. The measurement and command receipt are preserved under `diagnostics/` and `commands/`.
+
+No further browser-instrumentation run was made after this bounded failure. The only candidate source experiment was archived under `../attempt-04/` and rejected/unaccepted; tracked app and mirror source/test paths have been restored to branch HEAD.

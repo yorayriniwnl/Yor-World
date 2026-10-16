@@ -1,0 +1,15 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/static-batch-production-report.test.ts > production static-batch eligibility report > accounts for desktop and mobile runtime meshes with exact exclusion reasons
+TypeError: Cannot read properties of undefined (reading 'length')
+ ❯ tests/unit/static-batch-production-report.test.ts:83:99
+     81|       const diagnostics = report.diagnostics;
+     82|       expect(diagnostics.totalMeshes).toBeGreaterThan(0);
+     83|       expect(diagnostics.totalMeshes).toBe(diagnostics.batchedMeshes +…
+       |                                                                                                   ^
+     84|       expect(diagnostics.excludedMeshes.every(({ index, path: objectPa…
+     85|         index >= 0 && objectPath.length > 0 && material.length > 0 && …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

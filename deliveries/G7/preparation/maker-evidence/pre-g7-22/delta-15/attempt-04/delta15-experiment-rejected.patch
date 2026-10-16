@@ -1,0 +1,1456 @@
+diff --git a/app/src/features/world/LowQualityBatch.ts b/app/src/features/world/LowQualityBatch.ts
+index f18dd492..f2e8112e 100644
+--- a/app/src/features/world/LowQualityBatch.ts
++++ b/app/src/features/world/LowQualityBatch.ts
+@@ -12,7 +12,13 @@ const epsilon = 1e-6;
+ interface BatchEntry {
+   batch: THREE.BatchedMesh;
+   sourceMaterial: THREE.Material;
+-  originals: Array<{ mesh: THREE.Mesh; layerMask: number }>;
++  originals: Array<{
++    mesh: THREE.Mesh;
++    layerMask: number;
++    instanceId: number;
++    dynamic: boolean;
++    inBatch: boolean;
++  }>;
+ }
+ 
+ export interface StaticSceneBatchDiagnostics {
+@@ -20,9 +26,18 @@ export interface StaticSceneBatchDiagnostics {
+   eligibleMeshes: number;
+   layoutRejectedMeshes: number;
+   batchedMeshes: number;
++  dynamicMeshes: number;
++  dynamicBatchedMeshes: number;
+   batchCount: number;
+   singletonGroups: number;
+   singletonMeshes: number;
++  rejectedByReason: Record<string, number>;
++  excludedMeshes: Array<{
++    index: number;
++    path: string;
++    material: string;
++    reason: string;
++  }>;
+ }
+ 
+ function positiveOrthogonalTransform(matrix: THREE.Matrix4): boolean {
+@@ -86,36 +101,73 @@ function attributeLayout(geometry: THREE.BufferGeometry): string | null {
+   return JSON.stringify(layout);
+ }
+ 
+-function eligible(mesh: THREE.Mesh, animationTargets: Set<THREE.Object3D>): boolean {
+-  if (mesh.constructor !== THREE.Mesh || Array.isArray(mesh.material)
+-    || Object.keys(mesh.geometry.morphAttributes).length > 0 || mesh.morphTargetInfluences
+-    || mesh.geometry.groups.length > 0 || mesh.customDepthMaterial || mesh.customDistanceMaterial
+-    || mesh.onBeforeRender !== THREE.Object3D.prototype.onBeforeRender
++function dynamicReason(mesh: THREE.Mesh, animationTargets: Set<THREE.Object3D>): string | null {
++  for (let node: THREE.Object3D | null = mesh; node; node = node.parent) {
++    if (dynamicNames.test(node.name)) return `named:${node.name}`;
++    if (animationTargets.has(node)) return `animated:${node.name || node.type}`;
++  }
++  return null;
++}
++
++function exclusionReason(mesh: THREE.Mesh): string | null {
++  if (mesh.constructor !== THREE.Mesh) return "mesh-subclass";
++  for (let node: THREE.Object3D | null = mesh; node; node = node.parent) {
++    if (!node.visible) return "hidden-ancestor";
++  }
++  if (Array.isArray(mesh.material)) return "material-array";
++  if (Object.keys(mesh.geometry.morphAttributes).length > 0 || mesh.morphTargetInfluences) return "morph-targets";
++  if (mesh.customDepthMaterial || mesh.customDistanceMaterial) return "custom-shadow-material";
++  if (mesh.onBeforeRender !== THREE.Object3D.prototype.onBeforeRender
+     || mesh.onAfterRender !== THREE.Object3D.prototype.onAfterRender
+     || mesh.onBeforeShadow !== THREE.Object3D.prototype.onBeforeShadow
+-    || mesh.onAfterShadow !== THREE.Object3D.prototype.onAfterShadow
+-    || !(mesh.layers.mask & 1)) return false;
++    || mesh.onAfterShadow !== THREE.Object3D.prototype.onAfterShadow) return "mesh-render-hook";
++  if (!(mesh.layers.mask & 1)) return "not-on-camera-layer";
+   const material = mesh.material;
+   const transmitting = material as THREE.MeshPhysicalMaterial;
+-  if (!material.visible || material.transparent || material.opacity !== 1 || material.alphaTest !== 0
+-    || material.alphaHash || material.alphaToCoverage || material.stencilWrite || transmitting.transmission > 0
+-    || (material as THREE.MeshLambertMaterial).wireframe
+-    || material.blending !== THREE.NormalBlending || material.onBeforeRender !== THREE.Material.prototype.onBeforeRender
+-    || (material as THREE.ShaderMaterial).isShaderMaterial) return false;
++  if (!material.visible) return "material-invisible";
++  if (material.transparent || material.opacity !== 1 || material.blending !== THREE.NormalBlending) return "material-transparent-or-blended";
++  if (material.alphaTest !== 0 || material.alphaHash || material.alphaToCoverage) return "material-alpha-coverage";
++  if (material.stencilWrite) return "material-stencil";
++  if (transmitting.transmission > 0) return "material-transmission";
++  if ((material as THREE.MeshLambertMaterial).wireframe) return "material-wireframe";
++  if (material.onBeforeRender !== THREE.Material.prototype.onBeforeRender) return "material-render-hook";
++  if ((material as THREE.ShaderMaterial).isShaderMaterial) return "shader-material";
+   const count = mesh.geometry.index?.count ?? mesh.geometry.getAttribute("position")?.count;
+   if (!count || mesh.geometry.drawRange.start !== 0
+-    || (mesh.geometry.drawRange.count !== Infinity && mesh.geometry.drawRange.count !== count)) return false;
++    || (mesh.geometry.drawRange.count !== Infinity && mesh.geometry.drawRange.count !== count)) return "partial-geometry-range";
+   for (let node: THREE.Object3D | null = mesh; node; node = node.parent) {
+-    if (!node.visible || node.renderOrder !== 0 || dynamicNames.test(node.name) || animationTargets.has(node)
+-      || node.scale.x <= 0 || node.scale.y <= 0 || node.scale.z <= 0
+-      || !positiveOrthogonalTransform(node.matrixWorld)) return false;
++    if (node.renderOrder !== 0) return "nondefault-render-order";
++    if (node.scale.x <= 0 || node.scale.y <= 0 || node.scale.z <= 0) return "nonpositive-scale";
++    if (!positiveOrthogonalTransform(node.matrixWorld)) return "unsupported-world-transform";
+   }
+-  return true;
++  return null;
+ }
+ 
+-/** Reversible static draw batching. Construct before quality materials are
+- * applied and only when the renderer reports WEBGL_multi_draw. Source mesh
+- * identity, buffers, hierarchy and transforms remain owned by the original world.
++function objectPath(object: THREE.Object3D): string {
++  const names: string[] = [];
++  for (let node: THREE.Object3D | null = object; node; node = node.parent) {
++    names.push(node.name || node.type);
++  }
++  return names.reverse().join("/");
++}
++
++function materialName(mesh: THREE.Mesh): string {
++  const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
++  return materials.map((material) => material.name || material.type).join(",");
++}
++
++function effectivelyVisible(object: THREE.Object3D, root: THREE.Object3D): boolean {
++  for (let node: THREE.Object3D | null = object; node; node = node.parent) {
++    if (!node.visible) return false;
++    if (node === root) return true;
++  }
++  return false;
++}
++
++/** Reversible static and transform-synchronized draw batching. Construct before
++ * quality materials are applied and only when the renderer reports
++ * WEBGL_multi_draw. Source meshes keep identity, buffers, hierarchy, transforms,
++ * and raycast behavior; dynamic transforms are copied into per-object instances.
+  */
+ export class StaticSceneBatch {
+   private readonly entries: BatchEntry[] = [];
+@@ -124,8 +176,14 @@ export class StaticSceneBatch {
+   private eligibleMeshes = 0;
+   private layoutRejectedMeshes = 0;
+   private batchedMeshes = 0;
++  private dynamicMeshes = 0;
++  private dynamicBatchedMeshes = 0;
+   private singletonGroups = 0;
+   private singletonMeshes = 0;
++  private rendering = false;
++  private readonly localMatrix = new THREE.Matrix4();
++  private readonly existingMatrix = new THREE.Matrix4();
++  private readonly excludedMeshes: StaticSceneBatchDiagnostics["excludedMeshes"] = [];
+ 
+   constructor(
+     private readonly scene: THREE.Object3D,
+@@ -134,20 +192,44 @@ export class StaticSceneBatch {
+     scene.updateWorldMatrix(true, true);
+     const animationTargets = animatedNodes(scene);
+     const byMaterial = new Map<THREE.Material, Map<string, THREE.Mesh[]>>();
++    const meshIndices = new Map<THREE.Mesh, number>();
++    const dynamicByMesh = new Map<THREE.Mesh, boolean>();
++    const recordExclusion = (mesh: THREE.Mesh, reason: string) => {
++      this.excludedMeshes.push({
++        index: meshIndices.get(mesh) ?? -1,
++        path: objectPath(mesh),
++        material: materialName(mesh),
++        reason,
++      });
++    };
+     scene.traverse((object) => {
+       if (!(object as THREE.Mesh).isMesh) return;
+-      this.totalMeshes += 1;
+       const mesh = object as THREE.Mesh;
+-      if (!eligible(mesh, animationTargets) || Array.isArray(mesh.material)) return;
++      meshIndices.set(mesh, this.totalMeshes);
++      this.totalMeshes += 1;
++      const material = mesh.material;
++      if (Array.isArray(material)) {
++        recordExclusion(mesh, "material-array");
++        return;
++      }
++      const reason = exclusionReason(mesh);
++      if (reason) {
++        recordExclusion(mesh, reason);
++        return;
++      }
+       this.eligibleMeshes += 1;
++      const dynamic = dynamicReason(mesh, animationTargets) !== null;
++      dynamicByMesh.set(mesh, dynamic);
++      if (dynamic) this.dynamicMeshes += 1;
+       const layout = attributeLayout(mesh.geometry);
+       if (!layout) {
+         this.layoutRejectedMeshes += 1;
++        recordExclusion(mesh, "unsupported-attribute-layout");
+         return;
+       }
+       const key = JSON.stringify([layout, mesh.castShadow, mesh.receiveShadow, mesh.frustumCulled, mesh.layers.mask]);
+-      let groups = byMaterial.get(mesh.material);
+-      if (!groups) byMaterial.set(mesh.material, groups = new Map());
++      let groups = byMaterial.get(material);
++      if (!groups) byMaterial.set(material, groups = new Map());
+       let group = groups.get(key);
+       if (!group) groups.set(key, group = []);
+       group.push(mesh);
+@@ -159,26 +241,37 @@ export class StaticSceneBatch {
+         if (meshes.length < 2) {
+           this.singletonGroups += 1;
+           this.singletonMeshes += meshes.length;
++          for (const mesh of meshes) recordExclusion(mesh, "singleton-compatible-group");
+           continue;
+         }
+         this.batchedMeshes += meshes.length;
++        const dynamicCount = meshes.filter((mesh) => dynamicByMesh.get(mesh)).length;
++        this.dynamicBatchedMeshes += dynamicCount;
+         const geometries = [...new Set(meshes.map((mesh) => mesh.geometry))];
+         const vertices = geometries.reduce((total, geometry) => total + geometry.getAttribute("position").count, 0);
+         const indices = geometries.reduce((total, geometry) => total + (geometry.index?.count ?? 0), 0);
+         const batch = new THREE.BatchedMesh(meshes.length, vertices, indices, material);
+-        batch.name = "low-quality-static-batch";
++        batch.name = "world-static-geometry-batch";
+         batch.castShadow = meshes[0]!.castShadow;
+         batch.receiveShadow = meshes[0]!.receiveShadow;
+-        batch.frustumCulled = meshes[0]!.frustumCulled;
+-        batch.perObjectFrustumCulled = batch.frustumCulled;
++        batch.frustumCulled = meshes[0]!.frustumCulled && dynamicCount === 0;
++        batch.perObjectFrustumCulled = meshes[0]!.frustumCulled;
+         batch.layers.mask = meshes[0]!.layers.mask & ~(1 << STATIC_BATCH_ORIGINAL_LAYER);
+         batch.visible = false;
+         batch.raycast = () => {};
+         const geometryIds = new Map<THREE.BufferGeometry, number>();
+         for (const geometry of geometries) geometryIds.set(geometry, batch.addGeometry(geometry));
++        const originals: BatchEntry["originals"] = [];
+         for (const mesh of meshes) {
+           const instance = batch.addInstance(geometryIds.get(mesh.geometry)!);
+           batch.setMatrixAt(instance, new THREE.Matrix4().multiplyMatrices(inverseWorld, mesh.matrixWorld));
++          originals.push({
++            mesh,
++            layerMask: mesh.layers.mask,
++            instanceId: instance,
++            dynamic: dynamicByMesh.get(mesh) ?? false,
++            inBatch: true,
++          });
+         }
+         batch.computeBoundingBox();
+         batch.computeBoundingSphere();
+@@ -187,7 +280,7 @@ export class StaticSceneBatch {
+         this.entries.push({
+           batch,
+           sourceMaterial: material,
+-          originals: meshes.map((mesh) => ({ mesh, layerMask: mesh.layers.mask })),
++          originals,
+         });
+       }
+     }
+@@ -196,26 +289,66 @@ export class StaticSceneBatch {
+   public apply(tier: QualityTier): void {
+     if (this.disposed) return;
+     const renderBatches = tier !== "static";
++    this.rendering = renderBatches;
+     for (const { batch, sourceMaterial, originals } of this.entries) {
+       batch.visible = renderBatches;
+       batch.material = this.materialForTier(sourceMaterial, tier);
+-      for (const { mesh, layerMask } of originals) {
++      for (const { mesh, layerMask, inBatch } of originals) {
+         mesh.layers.mask = renderBatches
+-          ? (layerMask & ~(1 << 0)) | (1 << STATIC_BATCH_ORIGINAL_LAYER)
++          ? inBatch ? (layerMask & ~(1 << 0)) | (1 << STATIC_BATCH_ORIGINAL_LAYER) : layerMask | (1 << STATIC_BATCH_ORIGINAL_LAYER)
+           : layerMask;
+       }
+     }
++    if (renderBatches) this.syncDynamicInstances();
++  }
++
++  /** Synchronize transform-animated source meshes before each renderer pass. */
++  public syncDynamicInstances(): void {
++    if (this.disposed || !this.rendering) return;
++    this.scene.updateWorldMatrix(true, true);
++    const inverseWorld = this.scene.matrixWorld.clone().invert();
++    for (const { batch, originals } of this.entries) {
++      for (const source of originals) {
++        if (!source.dynamic) continue;
++        const { mesh, instanceId, layerMask } = source;
++        if (!positiveOrthogonalTransform(mesh.matrixWorld)) {
++          if (source.inBatch) {
++            batch.setVisibleAt(instanceId, false);
++            mesh.layers.mask = layerMask | (1 << STATIC_BATCH_ORIGINAL_LAYER);
++            source.inBatch = false;
++          }
++          continue;
++        }
++        if (!source.inBatch) {
++          mesh.layers.mask = (layerMask & ~(1 << 0)) | (1 << STATIC_BATCH_ORIGINAL_LAYER);
++          source.inBatch = true;
++        }
++        this.localMatrix.multiplyMatrices(inverseWorld, mesh.matrixWorld);
++        batch.getMatrixAt(instanceId, this.existingMatrix);
++        if (!this.localMatrix.equals(this.existingMatrix)) batch.setMatrixAt(instanceId, this.localMatrix);
++        const visible = effectivelyVisible(mesh, this.scene);
++        if (batch.getVisibleAt(instanceId) !== visible) batch.setVisibleAt(instanceId, visible);
++      }
++    }
+   }
+ 
+   public getDiagnostics(): StaticSceneBatchDiagnostics {
++    const rejectedByReason = new Map<string, number>();
++    for (const mesh of this.excludedMeshes) {
++      rejectedByReason.set(mesh.reason, (rejectedByReason.get(mesh.reason) ?? 0) + 1);
++    }
+     return {
+       totalMeshes: this.totalMeshes,
+       eligibleMeshes: this.eligibleMeshes,
+       layoutRejectedMeshes: this.layoutRejectedMeshes,
+       batchedMeshes: this.batchedMeshes,
++      dynamicMeshes: this.dynamicMeshes,
++      dynamicBatchedMeshes: this.dynamicBatchedMeshes,
+       batchCount: this.entries.length,
+       singletonGroups: this.singletonGroups,
+       singletonMeshes: this.singletonMeshes,
++      rejectedByReason: Object.fromEntries([...rejectedByReason.entries()].sort(([a], [b]) => a.localeCompare(b))),
++      excludedMeshes: [...this.excludedMeshes].sort((a, b) => a.index - b.index),
+     };
+   }
+ 
+diff --git a/app/src/features/world/WorldRuntime.ts b/app/src/features/world/WorldRuntime.ts
+index 06d463db..a028cec5 100644
+--- a/app/src/features/world/WorldRuntime.ts
++++ b/app/src/features/world/WorldRuntime.ts
+@@ -420,6 +420,7 @@ export class WorldRuntime {
+     }
+ 
+     if (this.renderer && this.integratedResult) {
++      this.staticSceneBatch?.syncDynamicInstances();
+       this.renderer.render(this.scene, this.camera);
+       this.renderedFrames++;
+       this.lastRenderedAt = currentTime;
+diff --git a/app/src/features/world/types.ts b/app/src/features/world/types.ts
+index 4fda5266..fe1c7265 100644
+--- a/app/src/features/world/types.ts
++++ b/app/src/features/world/types.ts
+@@ -68,15 +68,7 @@ export interface Diagnostics {
+   renderedTriangles?: number | undefined;
+   renderPixelRatio?: number | undefined;
+   interactions?: { boundProductionTargets: number; frozenHitProxyCount: number; lastActivatedId: string | null } | undefined;
+-  staticBatch?: {
+-    totalMeshes: number;
+-    eligibleMeshes: number;
+-    layoutRejectedMeshes: number;
+-    batchedMeshes: number;
+-    batchCount: number;
+-    singletonGroups: number;
+-    singletonMeshes: number;
+-  } | null | undefined;
++  staticBatch?: import("./LowQualityBatch").StaticSceneBatchDiagnostics | null | undefined;
+   lifecycleState: WorldLifecycleState;
+   residentCount: number;
+   chairCount: number;
+diff --git a/app/tests/unit/low-quality-batch.test.ts b/app/tests/unit/low-quality-batch.test.ts
+index 3b51ac2a..ca6a42e7 100644
+--- a/app/tests/unit/low-quality-batch.test.ts
++++ b/app/tests/unit/low-quality-batch.test.ts
+@@ -61,9 +61,13 @@ describe("reversible static batching of original frozen meshes", () => {
+       eligibleMeshes: 2,
+       layoutRejectedMeshes: 0,
+       batchedMeshes: 2,
++      dynamicMeshes: 0,
++      dynamicBatchedMeshes: 0,
+       batchCount: 1,
+       singletonGroups: 0,
+       singletonMeshes: 0,
++      rejectedByReason: {},
++      excludedMeshes: [],
+     });
+     expect(batch.geometry.getAttribute("position").array).not.toBe(meshes[0].geometry.getAttribute("position").array);
+     expect(batch.boundingBox).not.toBeNull();
+@@ -200,6 +204,47 @@ describe("reversible static batching of original frozen meshes", () => {
+     quality.dispose();
+   });
+ 
++  it("reports a path, material and precise reason for every mesh that stays on the source render path", () => {
++    const scene = new THREE.Group();
++    scene.name = "world";
++    const accepted = pair();
++    const transparentMaterial = new THREE.MeshBasicMaterial({ transparent: true });
++    const transparent = new THREE.Mesh(geometry(), transparentMaterial);
++    transparent.name = "transparent-panel";
++    const grouped = new THREE.Mesh(geometry(), new THREE.MeshBasicMaterial());
++    grouped.name = "grouped-trim";
++    grouped.geometry.addGroup(0, 3, 0);
++    const groupedSibling = new THREE.Mesh(geometry(), grouped.material as THREE.Material);
++    groupedSibling.name = "grouped-trim-sibling";
++    groupedSibling.geometry.addGroup(0, 3, 0);
++    const hiddenParent = new THREE.Group();
++    hiddenParent.name = "closed-drawer";
++    hiddenParent.visible = false;
++    const hidden = new THREE.Mesh(geometry(), new THREE.MeshBasicMaterial());
++    hidden.name = "hidden-detail";
++    hiddenParent.add(hidden);
++    const singleton = new THREE.Mesh(geometry(), new THREE.MeshBasicMaterial());
++    singleton.name = "unique-metal-part";
++    scene.add(...accepted, transparent, grouped, groupedSibling, hiddenParent, singleton);
++
++    const quality = new StaticSceneBatch(scene);
++    const diagnostics = quality.getDiagnostics();
++    expect(diagnostics.totalMeshes).toBe(7);
++    expect(diagnostics.batchedMeshes).toBe(4);
++    expect(diagnostics.excludedMeshes).toEqual([
++      expect.objectContaining({ path: "world/transparent-panel", material: "MeshBasicMaterial", reason: "material-transparent-or-blended" }),
++      expect.objectContaining({ path: "world/closed-drawer/hidden-detail", material: "MeshBasicMaterial", reason: "hidden-ancestor" }),
++      expect.objectContaining({ path: "world/unique-metal-part", material: "MeshBasicMaterial", reason: "singleton-compatible-group" }),
++    ]);
++    expect(diagnostics.rejectedByReason).toEqual({
++      "hidden-ancestor": 1,
++      "material-transparent-or-blended": 1,
++      "singleton-compatible-group": 1,
++    });
++    expect(diagnostics.totalMeshes).toBe(diagnostics.batchedMeshes + diagnostics.excludedMeshes.length);
++    quality.dispose();
++  });
++
+   it("supports non-indexed geometry when both original layouts match", () => {
+     const scene = new THREE.Group();
+     const meshes = pair();
+@@ -211,7 +256,7 @@ describe("reversible static batching of original frozen meshes", () => {
+     quality.dispose();
+   });
+ 
+-  it.each(["resident", "chair-root", "chair-base", "body-turn", "door-hinge", "painting-pivot", "blind_slat_1", "blind_slat_12", "hidden-yor-mark"])("excludes all descendants of dynamic %s", (name) => {
++  it.each(["resident", "chair-root", "chair-base", "body-turn", "door-hinge", "painting-pivot", "blind_slat_1", "blind_slat_12", "hidden-yor-mark"])("tracks every descendant transform beneath dynamic %s", (name) => {
+     const scene = new THREE.Group();
+     const dynamic = new THREE.Group();
+     dynamic.name = name;
+@@ -220,12 +265,55 @@ describe("reversible static batching of original frozen meshes", () => {
+     scene.add(dynamic);
+     const quality = new StaticSceneBatch(scene);
+     quality.apply("low");
+-    expect(batches(scene)).toHaveLength(0);
++    const batch = batches(scene)[0]!;
++    expect(batch.instanceCount).toBe(2);
++    expect(batch.frustumCulled).toBe(false);
++    expect(batch.perObjectFrustumCulled).toBe(true);
++    expect(quality.getDiagnostics().dynamicMeshes).toBe(2);
++    expect(quality.getDiagnostics().dynamicBatchedMeshes).toBe(2);
++    expect(meshes.map((mesh) => mesh.layers.mask)).toEqual([2, 2]);
++    dynamic.position.set(1.2, 0.5, -0.7);
++    dynamic.rotation.y = 0.4;
++    dynamic.updateWorldMatrix(true, true);
++    quality.syncDynamicInstances();
++    for (let index = 0; index < meshes.length; index += 1) {
++      const instance = batch.getMatrixAt(index, new THREE.Matrix4());
++      expectMatrix(new THREE.Matrix4().multiplyMatrices(batch.matrixWorld, instance), meshes[index]!.matrixWorld);
++    }
++    expect(batch.getVisibleAt(0)).toBe(true);
++    dynamic.visible = false;
++    quality.syncDynamicInstances();
++    expect(batch.getVisibleAt(0)).toBe(false);
++    dynamic.visible = true;
++    dynamic.scale.x = -1;
++    quality.syncDynamicInstances();
++    expect(batch.getVisibleAt(0)).toBe(false);
++    expect(meshes.map((mesh) => mesh.layers.mask)).toEqual([3, 3]);
++    dynamic.scale.x = 1;
++    quality.syncDynamicInstances();
++    expect(batch.getVisibleAt(0)).toBe(true);
++    expect(meshes.map((mesh) => mesh.layers.mask)).toEqual([2, 2]);
++    quality.dispose();
+     expect(meshes.map((mesh) => mesh.layers.mask)).toEqual([1, 1]);
++  });
++
++  it("batches grouped geometry when a single material owns the whole mesh", () => {
++    const scene = new THREE.Group();
++    const meshes = pair();
++    for (const mesh of meshes) {
++      mesh.geometry.addGroup(0, 6, 0);
++      mesh.geometry.addGroup(6, mesh.geometry.index!.count - 6, 0);
++    }
++    scene.add(...meshes);
++    const quality = new StaticSceneBatch(scene);
++    expect(batches(scene)).toHaveLength(1);
++    expect(batches(scene)[0]!.instanceCount).toBe(2);
++    expect(batches(scene)[0]!.geometry.getAttribute("position").count)
++      .toBe(meshes[0]!.geometry.getAttribute("position").count + meshes[1]!.geometry.getAttribute("position").count);
+     quality.dispose();
+   });
+ 
+-  it("excludes actual named and UUID animation targets and their descendants", () => {
++  it("updates instances for actual named and UUID animation targets and their descendants", () => {
+     const scene = new THREE.Group();
+     const animatedParent = new THREE.Group();
+     animatedParent.name = "animated-custom-root";
+@@ -242,12 +330,13 @@ describe("reversible static batching of original frozen meshes", () => {
+     const quality = new StaticSceneBatch(scene);
+     quality.apply("low");
+     expect(batches(scene)).toHaveLength(1);
+-    expect(batches(scene)[0]!.instanceCount).toBe(2);
+-    for (const mesh of [...animatedChildren, ...uuidMeshes]) expect(mesh.layers.mask).toBe(1);
++    expect(batches(scene)[0]!.instanceCount).toBe(6);
++    expect(quality.getDiagnostics().dynamicBatchedMeshes).toBe(4);
++    for (const mesh of [...animatedChildren, ...uuidMeshes]) expect(mesh.layers.mask).toBe(2);
+     quality.dispose();
+   });
+ 
+-  it("conservatively excludes a nested animation subtree when a track cannot be resolved", () => {
++  it("tracks a nested animation subtree conservatively when a track cannot be resolved", () => {
+     const scene = new THREE.Group();
+     const animated = new THREE.Group();
+     animated.add(...pair());
+@@ -256,11 +345,28 @@ describe("reversible static batching of original frozen meshes", () => {
+     ])];
+     scene.add(animated);
+     const quality = new StaticSceneBatch(scene);
+-    expect(batches(scene)).toHaveLength(0);
++    expect(batches(scene)).toHaveLength(1);
++    expect(quality.getDiagnostics().dynamicBatchedMeshes).toBe(2);
++    quality.dispose();
++  });
++
++  it("reports hidden transparent semantic proxies as hidden while preserving their raycast source", () => {
++    const scene = new THREE.Group();
++    const parent = new THREE.Group();
++    const proxy = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 }));
++    parent.visible = false;
++    parent.add(proxy);
++    scene.add(parent);
++    const quality = new StaticSceneBatch(scene);
++    const diagnostics = quality.getDiagnostics();
++    expect(diagnostics.totalMeshes).toBe(1);
++    expect(diagnostics.batchedMeshes).toBe(0);
++    expect(diagnostics.rejectedByReason["hidden-ancestor"]).toBe(1);
++    expect(proxy.geometry).toBeInstanceOf(THREE.BoxGeometry);
+     quality.dispose();
+   });
+ 
+-  it.each(["transparent", "cutout", "wireframe", "stencil", "partial", "groups", "array", "morph", "instanced", "instanced-attribute", "skinned", "callback", "material-callback", "order", "parent-order", "hidden", "negative", "parent-negative", "singular", "shear", "dynamic-buffer", "half-float"])("leaves %s meshes untouched", (condition) => {
++  it.each(["transparent", "cutout", "wireframe", "stencil", "partial", "array", "morph", "instanced", "instanced-attribute", "skinned", "callback", "material-callback", "order", "parent-order", "hidden", "negative", "parent-negative", "singular", "shear", "dynamic-buffer", "half-float"])("leaves %s meshes untouched", (condition) => {
+     const scene = new THREE.Group();
+     const meshes = pair();
+     if (condition === "transparent") (meshes[0].material as THREE.Material).transparent = true;
+@@ -270,7 +376,6 @@ describe("reversible static batching of original frozen meshes", () => {
+     if (condition === "material-callback") (meshes[0].material as THREE.Material).onBeforeRender = () => {};
+     for (const mesh of meshes) {
+       if (condition === "partial") mesh.geometry.setDrawRange(3, 3);
+-      if (condition === "groups") mesh.geometry.addGroup(0, 3, 0);
+       if (condition === "array") mesh.material = [mesh.material as THREE.Material];
+       if (condition === "morph") mesh.geometry.morphAttributes.position = [mesh.geometry.getAttribute("position").clone()];
+       if (condition === "callback") mesh.onBeforeRender = () => {};
+diff --git a/yorayriniwnl.in/src/features/world/LowQualityBatch.ts b/yorayriniwnl.in/src/features/world/LowQualityBatch.ts
+index f18dd492..f2e8112e 100644
+--- a/yorayriniwnl.in/src/features/world/LowQualityBatch.ts
++++ b/yorayriniwnl.in/src/features/world/LowQualityBatch.ts
+@@ -12,7 +12,13 @@ const epsilon = 1e-6;
+ interface BatchEntry {
+   batch: THREE.BatchedMesh;
+   sourceMaterial: THREE.Material;
+-  originals: Array<{ mesh: THREE.Mesh; layerMask: number }>;
++  originals: Array<{
++    mesh: THREE.Mesh;
++    layerMask: number;
++    instanceId: number;
++    dynamic: boolean;
++    inBatch: boolean;
++  }>;
+ }
+ 
+ export interface StaticSceneBatchDiagnostics {
+@@ -20,9 +26,18 @@ export interface StaticSceneBatchDiagnostics {
+   eligibleMeshes: number;
+   layoutRejectedMeshes: number;
+   batchedMeshes: number;
++  dynamicMeshes: number;
++  dynamicBatchedMeshes: number;
+   batchCount: number;
+   singletonGroups: number;
+   singletonMeshes: number;
++  rejectedByReason: Record<string, number>;
++  excludedMeshes: Array<{
++    index: number;
++    path: string;
++    material: string;
++    reason: string;
++  }>;
+ }
+ 
+ function positiveOrthogonalTransform(matrix: THREE.Matrix4): boolean {
+@@ -86,36 +101,73 @@ function attributeLayout(geometry: THREE.BufferGeometry): string | null {
+   return JSON.stringify(layout);
+ }
+ 
+-function eligible(mesh: THREE.Mesh, animationTargets: Set<THREE.Object3D>): boolean {
+-  if (mesh.constructor !== THREE.Mesh || Array.isArray(mesh.material)
+-    || Object.keys(mesh.geometry.morphAttributes).length > 0 || mesh.morphTargetInfluences
+-    || mesh.geometry.groups.length > 0 || mesh.customDepthMaterial || mesh.customDistanceMaterial
+-    || mesh.onBeforeRender !== THREE.Object3D.prototype.onBeforeRender
++function dynamicReason(mesh: THREE.Mesh, animationTargets: Set<THREE.Object3D>): string | null {
++  for (let node: THREE.Object3D | null = mesh; node; node = node.parent) {
++    if (dynamicNames.test(node.name)) return `named:${node.name}`;
++    if (animationTargets.has(node)) return `animated:${node.name || node.type}`;
++  }
++  return null;
++}
++
++function exclusionReason(mesh: THREE.Mesh): string | null {
++  if (mesh.constructor !== THREE.Mesh) return "mesh-subclass";
++  for (let node: THREE.Object3D | null = mesh; node; node = node.parent) {
++    if (!node.visible) return "hidden-ancestor";
++  }
++  if (Array.isArray(mesh.material)) return "material-array";
++  if (Object.keys(mesh.geometry.morphAttributes).length > 0 || mesh.morphTargetInfluences) return "morph-targets";
++  if (mesh.customDepthMaterial || mesh.customDistanceMaterial) return "custom-shadow-material";
++  if (mesh.onBeforeRender !== THREE.Object3D.prototype.onBeforeRender
+     || mesh.onAfterRender !== THREE.Object3D.prototype.onAfterRender
+     || mesh.onBeforeShadow !== THREE.Object3D.prototype.onBeforeShadow
+-    || mesh.onAfterShadow !== THREE.Object3D.prototype.onAfterShadow
+-    || !(mesh.layers.mask & 1)) return false;
++    || mesh.onAfterShadow !== THREE.Object3D.prototype.onAfterShadow) return "mesh-render-hook";
++  if (!(mesh.layers.mask & 1)) return "not-on-camera-layer";
+   const material = mesh.material;
+   const transmitting = material as THREE.MeshPhysicalMaterial;
+-  if (!material.visible || material.transparent || material.opacity !== 1 || material.alphaTest !== 0
+-    || material.alphaHash || material.alphaToCoverage || material.stencilWrite || transmitting.transmission > 0
+-    || (material as THREE.MeshLambertMaterial).wireframe
+-    || material.blending !== THREE.NormalBlending || material.onBeforeRender !== THREE.Material.prototype.onBeforeRender
+-    || (material as THREE.ShaderMaterial).isShaderMaterial) return false;
++  if (!material.visible) return "material-invisible";
++  if (material.transparent || material.opacity !== 1 || material.blending !== THREE.NormalBlending) return "material-transparent-or-blended";
++  if (material.alphaTest !== 0 || material.alphaHash || material.alphaToCoverage) return "material-alpha-coverage";
++  if (material.stencilWrite) return "material-stencil";
++  if (transmitting.transmission > 0) return "material-transmission";
++  if ((material as THREE.MeshLambertMaterial).wireframe) return "material-wireframe";
++  if (material.onBeforeRender !== THREE.Material.prototype.onBeforeRender) return "material-render-hook";
++  if ((material as THREE.ShaderMaterial).isShaderMaterial) return "shader-material";
+   const count = mesh.geometry.index?.count ?? mesh.geometry.getAttribute("position")?.count;
+   if (!count || mesh.geometry.drawRange.start !== 0
+-    || (mesh.geometry.drawRange.count !== Infinity && mesh.geometry.drawRange.count !== count)) return false;
++    || (mesh.geometry.drawRange.count !== Infinity && mesh.geometry.drawRange.count !== count)) return "partial-geometry-range";
+   for (let node: THREE.Object3D | null = mesh; node; node = node.parent) {
+-    if (!node.visible || node.renderOrder !== 0 || dynamicNames.test(node.name) || animationTargets.has(node)
+-      || node.scale.x <= 0 || node.scale.y <= 0 || node.scale.z <= 0
+-      || !positiveOrthogonalTransform(node.matrixWorld)) return false;
++    if (node.renderOrder !== 0) return "nondefault-render-order";
++    if (node.scale.x <= 0 || node.scale.y <= 0 || node.scale.z <= 0) return "nonpositive-scale";
++    if (!positiveOrthogonalTransform(node.matrixWorld)) return "unsupported-world-transform";
+   }
+-  return true;
++  return null;
+ }
+ 
+-/** Reversible static draw batching. Construct before quality materials are
+- * applied and only when the renderer reports WEBGL_multi_draw. Source mesh
+- * identity, buffers, hierarchy and transforms remain owned by the original world.
++function objectPath(object: THREE.Object3D): string {
++  const names: string[] = [];
++  for (let node: THREE.Object3D | null = object; node; node = node.parent) {
++    names.push(node.name || node.type);
++  }
++  return names.reverse().join("/");
++}
++
++function materialName(mesh: THREE.Mesh): string {
++  const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
++  return materials.map((material) => material.name || material.type).join(",");
++}
++
++function effectivelyVisible(object: THREE.Object3D, root: THREE.Object3D): boolean {
++  for (let node: THREE.Object3D | null = object; node; node = node.parent) {
++    if (!node.visible) return false;
++    if (node === root) return true;
++  }
++  return false;
++}
++
++/** Reversible static and transform-synchronized draw batching. Construct before
++ * quality materials are applied and only when the renderer reports
++ * WEBGL_multi_draw. Source meshes keep identity, buffers, hierarchy, transforms,
++ * and raycast behavior; dynamic transforms are copied into per-object instances.
+  */
+ export class StaticSceneBatch {
+   private readonly entries: BatchEntry[] = [];
+@@ -124,8 +176,14 @@ export class StaticSceneBatch {
+   private eligibleMeshes = 0;
+   private layoutRejectedMeshes = 0;
+   private batchedMeshes = 0;
++  private dynamicMeshes = 0;
++  private dynamicBatchedMeshes = 0;
+   private singletonGroups = 0;
+   private singletonMeshes = 0;
++  private rendering = false;
++  private readonly localMatrix = new THREE.Matrix4();
++  private readonly existingMatrix = new THREE.Matrix4();
++  private readonly excludedMeshes: StaticSceneBatchDiagnostics["excludedMeshes"] = [];
+ 
+   constructor(
+     private readonly scene: THREE.Object3D,
+@@ -134,20 +192,44 @@ export class StaticSceneBatch {
+     scene.updateWorldMatrix(true, true);
+     const animationTargets = animatedNodes(scene);
+     const byMaterial = new Map<THREE.Material, Map<string, THREE.Mesh[]>>();
++    const meshIndices = new Map<THREE.Mesh, number>();
++    const dynamicByMesh = new Map<THREE.Mesh, boolean>();
++    const recordExclusion = (mesh: THREE.Mesh, reason: string) => {
++      this.excludedMeshes.push({
++        index: meshIndices.get(mesh) ?? -1,
++        path: objectPath(mesh),
++        material: materialName(mesh),
++        reason,
++      });
++    };
+     scene.traverse((object) => {
+       if (!(object as THREE.Mesh).isMesh) return;
+-      this.totalMeshes += 1;
+       const mesh = object as THREE.Mesh;
+-      if (!eligible(mesh, animationTargets) || Array.isArray(mesh.material)) return;
++      meshIndices.set(mesh, this.totalMeshes);
++      this.totalMeshes += 1;
++      const material = mesh.material;
++      if (Array.isArray(material)) {
++        recordExclusion(mesh, "material-array");
++        return;
++      }
++      const reason = exclusionReason(mesh);
++      if (reason) {
++        recordExclusion(mesh, reason);
++        return;
++      }
+       this.eligibleMeshes += 1;
++      const dynamic = dynamicReason(mesh, animationTargets) !== null;
++      dynamicByMesh.set(mesh, dynamic);
++      if (dynamic) this.dynamicMeshes += 1;
+       const layout = attributeLayout(mesh.geometry);
+       if (!layout) {
+         this.layoutRejectedMeshes += 1;
++        recordExclusion(mesh, "unsupported-attribute-layout");
+         return;
+       }
+       const key = JSON.stringify([layout, mesh.castShadow, mesh.receiveShadow, mesh.frustumCulled, mesh.layers.mask]);
+-      let groups = byMaterial.get(mesh.material);
+-      if (!groups) byMaterial.set(mesh.material, groups = new Map());
++      let groups = byMaterial.get(material);
++      if (!groups) byMaterial.set(material, groups = new Map());
+       let group = groups.get(key);
+       if (!group) groups.set(key, group = []);
+       group.push(mesh);
+@@ -159,26 +241,37 @@ export class StaticSceneBatch {
+         if (meshes.length < 2) {
+           this.singletonGroups += 1;
+           this.singletonMeshes += meshes.length;
++          for (const mesh of meshes) recordExclusion(mesh, "singleton-compatible-group");
+           continue;
+         }
+         this.batchedMeshes += meshes.length;
++        const dynamicCount = meshes.filter((mesh) => dynamicByMesh.get(mesh)).length;
++        this.dynamicBatchedMeshes += dynamicCount;
+         const geometries = [...new Set(meshes.map((mesh) => mesh.geometry))];
+         const vertices = geometries.reduce((total, geometry) => total + geometry.getAttribute("position").count, 0);
+         const indices = geometries.reduce((total, geometry) => total + (geometry.index?.count ?? 0), 0);
+         const batch = new THREE.BatchedMesh(meshes.length, vertices, indices, material);
+-        batch.name = "low-quality-static-batch";
++        batch.name = "world-static-geometry-batch";
+         batch.castShadow = meshes[0]!.castShadow;
+         batch.receiveShadow = meshes[0]!.receiveShadow;
+-        batch.frustumCulled = meshes[0]!.frustumCulled;
+-        batch.perObjectFrustumCulled = batch.frustumCulled;
++        batch.frustumCulled = meshes[0]!.frustumCulled && dynamicCount === 0;
++        batch.perObjectFrustumCulled = meshes[0]!.frustumCulled;
+         batch.layers.mask = meshes[0]!.layers.mask & ~(1 << STATIC_BATCH_ORIGINAL_LAYER);
+         batch.visible = false;
+         batch.raycast = () => {};
+         const geometryIds = new Map<THREE.BufferGeometry, number>();
+         for (const geometry of geometries) geometryIds.set(geometry, batch.addGeometry(geometry));
++        const originals: BatchEntry["originals"] = [];
+         for (const mesh of meshes) {
+           const instance = batch.addInstance(geometryIds.get(mesh.geometry)!);
+           batch.setMatrixAt(instance, new THREE.Matrix4().multiplyMatrices(inverseWorld, mesh.matrixWorld));
++          originals.push({
++            mesh,
++            layerMask: mesh.layers.mask,
++            instanceId: instance,
++            dynamic: dynamicByMesh.get(mesh) ?? false,
++            inBatch: true,
++          });
+         }
+         batch.computeBoundingBox();
+         batch.computeBoundingSphere();
+@@ -187,7 +280,7 @@ export class StaticSceneBatch {
+         this.entries.push({
+           batch,
+           sourceMaterial: material,
+-          originals: meshes.map((mesh) => ({ mesh, layerMask: mesh.layers.mask })),
++          originals,
+         });
+       }
+     }
+@@ -196,26 +289,66 @@ export class StaticSceneBatch {
+   public apply(tier: QualityTier): void {
+     if (this.disposed) return;
+     const renderBatches = tier !== "static";
++    this.rendering = renderBatches;
+     for (const { batch, sourceMaterial, originals } of this.entries) {
+       batch.visible = renderBatches;
+       batch.material = this.materialForTier(sourceMaterial, tier);
+-      for (const { mesh, layerMask } of originals) {
++      for (const { mesh, layerMask, inBatch } of originals) {
+         mesh.layers.mask = renderBatches
+-          ? (layerMask & ~(1 << 0)) | (1 << STATIC_BATCH_ORIGINAL_LAYER)
++          ? inBatch ? (layerMask & ~(1 << 0)) | (1 << STATIC_BATCH_ORIGINAL_LAYER) : layerMask | (1 << STATIC_BATCH_ORIGINAL_LAYER)
+           : layerMask;
+       }
+     }
++    if (renderBatches) this.syncDynamicInstances();
++  }
++
++  /** Synchronize transform-animated source meshes before each renderer pass. */
++  public syncDynamicInstances(): void {
++    if (this.disposed || !this.rendering) return;
++    this.scene.updateWorldMatrix(true, true);
++    const inverseWorld = this.scene.matrixWorld.clone().invert();
++    for (const { batch, originals } of this.entries) {
++      for (const source of originals) {
++        if (!source.dynamic) continue;
++        const { mesh, instanceId, layerMask } = source;
++        if (!positiveOrthogonalTransform(mesh.matrixWorld)) {
++          if (source.inBatch) {
++            batch.setVisibleAt(instanceId, false);
++            mesh.layers.mask = layerMask | (1 << STATIC_BATCH_ORIGINAL_LAYER);
++            source.inBatch = false;
++          }
++          continue;
++        }
++        if (!source.inBatch) {
++          mesh.layers.mask = (layerMask & ~(1 << 0)) | (1 << STATIC_BATCH_ORIGINAL_LAYER);
++          source.inBatch = true;
++        }
++        this.localMatrix.multiplyMatrices(inverseWorld, mesh.matrixWorld);
++        batch.getMatrixAt(instanceId, this.existingMatrix);
++        if (!this.localMatrix.equals(this.existingMatrix)) batch.setMatrixAt(instanceId, this.localMatrix);
++        const visible = effectivelyVisible(mesh, this.scene);
++        if (batch.getVisibleAt(instanceId) !== visible) batch.setVisibleAt(instanceId, visible);
++      }
++    }
+   }
+ 
+   public getDiagnostics(): StaticSceneBatchDiagnostics {
++    const rejectedByReason = new Map<string, number>();
++    for (const mesh of this.excludedMeshes) {
++      rejectedByReason.set(mesh.reason, (rejectedByReason.get(mesh.reason) ?? 0) + 1);
++    }
+     return {
+       totalMeshes: this.totalMeshes,
+       eligibleMeshes: this.eligibleMeshes,
+       layoutRejectedMeshes: this.layoutRejectedMeshes,
+       batchedMeshes: this.batchedMeshes,
++      dynamicMeshes: this.dynamicMeshes,
++      dynamicBatchedMeshes: this.dynamicBatchedMeshes,
+       batchCount: this.entries.length,
+       singletonGroups: this.singletonGroups,
+       singletonMeshes: this.singletonMeshes,
++      rejectedByReason: Object.fromEntries([...rejectedByReason.entries()].sort(([a], [b]) => a.localeCompare(b))),
++      excludedMeshes: [...this.excludedMeshes].sort((a, b) => a.index - b.index),
+     };
+   }
+ 
+diff --git a/yorayriniwnl.in/src/features/world/WorldRuntime.ts b/yorayriniwnl.in/src/features/world/WorldRuntime.ts
+index 06d463db..a028cec5 100644
+--- a/yorayriniwnl.in/src/features/world/WorldRuntime.ts
++++ b/yorayriniwnl.in/src/features/world/WorldRuntime.ts
+@@ -420,6 +420,7 @@ export class WorldRuntime {
+     }
+ 
+     if (this.renderer && this.integratedResult) {
++      this.staticSceneBatch?.syncDynamicInstances();
+       this.renderer.render(this.scene, this.camera);
+       this.renderedFrames++;
+       this.lastRenderedAt = currentTime;
+diff --git a/yorayriniwnl.in/src/features/world/types.ts b/yorayriniwnl.in/src/features/world/types.ts
+index 4fda5266..fe1c7265 100644
+--- a/yorayriniwnl.in/src/features/world/types.ts
++++ b/yorayriniwnl.in/src/features/world/types.ts
+@@ -68,15 +68,7 @@ export interface Diagnostics {
+   renderedTriangles?: number | undefined;
+   renderPixelRatio?: number | undefined;
+   interactions?: { boundProductionTargets: number; frozenHitProxyCount: number; lastActivatedId: string | null } | undefined;
+-  staticBatch?: {
+-    totalMeshes: number;
+-    eligibleMeshes: number;
+-    layoutRejectedMeshes: number;
+-    batchedMeshes: number;
+-    batchCount: number;
+-    singletonGroups: number;
+-    singletonMeshes: number;
+-  } | null | undefined;
++  staticBatch?: import("./LowQualityBatch").StaticSceneBatchDiagnostics | null | undefined;
+   lifecycleState: WorldLifecycleState;
+   residentCount: number;
+   chairCount: number;
+diff --git a/yorayriniwnl.in/tests/unit/low-quality-batch.test.ts b/yorayriniwnl.in/tests/unit/low-quality-batch.test.ts
+index 3b51ac2a..ca6a42e7 100644
+--- a/yorayriniwnl.in/tests/unit/low-quality-batch.test.ts
++++ b/yorayriniwnl.in/tests/unit/low-quality-batch.test.ts
+@@ -61,9 +61,13 @@ describe("reversible static batching of original frozen meshes", () => {
+       eligibleMeshes: 2,
+       layoutRejectedMeshes: 0,
+       batchedMeshes: 2,
++      dynamicMeshes: 0,
++      dynamicBatchedMeshes: 0,
+       batchCount: 1,
+       singletonGroups: 0,
+       singletonMeshes: 0,
++      rejectedByReason: {},
++      excludedMeshes: [],
+     });
+     expect(batch.geometry.getAttribute("position").array).not.toBe(meshes[0].geometry.getAttribute("position").array);
+     expect(batch.boundingBox).not.toBeNull();
+@@ -200,6 +204,47 @@ describe("reversible static batching of original frozen meshes", () => {
+     quality.dispose();
+   });
+ 
++  it("reports a path, material and precise reason for every mesh that stays on the source render path", () => {
++    const scene = new THREE.Group();
++    scene.name = "world";
++    const accepted = pair();
++    const transparentMaterial = new THREE.MeshBasicMaterial({ transparent: true });
++    const transparent = new THREE.Mesh(geometry(), transparentMaterial);
++    transparent.name = "transparent-panel";
++    const grouped = new THREE.Mesh(geometry(), new THREE.MeshBasicMaterial());
++    grouped.name = "grouped-trim";
++    grouped.geometry.addGroup(0, 3, 0);
++    const groupedSibling = new THREE.Mesh(geometry(), grouped.material as THREE.Material);
++    groupedSibling.name = "grouped-trim-sibling";
++    groupedSibling.geometry.addGroup(0, 3, 0);
++    const hiddenParent = new THREE.Group();
++    hiddenParent.name = "closed-drawer";
++    hiddenParent.visible = false;
++    const hidden = new THREE.Mesh(geometry(), new THREE.MeshBasicMaterial());
++    hidden.name = "hidden-detail";
++    hiddenParent.add(hidden);
++    const singleton = new THREE.Mesh(geometry(), new THREE.MeshBasicMaterial());
++    singleton.name = "unique-metal-part";
++    scene.add(...accepted, transparent, grouped, groupedSibling, hiddenParent, singleton);
++
++    const quality = new StaticSceneBatch(scene);
++    const diagnostics = quality.getDiagnostics();
++    expect(diagnostics.totalMeshes).toBe(7);
++    expect(diagnostics.batchedMeshes).toBe(4);
++    expect(diagnostics.excludedMeshes).toEqual([
++      expect.objectContaining({ path: "world/transparent-panel", material: "MeshBasicMaterial", reason: "material-transparent-or-blended" }),
++      expect.objectContaining({ path: "world/closed-drawer/hidden-detail", material: "MeshBasicMaterial", reason: "hidden-ancestor" }),
++      expect.objectContaining({ path: "world/unique-metal-part", material: "MeshBasicMaterial", reason: "singleton-compatible-group" }),
++    ]);
++    expect(diagnostics.rejectedByReason).toEqual({
++      "hidden-ancestor": 1,
++      "material-transparent-or-blended": 1,
++      "singleton-compatible-group": 1,
++    });
++    expect(diagnostics.totalMeshes).toBe(diagnostics.batchedMeshes + diagnostics.excludedMeshes.length);
++    quality.dispose();
++  });
++
+   it("supports non-indexed geometry when both original layouts match", () => {
+     const scene = new THREE.Group();
+     const meshes = pair();
+@@ -211,7 +256,7 @@ describe("reversible static batching of original frozen meshes", () => {
+     quality.dispose();
+   });
+ 
+-  it.each(["resident", "chair-root", "chair-base", "body-turn", "door-hinge", "painting-pivot", "blind_slat_1", "blind_slat_12", "hidden-yor-mark"])("excludes all descendants of dynamic %s", (name) => {
++  it.each(["resident", "chair-root", "chair-base", "body-turn", "door-hinge", "painting-pivot", "blind_slat_1", "blind_slat_12", "hidden-yor-mark"])("tracks every descendant transform beneath dynamic %s", (name) => {
+     const scene = new THREE.Group();
+     const dynamic = new THREE.Group();
+     dynamic.name = name;
+@@ -220,12 +265,55 @@ describe("reversible static batching of original frozen meshes", () => {
+     scene.add(dynamic);
+     const quality = new StaticSceneBatch(scene);
+     quality.apply("low");
+-    expect(batches(scene)).toHaveLength(0);
++    const batch = batches(scene)[0]!;
++    expect(batch.instanceCount).toBe(2);
++    expect(batch.frustumCulled).toBe(false);
++    expect(batch.perObjectFrustumCulled).toBe(true);
++    expect(quality.getDiagnostics().dynamicMeshes).toBe(2);
++    expect(quality.getDiagnostics().dynamicBatchedMeshes).toBe(2);
++    expect(meshes.map((mesh) => mesh.layers.mask)).toEqual([2, 2]);
++    dynamic.position.set(1.2, 0.5, -0.7);
++    dynamic.rotation.y = 0.4;
++    dynamic.updateWorldMatrix(true, true);
++    quality.syncDynamicInstances();
++    for (let index = 0; index < meshes.length; index += 1) {
++      const instance = batch.getMatrixAt(index, new THREE.Matrix4());
++      expectMatrix(new THREE.Matrix4().multiplyMatrices(batch.matrixWorld, instance), meshes[index]!.matrixWorld);
++    }
++    expect(batch.getVisibleAt(0)).toBe(true);
++    dynamic.visible = false;
++    quality.syncDynamicInstances();
++    expect(batch.getVisibleAt(0)).toBe(false);
++    dynamic.visible = true;
++    dynamic.scale.x = -1;
++    quality.syncDynamicInstances();
++    expect(batch.getVisibleAt(0)).toBe(false);
++    expect(meshes.map((mesh) => mesh.layers.mask)).toEqual([3, 3]);
++    dynamic.scale.x = 1;
++    quality.syncDynamicInstances();
++    expect(batch.getVisibleAt(0)).toBe(true);
++    expect(meshes.map((mesh) => mesh.layers.mask)).toEqual([2, 2]);
++    quality.dispose();
+     expect(meshes.map((mesh) => mesh.layers.mask)).toEqual([1, 1]);
++  });
++
++  it("batches grouped geometry when a single material owns the whole mesh", () => {
++    const scene = new THREE.Group();
++    const meshes = pair();
++    for (const mesh of meshes) {
++      mesh.geometry.addGroup(0, 6, 0);
++      mesh.geometry.addGroup(6, mesh.geometry.index!.count - 6, 0);
++    }
++    scene.add(...meshes);
++    const quality = new StaticSceneBatch(scene);
++    expect(batches(scene)).toHaveLength(1);
++    expect(batches(scene)[0]!.instanceCount).toBe(2);
++    expect(batches(scene)[0]!.geometry.getAttribute("position").count)
++      .toBe(meshes[0]!.geometry.getAttribute("position").count + meshes[1]!.geometry.getAttribute("position").count);
+     quality.dispose();
+   });
+ 
+-  it("excludes actual named and UUID animation targets and their descendants", () => {
++  it("updates instances for actual named and UUID animation targets and their descendants", () => {
+     const scene = new THREE.Group();
+     const animatedParent = new THREE.Group();
+     animatedParent.name = "animated-custom-root";
+@@ -242,12 +330,13 @@ describe("reversible static batching of original frozen meshes", () => {
+     const quality = new StaticSceneBatch(scene);
+     quality.apply("low");
+     expect(batches(scene)).toHaveLength(1);
+-    expect(batches(scene)[0]!.instanceCount).toBe(2);
+-    for (const mesh of [...animatedChildren, ...uuidMeshes]) expect(mesh.layers.mask).toBe(1);
++    expect(batches(scene)[0]!.instanceCount).toBe(6);
++    expect(quality.getDiagnostics().dynamicBatchedMeshes).toBe(4);
++    for (const mesh of [...animatedChildren, ...uuidMeshes]) expect(mesh.layers.mask).toBe(2);
+     quality.dispose();
+   });
+ 
+-  it("conservatively excludes a nested animation subtree when a track cannot be resolved", () => {
++  it("tracks a nested animation subtree conservatively when a track cannot be resolved", () => {
+     const scene = new THREE.Group();
+     const animated = new THREE.Group();
+     animated.add(...pair());
+@@ -256,11 +345,28 @@ describe("reversible static batching of original frozen meshes", () => {
+     ])];
+     scene.add(animated);
+     const quality = new StaticSceneBatch(scene);
+-    expect(batches(scene)).toHaveLength(0);
++    expect(batches(scene)).toHaveLength(1);
++    expect(quality.getDiagnostics().dynamicBatchedMeshes).toBe(2);
++    quality.dispose();
++  });
++
++  it("reports hidden transparent semantic proxies as hidden while preserving their raycast source", () => {
++    const scene = new THREE.Group();
++    const parent = new THREE.Group();
++    const proxy = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 }));
++    parent.visible = false;
++    parent.add(proxy);
++    scene.add(parent);
++    const quality = new StaticSceneBatch(scene);
++    const diagnostics = quality.getDiagnostics();
++    expect(diagnostics.totalMeshes).toBe(1);
++    expect(diagnostics.batchedMeshes).toBe(0);
++    expect(diagnostics.rejectedByReason["hidden-ancestor"]).toBe(1);
++    expect(proxy.geometry).toBeInstanceOf(THREE.BoxGeometry);
+     quality.dispose();
+   });
+ 
+-  it.each(["transparent", "cutout", "wireframe", "stencil", "partial", "groups", "array", "morph", "instanced", "instanced-attribute", "skinned", "callback", "material-callback", "order", "parent-order", "hidden", "negative", "parent-negative", "singular", "shear", "dynamic-buffer", "half-float"])("leaves %s meshes untouched", (condition) => {
++  it.each(["transparent", "cutout", "wireframe", "stencil", "partial", "array", "morph", "instanced", "instanced-attribute", "skinned", "callback", "material-callback", "order", "parent-order", "hidden", "negative", "parent-negative", "singular", "shear", "dynamic-buffer", "half-float"])("leaves %s meshes untouched", (condition) => {
+     const scene = new THREE.Group();
+     const meshes = pair();
+     if (condition === "transparent") (meshes[0].material as THREE.Material).transparent = true;
+@@ -270,7 +376,6 @@ describe("reversible static batching of original frozen meshes", () => {
+     if (condition === "material-callback") (meshes[0].material as THREE.Material).onBeforeRender = () => {};
+     for (const mesh of meshes) {
+       if (condition === "partial") mesh.geometry.setDrawRange(3, 3);
+-      if (condition === "groups") mesh.geometry.addGroup(0, 3, 0);
+       if (condition === "array") mesh.material = [mesh.material as THREE.Material];
+       if (condition === "morph") mesh.geometry.morphAttributes.position = [mesh.geometry.getAttribute("position").clone()];
+       if (condition === "callback") mesh.onBeforeRender = () => {};
+
+diff --git a/app/tests/unit/static-batch-production-report.test.ts b/app/tests/unit/static-batch-production-report.test.ts
+new file mode 100644
+index 00000000..1fb16f14
+--- /dev/null
++++ b/app/tests/unit/static-batch-production-report.test.ts
+@@ -0,0 +1,184 @@
++import { createHash } from "node:crypto";
++import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
++import path from "node:path";
++import * as THREE from "three";
++import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
++import { describe, expect, it } from "vitest";
++import { integrateScene } from "../../src/features/world/SceneIntegrator";
++import { StaticSceneBatch } from "../../src/features/world/LowQualityBatch";
++
++async function parseFrozenModel(name: string) {
++  const source = readFileSync(path.join(process.cwd(), "public/models", name));
++  const jsonLength = source.readUInt32LE(12);
++  const json = JSON.parse(source.subarray(20, 20 + jsonLength).toString("utf8"));
++  for (const material of json.materials ?? []) {
++    for (const key of Object.keys(material)) if (key.endsWith("Texture")) delete material[key];
++    if (material.pbrMetallicRoughness) {
++      delete material.pbrMetallicRoughness.baseColorTexture;
++      delete material.pbrMetallicRoughness.metallicRoughnessTexture;
++    }
++  }
++  delete json.images;
++  delete json.textures;
++  const encoded = Buffer.from(JSON.stringify(json));
++  const paddedJson = Buffer.alloc(Math.ceil(encoded.length / 4) * 4, 32);
++  encoded.copy(paddedJson);
++  const binary = source.subarray(20 + jsonLength);
++  const glb = Buffer.alloc(20 + paddedJson.length + binary.length);
++  glb.writeUInt32LE(0x46546c67, 0);
++  glb.writeUInt32LE(2, 4);
++  glb.writeUInt32LE(glb.length, 8);
++  glb.writeUInt32LE(paddedJson.length, 12);
++  glb.writeUInt32LE(0x4e4f534a, 16);
++  paddedJson.copy(glb, 20);
++  binary.copy(glb, 20 + paddedJson.length);
++  const buffer = glb.buffer.slice(glb.byteOffset, glb.byteOffset + glb.byteLength) as ArrayBuffer;
++  return {
++    gltf: await new GLTFLoader().parseAsync(buffer, ""),
++    sha256: createHash("sha256").update(source).digest("hex"),
++  };
++}
++
++function objectPath(object: THREE.Object3D): string {
++  const names: string[] = [];
++  for (let node: THREE.Object3D | null = object; node; node = node.parent) names.push(node.name || node.type);
++  return names.reverse().join("/");
++}
++
++function attributeSignature(geometry: THREE.BufferGeometry): string[] {
++  return Object.keys(geometry.attributes).sort().map((name) => {
++    const attribute = geometry.getAttribute(name);
++    return `${name}:${attribute.itemSize}:${attribute.normalized ? 1 : 0}:${attribute.array.constructor.name}`;
++  });
++}
++
++function materialFingerprint(material: THREE.Material): string {
++  const serialized = material.toJSON() as unknown as Record<string, unknown>;
++  delete serialized.uuid;
++  delete serialized.name;
++  delete serialized.metadata;
++  return createHash("sha256").update(JSON.stringify(serialized)).digest("hex");
++}
++
++function effectivelyVisible(object: THREE.Object3D): boolean {
++  for (let node: THREE.Object3D | null = object; node; node = node.parent) if (!node.visible) return false;
++  return true;
++}
++
++describe("production static-batch eligibility report", () => {
++  it("accounts for every desktop and mobile runtime mesh and archives exact rejection reasons", async () => {
++    const [room, resident, fixture] = await Promise.all([
++      parseFrozenModel("production-room-full.glb"),
++      parseFrozenModel("resident-production.glb"),
++      parseFrozenModel("fixture-production.glb"),
++    ]);
++    for (const asset of [room.gltf, resident.gltf, fixture.gltf]) asset.scene.animations = asset.animations;
++    const integrated = integrateScene(room.gltf, resident.gltf, fixture.gltf);
++    const profiles = [
++      { name: "desktop", interactionAsset: "interaction-assets.glb" },
++      { name: "mobile", interactionAsset: "interaction-assets-mobile.glb" },
++    ] as const;
++    const outputDirectory = process.env.PRE_G7_23_DIAGNOSTICS_OUTPUT;
++    if (outputDirectory) mkdirSync(outputDirectory, { recursive: true });
++
++    for (const profile of profiles) {
++      const interactions = await parseFrozenModel(profile.interactionAsset);
++      interactions.gltf.scene.animations = interactions.gltf.animations;
++      // WorldInteractionBinding hides the semantic hit-proxy asset before the
++      // runtime adds it to the rendered scene and constructs static batches.
++      interactions.gltf.scene.traverse((node) => { node.visible = false; });
++      const runtimeScene = new THREE.Scene();
++      runtimeScene.add(integrated.scene, interactions.gltf.scene);
++      const sceneMeshes: Array<Record<string, unknown>> = [];
++      runtimeScene.traverse((node) => {
++        if (!(node as THREE.Mesh).isMesh) return;
++        const mesh = node as THREE.Mesh;
++        const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
++        sceneMeshes.push({
++          path: objectPath(mesh),
++          name: mesh.name,
++          visible: effectivelyVisible(mesh),
++          castShadow: mesh.castShadow,
++          receiveShadow: mesh.receiveShadow,
++          layerMask: mesh.layers.mask,
++          frustumCulled: mesh.frustumCulled,
++          material: materials.map((material) => ({
++            name: material.name || material.type,
++            uuid: material.uuid,
++            fingerprint: materialFingerprint(material),
++            type: material.type,
++            side: material.side,
++            shadowSide: material.shadowSide,
++            transparent: material.transparent,
++            opacity: material.opacity,
++            alphaTest: material.alphaTest,
++            transmission: (material as THREE.MeshPhysicalMaterial).transmission ?? 0,
++          })),
++        });
++      });
++      const batch = new StaticSceneBatch(runtimeScene);
++      const batchEntries = (batch as unknown as {
++        entries: Array<{
++          batch: THREE.BatchedMesh;
++          sourceMaterial: THREE.Material;
++          originals: Array<{ mesh: THREE.Mesh; dynamic: boolean }>;
++        }>;
++      }).entries;
++      const report = {
++        profile: profile.name,
++        interactionAsset: profile.interactionAsset,
++        sourceCommit: process.env.PRE_G7_23_SOURCE_COMMIT ?? null,
++        appTree: process.env.PRE_G7_23_APP_TREE ?? null,
++        instrumentedWorkingFileSha256: createHash("sha256")
++          .update(readFileSync(path.join(process.cwd(), "src/features/world/LowQualityBatch.ts")))
++          .digest("hex"),
++        assets: {
++          "production-room-full.glb": room.sha256,
++          "resident-production.glb": resident.sha256,
++          "fixture-production.glb": fixture.sha256,
++          [profile.interactionAsset]: interactions.sha256,
++        },
++        diagnostics: batch.getDiagnostics(),
++        sceneMeshes,
++        batchGroups: batchEntries.map(({ batch: target, sourceMaterial, originals }) => ({
++          material: sourceMaterial.name || sourceMaterial.type,
++          materialType: sourceMaterial.type,
++          materialUuid: sourceMaterial.uuid,
++          materialFingerprint: materialFingerprint(sourceMaterial),
++          castShadow: target.castShadow,
++          receiveShadow: target.receiveShadow,
++          frustumCulled: target.perObjectFrustumCulled,
++          dynamicSources: originals.filter(({ dynamic }) => dynamic).length,
++          sourceCount: originals.length,
++          attributeSignatures: [...new Set(originals.map(({ mesh }) => JSON.stringify(attributeSignature(mesh.geometry))))]
++            .map((signature) => JSON.parse(signature) as string[]),
++          sources: originals.map(({ mesh }) => objectPath(mesh)),
++        })),
++      };
++      const diagnostics = report.diagnostics;
++      expect(diagnostics.totalMeshes).toBeGreaterThan(0);
++      expect(diagnostics.totalMeshes).toBe(diagnostics.batchedMeshes + diagnostics.excludedMeshes.length);
++      expect(diagnostics.excludedMeshes.every(({ index, path: objectPath, material, reason }) =>
++        index >= 0 && objectPath.length > 0 && material.length > 0 && reason.length > 0)).toBe(true);
++
++      const output = outputDirectory ? path.join(outputDirectory, `${profile.name}-static-batch-exclusion-report.json`) : null;
++      if (output) writeFileSync(output, `${JSON.stringify(report, null, 2)}\n`, "utf8");
++      console.info(JSON.stringify({
++        profile: profile.name,
++        totalMeshes: diagnostics.totalMeshes,
++        batchedMeshes: diagnostics.batchedMeshes,
++        batchCount: diagnostics.batchCount,
++        batchMaterials: [...new Set(report.batchGroups.map(({ material }) => material))].length,
++        batchGroups: report.batchGroups.map(({ material, materialFingerprint, sourceCount, dynamicSources, attributeSignatures }) => ({
++          material, materialFingerprint, sourceCount, dynamicSources, attributeSignatures,
++        })),
++        rejectedByReason: diagnostics.rejectedByReason,
++        excludedCount: diagnostics.excludedMeshes.length,
++        visibleMeshes: sceneMeshes.filter((mesh) => mesh.visible).length,
++        visibleShadowCasters: sceneMeshes.filter((mesh) => mesh.visible && mesh.castShadow).length,
++        output,
++      }));
++      batch.dispose();
++    }
++  });
++});
+
+diff --git a/yorayriniwnl.in/tests/unit/static-batch-production-report.test.ts b/yorayriniwnl.in/tests/unit/static-batch-production-report.test.ts
+new file mode 100644
+index 00000000..1fb16f14
+--- /dev/null
++++ b/yorayriniwnl.in/tests/unit/static-batch-production-report.test.ts
+@@ -0,0 +1,184 @@
++import { createHash } from "node:crypto";
++import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
++import path from "node:path";
++import * as THREE from "three";
++import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
++import { describe, expect, it } from "vitest";
++import { integrateScene } from "../../src/features/world/SceneIntegrator";
++import { StaticSceneBatch } from "../../src/features/world/LowQualityBatch";
++
++async function parseFrozenModel(name: string) {
++  const source = readFileSync(path.join(process.cwd(), "public/models", name));
++  const jsonLength = source.readUInt32LE(12);
++  const json = JSON.parse(source.subarray(20, 20 + jsonLength).toString("utf8"));
++  for (const material of json.materials ?? []) {
++    for (const key of Object.keys(material)) if (key.endsWith("Texture")) delete material[key];
++    if (material.pbrMetallicRoughness) {
++      delete material.pbrMetallicRoughness.baseColorTexture;
++      delete material.pbrMetallicRoughness.metallicRoughnessTexture;
++    }
++  }
++  delete json.images;
++  delete json.textures;
++  const encoded = Buffer.from(JSON.stringify(json));
++  const paddedJson = Buffer.alloc(Math.ceil(encoded.length / 4) * 4, 32);
++  encoded.copy(paddedJson);
++  const binary = source.subarray(20 + jsonLength);
++  const glb = Buffer.alloc(20 + paddedJson.length + binary.length);
++  glb.writeUInt32LE(0x46546c67, 0);
++  glb.writeUInt32LE(2, 4);
++  glb.writeUInt32LE(glb.length, 8);
++  glb.writeUInt32LE(paddedJson.length, 12);
++  glb.writeUInt32LE(0x4e4f534a, 16);
++  paddedJson.copy(glb, 20);
++  binary.copy(glb, 20 + paddedJson.length);
++  const buffer = glb.buffer.slice(glb.byteOffset, glb.byteOffset + glb.byteLength) as ArrayBuffer;
++  return {
++    gltf: await new GLTFLoader().parseAsync(buffer, ""),
++    sha256: createHash("sha256").update(source).digest("hex"),
++  };
++}
++
++function objectPath(object: THREE.Object3D): string {
++  const names: string[] = [];
++  for (let node: THREE.Object3D | null = object; node; node = node.parent) names.push(node.name || node.type);
++  return names.reverse().join("/");
++}
++
++function attributeSignature(geometry: THREE.BufferGeometry): string[] {
++  return Object.keys(geometry.attributes).sort().map((name) => {
++    const attribute = geometry.getAttribute(name);
++    return `${name}:${attribute.itemSize}:${attribute.normalized ? 1 : 0}:${attribute.array.constructor.name}`;
++  });
++}
++
++function materialFingerprint(material: THREE.Material): string {
++  const serialized = material.toJSON() as unknown as Record<string, unknown>;
++  delete serialized.uuid;
++  delete serialized.name;
++  delete serialized.metadata;
++  return createHash("sha256").update(JSON.stringify(serialized)).digest("hex");
++}
++
++function effectivelyVisible(object: THREE.Object3D): boolean {
++  for (let node: THREE.Object3D | null = object; node; node = node.parent) if (!node.visible) return false;
++  return true;
++}
++
++describe("production static-batch eligibility report", () => {
++  it("accounts for every desktop and mobile runtime mesh and archives exact rejection reasons", async () => {
++    const [room, resident, fixture] = await Promise.all([
++      parseFrozenModel("production-room-full.glb"),
++      parseFrozenModel("resident-production.glb"),
++      parseFrozenModel("fixture-production.glb"),
++    ]);
++    for (const asset of [room.gltf, resident.gltf, fixture.gltf]) asset.scene.animations = asset.animations;
++    const integrated = integrateScene(room.gltf, resident.gltf, fixture.gltf);
++    const profiles = [
++      { name: "desktop", interactionAsset: "interaction-assets.glb" },
++      { name: "mobile", interactionAsset: "interaction-assets-mobile.glb" },
++    ] as const;
++    const outputDirectory = process.env.PRE_G7_23_DIAGNOSTICS_OUTPUT;
++    if (outputDirectory) mkdirSync(outputDirectory, { recursive: true });
++
++    for (const profile of profiles) {
++      const interactions = await parseFrozenModel(profile.interactionAsset);
++      interactions.gltf.scene.animations = interactions.gltf.animations;
++      // WorldInteractionBinding hides the semantic hit-proxy asset before the
++      // runtime adds it to the rendered scene and constructs static batches.
++      interactions.gltf.scene.traverse((node) => { node.visible = false; });
++      const runtimeScene = new THREE.Scene();
++      runtimeScene.add(integrated.scene, interactions.gltf.scene);
++      const sceneMeshes: Array<Record<string, unknown>> = [];
++      runtimeScene.traverse((node) => {
++        if (!(node as THREE.Mesh).isMesh) return;
++        const mesh = node as THREE.Mesh;
++        const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
++        sceneMeshes.push({
++          path: objectPath(mesh),
++          name: mesh.name,
++          visible: effectivelyVisible(mesh),
++          castShadow: mesh.castShadow,
++          receiveShadow: mesh.receiveShadow,
++          layerMask: mesh.layers.mask,
++          frustumCulled: mesh.frustumCulled,
++          material: materials.map((material) => ({
++            name: material.name || material.type,
++            uuid: material.uuid,
++            fingerprint: materialFingerprint(material),
++            type: material.type,
++            side: material.side,
++            shadowSide: material.shadowSide,
++            transparent: material.transparent,
++            opacity: material.opacity,
++            alphaTest: material.alphaTest,
++            transmission: (material as THREE.MeshPhysicalMaterial).transmission ?? 0,
++          })),
++        });
++      });
++      const batch = new StaticSceneBatch(runtimeScene);
++      const batchEntries = (batch as unknown as {
++        entries: Array<{
++          batch: THREE.BatchedMesh;
++          sourceMaterial: THREE.Material;
++          originals: Array<{ mesh: THREE.Mesh; dynamic: boolean }>;
++        }>;
++      }).entries;
++      const report = {
++        profile: profile.name,
++        interactionAsset: profile.interactionAsset,
++        sourceCommit: process.env.PRE_G7_23_SOURCE_COMMIT ?? null,
++        appTree: process.env.PRE_G7_23_APP_TREE ?? null,
++        instrumentedWorkingFileSha256: createHash("sha256")
++          .update(readFileSync(path.join(process.cwd(), "src/features/world/LowQualityBatch.ts")))
++          .digest("hex"),
++        assets: {
++          "production-room-full.glb": room.sha256,
++          "resident-production.glb": resident.sha256,
++          "fixture-production.glb": fixture.sha256,
++          [profile.interactionAsset]: interactions.sha256,
++        },
++        diagnostics: batch.getDiagnostics(),
++        sceneMeshes,
++        batchGroups: batchEntries.map(({ batch: target, sourceMaterial, originals }) => ({
++          material: sourceMaterial.name || sourceMaterial.type,
++          materialType: sourceMaterial.type,
++          materialUuid: sourceMaterial.uuid,
++          materialFingerprint: materialFingerprint(sourceMaterial),
++          castShadow: target.castShadow,
++          receiveShadow: target.receiveShadow,
++          frustumCulled: target.perObjectFrustumCulled,
++          dynamicSources: originals.filter(({ dynamic }) => dynamic).length,
++          sourceCount: originals.length,
++          attributeSignatures: [...new Set(originals.map(({ mesh }) => JSON.stringify(attributeSignature(mesh.geometry))))]
++            .map((signature) => JSON.parse(signature) as string[]),
++          sources: originals.map(({ mesh }) => objectPath(mesh)),
++        })),
++      };
++      const diagnostics = report.diagnostics;
++      expect(diagnostics.totalMeshes).toBeGreaterThan(0);
++      expect(diagnostics.totalMeshes).toBe(diagnostics.batchedMeshes + diagnostics.excludedMeshes.length);
++      expect(diagnostics.excludedMeshes.every(({ index, path: objectPath, material, reason }) =>
++        index >= 0 && objectPath.length > 0 && material.length > 0 && reason.length > 0)).toBe(true);
++
++      const output = outputDirectory ? path.join(outputDirectory, `${profile.name}-static-batch-exclusion-report.json`) : null;
++      if (output) writeFileSync(output, `${JSON.stringify(report, null, 2)}\n`, "utf8");
++      console.info(JSON.stringify({
++        profile: profile.name,
++        totalMeshes: diagnostics.totalMeshes,
++        batchedMeshes: diagnostics.batchedMeshes,
++        batchCount: diagnostics.batchCount,
++        batchMaterials: [...new Set(report.batchGroups.map(({ material }) => material))].length,
++        batchGroups: report.batchGroups.map(({ material, materialFingerprint, sourceCount, dynamicSources, attributeSignatures }) => ({
++          material, materialFingerprint, sourceCount, dynamicSources, attributeSignatures,
++        })),
++        rejectedByReason: diagnostics.rejectedByReason,
++        excludedCount: diagnostics.excludedMeshes.length,
++        visibleMeshes: sceneMeshes.filter((mesh) => mesh.visible).length,
++        visibleShadowCasters: sceneMeshes.filter((mesh) => mesh.visible && mesh.castShadow).length,
++        output,
++      }));
++      batch.dispose();
++    }
++  });
++});
