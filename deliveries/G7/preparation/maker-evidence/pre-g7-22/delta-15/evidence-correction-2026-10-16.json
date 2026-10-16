@@ -1,0 +1,139 @@
+{
+  "title": "PRE-G7-23 delta-15 evidence correction",
+  "date": "2026-10-16",
+  "status": "FAIL / unaccepted; evidence correction only",
+  "scope": "No application, mirror, source, or receipt capture files modified.",
+  "renderCallAccounting": {
+    "observedRendererInfoRenderCalls": 132,
+    "priorDecomposition": {
+      "expression": "68 + 64",
+      "status": "unverified"
+    },
+    "priorTransmissionPrepassAttribution": "unverified; corrected attempt-03 profile failed before pass-call capture",
+    "staticDiagnosticTransmissionMeshes": 2,
+    "staticDiagnosticPath": "diagnostics-after/final/desktop-static-batch-exclusion-report.json",
+    "shadowMapCounterCaveat": "supported: shadowMap.render runs before renderer.info.reset in the installed WebGLRenderer.js, so shadow submissions are excluded and 132 is a lower bound on total frame submissions"
+  },
+  "performanceSuite": {
+    "receipt": "commands/performance-suite.receipt.json",
+    "command": "pnpm run test:performance",
+    "exitCode": 1,
+    "passed": 4,
+    "failed": 2,
+    "failure": "Both failures timed out at 180000 ms while selecting quality-tier-select; the locator resolved but the control was not visible.",
+    "classification": "candidate/attempt run only; not final HEAD validation"
+  },
+  "streamBindings": {
+    "method": "SHA-256 and byte size computed from local capture and git cat-file blob at HEAD; committed Git blob OID also recorded.",
+    "streams": [
+      {
+        "path": "attempt-03/commands/chrome-1440x900-corrected-profile.stderr.bin",
+        "localCapture": {
+          "bytes": 2000,
+          "sha256": "ae6ee536e5f020c1fc9fce0be546f54af9b0d7c8fa65961c16684e32327a6f32",
+          "crlfPairs": 44,
+          "bareLf": 0
+        },
+        "committedGitBlob": {
+          "oid": "42fc264dc439e98c21d6d0eee91f2888d4d6cf93",
+          "bytes": 1956,
+          "sha256": "5c4b48d2002cd05bf81aab43d8d740c457e91e35787a3c84822608860f99ef9e",
+          "crlfPairs": 0,
+          "bareLf": 44
+        },
+        "normalization": "CRLF pairs converted to LF only; normalized local bytes exactly match committed Git blob",
+        "normalizationVerified": true
+      },
+      {
+        "path": "attempt-03/commands/source-group-inspection.stderr.bin",
+        "localCapture": {
+          "bytes": 2224,
+          "sha256": "495c769e118430c871ee2c2d8080d498ddc6587547a26f4ec60f0acd6b83614f",
+          "crlfPairs": 17,
+          "bareLf": 0
+        },
+        "committedGitBlob": {
+          "oid": "e84e87848765523ebc99accbd179e2d36fb840de",
+          "bytes": 2207,
+          "sha256": "0e6e70c30caa1525ef08fb5e5756a129c628da4d8084e2cf42c04963e9fbd469",
+          "crlfPairs": 0,
+          "bareLf": 17
+        },
+        "normalization": "CRLF pairs converted to LF only; normalized local bytes exactly match committed Git blob",
+        "normalizationVerified": true
+      },
+      {
+        "path": "commands/production-build-final.stdout.bin",
+        "localCapture": {
+          "bytes": 1346,
+          "sha256": "d55347d19e620b8d609fd40f620357942638b216debcf76157df030ac6d76ff3",
+          "crlfPairs": 3,
+          "bareLf": 50
+        },
+        "committedGitBlob": {
+          "oid": "3519c6dafcff937a390c81c74ee53e6625bfee74",
+          "bytes": 1343,
+          "sha256": "a3affa65ac932419b51e06081c413d2c5b9a8ff466d9b2f3b1be7b9911d6283c",
+          "crlfPairs": 0,
+          "bareLf": 53
+        },
+        "normalization": "CRLF pairs converted to LF only; normalized local bytes exactly match committed Git blob",
+        "normalizationVerified": true
+      },
+      {
+        "path": "commands/production-build-rerun.stdout.bin",
+        "localCapture": {
+          "bytes": 1343,
+          "sha256": "0cff698824ade00e347e0e3778119c27164175b0582f40db5c233db45cf5053b",
+          "crlfPairs": 3,
+          "bareLf": 50
+        },
+        "committedGitBlob": {
+          "oid": "564669821f982243e7dc5517909d41751d204b67",
+          "bytes": 1340,
+          "sha256": "8292b46a35925bd558a0753b510938797e7e14c99430f9070d096ecde1da506d",
+          "crlfPairs": 0,
+          "bareLf": 53
+        },
+        "normalization": "CRLF pairs converted to LF only; normalized local bytes exactly match committed Git blob",
+        "normalizationVerified": true
+      },
+      {
+        "path": "commands/production-build.stdout.bin",
+        "localCapture": {
+          "bytes": 888,
+          "sha256": "a2b25a0e251c9dca728fc79c6d9152a22b4f4d5e0e37836f3b4c0539a0ea14d2",
+          "crlfPairs": 4,
+          "bareLf": 11
+        },
+        "committedGitBlob": {
+          "oid": "6d8b40fd67edf4365cee48e48f135dc357ca57ee",
+          "bytes": 884,
+          "sha256": "91b82b7a6be9f9fc1f67d2e3fab3fceb2e42820df63620f40e64c546f255c85f",
+          "crlfPairs": 0,
+          "bareLf": 15
+        },
+        "normalization": "CRLF pairs converted to LF only; normalized local bytes exactly match committed Git blob",
+        "normalizationVerified": true
+      },
+      {
+        "path": "commands/typecheck.stdout.bin",
+        "localCapture": {
+          "bytes": 518,
+          "sha256": "bc02c1a59b690edbc6a70cf6110e20302a20855ec4c0e1ca379ee4dec9fe193a",
+          "crlfPairs": 2,
+          "bareLf": 5
+        },
+        "committedGitBlob": {
+          "oid": "da57b71d043dbdd685eeaa0a777cc6bf611c50b7",
+          "bytes": 516,
+          "sha256": "64ecfc24f911f58d9eeb402f50d8c50641c098b8ed6934a4a74f55ab9fb0d7c1",
+          "crlfPairs": 0,
+          "bareLf": 7
+        },
+        "normalization": "CRLF pairs converted to LF only; normalized local bytes exactly match committed Git blob",
+        "normalizationVerified": true
+      }
+    ]
+  }
+}
