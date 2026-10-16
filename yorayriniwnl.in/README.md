@@ -8,7 +8,7 @@ Source commit `5c1e6aedb71d89d46ffc0ada8de522526290131c` binds app tree `62a08db
 
 PRE-G7-35 awaits `renderer.compileAsync(this.scene, this.camera)` after required-scene integration, quality setup, and viewport sizing, before the first animation frame and entrance choreography. A shader-prewarm error is logged and regular startup continues. Optional interaction assets remain asynchronous. The pinned offline frozen install, lint, typecheck, and production build passed with Node 24.19.0 and pnpm 9.15.9. Build ID: `YeuUJsHpZHf4H1-GP30nT`. See [the PRE-G7-35 report](../deliveries/G7/preparation/maker-evidence/pre-g7-35/REPORT.md) and its evidence inventory.
 
-PRE-G7-35 remains **unaccepted and undeployed**. Unit, integration, e2e, browser runtime capture, and the full performance suite were **NOT RUN** under this packet. The build result does not verify that the startup stall is fixed. Independent audit, human visual review beside `references/images/main-reference.png`, and Parent ruling remain pending.
+PRE-G7-35 remains **unaccepted and undeployed**. PRE-G7-36 then captured one source-bound runtime diagnostic on the exact PRE-G7-35 build: the route reached `HOME` at 9.27 seconds, but three long tasks lasted 5.260, 9.284, and 1.812 seconds. The sampled stack still points to Three.js `WebGLProgram.onFirstUse`, including a 9.284-second freeze after `HOME`. The prewarm change has not eliminated the shader stall. Tests and the full performance suite were **NOT RUN**. See [the PRE-G7-36 report](../deliveries/G7/preparation/maker-evidence/pre-g7-36/REPORT.md). Independent audit, human visual review beside `references/images/main-reference.png`, and Parent ruling remain pending.
 
 ## PRE-G7-31 history
 

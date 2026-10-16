@@ -23,7 +23,7 @@
       "docs/planning/validation-and-production.md"
     ],
     "visualCandidateEvidence": "deliveries/G7/preparation/maker-evidence/pre-g7-31/",
-    "formalAcceptance": "PRE-G7-35 is an unaccepted, undeployed source candidate. Its offline frozen install, lint, typecheck, and production build passed. Runtime startup performance is unverified because browser capture and the full performance suite were not run under the packet. PRE-G7-32 performance failure and PRE-G7-34 CPU attribution remain unresolved evidence; independent audit, human visual review, and Parent ruling remain pending.",
+    "formalAcceptance": "PRE-G7-35 remains unaccepted and undeployed. PRE-G7-36 captured one runtime diagnostic on its exact build and reached HOME at 9.267 seconds, but three long tasks remained (5.260, 9.284, and 1.812 seconds); the same WebGLProgram.onFirstUse path is still present. The full performance suite was not run. Independent audit, human visual review, and Parent ruling remain pending.",
     "taskBranchParentCommit": "4757af073cc64f1eab93ff56bf49a824405d79cd",
     "productionRuntimeSourceCommit": "ffd4635242362774c7981f8d54405fd0ccb2b0c9",
     "productionRuntimeAppTree": "9895fcc5c09ba695674fc5ff0342f5afb35b3d0c",
@@ -58,6 +58,25 @@
       ],
       "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-35/",
       "buildId": "YeuUJsHpZHf4H1-GP30nT",
+      "acceptance": "unaccepted; undeployed"
+    },
+    "latestRuntimeDiagnostic": {
+      "packet": "PRE-G7-36",
+      "sourceCommit": "5c1e6aedb71d89d46ffc0ada8de522526290131c",
+      "status": "CAPTURED; residual shader stalls remain",
+      "buildId": "YeuUJsHpZHf4H1-GP30nT",
+      "browserVersion": "155.0.8059.84",
+      "finalLifecycleState": "HOME",
+      "homeAtMs": 9266.7,
+      "longTasksMs": [
+        5260,
+        9284,
+        1812
+      ],
+      "maxAnimationFrameGapMs": 9292.2,
+      "profileSamples": 23504,
+      "report": "deliveries/G7/preparation/maker-evidence/pre-g7-36/REPORT.md",
+      "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-36/",
       "acceptance": "unaccepted; undeployed"
     }
   },
@@ -1275,7 +1294,7 @@
       "testFiles": 14,
       "rawParityFailures": 130,
       "baseCommit": "5c1e6aedb71d89d46ffc0ada8de522526290131c",
-      "readmeSha256": "136110993ecdd793b38ff2f34925373027d9f5d5f812721cc026ea620c9cb4a9",
+      "readmeSha256": "0bc288a3f88b640c9a9371bdd096862648c0484fb255c558ee197833575798be",
       "evidence": "deliveries/G7/preparation/maker-evidence/pre-g7-35/source-mirror-parity-audit.json",
       "normalizedParityFailures": 0,
       "gitBlobParityFailures": 0
