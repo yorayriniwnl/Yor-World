@@ -8,6 +8,7 @@
 - **Frozen application source:** PRE-G7-31 commit `bd01478617b4166866f3f44196c56fc5add94acd`
 - **Frozen app tree:** `3975e40c59a04b8696efa2ca3605eb37a0617165`
 - **Frozen domain-mirror tree:** `8c34adf791c678a4e9e8bfe90f92426026994e68`
+- **Inherited candidate domain-mirror tree:** `8b276ca90142c4c7ed7f8674668677a5d167891a`; PRE-G7-32 changed only the mirrored `README.md` and `source-delivery-manifest.json` to record its unaccepted status. PRE-G7-33 revalidated 130 source/test pairs with zero Git-blob mismatches.
 - **Reused build:** PRE-G7-33 production build in `D:\p33\app`, build ID `ksG7LoWL4qW1WtybQH4gz`, `BUILD_ID` SHA-256 `c09ccc6e505742ebb0f3fb6e8126e96296e209b46bc05ea584e56a0ea4baa138`
 - **Output owner:** `deliveries/G7/preparation/maker-evidence/pre-g7-34/`
 - **Boundary:** Local read-only diagnosis. No product source, test source, model asset, dependency, threshold, timeout, quality-policy, deployment, or acceptance change.
@@ -30,6 +31,6 @@ Do not edit `app/`, `yorayriniwnl.in/`, tests, assets, dependencies, lockfiles, 
 
 ## Evidence and exit boundary
 
-Bind every capture to source commit `bd01478617b4166866f3f44196c56fc5add94acd`, app tree `3975e40c59a04b8696efa2ca3605eb37a0617165`, domain tree `8c34adf791c678a4e9e8bfe90f92426026994e68`, and reused build ID above. Record the P33 build receipt and the P34 preflight that verifies the build file and frozen Git trees. Include a strict SHA-256 / byte-length / Git-blob inventory for the report, scripts, preflight, command receipts/output, CPU profile, trace, screenshot, and server output.
+Bind every capture to source commit `bd01478617b4166866f3f44196c56fc5add94acd`, source app/domain trees `3975e40c59a04b8696efa2ca3605eb37a0617165` / `8c34adf791c678a4e9e8bfe90f92426026994e68`, inherited candidate app/domain trees `3975e40c59a04b8696efa2ca3605eb37a0617165` / `8b276ca90142c4c7ed7f8674668677a5d167891a`, and reused build ID above. Record the P33 build receipt and the P34 preflight that verifies the build file, frozen source trees, and inherited candidate trees. Include a strict SHA-256 / byte-length / Git-blob inventory for the report, scripts, preflight, command receipts/output, CPU profile, trace, screenshot, and server output.
 
 The PRE-G7-31 candidate remains unaccepted and undeployed. This packet cannot close the separate GPT Plus #2 audit or human visual review. If the profile identifies a likely cause, prepare a separate bounded correction packet before any product-source change. If not, preserve `UNRESOLVED` and state which attribution evidence is missing.
