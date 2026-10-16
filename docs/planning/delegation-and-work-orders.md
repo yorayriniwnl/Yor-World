@@ -42,6 +42,8 @@ PRE-G7-30 completed its authorized single trace recapture against the exact PRE-
 
 [PRE-G7-39](reconciliation-packets/2026-10-16-pre-g7-39-program-parameter-query-diagnostic.md) follows the P38 capture's zero successful-link info-log calls and 11.731 seconds measured in getProgramParameter. It authorizes one argument-aware WebGL query diagnostic against the frozen P38 build, with no application-source edit, install, build, tests, or full performance suite.
 
+[PRE-G7-40](reconciliation-packets/2026-10-16-pre-g7-40-production-shader-diagnostics-gate.md) responds to P39's 14.012 seconds in LINK_STATUS reads. It explicitly supersedes P38's no-disable clause for the production runtime only: automatic shader checks stay enabled in development and can be enabled in a production session with `?shaderDiagnostics=1`. It authorizes the mirrored WorldRuntime setting, lint/typecheck/build, and one source-bound runtime capture; tests and the full performance suite are not authorized.
+
 Read [current pre-G7 requirements](../operations/pre-g7-prerequisites.md) and the [RC6 dossier](../releases/v1.0.0-rc6.md). Parent continues authorized independent work and obtains missing service/device inputs. No mock, local fixture, emulation, liveness-only response or private preview substitutes for a mandatory production criterion.
 
 ## One specification and a small shared baseline
