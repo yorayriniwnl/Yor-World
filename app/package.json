@@ -19,21 +19,23 @@
     "start": "next start --hostname 127.0.0.1"
   },
   "dependencies": {
-    "next": "16.3.8",
-    "react": "19.3.0",
-    "react-dom": "19.3.0",
-    "three": "0.180.0",
-    "zod": "4.6.5",
     "@supabase/ssr": "0.12.7",
     "@supabase/supabase-js": "2.117.2",
+    "next": "16.3.8",
     "pg": "8.16.3",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
     "server-only": "0.0.1",
-    "sharp": "0.35.5"
+    "sharp": "0.35.5",
+    "three": "0.180.0",
+    "zod": "4.6.5"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
+    "@electric-sql/pglite": "0.5.8",
     "@playwright/test": "1.63.0",
     "@types/node": "24.19.0",
+    "@types/pg": "8.15.5",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@types/three": "0.180.0",
@@ -41,8 +43,11 @@
     "eslint-config-next": "16.3.8",
     "gltf-validator": "2.0.0-dev.3.10",
     "typescript": "6.0.3",
-    "vitest": "5.0.2",
-    "@electric-sql/pglite": "0.5.8",
-    "@types/pg": "8.15.5"
+    "vitest": "5.0.2"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "three@0.180.0": "patches/three@0.180.0.patch"
+    }
   }
 }
