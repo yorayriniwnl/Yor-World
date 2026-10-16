@@ -1,0 +1,5 @@
+﻿P29 install launcher attempt 01 — preserved pre-install failure
+
+The frozen dependency install was not launched. The wrapper ran `pnpm exec node` from C:\p29-maker-20261016 rather than the source app package and tested the complete Get-Command result array against one path. Direct pinned Node was C:\Users\ayush\AppData\Local\Temp\yor-world-node-24.19.0\unpacked\node-v24.19.0-win-x64\node.exe, version v24.19.0, SHA-256 3602f2bb1a10f2cbab4c36886218a33c1ab3db87290e73b033c46c77147d0237. `where.exe node` first result was the pinned path. Pinned pnpm was 9.15.9, SHA-256 98e6b99a881d64a1cc982c3e60aa260bf02160386b12e74475e06486dc74b090. The package-script call returned ERR_PNPM_RECURSIVE_EXEC_NO_PACKAGE because it was outside a package workspace. This is a wrapper working-directory/comparison failure; it did not indicate a different Node executable.
+
+PowerShell wrapper output: Pinned Node/pnpm resolver did not pass for accepted-root-500; install was not launched.
