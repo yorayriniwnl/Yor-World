@@ -22,6 +22,8 @@ Accepted RC5 / [G6-R1](reviews/2026-10-06-g6-r1.md) remains immutable, including
 
 [PRE-G7-12](reconciliation-packets/2026-10-14-pre-g7-12-reference-composition.md) is now the active local visual-composition and mobile-HUD correction packet. It consumes PRE-G7-11-R1's frozen app tree and does not authorize service changes, physical-device claims, or deployment.
 
+[PRE-G7-25](reconciliation-packets/2026-10-16-pre-g7-25-surface-parity-correction.md) is authorized to port batching onto the accepted PRE-G7-22 root source and correct inclusive main-plus-shadow draw-call measurement and the performance suite's controls-drawer selection. It preserves the accepted composition and remains local-only; it does not authorize services, physical-device claims, or deployment.
+
 Read [current pre-G7 requirements](../operations/pre-g7-prerequisites.md) and the [RC6 dossier](../releases/v1.0.0-rc6.md). Parent continues authorized independent work and obtains missing service/device inputs. No mock, local fixture, emulation, liveness-only response or private preview substitutes for a mandatory production criterion.
 
 ## One specification and a small shared baseline
