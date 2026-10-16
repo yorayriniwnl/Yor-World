@@ -1,0 +1,74 @@
+
+> yor-world@1.0.0-rc6 test:performance C:\p25\app
+> playwright test --config playwright.performance.config.ts
+
+
+Running 6 tests using 1 worker
+
+  ok 1 [chrome] › tests\performance\world.spec.ts:37:3 › C3 Performance Benchmarks & Budget Verification › captures actual dynamic public HTML payloads for the current production build (430ms)
+  ok 2 [chrome] › tests\performance\world.spec.ts:54:5 › C3 Performance Benchmarks & Budget Verification › Five cold loads on desktop-1440x900 (5.1s)
+  ok 3 [chrome] › tests\performance\world.spec.ts:54:5 › C3 Performance Benchmarks & Budget Verification › Five cold loads on mobile-390x844 (7.3s)
+  ok 4 [chrome] › tests\performance\world.spec.ts:54:5 › C3 Performance Benchmarks & Budget Verification › Five cold loads on narrow-320x600 (5.1s)
+  x  5 [chrome] › tests\performance\world.spec.ts:87:3 › C3 Performance Benchmarks & Budget Verification › 60-second active interaction route and frame pacing (18.1s)
+  x  6 [chrome] › tests\performance\world.spec.ts:263:3 › C3 Performance Benchmarks & Budget Verification › Enter/exit resource stability over multiple studio cycles (16.3s)
+
+
+  1) [chrome] › tests\performance\world.spec.ts:87:3 › C3 Performance Benchmarks & Budget Verification › 60-second active interaction route and frame pacing 
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator:  locator('[data-testid="world-stage-container"]')
+    Expected: "HOME"
+    Received: "LOADING"
+    Timeout:  15000ms
+
+    Call log:
+      - Expect "toHaveAttribute" locator('[data-testid="world-stage-container"]') with timeout 15000ms
+      - waiting for locator('[data-testid="world-stage-container"]')
+        5 × locator resolved to <div role="region" data-lifecycle-state="LOADING" data-studio-controls-open="false" aria-label="Interactive 3D Studio" data-testid="world-stage-container" class="world-module__FC9lxW__stageContainer world-module__FC9lxW__fullscreenStage world-module__FC9lxW__studioControlsClosed">…</div>
+          - unexpected value "LOADING"
+
+
+      91 |     const canvas = page.locator('[data-testid="world-canvas"]');
+      92 |     await expect(canvas).toBeVisible({ timeout: 15000 });
+    > 93 |     await expect(page.locator('[data-testid="world-stage-container"]')).toHaveAttribute("data-lifecycle-state", "HOME", { timeout: 15000 });
+         |                                                                         ^
+      94 |     await expect.poll(async () => Number(await canvas.getAttribute("data-rendered-frames"))).toBeGreaterThan(1);
+      95 |
+      96 |     // AUTO may legitimately remove WebGL after sustained slow windows. This route
+        at C:\p25\app\tests\performance\world.spec.ts:93:73
+
+    Error Context: test-results\world-C3-Performance-Bench-abb8e-tion-route-and-frame-pacing-chrome\error-context.md
+
+  2) [chrome] › tests\performance\world.spec.ts:263:3 › C3 Performance Benchmarks & Budget Verification › Enter/exit resource stability over multiple studio cycles 
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator:  getByTestId('world-stage-container')
+    Expected: "HOME"
+    Received: "LOADING"
+    Timeout:  15000ms
+
+    Call log:
+      - Expect "toHaveAttribute" getByTestId('world-stage-container') with timeout 15000ms
+      - waiting for getByTestId('world-stage-container')
+        2 × locator resolved to <div role="region" data-lifecycle-state="LOADING" data-studio-controls-open="false" aria-label="Interactive 3D Studio" data-testid="world-stage-container" class="world-module__FC9lxW__stageContainer world-module__FC9lxW__fullscreenStage world-module__FC9lxW__studioControlsClosed">…</div>
+          - unexpected value "LOADING"
+
+
+      269 |       const t0 = Date.now();
+      270 |       await page.goto("/?studio=1", { waitUntil: "domcontentloaded" });
+    > 271 |       await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME", { timeout: 15000 });
+          |                                                               ^
+      272 |       const qualitySelect = page.getByTestId("quality-tier-select");
+      273 |       await page.getByTestId("studio-controls-toggle").click();
+      274 |       await expect(qualitySelect).toBeVisible();
+        at C:\p25\app\tests\performance\world.spec.ts:271:63
+
+    Error Context: test-results\world-C3-Performance-Bench-934f4-over-multiple-studio-cycles-chrome\error-context.md
+
+  2 failed
+    [chrome] › tests\performance\world.spec.ts:87:3 › C3 Performance Benchmarks & Budget Verification › 60-second active interaction route and frame pacing 
+    [chrome] › tests\performance\world.spec.ts:263:3 › C3 Performance Benchmarks & Budget Verification › Enter/exit resource stability over multiple studio cycles 
+  4 passed (1.1m)
+ ELIFECYCLE  Command failed with exit code 1.

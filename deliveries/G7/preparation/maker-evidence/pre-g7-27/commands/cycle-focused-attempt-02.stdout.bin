@@ -1,0 +1,35 @@
+
+Running 1 test using 1 worker
+
+  x  1 [chrome] › tests\performance\world.spec.ts:263:3 › C3 Performance Benchmarks & Budget Verification › Enter/exit resource stability over multiple studio cycles (18.0s)
+
+
+  1) [chrome] › tests\performance\world.spec.ts:263:3 › C3 Performance Benchmarks & Budget Verification › Enter/exit resource stability over multiple studio cycles 
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator:  getByTestId('world-stage-container')
+    Expected: "HOME"
+    Received: "LOADING"
+    Timeout:  15000ms
+
+    Call log:
+      - Expect "toHaveAttribute" getByTestId('world-stage-container') with timeout 15000ms
+      - waiting for getByTestId('world-stage-container')
+        - locator resolved to <div role="region" data-lifecycle-state="LOADING" data-studio-controls-open="false" aria-label="Interactive 3D Studio" data-testid="world-stage-container" class="world-module__FC9lxW__stageContainer world-module__FC9lxW__fullscreenStage world-module__FC9lxW__studioControlsClosed">…</div>
+        - unexpected value "LOADING"
+
+
+      269 |       const t0 = Date.now();
+      270 |       await page.goto("/?studio=1", { waitUntil: "domcontentloaded" });
+    > 271 |       await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME", { timeout: 15000 });
+          |                                                               ^
+      272 |       const qualitySelect = page.getByTestId("quality-tier-select");
+      273 |       await page.getByTestId("studio-controls-toggle").click();
+      274 |       await expect(qualitySelect).toBeVisible();
+        at C:\p25\app\tests\performance\world.spec.ts:271:63
+
+    Error Context: test-results\world-C3-Performance-Bench-934f4-over-multiple-studio-cycles-chrome\error-context.md
+
+  1 failed
+    [chrome] › tests\performance\world.spec.ts:263:3 › C3 Performance Benchmarks & Budget Verification › Enter/exit resource stability over multiple studio cycles 
