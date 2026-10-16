@@ -1,0 +1,15 @@
+{
+    "schemaVersion":  1,
+    "task":  "PRE-G7-27",
+    "check":  "donor install preflight",
+    "decision":  "INVALID_SELF_MATCH",
+    "reason":  "The preflight matched its own PowerShell command line because that command text included the donor path and the pnpm install expression. No install/build/test process was running in the donor worktree and no pnpm install was launched.",
+    "observedProcess":  {
+                            "pid":  18592,
+                            "parentPid":  10652,
+                            "createdAtUtc":  "2026-10-16T10:04:31.5400930Z",
+                            "name":  "powershell.exe"
+                        },
+    "correctedPreflightExcludesShellWrapperProcesses":  true,
+    "retryOfSourceInvocation":  false
+}

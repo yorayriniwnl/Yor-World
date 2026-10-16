@@ -1,0 +1,80 @@
+{
+    "schemaVersion":  1,
+    "purpose":  "P27 harness DPR provenance and adjustment",
+    "task":  "PRE-G7-27",
+    "createdAtUtc":  "2026-10-16T10:03:54.0163821Z",
+    "harnessFiles":  [
+                         {
+                             "path":  "harness\\p27-render-attribution.start-time.ts",
+                             "bytes":  13351,
+                             "sha256":  "f4b3ccb03e56c0d5f99e228d6582ece93c728ffafe059ba63cb8bca876cc9755"
+                         },
+                         {
+                             "path":  "harness\\p27-render-attribution.spec.ts",
+                             "bytes":  13323,
+                             "sha256":  "f25da2e197042f7033f6afa038fd46e8195d6dfbc4185970f6eb904ed8892209"
+                         },
+                         {
+                             "path":  "harness\\dpr-removal.diff",
+                             "bytes":  886,
+                             "sha256":  "0ff25222c100dd34025d56a57a34c51002de2684212be2b93a1b07e4c6b0806e"
+                         },
+                         {
+                             "path":  "observer\\P27RenderAttribution.ts",
+                             "bytes":  19861,
+                             "sha256":  "39a04ba88257659a6c1838d26e668aee2642c1361515d395eff21f7f8a9ef127"
+                         }
+                     ],
+    "dprAdjustment":  {
+                          "change":  "Removed explicit deviceScaleFactor: 1 from the P27 spec in maker and both temporary source copies; no other harness change is intended.",
+                          "diffPath":  "harness/dpr-removal.diff",
+                          "diffSha256":  "0ff25222c100dd34025d56a57a34c51002de2684212be2b93a1b07e4c6b0806e",
+                          "actor":  "Unknown; edit was observed in the shared worktree, not authored by the parent per parent confirmation.",
+                          "process":  {
+                                          "pid":  36264,
+                                          "parentPid":  12372,
+                                          "image":  "powershell.exe",
+                                          "parentImage":  "codex.exe / app-server",
+                                          "startTimeLocal":  "2026-10-16 15:28:12 Asia/Calcutta",
+                                          "operationSummary":  "PowerShell -NoProfile read the three harness copies, removed the first regex match for the newline plus deviceScaleFactor: 1, wrote UTF-8 without BOM, and ran rg. Full exact command line was not retained in this evidence record."
+                                      }
+                      },
+    "playwrightDefault":  {
+                              "version":  "1.63.0",
+                              "dpr":  "1",
+                              "sourceEvidence":  [
+                                                     {
+                                                         "path":  "C:\\p27-source-500\\app\\node_modules\\.pnpm\\playwright-core@1.63.0\\node_modules\\playwright-core\\lib\\coreBundle.js",
+                                                         "bytes":  3477183,
+                                                         "sha256":  "549070af3acabb3efcc4f55bfe6210f9f7c2fcf633cf7eaa59bfe60719969171"
+                                                     },
+                                                     {
+                                                         "path":  "C:\\p27-source-500\\app\\node_modules\\.pnpm\\playwright-core@1.63.0\\node_modules\\playwright-core\\types\\types.d.ts",
+                                                         "bytes":  1131883,
+                                                         "sha256":  "2806f6d7810fba0306066d500cd716a6d1128d90af2c3cf71723e3ea0a8904c4"
+                                                     }
+                                                 ],
+                              "sourceClaims":  [
+                                                   "types/types.d.ts: Browser.newContext options document deviceScaleFactor default as 1.",
+                                                   "lib/coreBundle.js: Chromium context metrics use options.deviceScaleFactor || 1."
+                                               ],
+                              "actualBrowserDprRows":  "NOT RUN: accepted-root and donor builds failed before any P27 capture row."
+                          },
+    "acceptedRoot":  {
+                         "sourceCommit":  "500d10fa5901be48d4ff877e608d65ba0e271bb9",
+                         "baseAppTree":  "ba0b709192367e1d12a796618f97801a8fcd5a70",
+                         "buildStartRootTree":  "dfcd7cace30937232957cd1bcfbfc31cd10a8efd",
+                         "buildStartAppTree":  "0eba107c8ad66db30a8423a12f4e9b0233ebc1c4",
+                         "currentTemporaryRootTree":  "db0117af37bd52dfbe205af392df1308111e60c8",
+                         "currentTemporaryAppTree":  "d145091097ed8b4af41b6bb392e9c0e12a4a2174",
+                         "buildResult":  "FAIL exit 1; no retry, no capture."
+                     },
+    "donor":  {
+                  "sourceCommit":  "28fb4187445206bcc62e2ef0ae2678e44ac6604b",
+                  "baseAppTree":  "f68074b41b8d2eea228d7fa964d3db8358a9fea4",
+                  "currentTemporaryRootTree":  "8767ed4b122bd6e857106408773d39ebf13539d5",
+                  "currentTemporaryAppTree":  "f30ea7f3bff24388c2b868a172dee382f728ad49",
+                  "buildAndCapture":  "DONOR BUILD FAILED exit 1; capture invocation not started.",
+                  "actualBrowserDprRows":  "NOT RUN: donor build failed before any browser row."
+              }
+}

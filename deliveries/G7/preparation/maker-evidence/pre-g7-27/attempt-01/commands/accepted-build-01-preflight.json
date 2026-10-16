@@ -1,0 +1,29 @@
+{
+    "checkedAtUtc":  "2026-10-16T09:55:38.6656128Z",
+    "source":  "accepted-root-500",
+    "sourceCommit":  "500d10fa5901be48d4ff877e608d65ba0e271bb9",
+    "baseAppTree":  "ba0b709192367e1d12a796618f97801a8fcd5a70",
+    "temporaryAppTree":  "0eba107c8ad66db30a8423a12f4e9b0233ebc1c4",
+    "expectedOverlayFiles":  [
+                                 "app/src/features/world/WorldRuntime.ts",
+                                 "app/src/features/world/P27RenderAttribution.ts",
+                                 "app/tests/e2e/p27-render-attribution.spec.ts"
+                             ],
+    "nodeModulesPresent":  true,
+    "nextBinaryPresent":  true,
+    "matchingConcurrentTestsOrBuilds":  [
+                                            {
+                                                "pid":  2084,
+                                                "ppid":  5048,
+                                                "created":  "2026-10-15T22:22:54.3764150Z",
+                                                "command":  "C:\\Users\\ayush\\AppData\\Local\\Temp\\yor-world-node-24.19.0\\unpacked\\node-v24.19.0-win-x64\\node.exe C:\\Users\\ayush\\COddexxxxxxxxxxxxxxxx\\_worktrees\\pre-g7-22\\app\\node_modules\\.pnpm\\next@16.3.8_@babel+core@7.29.7_@playwright+test@1.63.0_@types+node@24.19.0_react-dom@19.3.0_react@19.3.0__react@19.3.0\\node_modules\\next\\dist\\server\\lib\\start-server.js"
+                                            },
+                                            {
+                                                "pid":  1920,
+                                                "ppid":  10652,
+                                                "created":  "2026-10-16T09:55:37.4074530Z",
+                                                "command":  "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -Command \"try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}\n$evidence = \u0027C:\\p27-maker-20261016\\deliveries\\G7\\preparation\\maker-evidence\\pre-g7-27\\attempt-01\\commands\u0027; $processes = @(Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match \u0027next build|playwright test|vitest run|pnpm.*build|pnpm.*test\u0027 } | ForEach-Object { [ordered]@{ pid=$_.ProcessId; ppid=$_.ParentProcessId; created=$_.CreationDate.ToUniversalTime().ToString(\u0027o\u0027); command=$_.CommandLine } }); $preflight = [ordered]@{ checkedAtUtc=[DateTime]::UtcNow.ToString(\u0027o\u0027); source=\u0027accepted-root-500\u0027; sourceCommit=(git rev-parse HEAD).Trim(); baseAppTree=(git rev-parse HEAD:app).Trim(); temporaryAppTree=\u00270eba107c8ad66db30a8423a12f4e9b0233ebc1c4\u0027; expectedOverlayFiles=@(\u0027app/src/features/world/WorldRuntime.ts\u0027,\u0027app/src/features/world/P27RenderAttribution.ts\u0027,\u0027app/tests/e2e/p27-render-attribution.spec.ts\u0027); nodeModulesPresent=(Test-Path \u0027C:\\p27-source-500\\app\\node_modules\u0027); nextBinaryPresent=(Test-Path \u0027C:\\p27-source-500\\app\\node_modules\\.bin\\next.cmd\u0027); matchingConcurrentTestsOrBuilds=$processes; decision=if ($processes.Count -eq 0) {\u0027CLEAR\u0027} else {\u0027BUSY\u0027} }; [System.IO.File]::WriteAllText(\\\"$evidence\\accepted-build-01-preflight.json\\\", (ConvertTo-Json -InputObject $preflight -Depth 7) + \\\"`n\\\", [System.Text.UTF8Encoding]::new($false)); Get-Content -Raw \\\"$evidence\\accepted-build-01-preflight.json\\\"; git status --short\""
+                                            }
+                                        ],
+    "decision":  "BUSY"
+}
