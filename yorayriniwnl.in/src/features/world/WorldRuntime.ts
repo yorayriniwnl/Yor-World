@@ -40,6 +40,85 @@ export interface WorldRuntimeOptions {
 
 const WEBGL_STARTUP_FAILURE_REASON = "The browser could not create a WebGL context for the 3D studio. Check browser hardware acceleration, or use the portfolio links below.";
 
+interface RenderInfoCounterTarget {
+  render: { calls: number };
+  reset?: () => void;
+}
+
+export interface InclusiveRenderCallSample {
+  inclusiveRenderCalls: number;
+  shadowPassRenderCalls: number | null;
+  mainPassRenderCalls: number | null;
+  rendererInfoResetCount: number;
+}
+
+/** Counts the renderer.info call segments on both sides of Three's shadow reset. */
+export class InclusiveRendererCallCounter {
+  private active = false;
+  private segmentStartCalls = 0;
+  private accumulatedCalls = 0;
+  private firstResetCalls = 0;
+  private resetCount = 0;
+  private disposed = false;
+  private readonly originalReset: (() => void) | null;
+  private readonly wrappedReset: (() => void) | null;
+
+  constructor(private readonly info: RenderInfoCounterTarget) {
+    const originalReset = info.reset;
+    this.originalReset = originalReset ?? null;
+    if (!originalReset) {
+      this.wrappedReset = null;
+      return;
+    }
+    const boundReset = originalReset.bind(info);
+    this.wrappedReset = () => {
+      if (this.active) {
+        const calls = Math.max(0, info.render.calls - this.segmentStartCalls);
+        this.accumulatedCalls += calls;
+        if (this.resetCount === 0) this.firstResetCalls = calls;
+        this.resetCount += 1;
+        this.segmentStartCalls = 0;
+      }
+      boundReset();
+    };
+    info.reset = this.wrappedReset;
+  }
+
+  public begin(): void {
+    if (this.disposed) throw new Error("Inclusive render-call measurement has been disposed.");
+    if (this.active) throw new Error("Inclusive render-call measurement is already active.");
+    this.active = true;
+    this.segmentStartCalls = this.info.render.calls;
+    this.accumulatedCalls = 0;
+    this.firstResetCalls = 0;
+    this.resetCount = 0;
+  }
+
+  public finish(): InclusiveRenderCallSample {
+    if (this.disposed) throw new Error("Inclusive render-call measurement has been disposed.");
+    if (!this.active) throw new Error("Inclusive render-call measurement is not active.");
+    const trailingCalls = Math.max(0, this.info.render.calls - this.segmentStartCalls);
+    this.accumulatedCalls += trailingCalls;
+    this.active = false;
+    const hasSingleShadowBoundary = this.resetCount === 1;
+    return {
+      inclusiveRenderCalls: this.accumulatedCalls,
+      shadowPassRenderCalls: hasSingleShadowBoundary ? this.firstResetCalls : null,
+      mainPassRenderCalls: hasSingleShadowBoundary ? trailingCalls : null,
+      rendererInfoResetCount: this.resetCount,
+    };
+  }
+
+  public dispose(): void {
+    if (this.disposed) return;
+    this.active = false;
+    this.disposed = true;
+    if (this.wrappedReset && this.originalReset && this.info.reset === this.wrappedReset) {
+      this.info.reset = this.originalReset;
+    }
+  }
+}
+
 class WebGLStartupError extends Error {
   public readonly technicalCause: unknown;
 
@@ -70,6 +149,13 @@ export class WorldRuntime {
   private interactionBinding: WorldInteractionBinding | null = null;
   private materialQuality: RuntimeMaterialQuality | null = null;
   private lowQualityBatch: LowQualityBatch | null = null;
+  private renderCallCounter: InclusiveRendererCallCounter | null = null;
+  private lastRenderCallSample: InclusiveRenderCallSample = {
+    inclusiveRenderCalls: 0,
+    shadowPassRenderCalls: null,
+    mainPassRenderCalls: null,
+    rendererInfoResetCount: 0,
+  };
   private readonly onFrameDuration: WorldRuntimeOptions["onFrameDuration"];
   private readonly onSamplingPause: WorldRuntimeOptions["onSamplingPause"];
 
@@ -246,6 +332,7 @@ export class WorldRuntime {
       console.error = originalConsoleError;
     }
 
+    this.renderCallCounter = new InclusiveRendererCallCounter(this.renderer.info);
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.15;
     this.renderer.shadowMap.enabled = this.qualityTier !== "low" && this.qualityTier !== "static";
@@ -420,15 +507,35 @@ export class WorldRuntime {
     }
 
     if (this.renderer && this.integratedResult) {
-      this.renderer.render(this.scene, this.camera);
+      this.lowQualityBatch?.syncDynamicInstances();
+      if (this.renderCallCounter) {
+        this.renderCallCounter.begin();
+        try {
+          this.renderer.render(this.scene, this.camera);
+        } finally {
+          this.lastRenderCallSample = this.renderCallCounter.finish();
+        }
+      } else {
+        this.renderer.render(this.scene, this.camera);
+        this.lastRenderCallSample = {
+          inclusiveRenderCalls: this.renderer.info.render.calls,
+          shadowPassRenderCalls: null,
+          mainPassRenderCalls: this.renderer.info.render.calls,
+          rendererInfoResetCount: 0,
+        };
+      }
       this.renderedFrames++;
       this.lastRenderedAt = currentTime;
       this.canvas.dataset.renderedFrames = String(this.renderedFrames);
+      this.canvas.dataset.renderCalls = String(this.lastRenderCallSample.inclusiveRenderCalls);
+      this.canvas.dataset.renderMainPassCalls = String(this.lastRenderCallSample.mainPassRenderCalls ?? "");
+      this.canvas.dataset.renderShadowPassCalls = String(this.lastRenderCallSample.shadowPassRenderCalls ?? "");
+      this.canvas.dataset.rendererInfoResetCount = String(this.lastRenderCallSample.rendererInfoResetCount);
       const frame: RenderedWorldFrame = {
         frame: this.renderedFrames, timestamp: currentTime, durationMs, qualityTier: this.qualityTier,
         activeClip: this.characterDirector?.currentClip ?? "none", characterMode: this.characterDirector?.mode ?? "unmounted",
         cameraPreset: this.cameraDirector?.getCurrentPreset() ?? "home-desktop", lifecycleState: this.lifecycleManager.getState(),
-        renderCalls: this.renderer.info.render.calls, renderedTriangles: this.renderer.info.render.triangles,
+        renderCalls: this.lastRenderCallSample.inclusiveRenderCalls, renderedTriangles: this.renderer.info.render.triangles,
       };
       this.canvas.dispatchEvent(new CustomEvent(WORLD_RENDERED_FRAME_EVENT, { detail: frame }));
     }
@@ -553,12 +660,12 @@ export class WorldRuntime {
   }
 
   private applySceneQuality(tier: QualityTier): void {
-    this.materialQuality?.apply(tier);
     // Three's fallback submits each instance separately without this extension.
-    if (tier === "low" && this.materialQuality && !this.lowQualityBatch
+    if (this.materialQuality && !this.lowQualityBatch
       && this.renderer?.getContext().getExtension("WEBGL_multi_draw")) {
       this.lowQualityBatch = new LowQualityBatch(this.scene);
     }
+    this.materialQuality?.apply(tier);
     this.lowQualityBatch?.apply(tier);
   }
 
@@ -592,10 +699,13 @@ export class WorldRuntime {
       ? (this.integratedResult.chairRoot.getWorldPosition(new THREE.Vector3()).toArray() as [number, number, number])
       : [0, 0, 0];
 
-    return {
+    const diagnostics = {
       renderedFrames: this.renderedFrames,
       lastRenderedAt: this.lastRenderedAt,
-      renderCalls: this.renderer?.info.render.calls ?? 0,
+      renderCalls: this.lastRenderCallSample.inclusiveRenderCalls,
+      mainPassRenderCalls: this.lastRenderCallSample.mainPassRenderCalls,
+      shadowPassRenderCalls: this.lastRenderCallSample.shadowPassRenderCalls,
+      rendererInfoResetCount: this.lastRenderCallSample.rendererInfoResetCount,
       renderedTriangles: this.renderer?.info.render.triangles ?? 0,
       renderPixelRatio: this.renderer?.getPixelRatio() ?? 0,
       lifecycleState: this.lifecycleManager.getState(),
@@ -632,6 +742,7 @@ export class WorldRuntime {
       experienceSnapshot: this.experienceController?.getSnapshot(),
       interactions: this.interactionBinding?.getDiagnostics(),
     };
+    return diagnostics;
   }
 
   /**
@@ -641,6 +752,8 @@ export class WorldRuntime {
     if (this.isDisposed) return;
     this.onSamplingPause?.();
     this.isDisposed = true;
+    this.renderCallCounter?.dispose();
+    this.renderCallCounter = null;
     this.loadingAbort.abort();
     this.interactionBinding?.dispose();
     this.interactionBinding = null;
