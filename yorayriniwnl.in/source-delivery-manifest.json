@@ -23,7 +23,7 @@
       "docs/planning/validation-and-production.md"
     ],
     "visualCandidateEvidence": "deliveries/G7/preparation/maker-evidence/pre-g7-31/",
-    "formalAcceptance": "PRE-G7-31 is an unaccepted mobile-camera candidate. Browser capture, tests, build, independent audit, human visual review, and Parent ruling remain pending.",
+    "formalAcceptance": "PRE-G7-31 remains an unaccepted mobile-camera candidate. PRE-G7-32 passed unit, lint, typecheck, both integration runs, build, and composition browser checks; its single performance-suite invocation failed when the active route remained LOADING instead of reaching HOME within the existing 15-second assertion. Independent audit, read-only human visual review, and Parent ruling remain pending.",
     "taskBranchParentCommit": "074ccbcb7fa5d8c5f89eb98aab9315cebb9100fb",
     "productionRuntimeSourceCommit": "ffd4635242362774c7981f8d54405fd0ccb2b0c9",
     "productionRuntimeAppTree": "9895fcc5c09ba695674fc5ff0342f5afb35b3d0c",
@@ -31,8 +31,28 @@
       "d86d3d68c34fcdff6319c7945c7d74e87ce81946",
       "bd01478617b4166866f3f44196c56fc5add94acd"
     ],
-    "validationReport": "deliveries/G7/preparation/maker-evidence/pre-g7-31/REPORT.md",
-    "packet": "PRE-G7-31"
+    "validationReport": "deliveries/G7/preparation/maker-evidence/pre-g7-32/REPORT.md",
+    "packet": "PRE-G7-31",
+    "priorValidationReport": "deliveries/G7/preparation/maker-evidence/pre-g7-31/REPORT.md",
+    "latestValidation": {
+      "packet": "PRE-G7-32",
+      "sourceCommit": "bd01478617b4166866f3f44196c56fc5add94acd",
+      "status": "FAIL",
+      "passingChecks": [
+        "pinned toolchain and source/mirror preflight",
+        "offline frozen install",
+        "unit",
+        "lint",
+        "typecheck",
+        "integration run 1",
+        "integration run 2",
+        "build",
+        "composition browser suite"
+      ],
+      "failedCheck": "full performance suite: 5 of 6 checks passed; active route remained LOADING instead of reaching HOME within the existing 15-second assertion",
+      "evidenceDirectory": "deliveries/G7/preparation/maker-evidence/pre-g7-32/",
+      "acceptance": "unaccepted; undeployed"
+    }
   },
   "mirror": {
     "sourceRoot": "app/",
