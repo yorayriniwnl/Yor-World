@@ -24,6 +24,8 @@ Accepted RC5 / [G6-R1](reviews/2026-10-06-g6-r1.md) remains immutable, including
 
 PRE-G7-30 completed its authorized single trace recapture against the exact PRE-G7-28 source and PRE-G7-29 build, using pnpm's documented script-argument forwarding without a standalone separator. The complete six-test suite passed, and all six traces are archived. Both startup-dependent tests reached HOME; the earlier stall did not reproduce, and its cause remains unresolved. No source change or acceptance is authorized; PRE-G7-28 remains unaccepted.
 
+[PRE-G7-31](reconciliation-packets/2026-10-16-pre-g7-31-mobile-home-framing.md) authorizes one bounded mobile-home camera target adjustment from the pushed PRE-G7-30 base. It does not accept PRE-G7-28 or close visual fidelity. Regression/browser checks, independent audit, fresh visual review, and Parent acceptance remain pending; no deployment is authorized.
+
 Read [current pre-G7 requirements](../operations/pre-g7-prerequisites.md) and the [RC6 dossier](../releases/v1.0.0-rc6.md). Parent continues authorized independent work and obtains missing service/device inputs. No mock, local fixture, emulation, liveness-only response or private preview substitutes for a mandatory production criterion.
 
 ## One specification and a small shared baseline
