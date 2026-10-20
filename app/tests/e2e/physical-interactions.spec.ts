@@ -57,7 +57,19 @@ test.describe("Physical & Room Interactions: Task C1 Arbitration & Robustness", 
     // Settle back to coding rest pose safely without duplicate queue
     const skipBtn = page.locator('[data-testid="skip-motion-btn"]');
     await skipBtn.click();
-    await expect(statusBadge).toContainText("coding_idle", { timeout: 3000 });
+    try {
+      await expect(statusBadge).toContainText("coding_idle", { timeout: 3000 });
+    } catch (error) {
+      console.error("GREETING_SETTLEMENT_DIAGNOSTICS", JSON.stringify(await page.evaluate(() => ({
+        stage: document.querySelector('[data-testid="world-stage-container"]')?.getAttribute("data-lifecycle-state"),
+        fallback: document.querySelector('[data-testid="world-failure-container"]')?.textContent?.slice(0,350),
+        staticFallback: document.querySelector('[data-testid="world-static-container"]')?.textContent?.slice(0,350),
+        placeholder: !!document.querySelector('[data-testid="world-loading-placeholder"]'),
+        studio: (document.querySelector('[data-testid="studio-fullscreen"]') as HTMLDialogElement | null)?.open,
+        worldElements: [...document.querySelectorAll("[data-testid]")].map(el => el.getAttribute("data-testid")).filter(id => id?.startsWith("world-") || id?.startsWith("fallback") || id?.startsWith("static")).slice(0,40),
+      }))));
+      throw error;
+    }
   });
 
   test("3. Attack: Escape key cancels interaction and restores safe explore base state", async ({ page }) => {
@@ -75,17 +87,38 @@ test.describe("Physical & Room Interactions: Task C1 Arbitration & Robustness", 
     // test. In that case the *intended* behavior is an accessible static
     // fallback, not a HUD that suddenly disappears. Accept only the actual
     // settled home camera or the documented static fallback.
-    await expect.poll(async () => {
-      if (await page.getByTestId("world-static-container").isVisible().catch(() => false)) {
-        return "accessible-static";
-      }
-      const stage = page.getByTestId("world-stage-container");
-      if (!(await stage.isVisible().catch(() => false))) return "waiting";
-      const state = await stage.getAttribute("data-lifecycle-state");
-      const homeCamera = page.getByTestId("camera-home-btn");
-      const active = (await homeCamera.getAttribute("class").catch(() => "")) ?? "";
-      return state === "HOME" && /hudButtonActive/.test(active) ? "home" : "waiting";
-    }, { timeout: 8000 }).toMatch(/^(home|accessible-static)$/);
+    try {
+      await expect.poll(async () => {
+        if (await page.getByTestId("world-static-container").isVisible().catch(() => false)) {
+          return "accessible-static";
+        }
+        const stage = page.getByTestId("world-stage-container");
+        if (!(await stage.isVisible().catch(() => false))) return "waiting";
+        const state = await stage.getAttribute("data-lifecycle-state");
+        const homeCamera = page.getByTestId("camera-home-btn");
+        const active = (await homeCamera.getAttribute("class").catch(() => "")) ?? "";
+        return state === "HOME" && /hudButtonActive/.test(active) ? "home" : "waiting";
+      }, { timeout: 8000 }).toMatch(/^(home|accessible-static)$/);
+    } catch (error) {
+      // Keep the failed CI log useful even when Playwright screenshots are not
+      // present in the retained evidence archive.
+      const snapshot = await page.evaluate(() => ({
+        stageState: document.querySelector('[data-testid="world-stage-container"]')?.getAttribute("data-lifecycle-state"),
+        homeClass: document.querySelector('[data-testid="camera-home-btn"]')?.className,
+        monitorClass: document.querySelector('[data-testid="camera-monitor-btn"]')?.className,
+        dialogOpen: (document.querySelector('[data-testid="studio-fullscreen"]') as HTMLDialogElement | null)?.open,
+        activeElement: document.activeElement?.getAttribute("data-testid") ?? document.activeElement?.tagName,
+        fallback: document.querySelector('[data-testid="world-failure-container"]')?.textContent?.slice(0,350),
+        staticFallback: document.querySelector('[data-testid="world-static-container"]')?.textContent?.slice(0,350),
+        placeholder: !!document.querySelector('[data-testid="world-loading-placeholder"]'),
+        worldElements: [...document.querySelectorAll("[data-testid]")].map(el => el.getAttribute("data-testid")).filter(id => id?.startsWith("world-") || id?.startsWith("fallback") || id?.startsWith("static")).slice(0,40),
+      }));
+      console.error("ESCAPE_HOME_DIAGNOSTICS", JSON.stringify(snapshot));
+      throw error;
+    }
+    // The real Escape key path above covers native fullscreen cancellation.
+    // Do not force a second camera cycle after this assertion: CI software
+    // renderers can legitimately switch to accessible static fallback.
     // Coding-idle settlement is checked independently in lifecycle test #2.
   });
 

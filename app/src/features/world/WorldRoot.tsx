@@ -164,30 +164,48 @@ export default function WorldRoot({
     });
 
     const handleResize = () => runtime.resize();
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        const state = lm.getState();
-        if (state === "ENTRANCE" || state === "TRANSITION") {
-          runtime.skip();
-          setDiagnostics(runtime.getDiagnostics());
-        } else if (state === "HOME") {
-          runtime.escape();
-          setActiveCamera("home-desktop");
-          setDiagnostics(runtime.getDiagnostics());
-          setShowRoomControls(false);
-          setShowLauncher(false);
-        } else if (state === "LOADING") {
-          lm.continueWithPortfolio();
-          if (onClose) onClose();
-        } else if (state === "FAILURE") {
-          lm.continueWithPortfolio();
-          if (onClose) onClose();
-        }
+    const handleStudioEscape = () => {
+      const state = lm.getState();
+      if (state === "ENTRANCE") {
+        // During the entrance Escape skips the cinematic intro.
+        runtime.skip();
+        setActiveCamera(window.innerWidth < 640 ? "home-mobile" : "home-desktop");
+        setDiagnostics(runtime.getDiagnostics());
+      } else if (state === "HOME" || state === "TRANSITION") {
+        // A camera change or interaction must always settle back at home.
+        runtime.escape();
+        setActiveCamera(window.innerWidth < 640 ? "home-mobile" : "home-desktop");
+        setDiagnostics(runtime.getDiagnostics());
+        setShowRoomControls(false);
+        setShowLauncher(false);
+      } else if (state === "LOADING" || state === "FAILURE") {
+        lm.continueWithPortfolio();
+        onClose?.();
       }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") handleStudioEscape();
     };
 
     window.addEventListener("resize", handleResize);
     window.addEventListener("keydown", handleKeyDown);
+    // Listen on the native dialog as well: its cancel event is delivered even
+    // when the browser consumes Escape before a window keydown can bubble.
+    const studioDialog = canvasRef.current.closest("dialog");
+    const handleDialogKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      // Handle the key at the modal boundary before another listener or the
+      // browser's dialog default can consume it.
+      event.preventDefault();
+      event.stopPropagation();
+      handleStudioEscape();
+    };
+    const handleDialogCancel = (event: Event) => {
+      event.preventDefault();
+      handleStudioEscape();
+    };
+    studioDialog?.addEventListener("keydown", handleDialogKeyDown, true);
+    studioDialog?.addEventListener("cancel", handleDialogCancel);
 
     // Diagnostics polling interval for live state
     const interval = setInterval(() => {
@@ -205,6 +223,8 @@ export default function WorldRoot({
       unsubExp();
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("keydown", handleKeyDown);
+      studioDialog?.removeEventListener("keydown", handleDialogKeyDown, true);
+      studioDialog?.removeEventListener("cancel", handleDialogCancel);
       runtime.dispose();
       audioControllerRef.current?.dispose();
       audioControllerRef.current = null;
