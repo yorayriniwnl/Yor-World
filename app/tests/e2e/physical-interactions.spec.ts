@@ -86,6 +86,17 @@ test.describe("Physical & Room Interactions: Task C1 Arbitration & Robustness", 
       const active = (await homeCamera.getAttribute("class").catch(() => "")) ?? "";
       return state === "HOME" && /hudButtonActive/.test(active) ? "home" : "waiting";
     }, { timeout: 8000 }).toMatch(/^(home|accessible-static)$/);
+    // A browser-native <dialog> cancel must behave identically even when
+    // its Escape keydown was consumed before reaching the window listener.
+    await page.getByTestId("camera-monitor-btn").click();
+    await expect(page.getByTestId("camera-monitor-btn")).toHaveClass(/hudButtonActive/);
+    await page.getByTestId("studio-fullscreen").evaluate((dialog) => {
+      if (!(dialog instanceof HTMLDialogElement)) throw new Error("Expected a dialog");
+      dialog.dispatchEvent(new Event("cancel", { cancelable: true }));
+    });
+    await expect(page.getByTestId("studio-fullscreen")).toHaveJSProperty("open", true);
+    await expect(page.getByTestId("camera-home-btn")).toHaveClass(/hudButtonActive/);
+    await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME");
     // Coding-idle settlement is checked independently in lifecycle test #2.
   });
 
