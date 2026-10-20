@@ -192,10 +192,19 @@ export default function WorldRoot({
     // Listen on the native dialog as well: its cancel event is delivered even
     // when the browser consumes Escape before a window keydown can bubble.
     const studioDialog = canvasRef.current.closest("dialog");
+    const handleDialogKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      // Handle the key at the modal boundary before another listener or the
+      // browser's dialog default can consume it.
+      event.preventDefault();
+      event.stopPropagation();
+      handleStudioEscape();
+    };
     const handleDialogCancel = (event: Event) => {
       event.preventDefault();
       handleStudioEscape();
     };
+    studioDialog?.addEventListener("keydown", handleDialogKeyDown, true);
     studioDialog?.addEventListener("cancel", handleDialogCancel);
 
     // Diagnostics polling interval for live state
@@ -214,6 +223,7 @@ export default function WorldRoot({
       unsubExp();
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("keydown", handleKeyDown);
+      studioDialog?.removeEventListener("keydown", handleDialogKeyDown, true);
       studioDialog?.removeEventListener("cancel", handleDialogCancel);
       runtime.dispose();
       audioControllerRef.current?.dispose();
