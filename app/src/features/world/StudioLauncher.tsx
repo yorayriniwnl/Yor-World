@@ -119,7 +119,12 @@ export function StudioLauncher({
           className={portfolioStyles.studioFullscreen}
           data-testid="studio-fullscreen"
           aria-label="YOR WORLD interactive 3D studio"
-          onCancel={(event) => event.preventDefault()}
+          onCancel={(event) => {
+            event.preventDefault();
+            // Browser-native dialog cancellation may consume the keydown event.
+            // Keep Escape within the studio rather than closing the dialog.
+            window.dispatchEvent(new Event("yor-world:studio-escape"));
+          }}
         >
           <nav className={portfolioStyles.studioQuickNav} aria-label="Studio navigation">
             <Link href="/projects" onClick={closeStudio} data-testid="studio-projects-link">Projects <span aria-hidden="true">↗</span></Link>
