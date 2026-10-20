@@ -189,8 +189,14 @@ export default function WorldRoot({
 
     window.addEventListener("resize", handleResize);
     window.addEventListener("keydown", handleKeyDown);
-    // Native <dialog> can consume Escape before the window sees keydown.
-    window.addEventListener("yor-world:studio-escape", handleStudioEscape);
+    // Listen on the native dialog as well: its cancel event is delivered even
+    // when the browser consumes Escape before a window keydown can bubble.
+    const studioDialog = canvasRef.current.closest("dialog");
+    const handleDialogCancel = (event: Event) => {
+      event.preventDefault();
+      handleStudioEscape();
+    };
+    studioDialog?.addEventListener("cancel", handleDialogCancel);
 
     // Diagnostics polling interval for live state
     const interval = setInterval(() => {
@@ -208,7 +214,7 @@ export default function WorldRoot({
       unsubExp();
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("yor-world:studio-escape", handleStudioEscape);
+      studioDialog?.removeEventListener("cancel", handleDialogCancel);
       runtime.dispose();
       audioControllerRef.current?.dispose();
       audioControllerRef.current = null;
