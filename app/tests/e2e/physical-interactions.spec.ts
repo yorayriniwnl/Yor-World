@@ -57,7 +57,19 @@ test.describe("Physical & Room Interactions: Task C1 Arbitration & Robustness", 
     // Settle back to coding rest pose safely without duplicate queue
     const skipBtn = page.locator('[data-testid="skip-motion-btn"]');
     await skipBtn.click();
-    await expect(statusBadge).toContainText("coding_idle", { timeout: 3000 });
+    try {
+      await expect(statusBadge).toContainText("coding_idle", { timeout: 3000 });
+    } catch (error) {
+      console.error("GREETING_SETTLEMENT_DIAGNOSTICS", JSON.stringify(await page.evaluate(() => ({
+        stage: document.querySelector('[data-testid="world-stage-container"]')?.getAttribute("data-lifecycle-state"),
+        fallback: document.querySelector('[data-testid="world-failure-container"]')?.textContent?.slice(0,350),
+        staticFallback: document.querySelector('[data-testid="world-static-container"]')?.textContent?.slice(0,350),
+        placeholder: !!document.querySelector('[data-testid="world-loading-placeholder"]'),
+        studio: (document.querySelector('[data-testid="studio-fullscreen"]') as HTMLDialogElement | null)?.open,
+        worldElements: [...document.querySelectorAll("[data-testid]")].map(el => el.getAttribute("data-testid")).filter(id => id?.startsWith("world-") || id?.startsWith("fallback") || id?.startsWith("static")).slice(0,40),
+      }))));
+      throw error;
+    }
   });
 
   test("3. Attack: Escape key cancels interaction and restores safe explore base state", async ({ page }) => {
@@ -96,6 +108,10 @@ test.describe("Physical & Room Interactions: Task C1 Arbitration & Robustness", 
         monitorClass: document.querySelector('[data-testid="camera-monitor-btn"]')?.className,
         dialogOpen: (document.querySelector('[data-testid="studio-fullscreen"]') as HTMLDialogElement | null)?.open,
         activeElement: document.activeElement?.getAttribute("data-testid") ?? document.activeElement?.tagName,
+        fallback: document.querySelector('[data-testid="world-failure-container"]')?.textContent?.slice(0,350),
+        staticFallback: document.querySelector('[data-testid="world-static-container"]')?.textContent?.slice(0,350),
+        placeholder: !!document.querySelector('[data-testid="world-loading-placeholder"]'),
+        worldElements: [...document.querySelectorAll("[data-testid]")].map(el => el.getAttribute("data-testid")).filter(id => id?.startsWith("world-") || id?.startsWith("fallback") || id?.startsWith("static")).slice(0,40),
       }));
       console.error("ESCAPE_HOME_DIAGNOSTICS", JSON.stringify(snapshot));
       throw error;
