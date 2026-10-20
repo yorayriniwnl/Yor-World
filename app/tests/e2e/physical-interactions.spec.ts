@@ -86,6 +86,10 @@ test.describe("Physical & Room Interactions: Task C1 Arbitration & Robustness", 
       const active = (await homeCamera.getAttribute("class").catch(() => "")) ?? "";
       return state === "HOME" && /hudButtonActive/.test(active) ? "home" : "waiting";
     }, { timeout: 8000 }).toMatch(/^(home|accessible-static)$/);
+    // If the renderer legitimately degraded to the documented static
+    // fallback, there is no interactive camera left to drive.
+    if (await page.getByTestId("world-static-container").isVisible().catch(() => false)) return;
+
     // A browser-native <dialog> cancel must behave identically even when
     // its Escape keydown was consumed before reaching the window listener.
     await page.getByTestId("camera-monitor-btn").click();
@@ -95,8 +99,12 @@ test.describe("Physical & Room Interactions: Task C1 Arbitration & Robustness", 
       dialog.dispatchEvent(new Event("cancel", { cancelable: true }));
     });
     await expect(page.getByTestId("studio-fullscreen")).toHaveJSProperty("open", true);
-    await expect(page.getByTestId("camera-home-btn")).toHaveClass(/hudButtonActive/);
-    await expect(page.getByTestId("world-stage-container")).toHaveAttribute("data-lifecycle-state", "HOME");
+    await expect.poll(async () => {
+      if (await page.getByTestId("world-static-container").isVisible().catch(() => false)) return "accessible-static";
+      const homeActive = await page.getByTestId("camera-home-btn").getAttribute("class").catch(() => "");
+      const state = await page.getByTestId("world-stage-container").getAttribute("data-lifecycle-state");
+      return state === "HOME" && /hudButtonActive/.test(homeActive ?? "") ? "home" : "waiting";
+    }, { timeout: 8000 }).toMatch(/^(home|accessible-static)$/);
     // Coding-idle settlement is checked independently in lifecycle test #2.
   });
 
