@@ -75,17 +75,31 @@ test.describe("Physical & Room Interactions: Task C1 Arbitration & Robustness", 
     // test. In that case the *intended* behavior is an accessible static
     // fallback, not a HUD that suddenly disappears. Accept only the actual
     // settled home camera or the documented static fallback.
-    await expect.poll(async () => {
-      if (await page.getByTestId("world-static-container").isVisible().catch(() => false)) {
-        return "accessible-static";
-      }
-      const stage = page.getByTestId("world-stage-container");
-      if (!(await stage.isVisible().catch(() => false))) return "waiting";
-      const state = await stage.getAttribute("data-lifecycle-state");
-      const homeCamera = page.getByTestId("camera-home-btn");
-      const active = (await homeCamera.getAttribute("class").catch(() => "")) ?? "";
-      return state === "HOME" && /hudButtonActive/.test(active) ? "home" : "waiting";
-    }, { timeout: 8000 }).toMatch(/^(home|accessible-static)$/);
+    try {
+      await expect.poll(async () => {
+        if (await page.getByTestId("world-static-container").isVisible().catch(() => false)) {
+          return "accessible-static";
+        }
+        const stage = page.getByTestId("world-stage-container");
+        if (!(await stage.isVisible().catch(() => false))) return "waiting";
+        const state = await stage.getAttribute("data-lifecycle-state");
+        const homeCamera = page.getByTestId("camera-home-btn");
+        const active = (await homeCamera.getAttribute("class").catch(() => "")) ?? "";
+        return state === "HOME" && /hudButtonActive/.test(active) ? "home" : "waiting";
+      }, { timeout: 8000 }).toMatch(/^(home|accessible-static)$/);
+    } catch (error) {
+      // Keep the failed CI log useful even when Playwright screenshots are not
+      // present in the retained evidence archive.
+      const snapshot = await page.evaluate(() => ({
+        stageState: document.querySelector('[data-testid="world-stage-container"]')?.getAttribute("data-lifecycle-state"),
+        homeClass: document.querySelector('[data-testid="camera-home-btn"]')?.className,
+        monitorClass: document.querySelector('[data-testid="camera-monitor-btn"]')?.className,
+        dialogOpen: (document.querySelector('[data-testid="studio-fullscreen"]') as HTMLDialogElement | null)?.open,
+        activeElement: document.activeElement?.getAttribute("data-testid") ?? document.activeElement?.tagName,
+      }));
+      console.error("ESCAPE_HOME_DIAGNOSTICS", JSON.stringify(snapshot));
+      throw error;
+    }
     // If the renderer legitimately degraded to the documented static
     // fallback, there is no interactive camera left to drive.
     if (await page.getByTestId("world-static-container").isVisible().catch(() => false)) return;
