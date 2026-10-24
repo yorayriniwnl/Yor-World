@@ -22,6 +22,23 @@ The work is grouped into three [production prompts](docs/planning/production-pro
 
 Start with [START_HERE.md](START_HERE.md). The [account prompt map](docs/planning/account-prompts.md) uses the corrected two-GPT allocation; [local tool access](docs/planning/local-tool-access.md) records startup files, and the [Claude browser workflow](docs/planning/browser-review-workflow.md) defines reusable context and review packets. Workers with verified access to this project folder can read the plans and [local reference library](references/README.md) directly. Saving files here does not connect browser-only AI accounts to the filesystem; no external account connection has been created.
 
+<!-- YOR REDLINE / EXPERIENCE V2 -->
+
+<a id="system-map"></a>
+## System map
+
+<div align="center"><picture><source media="(max-width: 600px)" srcset="docs/yor-redline-system-mobile.svg"/><img src="docs/yor-redline-system.svg" width="100%" alt="Immersive developer studio: Define studio brief to Implement source to Review release gates to Verify acceptance"/></picture></div>
+
+| Project signal | Documented scope |
+| :--- | :--- |
+| **Current maturity** | PLANNING / RELEASE GATES |
+| **Technical focus** | A planned interactive portfolio studio with documented candidates, source reviews, and acceptance gates. |
+| **Evidence boundary** | Accepted source-review stages do not mean production/manual acceptance is complete. |
+
+**Navigate:** [Canonical application](#canonical-application) · [Confirmed brief](#confirmed-brief) · [Recommended direction](#recommended-direction) · [Read the package](#read-the-package) · [Feasibility gate status](#feasibility-gate-status) · [What is verified today](#what-is-verified-today) · [Repository storage hygiene & forward-looking policy](#repository-storage-hygiene--forward-looking-policy)
+
+<!-- END YOR REDLINE / EXPERIENCE V2 -->
+
 ## Canonical application
 
 **CANONICAL APPLICATION ROOT: `app/`.** Run production installation, tests, builds, and future authorized G7 deployment from this root. Historical `deliveries/A6/source/` and `deliveries/C3/source/` are immutable proof inputs, never deployment roots. RC1/RC2 evidence remains historical.
