@@ -463,12 +463,10 @@ export class WorldRuntime {
     if (this.transitionCoordinator) {
       this.transitionCoordinator.skip();
     }
-    if (this.cameraDirector) {
-      this.cameraDirector.setPreset(isMobile ? "home-mobile" : "home-desktop");
-    }
-    if (this.experienceController) {
-      this.experienceController.send({ type: "ESCAPE" });
-    }
+    // Resolve controller arbitration first, then cancel any in-flight camera
+    // tween so its next animation frame cannot overwrite the home view.
+    void this.experienceController.send({ type: "ESCAPE" });
+    this.cameraDirector?.settleHome(isMobile);
     this.lifecycleManager.escape(this.sessionToken);
     return this.characterDirector ? this.characterDirector.settle() : 0;
   }
